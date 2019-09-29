@@ -6,7 +6,8 @@ Just clone this repository and you're almost ready.
 
 1. Copy `.env.example` file into `.env` and make sure you're running correct mysql settings
 2. Run `composer update`
-3. Run `php artisan serve` to host the page at `localhost:8000`
+3. Create app key `php artisan key:generate`
+4. Run `php artisan serve` to host the page at `localhost:8000`
 
 ## Prefered Workspace
 It's an advantage we use the same workspace in our development, here is how we've set it up:
