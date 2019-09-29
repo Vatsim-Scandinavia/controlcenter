@@ -1,12 +1,24 @@
-## Laravel SB Admin 2 Starter
+## SANTA
+Scandinavian Training System. Created using `Laravel 6.0`, based on `SB Admin 2` boostrap theme.
 
-This repository using `Laravel 5.8` with `SB Admin 2` as dashboard template. Just clone this repository and everything is ready to use.
+## Installing
+Just clone this repository and you're almost ready.
+1. Copy `.env.example` file into `.env` and make sure you're running correct mysql settings
 
-## About SB Admin 2
+2. Run `composer update`
 
-A free Bootstrap 4 admin theme built with HTML/CSS and a modern development workflow environment ready to use to build your next dashboard or web application. More information can be checked below:
+3. Run `php artisan serve` to host the page at `localhost:8000`
 
-- [Start Bootstrap - SB Admin 2](https://startbootstrap.com/themes/sb-admin-2/)
-- [SB Admin 2 - Live Preview](https://startbootstrap.com/previews/sb-admin-2/)
-- [SB Admin 2 on GitHub](https://github.com/BlackrockDigital/startbootstrap-sb-admin-2)
+## Setup and workspace
+It's an advantage we use the same workspace in our development, here is how we've set it up:
 
+* Visual Studio Code as editor
+* The following plugins installed: https://medium.com/@rohan_krishna/how-to-setup-visual-studio-code-for-laravel-php-276643c3013c
+* Optionally install this icon pack: https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme
+
+
+## Laravel basics
+If you're unfamiliar with Laravel, check out these resources:
+
+* Laravel Documentation: https://laravel.com/docs
+* Laravel essentials in 45 min: https://www.youtube.com/watch?v=ubfxi21M1vQ
