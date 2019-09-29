@@ -1,15 +1,14 @@
 ## SANTA
 Scandinavian Training System. Created using `Laravel 6.0`, based on `SB Admin 2` boostrap theme.
 
-## Installing
+## Setup and install
 Just clone this repository and you're almost ready.
+
 1. Copy `.env.example` file into `.env` and make sure you're running correct mysql settings
-
 2. Run `composer update`
-
 3. Run `php artisan serve` to host the page at `localhost:8000`
 
-## Setup and workspace
+## Prefered Workspace
 It's an advantage we use the same workspace in our development, here is how we've set it up:
 
 * Visual Studio Code as editor
