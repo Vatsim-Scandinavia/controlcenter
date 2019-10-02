@@ -22,3 +22,13 @@ If you're unfamiliar with Laravel, check out these resources:
 
 * Laravel Documentation: https://laravel.com/docs
 * Laravel essentials in 45 min: https://www.youtube.com/watch?v=ubfxi21M1vQ
+
+
+## Conventions
+In order to keep a collaborative project in the same style and understandable, it's important to follow some conventions:
+
+* MySQL tables are named in plural e.g `trainings`, not `training`
+* Controllers are suffixed with `Controller`, for instance `UserController`
+* The controllers should mainly consist of the methods of "7 restful controller actions" [Check out this video](https://laracasts.com/series/laravel-6-from-scratch/episodes/21?autoplay=true)
+* Models don't have any specific suffix or prefix
+* We name our views with blade suffix for clearity, like `header.blade.php`
