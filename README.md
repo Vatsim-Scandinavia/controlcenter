@@ -30,6 +30,7 @@ In order to keep a collaborative project in the same style and understandable, i
 
 ##### Models/SQL
 * MySQL tables are named in plural e.g `training_reports`, not `training_report`
+* Models are named in singular e.g. `Training`, not `Trainings`
 * Models names don't have any specific suffix or prefix
 * Models are per Laravel 6.0 located in root of `app/` folder.
 
@@ -40,3 +41,4 @@ In order to keep a collaborative project in the same style and understandable, i
 
 ##### Other
 * We name our views with blade suffix for clearity, like `header.blade.php`
+* For more in-depth conventions, check out [Laravel best practices](https://www.laravelbestpractices.com)
