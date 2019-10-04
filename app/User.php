@@ -36,4 +36,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Link user's endorsement
+     * 
+     * @return \App\Endorsement
+     */
+    public function endorsement(){
+        return $this->hasOne(Endorsement::class);
+    }
 }
