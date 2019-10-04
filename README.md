@@ -12,9 +12,10 @@ Just clone this repository and you're almost ready. First make sure you've insta
 ## Laravel
 
 ##### Basics
-If you're unfamiliar with Laravel, check out these resources:
+This project has a prerequesite that you're familiar with PHP and Object-oriented programming. If you're unfamiliar with Laravel, check out these resources:
 
 * Laravel Documentation: https://laravel.com/docs
+* Free and high-quality Laravel 6.0 tutorial: https://laracasts.com/series/laravel-6-from-scratch
 * Laravel essentials in 45 min: https://www.youtube.com/watch?v=ubfxi21M1vQ
 
 ##### Workspace
