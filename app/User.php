@@ -49,4 +49,8 @@ class User extends Authenticatable
     public function trainings(){
         return $this->hasMany(Training::class);
     }
+
+    public function usergroup(){
+        return $this->belongsTo(UserGroup::class, 'usergroup');
+    }
 }
