@@ -10,7 +10,7 @@ use App\Http\Controllers\RatingsController;
 use App\Http\Controllers\PRatingsController;
 use App\Http\Controllers\DivisionsController;
 use App\Http\Controllers\TestController;
-use App\Models\User;
+use App\User;
 /**
  * Class AuthController
  * @package App\Http\Controllers\login
@@ -65,22 +65,14 @@ class LoginController extends Controller
             $this->sso->validate(session('key'), session('secret'), $get->input('oauth_verifier'), function ($sso_data, $request) {
                 session()->forget('key');
                 session()->forget('secret');
-                User::updateOrCreate(['id' => $sso_data->id], ['fname' => $sso_data->name_first, 'lname' => $sso_data->name_last]);
-                $user = User::find($sso_data->id);
-                $subdivision = DivisionsController::getSubdivisionID($sso_data->region, $sso_data->division, $sso_data->subdivision);
-                $rating = RatingsController::getRatingID($sso_data->rating);
-                $pRatings = PRatingsController::getPRatingsIDs($sso_data->pilot_rating);
-                $user->subdivision()->sync($subdivision);
-                $user->rating()->sync($rating);
-                $user->p_ratings()->sync($pRatings);
-                
-                Auth::login($user, true);
+                User::updateOrCreate(['id' => $sso_data->id]);
+                Auth::login(User::find($sso_data->id), true);
             });
         } catch (SSOException $e) {
-            return redirect()->route('page')->withError($e->getMessage());
+            return redirect()->route('dashboard')->withError($e->getMessage());
         }
         
-        return redirect()->intended(route('page'));
+        return redirect()->intended(route('dashboard'));
     }
     /**
      * Log the user out
@@ -91,6 +83,6 @@ class LoginController extends Controller
     {
         if (! Auth::check()) return redirect()->back();
         Auth::logout();
-        return redirect()->route('page')->withSuccess('You have been successfully logged out.');
+        return redirect()->route('dashboard')->withSuccess('You have been successfully logged out.');
     }
 }

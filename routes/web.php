@@ -15,7 +15,7 @@
 // Main page
 //--------------------------------------------------------------------------
 Route::get('/', function(){
-    return view('welcome');
+    return view('front');
 });
 //--------------------------------------------------------------------------
 // VATSIM Authentication
@@ -24,6 +24,8 @@ Route::get('/login', 'Auth\LoginController@login')->middleware('guest')->name('l
 Route::get('/validate', 'Auth\LoginController@validateLogin')->middleware('guest');
 Route::get('/logout', 'Auth\LoginController@logout')->middleware('auth')->name('logout');
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
 });
 

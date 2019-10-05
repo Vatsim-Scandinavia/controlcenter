@@ -17,7 +17,8 @@ class CreateUsersTable extends Migration
             $table->integer('id')->unsigned();
             $table->boolean('visiting_controller')->default(false);
             $table->timestamp('last_login');
-            $table->unsignedInteger('usergroup');
+            $table->unsignedInteger('usergroup')->nullable();
+            $table->rememberToken();
         });
     }
 
