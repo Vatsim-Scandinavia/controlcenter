@@ -83,6 +83,6 @@ class LoginController extends Controller
     {
         if (! Auth::check()) return redirect()->back();
         Auth::logout();
-        return redirect()->route('dashboard')->withSuccess('You have been successfully logged out.');
+        return redirect()->to('/')->withSuccess('You have been successfully logged out.');
     }
 }
