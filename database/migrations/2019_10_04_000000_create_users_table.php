@@ -14,6 +14,8 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
+            $table->primary(['id']);
+
             $table->integer('id')->unsigned();
             $table->boolean('visiting_controller')->default(false);
             $table->timestamp('last_login');
