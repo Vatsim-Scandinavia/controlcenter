@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEndorsementsTable extends Migration
+class CreateSoloEndorsementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateEndorsementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('endorsements', function (Blueprint $table) {
+        Schema::create('solo_endorsements', function (Blueprint $table) {
             $table->primary(['user_id']);
 
             $table->integer('user_id')->unsigned();
@@ -32,6 +32,6 @@ class CreateEndorsementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('endorsements');
+        Schema::dropIfExists('solo_endorsements');
     }
 }
