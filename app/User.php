@@ -34,7 +34,7 @@ class User extends Authenticatable
      * @return \App\Handover
      */
     public function handover(){
-        return $this->hasOne(Handover::class, 'id');
+        return $this->belongsTo(Handover::class, 'id');
     }
 
     /**
@@ -44,5 +44,9 @@ class User extends Authenticatable
      */
     public function solo_endorsement(){
         return $this->hasOne(SoloEndorsement::class);
+    }
+
+    public function trainings(){
+        return $this->hasMany(Training::class);
     }
 }
