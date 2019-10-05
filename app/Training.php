@@ -14,11 +14,11 @@ class Training extends Model
         return $this->belongsTo(Country::class);
     }
 
-    public function training_reports(){
+    public function reports(){
         return $this->hasMany(TrainingReport::class);
     }
 
-    public function training_ratings(){
+    public function ratings(){
         return $this->hasMany(TrainingRequestRating::class);
     }
 

@@ -14,9 +14,7 @@ class CreateTrainingReportsTable extends Migration
     public function up()
     {
         Schema::create('training_reports', function (Blueprint $table) {
-            $table->primary(['id']);
-
-            $table->integer('id')->unsigned();
+            $table->increments('id');
             $table->integer('training_id')->unsigned();
             $table->integer('written_by_id')->unsigned();
             $table->string('content');
@@ -24,7 +22,7 @@ class CreateTrainingReportsTable extends Migration
             $table->string('position')->nullable();
             $table->boolean('draft')->default(false);
             $table->timestamps();
-            
+
         });
     }
 

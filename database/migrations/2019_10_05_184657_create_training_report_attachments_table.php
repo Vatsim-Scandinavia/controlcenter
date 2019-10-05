@@ -14,9 +14,7 @@ class CreateTrainingReportAttachmentsTable extends Migration
     public function up()
     {
         Schema::create('training_report_attachments', function (Blueprint $table) {
-            $table->primary(['id']);
-            
-            $table->integer('id')->unsigned();
+            $table->increments('id');
             $table->integer('training_report_id')->unsigned();
             $table->string('url');
             $table->timestamps();

@@ -14,18 +14,19 @@ class CreateTrainingsTable extends Migration
     public function up()
     {
         Schema::create('trainings', function (Blueprint $table) {
-            $table->primary(['id']);
-
-            $table->integer('id')->unsigned();
+            $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->tinyInteger('status');
             $table->integer('country_id');
-            $table->string('notes');
+            $table->string('notes')->nullable();
             $table->string('motivation');
             $table->boolean('english_only_training');
-            $table->boolean('paused');
+            $table->boolean('is_refresh')->default(false);
+            $table->boolean('paused')->default(false);
             $table->string('closed_reason')->nullable();
             $table->timestamps();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('finished_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
