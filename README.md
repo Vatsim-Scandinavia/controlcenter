@@ -42,4 +42,4 @@ In order to keep a collaborative project in the same style and understandable, i
 
 ##### Other
 * We name our views with blade suffix for clearity, like `header.blade.php`
-* For more in-depth conventions, check out [Laravel best practices](https://www.laravelbestpractices.com)
+* For more in-depth conventions which we try to follow, check out [Laravel best practices](https://www.laravelbestpractices.com)
