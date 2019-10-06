@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Owner
+    |--------------------------------------------------------------------------
+    |
+    | This value is the owner of your application. This value is used when the
+    | framework needs to place the application's owner in a notification or
+    | any other location as required by the application or its packages.
+    |
+    */
+
+    'owner' => env('APP_OWNER', 'VATSIM'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
