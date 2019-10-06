@@ -6,7 +6,7 @@
 <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
 
 <div class="row">
-    <!-- Earnings (Monthly) Card Example -->
+    <!-- Current rank card  -->
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
@@ -23,7 +23,7 @@
     </div>
     </div>
 
-    <!-- Pending Requests Card Example -->
+    <!-- Favorite position card -->
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
@@ -40,7 +40,7 @@
     </div>
     </div>
 
-    <!-- Earnings (Monthly) Card Example -->
+    <!-- ATC Hours card -->
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
@@ -59,7 +59,7 @@
 
     
 
-    <!-- Earnings (Monthly) Card Example -->
+    <!-- Last training card -->
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
