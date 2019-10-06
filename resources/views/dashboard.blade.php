@@ -153,7 +153,7 @@
             <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="img/undraw_aircraft_fbvl.svg" alt="">
         </div>
         <p>Are you interested in becoming an air traffic controller, or get a higher rank? Here you can request your training, and you will be notified when it's your turn.</p>
-        <a href="#" class="btn btn-success btn-block">
+        <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
             Request training
         </a>
         </div>

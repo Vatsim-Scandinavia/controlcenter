@@ -14,19 +14,19 @@
             <hr class="sidebar-divider my-0">
 
             <li class="nav-item active">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{ route('dashboard') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
             </li>      
     
             <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{ route('vatbook') }}">
                 <i class="fas fa-fw fa-calendar"></i>
                 <span>Vatbook</span></a>
             </li>
     
             <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{ route('content') }}">
                 <i class="fas fa-fw fa-book"></i>
                 <span>Training Content</span></a>
             </li>
@@ -40,19 +40,19 @@
             </div>
     
             <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('mentor') }}">
                 <i class="fas fa-fw fa-chalkboard-teacher"></i>
                 <span>My students</span></a>
             </li>
     
             <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('sweatbox') }}">
                 <i class="fas fa-fw fa-calendar-alt"></i>
                 <span>Sweatbox Calendar</span></a>
             </li>
     
             <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('requests') }}">
                 <i class="fas fa-fw fa-flag"></i>
                 <span>Requests</span></a>
             </li>
@@ -66,13 +66,13 @@
             </div>
     
             <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('memberlist') }}">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Overview</span></a>
             </li>
     
             <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('memberlist.endorsements') }}">
                 <i class="fas fa-fw fa-check-square"></i>
                 <span>Endorsements</span></a>
             </li>
@@ -88,9 +88,9 @@
             </a>
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Statistics</a>
-                <a class="collapse-item" href="#">Mentors</a>
-                <a class="collapse-item" href="#">ATC Activity</a>
+                <a class="collapse-item" href="{{ route('reports.stats') }}">Statistics</a>
+                <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+                <a class="collapse-item" href="{{ route('reports.atc') }}">ATC Activity</a>
                 </div>
             </div>
             </li>
@@ -103,9 +103,9 @@
             </a>
             <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Settings</a>
-                <a class="collapse-item" href="#">Training content</a>
-                <a class="collapse-item" href="#">Notification templates</a>
+                <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
+                <a class="collapse-item" href="{{ route('admin.content') }}">Training content</a>
+                <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 </div>
             </div>
             </li>            
