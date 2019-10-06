@@ -18,7 +18,11 @@
         <!-- Main Content -->
         <div id="content">
 
-            @include('layouts.topbar')
+            @auth
+                @include('layouts.topbar.authed')
+            @else
+                @include('layouts.topbar.guest')
+            @endauth
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
