@@ -37,7 +37,7 @@ In order to keep a collaborative project in the same style and understandable, i
 
 ##### Controllers
 * Controllers are suffixed with `Controller`, for instance `TrainingController`
-* Controllers are named in singular e.g. `TrainingController, not `TrainingsController`
+* Controllers are named in singular e.g. `TrainingController`, not `TrainingsController`
 * The controllers should mainly consist of the methods of "7 restful controller actions" [Check out this video](https://laracasts.com/series/laravel-6-from-scratch/episodes/21?autoplay=true)
 
 ##### Other
