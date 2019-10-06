@@ -9,11 +9,17 @@
         "prod": "npm run production",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.9.0",
+        "bootstrap": "4.3.1",
+        "chart.js": "2.8.0",
+        "datatables.net-bs4": "1.10.19",
+        "jquery": "3.4.1",
+        "jquery.easing": "^1.4.1"
+    },
     "devDependencies": {
         "axios": "^0.18",
-        "bootstrap": "^4.1.0",
         "cross-env": "^5.1",
-        "jquery": "^3.2",
         "laravel-mix": "^4.0.7",
         "lodash": "^4.17.5",
         "popper.js": "^1.12",
