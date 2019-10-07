@@ -10,7 +10,9 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        @include('layouts.sidebar')
+        @auth
+            @include('layouts.sidebar')
+        @endauth
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -19,10 +21,10 @@
         <div id="content">
 
             @auth
-                @include('layouts.topbar.authed')
-            @else
-                @include('layouts.topbar.guest')
+                @include('layouts.topbar')
             @endauth
+
+            @yield('content-master') <!-- For special things to be done outside the container -->
 
             <!-- Begin Page Content -->
             <div class="container-fluid">

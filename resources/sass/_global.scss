@@ -58,3 +58,42 @@ a {
 		font-weight: 800;
 	}
 }
+
+// Custom extras
+.front-cover{
+	width: 100%;
+	height: 92vh;
+
+    background: url(/images/front.jpg);	
+	background-size: cover;
+    background-position: center center;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+
+	.content{
+
+		width: 500px;
+		margin: auto;
+		text-align: center;
+
+		padding-top: 200px;
+
+		&-title{
+			font-size: 78px;
+			color: white;
+			line-height: 0;
+		}
+		
+		&-description{
+			font-size: 22px;
+			color: white;
+		}
+
+		a{
+			margin-top: 20px;
+			padding-top: 6px;
+			width: 72%;
+		}
+
+	}
+}
