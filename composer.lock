@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "deb7533ca384296ce60816633249bcf4",
+    "content-hash": "5acbe219fe50a295ce59dbfd0ca93740",
     "packages": [
         {
             "name": "bonroyage/oauth",
@@ -2913,6 +2913,56 @@
                 "vatsim"
             ],
             "time": "2017-02-22T13:24:17+00:00"
+        },
+        {
+            "name": "vatsim/sso-laravel",
+            "version": "3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bonroyage/vatsim-sso-laravel.git",
+                "reference": "75cd9335b0bd4427c333e4b7acd12f329aad4a60"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bonroyage/vatsim-sso-laravel/zipball/75cd9335b0bd4427c333e4b7acd12f329aad4a60",
+                "reference": "75cd9335b0bd4427c333e4b7acd12f329aad4a60",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/http": "5.*|6.*",
+                "illuminate/support": "5.*|6.*",
+                "php": ">=5.4.0",
+                "vatsim/sso": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Vatsim\\OAuthLaravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kieran Hardern",
+                    "email": "kieran@hardern.net"
+                },
+                {
+                    "name": "Roy de Vos Burchart",
+                    "email": "dev@bonroyage.com",
+                    "homepage": "http://www.bonroyage.com"
+                }
+            ],
+            "description": "VATSIM OAuth for Laravel",
+            "keywords": [
+                "SSO",
+                "laravel",
+                "oauth",
+                "vatsim"
+            ],
+            "time": "2019-09-29T18:43:50+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
