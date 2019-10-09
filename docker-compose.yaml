@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  web:
+      container_name: 'santa_web'
+      image: gustavkauman/docker-laravel:latest
+      ports:
+          - 80:80
+      volumes:
+          - ./:/var/www
+      links:
+          - db:mysql
+      working_dir: /var/www
+      env_file: ./.env
+  db:
+      container_name: 'santa_db'
+      image: mysql:5.7.27
+      ports:
+          - 3306:3306
+      environment:
+            MYSQL_DATABASE: santa
+            MYSQL_USER: santa
+            MYSQL_PASSWORD: santa
+            MYSQL_ROOT_PASSWORD: root
