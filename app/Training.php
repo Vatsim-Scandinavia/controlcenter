@@ -19,7 +19,7 @@ class Training extends Model
     }
 
     public function ratings(){
-        return $this->hasMany(TrainingRequestRating::class);
+        return $this->belongsToMany(Rating::class);
     }
 
     public function mentors(){

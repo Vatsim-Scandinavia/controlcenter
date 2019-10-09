@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTrainingRequestRatingsTable extends Migration
+class CreateRatingTrainingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateTrainingRequestRatingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('training_request_ratings', function (Blueprint $table) {
-            $table->primary(['training_id', 'rating_id']);
+        Schema::create('rating_training', function (Blueprint $table) {
+            $table->primary(['rating_id', 'training_id']);
 
-            $table->integer('training_id')->unsigned();
             $table->integer('rating_id')->unsigned();
+            $table->integer('training_id')->unsigned();
+            
         });
     }
 
@@ -28,6 +29,6 @@ class CreateTrainingRequestRatingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('training_request_ratings');
+        Schema::dropIfExists('rating_training');
     }
 }
