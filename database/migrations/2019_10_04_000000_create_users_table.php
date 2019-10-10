@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->boolean('visiting_controller')->default(false);
             $table->timestamp('last_login');
             $table->unsignedInteger('country')->nullable(); // Tie a user to a main country, also used by usergroup to show correct FIR.
-            $table->unsignedInteger('user_group')->nullable(); // Set if user group is tied to specific country
+            $table->unsignedInteger('group')->nullable(); // Set if user group is tied to specific country
             $table->rememberToken();
         });
     }
