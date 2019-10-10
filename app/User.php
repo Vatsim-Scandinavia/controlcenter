@@ -55,6 +55,6 @@ class User extends Authenticatable
     }
 
     public function teaches(){
-        return $this>belongsTo(Training::class);
+        return $this->belongsToMany(Training::class);
     }
 }

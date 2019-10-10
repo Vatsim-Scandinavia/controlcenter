@@ -23,6 +23,6 @@ class Training extends Model
     }
 
     public function mentors(){
-        return $this->hasMany(AssignedMentor::class);
+        return $this->belongsToMany(User::class);
     }
 }
