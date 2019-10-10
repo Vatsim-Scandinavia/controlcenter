@@ -17,7 +17,7 @@ class CreateSolosTable extends Migration
         Schema::create('solos', function (Blueprint $table) {
             $table->primary(['user_id']);
 
-            $table->integer('user_id')->unsigned();
+            $table->unsignedInteger('user_id');
             $table->string('position', 10);
             $table->timestamp('expire_at');
 

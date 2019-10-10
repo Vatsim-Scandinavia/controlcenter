@@ -16,8 +16,8 @@ class CreateRatingTrainingTable extends Migration
         Schema::create('rating_training', function (Blueprint $table) {
             $table->primary(['rating_id', 'training_id']);
 
-            $table->integer('rating_id')->unsigned();
-            $table->integer('training_id')->unsigned();
+            $table->unsignedInteger('rating_id');
+            $table->unsignedInteger('training_id');
             
         });
     }

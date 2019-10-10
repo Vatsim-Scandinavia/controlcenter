@@ -15,8 +15,8 @@ class CreateTrainingReportsTable extends Migration
     {
         Schema::create('training_reports', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('training_id')->unsigned();
-            $table->integer('written_by_id')->unsigned();
+            $table->unsignedInteger('training_id');
+            $table->unsignedInteger('written_by_id');
             $table->string('content');
             $table->string('mentor_notes')->nullable();
             $table->string('position')->nullable();

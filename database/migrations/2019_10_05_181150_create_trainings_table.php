@@ -15,7 +15,7 @@ class CreateTrainingsTable extends Migration
     {
         Schema::create('trainings', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->unsignedInteger('user_id');
             $table->tinyInteger('status');
             $table->integer('country_id');
             $table->string('notes')->nullable();

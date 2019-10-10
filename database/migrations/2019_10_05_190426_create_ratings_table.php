@@ -15,7 +15,7 @@ class CreateRatingsTable extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('vatsim_rating')->unsigned()->nullable();
+            $table->unsignedInteger('vatsim_rating')->nullable();
             $table->string('name', 50);
             $table->string('description');
             $table->boolean('rating_upgrade');

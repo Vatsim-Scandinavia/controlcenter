@@ -14,8 +14,8 @@ class CreateUserTrainingTable extends Migration
     public function up()
     {
         Schema::create('user_training', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned();
-            $table->integer('training_id')->unsigned();
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('training_id');
             $table->timestamp('expire_at');
             $table->timestamps();
         });
