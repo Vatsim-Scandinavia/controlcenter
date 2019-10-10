@@ -16,7 +16,7 @@ class User extends Authenticatable
      */
      
     protected $fillable = [
-        'id', 'visiting_controller', 'last_login', 'usergroup'
+        'id', 'visiting_controller', 'last_login', 'group'
     ];
 
     /**
@@ -50,7 +50,11 @@ class User extends Authenticatable
         return $this->hasMany(Training::class);
     }
 
-    public function usergroup(){
-        return $this->belongsTo(UserGroup::class);
+    public function group(){
+        return $this->belongsTo(Group::class);
+    }
+
+    public function teaches(){
+        return $this>belongsTo(Training::class);
     }
 }
