@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssignedMentorsTable extends Migration
+class CreateUserTraining extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateAssignedMentorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('assigned_mentors', function (Blueprint $table) {
+        Schema::create('user_training', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->integer('training_id')->unsigned();
             $table->timestamp('expire_at');
@@ -28,6 +28,6 @@ class CreateAssignedMentorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assigned_mentors');
+        Schema::dropIfExists('user_training');
     }
 }
