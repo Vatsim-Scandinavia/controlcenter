@@ -21,6 +21,6 @@ $factory->define(User::class, function (Faker $faker) {
         'id' => 1,
         'visiting_controller' => false,
         'last_login' => \Carbon\Carbon::now(),
-        'user_group' => 1,
+        'group' => 1,
     ];
 });
