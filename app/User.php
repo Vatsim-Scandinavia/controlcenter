@@ -40,10 +40,10 @@ class User extends Authenticatable
     /**
      * Link user's endorsement
      * 
-     * @return \App\SoloEndorsement
+     * @return \App\Solo
      */
     public function solo_endorsement(){
-        return $this->hasOne(SoloEndorsement::class);
+        return $this->hasOne(Solo::class);
     }
 
     public function trainings(){

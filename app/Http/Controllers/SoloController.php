@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\SoloEndorsement;
+use App\Solo;
 use Illuminate\Http\Request;
 
-class SoloEndorsementController extends Controller
+class SoloController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class SoloEndorsementController extends Controller
      * @param  \App\Endorsement  $endorsement
      * @return \Illuminate\Http\Response
      */
-    public function show(SoloEndorsement $endorsement)
+    public function show(Solo $endorsement)
     {
         //
     }
@@ -52,10 +52,10 @@ class SoloEndorsementController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\SoloEndorsement  $endorsement
+     * @param  \App\Solo  $endorsement
      * @return \Illuminate\Http\Response
      */
-    public function edit(SoloEndorsement $endorsement)
+    public function edit(Solo $endorsement)
     {
         //
     }
@@ -64,10 +64,10 @@ class SoloEndorsementController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SoloEndorsement  $endorsement
+     * @param  \App\Solo  $endorsement
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SoloEndorsement $endorsement)
+    public function update(Request $request, Solo $endorsement)
     {
         //
     }
@@ -75,10 +75,10 @@ class SoloEndorsementController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\SoloEndorsement  $endorsement
+     * @param  \App\Solo  $endorsement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SoloEndorsement $endorsement)
+    public function destroy(Solo $endorsement)
     {
         //
     }
