@@ -5,9 +5,10 @@ Scandinavian Training System. Created using `Laravel 6.0`, based on `SB Admin 2`
 Just clone this repository and you're almost ready. First make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) on your computer.
 
 1. Duplicate `.env.example` file into `.env` and make sure you're running correct mysql settings
-2. In the project folder, run `composer update` to install PHP dependecies and `npm install` (requires Node.js) to run Front-end dependecies.
+2. In the project folder, run `composer install` to install PHP dependecies and `npm install` (requires Node.js) to run Front-end dependecies.
 3. Create app key `php artisan key:generate`
-4. Run `php artisan serve` to host the page at `localhost:8000`
+4. Migrate the database with `php artisan migrate`
+5. Run `php artisan serve` to host the page at `localhost:8000`
 
 ## Laravel
 
