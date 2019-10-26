@@ -11,7 +11,7 @@
         </div>
 
         <div class="logo">
-            <img src="images/vatsca-negative.svg">
+            <img src="images/vatsca-logo-negative.svg">
         </div>
     </div>
 @endsection
