@@ -35,18 +35,6 @@
         </div>
         <!-- End of Main Content -->
 
-        <!-- Footer -->
-        @auth
-            <footer class="sticky-footer">
-                <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <img src="images/vatsca-positive.svg">
-                </div>
-                </div>
-            </footer>
-        @endauth
-        <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
 
