@@ -9,5 +9,9 @@
             <div class="content-description">Scandinavian Training Administration</div>
             <a href="{{ route('login') }}" class="btn btn-success">Login</a>
         </div>
+
+        <div class="logo">
+            <img src="images/vatsca-negative.svg">
+        </div>
     </div>
 @endsection

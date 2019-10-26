@@ -36,13 +36,15 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-                <span>Copyright &copy; {{ config('app.owner') }} {{ date('Y') }}</span>
-            </div>
-            </div>
-        </footer>
+        @auth
+            <footer class="sticky-footer">
+                <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <img src="images/vatsca-positive.svg">
+                </div>
+                </div>
+            </footer>
+        @endauth
         <!-- End of Footer -->
 
         </div>
