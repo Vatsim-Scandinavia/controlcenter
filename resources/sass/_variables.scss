@@ -4,12 +4,7 @@
 // Color Variables
 // Bootstrap Color Overrides
 
-$color-primary: #43c6e7;
-$color-secondary: #1a475f;
-$color-tertiary: #011328;
-$color-grey: #484b4c;
-$color-white: #dfebeb;
-
+$snow: #dfebeb !default;
 $white: #fff !default;
 $gray-100: #f8f9fc !default;
 $gray-200: #eaecf4 !default;
@@ -22,6 +17,7 @@ $gray-800: #5a5c69 !default;
 $gray-900: #3a3b45 !default;
 $black: #000 !default;
 
+$darkblue: #011328 !default;
 $blue: #1a475f !default;
 $indigo: #6610f2 !default;
 $purple: #6f42c1 !default;
@@ -29,9 +25,13 @@ $pink: #e83e8c !default;
 $red: #e74a3b !default;
 $orange: #fd7e14 !default;
 $yellow: #f6c23e !default;
-$green: #1cc88a !default;
+$green: #478f79 !default;
 $teal: #20c9a6 !default;
-$cyan: #36b9cc !default;
+$cyan: #43c6e7 !default;
+
+// Note: We don't have $primary here as it overrides bootstrap vars.
+$secondary: $blue;
+$tertiary: $darkblue;
 
 // Custom Colors
 $brand-google: #ea4335;
