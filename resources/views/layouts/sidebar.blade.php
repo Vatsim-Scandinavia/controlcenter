@@ -118,6 +118,9 @@
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" id="sidebarToggle"></button>
                 </div>
+
+                <!-- Logo -->
+                <img class="logo" src="images/vatsca-negative.svg">
             @else
                 <!-- Divider -->
                 <hr class="sidebar-divider my-0">
