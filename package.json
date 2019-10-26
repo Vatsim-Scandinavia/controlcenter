@@ -10,7 +10,6 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.9.0",
         "bootstrap": "4.3.1",
         "chart.js": "2.8.0",
         "datatables.net-bs4": "1.10.19",
@@ -18,6 +17,7 @@
         "jquery.easing": "^1.4.1"
     },
     "devDependencies": {
+        "@fortawesome/fontawesome-pro": "^5.11.2",
         "axios": "^0.18",
         "cross-env": "^5.1",
         "laravel-mix": "^4.0.7",

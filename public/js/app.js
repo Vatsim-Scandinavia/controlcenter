@@ -84179,10 +84179,10 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/langed/Documents/GitHub/santa/resources/js/app.js */"./resources/js/app.js");
-__webpack_require__(/*! /Users/langed/Documents/GitHub/santa/node_modules/chart.js/dist/Chart.bundle.js */"./node_modules/chart.js/dist/Chart.bundle.js");
-__webpack_require__(/*! /Users/langed/Documents/GitHub/santa/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js */"./node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js");
-module.exports = __webpack_require__(/*! /Users/langed/Documents/GitHub/santa/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\chart.js\dist\Chart.bundle.js */"./node_modules/chart.js/dist/Chart.bundle.js");
+__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\datatables.net-bs4\js\dataTables.bootstrap4.js */"./node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js");
+module.exports = __webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
