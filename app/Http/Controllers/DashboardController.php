@@ -25,4 +25,14 @@ class DashboardController extends Controller
     {
         return view('dashboard');
     }
+
+    /**
+     * Show the training apply view
+     * 
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+
+    public function apply(){
+        return view('trainingapply');
+    }
 }
