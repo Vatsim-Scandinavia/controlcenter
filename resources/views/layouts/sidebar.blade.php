@@ -120,7 +120,7 @@
                 </div>
 
                 <!-- Logo -->
-                <img class="logo" src="images/vatsca-logo-negative.svg">
+                <img class="logo" src="{{ asset('images/vatsca-logo-negative.svg') }}">
             @else
                 <!-- Divider -->
                 <hr class="sidebar-divider my-0">
