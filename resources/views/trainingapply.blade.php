@@ -90,29 +90,46 @@
             <div class="card-body">
 
                 <form>
-                    <div class="form-group">
-                        <label for="motivationTextarea">Letter of motivation</label>
-                        <textarea class="form-control" id="motivationTextarea" rows="3" placeholder="Write a short letter of motivation here" maxlength="1500"></textarea>
+
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
+                            <div class="form-group">
+                                <label for="inlineFormCustomSelectPref">Experience level</label>
+                                <select class="custom-select" id="inlineFormCustomSelectPref">
+                                    <option selected>Choose best fitting level...</option>
+                                    <option value="1">New to VATSIM</option>
+                                    <option value="2">Experienced on VATSIM</option>
+                                    <option value="3">Real world pilot</option>
+                                    <option value="4">Real world ATC</option>
+                                    <option value="5">Holding ATC rating from other vACC</option>
+                                    <option value="5">Holding ATC rating from other virtual network</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                    <label class="form-check-label" for="exampleCheck1">I'm only able to receive training in English</label>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group">
+                                <label for="motivationTextarea">Letter of motivation</label>
+                                <textarea class="form-control" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. Minimum 400 characters" maxlength="1500"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="remarkTextarea">Comments or remarks</label>
+                                <textarea class="form-control" id="remarkTextarea" rows="2" placeholder="Comment your experience, perferred training language, and other things you think want us to know." maxlength="500"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
+                            <img class="d-none d-xl-block img-fluid px-3 px-sm-4 mt-3 mb-4" src="{{asset('images/undraw_files_6b3d.svg')}}" alt="">
+                        </div>
+
                     </div>
-                    <div class="form-group">
-                        <label for="remarkTextarea">Other comments or remarks?</label>
-                        <textarea class="form-control" id="remarkTextarea" rows="2" placeholder="If you have any comments or remarks, write them here." maxlength="500"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="inlineFormCustomSelectPref">Experience level</label>
-                        <select class="custom-select" id="inlineFormCustomSelectPref">
-                            <option selected>Choose best fitting level...</option>
-                            <option value="1">New to VATSIM</option>
-                            <option value="2">Experienced on VATSIM</option>
-                            <option value="3">Real world pilot</option>
-                            <option value="4">Real world ATC</option>
-                            <option value="5">Holding ATC rating from other vACC</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">I'm only able to receive training in English</label>
-                    </div>
+                    
                     <button type="submit" class="btn btn-success">Submit training request</button>
                 </form>
             </div>
