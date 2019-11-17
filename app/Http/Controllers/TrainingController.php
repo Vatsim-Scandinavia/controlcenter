@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Country;
 use App\Training;
 use Illuminate\Http\Request;
 
