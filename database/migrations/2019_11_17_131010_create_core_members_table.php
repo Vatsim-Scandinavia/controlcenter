@@ -41,6 +41,6 @@ class CreateCoreMembersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('core_members');
+        // Do nothing, we don't want to delete core_members database, ever.
     }
 }
