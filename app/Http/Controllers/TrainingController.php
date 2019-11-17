@@ -24,7 +24,9 @@ class TrainingController extends Controller
      */
     public function create()
     {
-        //
+        return view('training.apply', [
+            'countries' => Country::all()
+        ]);
     }
 
     /**

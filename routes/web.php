@@ -51,6 +51,6 @@ Route::middleware('auth')->group(function () {
     
     // Other routes
     Route::get('/training', 'DashboardController@apply')->name('training');
-    Route::get('/training/apply', 'DashboardController@apply')->name('training.apply');
+    Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
 
 });

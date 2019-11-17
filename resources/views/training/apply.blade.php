@@ -38,10 +38,9 @@
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training country</label>
                             <select class="custom-select my-1 mr-sm-2">
-                                <option selected>Choose...</option>
-                                <option value="1">Norway</option>
-                                <option value="2">Sweden</option>
-                                <option value="3">Kalmarunionen</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-xl-6 col-md-6 mb-12">
