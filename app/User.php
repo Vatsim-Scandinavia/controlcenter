@@ -14,7 +14,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-     
+
     protected $fillable = [
         'id', 'visiting_controller', 'last_login', 'group'
     ];
@@ -30,16 +30,16 @@ class User extends Authenticatable
 
     /**
      * Link to handover data
-     * 
+     *
      * @return \App\Handover
      */
     public function handover(){
-        return $this->belongsTo(Handover::class, 'id');
+        return $this->hasOne(Handover::class, 'id');
     }
 
     /**
      * Link user's endorsement
-     * 
+     *
      * @return \App\Solo
      */
     public function solo_endorsement(){
