@@ -36,15 +36,15 @@ class CreateRatingsTable extends Migration
 
         DB::table('ratings')->insert([
             ['vatsim_rating' => 2, 'name' => 'S1', 'description' => 'Rating required to sit GND position', 'rating_upgrade' => true, 'available' => false],
+            ['vatsim_rating' => 3, 'name' => 'S2', 'description' => 'Rating required to sit TWR position', 'rating_upgrade' => true, 'available' => true],
         ]);
 
         DB::table('ratings')->insert([
-            ['vatsim_rating' => 3, 'name' => 'S2', 'description' => 'Rating required to sit TWR position', 'rating_upgrade' => true],
-            ['vatsim_rating' => 4, 'name' => 'S3', 'description' => 'Rating required to sit APP position', 'rating_upgrade' => true],
-            ['vatsim_rating' => 5, 'name' => 'C1', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
-            ['vatsim_rating' => 7, 'name' => 'C3', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
-            ['vatsim_rating' => 8, 'name' => 'I1', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
-            ['vatsim_rating' => 10, 'name' => 'I3', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
+            ['required_vatsim_rating' => 3, 'vatsim_rating' => 4, 'name' => 'S3', 'description' => 'Rating required to sit APP position', 'rating_upgrade' => true],
+            ['required_vatsim_rating' => 4, 'vatsim_rating' => 5, 'name' => 'C1', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
+            ['required_vatsim_rating' => 5, 'vatsim_rating' => 7, 'name' => 'C3', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
+            ['required_vatsim_rating' => 7, 'vatsim_rating' => 8, 'name' => 'I1', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
+            ['required_vatsim_rating' => 8, 'vatsim_rating' => 10, 'name' => 'I3', 'description' => 'Rating required to sit ACC position', 'rating_upgrade' => true],
         ]);
 
         DB::table('ratings')->insert([
