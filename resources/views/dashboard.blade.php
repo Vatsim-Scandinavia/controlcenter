@@ -13,7 +13,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-uppercase mb-1">Current Rank</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">Student 3</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $data['rating'] }}</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-id-badge fa-2x text-gray-300"></i>
@@ -57,7 +57,7 @@
     </div>
     </div>
 
-    
+
 
     <!-- Last training card -->
     <div class="col-xl-3 col-md-6 mb-4">
@@ -92,7 +92,7 @@
         </div>
         <!-- Card Body -->
         <div class="card-body">
-        
+
         <div class="table-responsive">
             <table class="table table-striped" width="100%" cellspacing="0">
             <thead>
