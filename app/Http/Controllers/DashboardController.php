@@ -30,7 +30,9 @@ class DashboardController extends Controller
             'rating' => $user->handover->ratingLong
         ];
 
-        return view('dashboard', compact('data'));
+        $trainings = $user->trainings;
+
+        return view('dashboard', compact('data', 'trainings'));
     }
 
     /**
