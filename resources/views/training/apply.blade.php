@@ -38,6 +38,7 @@
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training country</label>
                             <select class="custom-select my-1 mr-sm-2">
+                                <option selected>Choose training country</option>
                                 @foreach($countries as $country)
                                     <option value="{{ $country->id }}">{{ $country->name }}</option>
                                 @endforeach
@@ -46,10 +47,10 @@
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training type</label>
                             <select class="custom-select my-1 mr-sm-2">
-                                <option selected>Choose...</option>
-                                <option value="1">C1</option>
-                                <option value="2">Oceanic</option>
-                                <option value="3">ENGM MAE</option>
+                                <option selected>Choose</option>
+                                @foreach($ratings as $rating)
+                                    <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>

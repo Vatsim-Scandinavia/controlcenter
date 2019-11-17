@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Country;
+use App\Rating;
 use App\Training;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,8 @@ class TrainingController extends Controller
     public function create()
     {
         return view('training.apply', [
-            'countries' => Country::all()
+            'countries' => Country::all(),
+            'ratings' => Rating::all()->where('available', true)
         ]);
     }
 
