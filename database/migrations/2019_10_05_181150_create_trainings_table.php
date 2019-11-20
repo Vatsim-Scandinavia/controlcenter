@@ -16,12 +16,12 @@ class CreateTrainingsTable extends Migration
         Schema::create('trainings', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
+            $table->tinyInteger('type')->default(1)->comment('1=Standard, 2=Refresh, 3=Transfer, 4=Fast Track');
             $table->tinyInteger('status');
             $table->integer('country_id');
             $table->string('notes')->nullable();
             $table->string('motivation');
             $table->boolean('english_only_training');
-            $table->boolean('is_refresh')->default(false);
             $table->boolean('paused')->default(false);
             $table->string('closed_reason')->nullable();
             $table->timestamps();
