@@ -12,6 +12,10 @@ class Rating extends Model
         return $this->belongsToMany(Training::class);
     }
 
+    public function countries(){
+        return $this->belongsToMany(Country::class);
+    }
+
     public function users(){
         return $this->belongsToMany(Rating::class);
     }

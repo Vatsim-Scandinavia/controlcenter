@@ -26,9 +26,22 @@ class TrainingController extends Controller
      */
     public function create()
     {
+
+        // Filter ratings to the specific user's possiblities
+        // $availableRatings = Rating::where('available', true)->where('available', true)->get();
+        /*$payload = [];
+        $countries = Country::all();
+
+        foreach($countries as $country){
+            $payload[$country] => Rating::where('country', $country)->get(),
+        }
+
+        dd($payload);*/
+        $availableRatings = Rating::all();
+
         return view('training.apply', [
             'countries' => Country::all(),
-            'ratings' => Rating::all()->where('available', true)
+            'ratings' => $availableRatings
         ]);
     }
 
