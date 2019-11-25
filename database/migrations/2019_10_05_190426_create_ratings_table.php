@@ -43,14 +43,14 @@ class CreateRatingsTable extends Migration
         ]);
 
         DB::table('ratings')->insert([
-            ['name' => 'MAE ENGM TWR', 'country' => 1, 'description' => 'Major Airport endorsement for tower position'],
-            ['name' => 'MAE ENGM APP', 'country' => 1, 'description' => 'Major Airport endorsement for approach position'],
-            ['name' => 'MAE ESSA TWR', 'country' => 2, 'description' => 'Major Airport endorsement for tower position'],
-            ['name' => 'MAE ESSA APP', 'country' => 2, 'description' => 'Major Airport endorsement for approach position'],
-            ['name' => 'MAE EKCH TWR', 'country' => 3, 'description' => 'Major Airport endorsement for tower position'],
-            ['name' => 'MAE EKCH APP', 'country' => 3, 'description' => 'Major Airport endorsement for approach position'],
-            ['name' => 'Oceanic BICC', 'country' => 5, 'description' => 'Endorsement for oceanic position'],
-            ['name' => 'Oceanic ENOB', 'country' => 1, 'description' => 'Endorsement for oceanic position'],
+            ['name' => 'MAE ENGM TWR', 'description' => 'Major Airport endorsement for tower position'],
+            ['name' => 'MAE ENGM APP', 'description' => 'Major Airport endorsement for approach position'],
+            ['name' => 'MAE ESSA TWR', 'description' => 'Major Airport endorsement for tower position'],
+            ['name' => 'MAE ESSA APP', 'description' => 'Major Airport endorsement for approach position'],
+            ['name' => 'MAE EKCH TWR', 'description' => 'Major Airport endorsement for tower position'],
+            ['name' => 'MAE EKCH APP', 'description' => 'Major Airport endorsement for approach position'],
+            ['name' => 'Oceanic BICC', 'description' => 'Endorsement for oceanic position'],
+            ['name' => 'Oceanic ENOB', 'description' => 'Endorsement for oceanic position'],
         ]);
     }
 
