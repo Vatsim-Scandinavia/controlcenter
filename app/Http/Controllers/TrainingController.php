@@ -6,6 +6,7 @@ use App\Country;
 use App\Rating;
 use App\Training;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingController extends Controller
 {
@@ -27,21 +28,44 @@ class TrainingController extends Controller
     public function create()
     {
 
-        // Filter ratings to the specific user's possiblities
-        // $availableRatings = Rating::where('available', true)->where('available', true)->get();
-        /*$payload = [];
-        $countries = Country::all();
+        // Get relevant user data
+        $user = Auth::user();
+        $userVatsimRating = $user->handover->rating;
+        $userEndorsements = $user->ratings->where('vatsim_rating', NULL);
 
-        foreach($countries as $country){
-            $payload[$country] => Rating::where('country', $country)->get(),
+        // Loop through all countries, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
+        $payload = collect();
+
+        foreach(Country::with('ratings')->get() as $country){
+
+            $availableRatings = collect();
+            foreach($country->ratings as $rating){
+
+                $reqRating = $rating->pivot->required_vatsim_rating;
+                if($userVatsimRating >= $reqRating){
+                    $availableRatings->push($rating);
+                }
+
+            }
+
+            $payload->put($country->name, $availableRatings);
         }
 
-        dd($payload);*/
-        $availableRatings = Rating::all();
+        /*
+        $countries = Country::with('ratings')->get();
+        
+        $countries = $countries->filter(function($country){
+            return $country->ratings->filter(function($rating){
+                return $rating->pivot->required_vatsim_rating < 2;
+            });
+        });
+
+        dd($countries);*/
+
+        dd($payload);
 
         return view('training.apply', [
-            'countries' => Country::all(),
-            'ratings' => $availableRatings
+            'payload' => $payload,
         ]);
     }
 
