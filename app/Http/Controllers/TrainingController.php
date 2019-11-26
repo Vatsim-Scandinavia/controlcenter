@@ -31,38 +31,49 @@ class TrainingController extends Controller
         // Get relevant user data
         $user = Auth::user();
         $userVatsimRating = $user->handover->rating;
-        $userEndorsements = $user->ratings->where('vatsim_rating', NULL);
 
         // Loop through all countries, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
-        $payload = collect();
+        $payload = [];
 
         foreach(Country::with('ratings')->get() as $country){
 
             $availableRatings = collect();
             foreach($country->ratings as $rating){
 
-                $reqRating = $rating->pivot->required_vatsim_rating;
-                if($userVatsimRating >= $reqRating){
-                    $availableRatings->push($rating);
-                }
+                $reqVatRating = $rating->pivot->required_vatsim_rating;
 
+                // If the rating gives vatsim-rating higher than user already holds || OR if it's endorsement-rating AND user does not hold the endorsement
+                if( $rating->vatsim_rating > $userVatsimRating || ($rating->vatsim_rating == NULL &&  $user->ratings->firstWhere('id', $rating->id) == null) ){
+
+                    // If the required vatsim rating for the selection is lower or equals the level user has today, make it available
+                    if($reqVatRating <= $userVatsimRating){
+                        $availableRatings->push($rating);
+                    }
+                }
             }
 
-            $payload->put($country->name, $availableRatings);
+            // Bundle the ratings if relevant
+            $bundle = [];
+            $bundleAmount = 0;
+            foreach($availableRatings as $ratingIndex => $rating){
+
+                // If the rating is an endorsement-rating, and required vatsim rating is S3 or below (to avoid bundling C1+ endorsements), bundle and remove the rating from list
+                if($rating->vatsim_rating == NULL && $rating->pivot->required_vatsim_rating <= 4){
+                    $bundle['id'] = empty($bundle['id']) ? $rating->id : $bundle['id'].'+'.$rating->id;
+                    $bundle['name'] = empty($bundle['name']) ? $rating->name : $bundle['name'].' + '.$rating->name;
+                    $bundleAmount++;
+
+                    $availableRatings->pull($ratingIndex);
+                }
+            }
+
+            // Re-add the removed ratings as a bundle
+            if($bundleAmount > 0){ $availableRatings->push($bundle); }
+            
+            // Inject the data into payload
+            $payload[$country->id]["name"] = $country->name;
+            $payload[$country->id]["data"] = $availableRatings;
         }
-
-        /*
-        $countries = Country::with('ratings')->get();
-        
-        $countries = $countries->filter(function($country){
-            return $country->ratings->filter(function($rating){
-                return $rating->pivot->required_vatsim_rating < 2;
-            });
-        });
-
-        dd($countries);*/
-
-        dd($payload);
 
         return view('training.apply', [
             'payload' => $payload,

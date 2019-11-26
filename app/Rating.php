@@ -17,6 +17,6 @@ class Rating extends Model
     }
 
     public function users(){
-        return $this->belongsToMany(Rating::class);
+        return $this->belongsToMany(User::class);
     }
 }

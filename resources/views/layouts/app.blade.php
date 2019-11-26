@@ -6,6 +6,7 @@
     </head>
 
     <body id="page-top">
+    <div id='app'></div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">

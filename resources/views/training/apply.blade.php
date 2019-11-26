@@ -26,6 +26,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-xl-12 col-md-12 mb-12">
 
         <div class="card shadow mb-4">
@@ -33,23 +34,22 @@
                     <h6 class="m-0 font-weight-bold text-primary">Training choices</h6> 
                 </div>
                 <div class="card-body">
-                    {{ $payload }}
                     <div class="row">
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training country</label>
-                            <select class="custom-select my-1 mr-sm-2">
-                                <option selected>Choose training country</option>
-
-                                @foreach($payload as $country => $ratings)
-                                    <option value="">{{ $country }}</option>
+                            <select id="countrySelect" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
+                                <option selected disabled>Choose training country</option>
+                                @foreach($payload as $countryId => $country)
+                                    <option value="{{ $countryId }}">{{ $country["name"] }}</option>
                                 @endforeach
+                                
                             </select>
                         </div>
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training type</label>
-                            <select class="custom-select my-1 mr-sm-2">
-                                <option selected>Choose</option>
-                                
+                            <select id="ratingSelect" class="custom-select my-1 mr-sm-2">
+                                <option selected disabled>Choose</option>
+                                <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>                                
                             </select>
                         </div>
                     </div>
@@ -139,4 +139,33 @@
     @endif
 
 </div>
+@endsection
+
+@section('js')
+<script>
+
+    var payload = {!! json_encode($payload, true) !!}
+
+    const country = new Vue({
+        el: '#countrySelect',
+        methods: {
+            onChange(event) {
+                rating.update(event.srcElement.value)
+            }
+        }
+
+    });
+
+    const rating = new Vue({
+        el: '#ratingSelect',
+        data: {
+            ratings: '',
+        },
+        methods: {
+            update: function(value){
+                this.ratings = payload[event.target.value].data
+            }
+        }
+    });
+</script>
 @endsection
