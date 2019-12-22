@@ -44,7 +44,7 @@ class UserSettingController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function show(Group $group)
+    public function show(UserSetting $setting)
     {
         //
     }
@@ -55,7 +55,7 @@ class UserSettingController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function edit(Group $group)
+    public function edit(UserSetting $setting)
     {
         //
     }
@@ -67,7 +67,7 @@ class UserSettingController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Group $group)
+    public function update(Request $request, UserSetting $setting)
     {
         //
     }
@@ -78,7 +78,7 @@ class UserSettingController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Group $group)
+    public function destroy(UserSetting $setting)
     {
         //
     }
