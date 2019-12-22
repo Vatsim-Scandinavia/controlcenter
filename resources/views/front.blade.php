@@ -7,9 +7,9 @@
         <div class="content">
 
             
-            @if(session('errors'))
+            @if($errors->any())
             <div class="alert alert-danger" role="alert">
-                {{session('errors')->first('error')}}
+                Server Error: "{{ $errors->first() }}". Please contact Web Department if issue presists.
             </div>
             @endif
             

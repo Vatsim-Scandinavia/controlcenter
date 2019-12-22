@@ -73,7 +73,7 @@ class LoginController extends Controller
                 Auth::login(User::find($sso_data->id), true);
             });
         } catch (SSOException $e) {
-            return redirect()->route('front')->withError($e->getMessage());
+            return redirect()->route('front')->withErrors(['error' => $e->getMessage()]);
         }
         
         return redirect()->intended(route('dashboard'));
