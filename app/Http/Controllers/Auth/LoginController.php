@@ -43,13 +43,17 @@ class LoginController extends Controller
      */
     public function login()
     {
-        $this->sso->login(config('sso.return'), function ($key, $secret, $url) {
-            session()->put('key', $key);
-            session()->put('secret', $secret);
-            session()->save();
-            header('Location: ' . $url);
-            die();
-        });
+        try{
+            $this->sso->login(config('sso.return'), function ($key, $secret, $url) {
+                session()->put('key', $key);
+                session()->put('secret', $secret);
+                session()->save();
+                header('Location: ' . $url);
+                die();
+            });
+        } catch (SSOException $e) {
+            return redirect()->route('front')->withErrors(['error' => $e->getMessage()]);
+        }
     }
     /**
      * Validate the login and access protected resources, create the user if they don't exist, update them if they do, and log them in
@@ -69,7 +73,7 @@ class LoginController extends Controller
                 Auth::login(User::find($sso_data->id), true);
             });
         } catch (SSOException $e) {
-            return redirect()->route('dashboard')->withError($e->getMessage());
+            return redirect()->route('front')->withError($e->getMessage());
         }
         
         return redirect()->intended(route('dashboard'));
