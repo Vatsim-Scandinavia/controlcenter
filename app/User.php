@@ -61,4 +61,7 @@ class User extends Authenticatable
     public function ratings(){
         return $this->belongsToMany(Rating::class);
     }
+    public function settings(){
+        return $this->hasMany(UserSetting::class);
+    }
 }
