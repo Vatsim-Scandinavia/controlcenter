@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/templates', 'DashboardController@admin')->name('admin.templates');
 
     // User-specific Navigation
-    Route::get('/settings', 'DashboardController@admin')->name('settings');
+    Route::get('/settings', 'UserSettingController@index')->name('settings');
     
     // Other routes
     Route::get('/training', 'DashboardController@apply')->name('training');
