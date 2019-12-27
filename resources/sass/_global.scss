@@ -111,3 +111,20 @@ a {
 		}
 	}
 }
+
+.table{
+	&-leftpadded{
+		thead,tbody{
+			th:first-child,td:first-child{
+				padding-left: 20px;
+			}
+		}
+	}
+
+	.thead-dark, .tbody-dark{
+		th{
+			border-color: $blue;
+			background-color: $blue;
+		}
+	}
+}
