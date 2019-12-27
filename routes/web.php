@@ -35,8 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
     Route::get('/sweatbox', 'DashboardController@sweatbox')->name('sweatbox');
     Route::get('/requests', 'DashboardController@requests')->name('requests');
-    Route::get('/memberlist', 'DashboardController@member')->name('memberlist');
-    Route::get('/memberlist/endorsements', 'DashboardController@member')->name('memberlist.endorsements');
+    Route::get('/users', 'UserController@index')->name('users');
+    Route::get('/users/endorsements', 'DashboardController@member')->name('users.endorsements');
 
     Route::get('/reports/stats', 'DashboardController@reports')->name('reports.stats');
     Route::get('/reports/mentors', 'DashboardController@reports')->name('reports.mentors');

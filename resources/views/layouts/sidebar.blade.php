@@ -67,13 +67,13 @@
                 </div>
         
                 <li class="nav-item">
-                <a class="nav-link" href="{{ route('memberlist') }}">
+                <a class="nav-link" href="{{ route('users') }}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Overview</span></a>
                 </li>
         
                 <li class="nav-item">
-                <a class="nav-link" href="{{ route('memberlist.endorsements') }}">
+                <a class="nav-link" href="{{ route('users.endorsements') }}">
                     <i class="fas fa-fw fa-check-square"></i>
                     <span>Endorsements</span></a>
                 </li>
