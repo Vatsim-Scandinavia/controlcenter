@@ -69,7 +69,7 @@ class TrainingController extends Controller
 
             // Re-add the removed ratings as a bundle
             if($bundleAmount > 0){ $availableRatings->push($bundle); }
-            
+
             // Inject the data into payload
             $payload[$country->id]["name"] = $country->name;
             $payload[$country->id]["data"] = $availableRatings;
@@ -88,7 +88,37 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'experience' => 'required|min:1|max:5',
+            'englishOnly' => 'nullable',
+            'motivation' => 'required|min:400|max:1500',
+            'comment' => 'nullable',
+            'training_level' => 'required',
+            'training_country' => 'required'
+        ]);
+
+        $ratings = explode("+", $data["training_level"]);
+        $modelRatings = [];
+        foreach ($ratings as $rating) {
+            array_push($modelRatings, Rating::find($rating));
+        }
+
+        $training = new Training();
+        $training->user_id = \Auth::id();
+        $training->country_id = $data["training_country"];
+        $training->notes = $data["comment"];
+        $training->motivation = $data["motivation"];
+
+        $training->english_only_training = key_exists("englishOnly", $data) ? true : false;
+
+        $training->save();
+
+        $training->fresh();
+
+        $training->ratings()->saveMany($modelRatings);
+
+        $training->save();
+
     }
 
     /**
