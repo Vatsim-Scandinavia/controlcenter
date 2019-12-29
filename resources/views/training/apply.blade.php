@@ -88,13 +88,14 @@
             </div>
             <div class="card-body">
 
-                <form>
+                <form id="training-form">
+                    @csrf
 
                     <div class="row">
                         <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                             <div class="form-group">
                                 <label for="inlineFormCustomSelectPref">Experience level</label>
-                                <select class="custom-select" id="inlineFormCustomSelectPref">
+                                <select class="custom-select" name="experience" id="inlineFormCustomSelectPref">
                                     <option selected>Choose best fitting level...</option>
                                     <option value="1">New to VATSIM</option>
                                     <option value="2">Experienced on VATSIM</option>
@@ -107,19 +108,19 @@
 
                             <div class="form-group form-check">
                                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                    <label class="form-check-label" for="exampleCheck1">I'm only able to receive training in English</label>
+                                    <label class="form-check-label" name="englishOnly" for="exampleCheck1">I'm only able to receive training in English</label>
                             </div>
 
                             <hr>
 
                             <div class="form-group">
                                 <label for="motivationTextarea">Letter of motivation</label>
-                                <textarea class="form-control" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. Minimum 400 characters" maxlength="1500"></textarea>
+                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. Minimum 400 characters" maxlength="1500"></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="remarkTextarea">Comments or remarks</label>
-                                <textarea class="form-control" id="remarkTextarea" rows="2" placeholder="Comment your experience, perferred training language, and other things you think want us to know." maxlength="500"></textarea>
+                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience, perferred training language, and other things you think want us to know." maxlength="500"></textarea>
                             </div>
                         </div>
 
@@ -129,7 +130,7 @@
 
                     </div>
 
-                    <button type="submit" class="btn btn-success">Submit training request</button>
+                    <button type="submit" id="training-submit-btn" class="btn btn-success">Submit training request</button>
                 </form>
             </div>
         </div>
@@ -174,6 +175,33 @@
         sessionStorage.setItem('training_country', training_country);
         let training_level = $('#ratingSelect').val();
         sessionStorage.setItem('training_level', training_level);
+
+    });
+
+    $('#training-submit-btn').click( function (e) {
+
+        e.preventDefault();
+
+        var form = document.getElementById('training-form');
+        var data = new FormData(form);
+
+        data.append('training_country', sessionStorage.getItem('training_country'));
+        data.append('training_level', sessionStorage.getItem('training_level'));
+
+        sessionStorage.removeItem('training_country');
+        sessionStorage.removeItem('training_level');
+
+        $.ajax('/training/store',
+            {
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    console.log("Ajax success");
+                }
+            }
+        )
 
     });
 
