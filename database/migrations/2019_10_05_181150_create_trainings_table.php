@@ -17,10 +17,10 @@ class CreateTrainingsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->tinyInteger('type')->default(1)->comment('1=Standard, 2=Refresh, 3=Transfer, 4=Fast Track');
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(0)->comment("-2: Closed on student’s request -1: Closed on TA request, 0: In queue, 1: In progress, 2: Awaiting for exam, 3: Completed");
             $table->integer('country_id');
-            $table->string('notes')->nullable();
-            $table->string('motivation');
+            $table->text('notes')->nullable();
+            $table->text('motivation');
             $table->boolean('english_only_training');
             $table->boolean('paused')->default(false);
             $table->string('closed_reason')->nullable();
