@@ -11,4 +11,5 @@ npm-debug.log
 yarn-error.log
 /.phpstorm.meta.php
 /_ide_helper.php
+.idea/
 .DS_Store
