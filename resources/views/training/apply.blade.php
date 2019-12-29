@@ -12,7 +12,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4 border-left-danger">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Important information</h6> 
+                <h6 class="m-0 font-weight-bold text-primary">Important information</h6>
             </div>
             <div class="card-body">
                 <h5 class="card-title">What is ATC trainig?</h5>
@@ -31,7 +31,7 @@
 
         <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Training choices</h6> 
+                    <h6 class="m-0 font-weight-bold text-primary">Training choices</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -42,31 +42,31 @@
                                 @foreach($payload as $countryId => $country)
                                     <option value="{{ $countryId }}">{{ $country["name"] }}</option>
                                 @endforeach
-                                
+
                             </select>
                         </div>
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training type</label>
                             <select id="ratingSelect" class="custom-select my-1 mr-sm-2">
                                 <option selected disabled>Choose</option>
-                                <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>                                
+                                <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                             </select>
                         </div>
                     </div>
 
-                    <a class="btn btn-success" href="?step=2">Continue</a>
+                    <a class="btn btn-success" id="continue-btn-step-1" href="?step=2">Continue</a>
                 </div>
             </div>
     </div>
 
-    
+
     <!-- Student SOP -->
     @elseif(Request::get('step') == 2)
-    
+
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Standard Operating Procedures</h6> 
+                <h6 class="m-0 font-weight-bold text-primary">Standard Operating Procedures</h6>
             </div>
             <div class="card-body">
 
@@ -84,7 +84,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Details</h6> 
+                <h6 class="m-0 font-weight-bold text-primary">Details</h6>
             </div>
             <div class="card-body">
 
@@ -128,13 +128,13 @@
                         </div>
 
                     </div>
-                    
+
                     <button type="submit" class="btn btn-success">Submit training request</button>
                 </form>
             </div>
         </div>
 
-              
+
     </div>
     @endif
 
@@ -167,5 +167,15 @@
             }
         }
     });
+
+    $('#continue-btn-step-1').click( function () {
+
+        let training_country = $('#countrySelect').val();
+        sessionStorage.setItem('training_country', training_country);
+        let training_level = $('#ratingSelect').val();
+        sessionStorage.setItem('training_level', training_level);
+
+    });
+
 </script>
 @endsection
