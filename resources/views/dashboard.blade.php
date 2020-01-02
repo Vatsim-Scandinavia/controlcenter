@@ -5,6 +5,10 @@
 @section('content')
 <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
 
+<div class="row" id="success-message">
+
+</div>
+
 <div class="row">
     <!-- Current rank card  -->
     <div class="col-xl-3 col-md-6 mb-4">
@@ -186,4 +190,23 @@
     </div>
 
 </div>
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+
+        if (sessionStorage.getItem('successMessage') != null) {
+            document.getElementById("success-message").innerHTML = "<div class=\"col-xl-11 col-md-11 mx-auto mb-4 alert alert-success\">\n" +
+                "        You training request has been added to the queue!\n" +
+                "    </div>";
+        }
+
+        $(document).ready(
+            setTimeout(function () {
+                $("#success-message").css("display", "none");
+                sessionStorage.removeItem('successMessage');
+            }, 5000)
+        );
+
+    </script>
 @endsection

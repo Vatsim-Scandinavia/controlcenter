@@ -208,6 +208,10 @@
                 success: function () {
                     sessionStorage.removeItem('training_country');
                     sessionStorage.removeItem('training_level');
+
+                    sessionStorage.setItem("successMessage", "You training request has been added to the queue!");
+                    window.location = "/";
+
                 },
                 error: function (error) {
                     var message = error.responseJSON.errors;
