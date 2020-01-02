@@ -95,8 +95,10 @@
                         <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                             <div class="form-group">
                                 <label for="inlineFormCustomSelectPref">Experience level</label>
-                                <select class="custom-select" name="experience" id="inlineFormCustomSelectPref">
-                                    <option selected>Choose best fitting level...</option>
+                                <select class="custom-select" name="experience" id="inlineFormCustomSelectPref" onchange="function removeErr() {
+                                  $('#err-experience').html('');
+                                }; removeErr();">
+                                    <option selected disabled>Choose best fitting level...</option>
                                     <option value="1">New to VATSIM</option>
                                     <option value="2">Experienced on VATSIM</option>
                                     <option value="3">Real world pilot</option>
@@ -104,18 +106,26 @@
                                     <option value="5">Holding ATC rating from other vACC</option>
                                     <option value="5">Holding ATC rating from other virtual network</option>
                                 </select>
+                                <div class="danger text-danger" id="err-experience">
+
+                                </div>
                             </div>
 
                             <div class="form-group form-check">
-                                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                    <label class="form-check-label" name="englishOnly" for="exampleCheck1">I'm only able to receive training in English</label>
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" name="englishOnly" for="exampleCheck1">I'm only able to receive training in English</label>
                             </div>
 
                             <hr>
 
                             <div class="form-group">
                                 <label for="motivationTextarea">Letter of motivation</label>
-                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. Minimum 400 characters" maxlength="1500"></textarea>
+                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. Minimum 400 characters" maxlength="1500" onchange="function removeErr() {
+                                  $('#err-motivation').html('');
+                                }; removeErr();"></textarea>
+                                <div class="danger text-danger" id="err-motivation">
+
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -198,6 +208,16 @@
                 success: function () {
                     sessionStorage.removeItem('training_country');
                     sessionStorage.removeItem('training_level');
+                },
+                error: function (error) {
+                    var message = error.responseJSON.errors;
+
+                    if (message.experience)
+                        $("#err-experience").html("Please select a proper experience level");
+
+                    if (message.motivation)
+                        $("#err-motivation").html(message.motivation[0]);
+
                 }
             }
         )
