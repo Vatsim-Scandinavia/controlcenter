@@ -105,33 +105,58 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                <td>S2</td>
-                <td>NO</td>
-                <td>18 Apr 2016 - 19 May 2016</td>
-                <td>Training completed</td>
-                <td>
-                    <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;6</a>
-                </td>
-                </tr>
-                <tr>
-                <td>S2 + MAE ENGM</td>
-                <td>NO</td>
-                <td>20 Sept 2017 - 19 Jan 2018</td>
-                <td>Training completed</td>
-                <td>
-                    <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;3</a>
-                </td>
-                </tr>
-                <tr>
-                <td>S3</td>
-                <td>NO</td>
-                <td>20 Apr 2019 - Now</td>
-                <td>Training active</td>
-                <td>
-                    <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;1</a>
-                </td>
-                </tr>
+                @foreach($trainings as $training)
+                    <tr>
+                        <td>
+                            @if ( is_iterable($ratings = $training->ratings->toArray()) )
+                                @for( $i = 0; $i < sizeof($ratings); $i++ )
+                                    @if ( $i == (sizeof($ratings) - 1) )
+                                        {{ $ratings[$i]["name"] }}
+                                    @else
+                                        {{ $ratings[$i]["name"] . " + " }}
+                                    @endif
+                                @endfor
+                            @else
+                                {{ $ratings["name"] }}
+                            @endif
+                        </td>
+                        <td>{{ $training->country->name }}</td>
+                        <td>
+                            @if ($training->started_at == null && $training->finished_at == null)
+                                Training not started
+                            @elseif ($training->finished_at == null)
+                                {{ $training->started_at->toFormattedDateString() }} -
+                            @else
+                                {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                            @endif
+                        </td>
+                        <td>
+                            @switch($training->state)
+                                @case(-2)
+                                    Closed on student’s request
+                                    @break
+                                @case(-1)
+                                    Closed on TA request
+                                    @break
+                                @case(0)
+                                    In queue
+                                    @break
+                                @case(1)
+                                    In progress
+                                    @break
+                                @case(2)
+                                    Awaiting examination
+                                    @break
+                                @case(3)
+                                    Completed
+                                    @break
+                            @endswitch
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
             </table>
         </div>

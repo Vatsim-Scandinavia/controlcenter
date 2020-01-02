@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Training extends Model
 {
+
+    protected $dates = [
+      'started_at',
+      'finished_at'
+    ];
+
     public function user(){
         return $this->belongsTo(User::class);
     }
