@@ -89,7 +89,7 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'experience' => 'required|min:1|max:5',
+            'experience' => 'required|integer|min:1|max:5',
             'englishOnly' => 'nullable',
             'motivation' => 'required|min:400|max:1500',
             'comment' => 'nullable',
