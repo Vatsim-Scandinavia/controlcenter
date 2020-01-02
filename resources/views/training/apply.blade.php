@@ -188,8 +188,6 @@
         data.append('training_country', sessionStorage.getItem('training_country'));
         data.append('training_level', sessionStorage.getItem('training_level'));
 
-        sessionStorage.removeItem('training_country');
-        sessionStorage.removeItem('training_level');
 
         $.ajax('/training/store',
             {
@@ -198,7 +196,8 @@
                 processData: false,
                 contentType: false,
                 success: function () {
-                    console.log("Ajax success");
+                    sessionStorage.removeItem('training_country');
+                    sessionStorage.removeItem('training_level');
                 }
             }
         )
