@@ -131,7 +131,7 @@
                             @endif
                         </td>
                         <td>
-                            @switch($training->state)
+                            @switch($training->status)
                                 @case(-2)
                                     Closed on student’s request
                                     @break
