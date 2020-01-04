@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/content', 'DashboardController@content')->name('content');
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
     Route::get('/sweatbox', 'DashboardController@sweatbox')->name('sweatbox');
-    Route::get('/requests', 'DashboardController@requests')->name('requests');
+    Route::get('/trainings', 'TrainingController@index')->name('requests');
     Route::get('/users', 'UserController@index')->name('users');
     Route::get('/users/endorsements', 'DashboardController@member')->name('users.endorsements');
 
