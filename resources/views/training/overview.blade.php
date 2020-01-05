@@ -14,7 +14,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+                    <table data-toggle="table" data-search="true" data-show-columns="true" class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
                         <thead class="thead-dark">
                             <tr>
                                 <th>State</th>
@@ -24,8 +24,8 @@
                                 <th>Type</th>
                                 <th>Period</th>
                                 <th>Country</th>
-                                <th class="text-center">English only</th>
-                                <th>Application date</th>
+                                <th>Applied</th>
+                                <th>Mentor</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,19 +37,20 @@
                                 <td><i class="fas fa-circle"></i>&ensp;Standard</td>
                                 <td>25.01.20 - now</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-book-open text-success"></i>&ensp;<a href="/training/2">In progress</a></td>
                                 <td><a href="/user/1300001">1300024</a></td>
                                 <td><a href="/user/1300001">Test Riperino</a></td>
                                 <td>S3</td>
-                                <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
+                                <td><i class="fas fa-play"></i>&ensp;Prioritised</td>
+                                
                                 <td>25.01.20 - now</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
@@ -59,19 +60,19 @@
                                 <td><i class="fas fa-fast-forward"></i>&ensp;Fast-track</td>
                                 <td>Not started</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>-</td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
                                 <td><a href="/user/1300001">1300123</a></td>
                                 <td><a href="/user/1300001">Norman Virus</a></td>
                                 <td>ENOB Oceanic</td>
-                                <td><i class="fas fa-circle"></i>&ensp;Standard</td>
+                                <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
                                 <td>Not started</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-check text-danger"></i></td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>-</td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
@@ -81,8 +82,19 @@
                                 <td><i class="fas fa-exchange"></i>&ensp;Transfer</td>
                                 <td>Not started</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
+                                <td><a href="/user/1300001">1300031</a></td>
+                                <td><a href="/user/1300001">Test Testersen</a></td>
+                                <td>S2</td>
+                                <td><i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation</td>
+                                <td>Not started</td>
+                                <td>Norway</td>
+                                <td>24.01.20</td>
+                                <td>-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -108,40 +120,37 @@
                                 <th>Type</th>
                                 <th>Period</th>
                                 <th>Country</th>
-                                <th class="text-center">English only</th>
-                                <th>Application date</th>
-                                <th>Closed date</th>
+                                <th>Applied</th>
+                                <th>Closed</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><i class="fas fa-file-certificate text-success"></i>&ensp;<a href="/training/2">Completed</a></td>
+                                <td><i class="fas fa-check text-success"></i>&ensp;<a href="/training/2">Completed</a></td>
                                 <td><a href="/user/1300001">1300001</a></td>
                                 <td><a href="/user/1300001">Test Testersen</a></td>
                                 <td>S2 + S2 MAE ENGM</td>
                                 <td><i class="fas fa-circle"></i>&ensp;Standard</td>
                                 <td>24.01.20 - 26.02.20</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>24.01.20</td>
                             </tr>
                             <tr>
-                                <td><i class="fas fa-file-certificate text-success"></i>&ensp;<a href="/training/2">Completed</a></td>
+                                <td><i class="fas fa-check text-success"></i>&ensp;<a href="/training/2">Completed</a></td>
                                 <td><a href="/user/1300001">1300024</a></td>
                                 <td><a href="/user/1300001">Test Riperino</a></td>
                                 <td>S3</td>
                                 <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
                                 <td>24.01.20 - 26.02.20</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>24.01.20</td>
                             </tr>
                             <tr>
                                 <td>
-                                    <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by TA</a>
-                                    &nbsp;<div class="fa fa-comment-alt-lines text-info" data-placement="right" data-html="true" title="Closed due to the member breaking CoC multiple times during training."></div>
+                                    <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by staff</a>
+                                    &nbsp;<div class="fa fa-comment-alt-lines text-primary" data-placement="right" data-html="true" title="Closed due to the member breaking CoC multiple times during training."></div>
                                 </td>
                                 <td><a href="/user/1300001">1300412</a></td>
                                 <td><a href="/user/1300001">Squeeker Kidsen</a></td>
@@ -149,9 +158,8 @@
                                 <td><i class="fas fa-fast-forward"></i>&ensp;Fast-track</td>
                                 <td>Never started</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>24.01.20</td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by student</a></td>
@@ -161,14 +169,13 @@
                                 <td><i class="fas fa-circle"></i>&ensp;Standard</td>
                                 <td>Never started</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-check text-danger"></i></td>
-                                <td>24.01.2020</td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>24.01.20</td>
                             </tr>
                             <tr>
                                 <td>
                                     <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by system</a>
-                                    &nbsp;<div class="fa fa-comment-alt-lines text-info" data-placement="right" data-html="true" title="Did not confirm training interest within 2 weeks."></div>
+                                    &nbsp;<div class="fa fa-comment-alt-lines text-primary" data-placement="right" data-html="true" title="Did not confirm training interest within 2 weeks."></div>
                                 </td>
                                 <td><a href="/user/1300001">1300031</a></td>
                                 <td><a href="/user/1300001">Test Testersen</a></td>
@@ -176,9 +183,8 @@
                                 <td><i class="fas fa-exchange"></i>&ensp;Transfer</td>
                                 <td>Never started</td>
                                 <td>Norway</td>
-                                <td class="text-center"><i class="fas fa-times"></i></td>
-                                <td>24.01.2020</td>
-                                <td>24.01.2020</td>
+                                <td>24.01.20</td>
+                                <td>24.01.20</td>
                             </tr>
                         </tbody>
                     </table>
