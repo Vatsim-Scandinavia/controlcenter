@@ -33,207 +33,88 @@
                             </tr>
                         </thead>
                         <tbody>
+
+                            @foreach($openTrainings as $training)
                             <tr>
-                                <td><i class="fas fa-graduation-cap text-success"></i>&ensp;<a href="/training/2">Awaiting exam</a></td>
-                                <td><a href="/user/1300001">1300001</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2 + S2 MAE ENGM</td>
-                                <td><i class="fas fa-circle"></i>&ensp;Standard</td>
-                                <td>25.01.20 - now</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
+                                <td>
+                                    @switch($training->status)
+                                        @case(0)
+                                            <i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/{{ $training->id }}">In queue</a>
+                                            @break
+                                        @case(1)
+                                            <i class="fas fa-book-open text-success"></i>&ensp;<a href="/training/{{ $training->id }}">In progress</a>
+                                            @break
+                                        @case(2)
+                                            <i class="fas fa-graduation-cap text-success"></i>&ensp;<a href="/training/{{ $training->id }}">Awaiting exam</a>
+                                            @break
+                                    @endswitch
+                                </td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->handover->firstName }} {{ $training->user->handover->lastName }}</a></td>
+                                <td>
+                                    @if ( is_iterable($ratings = $training->ratings->toArray()) )
+                                        @for( $i = 0; $i < sizeof($ratings); $i++ )
+                                            @if ( $i == (sizeof($ratings) - 1) )
+                                                {{ $ratings[$i]["name"] }}
+                                            @else
+                                                {{ $ratings[$i]["name"] . " + " }}
+                                            @endif
+                                        @endfor
+                                    @else
+                                        {{ $ratings["name"] }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @switch($training->type)
+                                        @case(1)
+                                            <i class="fas fa-circle"></i>&ensp;Standard
+                                            @break
+                                        @case(2)
+                                            <i class="fas fa-sync"></i>&ensp;Refresh
+                                            @break
+                                        @case(3)
+                                            <i class="fas fa-exchange"></i>&ensp;Transfer
+                                            @break
+                                        @case(4)
+                                            <i class="fas fa-fast-forward"></i>&ensp;Fast-track
+                                            @break
+                                        @case(5)
+                                            <i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation
+                                            @break
+                                    @endswitch
+                                    
+                                </td>
+                                <td>
+                                    @if ($training->started_at == null && $training->finished_at == null)
+                                        Training not started
+                                    @elseif ($training->finished_at == null)
+                                        {{ $training->started_at->toFormattedDateString() }} -
+                                    @else
+                                        {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                                    @endif
+                                </td>
+                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->created_at->toFormattedDateString() }}</td>
+                                <td>
+                                    @if ( is_iterable($mentors = $training->mentors->toArray()) )
+                                        @if (sizeof($mentors) == 0)
+                                            -
+                                        @else
+                                            @for( $i = 0; $i < sizeof($mentors); $i++ )
+                                                @if ( $i == (sizeof($mentors) - 1) )
+                                                    {{ $mentors[$i]["name"] }}
+                                                @else
+                                                    {{ $mentors[$i]["name"] . ", " }}
+                                                @endif
+                                            @endfor
+                                        @endif
+                                    @else
+                                        {{ $mentors[$i]["name"] }}
+                                    @endif
+                                </td>
                             </tr>
-                            <tr>
-                                <td><i class="fas fa-book-open text-success"></i>&ensp;<a href="/training/2">In progress</a></td>
-                                <td><a href="/user/1300001">1300024</a></td>
-                                <td><a href="/user/1300001">Test Riperino</a></td>
-                                <td>S3</td>
-                                <td><i class="fas fa-play"></i>&ensp;Prioritised</td>
-                                
-                                <td>25.01.20 - now</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
-                                <td><a href="/user/1300001">1300412</a></td>
-                                <td><a href="/user/1300001">Squeeker Kidsen</a></td>
-                                <td>C1</td>
-                                <td><i class="fas fa-fast-forward"></i>&ensp;Fast-track</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
-                                <td><a href="/user/1300001">1300123</a></td>
-                                <td><a href="/user/1300001">Norman Virus</a></td>
-                                <td>ENOB Oceanic</td>
-                                <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-exchange"></i>&ensp;Transfer</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-graduation-cap text-success"></i>&ensp;<a href="/training/2">Awaiting exam</a></td>
-                                <td><a href="/user/1300001">1300001</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2 + S2 MAE ENGM</td>
-                                <td><i class="fas fa-circle"></i>&ensp;Standard</td>
-                                <td>25.01.20 - now</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-book-open text-success"></i>&ensp;<a href="/training/2">In progress</a></td>
-                                <td><a href="/user/1300001">1300024</a></td>
-                                <td><a href="/user/1300001">Test Riperino</a></td>
-                                <td>S3</td>
-                                <td><i class="fas fa-play"></i>&ensp;Prioritised</td>
-                                
-                                <td>25.01.20 - now</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
-                                <td><a href="/user/1300001">1300412</a></td>
-                                <td><a href="/user/1300001">Squeeker Kidsen</a></td>
-                                <td>C1</td>
-                                <td><i class="fas fa-fast-forward"></i>&ensp;Fast-track</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
-                                <td><a href="/user/1300001">1300123</a></td>
-                                <td><a href="/user/1300001">Norman Virus</a></td>
-                                <td>ENOB Oceanic</td>
-                                <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-exchange"></i>&ensp;Transfer</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-graduation-cap text-success"></i>&ensp;<a href="/training/2">Awaiting exam</a></td>
-                                <td><a href="/user/1300001">1300001</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2 + S2 MAE ENGM</td>
-                                <td><i class="fas fa-circle"></i>&ensp;Standard</td>
-                                <td>25.01.20 - now</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-book-open text-success"></i>&ensp;<a href="/training/2">In progress</a></td>
-                                <td><a href="/user/1300001">1300024</a></td>
-                                <td><a href="/user/1300001">Test Riperino</a></td>
-                                <td>S3</td>
-                                <td><i class="fas fa-play"></i>&ensp;Prioritised</td>
-                                
-                                <td>25.01.20 - now</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td><a href="/user/1300001">Mentor Mentorsen</a></td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
-                                <td><a href="/user/1300001">1300412</a></td>
-                                <td><a href="/user/1300001">Squeeker Kidsen</a></td>
-                                <td>C1</td>
-                                <td><i class="fas fa-fast-forward"></i>&ensp;Fast-track</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/2">In queue</a></td>
-                                <td><a href="/user/1300001">1300123</a></td>
-                                <td><a href="/user/1300001">Norman Virus</a></td>
-                                <td>ENOB Oceanic</td>
-                                <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-exchange"></i>&ensp;Transfer</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-pause"></i>&ensp;<a href="/training/2">Paused</a></td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation</td>
-                                <td>Not started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>-</td>
-                            </tr>
+                            @endforeach
+
                         </tbody>
                     </table>
                 </div>
@@ -267,67 +148,77 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><i class="fas fa-check text-success"></i>&ensp;<a href="/training/2">Completed</a></td>
-                                <td><a href="/user/1300001">1300001</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2 + S2 MAE ENGM</td>
-                                <td><i class="fas fa-circle"></i>&ensp;Standard</td>
-                                <td>24.01.20 - 26.02.20</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>24.01.20</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-check text-success"></i>&ensp;<a href="/training/2">Completed</a></td>
-                                <td><a href="/user/1300001">1300024</a></td>
-                                <td><a href="/user/1300001">Test Riperino</a></td>
-                                <td>S3</td>
-                                <td><i class="fas fa-sync"></i>&ensp;Refresh</td>
-                                <td>24.01.20 - 26.02.20</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>24.01.20</td>
-                            </tr>
+
+                            @foreach($closedTrainings as $training)
                             <tr>
                                 <td>
-                                    <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by staff</a>
-                                    &nbsp;<div class="fa fa-comment-alt-lines text-primary" data-placement="right" data-html="true" title="Closed due to the member breaking CoC multiple times during training."></div>
+                                    @switch($training->status)
+                                        @case(3)
+                                            <i class="fas fa-check text-success"></i>&ensp;<a href="/training/{{ $training->id }}">Completed</a>
+                                            @break
+                                        @case(-1)
+                                            <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/{{ $training->id }}">Closed by staff</a>
+                                            @break
+                                        @case(-2)
+                                            <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/{{ $training->id }}">Closed by student</a>
+                                            @break
+                                        @case(-3)
+                                            <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/{{ $training->id }}">Closed by system</a>
+                                            @break
+                                        @default
+                                            Ehh, it's {{ $training->status }}
+                                    @endswitch
                                 </td>
-                                <td><a href="/user/1300001">1300412</a></td>
-                                <td><a href="/user/1300001">Squeeker Kidsen</a></td>
-                                <td>C1</td>
-                                <td><i class="fas fa-fast-forward"></i>&ensp;Fast-track</td>
-                                <td>Never started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>24.01.20</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by student</a></td>
-                                <td><a href="/user/1300001">1300123</a></td>
-                                <td><a href="/user/1300001">Norman Virus</a></td>
-                                <td>ENOB Oceanic</td>
-                                <td><i class="fas fa-circle"></i>&ensp;Standard</td>
-                                <td>Never started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>24.01.20</td>
-                            </tr>
-                            <tr>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->handover->firstName }} {{ $training->user->handover->lastName }}</a></td>
                                 <td>
-                                    <i class="fas fa-ban text-danger"></i>&ensp;<a href="/training/2">Closed by system</a>
-                                    &nbsp;<div class="fa fa-comment-alt-lines text-primary" data-placement="right" data-html="true" title="Did not confirm training interest within 2 weeks."></div>
+                                    @if ( is_iterable($ratings = $training->ratings->toArray()) )
+                                        @for( $i = 0; $i < sizeof($ratings); $i++ )
+                                            @if ( $i == (sizeof($ratings) - 1) )
+                                                {{ $ratings[$i]["name"] }}
+                                            @else
+                                                {{ $ratings[$i]["name"] . " + " }}
+                                            @endif
+                                        @endfor
+                                    @else
+                                        {{ $ratings["name"] }}
+                                    @endif
                                 </td>
-                                <td><a href="/user/1300001">1300031</a></td>
-                                <td><a href="/user/1300001">Test Testersen</a></td>
-                                <td>S2</td>
-                                <td><i class="fas fa-exchange"></i>&ensp;Transfer</td>
-                                <td>Never started</td>
-                                <td>Norway</td>
-                                <td>24.01.20</td>
-                                <td>24.01.20</td>
+                                <td>
+                                    @switch($training->type)
+                                        @case(1)
+                                            <i class="fas fa-circle"></i>&ensp;Standard
+                                            @break
+                                        @case(2)
+                                            <i class="fas fa-sync"></i>&ensp;Refresh
+                                            @break
+                                        @case(3)
+                                            <i class="fas fa-exchange"></i>&ensp;Transfer
+                                            @break
+                                        @case(4)
+                                            <i class="fas fa-fast-forward"></i>&ensp;Fast-track
+                                            @break
+                                        @case(5)
+                                            <i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation
+                                            @break
+                                    @endswitch
+                                    
+                                </td>
+                                <td>
+                                    @if ($training->started_at == null && $training->finished_at == null)
+                                        Training never started
+                                    @elseif ($training->finished_at == null)
+                                        {{ $training->started_at->toFormattedDateString() }} -
+                                    @else
+                                        {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                                    @endif
+                                </td>
+                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->created_at->toFormattedDateString() }}</td>
+                                <td>{{ $training->finished_at->toFormattedDateString() }}</td>
                             </tr>
+                            @endforeach
+
                         </tbody>
                     </table>
                 </div>

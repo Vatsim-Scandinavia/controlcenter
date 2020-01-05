@@ -17,7 +17,10 @@ class TrainingController extends Controller
      */
     public function index()
     {
-        return view('training.overview');
+        $openTrainings = Training::where('status', '>=', 0)->get();
+        $closedTrainings = Training::where('status', '<', 0)->get();
+
+        return view('training.overview', compact('openTrainings', 'closedTrainings'));
     }
 
     /**
