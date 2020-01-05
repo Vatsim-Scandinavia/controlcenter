@@ -29,7 +29,8 @@ mix.js([
     'resources/js/app.js',
     'node_modules/chart.js/dist/Chart.bundle.js',
     'node_modules/bootstrap-table/dist/bootstrap-table.js',
-    'node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js'
+    'node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js',
+    'node_modules/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js'
 ], 'public/js')
 .sass('resources/sass/app.scss', 'public/css')
 .sass('resources/sass/vendor.scss', 'public/css')
