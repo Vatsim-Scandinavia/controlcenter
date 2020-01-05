@@ -12,4 +12,5 @@
 
 <!-- Custom styles for this template-->
 <link href="{{ asset('css/app.css' ) }}" rel="stylesheet">
+<link href="{{ asset('css/vendor.css' ) }}" rel="stylesheet">
 @yield('css')

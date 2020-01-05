@@ -1,13 +1,8 @@
 // Variables
 @import 'variables';
 
-// Vendors
+// Bootstrap
 @import '~bootstrap/scss/bootstrap';
-
-@import '~@fortawesome/fontawesome-pro/scss/brands';
-@import '~@fortawesome/fontawesome-pro/scss/regular';
-@import '~@fortawesome/fontawesome-pro/scss/solid';
-@import '~@fortawesome/fontawesome-pro/scss/fontawesome';
 
 // Import app scss
 @import "mixins.scss";
