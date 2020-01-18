@@ -49,9 +49,9 @@ Route::middleware('auth')->group(function () {
     // User-specific Navigation
     Route::get('/settings', 'UserSettingController@index')->name('settings');
 
-    // Other routes
-    Route::get('/training', 'DashboardController@apply')->name('training');
+    // Training routes
     Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
     Route::post('/training/store', 'TrainingController@store');
-
+    Route::get('/training/{training}', 'TrainingController@show');
+    
 });
