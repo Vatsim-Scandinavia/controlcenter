@@ -5,11 +5,38 @@ namespace App\Http\Controllers;
 use App\Country;
 use App\Rating;
 use App\Training;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TrainingController extends Controller
 {
+    /**
+     * A list of possible statuses
+     *
+     */
+    public $statuses = [
+        -3 => ["text" => "Closed by system", "assignableByStaff" => false],
+        -2 => ["text" => "Closed by student", "assignableByStaff" => false],
+        -1 => ["text" => "Closed by staff", "assignableByStaff" => true],
+        0 => ["text" => "In queue", "assignableByStaff" => true],
+        1 => ["text" => "In progress", "assignableByStaff" => true],
+        2 => ["text" => "Awaiting exam", "assignableByStaff" => true],
+        3 => ["text" => "Completed", "assignableByStaff" => true]
+    ];
+
+    /**
+     * A list of possible types
+     *
+     */
+    public $types = [
+        1 => "Standard",
+        2 => "Refresh",
+        3 => "Transfer",
+        4 => "Fast-track",
+        5 => "Familiarisation",
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -133,8 +160,11 @@ class TrainingController extends Controller
     public function show($id)
     {
         $training = Training::find($id);
+        $mentors = User::whereNotNull('group')->get();
+        $statuses = $this->statuses;
+        $types = $this->types;
 
-        return view('training.show', ['training' => $training]);
+        return view('training.show', compact('training', 'mentors', 'statuses', 'types'));
     }
 
     /**

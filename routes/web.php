@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     // Training routes
     Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
     Route::post('/training/store', 'TrainingController@store');
+    Route::post('/training/update', 'TrainingController@update');
     Route::get('/training/{training}', 'TrainingController@show');
     
 });

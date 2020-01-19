@@ -142,7 +142,7 @@
 
 <div class="row">
 
-    <div class="col-xl-6 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -150,32 +150,52 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form method="POST">
+                <form action="{!! action('TrainingController@update') !!}" method="POST">
                     @csrf
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training state</label>
                         <select class="form-control" id="trainingStateSelect">
-                            <option value="-1">Closed by staff</option>
-                            <option value="0">In queue</option>
-                            <option value="1">In progress</option>
-                            <option value="2">Awaiting exam</option>
-                            <option value="3">Completed</option>
+                            @foreach($statuses as $id => $data)
+                                @if($data["assignableByStaff"])
+                                    @if($id == $training->status)
+                                        <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
+                                    @else
+                                        <option value="{{ $id }}">{{ $data["text"] }}</option>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trainingStateSelect">Select training type</label>
+                        <select class="form-control" id="trainingStateSelect">
+                            @foreach($types as $id => $text)
+                                @if($id == $training->type)
+                                    <option value="{{ $id }}" selected>{{ $text }}</option>
+                                @else
+                                    <option value="{{ $id }}">{{ $text }}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="internalTrainingComments">Internal training comments</label>
-                        <textarea class="form-control" id="internalTrainingComments" rows="8"></textarea>
+                        <textarea class="form-control" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                            <select multiple class="form-control" id="assignMentors">
-                            <option>Petter Nielsen</option>
-                            <option>Niels Peter</option>
-                            <option>Martin Moe</option>
-                            <option>Vera Noran</option>
+                        <select multiple class="form-control" id="assignMentors">
+                            @php
+                                var_dump($mentors);
+                            @endphp
+                            @foreach($mentors as $mentor)
+                                <option>{{ $mentor->handover->firstName }} {{ $mentor->handover->lastName }}</option>
+                            @endforeach
+                            <option>Test</option>
                         </select>
                     </div>
 
@@ -186,7 +206,47 @@
         </div>
     </div>
 
-    <div class="col-xl-6 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Application 
+                </h6> 
+            </div>
+            <div class="report-overflow-scroll">
+                <div class="card-body">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header text-primary">Language</div>
+                        <div class="card-body">
+                            @if($training->english_only_training)
+                                <p class="card-text text-warning">
+                                    The student wishes to receive training in English.
+                                </p>
+                            @else
+                                <p class="card-text">
+                                    The student is able to receive training in local and English language.
+                                </p>
+                            @endif
+                        
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header text-primary">Letter of motivation</div>
+                        <div class="card-body">
+                        <p class="card-text">
+                            {{ $training->motivation }}
+                        </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
