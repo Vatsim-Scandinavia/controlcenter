@@ -160,11 +160,11 @@ class TrainingController extends Controller
     public function show($id)
     {
         $training = Training::find($id);
-        $mentors = User::whereNotNull('group')->get();
+        $trainingMentors = User::whereNotNull('group')->get();
         $statuses = $this->statuses;
         $types = $this->types;
 
-        return view('training.show', compact('training', 'mentors', 'statuses', 'types'));
+        return view('training.show', compact('training', 'trainingMentors', 'statuses', 'types'));
     }
 
     /**

@@ -189,13 +189,9 @@
                     <div class="form-group">
                         <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" id="assignMentors">
-                            @php
-                                var_dump($mentors);
-                            @endphp
-                            @foreach($mentors as $mentor)
+                            @foreach($trainingMentors as $mentor)
                                 <option>{{ $mentor->handover->firstName }} {{ $mentor->handover->lastName }}</option>
                             @endforeach
-                            <option>Test</option>
                         </select>
                     </div>
 
