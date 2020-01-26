@@ -47,17 +47,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    @switch($training->status)
-                                        @case(0)
-                                            <i class="fas fa-hourglass text-warning"></i>&ensp;<a href="/training/{{ $training->id }}">In queue</a>
-                                            @break
-                                        @case(1)
-                                            <i class="fas fa-book-open text-success"></i>&ensp;<a href="/training/{{ $training->id }}">In progress</a>
-                                            @break
-                                        @case(2)
-                                            <i class="fas fa-graduation-cap text-success"></i>&ensp;<a href="/training/{{ $training->id }}">Awaiting exam</a>
-                                            @break
-                                    @endswitch
+                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
                                 </td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->handover->firstName }} {{ $training->user->handover->lastName }}</a></td>
@@ -75,24 +65,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @switch($training->type)
-                                        @case(1)
-                                            <i class="fas fa-circle"></i>&ensp;Standard
-                                            @break
-                                        @case(2)
-                                            <i class="fas fa-sync"></i>&ensp;Refresh
-                                            @break
-                                        @case(3)
-                                            <i class="fas fa-exchange"></i>&ensp;Transfer
-                                            @break
-                                        @case(4)
-                                            <i class="fas fa-fast-forward"></i>&ensp;Fast-track
-                                            @break
-                                        @case(5)
-                                            <i class="fas fa-compress-arrows-alt"></i>&ensp;Familiarisation
-                                            @break
-                                    @endswitch
-                                    
+                                    <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
                                     @if ($training->started_at == null && $training->finished_at == null)
@@ -171,11 +144,11 @@
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
                         <select class="form-control" id="trainingStateSelect">
-                            @foreach($types as $id => $text)
+                            @foreach($types as $id => $data)
                                 @if($id == $training->type)
-                                    <option value="{{ $id }}" selected>{{ $text }}</option>
+                                    <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
                                 @else
-                                    <option value="{{ $id }}">{{ $text }}</option>
+                                    <option value="{{ $id }}">{{ $data["text"] }}</option>
                                 @endif
                             @endforeach
                         </select>

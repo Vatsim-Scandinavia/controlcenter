@@ -16,13 +16,13 @@ class TrainingController extends Controller
      *
      */
     public $statuses = [
-        -3 => ["text" => "Closed by system", "assignableByStaff" => false],
-        -2 => ["text" => "Closed by student", "assignableByStaff" => false],
-        -1 => ["text" => "Closed by staff", "assignableByStaff" => true],
-        0 => ["text" => "In queue", "assignableByStaff" => true],
-        1 => ["text" => "In progress", "assignableByStaff" => true],
-        2 => ["text" => "Awaiting exam", "assignableByStaff" => true],
-        3 => ["text" => "Completed", "assignableByStaff" => true]
+        -3 => ["text" => "Closed by system", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
+        -2 => ["text" => "Closed by student", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
+        -1 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
+        0 => ["text" => "In queue", "color" => "warning", "icon" => "fas fa-hourglass", "assignableByStaff" => true],
+        1 => ["text" => "In progress", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        2 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
+        3 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true]
     ];
 
     /**
@@ -30,11 +30,11 @@ class TrainingController extends Controller
      *
      */
     public $types = [
-        1 => "Standard",
-        2 => "Refresh",
-        3 => "Transfer",
-        4 => "Fast-track",
-        5 => "Familiarisation",
+        1 => ["text" => "Standard", "icon" => "fas fa-circle"],
+        2 => ["text" => "Refresh", "icon" => "fas fa-sync"],
+        3 => ["text" => "Transfer", "icon" => "fas fa-exchange"],
+        4 => ["text" => "Fast-track", "icon" => "fas fa-fast-forward"],
+        5 => ["text" => "Familiarisation", "icon" => "fas fa-compress-arrows-alt"],
     ];
 
     /**
@@ -47,7 +47,10 @@ class TrainingController extends Controller
         $openTrainings = Training::where('status', '>=', 0)->get();
         $closedTrainings = Training::where('status', '<', 0)->get();
 
-        return view('training.overview', compact('openTrainings', 'closedTrainings'));
+        $statuses = $this->statuses;
+        $types = $this->types;
+
+        return view('training.overview', compact('openTrainings', 'closedTrainings', 'statuses', 'types'));
     }
 
     /**
