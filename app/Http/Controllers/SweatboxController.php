@@ -16,7 +16,7 @@ class SweatboxController extends Controller
      */
     public function index(){
         $user = Auth::user();
-        $bookings = Booking::all();
+        $bookings = Booking::all()->sortBy('date');
 
         if($user->isMentor()) {
             return view('sweatbox.calendar', compact('bookings', 'user'));
