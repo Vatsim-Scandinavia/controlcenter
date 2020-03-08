@@ -33,7 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/vatbook', 'DashboardController@vatbook')->name('vatbook');
     Route::get('/content', 'DashboardController@content')->name('content');
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
-    Route::get('/sweatbox', 'DashboardController@sweatbox')->name('sweatbox');
     Route::get('/trainings', 'TrainingController@index')->name('requests');
     Route::get('/users', 'UserController@index')->name('users');
     Route::get('/users/endorsements', 'DashboardController@member')->name('users.endorsements');
@@ -54,5 +53,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/training/store', 'TrainingController@store');
     Route::post('/training/update', 'TrainingController@update');
     Route::get('/training/{training}', 'TrainingController@show');
-    
+
+    // Sweatbox routes
+    Route::get('/sweatbox', 'SweatboxController@index')->name('sweatbox');
+    Route::get('/sweatbox/create', 'SweatboxController@create')->name('sweatbox.create');
+    Route::get('/sweatbox/{id}/delete', 'SweatboxController@delete')->name('sweatbox.delete');
+    Route::get('/sweatbox/{id}', 'SweatboxController@show');
+    Route::post('/sweatbox/store', 'SweatboxController@store');
+    Route::post('/sweatbox/update', 'SweatboxController@update');
 });
