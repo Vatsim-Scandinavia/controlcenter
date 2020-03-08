@@ -69,14 +69,14 @@ class User extends Authenticatable
 
     // User group checks
     public function isMentor(){
-        return $this->group <= 3;
+        return $this->group <= 3 && isset($this->group);
     }
 
     public function isModerator(){
-        return $this->group <= 2;
+        return $this->group <= 2 && isset($this->group);
     }
 
     public function isAdmin(){
-        return $this->group <= 1;
+        return $this->group <= 1 && isset($this->group);
     }
 }
