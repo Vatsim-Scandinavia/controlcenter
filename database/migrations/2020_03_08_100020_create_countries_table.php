@@ -19,11 +19,11 @@ class CreateCountriesTable extends Migration
         });
 
         DB::table('countries')->insert([
-            ['name' => "Norway"],
-            ['name' => "Sweden"],
             ['name' => "Denmark"],
             ['name' => "Finland"],
             ['name' => "Iceland"],
+            ['name' => "Norway"],
+            ['name' => "Sweden"],
         ]);
     }
 

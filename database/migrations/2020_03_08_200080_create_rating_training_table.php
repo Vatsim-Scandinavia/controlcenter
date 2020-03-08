@@ -17,8 +17,10 @@ class CreateRatingTrainingTable extends Migration
             $table->primary(['rating_id', 'training_id']);
 
             $table->unsignedInteger('rating_id');
-            $table->unsignedInteger('training_id');
-            
+            $table->unsignedBigInteger('training_id');
+
+            $table->foreign('rating_id')->references('id')->on('ratings');
+            $table->foreign('training_id')->references('id')->on('trainings'); 
         });
     }
 

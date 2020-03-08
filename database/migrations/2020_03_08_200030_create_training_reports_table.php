@@ -14,15 +14,16 @@ class CreateTrainingReportsTable extends Migration
     public function up()
     {
         Schema::create('training_reports', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('training_id');
-            $table->unsignedInteger('written_by_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('training_id');
+            $table->unsignedBigInteger('written_by_id');
             $table->string('content');
             $table->string('mentor_notes')->nullable();
             $table->string('position')->nullable();
             $table->boolean('draft')->default(false);
             $table->timestamps();
 
+            $table->foreign('written_by_id')->references('id')->on('users');
         });
     }
 

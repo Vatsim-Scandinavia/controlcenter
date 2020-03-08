@@ -17,7 +17,10 @@ class CreateRatingUser extends Migration
             $table->primary(['rating_id', 'user_id']);
 
             $table->unsignedInteger('rating_id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedBigInteger('user_id');
+
+            $table->foreign('rating_id')->references('id')->on('ratings');
+            $table->foreign('user_id')->references('id')->on('users');
             
         });
     }

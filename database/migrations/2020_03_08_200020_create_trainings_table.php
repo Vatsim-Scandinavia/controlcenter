@@ -14,11 +14,11 @@ class CreateTrainingsTable extends Migration
     public function up()
     {
         Schema::create('trainings', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
             $table->tinyInteger('type')->default(1)->comment('1=Standard, 2=Refresh, 3=Transfer, 4=Fast Track');
             $table->tinyInteger('status')->default(0)->comment("-2: Closed on student’s request -1: Closed on TA request, 0: In queue, 1: In progress, 2: Awaiting for exam, 3: Completed");
-            $table->integer('country_id');
+            $table->unsignedInteger('country_id');
             $table->text('notes')->nullable();
             $table->text('motivation');
             $table->boolean('english_only_training');
@@ -29,6 +29,7 @@ class CreateTrainingsTable extends Migration
             $table->timestamp('finished_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('country_id')->references('id')->on('countries');
         });
     }
 

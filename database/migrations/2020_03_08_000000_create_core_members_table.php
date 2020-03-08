@@ -14,7 +14,7 @@ class CreateCoreMembersTable extends Migration
     public function up()
     {
         Schema::connection('mysql-noprefix')->create('core_members', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('email', 64);
             $table->string('firstName', 50);
             $table->string('lastName', 50);

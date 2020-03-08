@@ -1,11 +1,10 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSolosTable extends Migration
+class CreateUserSettingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +13,10 @@ class CreateSolosTable extends Migration
      */
     public function up()
     {
-        Schema::create('solos', function (Blueprint $table) {
-            $table->primary(['user_id']);
-
-            $table->unsignedInteger('user_id');
-            $table->string('position', 10);
-            $table->timestamp('expire_at');
+        Schema::create('user_settings', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->string('setting', 32);
+            $table->boolean('value')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
@@ -32,6 +29,6 @@ class CreateSolosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('solos');
+        Schema::dropIfExists('user_settings');
     }
 }

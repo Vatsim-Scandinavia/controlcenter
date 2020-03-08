@@ -1,10 +1,11 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTrainingUserTable extends Migration
+class CreateSolosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +14,14 @@ class CreateTrainingUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('training_user', function (Blueprint $table) {
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('training_id');
+        Schema::create('solos', function (Blueprint $table) {
+            $table->primary(['user_id']);
+
+            $table->unsignedBigInteger('user_id');
+            $table->string('position', 10);
             $table->timestamp('expire_at');
-            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -28,6 +32,6 @@ class CreateTrainingUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('training_user');
+        Schema::dropIfExists('solos');
     }
 }

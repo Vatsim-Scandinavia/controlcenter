@@ -14,10 +14,12 @@ class CreateTrainingReportAttachmentsTable extends Migration
     public function up()
     {
         Schema::create('training_report_attachments', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('training_report_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('training_report_id');
             $table->string('url');
             $table->timestamps();
+
+            $table->foreign('training_report_id')->references('id')->on('training_reports');
         });
     }
 
