@@ -16,9 +16,9 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->boolean('visiting_controller')->default(false);
-            $table->timestamp('last_login');
             $table->unsignedInteger('country')->nullable(); // Tie a user to a main country, also used by usergroup to show correct FIR.
-            $table->unsignedInteger('group')->nullable(); // Set if user group is tied to specific country
+            $table->unsignedInteger('group')->nullable(); // Used to set usergroup, also set to assign a Training Assistant to a specific country.
+            $table->timestamp('last_login');
             $table->rememberToken();
         });
     }

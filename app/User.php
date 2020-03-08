@@ -61,7 +61,22 @@ class User extends Authenticatable
     public function ratings(){
         return $this->belongsToMany(Rating::class);
     }
+
     public function settings(){
         return $this->hasMany(UserSetting::class);
+    }
+
+
+    // User group checks
+    public function isMentor(){
+        return $this->group == 3;
+    }
+
+    public function isModerator(){
+        return $this->group == 2;
+    }
+
+    public function isAdmin(){
+        return $this->group == 1;
     }
 }
