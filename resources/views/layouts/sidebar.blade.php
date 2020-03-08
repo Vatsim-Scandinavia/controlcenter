@@ -26,12 +26,6 @@
                     <span>Vatbook</span></a>
                 </li>
         
-                <li class="nav-item">
-                <a class="nav-link" href="{{ route('content') }}">
-                    <i class="fas fa-fw fa-book"></i>
-                    <span>Training Content</span></a>
-                </li>
-        
                 <!-- Divider -->
                 <hr class="sidebar-divider">
         
@@ -105,7 +99,6 @@
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
-                    <a class="collapse-item" href="{{ route('admin.content') }}">Training content</a>
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                     </div>
                 </div>
