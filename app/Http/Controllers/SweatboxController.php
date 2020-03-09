@@ -21,9 +21,8 @@ class SweatboxController extends Controller
         if($user->isMentor()) {
             return view('sweatbox.calendar', compact('bookings', 'user'));
         }
-        else {
-            abort(404);
-        };
+        
+        abort(403);
     }
 
     /**
@@ -37,9 +36,8 @@ class SweatboxController extends Controller
         if($user->isMentor()) {
             return view('sweatbox.create');
         }
-        else {
-            abort(404);
-        };
+        
+        abort(403);
     }
 
     /**
@@ -55,9 +53,8 @@ class SweatboxController extends Controller
         if ($booking->mentor == $user->id || $user->isModerator()) {
             return view('sweatbox.show', compact('booking', 'user'));
         }
-        else {
-            abort(404);
-        };
+        
+        abort(403);
     }
 
     /**
