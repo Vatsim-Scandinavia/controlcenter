@@ -34,12 +34,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
     Route::get('/trainings', 'TrainingController@index')->name('requests');
     Route::get('/users', 'UserController@index')->name('users');
-    Route::get('/users/endorsements', 'DashboardController@member')->name('users.endorsements');
 
+    // User endorsements
+    Route::get('/users/endorsements', 'UserEndorsementController@index')->name('users.endorsements');
+    Route::get('/users/endorsements/create', 'UserEndorsementController@create')->name('users.endorsements.create');
+    Route::get('/users/endorsements/{id}', 'UserEndorsementController@show');
+    Route::get('/users/endorsements/{id}/delete', 'UserEndorsementController@delete');
+    Route::post('/users/endorsements/store', 'UserEndorsementController@store');
+    Route::post('/users/endorsements/update', 'UserEndorsementController@update');
+
+    // Reports
     Route::get('/reports/stats', 'DashboardController@reports')->name('reports.stats');
     Route::get('/reports/mentors', 'DashboardController@reports')->name('reports.mentors');
     Route::get('/reports/atc', 'DashboardController@reports')->name('reports.atc');
 
+    // Admin
     Route::get('/admin/settings', 'DashboardController@admin')->name('admin.settings');
     Route::get('/admin/content', 'DashboardController@admin')->name('admin.content');
     Route::get('/admin/templates', 'DashboardController@admin')->name('admin.templates');
