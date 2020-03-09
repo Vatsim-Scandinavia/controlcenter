@@ -30,7 +30,6 @@ Route::middleware('auth')->group(function () {
 
     // Sidebar Navigation
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
-    Route::get('/vatbook', 'DashboardController@vatbook')->name('vatbook');
     Route::get('/content', 'DashboardController@content')->name('content');
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
     Route::get('/trainings', 'TrainingController@index')->name('requests');
@@ -61,4 +60,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/sweatbox/{id}', 'SweatboxController@show');
     Route::post('/sweatbox/store', 'SweatboxController@store');
     Route::post('/sweatbox/update', 'SweatboxController@update');
+
+    // Vatbook routes
+    Route::get('/vatbook', 'VatbookController@index')->name('vatbook');
+    Route::get('/vatbook/create', 'VatbookController@create')->name('vatbook.create');
+    Route::get('/vatbook/{id}/delete', 'VatbookController@delete')->name('vatbook.delete');
+    Route::get('/vatbook/{id}', 'VatbookController@show');
+    Route::post('/vatbook/store', 'VatbookController@store');
+    Route::post('/vatbook/update', 'VatbookController@update');
 });
