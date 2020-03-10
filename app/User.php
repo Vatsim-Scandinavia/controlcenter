@@ -66,6 +66,9 @@ class User extends Authenticatable
         return $this->hasMany(UserSetting::class);
     }
 
+    public function bookings(){
+        return $this->hasMany(Booking::class);
+    }
 
     // User group checks
     public function isMentor(){

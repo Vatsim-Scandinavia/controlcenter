@@ -33,7 +33,12 @@
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position">
+                        <input id="position" class="form-control" type="text" name="position" list="positions" />
+                        <datalist id="positions">
+                            @foreach($positions as $position)
+                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                            @endforeach
+                        </datalist>
                     </div>
 
                     <div class="form-group">

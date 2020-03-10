@@ -24,6 +24,7 @@
                                 <th data-filter-control="select">Start (Zulu)</th>
                                 <th data-filter-control="select">End (Zulu)</th>
                                 <th data-sortable="true" data-filter-control="select">Position</th>
+                                <th data-sortable="true" data-filter-control="select">FIR</th>
                                 <th data-sortable="true" data-filter-control="select">Mentor</th>
                                 <th>Notes</th>
                             </tr>
@@ -47,14 +48,13 @@
                                     {{ date('H:i', strtotime($booking->end_at)) }}z
                                 </td>
                                 <td>
-                                    {{ $booking->position }}
+                                    {{ $booking->position->callsign }} ({{ $booking->position->name }})
                                 </td>
                                 <td>
-                                    @if ( sizeof($user->handover->where('id', '=', $booking->mentor)->get()) < 1 )
-                                        Invalid User
-                                    @else
-                                        {{ $user->handover->where('id', '=', $booking->mentor)->get()[0]->firstName }} {{ $user->handover->where('id', '=', $booking->mentor)->get()[0]->lastName }} ({{ $booking->mentor }})
-                                    @endif
+                                    {{ $booking->position->fir }}
+                                </td>
+                                <td>
+                                    {{ $booking->user->handover->firstName }} {{ $booking->user->handover->lastName }} ({{ $booking->user->id }})
                                 </td>
                                 <td>
                                     {{ mb_strimwidth($booking->mentor_notes, 0, 40) }}

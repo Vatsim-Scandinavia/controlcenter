@@ -33,7 +33,12 @@
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position" value="{{ $booking->position }}">
+                    <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ $booking->position->callsign }}" />
+                        <datalist id="positions">
+                            @foreach($positions as $position)
+                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                            @endforeach
+                        </datalist>
                     </div>
 
                     <div class="form-group">
@@ -43,7 +48,7 @@
 
                     <div class="form-group">
                         <label for="mentor">Mentor</label>
-                        <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="@if ( sizeof($user->handover->where('id', '=', $booking->mentor)->get()) < 1 )Invalid User @else{{ $user->handover->where('id', '=', $booking->mentor)->get()[0]->firstName }} {{ $user->handover->where('id', '=', $booking->mentor)->get()[0]->lastName }} ({{ $booking->mentor }}) @endif">
+                        <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="{{ $booking->user->handover->firstName }} {{ $booking->user->handover->lastName }} ({{ $booking->user->id }})">
                     </div>
 
                     <input type="hidden" name="id" value="{{{ $booking->id }}}"> 
