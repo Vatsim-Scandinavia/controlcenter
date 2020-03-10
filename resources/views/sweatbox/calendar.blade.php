@@ -30,7 +30,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
                             @foreach($bookings as $booking)
                             <tr>
                                 <td> 
@@ -39,7 +38,6 @@
                                     @else
                                         {{ date('F d, Y', strtotime($booking->date)) }}
                                     @endif
-                                    
                                 </td>
                                 <td>
                                     {{ date('H:i', strtotime($booking->start_at)) }}z
@@ -61,7 +59,6 @@
                                 </td>
                             </tr>
                             @endforeach
-
                         </tbody>
                     </table>
                 </div>
