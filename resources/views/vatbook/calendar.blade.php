@@ -51,7 +51,10 @@
                                     {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    {{ $booking->name }} ({{ $booking->cid }})
+                                    {{ $booking->name }}
+                                    @if ($booking->cid > 0)
+                                        ({{ $booking->cid }})
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
