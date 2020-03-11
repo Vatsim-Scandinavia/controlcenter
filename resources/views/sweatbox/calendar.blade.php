@@ -21,8 +21,8 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-sortable="true" data-filter-control="select">Date</th>
-                                <th data-filter-control="select">Start (Zulu)</th>
-                                <th data-filter-control="select">End (Zulu)</th>
+                                <th data-sortable="true" data-filter-control="select">Start (Zulu)</th>
+                                <th data-sortable="true" data-filter-control="select">End (Zulu)</th>
                                 <th data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-sortable="true" data-filter-control="select">FIR</th>
                                 <th data-sortable="true" data-filter-control="select">Mentor</th>
