@@ -44,10 +44,19 @@
                     @if ($user->isMentor())
                         <div class="form-group">
                             <label for="training">Training</label>
-                            <input id="training" class="form-control" type="checkbox" name="training">
+                            @if ($booking->training == 1)
+                                <input id="training" class="form-control" type="checkbox" name="training" value=1 checked>
+                            @else
+                                <input id="training" class="form-control" type="checkbox" name="training" value=1>
+                            @endif
+                            
                             @if ($user->isModerator())
                                 <label for="event">Event</label>
-                                <input id="event" class="form-control" type="checkbox" name="event">
+                                @if ($booking->event == 1)
+                                    <input id="event" class="form-control" type="checkbox" name="event" value=1 checked>
+                                @else
+                                    <input id="event" class="form-control" type="checkbox" name="event" value=1>
+                                @endif
                             @endif
                         </div>
                     @endif
