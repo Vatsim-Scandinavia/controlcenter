@@ -46,7 +46,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-            foreach(Vatbook::all() as $booking) {
+            foreach(Vatbook::whereNull('local_id') as $booking) {
                 $count = 0;
                 foreach($raw->children() as $element){
                     if($element->id == $booking->eu_id) $count =+ 1;
