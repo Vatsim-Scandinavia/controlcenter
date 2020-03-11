@@ -32,6 +32,7 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td> 
+                                    <span style="display: none">{{ date('Y-m-d', strtotime($booking->time_start)) }}</span>
                                     @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null)
                                         <a href="/vatbook/{{ $booking->id }}">{{ date('F d, Y', strtotime($booking->time_start)) }}</a>
                                     @else

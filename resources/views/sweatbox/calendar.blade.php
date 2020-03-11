@@ -33,6 +33,7 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td> 
+                                    <span style="display: none">{{ date('Y-m-d', strtotime($booking->date)) }}</span>
                                     @if ($booking->mentor == $user->id || $user->isModerator())
                                         <a href="/sweatbox/{{ $booking->id }}">{{ date('F d, Y', strtotime($booking->date)) }}</a>
                                     @else
