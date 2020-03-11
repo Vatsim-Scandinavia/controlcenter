@@ -33,17 +33,28 @@
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position" value="{{ $booking->position }}">
+                    <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ $booking->position->callsign }}" />
+                        <datalist id="positions">
+                            @foreach($positions as $position)
+                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                            @endforeach
+                        </datalist>
                     </div>
 
-                    <div class="form-group">
-                        <label for="mentor_notes">Mentor notes</label>
-                        <textarea class="form-control" id="mentor_notes" rows="8" placeholder="Write booking notes here" name="mentor_notes">{{ $booking->mentor_notes }}</textarea>
-                    </div>
+                    @if ($user->isMentor())
+                        <div class="form-group">
+                            <label for="training">Training</label>
+                            <input id="training" class="form-control" type="checkbox" name="training">
+                            @if ($user->isModerator())
+                                <label for="event">Event</label>
+                                <input id="event" class="form-control" type="checkbox" name="event">
+                            @endif
+                        </div>
+                    @endif
 
                     <div class="form-group">
                         <label for="mentor">Mentor</label>
-                        <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="@if ( sizeof($user->handover->where('id', '=', $booking->mentor)->get()) < 1 )Invalid User @else{{ $user->handover->where('id', '=', $booking->mentor)->get()[0]->firstName }} {{ $user->handover->where('id', '=', $booking->mentor)->get()[0]->lastName }} ({{ $booking->mentor }}) @endif">
+                        <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="{{ $booking->user->handover->firstName }} {{ $booking->user->handover->lastName }} ({{ $booking->user->id }})">
                     </div>
 
                     <input type="hidden" name="id" value="{{{ $booking->id }}}"> 
@@ -67,9 +78,9 @@
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $('div').tooltip();
-        $(".datepicker").flatpickr({ dateFormat: "F d, Y", defaultDate: new Date({!! json_encode($booking->date) !!}) });
-        $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: {!! json_encode($booking->start_at) !!} });
-        $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: {!! json_encode($booking->end_at) !!} });
+        $(".datepicker").flatpickr({ dateFormat: "F d, Y", defaultDate: new Date({!! json_encode($booking->time_start) !!}) });
+        $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: new Date({!! json_encode($booking->time_start) !!}) });
+        $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: new Date({!! json_encode($booking->time_end) !!}) });
     })
 </script>
 @endsection

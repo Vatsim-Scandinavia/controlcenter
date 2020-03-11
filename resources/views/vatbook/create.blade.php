@@ -33,14 +33,24 @@
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position">
+                        <input id="position" class="form-control" type="text" name="position" list="positions" />
+                        <datalist id="positions">
+                            @foreach($positions as $position)
+                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                            @endforeach
+                        </datalist>
                     </div>
-
-                    <div class="form-group">
-                        <label for="mentor_notes">Mentor notes</label>
-                        <textarea class="form-control" id="mentor_notes" rows="8" placeholder="Write booking notes here" name="mentor_notes"></textarea>
-                    </div>
-
+                    @if ($user->isMentor())
+                        <div class="form-group">
+                            <label for="training">Training</label>
+                            <input id="training" class="form-control" type="checkbox" name="training">
+                            @if ($user->isModerator())
+                                <label for="event">Event</label>
+                                <input id="event" class="form-control" type="checkbox" name="event">
+                            @endif
+                        </div>
+                    @endif
+                    
                     <button type="submit" class="btn btn-primary">Save</button>
 
                 </form>

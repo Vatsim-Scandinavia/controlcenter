@@ -25,29 +25,33 @@
                                 <th data-filter-control="select">End (Zulu)</th>
                                 <th data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-sortable="true" data-filter-control="select">FIR</th>
-                                <th data-sortable="true" data-filter-control="select">Name</th>
+                                <th data-sortable="true" data-filter-control="select">User</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($bookings as $booking)
                             <tr>
                                 <td> 
-                                    {{ date('F d, Y', strtotime($booking[0]->time_start)) }}        
+                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null)
+                                        <a href="/vatbook/{{ $booking->id }}">{{ date('F d, Y', strtotime($booking->time_start)) }}</a>
+                                    @else
+                                        {{ date('F d, Y', strtotime($booking->time_start)) }}
+                                    @endif
                                 </td>
                                 <td>
-                                    {{ date('H:i', strtotime($booking[0]->time_start)) }}z
+                                    {{ date('H:i', strtotime($booking->time_start)) }}z
                                 </td>
                                 <td>
-                                    {{ date('H:i', strtotime($booking[0]->time_end)) }}z
+                                    {{ date('H:i', strtotime($booking->time_end)) }}z
                                 </td>
                                 <td>
-                                    {{ $booking[0]->callsign }} ({{ $booking[1] }})
+                                    {{ $booking->position->callsign }} ({{ $booking->position->name }})
                                 </td>
                                 <td>
-                                    {{ $booking[2] }}
+                                    {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    {{ $booking[0]->name }} ({{ $booking[0]->cid }})
+                                    {{ $booking->name }} ({{ $booking->cid }})
                                 </td>
                             </tr>
                             @endforeach
