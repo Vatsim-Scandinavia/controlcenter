@@ -17,7 +17,7 @@ class VatbookController extends Controller
      */
     public function index(){
         $user = Auth::user();
-        $bookings = Vatbook::all();
+        $bookings = Vatbook::all()->sortBy('time_start');
 
         return view('vatbook.calendar', compact('bookings', 'user')); 
     }
