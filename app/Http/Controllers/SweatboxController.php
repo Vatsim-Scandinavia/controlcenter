@@ -83,8 +83,6 @@ class SweatboxController extends Controller
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
-            if(!empty(Booking::whereBetween('start_at', [$booking->start_at, $booking->end_at])->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])->where('position_id', $booking->position_id)->get())) return back()->withErrors('The position is already booked for that time!')->withInput();
-
             $booking->save();
         }
 
@@ -120,8 +118,6 @@ class SweatboxController extends Controller
             $booking->end_at = $data['end_at'];
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
             $booking->mentor_notes = $data['mentor_notes'];
-
-            if(!empty(Booking::whereBetween('start_at', [$booking->start_at, $booking->end_at])->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])->where('position_id', $booking->position_id)->get())) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             $booking->save();
         }
