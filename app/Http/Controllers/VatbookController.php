@@ -158,13 +158,13 @@ class VatbookController extends Controller
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
             ->where('deleted', false)
-            ->where('id', '!=', $request->id)
+            ->where('id', '!=', $booking->id)
             ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
             ->where('deleted', false)
-            ->where('id', '!=', $request->id)
+            ->where('id', '!=', $booking->id)
             ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
