@@ -53,15 +53,15 @@
 
                     @if ($user->isMentor())
                         <div class="form-group">
-                            <label for="training">Training</label>
                             <input id="training" type="checkbox" name="training" value=1>
+                            <label for="training">Training</label>
                         </div>
                     @endif
 
                     @if ($user->isModerator())
                         <div class="form-group">
-                            <label for="event">Event</label>
                             <input id="event" type="checkbox" name="event" value=1>
+                            <label for="event">Event</label>
                         </div>
                     @endif
 
