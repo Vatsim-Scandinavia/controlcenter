@@ -17,7 +17,8 @@
                         data-toggle="table"
                         data-pagination="true"
                         data-strict-search="true"
-                        data-filter-control="true">
+                        data-filter-control="true"
+                        data-page-size="25">
                         <thead class="thead-light">
                             <tr>
                                 <th data-sortable="true" data-filter-control="select">Date</th>
