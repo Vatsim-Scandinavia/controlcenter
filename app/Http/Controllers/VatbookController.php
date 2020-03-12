@@ -89,10 +89,12 @@ class VatbookController extends Controller
         ->where('time_end', '!=', $booking->time_start)
         ->where('time_start', '!=', $booking->time_end)
         ->where('position_id', $booking->position_id)
+        ->where('deleted', false)
         ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
         ->where('time_end', '!=', $booking->time_start)
         ->where('time_start', '!=', $booking->time_end)
         ->where('position_id', $booking->position_id)
+        ->where('deleted', false)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
@@ -153,10 +155,12 @@ class VatbookController extends Controller
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
+            ->where('deleted', false)
             ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
+            ->where('deleted', false)
             ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
