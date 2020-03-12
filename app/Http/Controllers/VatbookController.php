@@ -82,8 +82,13 @@ class VatbookController extends Controller
         else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
-
-        if(!empty(Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])->where('position_id', $booking->position_id)->get())) return back()->withErrors('The position is already booked for that time!')->withInput();
+        
+        if(!Vatbook::whereBetween('time_start', [$start_at, $end_at])
+        ->orWhereBetween('time_end', [$start_at, $end_at])
+        ->where('time_end', '!=', $start_at)
+        ->where('time_start', '!=', $end_at)
+        ->where('callsign', '=', $data['position'])
+        ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
         else $booking->training = 0;
@@ -137,7 +142,12 @@ class VatbookController extends Controller
             if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
 
-            if(!empty(Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])->where('position_id', $booking->position_id)->get())) return back()->withErrors('The position is already booked for that time!')->withInput();
+            if(!Vatbook::whereBetween('time_start', [$start_at, $end_at])
+            ->orWhereBetween('time_end', [$start_at, $end_at])
+            ->where('time_end', '!=', $start_at)
+            ->where('time_start', '!=', $end_at)
+            ->where('callsign', '=', $data['position'])
+            ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
             else $booking->training = 0;
