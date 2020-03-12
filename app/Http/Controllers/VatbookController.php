@@ -82,6 +82,8 @@ class VatbookController extends Controller
         else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
+
+        if($booking->time_start === $booking->time_end) return back()->withErrors('Booking has to have a duration!')->withInput();
         
         if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
         ->where('time_end', '!=', $booking->time_start)
@@ -144,6 +146,8 @@ class VatbookController extends Controller
             $booking->time_start = date('Y-m-d H:i:s', strtotime($data['date'] . $data['start_at']));
             if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
+
+            if($booking->time_start === $booking->time_end) return back()->withErrors('Booking has to have a duration!')->withInput();
 
             if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)

@@ -79,7 +79,7 @@
                     <input type="hidden" name="id" value="{{{ $booking->id }}}"> 
 
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <a href="{{ route('vatbook.delete', $booking->id) }}" onclick="return confirm('Are you sure?')" class="btn btn-danger">Delete</a>
+                    <a href="{{ route('vatbook.delete', $booking->id) }}" onclick="return confirm('Are you sure you want to delete this booking?')" class="btn btn-danger">Delete</a>
                 </form>
             </div>
         </div>
