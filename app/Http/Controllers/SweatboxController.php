@@ -63,7 +63,7 @@ class SweatboxController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'date' => 'required|date:Y-m-d',
+            'date' => 'required|date:Y-m-d|after_or_equal:today',
             'start_at' => 'required|regex:/^\d{2}:\d{2}$/',
             'end_at' => 'required|regex:/^\d{2}:\d{2}$/',
             'position' => 'required|exists:positions,callsign',
@@ -99,7 +99,7 @@ class SweatboxController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
-            'date' => 'required|date:Y-m-d',
+            'date' => 'required|date:Y-m-d|after_or_equal:today',
             'start_at' => 'required|regex:/^\d{2}:\d{2}$/',
             'end_at' => 'required|regex:/^\d{2}:\d{2}$/',
             'position' => 'required|exists:positions,callsign',

@@ -65,7 +65,7 @@
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $('div').tooltip();
-        $(".datepicker").flatpickr({ dateFormat: "F d, Y" });
+        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "F d, Y" });
         $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
         $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
         $('.flatpickr-input:visible').on('focus', function () {

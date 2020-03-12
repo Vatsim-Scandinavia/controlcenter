@@ -87,7 +87,7 @@
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $('div').tooltip();
-        $(".datepicker").flatpickr({ dateFormat: "F d, Y", defaultDate: new Date({!! json_encode($booking->time_start) !!}) });
+        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "F d, Y", defaultDate: new Date({!! json_encode($booking->time_start) !!}) });
         $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: new Date({!! json_encode($booking->time_start) !!}) });
         $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: new Date({!! json_encode($booking->time_end) !!}) });
         $('.flatpickr-input:visible').on('focus', function () {
