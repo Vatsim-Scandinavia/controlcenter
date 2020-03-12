@@ -18,22 +18,22 @@
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control" type="text" name="date">
+                        <input id="date" class="datepicker form-control" type="text" name="date" required>
                     </div>
 
                     <div class="form-group">
                         <label for="start_at">Start (Zulu)</label>
-                        <input id="start_at" class="starttimepicker form-control" type="text" name="start_at">
+                        <input id="start_at" class="starttimepicker form-control" type="text" name="start_at" required>
                     </div>
 
                     <div class="form-group">
                         <label for="end_at">End (Zulu)</label>
-                        <input id="end_at" class="endtimepicker form-control" type="text" name="end_at">
+                        <input id="end_at" class="endtimepicker form-control" type="text" name="end_at" required>
                     </div>
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position" list="positions" />
+                        <input id="position" class="form-control" type="text" name="position" list="positions" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
                                 <option value="{{ $position->callsign }}">{{ $position->name }}</option>
@@ -73,6 +73,10 @@
         $(".datepicker").flatpickr({ dateFormat: "F d, Y" });
         $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
         $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+        $('.flatpickr-input:visible').on('focus', function () {
+            $(this).blur();
+        });
+        $('.flatpickr-input:visible').prop('readonly', false);
     })
 </script>
 @endsection
