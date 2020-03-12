@@ -83,6 +83,8 @@ class VatbookController extends Controller
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
 
+        if(!empty(Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])->where('position_id', $booking->position_id)->get())) return back()->withErrors('The position is already booked for that time!')->withInput();
+
         if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
         else $booking->training = 0;
         if(isset($data['event']) && $user->isModerator()) {
@@ -134,6 +136,8 @@ class VatbookController extends Controller
             $booking->time_start = date('Y-m-d H:i:s', strtotime($data['date'] . $data['start_at']));
             if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
+
+            if(!empty(Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])->where('position_id', $booking->position_id)->get())) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
             else $booking->training = 0;
