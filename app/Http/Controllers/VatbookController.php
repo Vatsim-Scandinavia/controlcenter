@@ -167,6 +167,7 @@ class VatbookController extends Controller
         if($booking->local_id !== null && $user->id == $booking->cid || $user->isModerator() && $booking->local_id !== null) {
             file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $booking->eu_id . '&Local_ID=' . $booking->local_id);
             $booking->deleted = true;
+            $booking->local_id = null;
             $booking->save();
         }
 
