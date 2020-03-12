@@ -20,8 +20,8 @@ class CreateVatbooksTable extends Migration
             $table->string('callsign', 11);
             $table->bigInteger('position_id')->unsigned();
             $table->string('name');
-            $table->time('time_start');
-            $table->time('time_end');
+            $table->dateTime('time_start');
+            $table->dateTime('time_end');
             $table->bigInteger('cid')->unsigned();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->boolean('training')->default(false);
