@@ -17,7 +17,7 @@ class VatbookController extends Controller
      */
     public function index(){
         $user = Auth::user();
-        $bookings = Vatbook::all()->sortBy('time_start');
+        $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
 
         return view('vatbook.calendar', compact('bookings', 'user')); 
     }
@@ -83,15 +83,15 @@ class VatbookController extends Controller
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
 
-        if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-        else $booking->training = 0;
+        if(isset($data['training']) && $user->isMentor()) $booking->training = true;
+        else $booking->training = false;
         if(isset($data['event']) && $user->isModerator()) {
             $eventUrl = "vatsim-scandinavia.org";
-            $booking->event = 1;
+            $booking->event = true;
             $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
         } 
         else {
-            $booking->event = 0;
+            $booking->event = false;
             $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
         }
 
@@ -135,15 +135,15 @@ class VatbookController extends Controller
             if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
 
-            if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-            else $booking->training = 0;
+            if(isset($data['training']) && $user->isMentor()) $booking->training = true;
+            else $booking->training = false;
             if(isset($data['event']) && $user->isModerator()) {
                 $eventUrl = "vatsim-scandinavia.org";
-                $booking->event = 1;
+                $booking->event = true;
                 file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             } 
             else {
-                $booking->event = 0;
+                $booking->event = false;
                 file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
             }
 
@@ -166,7 +166,8 @@ class VatbookController extends Controller
 
         if($booking->local_id !== null && $user->id == $booking->cid || $user->isModerator() && $booking->local_id !== null) {
             file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $booking->eu_id . '&Local_ID=' . $booking->local_id);
-            $booking->delete();
+            $booking->deleted = true;
+            $booking->save();
         }
 
         return redirect('/vatbook');

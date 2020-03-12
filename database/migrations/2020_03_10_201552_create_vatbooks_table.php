@@ -26,6 +26,7 @@ class CreateVatbooksTable extends Migration
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->boolean('training')->default(false);
             $table->boolean('event')->default(false);
+            $table->boolean('deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('user_id')
