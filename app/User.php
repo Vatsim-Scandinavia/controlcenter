@@ -74,6 +74,10 @@ class User extends Authenticatable
         return $this->hasMany(Vatbook::class);
     }
 
+    public function name(){
+        return "{$this->handover->firstName} {$this->handover->lastName}";
+    }
+
     // User group checks
     public function isMentor(){
         return $this->group <= 3 && isset($this->group);

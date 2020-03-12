@@ -58,7 +58,7 @@
 
                     <div class="form-group">
                         <label for="mentor">Mentor</label>
-                        <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="{{ $booking->user->handover->firstName }} {{ $booking->user->handover->lastName }} ({{ $booking->user->id }})">
+                        <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="{{ $booking->user->name() }} ({{ $booking->user->id }})">
                     </div>
 
                     <input type="hidden" name="id" value="{{{ $booking->id }}}"> 

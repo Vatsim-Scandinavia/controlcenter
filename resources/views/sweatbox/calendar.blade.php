@@ -54,7 +54,7 @@
                                     {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    {{ $booking->user->handover->firstName }} {{ $booking->user->handover->lastName }} ({{ $booking->user->id }})
+                                    {{ $booking->user->name() }} ({{ $booking->user->id }})
                                 </td>
                                 <td>
                                     {{ mb_strimwidth($booking->mentor_notes, 0, 40) }}
