@@ -50,17 +50,21 @@
                             @endforeach
                         </datalist>
                     </div>
+
                     @if ($user->isMentor())
                         <div class="form-group">
                             <label for="training">Training</label>
-                            <input id="training" class="form-control" type="checkbox" name="training" value=1>
-                            @if ($user->isModerator())
-                                <label for="event">Event</label>
-                                <input id="event" class="form-control" type="checkbox" name="event" value=1>
-                            @endif
+                            <input id="training" type="checkbox" name="training" value=1>
                         </div>
                     @endif
-                    
+
+                    @if ($user->isModerator())
+                        <div class="form-group">
+                            <label for="event">Event</label>
+                            <input id="event" type="checkbox" name="event" value=1>
+                        </div>
+                    @endif
+
                     <button type="submit" class="btn btn-primary">Save</button>
 
                 </form>

@@ -55,18 +55,20 @@
                         <div class="form-group">
                             <label for="training">Training</label>
                             @if ($booking->training == 1)
-                                <input id="training" class="form-control" type="checkbox" name="training" value=1 checked>
+                                <input id="training" type="checkbox" name="training" value=1 checked>
                             @else
-                                <input id="training" class="form-control" type="checkbox" name="training" value=1>
+                                <input id="training" type="checkbox" name="training" value=1>
                             @endif
-                            
-                            @if ($user->isModerator())
-                                <label for="event">Event</label>
-                                @if ($booking->event == 1)
-                                    <input id="event" class="form-control" type="checkbox" name="event" value=1 checked>
-                                @else
-                                    <input id="event" class="form-control" type="checkbox" name="event" value=1>
-                                @endif
+                        </div>
+                    @endif
+
+                    @if ($user->isModerator())
+                        <div class="form-group">
+                            <label for="event">Event</label>
+                            @if ($booking->event == 1)
+                                <input id="event" type="checkbox" name="event" value=1 checked>
+                            @else
+                                <input id="event" type="checkbox" name="event" value=1>
                             @endif
                         </div>
                     @endif
