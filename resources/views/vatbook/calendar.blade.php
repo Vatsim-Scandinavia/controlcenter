@@ -18,7 +18,8 @@
                         data-pagination="true"
                         data-strict-search="true"
                         data-filter-control="true"
-                        data-page-size="25">
+                        data-page-size="15"
+                        data-page-list=[10,15,25,50]>
                         <thead class="thead-light">
                             <tr>
                                 <th data-sortable="true" data-filter-control="select">Date</th>
