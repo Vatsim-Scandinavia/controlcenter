@@ -1,92 +1,95 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Vatsim\OAuth\SSOException;
-use Vatsim\OAuth\SSO;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\RatingsController;
-use App\Http\Controllers\PRatingsController;
-use App\Http\Controllers\DivisionsController;
-use App\Http\Controllers\TestController;
+
 use App\User;
+use Illuminate\Http\Request;
+use League\OAuth2\Client\Token;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\OAuthController;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+
 /**
- * Class AuthController
- * @package App\Http\Controllers\login
+ * This controller handles authenticating users for the application and
+ * redirecting them to your home screen. The controller uses a trait
+ * to conveniently provide its functionality to your applications.
  */
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
+
+    protected $provider;
+
     /**
-     * @var SSO
-     */
-    private $sso;
-    /**
-     * LoginController constructor.
+     * Create a new controller instance.
+     *
+     * @return void
      */
     public function __construct()
     {
-        $this->sso = new SSO(
-            config('sso.base'),
-            config('sso.key'),
-            config('sso.secret'),
-            config('sso.method'),
-            config('sso.cert'),
-            config('sso.additionalConfig')
+        $this->provider = new OAuthController();
+    }
+
+    public function login(Request $request)
+    {
+        if (! $request->has('code') || ! $request->has('state')) {
+            $authorizationUrl = $this->provider->getAuthorizationUrl(); // Generates state
+            $request->session()->put('oauthstate', $this->provider->getState());
+			return redirect()->away($authorizationUrl);
+        } else if ($request->input('state') !== session()->pull('oauthstate')) {
+            return redirect()->route('front')->withError("Something went wrong, please try again (state mismatch).");
+        } else {
+            return $this->verifyLogin($request);
+        }
+    }
+
+    protected function verifyLogin(Request $request)
+    {
+        try {
+            $accessToken = $this->provider->getAccessToken('authorization_code', [
+                'code' => $request->input('code')
+            ]);
+            
+        } catch (IdentityProviderException $e) {
+            return redirect()->route('front')->withError("Authentication error: ".$e->getMessage());
+        }
+        $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
+
+        if (!isset($resourceOwner->id) && $resourceOwner->data->oauth->token_valid === "true") {
+            return redirect()->route('front')->withError("You did not grant all data which is required to use this service.");
+        }
+
+        $account = $this->completeLogin($resourceOwner, $accessToken);
+
+        auth()->login($account, true);
+
+        return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
+    }
+
+    protected function completeLogin($resourceOwner, $token)
+    {
+        $account = User::updateOrCreate(
+            ['id' => $resourceOwner->id],
+            ['last_login' => \Carbon\Carbon::now()]
         );
-    }
-    /**
-     * Redirect user to VATSIM SSO for login
-     *
-     * @throws \Vatsim\OAuth\SSOException
-     */
-    public function login()
-    {
-        try{
-            $this->sso->login(config('sso.return'), function ($key, $secret, $url) {
-                session()->put('key', $key);
-                session()->put('secret', $secret);
-                session()->save();
-                header('Location: ' . $url);
-                die();
-            });
-        } catch (SSOException $e) {
-            return redirect()->route('front')->withErrors(['error' => $e->getMessage()]);
-        }
-    }
-    /**
-     * Validate the login and access protected resources, create the user if they don't exist, update them if they do, and log them in
-     *
-     * @param Request $get
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Vatsim\OAuth\SSOException
-     */
-    public $newUser;
-    public function validateLogin(Request $get)
-    {
-        try{
-            $this->sso->validate(session('key'), session('secret'), $get->input('oauth_verifier'), function ($sso_data, $request) {
-                session()->forget('key');
-                session()->forget('secret');
-                User::updateOrCreate(['id' => $sso_data->id]);
-                Auth::login(User::find($sso_data->id), true);
-            });
-        } catch (SSOException $e) {
-            return redirect()->route('front')->withErrors(['error' => $e->getMessage()]);
-        }
         
-        return redirect()->intended(route('dashboard'));
+        /*if ($resourceOwner->data->oauth->token_valid) { // User has given us permanent access to updated data
+            $account->access_token = $token->getToken();
+            $account->refresh_token = $token->getRefreshToken();
+            $account->token_expires = $token->getExpires();
+        }*/
+
+        $account->save();
+
+        return $account;
     }
-    /**
-     * Log the user out
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
+
     public function logout()
     {
-        if (! Auth::check()) return redirect()->back();
-        Auth::logout();
-        return redirect()->to('/')->withSuccess('You have been successfully logged out.');
+        auth()->logout();
+
+        return redirect(route('front'))->withSuccess('You have been successfully logged out');
     }
 }
