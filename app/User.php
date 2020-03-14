@@ -16,7 +16,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'id', 'visiting_controller', 'last_login', 'group'
+        'country', 'group', 'last_login'
     ];
 
     /**
