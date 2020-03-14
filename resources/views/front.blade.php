@@ -5,12 +5,11 @@
 @section('content-master')
     <div class="front-cover">
         <div class="content">
-
             
-            @if($errors->any())
-            <div class="alert alert-danger" role="alert">
-                Server Error: "{{ $errors->first() }}". Please contact Web Department if issue presists.
-            </div>
+            @if(Session::has('error') OR isset($error))
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa fa-lg fa-exclamation-circle"></i> {!! Session::has('error') ? Session::pull("error") : $error !!}
+                </div>
             @endif
             
             <div class="content-title"><i class="fas fa-sleigh"></i> {{ config('app.name') }}</div>
