@@ -75,7 +75,7 @@ class User extends Authenticatable
     }
 
     public function name(){
-        return "{$this->handover->firstName} {$this->handover->lastName}";
+        return "{$this->handover->first_name} {$this->handover->last_name}";
     }
 
     // User group checks
