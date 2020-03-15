@@ -25,7 +25,7 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="select">Student</th>
+                                <th data-sortable="true" data-filter-control="input">Student</th>
                                 <th data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-filter-control="select">Starts</th>
                                 <th data-filter-control="select">Expires</th>
