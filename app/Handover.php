@@ -11,4 +11,7 @@ class Handover extends Model
      */
     protected $connection = 'mysql-handover'; 
     public $table = 'users';
+
+    protected $fillable = ['atc_active', 'visiting_controller'];
+
 }

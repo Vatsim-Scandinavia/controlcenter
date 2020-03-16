@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Position;
 use App\UserEndorsement;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,7 +33,10 @@ class UserEndorsementController extends Controller
     public function create()
     {
         $user = Auth::user();
-        if($user->isModerator()) return view('user.endorsement.create', compact('user'));
+        $students = User::with('trainings')->has('trainings')->get();
+        $positions = Position::all();
+
+        if($user->isModerator()) return view('user.endorsement.create', compact('students', 'positions'));
 
         abort(403);
     }
@@ -42,9 +47,33 @@ class UserEndorsementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        if(Auth::user()->isModerator()) {
+
+            $data = request()->validate([
+                'student' => 'required|numeric',
+                'expires' => 'required|date:Y-m-d|after_or_equal:today|before_or_equal:'.\Carbon\Carbon::createFromTime()->addMonth(),
+                'position' => 'required|exists:positions,callsign'
+            ]);
+
+            $user = User::find($data['student']);
+            if(!$user) return back()->withErrors(['student' => 'Invalid user']);
+        
+            $expireDate = new DateTime($data['expires']);
+            $endorsement = new UserEndorsement();
+
+            $endorsement->user_id = $user->id;
+            $endorsement->training_id = $user->trainings->first()->id;
+            $endorsement->position = $data['position'];
+            $endorsement->expires_at = $expireDate->format('Y-m-d');
+
+            $endorsement->save();
+
+            return redirect()->route('users.endorsements');
+        }
+
+        abort(403);
     }
 
     /**

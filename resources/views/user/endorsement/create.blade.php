@@ -10,25 +10,69 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Booking 
+                    Create 
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('SweatboxController@store') !!}" method="POST">
+                <form action="{!! action('UserEndorsementController@store') !!}" method="POST">
                     @csrf
+
                     <div class="form-group">
                         <label for="student">Student</label>
-                        <textarea class="form-control" id="student" rows="8" placeholder="Write booking notes here" name="student"></textarea>
+                        <input 
+                            id="student"
+                            class="form-control @error('student') is-invalid @enderror"
+                            type="text"
+                            name="student"
+                            list="students"
+                            value="{{ old('student') }}"
+                            required>
+
+                        <datalist id="students">
+                            @foreach($students as $student)
+                                <option value="{{ $student->id }}">{{ $student->handover->full_name }}</option>
+                            @endforeach
+                        </datalist>
+
+                        @error('student')
+                            <span class="text-danger">{{ $errors->first('student') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="date">Expires</label>
-                        <input id="date" class="datepicker form-control" type="text" name="date">
+                        <label for="expires">Expires</label>
+                        <input
+                            id="expires"
+                            class="datepicker form-control @error('expires') is-invalid @enderror"
+                            type="text"
+                            name="expires"
+                            required>
+
+                        @error('expires')
+                            <span class="text-danger">{{ $errors->first('expires') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position">
+                        <input 
+                            id="position"
+                            class="form-control @error('position') is-invalid @enderror"
+                            type="text"
+                            name="position"
+                            list="positions"
+                            value="{{ old('position') }}"
+                            required>
+
+                        <datalist id="positions">
+                            @foreach($positions as $position)
+                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                            @endforeach
+                        </datalist>
+
+                        @error('position')
+                            <span class="text-danger">{{ $errors->first('position') }}</span>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-success">Create</button>
@@ -49,9 +93,15 @@
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $('div').tooltip();
-        $(".datepicker").flatpickr({ dateFormat: "F d, Y" });
-        $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
-        $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+        if({!! json_encode(old('date')) !!}) { 
+            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "F d, Y", defaultDate: new Date({!! json_encode(old('date')) !!}) });
+        } else {
+            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "F d, Y" });
+        }
+        $('.flatpickr-input:visible').on('focus', function () {
+            $(this).blur();
+        });
+        $('.flatpickr-input:visible').prop('readonly', false);
     })
 </script>
 @endsection
