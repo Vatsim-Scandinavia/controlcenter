@@ -11,8 +11,6 @@ use Tests\TestCase;
 class FrontpageTest extends TestCase
 {
 
-    use RefreshDatabase;
-
     /** @test **/
     public function user_can_load_front_page()
     {
@@ -28,8 +26,15 @@ class FrontpageTest extends TestCase
         Auth::login($user);
 
         $response = $this->get('/');
-        $response->assertStatus(302)
-            ->assertRedirect('/dashboard');
+        $response->assertRedirect('/dashboard');
+
+    }
+
+    /** @test */
+    public function user_cant_logout_if_not_logged_in()
+    {
+        $response = $this->get('/logout');
+        $response->assertRedirect('/login');
 
     }
 
