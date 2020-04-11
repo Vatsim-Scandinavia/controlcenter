@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         $data = [
-            'rating' => $user->handover->ratingLong
+            'rating' => $user->handover->rating_long
         ];
 
         $trainings = $user->trainings;
