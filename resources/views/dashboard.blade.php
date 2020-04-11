@@ -113,13 +113,13 @@
                     <tr>
                         <td>
                             @if ( is_iterable($ratings = $training->ratings->toArray()) )
-                                @for( $i = 0; $i < sizeof($ratings); $i++ )
-                                    @if ( $i == (sizeof($ratings) - 1) )
-                                        {{ $ratings[$i]["name"] }}
+                                @foreach($ratings as $rating)
+                                    @if ($loop->last)
+                                        {{ $rating["name"] }}
                                     @else
-                                        {{ $ratings[$i]["name"] . " + " }}
+                                        {{ $rating["name"] . " + " }}
                                     @endif
-                                @endfor
+                                @endforeach
                             @else
                                 {{ $ratings["name"] }}
                             @endif
