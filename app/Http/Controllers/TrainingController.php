@@ -40,7 +40,7 @@ class TrainingController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
@@ -56,7 +56,7 @@ class TrainingController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
@@ -117,7 +117,7 @@ class TrainingController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Training|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -152,13 +152,14 @@ class TrainingController extends Controller
 
         $training->save();
 
+        return $training;
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Training  $training
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($id)
     {
