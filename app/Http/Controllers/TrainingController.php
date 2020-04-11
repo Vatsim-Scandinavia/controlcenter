@@ -8,6 +8,7 @@ use App\Training;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 
 class TrainingController extends Controller
 {
@@ -121,14 +122,7 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'experience' => 'required|integer|min:1|max:5',
-            'englishOnly' => 'nullable',
-            'motivation' => 'required|min:400|max:1500',
-            'comment' => 'nullable',
-            'training_level' => 'required',
-            'training_country' => 'required'
-        ]);
+        $data = $this->validateRequest();
 
         $ratings = explode("+", $data["training_level"]);
         $modelRatings = [];
@@ -185,13 +179,17 @@ class TrainingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Training  $training
-     * @return \Illuminate\Http\Response
+     * @param Training $training
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, Training $training)
+    public function update(Training $training)
     {
-        //
+        $this->authorize('update', $training);
+
+        $training->update($this->validateRequest());
+
+        return redirect($training->path())->with("message", "Training successfully updated");
     }
 
     /**
@@ -203,5 +201,20 @@ class TrainingController extends Controller
     public function destroy(Training $training)
     {
         //
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'experience' => 'sometimes|required|integer|min:1|max:5',
+            'englishOnly' => 'nullable',
+            'motivation' => 'sometimes|required|min:400|max:1500',
+            'comment' => 'nullable',
+            'training_level' => 'sometimes|required',
+            'training_country' => 'sometimes|required'
+        ]);
     }
 }

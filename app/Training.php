@@ -7,10 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Training extends Model
 {
 
+    protected $guarded = [];
+
     protected $dates = [
       'started_at',
       'finished_at'
     ];
+
+    public function path()
+    {
+        return route('training.update', ['training' => $this->id]);
+    }
 
     public function user(){
         return $this->belongsTo(User::class);
