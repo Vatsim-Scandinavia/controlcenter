@@ -120,8 +120,6 @@
                                         {{ $rating["name"] . " + " }}
                                     @endif
                                 @endforeach
-                            @else
-                                {{ $ratings["name"] }}
                             @endif
                         </td>
                         <td>{{ $training->country->name }}</td>
