@@ -97,6 +97,9 @@
         <!-- Card Body -->
         <div class="card-body">
 
+        @if (sizeof($trainings) == 0)
+            You have no trainings.
+        @else
         <div class="table-responsive">
             <table class="table table-striped" width="100%" cellspacing="0">
             <thead>
@@ -162,7 +165,7 @@
             </tbody>
             </table>
         </div>
-
+        @endif
         </div>
     </div>
     </div>
