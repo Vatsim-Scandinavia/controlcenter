@@ -74,7 +74,7 @@ class User extends Authenticatable
         return $this->hasMany(Vatbook::class);
     }
 
-    public function name(){
+    public function getNameAttribute(){
         return "{$this->handover->first_name} {$this->handover->last_name}";
     }
 
