@@ -64,6 +64,10 @@ Route::middleware('auth')->group(function () {
 
     // Training report routes
     Route::get('/training/report/{report}', 'TrainingReportController@show')->name('training.report.show');
+    Route::get('training/{training}/reports', 'TrainingReportController@index')->name('training.report.index');
+    Route::get('/training/{training}/report/create', 'TrainingReportController@create')->name('training.report.create');
+    Route::post('/training/{training}/report', 'TrainingReportController@store')->name('training.report.store');
+    Route::patch('/training/report/{report}', 'TrainingReportController@update')->name('training.report.update');
 
     // Sweatbox routes
     Route::get('/sweatbox', 'SweatboxController@index')->name('sweatbox');
