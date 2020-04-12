@@ -115,7 +115,7 @@
             </thead>
             <tbody>
                 @foreach($trainings as $training)
-                    <tr>
+                    <tr class="link-row" data-href="{{ $training->path() }}">
                         <td>
                             @foreach($training->ratings as $rating)
                                 @if ($loop->last)
@@ -158,7 +158,7 @@
                             @endswitch
                         </td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
+                            <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
                         </td>
                     </tr>
                 @endforeach
@@ -191,6 +191,11 @@
     </div>
 
 </div>
+<style>
+    .link-row {
+        cursor: pointer;
+    }
+</style>
 @endsection
 
 @section('js')
@@ -202,12 +207,17 @@
                 "    </div>";
         }
 
-        $(document).ready(
+        $(document).ready( function () {
             setTimeout(function () {
                 $("#success-message").css("display", "none");
-                sessionStorage.removeItem('successMessage');
-            }, 5000)
-        );
+                sessionStorage.removeItem("successMessage");
+            }, 5000);
+
+            $(".link-row").click(function () {
+                window.location = $(this).data('href');
+            });
+
+        });
 
     </script>
 @endsection
