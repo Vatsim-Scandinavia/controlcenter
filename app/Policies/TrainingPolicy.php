@@ -45,4 +45,16 @@ class TrainingPolicy
     {
         return $user->isModerator();
     }
+
+    /**
+     * Determines whether the user can access the training reports associated with the training
+     *
+     * @param User $user
+     * @param Training $training
+     * @return bool
+     */
+    public function viewReports(User $user, Training $training)
+    {
+        return $user->isMentor() || $user->is($training->user);
+    }
 }
