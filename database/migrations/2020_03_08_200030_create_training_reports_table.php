@@ -23,6 +23,7 @@ class CreateTrainingReportsTable extends Migration
             $table->boolean('draft')->default(false);
             $table->timestamps();
 
+            $table->foreign('training_id')->references('id')->on('trainings');
             $table->foreign('written_by_id')->references('id')->on('users');
         });
     }
