@@ -115,15 +115,13 @@
                 @foreach($trainings as $training)
                     <tr>
                         <td>
-                            @if ( is_iterable($ratings = $training->ratings->toArray()) )
-                                @foreach($ratings as $rating)
-                                    @if ($loop->last)
-                                        {{ $rating["name"] }}
-                                    @else
-                                        {{ $rating["name"] . " + " }}
-                                    @endif
-                                @endforeach
-                            @endif
+                            @foreach($training->ratings as $rating)
+                                @if ($loop->last)
+                                    {{ $rating->name }}
+                                @else
+                                    {{ $rating->name . " + " }}
+                                @endif
+                            @endforeach
                         </td>
                         <td>{{ $training->country->name }}</td>
                         <td>
