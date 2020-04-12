@@ -47,7 +47,7 @@ class CreateCountryRating extends Migration
             ['country_id' => 4, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 4, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Sweden
+            // Iceland
             ['country_id' => 5, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 5, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 5, 'rating_id' => 4, 'required_vatsim_rating' => 4],
