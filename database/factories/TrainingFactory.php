@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Training::class, function (Faker $faker) {
     return [
-        'user_id' => factory(\App\User::class)->create()->id,
+        'user_id' => factory(\App\User::class)->create(['group' => null])->id,
         'status' => 0,
         'country_id' => 1,
         'motivation' => $faker->paragraph(15, false),
