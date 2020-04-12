@@ -88,27 +88,30 @@ class TrainingsTest extends TestCase
 
 
     /** @test */
-    public function user_can_update_the_trainings_status()
+    public function moderator_can_update_the_trainings_status()
     {
         $training = factory(\App\Training::class)->create();
-        $training->updateStatus(0);
+        $moderator = factory(\App\User::class)->create();
+        $moderator->update(['group' => 1]);
+
+        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 0]);
 
-        $training->updateStatus(1);
+        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 1]);
 
-        $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 1, 'started_at' => $training->started_at->format('Y-m-d H:i:s')]);
+        $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 1, 'started_at' => $training->fresh()->started_at->format('Y-m-d H:i:s')]);
 
-        $training->updateStatus(3);
+        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 3]);
 
         $this->assertDatabaseHas('trainings', [
             'id' => $training->id,
             'status' => 3,
-            'started_at' => $training->started_at->format('Y-m-d H:i:s'),
-            'finished_at' => $training->finished_at->format('Y-m-d H:i:s')
+            'started_at' => $training->fresh()->started_at->format('Y-m-d H:i:s'),
+            'finished_at' => $training->fresh()->finished_at->format('Y-m-d H:i:s')
         ]);
 
-        $training->updateStatus(0);
+        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
 
         $this->assertDatabaseHas('trainings', [
             'id' => $training->id,
@@ -117,7 +120,7 @@ class TrainingsTest extends TestCase
             'finished_at' => null
         ]);
 
-        $training->updateStatus(-1);
+        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => -1]);
 
         $this->assertDatabaseHas('trainings', [
             'id' => $training->id,

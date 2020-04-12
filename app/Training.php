@@ -25,28 +25,24 @@ class Training extends Model
 
         if (($status == 0 || $status == -1) && $status < $oldStatus) {
             // Training was set back in queue
-            $this->started_at = null;
-            $this->finished_at = null;
-            $this->save();
+            $this->update(['started_at' => null, 'finished_at' => null]);
         }
 
         if ($status == 1) {
             if ($status > $oldStatus) {
                 // Training has begun
-                $this->started_at = now();
-                $this->save();
+                $this->update(['started_at' => now()]);
             } elseif ($status < $oldStatus) {
-                $this->finished_at = null;
-                $this->save();
+                $this->update(['finished_at' => null]);
             }
         }
 
         if ($status == 3 && $status > $oldStatus) {
-            if ($this->started_at == null)
-                $this->started_at = now();
-
-            $this->finished_at = now();
-            $this->save();
+            if ($this->started_at == null) {
+                $this->update(['started_at' => now(), 'finished_at' => now()]);
+            } else {
+                $this->update(['finished_at' => now()]);
+            }
         }
 
         $this->update(['status' => $status]);
