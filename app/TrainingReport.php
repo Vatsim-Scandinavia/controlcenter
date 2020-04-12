@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class TrainingReport extends Model
 {
+
+    public function path()
+    {
+        return route('training.report.show', ['report' => $this->id]);
+    }
+
     public function training(){
         return $this->belongsTo(Training::class);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\TrainingReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,8 +27,11 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
+        $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id')->toArray())->orderBy('created_at')->get()->last();
+
         $data = [
-            'rating' => $user->handover->rating_long
+            'rating' => $user->handover->rating_long,
+            'report' => $report
         ];
 
         $trainings = $user->trainings;

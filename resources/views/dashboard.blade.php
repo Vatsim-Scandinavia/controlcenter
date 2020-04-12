@@ -72,7 +72,9 @@
             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Last training</div>
             <div class="row no-gutters align-items-center">
                 <div class="col-auto">
-                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">20th June 2019</div>
+                @if ($data['report'] != null) <a href="{{ $data['report']->path() }}"> @endif
+                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $data['report'] != null ? $data['report']->created_at->toFormattedDateString() : "-" }}</div>
+                @if ($data['report'] != null) </a> @endif
                 </div>
             </div>
             </div>
