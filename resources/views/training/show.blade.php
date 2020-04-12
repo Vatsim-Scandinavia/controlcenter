@@ -217,92 +217,33 @@
                     Reports
                 </h6>
             </div>
-            @if (sizeof($training->reports) == 0)
-                <div class="card-body">
-                    <div class="card-text text-primary">
-                        No training reports yet.
-                    </div>
-                </div>
-            @else
-                @foreach($training->reports as $report)
-                    <div class="card-body">
-                        <div class="card bg-light mb-3">
-                            <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}</div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    {{ $report->content }}
-                                </p>
-                            </div>
-                            @if ($report->mentor_notes != null)
-                            <div class="card-header text-primary">Mentor notes</div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    {{ $report->mentor_notes }}
-                                </p>
-                            </div>
-                            @endif
+            <div class="card-body">
+                @if (sizeof($training->reports) == 0)
+                        <div class="card-text text-primary">
+                            No training reports yet.
                         </div>
-                    </div>
-                @endforeach
-            @endif
-            <!--
-            <div class="report-overflow-scroll">
-
-                <div class="card-body">
-                    <div class="card bg-light mb-3">
-                        <div class="card-header text-primary">Training report 12. des 2019</div>
-                            <div class="card-body">
-                            <p class="card-text">
-                                First session, lost notes due to technical issues, but from what I can recall, you need to practice some on your phraseology.
-                                Mainly "Cleared to", "Climb FL/xxx feet" -- never "Fly direct" or "Climb to FL/xxx feet".
-                                <br><br>
-                                Remember that separation by altitude or vectors are always made to create separation. (Vertical) speed control is only used to
-                                _maintain_ separation.
-                                <br><br>
-                                When giving vectors, always explain why: For example "Turn left/right hdg xxx, vectors ILS rwy 17".
-                                <br><br>
-                                Upon giving vectors to aircraft previously flying on own navigation (ie. on a STAR or direct a NAVAID) it's generally a good idea
-                                to say "fly heading xxx" instead of "turn left/right hdg xxx", because you don't know which heading he's flying. Remember the
-                                difference between heading and track.
-                            </p>
+                @else
+                    @foreach($training->reports as $report)
+                            <div class="card bg-light mb-3">
+                                <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}</div>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{ $report->content }}
+                                    </p>
+                                </div>
+                                @if ($report->mentor_notes != null)
+                                <div class="card-header text-primary">Mentor notes</div>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{ $report->mentor_notes }}
+                                    </p>
+                                </div>
+                                @endif
                             </div>
-                        <div class="card-header text-primary">Mentor notes</div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Mentor notes text
-                                </p>
-                            </div>
-                    </div>
-                </div>
-
-                <div class="card-body">
-                    <div class="card bg-light mb-3">
-                        <div class="card-header text-primary">Training report 12. des 2019</div>
-                            <div class="card-body">
-                            <p class="card-text">
-                                When someone checks in with their altitude, you don't need to state the altitude you see them at in your scope when identifying
-                                them.
-                                <br><br>
-                                Deconfliction: We received LNFTQ, a DA40, with SAS253, a B737 just 5.6 nmi and decreasing behind, from Tower. Not a good spot to
-                                be in, but that was Tower's fault. In this situation, your number one priority is to get these
-                                <br><br>
-                                away from each other. The most effective way of doing this is giving them vectors away from each other. Relevant phraseology here
-                                is: "SAS253, essential traffic, 12'o'clock, 4000 feet, 4 nmi, light aircraft, turn left HDG 090 NOW".
-                                <br><br>
-                                Remember to look at the TL. If it's at level 95, you cannot descend people to FL80, because you should never clear people to fly
-                                in the transition layer.
-                                <br><br>
-                                Remember to use the lists actively (CFL etc).
-                                <br><br>
-                                You can give resume own nav, you don't need to vector planes, if it gets stressful
-                                <br><br>
-                                Don't just say yes to everything a pilot asks for. On the contrary, don't micro manage them either
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-                -->
+                    @endforeach
+                @endif
+                <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 btn-primary">Create report</a>
+                <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 ml-2 btn-outline-secondary">See all reports</a>
             </div>
         </div>
     </div>
