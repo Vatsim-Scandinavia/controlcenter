@@ -152,12 +152,14 @@ class TrainingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Training  $training
+     * @param \App\Training $training
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($id)
+    public function show(Training $training)
     {
-        $training = Training::find($id);
+        $this->authorize('view', $training);
+
         $trainingMentors = User::whereNotNull('group')->get();
         $statuses = $this->statuses;
         $types = $this->types;

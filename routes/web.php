@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
     Route::post('/training/store', 'TrainingController@store');
     Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
-    Route::get('/training/{training}', 'TrainingController@show');
+    Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 
     // Sweatbox routes
     Route::get('/sweatbox', 'SweatboxController@index')->name('sweatbox');
