@@ -86,6 +86,46 @@ class TrainingsTest extends TestCase
 
     }
 
-    // TODO add test for changing training status
+
+    /** @test */
+    public function user_can_update_the_trainings_status()
+    {
+        $training = factory(\App\Training::class)->create();
+        $training->updateStatus(0);
+
+        $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 0]);
+
+        $training->updateStatus(1);
+
+        $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 1, 'started_at' => $training->started_at->format('Y-m-d H:i:s')]);
+
+        $training->updateStatus(3);
+
+        $this->assertDatabaseHas('trainings', [
+            'id' => $training->id,
+            'status' => 3,
+            'started_at' => $training->started_at->format('Y-m-d H:i:s'),
+            'finished_at' => $training->finished_at->format('Y-m-d H:i:s')
+        ]);
+
+        $training->updateStatus(0);
+
+        $this->assertDatabaseHas('trainings', [
+            'id' => $training->id,
+            'status' => 0,
+            'started_at' => null,
+            'finished_at' => null
+        ]);
+
+        $training->updateStatus(-1);
+
+        $this->assertDatabaseHas('trainings', [
+            'id' => $training->id,
+            'status' => -1,
+            'started_at' => null,
+            'finished_at' => null
+        ]);
+
+    }
 
 }

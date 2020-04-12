@@ -48,6 +48,8 @@ class Training extends Model
             $this->finished_at = now();
             $this->save();
         }
+
+        $this->update(['status' => $status]);
     }
 
     public function user(){
