@@ -2,27 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Training;
 use App\TrainingReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingReportController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Training $training
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function index()
+    public function index(Training $training)
     {
-        //
+        $this->authorize('viewReports', $training);
+
+        $reports = TrainingReport::where('training_id', $training->id);
+
+        foreach ($reports as $key => $report) {
+            if ( ! Auth::user()->can('view', $report)) {
+                $reports->pull($key);
+            }
+        }
+
+        return view('trainingReport.index', compact('reports'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Training $training
+     * @return void
      */
-    public function create()
+    public function create(Training $training)
     {
         //
     }
