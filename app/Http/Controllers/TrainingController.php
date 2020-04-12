@@ -189,7 +189,18 @@ class TrainingController extends Controller
     {
         $this->authorize('update', $training);
 
-        $training->update($this->validateRequest());
+        $attributes = $this->validateRequest();
+        if (key_exists('status', $attributes)) {
+            $training->updateStatus($attributes['status']);
+        }
+
+        if (key_exists('mentors', $attributes)) {
+            $training->mentors()->detach();
+            $training->mentors()->attach($attributes['mentors']);
+            unset($attributes['mentors']);
+        }
+
+        $training->update($attributes);
 
         return redirect($training->path())->with("message", "Training successfully updated");
     }
@@ -216,7 +227,11 @@ class TrainingController extends Controller
             'motivation' => 'sometimes|required|min:400|max:1500',
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
-            'training_country' => 'sometimes|required'
+            'training_country' => 'sometimes|required',
+            'status' => 'sometimes|required|integer',
+            'type' => 'sometimes|required|integer',
+            'notes' => 'nullable',
+            'mentors' => 'sometimes'
         ]);
     }
 }

@@ -19,6 +19,7 @@ class CreateTrainingUserTable extends Migration
             $table->timestamp('expire_at');
             $table->timestamps();
 
+            $table->primary(['user_id', 'training_id']);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('training_id')->references('id')->on('trainings');
         });

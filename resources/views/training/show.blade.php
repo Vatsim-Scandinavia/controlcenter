@@ -4,18 +4,14 @@
 
 @section('content')
 <h1 class="h3 mb-4 text-gray-800">
-    {{ $training->user->handover->firstName }}'s training for
-    @if ( is_iterable($ratings = $training->ratings->toArray()) )
-        @for( $i = 0; $i < sizeof($ratings); $i++ )
-            @if ( $i == (sizeof($ratings) - 1) )
-                {{ $ratings[$i]["name"] }}
-            @else
-                {{ $ratings[$i]["name"] . " + " }}
-            @endif
-        @endfor
-    @else
-        {{ $ratings["name"] }}
-    @endif
+    {{ $training->user->handover->first_name }}'s training for
+    @foreach($training->ratings as $rating)
+        @if ($loop->last)
+            {{ $rating->name }}
+        @else
+            {{ $rating->name . " + " }}
+        @endif
+    @endforeach
 </h1>
 
 <div class="row">
@@ -25,7 +21,7 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
                     Details
-                </h6> 
+                </h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -50,7 +46,7 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
                                 </td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
-                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->handover->firstName }} {{ $training->user->handover->lastName }}</a></td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->name }}</a></td>
                                 <td>
                                     @if ( is_iterable($ratings = $training->ratings->toArray()) )
                                         @for( $i = 0; $i < sizeof($ratings); $i++ )
@@ -86,20 +82,16 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if ( is_iterable($mentors = $training->mentors->toArray()) )
-                                        @if (sizeof($mentors) == 0)
-                                            -
-                                        @else
-                                            @for( $i = 0; $i < sizeof($mentors); $i++ )
-                                                @if ( $i == (sizeof($mentors) - 1) )
-                                                    {{ $mentors[$i]["name"] }}
-                                                @else
-                                                    {{ $mentors[$i]["name"] . ", " }}
-                                                @endif
-                                            @endfor
-                                        @endif
+                                    @if (sizeof($training->mentors) == 0)
+                                        -
                                     @else
-                                        {{ $mentors[$i]["name"] }}
+                                        @foreach($training->mentors as $mentor)
+                                            @if($loop->last)
+                                                {{ $mentor->name }}
+                                            @else
+                                                {{ $mentor->name . " + " }}
+                                            @endif
+                                        @endforeach
                                     @endif
                                 </td>
                             </tr>
@@ -115,20 +107,22 @@
 
 <div class="row">
 
-    <div class="col-xl-4 col-md-12 mb-12">
+    @can('update', $training)
+    <div class="col-xl col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Options 
-                </h6> 
+                    Options
+                </h6>
             </div>
             <div class="card-body">
-                <form action="{!! action('TrainingController@update') !!}" method="POST">
+                <form action="{{ route('training.update', ['training' => $training->id]) }}" method="POST">
+                    @method('PATCH')
                     @csrf
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training state</label>
-                        <select class="form-control" id="trainingStateSelect">
+                        <select class="form-control" name="status" id="trainingStateSelect">
                             @foreach($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -143,7 +137,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
-                        <select class="form-control" id="trainingStateSelect">
+                        <select class="form-control" name="type" id="trainingStateSelect">
                             @foreach($types as $id => $data)
                                 @if($id == $training->type)
                                     <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
@@ -156,14 +150,14 @@
 
                     <div class="form-group">
                         <label for="internalTrainingComments">Internal training comments</label>
-                        <textarea class="form-control" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
+                        <textarea class="form-control" name="notes" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" id="assignMentors">
+                        <select multiple class="form-control" name="mentors[]" id="assignMentors">
                             @foreach($trainingMentors as $mentor)
-                                <option>{{ $mentor->handover->firstName }} {{ $mentor->handover->lastName }}</option>
+                                <option value="{{ $mentor->id }}" {{ ($training->mentors->contains($mentor->id)) ? "selected" : "" }}>{{ $mentor->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -174,13 +168,14 @@
             </div>
         </div>
     </div>
+    @endcan
 
-    <div class="col-xl-4 col-md-12 mb-12">
+    <div class="col-xl col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Application 
-                </h6> 
+                    Application
+                </h6>
             </div>
             <div class="report-overflow-scroll">
                 <div class="card-body">
@@ -196,7 +191,7 @@
                                     The student is able to receive training in local and English language.
                                 </p>
                             @endif
-                        
+
                         </div>
                     </div>
                 </div>
@@ -213,16 +208,46 @@
             </div>
         </div>
     </div>
-    
 
-    <div class="col-xl-4 col-md-12 mb-12">
+
+    <div class="col-xl col-md-12 mb-12">
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Reports 
-                </h6> 
+                    Reports
+                </h6>
             </div>
+            @if (sizeof($training->reports) == 0)
+                <div class="card-body">
+                    <div class="card-text text-primary">
+                        No training reports yet.
+                    </div>
+                </div>
+            @else
+                @foreach($training->reports as $report)
+                    <div class="card-body">
+                        <div class="card bg-light mb-3">
+                            <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}</div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {{ $report->content }}
+                                </p>
+                            </div>
+                            @if ($report->mentor_notes != null)
+                            <div class="card-header text-primary">Mentor notes</div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {{ $report->mentor_notes }}
+                                </p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+            <!--
             <div class="report-overflow-scroll">
+
                 <div class="card-body">
                     <div class="card bg-light mb-3">
                         <div class="card-header text-primary">Training report 12. des 2019</div>
@@ -240,7 +265,13 @@
                                 to say "fly heading xxx" instead of "turn left/right hdg xxx", because you don't know which heading he's flying. Remember the
                                 difference between heading and track.
                             </p>
-                        </div>
+                            </div>
+                        <div class="card-header text-primary">Mentor notes</div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Mentor notes text
+                                </p>
+                            </div>
                     </div>
                 </div>
 
@@ -271,9 +302,8 @@
 
                     </div>
                 </div>
+                -->
             </div>
         </div>
     </div>
-
-</div>
 @endsection

@@ -86,5 +86,6 @@ class TrainingsTest extends TestCase
 
     }
 
+    // TODO add test for changing training status
 
 }
