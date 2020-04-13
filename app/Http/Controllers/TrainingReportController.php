@@ -45,12 +45,22 @@ class TrainingReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param Training $training
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(Request $request)
+    public function store(Request $request, Training $training)
     {
-        //
+        $this->authorize('create', TrainingReport::class);
+
+        $data = $this->validateRequest();
+        $data['written_by_id'] = Auth::id();
+        $data['training_id'] = $training->id;
+
+        $report = TrainingReport::create($data);
+
+        return redirect($report->path());
     }
 
     /**
@@ -96,5 +106,18 @@ class TrainingReportController extends Controller
     public function destroy(TrainingReport $trainingReport)
     {
         //
+    }
+
+    /**
+     * Validates the request data
+     */
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'content' => 'required',
+            'mentor_notes' => 'nullable',
+            'position' => 'nullable',
+            'draft' => 'sometimes|required|boolean'
+        ]);
     }
 }

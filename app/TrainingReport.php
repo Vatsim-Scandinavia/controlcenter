@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class TrainingReport extends Model
 {
 
+    protected $guarded = [];
+
     public function path()
     {
         return route('training.report.show', ['report' => $this->id]);
