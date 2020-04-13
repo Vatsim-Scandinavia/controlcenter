@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 
     // Training report routes
-    Route::get('/training/report/{report}', 'TrainingReportController@show')->name('training.report.show');
+    Route::get('/training/report/{report}', 'TrainingReportController@edit')->name('training.report.edit');
     Route::get('training/{training}/reports', 'TrainingReportController@index')->name('training.report.index');
     Route::get('/training/{training}/report/create', 'TrainingReportController@create')->name('training.report.create');
     Route::post('/training/{training}/report', 'TrainingReportController@store')->name('training.report.store');

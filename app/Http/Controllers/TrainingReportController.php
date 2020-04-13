@@ -79,11 +79,11 @@ class TrainingReportController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\TrainingReport  $trainingReport
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(TrainingReport $trainingReport)
+    public function edit(TrainingReport $report)
     {
-        //
+        return view('trainingReport.edit', compact('report'));
     }
 
     /**
