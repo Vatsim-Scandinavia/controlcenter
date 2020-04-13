@@ -88,13 +88,18 @@ class TrainingReportController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TrainingReport  $trainingReport
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param \App\TrainingReport $report
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, TrainingReport $trainingReport)
+    public function update(Request $request, TrainingReport $report)
     {
-        //
+        $this->authorize('update', $report);
+
+        $report->update($this->validateRequest());
+
+        return redirect($report->path())->with('message', 'Training report successfully updated');
     }
 
     /**

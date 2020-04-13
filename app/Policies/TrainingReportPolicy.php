@@ -43,7 +43,7 @@ class TrainingReportPolicy
      */
     public function update(User $user, TrainingReport $trainingReport)
     {
-        return $user->isModerator() || $user->is($trainingReport->user);
+        return $user->isMentor();
     }
 
     /**

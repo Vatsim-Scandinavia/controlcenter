@@ -74,7 +74,32 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
 
+    /** @test */
+    public function mentor_can_update_a_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->create();
+        $content = $this->faker->paragraph();
 
+        $this->actingAs($report->training->mentors()->first())
+            ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
+            ->assertRedirect($report->path());
+
+        $this->assertDatabaseHas('training_reports', ['content' => $content]);
+
+    }
+
+    /** @test */
+    public function a_regular_user_cant_update_a_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->create();
+        $content = $this->faker->paragraph();
+
+        $this->actingAs($report->training->user)
+            ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
+            ->assertStatus(403);
+
+        $this->assertDatabaseMissing('training_reports', ['content' => $content]);
+    }
 
 
 }
