@@ -62,5 +62,19 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseHas('training_reports', $report->getAttributes());
     }
 
+    /** @test */
+    public function a_regular_user_cant_create_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->make();
+
+        $this->actingAs(factory(\App\User::class)->create(['group' => null]))
+            ->post(route('training.report.store', ['training' => $report->training->id]), $report->getAttributes())
+            ->assertStatus(403);
+
+        $this->assertDatabaseMissing('training_reports', $report->getAttributes());
+    }
+
+
+
 
 }
