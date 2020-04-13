@@ -98,8 +98,6 @@ class TrainingReportController extends Controller
     {
         $this->authorize('update', $report);
 
-//        return $request->all();
-
         $report->update($this->validateRequest());
 
         return redirect()->back()->with('message', 'Training report successfully updated');
