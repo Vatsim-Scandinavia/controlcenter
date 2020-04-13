@@ -6,6 +6,7 @@ use App\Training;
 use App\TrainingReport;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class TrainingReportPolicy
 {
@@ -55,6 +56,6 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {
-        return $user->isModerator() || $user->is($trainingReport->user);
+        return ($user->isModerator() || $user->is($trainingReport->user)) ? Response::allow() : Response::deny("Only moderators and the author of the training report can delete it.");
     }
 }

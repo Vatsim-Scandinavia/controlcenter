@@ -101,5 +101,56 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseMissing('training_reports', ['content' => $content]);
     }
 
+    /** @test */
+    public function mentor_can_delete_a_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->create();
+
+        $this->actingAs($report->training->mentors()->first())
+            ->delete(route('training.report.delete', ['report' => $report->id]))
+            ->assertRedirect(route('training.report.index', ['training' => $report->training->id]));
+
+        $this->assertDatabaseMissing('training_reports', $report->getAttributes());
+    }
+
+    /** @test */
+    public function another_mentor_cant_delete_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->create();
+        $otherMentor = factory(\App\User::class)->create(['group' => 3]);
+
+        $this->actingAs($otherMentor)
+            ->delete(route('training.report.delete', ['report' => $report->id]))
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('training_reports', $report->getAttributes());
+    }
+
+    /** @test */
+    public function regular_user_cant_delete_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->create();
+        $regularUser = factory(\App\User::class)->create(['group' => null]);
+
+        $this->actingAs($regularUser)
+            ->delete(route('training.report.delete', ['report' => $report->id]))
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('training_reports', $report->getAttributes());
+    }
+
+    /** @test */
+    public function another_moderator_can_delete_training_report()
+    {
+        $report = factory(\App\TrainingReport::class)->create();
+        $otherModerator = factory(\App\User::class)->create(['group' => 1]);
+
+        $this->actingAs($otherModerator)
+            ->delete(route('training.report.delete', ['report' => $report->id]))
+            ->assertRedirect(route('training.report.index', ['training' => $report->training->id]));
+
+        $this->assertDatabaseMissing('training_reports', $report->getAttributes());
+    }
+
 
 }

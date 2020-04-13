@@ -105,12 +105,17 @@ class TrainingReportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\TrainingReport  $trainingReport
-     * @return \Illuminate\Http\Response
+     * @param \App\TrainingReport $report
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function destroy(TrainingReport $trainingReport)
+    public function destroy(TrainingReport $report)
     {
-        //
+        $this->authorize('delete', $report);
+
+        $report->delete();
+
+        return redirect(route('training.report.index', ['training' => $report->training->id]))->with('message', 'Training report deleted');
     }
 
     /**
