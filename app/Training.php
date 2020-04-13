@@ -16,7 +16,7 @@ class Training extends Model
 
     public function path()
     {
-        return route('training.update', ['training' => $this->id]);
+        return route('training.show', ['training' => $this->id]);
     }
 
     public function updateStatus(int $status)
