@@ -6,6 +6,7 @@ use App\Training;
 use App\TrainingReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class TrainingReportController extends Controller
 {
@@ -20,7 +21,7 @@ class TrainingReportController extends Controller
     {
         $this->authorize('viewReports', $training);
 
-        $reports = TrainingReport::where('training_id', $training->id);
+        $reports = TrainingReport::where('training_id', $training->id)->get();
 
         foreach ($reports as $key => $report) {
             if ( ! Auth::user()->can('view', $report)) {
@@ -28,7 +29,7 @@ class TrainingReportController extends Controller
             }
         }
 
-        return view('trainingReport.index', compact('reports'));
+        return view('trainingReport.index', compact('training', 'reports'));
     }
 
     /**
@@ -97,9 +98,11 @@ class TrainingReportController extends Controller
     {
         $this->authorize('update', $report);
 
+//        return $request->all();
+
         $report->update($this->validateRequest());
 
-        return redirect($report->path())->with('message', 'Training report successfully updated');
+        return redirect()->back()->with('message', 'Training report successfully updated');
     }
 
     /**
@@ -124,7 +127,7 @@ class TrainingReportController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'content' => 'required',
+            'content' => 'sometimes|required',
             'mentor_notes' => 'nullable',
             'position' => 'nullable',
             'draft' => 'sometimes|required|boolean'

@@ -9,6 +9,10 @@ class TrainingReport extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'draft' => 'boolean'
+    ];
+
     public function path()
     {
         return route('training.report.show', ['report' => $this->id]);
