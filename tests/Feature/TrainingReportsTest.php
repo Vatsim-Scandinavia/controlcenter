@@ -82,7 +82,7 @@ class TrainingReportsTest extends TestCase
 
         $this->actingAs($report->training->mentors()->first())
             ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
-            ->assertRedirect($report->path());
+            ->assertRedirect();
 
         $this->assertDatabaseHas('training_reports', ['content' => $content]);
 

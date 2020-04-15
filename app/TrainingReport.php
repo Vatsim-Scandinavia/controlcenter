@@ -15,7 +15,7 @@ class TrainingReport extends Model
 
     public function path()
     {
-        return route('training.report.show', ['report' => $this->id]);
+        return route('training.report.edit', ['report' => $this->id]);
     }
 
     public function training(){
