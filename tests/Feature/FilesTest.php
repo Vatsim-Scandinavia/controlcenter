@@ -22,7 +22,7 @@ class FilesTest extends TestCase
      */
     protected function tearDown(): void
     {
-        Storage::deleteDirectory('public/files');
+        Storage::deleteDirectory('public/');
         parent::tearDown();
     }
 
@@ -35,7 +35,7 @@ class FilesTest extends TestCase
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file = File::find($response->decodeResponseJson('file_id'));
 
-        Storage::disk('local')->assertExists($file->full_path);
+        Storage::disk('test')->assertExists($file->full_path);
     }
 
     /** @test */
@@ -47,7 +47,7 @@ class FilesTest extends TestCase
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file = File::find($response->decodeResponseJson('file_id'));
 
-        Storage::disk('local')->assertExists($file->full_path);
+        Storage::disk('test')->assertExists($file->full_path);
     }
 
     /** @test */
@@ -59,7 +59,7 @@ class FilesTest extends TestCase
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file = File::find($response->decodeResponseJson('file_id'));
 
-        Storage::disk('local')->assertExists($file->full_path);
+        Storage::disk('test')->assertExists($file->full_path);
 
         $this->actingAs($user)->get(route('file.get', ['file' => $file]))
             ->assertStatus(200);
