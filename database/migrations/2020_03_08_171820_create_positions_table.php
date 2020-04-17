@@ -21,6 +21,7 @@ class CreatePositionsTable extends Migration
             $table->string('fir', 4);
         });
 
+        // Denmark
         DB::table('positions')->insert([
             ['callsign' => 'EKAH_APP', 'name' => 'Aarhus Approach', 'fir' => 'EKDK'],
             ['callsign' => 'EKAH_TWR', 'name' => 'Aarhus Tower', 'fir' => 'EKDK'],
@@ -58,7 +59,11 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'EKSP_APP', 'name' => 'Skrydstrup Approach', 'fir' => 'EKDK'],
             ['callsign' => 'EKYT_TWR', 'name' => 'Aalborg Tower', 'fir' => 'EKDK'],
             ['callsign' => 'EKYT_APP', 'name' => 'Aalborg Approach', 'fir' => 'EKDK'],
-            ['callsign' => 'EKYT_F_APP', 'name' => 'Aalborg Arrival', 'fir' => 'EKDK'],
+            ['callsign' => 'EKYT_F_APP', 'name' => 'Aalborg Arrival', 'fir' => 'EKDK']
+        ]);
+
+        // Finland
+        DB::table('positions')->insert([
             ['callsign' => 'EFIN_A_CTR', 'name' => 'Helsinki Control', 'fir' => 'EFIN'],
             ['callsign' => 'EFIN_B_CTR', 'name' => 'Helsinki Control', 'fir' => 'EFIN'],
             ['callsign' => 'EFIN_C_CTR', 'name' => 'Helsinki Control', 'fir' => 'EFIN'],
@@ -129,7 +134,11 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'EFTU_TWR', 'name' => 'Turku Tower', 'fir' => 'EFIN'],
             ['callsign' => 'EFUT_TWR', 'name' => 'Utti Tower', 'fir' => 'EFIN'],
             ['callsign' => 'EFVA_APP', 'name' => 'Vaasa Radar', 'fir' => 'EFIN'],
-            ['callsign' => 'EFVA_TWR', 'name' => 'Vaasa Tower', 'fir' => 'EFIN'],
+            ['callsign' => 'EFVA_TWR', 'name' => 'Vaasa Tower', 'fir' => 'EFIN']
+        ]);
+
+        // Iceland
+        DB::table('positions')->insert([
             ['callsign' => 'BIRD_CTR', 'name' => 'Reykjavik Control', 'fir' => 'BIRD'],
             ['callsign' => 'BIRD_1_CTR', 'name' => 'Reykjavik Control', 'fir' => 'BIRD'],
             ['callsign' => 'BIRD_2_CTR', 'name' => 'Reykjavik Control', 'fir' => 'BIRD'],
@@ -176,7 +185,11 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'BGTL_APP', 'name' => 'Thule Approach', 'fir' => 'BGGL'],
             ['callsign' => 'BGTL_TWR', 'name' => 'Thule Tower', 'fir' => 'BGGL'],
             ['callsign' => 'BGTL_GND', 'name' => 'Thule Ground', 'fir' => 'BGGL'],
-            ['callsign' => 'BGCO_TWR', 'name' => 'Constable Pynt Tower', 'fir' => 'BGGL'],
+            ['callsign' => 'BGCO_TWR', 'name' => 'Constable Pynt Tower', 'fir' => 'BGGL']
+        ]);
+
+        // Norway
+        DB::table('positions')->insert([
             ['callsign' => 'ENAL_APP', 'name' => 'Møre Approach', 'fir' => 'ENOR'],
             ['callsign' => 'ENAL_TWR', 'name' => 'Vigra Tower', 'fir' => 'ENOR'],
             ['callsign' => 'ENAN_APP', 'name' => 'Andøya Tower', 'fir' => 'ENOR'],
@@ -293,8 +306,11 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'ENJA_I_TWR', 'name' => 'Jan Mayen Information', 'fir' => 'ENOB'],
             ['callsign' => 'ENOB_CTR', 'name' => 'Bodø Oceanic Control', 'fir' => 'ENOB'],
             ['callsign' => 'ENSA_I_TWR', 'name' => 'Svea Information', 'fir' => 'ENOB'],
-            ['callsign' => 'ENSB_I_TWR', 'name' => 'Longyear Information', 'fir' => 'ENOB'],
-            ['callsign' => 'ESCF_TWR', 'name' => 'Malmen Tower', 'fir' => 'ESAA'],
+            ['callsign' => 'ENSB_I_TWR', 'name' => 'Longyear Information', 'fir' => 'ENOB']
+        ]);
+
+        // Sweden
+        DB::table('positions')->insert([['callsign' => 'ESCF_TWR', 'name' => 'Malmen Tower', 'fir' => 'ESAA'],
             ['callsign' => 'ESCM_TWR', 'name' => 'Uppsala Tower', 'fir' => 'ESAA'],
             ['callsign' => 'ESCR_CTR', 'name' => 'Grizzly', 'fir' => 'ESAA'],
             ['callsign' => 'ESDF_TWR', 'name' => 'Ronneby Tower', 'fir' => 'ESAA'],
