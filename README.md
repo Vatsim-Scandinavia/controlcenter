@@ -1,5 +1,5 @@
 ## SANTA
-Scandinavian Training System. Created using `Laravel 6.0`, based on `SB Admin 2` boostrap theme.
+Scandinavian Training System. Created using `Laravel 6`, based on `SB Admin 2` boostrap theme.
 
 ## Setup and install
 Just clone this repository and you're almost ready. First make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) on your computer.
