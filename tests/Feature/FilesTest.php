@@ -87,5 +87,32 @@ class FilesTest extends TestCase
         $this->actingAs($user)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('message', 'File successfully deleted');
     }
 
+    /** @test */
+    public function moderator_can_delete_another_users_file()
+    {
+        $user = factory(\App\User::class)->create(['group' => 3]);
+        $file = UploadedFile::fake()->image($this->faker->word);
+        $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
+        $file_id = $response->decodeResponseJson('file_id');
+        $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
+
+        $moderator = factory(\App\User::class)->create(['group' => 2]);
+
+        $this->actingAs($moderator)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('message', 'File successfully deleted');
+    }
+
+    /** @test */
+    public function regular_user_cant_delete_another_users_file()
+    {
+        $user = factory(\App\User::class)->create(['group' => 3]);
+        $file = UploadedFile::fake()->image($this->faker->word);
+        $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
+        $file_id = $response->decodeResponseJson('file_id');
+        $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
+
+        $otherUser = factory(\App\User::class)->create(['group' => null]);
+
+        $this->actingAs($otherUser)->delete(route('file.delete', ['file' => $file_id]))->assertStatus(403)->assertSessionMissing('message');
+    }
 
 }
