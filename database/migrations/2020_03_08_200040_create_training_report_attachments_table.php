@@ -19,9 +19,6 @@ class CreateTrainingReportAttachmentsTable extends Migration
             $table->string('file_id');
             $table->boolean('hidden')->default(false);
             $table->timestamps();
-
-            $table->foreign('training_report_id')->references('id')->on('training_reports');
-            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 

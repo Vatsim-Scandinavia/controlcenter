@@ -16,7 +16,7 @@ class CreateFilesTable extends Migration
         Schema::create('files', function (Blueprint $table) {
 
             $table->string('id');
-            $table->integer('uploaded_by')->nullable();
+            $table->unsignedBigInteger('uploaded_by')->nullable();
             $table->string('path');
             $table->timestamps();
 
@@ -25,6 +25,11 @@ class CreateFilesTable extends Migration
             // We want to keep all the files even though the user is deleted from the database
             $table->foreign('uploaded_by')->references('id')->on('users')->onDelete('SET NULL')->onUpdate('CASCADE');
 
+        });
+
+        Schema::table('training_report_attachments', function ($table) {
+            $table->foreign('training_report_id')->references('id')->on('training_reports');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 
