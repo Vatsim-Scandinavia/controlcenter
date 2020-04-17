@@ -242,8 +242,12 @@
                             </div>
                     @endforeach
                 @endif
-                <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 btn-primary">Create report</a>
-                <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 ml-2 btn-outline-secondary">See all reports</a>
+                @can('create', \App\TrainingReport::class)
+                <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
+                @endcan
+                @can('viewReports', $training)
+                <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 btn-outline-secondary">See all reports</a>
+                @endcan
             </div>
         </div>
     </div>
