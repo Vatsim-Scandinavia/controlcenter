@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\File;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,18 +43,7 @@ class FileController extends Controller
 
         $this->validateRequest();
 
-        $file = request()->file('file');
-        $extension = $file->extension();
-        $id = sha1($file->getFilename() . now()->format('Ymd_His') . rand(1000, 9999));
-        $filename = now()->format('Ymd_His') . "_" . $id . "." . $extension;
-
-        Storage::putFileAs('public/files/', $file, $filename);
-
-        File::create([
-            'id' => $id,
-            'uploaded_by' => Auth::id(),
-            'path' => $filename
-        ]);
+        $id = $this->saveFile($request->file('file'));
 
         if ($request->expectsJson()) {
             return json_encode([
@@ -90,6 +80,29 @@ class FileController extends Controller
         return request()->validate([
             'file' => 'required|file'
         ]);
+    }
+
+    /**
+     * Save the provided file using the naming scheme.
+     *
+     * @param UploadedFile $file
+     * @return string
+     */
+    public static function saveFile(UploadedFile $file)
+    {
+        $extension = $file->extension();
+        $id = sha1($file->getFilename() . now()->format('Ymd_His') . rand(1000, 9999));
+        $filename = now()->format('Ymd_His') . "_" . $id . "." . $extension;
+
+        Storage::putFileAs('public/files/', $file, $filename);
+
+        File::create([
+            'id' => $id,
+            'uploaded_by' => Auth::id(),
+            'path' => $filename
+        ]);
+
+        return $id;
     }
 
 }
