@@ -35,7 +35,7 @@
 
                             <div class="row">
                                 <label for="content"><span class="font-weight-bold col-12 px-2 mx-2">Content: </span></label>
-                                <textarea rows="8" placeholder="Content..." class="mt-2 col-10 px-2 mx-2">{{ $report->content }}</textarea>
+                                <textarea rows="8" placeholder="Content..." name="content" class="mt-2 col-10 px-2 mx-2">{{ $report->content }}</textarea>
                             </div>
                             <div class="row">
                                 <label for="draft"><span class="font-weight-bold">Draft?</span></label>
