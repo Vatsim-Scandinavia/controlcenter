@@ -36,11 +36,14 @@ class TrainingReportController extends Controller
      * Show the form for creating a new resource.
      *
      * @param Training $training
-     * @return void
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Training $training)
     {
-        //
+        $this->authorize('createReport', $training);
+
+        return view('trainingReport.create', compact('training'));
     }
 
     /**
