@@ -7,6 +7,7 @@ use App\TrainingReport;
 use App\TrainingReportAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use function MongoDB\BSON\toJSON;
 
 class TrainingReportAttachmentController extends Controller
 {
@@ -108,8 +109,8 @@ class TrainingReportAttachmentController extends Controller
         Storage::delete($attachment->file->full_path);
         $attachment->delete();
 
-        if ($request->wantsJson()) {
-            return json_encode(['message' => 'Attachment successfully deleted']);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Attachment successfully deleted']);
         }
 
         return redirect()->back()->with('message', 'Attachment successfully deleted');

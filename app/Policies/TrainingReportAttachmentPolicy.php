@@ -49,12 +49,12 @@ class TrainingReportAttachmentPolicy
      * Determine whether the user can delete the training report attachment.
      *
      * @param  \App\User  $user
-     * @param  \App\TrainingReportAttachment  $trainingReportAttachment
+     * @param  \App\TrainingReportAttachment  $attachment
      * @return mixed
      */
-    public function delete(User $user, TrainingReportAttachment $trainingReportAttachment)
+    public function delete(User $user, TrainingReportAttachment $attachment)
     {
-        //
+        return $user->isAdmin() || $user->is($attachment->file->owner);
     }
 
     /**

@@ -53,15 +53,30 @@
                         </form>
                     </div>
                     <div class="col-xl-4 col-md-12 border-left-primary">
-                        <p><span class="font-weight-bold">Attachments:</span></p>
-                        <p>
-                            @if(count($report->attachments) == 0)
-                                <span class="font-italic">No attachments to this report.</span>
-                            @endif
-                            @foreach($report->attachments as $attachment)
-                                <a href="#">{{ $attachment->url }}</a>
-                            @endforeach
-                        </p>
+                        <div>
+                            <p><span class="font-weight-bold">Attachments:</span></p>
+                            <div>
+                                @if(count($report->attachments) == 0)
+                                    <span class="font-italic">No attachments to this report.</span>
+                                @endif
+                                @foreach($report->attachments as $attachment)
+                                    <div data-id="{{ $attachment->id }}">
+                                        <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                            {{ $attachment->file->name }}
+                                        </a>
+                                        <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-times"></i>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div>
+                            <form method="post" id="file-form" action="{{ route('training.report.attachment.store', ['report' => $report->id]) }}" enctype="multipart/form-data">
+                                @csrf
+                                <label for="hidden" class="mt-3">Hidden?</label>
+                                <input type="checkbox" name="hidden" id="hidden"><br>
+                                <input type="file" name="file" id="add-file" onchange="uploadFile(this)" class="btn btn-primary">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,4 +85,39 @@
 </div>
 
 
+@endsection
+
+@section('js')
+<script type="text/javascript">
+
+    function uploadFile(input) {
+        if (input.value != null) {
+            $("#file-form").submit();
+        }
+    }
+
+    function deleteAttachment(input) {
+
+        input = $(input);
+        let id = input.data('attachment');
+
+        $.ajax('/training/report/attachment/' + id, {
+            'method' : "post",
+            'data' : {
+                '_token': "{!! csrf_token() !!}",
+                '_method': 'delete'
+            },
+            success: function (data, id) {
+                if (data.message === 'Attachment successfully deleted') {
+                    $("div").find('[data-id="' + id + '"').remove();
+                }
+            },
+            error: function (data) {
+                console.log("An error occurred");
+            }
+        });
+
+    }
+
+</script>
 @endsection
