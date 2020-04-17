@@ -16,10 +16,12 @@ class CreateTrainingReportAttachmentsTable extends Migration
         Schema::create('training_report_attachments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('training_report_id');
-            $table->string('url');
+            $table->string('file_id');
+            $table->boolean('hidden')->default(false);
             $table->timestamps();
 
             $table->foreign('training_report_id')->references('id')->on('training_reports');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 
