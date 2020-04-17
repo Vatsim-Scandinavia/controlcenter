@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\File;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class FilePolicy
 {
@@ -22,7 +23,7 @@ class FilePolicy
         // TODO add more fitting permissions here.
         return $user->isModerator() ||
             $user->is($file->owner) ||
-            ($file->trainingReportAttachment != null ? $user->is($file->trainingReportAttachment->training->user) : false);
+            ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
     }
 
     /**
