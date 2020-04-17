@@ -70,6 +70,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/training/report/{report}', 'TrainingReportController@update')->name('training.report.update');
     Route::delete('/training/report/{report}', 'TrainingReportController@destroy')->name('training.report.delete');
 
+    Route::get('/files/{file}', 'FileController@get')->name('file.get');
+    Route::post('/files', 'FileController@store')->name('file.store');
+    Route::delete('/files/{file}', 'FileController@destroy')->name('file.delete');
+
     // Sweatbox routes
     Route::get('/sweatbox', 'SweatboxController@index')->name('sweatbox');
     Route::get('/sweatbox/create', 'SweatboxController@create')->name('sweatbox.create');
