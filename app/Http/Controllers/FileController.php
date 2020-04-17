@@ -24,7 +24,7 @@ class FileController extends Controller
         $this->authorize('view', $file);
 
         if (Storage::exists($file->full_path)) {
-            return File::find($file->id);
+            return response()->file(storage_path('app/' . $file->full_path));
         } else {
             return abort(404);
         }
@@ -91,13 +91,14 @@ class FileController extends Controller
     public static function saveFile(UploadedFile $file)
     {
         $extension = $file->extension();
-        $id = sha1($file->getFilename() . now()->format('Ymd_His') . rand(1000, 9999));
+        $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
         $filename = now()->format('Ymd_His') . "_" . $id . "." . $extension;
 
         Storage::putFileAs('public/files/', $file, $filename);
 
         File::create([
             'id' => $id,
+            'name' => $file->getClientOriginalName(),
             'uploaded_by' => Auth::id(),
             'path' => $filename
         ]);

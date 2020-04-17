@@ -17,6 +17,7 @@ class CreateFilesTable extends Migration
 
             $table->string('id');
             $table->unsignedBigInteger('uploaded_by')->nullable();
+            $table->string('name');
             $table->string('path');
             $table->timestamps();
 
