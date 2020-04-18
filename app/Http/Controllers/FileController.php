@@ -88,11 +88,14 @@ class FileController extends Controller
      * @param UploadedFile $file
      * @return string
      */
-    public static function saveFile(UploadedFile $file)
+    public static function saveFile(UploadedFile $file, string $filename = null)
     {
         $extension = $file->extension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
-        $filename = now()->format('Ymd_His') . "_" . $id . "." . $extension;
+
+        if ($filename == null) {
+            $filename = now()->format('Ymd_His') . "_" . $id . "." . $extension;
+        }
 
         Storage::putFileAs('public/files/', $file, $filename);
 
