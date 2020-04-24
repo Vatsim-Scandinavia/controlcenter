@@ -87,6 +87,14 @@ class User extends Authenticatable
         return $this->handover->full_name;
     }
 
+    public function getRatingAttribute(){
+        return $this->handover->rating;
+    }
+
+    public function getRatingLongAttribute(){
+        return $this->handover->rating_long;
+    }
+
     // User group checks
     public function isMentor(){
         return $this->group <= 3 && isset($this->group);
