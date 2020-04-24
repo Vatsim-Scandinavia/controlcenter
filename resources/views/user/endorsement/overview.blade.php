@@ -36,9 +36,9 @@
                             <tr>
                                 <td>
                                     @if($user->isModerator())
-                                        <a href="/user/endorsement/edit/{{ $endorsement->user_id }}">{{ $endorsement->user->name() }} ({{ $endorsement->user->id }})</a>
+                                        <a href="/user/endorsement/edit/{{ $endorsement->user_id }}">{{ $endorsement->user->name }} ({{ $endorsement->user->id }})</a>
                                     @else
-                                        {{ $endorsement->user->handover->firstName }} {{ $endorsement->user->handover->lastName }}
+                                        {{ $endorsement->user->name }}
                                     @endif
                                 </td>
                                 <td>

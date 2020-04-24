@@ -75,7 +75,7 @@
 
                     <div class="form-group">
                         <label for="user">User</label>
-                        <input id="user" class="form-control" type="text" name="user" readonly="readonly" value="{{ $booking->user->name() }} ({{ $booking->user->id }})">
+                        <input id="user" class="form-control" type="text" name="user" readonly="readonly" value="{{ $booking->user->name }} ({{ $booking->user->id }})">
                     </div>
 
                     <input type="hidden" name="id" value="{{{ $booking->id }}}"> 

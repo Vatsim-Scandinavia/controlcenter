@@ -30,7 +30,7 @@
 
                         <datalist id="students">
                             @foreach($students as $student)
-                                <option value="{{ $student->id }}">{{ $student->handover->full_name }}</option>
+                                <option value="{{ $student->id }}">{{ $student->name }}</option>
                             @endforeach
                         </datalist>
 

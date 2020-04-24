@@ -55,7 +55,7 @@
                                     {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    {{ $booking->user->name() }} ({{ $booking->user->id }})
+                                    {{ $booking->user->name }} ({{ $booking->user->id }})
                                 </td>
                                 <td>
                                     {{ mb_strimwidth($booking->mentor_notes, 0, 40) }}
