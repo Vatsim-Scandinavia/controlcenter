@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Training;
 use App\TrainingReport;
+use App\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -43,7 +44,9 @@ class TrainingReportController extends Controller
     {
         $this->authorize('createReport', $training);
 
-        return view('trainingReport.create', compact('training'));
+        $positions = Position::all();
+
+        return view('trainingReport.create', compact('training', 'positions'));
     }
 
     /**
