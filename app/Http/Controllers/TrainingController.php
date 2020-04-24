@@ -64,7 +64,7 @@ class TrainingController extends Controller
 
         // Get relevant user data
         $user = Auth::user();
-        $userVatsimRating = $user->handover->rating;
+        $userVatsimRating = $user->rating;
 
         // Loop through all countries, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
         $payload = [];

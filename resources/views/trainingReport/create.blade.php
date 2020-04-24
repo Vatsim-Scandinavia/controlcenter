@@ -4,7 +4,7 @@
 
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">
-        New Training Report for {{ $training->user->handover->first_name }}'s training for
+        New Training Report for {{ $training->user->firstName }}'s training for
         @foreach($training->ratings as $rating)
             @if ($loop->last)
                 {{ $rating->name }}

@@ -30,7 +30,7 @@ class DashboardController extends Controller
         $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id')->toArray())->orderBy('created_at')->get()->last();
 
         $data = [
-            'rating' => $user->handover->rating_long,
+            'rating' => $user->ratingLong,
             'report' => $report
         ];
 
