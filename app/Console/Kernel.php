@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CleanEndorsements::class,
     ];
 
     /**
@@ -55,6 +55,10 @@ class Kernel extends ConsoleKernel
             }
 
         })->everyFiveMinutes();
+
+        // Clean up expired solo endorsements
+        $schedule->command('clean:endorsements')
+            ->everyMinute();
     }
 
     /**

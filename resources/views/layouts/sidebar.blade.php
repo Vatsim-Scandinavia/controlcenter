@@ -76,7 +76,7 @@
         <li class="nav-item">
         <a class="nav-link" href="{{ route('users.endorsements') }}">
             <i class="fas fa-fw fa-check-square"></i>
-            <span>Endorsements</span></a>
+            <span>Solo Endorsements</span></a>
         </li>
 
         <!-- Divider -->
