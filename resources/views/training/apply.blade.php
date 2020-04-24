@@ -72,7 +72,7 @@
 
                 <p>Please read through the standard operating procedures for students below, and accept the terms by continueing to the next step.</p>
 
-                <embed src="https://drive.google.com/viewerng/viewer?embedded=true&url=http://vatsim-scandinavia.org/wp-content/uploads/2017/11/VACCSCA-SOP-Students-v2.pdf" type="application/pdf" width="100%" height="800px">
+                <embed src="https://drive.google.com/viewerng/viewer?embedded=true&url=https://vatsim-scandinavia.org/applications/core/interface/file/attachment.php?id=2049" type="application/pdf" width="100%" height="800px">
 
                 <a class="btn btn-success" href="?step=3">I accept</a>
             </div>
