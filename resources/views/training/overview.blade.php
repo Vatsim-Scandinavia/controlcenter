@@ -69,21 +69,17 @@
                                 <td>{{ $training->country->name }}</td>
                                 <td>{{ $training->created_at->toFormattedDateString() }}</td>
                                 <td>
-                                    @if ( is_iterable($mentors = $training->mentors->toArray()) )
-                                        @if (sizeof($mentors) == 0)
-                                            -
-                                        @else
-                                            @for( $i = 0; $i < sizeof($mentors); $i++ )
-                                                @if ( $i == (sizeof($mentors) - 1) )
-                                                    {{ $mentors[$i]["name"] }}
-                                                @else
-                                                    {{ $mentors[$i]["name"] . ", " }}
-                                                @endif
-                                            @endfor
-                                        @endif
-                                    @else
-                                        {{ $mentors[$i]["name"] }}
+
+                                    @if ($training->mentors->count() == 0)
+                                        -
+                                    @elseif ($training->mentors->count() == 1)
+                                        {{ $training->mentors->first()->name }}
+                                    @elseif ($training->mentors->count() > 1)
+                                        @foreach($training->mentors as $mentor)
+                                            {{ $mentor->name }}, 
+                                        @endforeach
                                     @endif
+
                                 </td>
                             </tr>
                             @endforeach
