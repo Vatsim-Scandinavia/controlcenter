@@ -40,7 +40,7 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
                                 </td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
-                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->handover->firstName }} {{ $training->user->handover->lastName }}</a></td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->getFullName() }}</a></td>
                                 <td>
                                     @if ( is_iterable($ratings = $training->ratings->toArray()) )
                                         @for( $i = 0; $i < sizeof($ratings); $i++ )
@@ -128,7 +128,7 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
                                 </td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
-                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->handover->firstName }} {{ $training->user->handover->lastName }}</a></td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $endorsement->user->getFullName() }}</a></td>
                                 <td>
                                     @if ( is_iterable($ratings = $training->ratings->toArray()) )
                                         @for( $i = 0; $i < sizeof($ratings); $i++ )

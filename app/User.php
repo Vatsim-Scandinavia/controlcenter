@@ -74,8 +74,17 @@ class User extends Authenticatable
         return $this->hasMany(Vatbook::class);
     }
 
-    public function getNameAttribute(){
-        return "{$this->handover->first_name} {$this->handover->last_name}";
+    // Get properties from Handover, the variable names here break with the convention.
+    public function getFirstName(){
+        return $this->handover->first_name;
+    }
+
+    public function getLastName(){
+        return $this->handover->last_name;
+    }
+
+    public function getFullName(){
+        return $this->handover->full_name;
     }
 
     // User group checks
