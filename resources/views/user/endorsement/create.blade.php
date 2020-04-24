@@ -46,6 +46,7 @@
                             class="datepicker form-control @error('expires') is-invalid @enderror"
                             type="text"
                             name="expires"
+                            value="{{ old('expires') }}"
                             required>
 
                         @error('expires')

@@ -7,6 +7,12 @@
 
 <div class="row">
     <div class="col-xl-6 col-md-12 mb-12">
+
+        @if(Session::has('success') OR isset($success))
+            <div class="alert alert-success" role="alert">
+                {!! Session::has('success') ? Session::pull("success") : $error !!}
+            </div>
+        @endif
         
         <div class="alert alert-info text-sm" style="font-size: 12px" role="alert">
             <i class="fas fa-info-circle"></i>&nbsp;All endorsements expire at 12:00z on the given day</a>.
@@ -29,17 +35,14 @@
                                 <th data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-filter-control="select">Starts</th>
                                 <th data-filter-control="select">Expires</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($endorsements as $endorsement)
                             <tr>
                                 <td>
-                                    @if($user->isModerator())
-                                        <a href="/user/endorsement/edit/{{ $endorsement->user_id }}">{{ $endorsement->user->name }} ({{ $endorsement->user->id }})</a>
-                                    @else
-                                        {{ $endorsement->user->name }}
-                                    @endif
+                                    {{ $endorsement->user->name }}
                                 </td>
                                 <td>
                                     {{ $endorsement->position }}    
@@ -49,6 +52,13 @@
                                 </td>
                                 <td> 
                                     {{ $endorsement->expires_at->toFormattedDateString() }}                                
+                                </td>
+                                <td>
+                                    @if($user->isModerator())
+                                        <a href="/users/endorsements/{{ $endorsement->id }}/delete"><i class="fas fa-times"></i> Remove</a>
+                                    @else
+                                        Delete
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach

@@ -38,10 +38,8 @@ Route::middleware('auth')->group(function () {
     // User endorsements
     Route::get('/users/endorsements', 'UserEndorsementController@index')->name('users.endorsements');
     Route::get('/users/endorsements/create', 'UserEndorsementController@create')->name('users.endorsements.create');
-    Route::get('/users/endorsements/{id}', 'UserEndorsementController@show');
     Route::get('/users/endorsements/{id}/delete', 'UserEndorsementController@delete');
     Route::post('/users/endorsements/store', 'UserEndorsementController@store');
-    Route::post('/users/endorsements/update', 'UserEndorsementController@update');
 
     // Reports
     Route::get('/reports/stats', 'DashboardController@reports')->name('reports.stats');

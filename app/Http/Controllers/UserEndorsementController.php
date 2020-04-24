@@ -57,57 +57,30 @@ class UserEndorsementController extends Controller
                 'position' => 'required|exists:positions,callsign'
             ]);
 
+            // Check if student exists
             $user = User::find($data['student']);
-            if(!$user) return back()->withErrors(['student' => 'Invalid user']);
+            if(!$user) return back()->withInput()->withErrors(['student' => 'Invalid user']);
         
+            // Check if endoresement for this student already exists
+            $existingEndorsement = UserEndorsement::where('user_id', $user->id)->count();
+            if($existingEndorsement) return back()->withInput()->withErrors(['student' => 'This student already has an active solo endorsement']);
+
             $expireDate = new DateTime($data['expires']);
+            $expireDate->setTime(12, 0);
+
             $endorsement = new UserEndorsement();
 
             $endorsement->user_id = $user->id;
             $endorsement->training_id = $user->trainings->first()->id;
             $endorsement->position = $data['position'];
-            $endorsement->expires_at = $expireDate->format('Y-m-d');
+            $endorsement->expires_at = $expireDate->format('Y-m-d H:i:s');
 
             $endorsement->save();
 
-            return redirect()->route('users.endorsements');
+            return redirect()->intended(route('users.endorsements'))->withSuccess($user->name . "'s endorsement created");
         }
 
         abort(403);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Group  $group
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Group  $group
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Group  $group
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        //
     }
 
     /**
@@ -116,8 +89,13 @@ class UserEndorsementController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function delete($id)
     {
-        //
+        $user = Auth::user();
+        $endorsement = UserEndorsement::findOrFail($id);
+
+        if($user->isModerator()) $endorsement->delete();
+
+        return redirect()->intended(route('users.endorsements'))->withSuccess($user->name . "'s endorsement deleted");
     }
 }

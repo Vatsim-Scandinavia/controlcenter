@@ -15,7 +15,7 @@ class CreateUserEndorsementsTable extends Migration
     {
         Schema::create('user_endorsements', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->unique();
             $table->unsignedBigInteger('training_id');
             $table->string('position', 30);
             $table->timestamp('expires_at');
@@ -23,6 +23,8 @@ class CreateUserEndorsementsTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('training_id')->references('id')->on('trainings');
+
+            
         });
     }
 

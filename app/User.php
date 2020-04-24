@@ -42,7 +42,7 @@ class User extends Authenticatable
      *
      * @return \App\Solo
      */
-    public function solo_endorsement(){
+    public function soloEndorsement(){
         return $this->hasOne(Solo::class);
     }
 
