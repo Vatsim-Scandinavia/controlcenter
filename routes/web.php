@@ -68,9 +68,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/training/report/{report}', 'TrainingReportController@update')->name('training.report.update');
     Route::delete('/training/report/{report}', 'TrainingReportController@destroy')->name('training.report.delete');
 
+    // Training report attachment routes
     Route::get('/training/report/attachment/{attachment}', 'TrainingReportAttachmentController@show')->name('training.report.attachment.show');
     Route::post('/training/report/{report}/attachment', 'TrainingReportAttachmentController@store')->name('training.report.attachment.store');
     Route::delete('/training/report/attachment/{attachment}', 'TrainingReportAttachmentController@destroy')->name('training.report.attachment.delete');
+
+    // Training examination routes
+    Route::get('/training/examination/{examination}', 'TrainingExaminationController@show')->name('training.examination.show');
+    Route::get('/training/{training}/examination/create', 'TrainingExaminationController@create')->name('training.examination.create');
+    Route::post('/training/{training}/examination', 'TrainingExaminationController@store')->name('training.examination.store');
+    Route::patch('/training/examination/{examination}', 'TrainingExaminationController@update')->name('training.examination.update');
+    Route::delete('/training/examination/{examination}', 'TrainingExaminationController@destroy')->name('training.examination.delete');
 
     Route::get('/files/{file}', 'FileController@get')->name('file.get');
     Route::post('/files', 'FileController@store')->name('file.store');

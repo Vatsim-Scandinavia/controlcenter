@@ -62,4 +62,10 @@ class TrainingPolicy
     {
         return $user->isMentor() && $user->isNot($training->user);
     }
+
+    public function createExamination(User $user, Training $training)
+    {
+        return $user->isMentor() && $user->isNot($training->user);
+    }
+
 }
