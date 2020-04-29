@@ -39,7 +39,8 @@ jobs:
         chmod 700 -R ~/.ssh
         ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
         touch ~/.ssh/id_rsa
-        ssh-echo "${{ secrets.DEPLOY_KEY }}" >> ~/id_rsa && ssh-add ~/id_rsa
+        ssh-echo "${{ secrets.DEPLOY_KEY }}" >> ~/.ssh/id_rsa
+        ssh-add ~/.ssh/id_rsa
     - name: Deploy on server
       run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa test"
     - name: Install Dependencies
