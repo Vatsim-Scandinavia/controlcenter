@@ -42,9 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/endorsements/store', 'UserEndorsementController@store');
 
     // Reports
-    Route::get('/reports/stats', 'DashboardController@reports')->name('reports.stats');
-    Route::get('/reports/mentors', 'DashboardController@reports')->name('reports.mentors');
-    Route::get('/reports/atc', 'DashboardController@reports')->name('reports.atc');
+    Route::get('/reports/stats', 'ReportController@stats')->name('reports.stats');
+    Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
+    Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
 
     // Admin
     Route::get('/admin/settings', 'DashboardController@admin')->name('admin.settings');
