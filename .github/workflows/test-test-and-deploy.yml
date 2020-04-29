@@ -35,6 +35,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+      - name: Make sure SSH agent is running
+        run: eval $(ssh-agent)
       - name: Setup SSH Agent
         uses: yakuhzi/action-ssh-agent@1.4.2
         with:
