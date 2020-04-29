@@ -1,15 +1,16 @@
-name: Test & Deploy Laravel Application
+name: Test Application & Deploy to Test environment
 
 on:
   push:
     branches: [ test ]
 
 jobs:
-  laravel-tests:
+  test-and-deploy:
 
     runs-on: ubuntu-18.04
     
     steps:
+      # Test application
     - uses: actions/checkout@v2
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -28,24 +29,14 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: vendor/bin/phpunit
-  
-  deploy:
-    
-    runs-on: ubuntu-18.04
-    
-    steps:
-      - uses: actions/checkout@v2
-      - name: Make sure SSH agent is running
-        run: eval $(ssh-agent)
-      - name: Setup SSH Agent
-        uses: yakuhzi/action-ssh-agent@1.4.2
-        with:
-          private: ${{ secrets.DEPLOY_KEY }}
-      - name: Deploy on server
-        run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa test"
-      - name: Install Dependencies
-        run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist"
-      - name: Migrate DBs
-        run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && php artisan migrate"
-      - name: Create frontend assets
-        run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && npm run prod"
+      # Deploy to server
+    - name: Set up SSH agent
+      run: eval $(ssh-agent) && echo ${{ secrets.DEPLOY_KEY }} >> ~/.ssh/id_rsa && ssh-add ~/.ssh/id_rsa
+    - name: Deploy on server
+      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa test"
+    - name: Install Dependencies
+      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist"
+    - name: Migrate DBs
+      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && php artisan migrate"
+    - name: Create frontend assets
+      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && npm run prod"
