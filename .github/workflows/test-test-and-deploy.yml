@@ -31,7 +31,13 @@ jobs:
       run: vendor/bin/phpunit
       # Deploy to server
     - name: Set up SSH agent
-      run: eval $(ssh-agent) && touch ~/.ssh/id_rsa && echo "${{ secrets.DEPLOY_KEY }}" >> ~/.ssh/id_rsa && ssh-add ~/.ssh/id_rsa
+      run: |
+        eval $(ssh-agent)
+        mkdir ~/.ssh
+        ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.DEPLOY_KEY }}" >> ~/.ssh/id_rsa
+        chmod 700 -R ~/.ssh
+        ssh-add ~/.ssh/id_rsa
     - name: Deploy on server
       run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa test"
     - name: Install Dependencies
