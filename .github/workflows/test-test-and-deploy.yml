@@ -1,5 +1,5 @@
 name: Test Application & Deploy to Test environment
-#test
+
 on:
   push:
     branches: [ test ]
