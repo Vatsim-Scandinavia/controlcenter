@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
 
 class ReportController extends Controller
 {
@@ -33,6 +34,9 @@ class ReportController extends Controller
      */
 
     public function atc(){
-        return view('reports.atc');
+
+        $controllers = User::all();
+
+        return view('reports.atc', compact('controllers'));
     }
 }
