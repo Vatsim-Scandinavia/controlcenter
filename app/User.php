@@ -91,6 +91,10 @@ class User extends Authenticatable
         return $this->handover->rating;
     }
 
+    public function getRatingShortAttribute(){
+        return $this->handover->rating_short;
+    }
+
     public function getRatingLongAttribute(){
         return $this->handover->rating_long;
     }
