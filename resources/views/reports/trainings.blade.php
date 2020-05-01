@@ -124,10 +124,10 @@
             <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Min/Max waiting time</div>
+                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Min-Max waiting time</div>
                 <div class="row no-gutters align-items-center">
                     <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">2/7 months</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">2-7 months</div>
                     </div>
                 </div>
                 </div>
@@ -146,7 +146,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Training Requests last year
+                    Training requests last year
                 </h6> 
             </div>
             <div class="card-body">
@@ -156,156 +156,177 @@
     </div>
 
 </div>
-<!--
+
 <div class="row">
+
     <div class="col-xl-6 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    New Training Requests (7 days)
+                    New requests last 6 months
                 </h6> 
             </div>
             <div class="card-body">
-                <canvas id="trainingRequestChart7day" height="200"></canvas>
+                <canvas id="newTrainingRequests"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Completed requests last 6 months
+                </h6> 
+            </div>
+            <div class="card-body">
+                <canvas id="completedTrainingRequests"></canvas>
             </div>
         </div>
     </div>
 
 </div>
--->
+
 
 @endsection
 
 @section('js')
 
 <script>
-    var labels = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ];
+    function randomScalingFactor() {
+		return Math.round(Math.random() * 100);
+	};
 
-    var dataFinland = [
-        5,
-        2,
-        6,
-        7,
-        1,
-        6,
-        7
-    ];
-
-    var dataIceland = [
-        7,
-        2,
-        0,
-        1,
-        1,
-        2,
-        0
-    ];
-
-    var dataDenmark = [
-        7,
-        8,
-        2,
-        1,
-        7,
-        1,
-        0
-    ];
-
-    var dataNorway = [
-        8,
-        9,
-        10,
-        2,
-        6,
-        4,
-        8
-    ];
-
-    var dataSweden = [
-        8,
-        2,
-        6,
-        2,
-        7,
-        1,
-        2
-    ];
-
-    var mix = document.getElementById("trainingRequestChart7day").getContext('2d');
-    var trainingRequestChart7day = new Chart(mix, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: "Finland",
-                    data: dataFinland,
-                    borderColor: '#43c6e7',
-                    backgroundColor: '#43c6e7',
-                    yAxisID: 'requests',
-                },
-                {
-                    label: "Iceland",
-                    data: dataIceland,
-                    borderColor: '#ff9800',
-                    backgroundColor: '#ff9800',
-                    yAxisID: 'requests',
-                },
-                {
-                    label: "Denmark",
-                    data: dataDenmark,
-                    borderColor: '#537bc4',
-                    backgroundColor: '#537bc4',
-                    yAxisID: 'requests',
-                },
-                {
-                    label: "Norway",
-                    data: dataNorway,
-                    borderColor: '#b63f3f',
-                    backgroundColor: '#b63f3f',
-                    yAxisID: 'requests',
-                },
-                {
-                    label: "Sweden",
-                    data: dataSweden,
-                    borderColor: '#41826e',
-                    backgroundColor: '#41826e',
-                    yAxisID: 'requests',
-                },
+    var barChartData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            label: 'S2',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: [
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor()
             ]
-        },
+        }, {
+            label: 'S3',
+            backgroundColor: 'rgb(100, 100, 200)',
+            data: [
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor()
+            ]
+        }, {
+            label: 'C1',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: [
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor()
+            ]
+        }]
+
+    };
+
+    var mix = document.getElementById("newTrainingRequests").getContext('2d');
+    var newTrainingRequests = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
         options: {
-            elements: {
-                line: {
-                    tension: 0
-                }
+            tooltips: {
+                mode: 'index',
+                intersect: false
             },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
+            responsive: true,
             scales: {
-                yAxes: [
-                    {
-                        id: "requests",
-                        ticks: {
-                            beginAtZero: true,
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Amount of requests'
-                        }
-                    },
-                ]
+                xAxes: [{
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+</script>
+
+
+<script>
+    function randomScalingFactor() {
+		return Math.round(Math.random() * 100);
+	};
+
+    var barChartData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            label: 'S2',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: [
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor()
+            ]
+        }, {
+            label: 'S3',
+            backgroundColor: 'rgb(100, 100, 200)',
+            data: [
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor()
+            ]
+        }, {
+            label: 'C1',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: [
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor(),
+                randomScalingFactor()
+            ]
+        }]
+
+    };
+
+    var mix = document.getElementById("completedTrainingRequests").getContext('2d');
+    var completedTrainingRequests = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            tooltips: {
+                mode: 'index',
+                intersect: false
             },
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
         }
     });
 </script>
@@ -346,7 +367,7 @@
 
     var ctx = document.getElementById('trainingChart').getContext('2d');
     ctx.canvas.width = 1000;
-    ctx.canvas.height = 300;
+    ctx.canvas.height = 200;
 
     var color = Chart.helpers.color;
     var cfg = {
