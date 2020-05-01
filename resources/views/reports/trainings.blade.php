@@ -1,9 +1,21 @@
 @extends('layouts.app')
 
-@section('title', 'Statistics')
+@section('title', 'Training Statistics')
 
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Statistics</h1>
+<h1 class="h3 mb-4 text-gray-800">Training Statistics
+    <div class="dropdown show" style="display: inline;">
+        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            All FIRs
+        </a>
+    
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="#">Denmark</a>
+            <a class="dropdown-item" href="#">Finland</a>
+            <a class="dropdown-item" href="#">Iceland</a>
+        </div>
+    </div>
+</h1>
 
 @if ($errors->any())
     <div class="alert alert-danger">
@@ -14,6 +26,120 @@
         </ul>
     </div>
 @endif
+
+
+
+<div class="row">
+
+    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="card border-left-secondary shadow h-100 py-2">
+        <div class="card-body">
+        <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-uppercase mb-1">In queue</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">21</div>
+            </div>
+            <div class="col-auto">
+            <i class="fas fa-hourglass fa-2x text-gray-300"></i>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+        <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In training</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+            </div>
+            <div class="col-auto">
+            <i class="fas fa-book-open fa-2x text-gray-300"></i>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+        <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Awaiting exam</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
+            </div>
+            <div class="col-auto">
+            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed this year</div>
+                <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">19</div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-auto">
+                <i class="fas fa-check fa-2x text-gray-300"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-secondary shadow h-100 py-2">
+            <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Average waiting time</div>
+                <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">5.4 months</div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-auto">
+                <i class="fas fa-hourglass fa-2x text-gray-300"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-secondary shadow h-100 py-2">
+            <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Min/Max waiting time</div>
+                <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">2/7 months</div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-auto">
+                <i class="fas fa-hourglass fa-2x text-gray-300"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <div class="row">
     <div class="col-xl-12 col-md-12 mb-12">
@@ -30,7 +156,7 @@
     </div>
 
 </div>
-
+<!--
 <div class="row">
     <div class="col-xl-6 col-md-12 mb-12">
         <div class="card shadow mb-4">
@@ -46,6 +172,7 @@
     </div>
 
 </div>
+-->
 
 @endsection
 
@@ -192,21 +319,6 @@
             return unit === 'second' || unit === 'minute' || unit === 'hour';
         }
 
-        function beforeNineThirty(date) {
-            return date.hour() < 9 || (date.hour() === 9 && date.minute() < 30);
-        }
-
-        // Returns true if outside 9:30am-4pm on a weekday
-        function outsideMarketHours(date) {
-            if (date.isoWeekday() > 5) {
-                return true;
-            }
-            if (unitLessThanDay() && (beforeNineThirty(date) || date.hour() > 16)) {
-                return true;
-            }
-            return false;
-        }
-
         function randomNumber(min, max) {
             return Math.random() * (max - min) + min;
         }
@@ -225,17 +337,10 @@
         var data = [];
         var lessThanDay = unitLessThanDay();
         for (; data.length < 600 && date.isBefore(now); date = date.clone().add(1, unit).startOf(unit)) {
-            if (outsideMarketHours(date)) {
-                if (!lessThanDay || !beforeNineThirty(date)) {
-                    date = date.clone().add(date.isoWeekday() >= 5 ? 8 - date.isoWeekday() : 1, 'day');
-                }
-                if (lessThanDay) {
-                    date = date.hour(9).minute(30).second(0);
-                }
-            }
             data.push(randomBar(date, data.length > 0 ? data[data.length - 1].y : 30));
         }
 
+        console.log(data);
         return data;
     }
 
@@ -278,32 +383,6 @@
                         maxRotation: 0,
                         sampleSize: 100
                     },
-                    afterBuildTicks: function(scale, ticks) {
-                        var majorUnit = scale._majorUnit;
-                        var firstTick = ticks[0];
-                        var i, ilen, val, tick, currMajor, lastMajor;
-
-                        val = moment(ticks[0].value);
-                        if ((majorUnit === 'minute' && val.second() === 0)
-                                || (majorUnit === 'hour' && val.minute() === 0)
-                                || (majorUnit === 'day' && val.hour() === 9)
-                                || (majorUnit === 'month' && val.date() <= 3 && val.isoWeekday() === 1)
-                                || (majorUnit === 'year' && val.month() === 0)) {
-                            firstTick.major = true;
-                        } else {
-                            firstTick.major = false;
-                        }
-                        lastMajor = val.get(majorUnit);
-
-                        for (i = 1, ilen = ticks.length; i < ilen; i++) {
-                            tick = ticks[i];
-                            val = moment(tick.value);
-                            currMajor = val.get(majorUnit);
-                            tick.major = currMajor !== lastMajor;
-                            lastMajor = currMajor;
-                        }
-                        return ticks;
-                    }
                 }],
                 yAxes: [{
                     gridLines: {
@@ -318,16 +397,6 @@
             tooltips: {
                 intersect: false,
                 mode: 'index',
-                callbacks: {
-                    label: function(tooltipItem, myData) {
-                        var label = myData.datasets[tooltipItem.datasetIndex].label || '';
-                        if (label) {
-                            label += ': ';
-                        }
-                        label += parseFloat(tooltipItem.value).toFixed(2);
-                        return label;
-                    }
-                }
             }
         }
     };

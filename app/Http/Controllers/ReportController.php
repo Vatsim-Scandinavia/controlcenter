@@ -12,8 +12,8 @@ class ReportController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
 
-    public function stats(){
-        return view('reports.stats');
+    public function trainings(){
+        return view('reports.trainings');
     }
 
     /**

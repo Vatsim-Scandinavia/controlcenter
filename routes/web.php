@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/endorsements/store', 'UserEndorsementController@store');
 
     // Reports
-    Route::get('/reports/stats', 'ReportController@stats')->name('reports.stats');
+    Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
     Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
 
