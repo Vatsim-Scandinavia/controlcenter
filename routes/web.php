@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/endorsements/{id}/delete', 'UserEndorsementController@delete');
     Route::post('/users/endorsements/store', 'UserEndorsementController@store');
 
+    Route::post('/mentor/{user}/country', 'MentorController@addCountry')->name('mentor.add.country');
+    Route::post('/country/{country}/mentor', 'MentorController@addMentor')->name('country.add.mentor');
+    Route::delete('/mentor/{user}/country', 'MentorController@removeCountry')->name('mentor.remove.country');
+    Route::delete('/country/{country}/mentor', 'MentorController@removeMentor')->name('country.remove.mentor');
+
     // Reports
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -74,6 +75,11 @@ class User extends Authenticatable
         return $this->hasMany(Vatbook::class);
     }
 
+    public function mentor_countries()
+    {
+        return $this->belongsToMany(Country::class, 'mentor_country');
+    }
+
     // Get properties from Handover, the variable names here break with the convention.
     public function getLastNameAttribute(){
         return $this->handover->last_name;
@@ -100,8 +106,16 @@ class User extends Authenticatable
     }
 
     // User group checks
-    public function isMentor(){
-        return $this->group <= 3 && isset($this->group);
+    public function isMentor(Country $country = null) {
+
+        if ($country == null) {
+            return $this->group <= 3 && isset($this->group);
+        }
+
+        return  $this->group <= 3 &&
+                isset($this->group) &&
+                $country->mentors->contains($this);
+
     }
 
     public function isModerator(){

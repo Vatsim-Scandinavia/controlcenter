@@ -16,6 +16,7 @@ class TrainingReportsTest extends TestCase
     {
         $training = factory(\App\Training::class)->create();
         $mentor = factory(\App\User::class)->create(['group' => 3]);
+        $training->country->mentors()->attach($mentor);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addCentury()]);
 
         $this->actingAs($mentor)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
@@ -47,7 +48,9 @@ class TrainingReportsTest extends TestCase
     public function mentor_can_access_draft_training_report()
     {
         $report = factory(\App\TrainingReport::class)->create(['draft' => true]);
-        $this->actingAs($report->training->mentors()->first())->assertTrue(Gate::inspect('view', $report)->allowed());
+        $mentor = $report->training->mentors()->first();
+        $report->training->country->mentors()->attach($mentor);
+        $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
     }
 
     /** @test */
@@ -78,9 +81,12 @@ class TrainingReportsTest extends TestCase
     public function mentor_can_update_a_training_report()
     {
         $report = factory(\App\TrainingReport::class)->create();
+        $mentor = $report->training->mentors()->first();
         $content = $this->faker->paragraph();
 
-        $this->actingAs($report->training->mentors()->first())
+        $report->training->country->mentors()->attach($mentor);
+
+        $this->actingAs($mentor)
             ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
             ->assertRedirect();
 
@@ -105,8 +111,11 @@ class TrainingReportsTest extends TestCase
     public function mentor_can_delete_a_training_report()
     {
         $report = factory(\App\TrainingReport::class)->create();
+        $mentor = $report->training->mentors()->first();
 
-        $this->actingAs($report->training->mentors()->first())
+        $report->training->country->mentors()->attach($mentor);
+
+        $this->actingAs($mentor)
             ->delete(route('training.report.delete', ['report' => $report->id]))
             ->assertRedirect(route('training.report.index', ['training' => $report->training->id]));
 

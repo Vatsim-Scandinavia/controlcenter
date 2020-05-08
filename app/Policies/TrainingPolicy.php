@@ -19,7 +19,9 @@ class TrainingPolicy
      */
     public function view(User $user, Training $training)
     {
-        return $user->isMentor() || $user->is($training->user);
+        return  $user->isMentor($training->country) ||
+                $user->isModerator() ||
+                $user->is($training->user);
     }
 
     /**
@@ -31,7 +33,8 @@ class TrainingPolicy
      */
     public function update(User $user, Training $training)
     {
-        return $training->mentors->contains($user) || $user->isModerator();
+        return  $training->mentors->contains($user) ||
+                $user->isModerator();
     }
 
     /**
@@ -55,17 +58,17 @@ class TrainingPolicy
      */
     public function viewReports(User $user, Training $training)
     {
-        return $user->isMentor() || $user->is($training->user);
+        return $user->isMentor($training->country) || $user->is($training->user);
     }
 
     public function createReport(User $user, Training $training)
     {
-        return $user->isMentor() && $user->isNot($training->user);
+        return $user->isMentor($training->country) && $user->isNot($training->user);
     }
 
     public function createExamination(User $user, Training $training)
     {
-        return $user->isMentor() && $user->isNot($training->user);
+        return $user->isMentor($training->country) && $user->isNot($training->user);
     }
 
 }

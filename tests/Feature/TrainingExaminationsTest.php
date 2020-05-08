@@ -20,6 +20,7 @@ class TrainingExaminationsTest extends TestCase
         parent::setUp();
         $this->examination = factory(TrainingExamination::class)->make();
         $this->training = $this->examination->training;
+        $this->training->country->mentors()->attach($this->examination->examiner);
     }
 
     /** @test */

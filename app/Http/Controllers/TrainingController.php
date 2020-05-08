@@ -160,7 +160,7 @@ class TrainingController extends Controller
     {
         $this->authorize('view', $training);
 
-        $trainingMentors = User::whereNotNull('group')->get();
+        $trainingMentors = $training->country->mentors;
         $statuses = $this->statuses;
         $types = $this->types;
 
@@ -195,8 +195,12 @@ class TrainingController extends Controller
         }
 
         if (key_exists('mentors', $attributes)) {
-            $training->mentors()->detach();
-            $training->mentors()->attach($attributes['mentors']);
+
+            foreach ((array) $attributes['mentors'] as $mentor) {
+                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country))
+                    $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
+            }
+
             unset($attributes['mentors']);
         }
 

@@ -21,7 +21,7 @@ class TrainingReportPolicy
      */
     public function view(User $user, TrainingReport $trainingReport)
     {
-        return $user->isMentor() || ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
+        return $user->isMentor($trainingReport->training->country) || ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
     }
 
     /**
@@ -44,7 +44,7 @@ class TrainingReportPolicy
      */
     public function update(User $user, TrainingReport $trainingReport)
     {
-        return $user->isMentor();
+        return $user->isMentor($trainingReport->training->country);
     }
 
     /**
@@ -56,7 +56,7 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {
-        return ($user->isModerator() || ($user->is($trainingReport->user) && $user->isMentor()))
+        return ($user->isModerator() || ($user->is($trainingReport->user) && $user->isMentor($trainingReport->training->country)))
             ? Response::allow()
             : Response::deny("Only moderators and the author of the training report can delete it.");
     }
