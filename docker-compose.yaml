@@ -12,13 +12,13 @@ services:
           - ./:/var/www
       links:
           - db:mysql
+          - handover-db:mysql
       working_dir: /var/www
-      env_file: ./.env
       environment:
           XDEBUG_CONFIG: remote_host=192.168.1.209
   db:
       container_name: 'santa_db'
-      image: mysql:5.7.27
+      image: mysql:8.0.19
       ports:
           - 3306:3306
       environment:
@@ -26,3 +26,15 @@ services:
             MYSQL_USER: santa
             MYSQL_PASSWORD: santa
             MYSQL_ROOT_PASSWORD: root
+
+  handover-db:
+      container_name: 'handover_db'
+      image: mysql:5.7.27
+      ports:
+          - 3308:3306
+      environment:
+            MYSQL_DATABASE: dev_handover
+            MYSQL_USER: handover
+            MYSQL_PASSWORD: handover
+            MYSQL_ROOT_PASSWORD: root
+
