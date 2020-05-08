@@ -76,11 +76,11 @@ class User extends Authenticatable
 
     // Get properties from Handover, the variable names here break with the convention.
     public function getLastNameAttribute(){
-        return $this->handover->first_name;
+        return $this->handover->last_name;
     }
 
     public function getFirstNameAttribute(){
-        return $this->handover->last_name;
+        return $this->handover->first_name;
     }
 
     public function getNameAttribute(){
