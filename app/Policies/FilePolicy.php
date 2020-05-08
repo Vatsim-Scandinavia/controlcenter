@@ -21,9 +21,9 @@ class FilePolicy
     public function view(User $user, File $file)
     {
         // TODO add more fitting permissions here.
-        return $user->isModerator() ||
-            $user->is($file->owner) ||
-            ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
+        return  $user->isModerator() ||
+                $user->is($file->owner) ||
+                ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
     }
 
     /**
