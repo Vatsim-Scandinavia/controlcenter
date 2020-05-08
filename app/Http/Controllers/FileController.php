@@ -86,16 +86,19 @@ class FileController extends Controller
      * Save the provided file using the naming scheme.
      *
      * @param UploadedFile $file
+     * @param string|null $filename
      * @return string
      */
     public static function saveFile(UploadedFile $file, string $filename = null)
     {
-        $extension = $file->extension();
+        $extension = $file->getExtension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
 
         if ($filename == null) {
-            $filename = now()->format('Ymd_His') . "_" . $id . "." . $extension;
+            $filename = now()->format('Ymd_His') . "_" . $id;
         }
+
+        $filename = $filename . "." . $extension;
 
         Storage::putFileAs('public/files/', $file, $filename);
 
