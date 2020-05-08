@@ -242,7 +242,7 @@
                             </div>
                     @endforeach
                 @endif
-                @can('create', \App\TrainingReport::class)
+                @can('createReport', $training)
                 <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
                 @endcan
                 @can('viewReports', $training)
