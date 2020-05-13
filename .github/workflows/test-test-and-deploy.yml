@@ -2,7 +2,7 @@ name: Test Application & Deploy to Test environment
 
 on:
   push:
-    branches: [ test ]
+    branches: [ staging ]
 
 jobs:
   test-and-deploy:
@@ -39,7 +39,7 @@ jobs:
         chmod 700 -R ~/.ssh
         ssh-add ~/.ssh/id_rsa
     - name: Deploy on server
-      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa test"
+      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa staging"
     - name: Install Dependencies
       run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist"
     - name: Migrate DBs
