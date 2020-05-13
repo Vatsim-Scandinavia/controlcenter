@@ -2,10 +2,10 @@ name: Test Application
 
 on:
   pull_request:
-    branches: [ master, test ]
+    branches: [ master, staging ]
 
 jobs:
-  test-and-deploy:
+  test-application:
 
     runs-on: ubuntu-18.04
     
