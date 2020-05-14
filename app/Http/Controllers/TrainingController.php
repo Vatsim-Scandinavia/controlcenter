@@ -45,8 +45,17 @@ class TrainingController extends Controller
      */
     public function index()
     {
-        $openTrainings = Training::where('status', '>=', 0)->get();
-        $closedTrainings = Training::where('status', '<', 0)->get();
+
+        $trainings = Training::all();
+
+        foreach ($trainings as $key => $training) {
+            if ( ! Auth::user()->can('view', $training)) {
+                $trainings->pull($key);
+            }
+        }
+
+        $openTrainings = $trainings->where('status', '>=', 0);
+        $closedTrainings =  $trainings->where('status', '<', 0);
 
         $statuses = $this->statuses;
         $types = $this->types;
