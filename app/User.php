@@ -90,7 +90,7 @@ class User extends Authenticatable
     }
 
     public function getNameAttribute(){
-        return $this->handover->full_name;
+        return $this->first_name . " " . $this->last_name;
     }
 
     public function getRatingAttribute(){
