@@ -22,13 +22,7 @@ class TrainingReportController extends Controller
     {
         $this->authorize('viewReports', $training);
 
-        $reports = TrainingReport::where('training_id', $training->id)->get();
-
-        foreach ($reports as $key => $report) {
-            if ( ! Auth::user()->can('view', $report)) {
-                $reports->pull($key);
-            }
-        }
+        $reports = Auth::user()->viewableModels(TrainingReport::class, [['training_id', '=', $training->id]]);
 
         return view('trainingReport.index', compact('training', 'reports'));
     }

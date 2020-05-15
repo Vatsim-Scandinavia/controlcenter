@@ -46,13 +46,7 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $trainings = Training::all();
-
-        foreach ($trainings as $key => $training) {
-            if ( ! Auth::user()->can('view', $training)) {
-                $trainings->pull($key);
-            }
-        }
+        $trainings = Auth::user()->viewableModels(\App\Training::class);
 
         $openTrainings = $trainings->where('status', '>=', 0);
         $closedTrainings =  $trainings->where('status', '<', 0);

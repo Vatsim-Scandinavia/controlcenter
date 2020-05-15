@@ -105,6 +105,28 @@ class User extends Authenticatable
         return $this->handover->rating_long;
     }
 
+    /**
+     * Get the models allowed for the user to be viewed.
+     *
+     * @param $class
+     * @param array $options
+     * @return mixed
+     */
+    public function viewableModels($class, array $options = [])
+    {
+
+        $models = $class::where($options)->get();
+
+        foreach ($models as $key => $model) {
+            if ($this->cannot('view', $model)) {
+                $models->pull($key);
+            }
+        }
+
+        return $models;
+
+    }
+
     // User group checks
     public function isMentor(Country $country = null) {
 
