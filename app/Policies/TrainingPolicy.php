@@ -58,7 +58,9 @@ class TrainingPolicy
      */
     public function viewReports(User $user, Training $training)
     {
-        return $user->isMentor($training->country) || $user->is($training->user);
+        return  $user->isMentor($training->country) ||
+                $user->is($training->user) ||
+                $user->isAdmin();
     }
 
     public function createReport(User $user, Training $training)
