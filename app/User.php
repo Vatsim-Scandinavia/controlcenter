@@ -3,10 +3,13 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
+
+    use Notifiable;
 
     public $timestamps = false;
 
