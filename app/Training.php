@@ -10,8 +10,8 @@ class Training extends Model
     protected $guarded = [];
 
     protected $dates = [
-      'started_at',
-      'finished_at'
+        'started_at',
+        'finished_at'
     ];
 
     public function path()
@@ -48,23 +48,28 @@ class Training extends Model
         $this->update(['status' => $status]);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function country(){
+    public function country()
+    {
         return $this->belongsTo(Country::class);
     }
 
-    public function reports(){
+    public function reports()
+    {
         return $this->hasMany(TrainingReport::class);
     }
 
-    public function ratings(){
+    public function ratings()
+    {
         return $this->belongsToMany(Rating::class);
     }
 
-    public function mentors(){
+    public function mentors()
+    {
         return $this->belongsToMany(User::class);
     }
 }
