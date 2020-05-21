@@ -12,7 +12,8 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
-        "league/oauth2-client": "^2.4"
+        "league/oauth2-client": "^2.4",
+        "wildside/userstamps": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.3",
