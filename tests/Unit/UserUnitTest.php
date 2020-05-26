@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Exceptions\PolicyMissingException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -72,6 +73,14 @@ class UserUnitTest extends TestCase
         $this->user->can('view', $training)
             ? $this->assertTrue($this->user->viewableModels('\App\Training')->contains($training))
             : $this->assertFalse($this->user->viewableModels('\App\Training')->contains($training));
+    }
+
+    /** @test */
+    public function an_exception_is_thrown_if_a_policy_does_not_exist_for_class()
+    {
+        $this->expectException(PolicyMissingException::class);
+
+        $this->user->viewableModels('\App\Test');
     }
 
 
