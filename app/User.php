@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exceptions\PolicyMethodMissingException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -114,11 +115,16 @@ class User extends Authenticatable
      * @param $class
      * @param array $options
      * @return mixed
+     * @throws PolicyMethodMissingException
      */
     public function viewableModels($class, array $options = [])
     {
 
         $models = $class::where($options)->get();
+
+        if ( ! method_exists(policy($class), 'view')) {
+            throw new PolicyMethodMissingException('The view policy does not exist on the policy.');
+        }
 
         foreach ($models as $key => $model) {
             if ($this->cannot('view', $model)) {
