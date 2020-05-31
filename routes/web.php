@@ -52,9 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
 
     // Admin
-    Route::get('/admin/settings', 'DashboardController@admin')->name('admin.settings');
-    Route::get('/admin/content', 'DashboardController@admin')->name('admin.content');
-    Route::get('/admin/templates', 'DashboardController@admin')->name('admin.templates');
+    Route::get('/admin/settings', 'GlobalSettingController@index')->name('admin.settings');
+    Route::post('/admin/settings', 'GlobalSettingController@edit')->name('admin.settings.store');
+    Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
 
     // User-specific Navigation
     Route::get('/settings', 'UserSettingController@index')->name('settings');
