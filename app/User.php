@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMissingException;
 use App\Exceptions\PolicyMethodMissingException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -87,11 +88,11 @@ class User extends Authenticatable
 
     // Get properties from Handover, the variable names here break with the convention.
     public function getLastNameAttribute(){
-        return $this->handover->last_name;
+        return $this->getHandoverAttr('last_name');
     }
 
     public function getFirstNameAttribute(){
-        return $this->handover->first_name;
+        return $this->getHandoverAttr('first_name');
     }
 
     public function getNameAttribute(){
@@ -99,15 +100,33 @@ class User extends Authenticatable
     }
 
     public function getRatingAttribute(){
-        return $this->handover->rating;
+        return $this->getHandoverAttr('rating');
     }
 
     public function getRatingShortAttribute(){
-        return $this->handover->rating_short;
+        return $this->getHandoverAttr('rating_short');
     }
 
     public function getRatingLongAttribute(){
-        return $this->handover->rating_long;
+        return $this->getHandoverAttr('rating_long');
+    }
+
+    /**
+     * Get an attribute from the user's Handover object
+     *
+     * @param string $key
+     * @return mixed
+     * @throws MissingHandoverObjectException
+     */
+    public function getHandoverAttr(string $key)
+    {
+        $handover = $this->handover;
+
+        if ($handover == null) {
+            throw new MissingHandoverObjectException($this->id);
+        }
+
+        return $handover->$key;
     }
 
     /**
