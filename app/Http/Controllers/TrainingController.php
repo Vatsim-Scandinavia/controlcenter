@@ -52,8 +52,8 @@ class TrainingController extends Controller
         $openTrainings = $trainings->where('status', '>=', 0);
         $closedTrainings =  $trainings->where('status', '<', 0);
 
-        $statuses = $this->statuses;
-        $types = $this->types;
+        $statuses = TrainingController::$statuses;
+        $types = TrainingController::$types;
 
         return view('training.overview', compact('openTrainings', 'closedTrainings', 'statuses', 'types'));
     }
@@ -167,8 +167,8 @@ class TrainingController extends Controller
         $examinations = TrainingExamination::where('training_id', $training->id)->get();
 
         $trainingMentors = $training->country->mentors;
-        $statuses = $this->statuses;
-        $types = $this->types;
+        $statuses = TrainingController::$statuses;
+        $types = TrainingController::$types;
 
         return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types'));
     }
