@@ -218,6 +218,18 @@
                 </h6>
             </div>
             <div class="card-body">
+
+                @foreach($examinations as $examination)
+                        <div class="card bg-light mb-3">
+                            <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}</div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {{ $examination->result }}
+                                </p>
+                            </div>
+                        </div>
+                @endforeach
+
                 @if (sizeof($training->reports) == 0)
                         <div class="card-text text-primary">
                             No training reports yet.
@@ -242,8 +254,12 @@
                             </div>
                     @endforeach
                 @endif
+
                 @can('createReport', $training)
                 <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
+                @endcan
+                @can('createExamination', $training)
+                <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-success">Create examination report</a>
                 @endcan
                 @can('viewReports', $training)
                 <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 btn-outline-secondary">See all reports</a>

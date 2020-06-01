@@ -15,11 +15,6 @@ class TrainingExamination extends Model
         'draft' => 'boolean',
     ];
 
-    public function getResultAttribute()
-    {
-        return ucfirst($this->result);
-    }
-
     public function training()
     {
         return $this->belongsTo(Training::class);

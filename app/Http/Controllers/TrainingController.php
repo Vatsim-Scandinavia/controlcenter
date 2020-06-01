@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Country;
 use App\Rating;
 use App\Training;
+use App\TrainingExamination;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -163,11 +164,13 @@ class TrainingController extends Controller
     {
         $this->authorize('view', $training);
 
+        $examinations = TrainingExamination::where('training_id', $training->id)->get();
+
         $trainingMentors = $training->country->mentors;
         $statuses = $this->statuses;
         $types = $this->types;
 
-        return view('training.show', compact('training', 'trainingMentors', 'statuses', 'types'));
+        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types'));
     }
 
     /**

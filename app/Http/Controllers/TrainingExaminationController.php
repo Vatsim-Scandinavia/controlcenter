@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use App\Position;
 use App\Training;
 use App\TrainingExamination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class TrainingExaminationController extends Controller
 {
@@ -33,6 +35,10 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('createExamination', $training);
+        
+        $positions = Position::all();
+
+        return view('trainingExam.create', compact('training', 'positions'));
     }
 
     /**
@@ -48,14 +54,20 @@ class TrainingExaminationController extends Controller
         $this->authorize('createExamination', $training);
 
         $data = $this->validateRequest();
+        $data = $request->validate([
+            'date' => 'required|date:Y-m-d',
+            'position' => 'required|exists:positions,callsign',
+            'result' => ['required', Rule::in(['FAILED', 'PASSED', 'CANCELLED', 'POSTPONED'])],
+        ]);
 
-        $position = Position::where('id', $data['position_id'])->first();
-
+        $date = new DateTime($data['date']);
+        $position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+        
         $examination = TrainingExamination::create([
-            'position_id' => $position->id,
+            'position_id' => $position_id,
             'training_id' => $training->id,
             'examiner_id' => Auth::id(),
-            'examination_date' => $data['examination_date']
+            'examination_date' => $date,
         ]);
 
         if (key_exists('result', $data)) {

@@ -21,7 +21,6 @@ class CreateTrainingExaminationsTable extends Migration
             $table->string('examination_sheet')->nullable();
             $table->enum('result', ['PASSED', 'FAILED', 'CANCELLED', 'POSTPONED'])->nullable();
             $table->date('examination_date');
-            $table->boolean('draft')->default(false);
             $table->timestamps();
 
             $table->foreign('training_id')->references('id')->on('trainings')->onDelete('CASCADE')->onUpdate('CASCADE');
