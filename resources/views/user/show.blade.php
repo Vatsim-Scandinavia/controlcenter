@@ -39,11 +39,11 @@
                                 <td>{{ $user->first_name }}</td>
                                 <td>{{ $user->last_name }}</td>
                                 <td>{{ $user->rating_short }}</td>
-                                <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
+                                <td><i class="text-muted fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
                                 <td>{{ $user->country }}</td>
-                                <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
+                                <td><i class="text-muted fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->last_login }}</td>
                             </tr>
                         </tbody>
@@ -72,13 +72,13 @@
                     <div class="form-check">
                     @foreach($groups as $group)
                         <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="access" {{ $user->group == $group->id ? "checked" : "" }}><b>{{ $group->name }}</b>
+                            <input type="radio" class="form-check-input" name="access" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
                             <div class="text-muted">{{ $group->description }}</div>
                             <br>
                         </label>
                     @endforeach
                     <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="access" {{ !$user->group ? "checked" : "" }}><b>None</b>
+                        <input type="radio" class="form-check-input" name="access" {{ !$user->group ? "checked" : "" }}>None
                         <div class="text-muted">No specific access, usually a student.</div>
                         <br>
                     </label>
@@ -137,7 +137,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
+                                    <i class="text-muted {{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                             </tr>
                             @endforeach
