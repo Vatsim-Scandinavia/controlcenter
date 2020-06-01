@@ -17,7 +17,7 @@ class TrainingController extends Controller
      * A list of possible statuses
      *
      */
-    public $statuses = [
+    public static $statuses = [
         -3 => ["text" => "Closed by system", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
         -2 => ["text" => "Closed by student", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
         -1 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
@@ -31,7 +31,7 @@ class TrainingController extends Controller
      * A list of possible types
      *
      */
-    public $types = [
+    public static $types = [
         1 => ["text" => "Standard", "icon" => "fas fa-circle"],
         2 => ["text" => "Refresh", "icon" => "fas fa-sync"],
         3 => ["text" => "Transfer", "icon" => "fas fa-exchange"],

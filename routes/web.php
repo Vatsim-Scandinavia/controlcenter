@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/mentor/{user}/country', 'MentorController@removeCountry')->name('mentor.remove.country');
     Route::delete('/country/{country}/mentor', 'MentorController@removeMentor')->name('country.remove.mentor');
 
+    // Users
+    Route::get('/user/{user}', 'UserController@show')->name('user.show');
+    Route::patch('/user/{user}', 'UserController@update')->name('user.update');
+
     // Reports
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');

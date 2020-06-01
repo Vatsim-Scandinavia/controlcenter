@@ -126,6 +126,22 @@ class User extends Authenticatable
         return $this->getHandoverAttr('rating_long');
     }
 
+    public function getDivisionAttribute(){
+        return $this->getHandoverAttr('division');
+    }
+
+    public function getSubdivisionAttribute(){
+        return $this->getHandoverAttr('subdivision');
+    }
+
+    public function getVisitingControllerAttribute(){
+        return $this->getHandoverAttr('visiting_controller');
+    }
+
+    public function getActiveAttribute(){
+        return $this->getHandoverAttr('atc_active');
+    }
+
     /**
      * Get an attribute from the user's Handover object
      *

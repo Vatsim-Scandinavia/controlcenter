@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Group;
+use App\Country;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -44,9 +46,17 @@ class UserController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function show(Group $group)
+    public function show($id)
     {
-        //
+        $user = User::find($id);
+        $groups = Group::all();
+        $countries = Country::all();
+
+        $trainings = $user->trainings;
+        $statuses = TrainingController::$statuses;
+        $types = TrainingController::$types;
+
+        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types'));
     }
 
     /**
@@ -55,7 +65,7 @@ class UserController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function edit(Group $group)
+    public function edit(User $user)
     {
         //
     }
@@ -67,7 +77,7 @@ class UserController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Group $group)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -78,7 +88,7 @@ class UserController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Group $group)
+    public function destroy(User $user)
     {
         //
     }

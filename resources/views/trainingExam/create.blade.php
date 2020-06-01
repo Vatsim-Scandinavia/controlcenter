@@ -61,7 +61,7 @@
                                 <option value="CANCELLED">Cancelled</option>
                                 <option value="POSTPONED">Postponed</option>
                             </select>
-                          </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="attachments">Attachments</label>
