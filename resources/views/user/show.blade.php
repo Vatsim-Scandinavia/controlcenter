@@ -181,7 +181,7 @@
                             @foreach($user->teaches as $training)
                             <tr>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
-                                <td>TBA</td>
+                                <td>{{ Carbon\Carbon::parse($user->teaches->find($training->id)->pivot->expire_at)->toFormattedDateString() }}</td>
                             </tr>
                             @endforeach
                         </tbody>

@@ -107,6 +107,6 @@ class Training extends Model
      */
     public function mentors()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('expire_at');
     }
 }
