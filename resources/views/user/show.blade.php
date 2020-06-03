@@ -10,6 +10,13 @@
 <div class="row">
 
     <div class="col-xl-12 col-md-12 mb-12">
+
+        @if(Session::has('success') OR isset($success))
+            <div class="alert alert-success" role="alert">
+                {!! Session::has('success') ? Session::pull("success") : $error !!}
+            </div>
+        @endif
+
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -71,26 +78,32 @@
 
                     <div class="form-check">
                     @foreach($groups as $group)
-                        <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="access" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
+                        <label class="form-check-label @error('access') is-invalid @enderror">
+                            <input type="radio" class="form-check-input" name="access" value="{{ $group->id }}" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
                             <div class="text-muted">{{ $group->description }}</div>
                             <br>
                         </label>
                     @endforeach
-                    <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="access" {{ !$user->group ? "checked" : "" }}>None
+                    <label class="form-check-label @error('access') is-invalid @enderror">
+                        <input type="radio" class="form-check-input" name="access" value="0" {{ !$user->group ? "checked" : "" }}>None
                         <div class="text-muted">No specific access, usually a student.</div>
                         <br>
                     </label>
+                    @error('access')
+                        <span class="text-danger">{{ $errors->first('access') }}</span>
+                    @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="assignCountries">Mentoring countries: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label class="@error('countries') is-invalid @enderror" for="assignCountries">Mentoring countries: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="countries[]" id="assignCountries">
                             @foreach($countries as $country)
                                 <option value="{{ $country->id }}" {{ ($user->mentor_countries->contains($country->id)) ? "selected" : "" }}>{{ $country->name }}</option>
                             @endforeach
                         </select>
+                        @error('countries')
+                            <span class="text-danger">{{ $errors->first('countries') }}</span>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary">Save access</button>
