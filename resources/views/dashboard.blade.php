@@ -136,26 +136,7 @@
                             @endif
                         </td>
                         <td>
-                            @switch($training->status)
-                                @case(-2)
-                                    Closed on student’s request
-                                    @break
-                                @case(-1)
-                                    Closed on TA request
-                                    @break
-                                @case(0)
-                                    In queue
-                                    @break
-                                @case(1)
-                                    In progress
-                                    @break
-                                @case(2)
-                                    Awaiting examination
-                                    @break
-                                @case(3)
-                                    Completed
-                                    @break
-                            @endswitch
+                            <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}
                         </td>
                         <td>
                             <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
