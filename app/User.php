@@ -111,6 +111,11 @@ class User extends Authenticatable
         return $this->first_name . " " . $this->last_name;
     }
 
+    public function getEmailAttribute()
+    {
+        return $this->getHandoverAttr('email');
+    }
+
     public function getRatingAttribute()
     {
         return $this->getHandoverAttr('rating');
