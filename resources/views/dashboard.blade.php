@@ -16,7 +16,7 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Current Rank</div>
+            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Current Rank</div>
             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $data['rating'] }}</div>
             </div>
             <div class="col-auto">
@@ -33,7 +33,7 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Your favorite position</div>
+            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Your favorite position</div>
             <div class="h5 mb-0 font-weight-bold text-gray-800">ENGM_W_APP</div>
             </div>
             <div class="col-auto">
