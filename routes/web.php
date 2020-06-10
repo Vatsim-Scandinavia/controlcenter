@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
     // Users
     Route::get('/user/{user}', 'UserController@show')->name('user.show');
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');
+    Route::get('/settings', 'UserController@settings')->name('user.settings');
+    Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
 
     // Reports
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
@@ -59,9 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/settings', 'GlobalSettingController@index')->name('admin.settings');
     Route::post('/admin/settings', 'GlobalSettingController@edit')->name('admin.settings.store');
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
-
-    // User-specific Navigation
-    Route::get('/settings', 'UserSettingController@index')->name('settings');
 
     // Training routes
     Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
