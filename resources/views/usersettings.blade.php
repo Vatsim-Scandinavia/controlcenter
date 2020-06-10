@@ -34,28 +34,30 @@
                                 </label>
                             </div>
 
-                            <hr>
+                            @if($user->isModerator())
+                                <hr>
 
-                            <h5>Notifications</h5>
+                                <h5>Moderator Notifications</h5>
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check1" name="setting_notify_newreq" {{ $user->setting_notify_newreq ? "checked" : "" }}>
-                                <label class="form-check-label" for="check1">
-                                    Send notification of new training requests
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check2" name="setting_notify_closedreq" {{ $user->setting_notify_closedreq ? "checked" : "" }}>
-                                <label class="form-check-label" for="check2">
-                                    Send notification of closed training requests
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check3" name="setting_notify_newexamreport" {{ $user->setting_notify_newexamreport ? "checked" : "" }}>
-                                <label class="form-check-label" for="check3">
-                                    Send notification of new examination reports
-                                </label>
-                            </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="check1" name="setting_notify_newreq" {{ $user->setting_notify_newreq ? "checked" : "" }}>
+                                    <label class="form-check-label" for="check1">
+                                        Send notification of new training requests
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="check2" name="setting_notify_closedreq" {{ $user->setting_notify_closedreq ? "checked" : "" }}>
+                                    <label class="form-check-label" for="check2">
+                                        Send notification of closed training requests
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="check3" name="setting_notify_newexamreport" {{ $user->setting_notify_newexamreport ? "checked" : "" }}>
+                                    <label class="form-check-label" for="check3">
+                                        Send notification of new examination reports
+                                    </label>
+                                </div>
+                            @endif
 
                             <button class="btn btn-success mt-3" type="submit">Save</button>
                         </form>
