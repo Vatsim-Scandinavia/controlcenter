@@ -67,7 +67,7 @@ class User extends Authenticatable
 
     public function teaches()
     {
-        return $this->belongsToMany(Training::class);
+        return $this->belongsToMany(Training::class)->withPivot('expire_at');
     }
 
     public function ratings()

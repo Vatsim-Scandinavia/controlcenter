@@ -9,13 +9,13 @@
 
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">VATSCA Members</h6> 
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">VATSCA Members</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-dark">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Vatsim ID</th>
                                 <th>First Name</th>
@@ -83,13 +83,13 @@
 
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Registered Non-VATSCA Users</h6> 
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">Registered Non-VATSCA Users</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-dark">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Vatsim ID</th>
                                 <th>First Name</th>

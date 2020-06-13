@@ -20,6 +20,11 @@ class CreateUsersTable extends Migration
             $table->timestamp('last_login');
             $table->rememberToken();
 
+            $table->boolean("setting_notify_newreport")->default(true);
+            $table->boolean("setting_notify_newreq")->default(true);
+            $table->boolean("setting_notify_closedreq")->default(true);
+            $table->boolean("setting_notify_newexamreport")->default(true);
+
             $table->foreign('country')->references('id')->on('countries');
             $table->foreign('group')->references('id')->on('groups');
         });

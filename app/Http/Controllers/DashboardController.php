@@ -35,8 +35,9 @@ class DashboardController extends Controller
         ];
 
         $trainings = $user->trainings;
+        $statuses = TrainingController::$statuses;
 
-        return view('dashboard', compact('data', 'trainings'));
+        return view('dashboard', compact('data', 'trainings', 'statuses'));
     }
 
     /**

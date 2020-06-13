@@ -127,6 +127,16 @@ a {
 			background-color: $blue;
 		}
 	}
+
+	.thead-light{
+		th{
+			color: $gray-800;
+		}
+	}
+
+	tr{
+		color: $gray-800;
+	}
 }
 
 // Lets tweak a bit the style of bootstrap-table plugin

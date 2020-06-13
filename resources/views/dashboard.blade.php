@@ -16,7 +16,7 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Current Rank</div>
+            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Current Rank</div>
             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $data['rating'] }}</div>
             </div>
             <div class="col-auto">
@@ -33,7 +33,7 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Your favorite position</div>
+            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Your favorite position</div>
             <div class="h5 mb-0 font-weight-bold text-gray-800">ENGM_W_APP</div>
             </div>
             <div class="col-auto">
@@ -93,18 +93,18 @@
     <div class="col-xl-8 col-lg-7">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">My Trainings</h6>
+        <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-white">My Trainings</h6>
         </div>
         <!-- Card Body -->
-        <div class="card-body">
+        <div class="card-body p-0">
 
         @if (sizeof($trainings) == 0)
             You have no trainings.
         @else
         <div class="table-responsive">
-            <table class="table table-striped" width="100%" cellspacing="0">
-            <thead>
+            <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+            <thead class="thead-light">
                 <tr>
                 <th>Level</th>
                 <th>Country</th>
@@ -136,26 +136,7 @@
                             @endif
                         </td>
                         <td>
-                            @switch($training->status)
-                                @case(-2)
-                                    Closed on student’s request
-                                    @break
-                                @case(-1)
-                                    Closed on TA request
-                                    @break
-                                @case(0)
-                                    In queue
-                                    @break
-                                @case(1)
-                                    In progress
-                                    @break
-                                @case(2)
-                                    Awaiting examination
-                                    @break
-                                @case(3)
-                                    Completed
-                                    @break
-                            @endswitch
+                            <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}
                         </td>
                         <td>
                             <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
@@ -174,8 +155,8 @@
     <div class="col-xl-4 col-lg-5">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Training</h6>
+        <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-white">Training</h6>
         </div>
         <!-- Card Body -->
         <div class="card-body">
