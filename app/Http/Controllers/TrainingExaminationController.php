@@ -30,12 +30,13 @@ class TrainingExaminationController extends Controller
      *
      * @param Request $request
      * @param Training $training
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Request $request, Training $training)
     {
         $this->authorize('createExamination', $training);
-        
+
         $positions = Position::all();
 
         return view('trainingExam.create', compact('training', 'positions'));
@@ -54,15 +55,10 @@ class TrainingExaminationController extends Controller
         $this->authorize('createExamination', $training);
 
         $data = $this->validateRequest();
-        $data = $request->validate([
-            'date' => 'required|date:Y-m-d',
-            'position' => 'required|exists:positions,callsign',
-            'result' => ['required', Rule::in(['FAILED', 'PASSED', 'CANCELLED', 'POSTPONED'])],
-        ]);
 
-        $date = new DateTime($data['date']);
+        $date = new DateTime($data['examination_date']);
         $position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
-        
+
         $examination = TrainingExamination::create([
             'position_id' => $position_id,
             'training_id' => $training->id,
@@ -133,9 +129,9 @@ class TrainingExaminationController extends Controller
     private function validateRequest()
     {
         return request()->validate([
-            'position_id' => 'sometimes|integer',
-            'result' => 'sometimes|string',
-            'examination_date' => 'sometimes|date',
+            'position' => 'required|exists:positions,callsign',
+            'result' => ['required', Rule::in(['FAILED', 'PASSED', 'CANCELLED', 'POSTPONED'])],
+            'examination_date' => 'sometimes|date:Y-m-d',
             'examination_sheet' => 'sometimes|file'
         ]);
     }

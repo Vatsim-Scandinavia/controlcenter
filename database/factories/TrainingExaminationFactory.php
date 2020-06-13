@@ -11,9 +11,10 @@ $factory->define(TrainingExamination::class, function (Faker $faker) {
     $examiner = factory(\App\User::class)->create(['group' => 2]);
 
     return [
-        'examination_date' => now(),
+        'examination_date' => now()->format('Y-m-d'),
         'examiner_id' => $examiner->id,
         'training_id' => $training->id,
-        'position_id' => '2'
+        'position_id' => \App\Position::all()->firstWhere('callsign', '=', 'EKCH_TWR')->id,
+        'result' => 'PASSED'
     ];
 });
