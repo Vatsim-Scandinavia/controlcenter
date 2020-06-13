@@ -27,13 +27,13 @@
                         @csrf
 
                         <div class="form-group">
-                            <label for="date">Date</label>
-                            <input id="date" class="datepicker form-control" type="text" name="date" required>
+                            <label for="examination_date">Date</label>
+                            <input id="examination_date" class="datepicker form-control" type="text" name="examination_date" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="position">Position</label>
-                            <input 
+                            <input
                                 id="position"
                                 class="form-control @error('position') is-invalid @enderror"
                                 type="text"
@@ -41,13 +41,13 @@
                                 list="positions"
                                 value="{{ old('position') }}"
                                 required>
-    
+
                             <datalist id="positions">
                                 @foreach($positions as $position)
                                     <option value="{{ $position->callsign }}">{{ $position->name }}</option>
                                 @endforeach
                             </datalist>
-    
+
                             @error('position')
                                 <span class="text-danger">{{ $errors->first('position') }}</span>
                             @enderror
@@ -88,7 +88,7 @@
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $('div').tooltip();
-        if({!! json_encode(old('date')) !!}) { 
+        if({!! json_encode(old('date')) !!}) {
             $(".datepicker").flatpickr({ dateFormat: "F d, Y", defaultDate: new Date({!! json_encode(old('date')) !!}) });
             $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: {!! json_encode(old('start_at')) !!} });
             $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: {!! json_encode(old('end_at')) !!} });
