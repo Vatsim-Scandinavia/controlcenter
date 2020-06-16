@@ -18,3 +18,10 @@
 @import "login.scss";
 @import "error.scss";
 @import "footer.scss";
+
+// Override boostrap on the input color
+.form-control{
+    &, &:focus{
+        color: $tertiary;
+    }
+}
