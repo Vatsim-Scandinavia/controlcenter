@@ -209,6 +209,37 @@ class TrainingController extends Controller
     }
 
     /**
+     * Confirm the continued interest in the training
+     *
+     * @param Training $training
+     * @param string $key
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
+    public function confirmInterest(Training $training, string $key)
+    {
+
+        $notification = DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+                            ->where('training_id', '=', $training->id)
+                            ->get()
+                            ->sortBy('created_at')
+                            ->last();
+
+        if ($notification->key != $key || Auth::id() != $training->user->id) {
+            return response('', 400);
+        }
+
+        DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+                ->where('notification_id', $notification->notification_id)
+                ->update([
+                    'confirmed_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+        return redirect()->to($training->path())->with('message', 'Interest successfully confirmed');
+
+    }
+
+    /**
      * @return mixed
      */
     protected function validateRequest()

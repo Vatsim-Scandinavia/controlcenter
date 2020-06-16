@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 
+    Route::get('/training/{training}/confirm/{key}', 'TrainingController@confirmInterest')->name('training.confirm.interest');
+
     // Training report routes
     Route::get('/training/report/{report}', 'TrainingReportController@edit')->name('training.report.edit');
     Route::get('training/{training}/reports', 'TrainingReportController@index')->name('training.report.index');
