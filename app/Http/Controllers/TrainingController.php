@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Country;
+use App\Notifications\ContinuedTrainingInterestNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 
 class TrainingController extends Controller
@@ -174,17 +178,6 @@ class TrainingController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Training  $training
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Training $training)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param Training $training
@@ -213,17 +206,6 @@ class TrainingController extends Controller
         $training->update($attributes);
 
         return redirect($training->path())->with("message", "Training successfully updated");
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Training  $training
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Training $training)
-    {
-        //
     }
 
     /**
