@@ -1,0 +1,89 @@
+@extends('layouts.app')
+
+@section('title', 'Votes')
+
+@section('content')
+<h1 class="h3 mb-4 text-gray-800">Vote</h1>
+
+@if(Session::has('success') OR isset($success))
+        <div class="alert alert-success" role="alert">
+            {!! Session::has('success') ? Session::pull("success") : $error !!}
+        </div>
+    @endif
+
+<div class="row">
+
+    <div class="col-xl-6 col-md-6 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">Cast your vote</h6> 
+            </div>
+            <div class="card-body">
+                <h3>{{ $vote->question }}</h3>
+
+                @if( $vote->require_active && !\Auth::user()->active )
+
+                    <p class="text-danger">Sorry, you do not qualify to participate in this vote. The vote is only for ATC active members.</p>
+
+                @else
+
+                    @if($vote->user()->exists(\Auth::user()))
+
+                        <p>You've already voted.</p>
+
+                    @else
+                        <form action="{{ route('vote.update', $vote->id) }}" method="POST">
+                            @method('PATCH')
+                            @csrf
+
+                            @foreach( $vote->option as $votefor )
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="vote" id="{{ $votefor->option }}" value="{{ $votefor->id }}">
+                                    <label class="form-check-label" for="{{ $votefor->option }}">
+                                        {{ $votefor->option }}
+                                    </label>
+                                </div>
+                            @endforeach
+                            @error('vote')
+                                <span class="text-danger">{{ $errors->first('vote') }}</span>
+                            @enderror
+                            
+                            <br>
+                            <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed</p>
+                            <button type="submit" class="btn btn-success">Submit Vote</button>
+                            
+                        </form>
+
+                    @endif
+
+                @endif
+
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6 col-md-6 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">Vote summary</h6> 
+            </div>
+            <div class="card-body">
+
+                @if ($vote->closed)
+
+                    <p>Trump won</p>
+
+                @else
+
+                    <p>Summary will be publicly available once the vote closes at {{ $vote->end_at }}</p>
+
+                @endif
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+@endsection

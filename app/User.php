@@ -95,6 +95,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Country::class, 'mentor_country');
     }
 
+    public function vote(){
+        return $this->hasMany(Vote::class);
+    }
+
     // Get properties from Handover, the variable names here break with the convention.
     public function getLastNameAttribute()
     {

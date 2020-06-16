@@ -109,4 +109,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/vatbook/{id}', 'VatbookController@show');
     Route::post('/vatbook/store', 'VatbookController@store');
     Route::post('/vatbook/update', 'VatbookController@update');
+
+    // Vote routes
+    Route::get('/votes', 'VoteController@index')->name('vote.overview');
+    Route::get('/vote/create', 'VoteController@create')->name('vote.create');
+    Route::post('/vote/store', 'VoteController@store')->name('vote.store');
+    Route::patch('/vote/{id}', 'VoteController@update')->name('vote.update');
+    Route::get('/vote/{id}', 'VoteController@show')->name('vote.show');
 });

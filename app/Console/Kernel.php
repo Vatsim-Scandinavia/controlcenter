@@ -41,6 +41,10 @@ class Kernel extends ConsoleKernel
         // Clean up expired solo endorsements
         $schedule->command('clean:endorsements')
             ->everyMinute();
+
+        // Close expired votes
+        $schedule->command('clean:votes')
+            ->everyMinute();
     }
 
     /**

@@ -106,6 +106,7 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
+            <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
             <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
             </div>
         </div>
