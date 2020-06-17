@@ -72,7 +72,8 @@
 
                 @if ($vote->closed)
 
-                    <p>Trump won</p>
+                    <h3>Results</h3>
+                    <canvas id="voteResults"></canvas>
 
                 @else
 
@@ -86,4 +87,49 @@
 
 
 </div>
+@endsection
+
+@section('js')
+<script>
+
+    var vote = {!! json_encode($vote->option) !!};
+
+    var voteOption = [];
+    var voteVotes = [];
+    for (i = 0; i < vote.length; i++) {
+        voteOption.push(vote[i]['option']);
+        voteVotes.push(vote[i]['voted']);
+    }    
+
+    var barChartData = {
+        labels: voteOption,
+        datasets: [{
+            label: 'Votes',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: voteVotes,
+        }]
+
+    };
+
+    var mix = document.getElementById("voteResults").getContext('2d');
+    var completedTrainingRequests = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            tooltips: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            responsive: true,
+        }
+    });
+
+</script>
 @endsection
