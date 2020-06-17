@@ -97,10 +97,10 @@
         <h6 class="m-0 font-weight-bold text-white">My Trainings</h6>
         </div>
         <!-- Card Body -->
-        <div class="card-body p-0">
+        <div class="card-body {{ sizeof($trainings) == 0 ? '' : 'p-0' }}">
 
         @if (sizeof($trainings) == 0)
-            You have no trainings.
+            <p>You have no registered trainings.</p>
         @else
         <div class="table-responsive">
             <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
