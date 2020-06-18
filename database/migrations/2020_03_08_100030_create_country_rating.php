@@ -20,6 +20,7 @@ class CreateCountryRating extends Migration
             $table->unsignedInteger('rating_id');
 
             $table->unsignedInteger('required_vatsim_rating')->nullable();
+            $table->unsignedInteger('queue_length')->nullable();
 
             $table->foreign('country_id')->references('id')->on('countries');
             $table->foreign('rating_id')->references('id')->on('ratings');

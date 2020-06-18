@@ -34,6 +34,10 @@ class Kernel extends ConsoleKernel
             DB::table('bookings')->where('date', '<', date('Y-m-d'))->delete();
         })->daily();
 
+        // Update training queue calculations
+        $schedule->command('update:queuecalculation')
+            ->daily();
+
         // Update Vatbook bookings
         $schedule->command('update:bookings')
             ->everyFiveMinutes();
