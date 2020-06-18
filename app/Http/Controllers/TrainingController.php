@@ -218,7 +218,7 @@ class TrainingController extends Controller
     public function confirmInterest(Training $training, string $key)
     {
 
-        $notification = DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+        $notification = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
                             ->where('training_id', '=', $training->id)
                             ->get()
                             ->sortBy('created_at')
@@ -228,7 +228,7 @@ class TrainingController extends Controller
             return response('', 400);
         }
 
-        DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+        DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
                 ->where('notification_id', $notification->notification_id)
                 ->update([
                     'confirmed_at' => now(),

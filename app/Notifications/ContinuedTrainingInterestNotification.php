@@ -88,8 +88,8 @@ class ContinuedTrainingInterestNotification extends Notification // implements S
      */
     private function addToDB()
     {
-        if (count(DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)->where('notification_id', $this->id)->get()) == 0) {
-            DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)->insert([
+        if (count(DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)->where('notification_id', $this->id)->get()) == 0) {
+            DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)->insert([
                 'notification_id' => $this->id,
                 'training_id' => $this->training->id,
                 'key' => $this->key,

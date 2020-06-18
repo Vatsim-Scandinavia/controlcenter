@@ -47,7 +47,7 @@ class SendContinuedInterestNotifications extends Command
 
         foreach ($trainings as $training) {
 
-            $last = DB::table(Training::$CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+            $last = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
                 ->where('training_id', $training->id)
                 ->get()
                 ->sortBy('created_at')

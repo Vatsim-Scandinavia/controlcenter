@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Training extends Model
 {
 
-    public static $CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE = 'continued_interest_notification_log';
+    const CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE = 'continued_interest_notification_log';
 
     protected $guarded = [];
 
