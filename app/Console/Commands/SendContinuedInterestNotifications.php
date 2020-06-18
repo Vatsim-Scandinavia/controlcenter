@@ -56,11 +56,8 @@ class SendContinuedInterestNotifications extends Command
             // A notification hasn't been sent previously
             if ($last == null) {
                 if ($training->created_at->diffInDays(now()) >= 30) {
-                    return;
-                } else {
                     $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
                     $training->user->notify(new ContinuedTrainingInterestNotification($training, $key));
-                    return;
                 }
             }
 
