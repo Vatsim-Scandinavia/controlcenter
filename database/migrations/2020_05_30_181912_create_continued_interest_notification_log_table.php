@@ -18,7 +18,7 @@ class CreateContinuedInterestNotificationLogTable extends Migration
             $table->unsignedBigInteger('training_id');
             $table->string('key');
             $table->timestamps();
-            $table->timestamp('deadline');
+            $table->timestamp('deadline')->nullable();
             $table->timestamp('confirmed_at')->nullable();
 
             $table->primary('notification_id', 'ci_notification_id_pk');
