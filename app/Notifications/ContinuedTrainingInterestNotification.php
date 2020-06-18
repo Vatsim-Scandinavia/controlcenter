@@ -60,6 +60,7 @@ class ContinuedTrainingInterestNotification extends Notification // implements S
             $mailMessage->line(' - ' . $rating->name);
         }
 
+        $mailMessage->line('Deadline: ' . $this->deadline->format('d-m-Y'));
         $mailMessage->action('Confirm interest', url(route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] )));
 
         return $mailMessage;
