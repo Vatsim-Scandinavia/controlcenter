@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\User;
 use App\Country;
+use App\Training;
 
 class ReportController extends Controller
 {
@@ -48,10 +51,40 @@ class ReportController extends Controller
         $totalRequests = [];
         if($filterCountry){
 
-            //dd(Country::find($country)->trainings->where('created_at', '<=', date('Y-m-d H:i:s')));
+            $data = Training::select([
+                // This aggregates the data and makes available a 'count' attribute
+                DB::raw('count(id) as `count`'), 
+                // This throws away the timestamp portion of the date
+                DB::raw('DATE(created_at) as day')
+              // Group these records according to that day
+              ])->groupBy('day')
+              // Show only the filtered country
+              ->where('country_id', $filterCountry)
+              // And restrict these results to only those created in the last week
+              ->where('created_at', '>=', Carbon::now()->subYear(1))
+              ->get()
+            ;
+
+            foreach($data as $entry) {
+                array_push($totalRequests, ['t' => $entry->day, 'y' => $entry->count]);
+            }
 
         } else {
-            
+            $data = Training::select([
+                // This aggregates the data and makes available a 'count' attribute
+                DB::raw('count(id) as `count`'), 
+                // This throws away the timestamp portion of the date
+                DB::raw('DATE(created_at) as day')
+              // Group these records according to that day
+              ])->groupBy('day')
+              // And restrict these results to only those created in the last week
+              ->where('created_at', '>=', Carbon::now()->subYear(1))
+              ->get()
+            ;
+
+            foreach($data as $entry) {
+                array_push($totalRequests, ['t' => $entry->day, 'y' => $entry->count]);
+            }
         }
 
         // Calculate new requests last 6 months
@@ -99,7 +132,7 @@ class ReportController extends Controller
         ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All FIRs';
         $firs = Country::all();
 
-        return view('reports.trainings', compact('filterName', 'firs', 'cardNumbers', 'queues'));
+        return view('reports.trainings', compact('filterName', 'firs', 'cardNumbers', 'totalRequests', 'queues'));
     }
 
     /**

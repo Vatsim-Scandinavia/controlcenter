@@ -107,7 +107,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Training requests last year
+                    Training requests last 12 months
                 </h6> 
             </div>
             <div class="card-body">
@@ -360,6 +360,8 @@
     ctx.canvas.width = 1000;
     ctx.canvas.height = 200;
 
+    var requestData = {!! json_encode($totalRequests) !!}
+
     var color = Chart.helpers.color;
     var cfg = {
         data: {
@@ -367,7 +369,7 @@
                 label: 'Training Requests',
                 backgroundColor: 'rgb(200, 100, 100)',
                 borderColor: 'rgb(255, 100, 100)',
-                data: generateData(),
+                data: requestData,
                 type: 'bar',
                 pointRadius: 0,
                 fill: false,
@@ -403,6 +405,9 @@
                     scaleLabel: {
                         display: true,
                         labelString: 'Requests'
+                    },
+                    ticks: {
+                        beginAtZero: true
                     }
                 }]
             },
