@@ -14,29 +14,62 @@ class ReportController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
 
-    public function trainings($country = false){
+    public function trainings($filterCountry = false){
+
+        
 
         // Note: Yes I know I could make this under same IF, but then it'd become a nice spaghetti!
 
+        // Calculate card numbers (in queue, in training, awaiting exam, completed this year)
+        $cardNumbers = [
+            "waiting" => 0,
+            "training" => 0,
+            "exam" => 0,
+            "completed" => 0,
+        ];
+        if($filterCountry){
+
+            $cardNumbers["waiting"] = Country::find($filterCountry)->trainings->where('status', 0)->count();
+            $cardNumbers["training"] = Country::find($filterCountry)->trainings->where('status', 1)->count();
+            $cardNumbers["exam"] = Country::find($filterCountry)->trainings->where('status', 2)->count();
+            $cardNumbers["completed"] = Country::find($filterCountry)->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+
+        } else {
+            
+            foreach(Country::all() as $country){
+                $cardNumbers["waiting"] = $cardNumbers["waiting"] + $country->trainings->where('status', 0)->count();
+                $cardNumbers["training"] = $cardNumbers["training"] + $country->trainings->where('status', 1)->count();
+                $cardNumbers["exam"] = $cardNumbers["exam"] + $country->trainings->where('status', 2)->count();
+                $cardNumbers["completed"] = $cardNumbers["completed"] + $country->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+            }
+
+        }
+
+
         // Calculate total training requests
-        
+        $totalRequests = [];
+        if($filterCountry){
+
+            //dd(Country::find($country)->trainings->where('created_at', '<=', date('Y-m-d H:i:s')));
+
+        } else {
+            
+        }
 
         // Calculate new requests last 6 months
 
         // Calculate completed requests last 6 months
 
+
         // Calculate queues
         $queues = [];
-        if($country){
-            $filter = Country::find($country)->name;
-
-            foreach(Country::find($country)->ratings as $rating){
+        if($filterCountry){
+            foreach(Country::find($filterCountry)->ratings as $rating){
                 if($rating->pivot->queue_length){
                     $queues[$rating->name] = $rating->pivot->queue_length;
                 }
             }
         } else {
-            $filter = 'All FIRs';
 
             $divideRating = [];
             foreach(Country::all() as $country){
@@ -65,8 +98,10 @@ class ReportController extends Controller
         }
 
         // Wrap it up and send it to the view
+        ($filterCountry) ? $filter = Country::find($filterCountry)->name :  $filter = 'All FIRs';
         $firs = Country::all();
-        return view('reports.trainings', compact('filter', 'firs', 'queues'));
+        
+        return view('reports.trainings', compact('filter', 'firs', 'cardNumbers', 'queues'));
     }
 
     /**

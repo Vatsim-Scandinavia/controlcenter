@@ -38,7 +38,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">In queue</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">21 requests</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardNumbers["waiting"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-hourglass fa-2x text-gray-300"></i>
@@ -54,7 +54,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In training</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">5 requests</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardNumbers["training"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-book-open fa-2x text-gray-300"></i>
@@ -70,7 +70,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Awaiting exam</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">2 requests</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardNumbers["exam"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
@@ -88,7 +88,7 @@
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed this year</div>
                 <div class="row no-gutters align-items-center">
                     <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">19 requests</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $cardNumbers["completed"] }} requests</div>
                     </div>
                 </div>
                 </div>
