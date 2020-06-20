@@ -13,7 +13,7 @@ class Rating extends Model
     }
 
     public function countries(){
-        return $this->belongsToMany(Country::class)->withPivot('required_vatsim_rating');
+        return $this->belongsToMany(Country::class)->withPivot('required_vatsim_rating', 'queue_length');
     }
 
     public function users(){

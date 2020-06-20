@@ -31,13 +31,13 @@
 
 <div class="row">
 
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-secondary shadow h-100 py-2">
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">In queue</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">21</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">21 requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-hourglass fa-2x text-gray-300"></i>
@@ -47,13 +47,13 @@
     </div>
     </div>
 
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In training</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">5 requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-book-open fa-2x text-gray-300"></i>
@@ -63,13 +63,13 @@
     </div>
     </div>
 
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Awaiting exam</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">2 requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
@@ -79,7 +79,7 @@
     </div>
     </div>
 
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -87,52 +87,12 @@
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed this year</div>
                 <div class="row no-gutters align-items-center">
                     <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">19</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">19 requests</div>
                     </div>
                 </div>
                 </div>
                 <div class="col-auto">
                 <i class="fas fa-check fa-2x text-gray-300"></i>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-6 mb-4">
-        <div class="card border-left-secondary shadow h-100 py-2">
-            <div class="card-body">
-            <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-secondary text-uppercase text-gray-600 mb-1">Average waiting time</div>
-                <div class="row no-gutters align-items-center">
-                    <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">5.4 months</div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-auto">
-                <i class="fas fa-hourglass fa-2x text-gray-300"></i>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-6 mb-4">
-        <div class="card border-left-secondary shadow h-100 py-2">
-            <div class="card-body">
-            <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-secondary text-uppercase text-gray-600 mb-1">Min-Max waiting time</div>
-                <div class="row no-gutters align-items-center">
-                    <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">2-7 months</div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-auto">
-                <i class="fas fa-hourglass fa-2x text-gray-300"></i>
                 </div>
             </div>
             </div>
@@ -159,7 +119,7 @@
 
 <div class="row">
 
-    <div class="col-xl-6 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -172,7 +132,7 @@
         </div>
     </div>
 
-    <div class="col-xl-6 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -181,6 +141,36 @@
             </div>
             <div class="card-body">
                 <canvas id="completedTrainingRequests"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Queue lengths <span class="badge badge-danger">Beta and inaccurate</span>
+                </h6> 
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Rating</th>
+                            <th>Average waiting time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach($queues as $queue => $time)
+                            <tr>
+                                <td>{{ $queue }}</td>
+                                <td>{{ \Carbon\CarbonInterval::seconds($time)->cascade()->forHumans(['parts' => 2]) }}</td>
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -51,16 +51,19 @@ class UpdateQueueCalculation extends Command
                 // Get the queue time from each training of this specific rating in the specific country
                 foreach($rating->trainings->where('country_id', $country->id) as $training){
 
-                    $trainingCreated = $training->created_at;
-                    $trainingStarted = $training->started_at;
+                    // Only include pure Vatsim ratings in calculation
+                    if($training->ratings->count() == 1 && $training->ratings->first()->vatsim_rating){
+                        $trainingCreated = $training->created_at;
+                        $trainingStarted = $training->started_at;
 
-                    // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
-                    $waitingTime = $trainingStarted->diffInSeconds($trainingCreated);
-                    $waitingTime = $waitingTime - $training->paused_length;
+                        // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
+                        $waitingTime = $trainingStarted->diffInSeconds($trainingCreated);
+                        $waitingTime = $waitingTime - $training->paused_length;
 
-                    // Inject this specific training's record into the average calculation
-                    $averageSum = $averageSum + $waitingTime;
-                    $averageNumber++;
+                        // Inject this specific training's record into the average calculation
+                        $averageSum = $averageSum + $waitingTime;
+                        $averageNumber++;
+                    }                    
                 }   
 
                 // Calculate the average for this country's selected rating, then insert it to the country's rating column
