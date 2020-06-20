@@ -16,15 +16,27 @@ class ReportController extends Controller
 
     public function trainings($country = false){
 
-        $queues = [];
+        // Note: Yes I know I could make this under same IF, but then it'd become a nice spaghetti!
 
+        // Calculate total training requests
+        
+
+        // Calculate new requests last 6 months
+
+        // Calculate completed requests last 6 months
+
+        // Calculate queues
+        $queues = [];
         if($country){
+            $filter = Country::find($country)->name;
+
             foreach(Country::find($country)->ratings as $rating){
                 if($rating->pivot->queue_length){
                     $queues[$rating->name] = $rating->pivot->queue_length;
                 }
             }
         } else {
+            $filter = 'All FIRs';
 
             $divideRating = [];
             foreach(Country::all() as $country){
@@ -52,9 +64,9 @@ class ReportController extends Controller
 
         }
 
+        // Wrap it up and send it to the view
         $firs = Country::all();
-
-        return view('reports.trainings', compact('firs', 'queues'));
+        return view('reports.trainings', compact('filter', 'firs', 'queues'));
     }
 
     /**
