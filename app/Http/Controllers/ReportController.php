@@ -15,10 +15,8 @@ class ReportController extends Controller
      */
 
     public function trainings($filterCountry = false){
-
-        
-
         // Note: Yes I know I could make this under same IF, but then it'd become a nice spaghetti!
+        // I'll split it up into individual functions once it works.
 
         // Calculate card numbers (in queue, in training, awaiting exam, completed this year)
         $cardNumbers = [
@@ -98,10 +96,10 @@ class ReportController extends Controller
         }
 
         // Wrap it up and send it to the view
-        ($filterCountry) ? $filter = Country::find($filterCountry)->name :  $filter = 'All FIRs';
+        ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All FIRs';
         $firs = Country::all();
-        
-        return view('reports.trainings', compact('filter', 'firs', 'cardNumbers', 'queues'));
+
+        return view('reports.trainings', compact('filterName', 'firs', 'cardNumbers', 'queues'));
     }
 
     /**

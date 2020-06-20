@@ -6,7 +6,7 @@
 <h1 class="h3 mb-4 text-gray-800">Training Statistics
     <div class="dropdown show" style="display: inline;">
         <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ $filter }}
+            {{ $filterName }}
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
