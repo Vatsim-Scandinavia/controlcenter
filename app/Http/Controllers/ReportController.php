@@ -52,7 +52,9 @@ class ReportController extends Controller
 
         }
 
-        return view('reports.trainings', compact('queues'));
+        $firs = Country::all();
+
+        return view('reports.trainings', compact('firs', 'queues'));
     }
 
     /**

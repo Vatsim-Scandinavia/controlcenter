@@ -53,8 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
 
     // Reports
-    Route::get('/reports/trainings/{id}', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
+    Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.country');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
     Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
 

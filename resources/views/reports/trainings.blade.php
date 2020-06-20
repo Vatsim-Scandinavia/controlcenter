@@ -10,9 +10,10 @@
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="#">Denmark</a>
-            <a class="dropdown-item" href="#">Finland</a>
-            <a class="dropdown-item" href="#">Iceland</a>
+            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All FIRs</a>
+            @foreach($firs as $fir)
+                <a class="dropdown-item" href="{{ route('reports.training.country', $fir->id) }}">{{ $fir->name }}</a>
+            @endforeach 
         </div>
     </div>
 </h1>
