@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use App\User;
 use App\Country;
 use App\Training;
+use App\Rating;
+use DateTime;
 
 class ReportController extends Controller
 {
@@ -87,9 +89,64 @@ class ReportController extends Controller
             }
         }
 
-        // Calculate new requests last 6 months
+        // Calculate new and requests last 6 months
+        $monthTranslator = [];
+        $monthTranslator[(int)Carbon::now()->format('m')] = 6;
+        $monthTranslator[(int)Carbon::now()->subMonths(1)->format('m')] = 5;
+        $monthTranslator[(int)Carbon::now()->subMonths(2)->format('m')] = 4;
+        $monthTranslator[(int)Carbon::now()->subMonths(3)->format('m')] = 3;
+        $monthTranslator[(int)Carbon::now()->subMonths(4)->format('m')] = 2;
+        $monthTranslator[(int)Carbon::now()->subMonths(5)->format('m')] = 1;
+        $monthTranslator[(int)Carbon::now()->subMonths(6)->format('m')] = 0;
 
-        // Calculate completed requests last 6 months
+        $newRequests = [];
+        $completedRequests = [];
+        if($filterCountry){
+
+            foreach(Rating::all() as $rating){
+                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+
+                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+
+                    // New requests
+                    foreach($rating->trainings->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months'))) as $training){
+
+                        $newData = $training->select([
+                            // This aggregates the data and makes available a 'count' attribute
+                            DB::raw('count(id) as `count`'), 
+                            // This throws away the timestamp portion of the date
+                            DB::raw('MONTH(created_at) as month')
+                        ])->where('country_id', $filterCountry)->groupBy('month')->get();
+
+                        foreach($newData as $newDataEntry) {
+                            $newRequests[$rating->name][$monthTranslator[$newDataEntry->month]] = $newDataEntry->count;
+                        }
+
+                    }
+
+                    // Completed requests
+                    foreach($rating->trainings->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months'))) as $training){
+                        $finshedData = $training->select([
+                            // This aggregates the data and makes available a 'count' attribute
+                            DB::raw('count(id) as `count`'), 
+                            // This throws away the timestamp portion of the date
+                            DB::raw('MONTH(created_at) as month')
+                        ])->where('country_id', $filterCountry)->groupBy('month')->get();
+
+                        foreach($finshedData as $completedDataEntry) {
+                            $completedRequests[$rating->name][$monthTranslator[$completedDataEntry->month]] = $completedDataEntry->count;
+                        }
+
+                    }
+
+                    dd($completedRequests);
+                }
+            }
+
+        } else {
+
+        }
 
 
         // Calculate queues
@@ -132,7 +189,7 @@ class ReportController extends Controller
         ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All FIRs';
         $firs = Country::all();
 
-        return view('reports.trainings', compact('filterName', 'firs', 'cardNumbers', 'totalRequests', 'queues'));
+        return view('reports.trainings', compact('filterName', 'firs', 'cardNumbers', 'totalRequests', 'newRequests', 'completedRequests', 'queues'));
     }
 
     /**

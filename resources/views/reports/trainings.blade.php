@@ -188,44 +188,28 @@
 		return Math.round(Math.random() * 100);
 	};
 
+    var newRequestsData = {!! json_encode($newRequests) !!}
+
     var barChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
         datasets: [{
             label: 'S2',
             backgroundColor: 'rgb(200, 100, 100)',
-            data: [
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor()
-            ]
+            data: newRequestsData["S2"]
         }, {
             label: 'S3',
             backgroundColor: 'rgb(100, 100, 200)',
-            data: [
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor()
-            ]
+            data: newRequestsData["S3"]
         }, {
             label: 'C1',
             backgroundColor: 'rgb(100, 200, 100)',
-            data: [
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor()
-            ]
+            data: newRequestsData["C1"]
         }]
 
     };
@@ -256,46 +240,30 @@
 <script>
     function randomScalingFactor() {
 		return Math.round(Math.random() * 100);
-	};
+    };
+
+    var completedRequestsData = {!! json_encode($completedRequests) !!}
 
     var barChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
         datasets: [{
             label: 'S2',
             backgroundColor: 'rgb(200, 100, 100)',
-            data: [
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor()
-            ]
+            data: completedRequestsData["S2"]
         }, {
             label: 'S3',
             backgroundColor: 'rgb(100, 100, 200)',
-            data: [
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor()
-            ]
+            data: completedRequestsData["S3"]
         }, {
             label: 'C1',
             backgroundColor: 'rgb(100, 200, 100)',
-            data: [
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor(),
-                randomScalingFactor()
-            ]
+            data: completedRequestsData["C1"]
         }]
 
     };
