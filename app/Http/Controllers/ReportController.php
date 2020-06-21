@@ -20,198 +20,18 @@ class ReportController extends Controller
      */
 
     public function trainings($filterCountry = false){
-        // Note: Yes I know I could make this under same IF, but then it'd become a nice spaghetti!
-        // I'll split it up into individual functions once it works.
 
-        // Calculate card numbers (in queue, in training, awaiting exam, completed this year)
-        $cardNumbers = [
-            "waiting" => 0,
-            "training" => 0,
-            "exam" => 0,
-            "completed" => 0,
-        ];
-        if($filterCountry){
+        // Get stats
+        $cardStats = $this->getCardStats($filterCountry);
+        $totalRequests = $this->getDailyRequestsStats($filterCountry);
+        list($newRequests, $completedRequests) = $this->getBiAnnualRequestsStats($filterCountry);
+        $queues = $this->getQueueStats($filterCountry);
+    
+        // Send it to the view
+        ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All Countries';
+        $countries = Country::all();
 
-            $cardNumbers["waiting"] = Country::find($filterCountry)->trainings->where('status', 0)->count();
-            $cardNumbers["training"] = Country::find($filterCountry)->trainings->where('status', 1)->count();
-            $cardNumbers["exam"] = Country::find($filterCountry)->trainings->where('status', 2)->count();
-            $cardNumbers["completed"] = Country::find($filterCountry)->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
-
-        } else {
-            
-            foreach(Country::all() as $country){
-                $cardNumbers["waiting"] = $cardNumbers["waiting"] + $country->trainings->where('status', 0)->count();
-                $cardNumbers["training"] = $cardNumbers["training"] + $country->trainings->where('status', 1)->count();
-                $cardNumbers["exam"] = $cardNumbers["exam"] + $country->trainings->where('status', 2)->count();
-                $cardNumbers["completed"] = $cardNumbers["completed"] + $country->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
-            }
-
-        }
-
-
-        // Calculate total training requests
-        $totalRequests = [];
-        if($filterCountry){
-
-            $data = Training::select([DB::raw('count(id) as `count`'), DB::raw('DATE(created_at) as day')])->groupBy('day')
-              ->where('country_id', $filterCountry)
-              ->where('created_at', '>=', Carbon::now()->subYear(1))
-              ->get();
-
-            foreach($data as $entry) {
-                array_push($totalRequests, ['t' => $entry->day, 'y' => $entry->count]);
-            }
-
-        } else {
-            $data = Training::select([
-                DB::raw('count(id) as `count`'), 
-                DB::raw('DATE(created_at) as day')
-              ])->groupBy('day')
-              ->where('created_at', '>=', Carbon::now()->subYear(1))
-              ->get();
-
-            foreach($data as $entry) {
-                array_push($totalRequests, ['t' => $entry->day, 'y' => $entry->count]);
-            }
-        }
-
-        // Calculate new and requests last 6 months
-        $monthTranslator = [
-            (int)Carbon::now()->format('m') => 6,
-            (int)Carbon::now()->subMonths(1)->format('m') => 5,
-            (int)Carbon::now()->subMonths(2)->format('m') => 4,
-            (int)Carbon::now()->subMonths(3)->format('m') => 3,
-            (int)Carbon::now()->subMonths(4)->format('m') => 2,
-            (int)Carbon::now()->subMonths(5)->format('m') => 1,
-            (int)Carbon::now()->subMonths(6)->format('m') => 0,
-        ];
-
-        $newRequests = [];
-        $completedRequests = [];
-        if($filterCountry){
-
-            foreach(Rating::all() as $rating){
-                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
-
-                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-
-                    // New requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
-                        ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->where('country_id', $filterCountry)
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach($query as $entry) {
-                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-
-                    // Completed requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
-                        ->where('status', 3)
-                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->where('country_id', $filterCountry)
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach($query as $entry) {
-                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-                }
-            }
-
-        } else {
-
-            foreach(Rating::all() as $rating){
-                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
-
-                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-
-                    // New requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
-                        ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach($query as $entry) {
-                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-
-                    // Completed requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
-                        ->where('status', 3)
-                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach($query as $entry) {
-                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-                }
-            }
-
-        }
-
-
-        // Calculate queues
-        $queues = [];
-        if($filterCountry){
-            foreach(Country::find($filterCountry)->ratings as $rating){
-                if($rating->pivot->queue_length){
-                    $queues[$rating->name] = $rating->pivot->queue_length;
-                }
-            }
-        } else {
-
-            $divideRating = [];
-            foreach(Country::all() as $country){
-                // Loop through the ratings of this country to get queue length
-                foreach($country->ratings as $rating){
-
-                    // Only calculate if queue length is defined
-                    if($rating->pivot->queue_length){
-                        if(isset($queues[$rating->name])){
-                            $queues[$rating->name] = $queues[$rating->name] + $rating->pivot->queue_length;
-                            $divideRating[$rating->name]++;
-                        } else {
-                            $queues[$rating->name] = $rating->pivot->queue_length;
-                            $divideRating[$rating->name] = 1;
-                        }
-                    }
-                }
-
-            }
-
-            // Divide the queue length appropriately to get an average across countries
-            foreach($queues as $queue => $value){
-                $queues[$queue] = $value / $divideRating[$queue];
-            }
-
-        }
-
-        // Wrap it up and send it to the view
-        ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All FIRs';
-        $firs = Country::all();
-
-        return view('reports.trainings', compact('filterName', 'firs', 'cardNumbers', 'totalRequests', 'newRequests', 'completedRequests', 'queues'));
+        return view('reports.trainings', compact('filterName', 'countries', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'queues'));
     }
 
     /**
@@ -236,4 +56,222 @@ class ReportController extends Controller
 
         return view('reports.atc', compact('controllers'));
     }
+
+
+    /**
+     * Return the statistics for the cards (in queue, in training, awaiting exam, completed this year) on top of the page
+     * 
+     * @return mixed
+     */
+    protected function getCardStats($countryFilter)
+    {
+        $payload = [
+            "waiting" => 0,
+            "training" => 0,
+            "exam" => 0,
+            "completed" => 0,
+        ];
+
+        if($countryFilter){
+            $payload["waiting"] = Country::find($countryFilter)->trainings->where('status', 0)->count();
+            $payload["training"] = Country::find($countryFilter)->trainings->where('status', 1)->count();
+            $payload["exam"] = Country::find($countryFilter)->trainings->where('status', 2)->count();
+            $payload["completed"] = Country::find($countryFilter)->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+        } else {
+            foreach(Country::all() as $country){
+                $payload["waiting"] = $payload["waiting"] + $country->trainings->where('status', 0)->count();
+                $cardNumbers["training"] = $payload["training"] + $country->trainings->where('status', 1)->count();
+                $payload["exam"] = $payload["exam"] + $country->trainings->where('status', 2)->count();
+                $payload["completed"] = $payload["completed"] + $country->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+            }
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Return the statistics the total amount of requests per day
+     * 
+     * @return mixed
+     */
+    protected function getDailyRequestsStats($countryFilter)
+    {
+        $payload = [];
+        if($countryFilter){
+
+            $data = Training::select([DB::raw('count(id) as `count`'), DB::raw('DATE(created_at) as day')])->groupBy('day')
+              ->where('country_id', $countryFilter)
+              ->where('created_at', '>=', Carbon::now()->subYear(1))
+              ->get();
+
+            foreach($data as $entry) {
+                array_push($payload, ['t' => $entry->day, 'y' => $entry->count]);
+            }
+
+        } else {
+            $data = Training::select([
+                DB::raw('count(id) as `count`'), 
+                DB::raw('DATE(created_at) as day')
+              ])->groupBy('day')
+              ->where('created_at', '>=', Carbon::now()->subYear(1))
+              ->get();
+
+            foreach($data as $entry) {
+                array_push($payload, ['t' => $entry->day, 'y' => $entry->count]);
+            }
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Return the new/completed request statistics for 6 months
+     * 
+     * @return mixed
+     */
+    protected function getBiAnnualRequestsStats($countryFilter)
+    {
+        $monthTranslator = [
+            (int)Carbon::now()->format('m') => 6,
+            (int)Carbon::now()->subMonths(1)->format('m') => 5,
+            (int)Carbon::now()->subMonths(2)->format('m') => 4,
+            (int)Carbon::now()->subMonths(3)->format('m') => 3,
+            (int)Carbon::now()->subMonths(4)->format('m') => 2,
+            (int)Carbon::now()->subMonths(5)->format('m') => 1,
+            (int)Carbon::now()->subMonths(6)->format('m') => 0,
+        ];
+
+        $newRequests = [];
+        $completedRequests = [];
+
+        if($countryFilter){
+
+            foreach(Rating::all() as $rating){
+                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+
+                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+
+                    // New requests
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->where('country_id', $countryFilter)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+
+                    // Completed requests
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->where('status', 3)
+                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->where('country_id', $countryFilter)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+                }
+            }
+
+        } else {
+
+            foreach(Rating::all() as $rating){
+                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+
+                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+
+                    // New requests
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+
+                    // Completed requests
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->where('status', 3)
+                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+                }
+            }
+
+        }
+
+        return [$newRequests, $completedRequests];
+    }
+
+    /**
+     * Return the new/completed request statistics for 6 months
+     * 
+     * @return mixed
+     */
+    protected function getQueueStats($countryFilter)
+    {
+        $payload = [];
+        if($countryFilter){
+            foreach(Country::find($countryFilter)->ratings as $rating){
+                if($rating->pivot->queue_length){
+                    $payload[$rating->name] = $rating->pivot->queue_length;
+                }
+            }
+        } else {
+
+            $divideRating = [];
+            foreach(Country::all() as $country){
+                // Loop through the ratings of this country to get queue length
+                foreach($country->ratings as $rating){
+
+                    // Only calculate if queue length is defined
+                    if($rating->pivot->queue_length){
+                        if(isset($payload[$rating->name])){
+                            $payload[$rating->name] = $payload[$rating->name] + $rating->pivot->queue_length;
+                            $divideRating[$rating->name]++;
+                        } else {
+                            $payload[$rating->name] = $rating->pivot->queue_length;
+                            $divideRating[$rating->name] = 1;
+                        }
+                    }
+                }
+
+            }
+
+            // Divide the queue length appropriately to get an average across countries
+            foreach($payload as $queue => $value){
+                $payload[$queue] = $value / $divideRating[$queue];
+            }
+
+        }
+
+        return $payload;
+    }
+    
 }

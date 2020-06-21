@@ -10,9 +10,9 @@
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All FIRs</a>
-            @foreach($firs as $fir)
-                <a class="dropdown-item" href="{{ route('reports.training.country', $fir->id) }}">{{ $fir->name }}</a>
+            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Countries</a>
+            @foreach($countries as $country)
+                <a class="dropdown-item" href="{{ route('reports.training.country', $country->id) }}">{{ $country->name }}</a>
             @endforeach 
         </div>
     </div>
@@ -38,7 +38,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">In queue</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardNumbers["waiting"] }} requests</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardStats["waiting"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-hourglass fa-2x text-gray-300"></i>
@@ -54,7 +54,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In training</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardNumbers["training"] }} requests</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardStats["training"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-book-open fa-2x text-gray-300"></i>
@@ -70,7 +70,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Awaiting exam</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardNumbers["exam"] }} requests</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardStats["exam"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
@@ -88,7 +88,7 @@
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed this year</div>
                 <div class="row no-gutters align-items-center">
                     <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $cardNumbers["completed"] }} requests</div>
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $cardStats["completed"] }} requests</div>
                     </div>
                 </div>
                 </div>
@@ -184,145 +184,7 @@
 @section('js')
 
 <script>
-    function randomScalingFactor() {
-		return Math.round(Math.random() * 100);
-	};
-
-    var newRequestsData = {!! json_encode($newRequests) !!}
-
-    var barChartData = {
-        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                moment().subtract(5, "month").startOf("month").format('MMMM'),
-                moment().subtract(4, "month").startOf("month").format('MMMM'),
-                moment().subtract(3, "month").startOf("month").format('MMMM'),
-                moment().subtract(2, "month").startOf("month").format('MMMM'),
-                moment().subtract(1, "month").startOf("month").format('MMMM'),
-                moment().startOf("month").format('MMMM')],
-        datasets: [{
-            label: 'S2',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: newRequestsData["S2"]
-        }, {
-            label: 'S3',
-            backgroundColor: 'rgb(100, 100, 200)',
-            data: newRequestsData["S3"]
-        }, {
-            label: 'C1',
-            backgroundColor: 'rgb(100, 200, 100)',
-            data: newRequestsData["C1"]
-        }]
-
-    };
-
-    var mix = document.getElementById("newTrainingRequests").getContext('2d');
-    var newTrainingRequests = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    stacked: true,
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
-            }
-        }
-    });
-</script>
-
-
-<script>
-    function randomScalingFactor() {
-		return Math.round(Math.random() * 100);
-    };
-
-    var completedRequestsData = {!! json_encode($completedRequests) !!}
-
-    var barChartData = {
-        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                moment().subtract(5, "month").startOf("month").format('MMMM'),
-                moment().subtract(4, "month").startOf("month").format('MMMM'),
-                moment().subtract(3, "month").startOf("month").format('MMMM'),
-                moment().subtract(2, "month").startOf("month").format('MMMM'),
-                moment().subtract(1, "month").startOf("month").format('MMMM'),
-                moment().startOf("month").format('MMMM')],
-        datasets: [{
-            label: 'S2',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: completedRequestsData["S2"]
-        }, {
-            label: 'S3',
-            backgroundColor: 'rgb(100, 100, 200)',
-            data: completedRequestsData["S3"]
-        }, {
-            label: 'C1',
-            backgroundColor: 'rgb(100, 200, 100)',
-            data: completedRequestsData["C1"]
-        }]
-
-    };
-
-    var mix = document.getElementById("completedTrainingRequests").getContext('2d');
-    var completedTrainingRequests = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    stacked: true,
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
-            }
-        }
-    });
-</script>
-
-<script>
-
-    function generateData() {
-        var unit = "day";
-
-        function unitLessThanDay() {
-            return unit === 'second' || unit === 'minute' || unit === 'hour';
-        }
-
-        function randomNumber(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        function randomBar(date, lastClose) {
-            var open = randomNumber(lastClose * 0.95, lastClose * 1.05).toFixed(2);
-            var close = randomNumber(open * 0.95, open * 1.05).toFixed(2);
-            return {
-                t: date.valueOf(),
-                y: close
-            };
-        }
-
-        var date = moment('Jan 01 1990', 'MMM DD YYYY');
-        var now = moment();
-        var data = [];
-        var lessThanDay = unitLessThanDay();
-        for (; data.length < 600 && date.isBefore(now); date = date.clone().add(1, unit).startOf(unit)) {
-            data.push(randomBar(date, data.length > 0 ? data[data.length - 1].y : 30));
-        }
-
-        console.log(data);
-        return data;
-    }
+    // Total training amount chart
 
     var ctx = document.getElementById('trainingChart').getContext('2d');
     ctx.canvas.width = 1000;
@@ -388,6 +250,108 @@
 
     var chart = new Chart(ctx, cfg);
 
+</script>
+
+<script>
+
+    // New request chart
+    var newRequestsData = {!! json_encode($newRequests) !!}
+
+    var barChartData = {
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
+        datasets: [{
+            label: 'S2',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: newRequestsData["S2"]
+        }, {
+            label: 'S3',
+            backgroundColor: 'rgb(100, 100, 200)',
+            data: newRequestsData["S3"]
+        }, {
+            label: 'C1',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: newRequestsData["C1"]
+        }]
+
+    };
+
+    var mix = document.getElementById("newTrainingRequests").getContext('2d');
+    var newTrainingRequests = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            tooltips: {
+                mode: 'index',
+                intersect: false
+            },
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+</script>
+
+<script>
+
+    // Completed requests chart
+    var completedRequestsData = {!! json_encode($completedRequests) !!}
+
+    var barChartData = {
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
+        datasets: [{
+            label: 'S2',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: completedRequestsData["S2"]
+        }, {
+            label: 'S3',
+            backgroundColor: 'rgb(100, 100, 200)',
+            data: completedRequestsData["S3"]
+        }, {
+            label: 'C1',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: completedRequestsData["C1"]
+        }]
+
+    };
+
+    var mix = document.getElementById("completedTrainingRequests").getContext('2d');
+    var completedTrainingRequests = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            tooltips: {
+                mode: 'index',
+                intersect: false
+            },
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
 </script>
 
 @endsection
