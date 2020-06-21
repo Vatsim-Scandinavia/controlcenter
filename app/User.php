@@ -15,6 +15,9 @@ class User extends Authenticatable
     use Notifiable;
 
     public $timestamps = false;
+    protected $dates = [
+        'last_login',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -141,6 +144,10 @@ class User extends Authenticatable
 
     public function getSubdivisionAttribute(){
         return $this->getHandoverAttr('subdivision');
+    }
+
+    public function getCountryAttribute(){
+        return $this->getHandoverAttr('country');
     }
 
     public function getVisitingControllerAttribute(){
