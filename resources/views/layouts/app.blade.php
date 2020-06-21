@@ -49,6 +49,57 @@
 
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        // Search bar
+        $(document).ready(function(){
+
+            function fetch_users(query = '')
+            {
+                $.ajax({
+                    url:"{{ route('user.search') }}",
+                    method:'GET',
+                    data:{query:query},
+                    dataType:'json',
+                    success:function(data)
+                    {
+                        var html = '';
+
+                        if(data.length > 0){
+                            var baseUrl = '{{ URL::to('/user') }}\/'
+                            for(var i=0; i<data.length; i++){
+                                html += html + '<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
+                            }
+                            $('.search-results').html(html);
+                        } else {
+                            $('.search-results').html("No results");
+                        }
+                        
+                        $('.search-results').slideDown("fast");
+                    }
+                })
+            }
+    
+            var timer = null
+            $(document).on('keyup', '#search', function(){
+                var query = $(this).val();
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 500, query)
+            });
+
+            $('#user-search-form').on('submit', function(e){
+                
+                var query = $('#search').val();
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 500, query)
+
+                e.preventDefault();
+            });
+
+            $(document).on('focusout', '#search', function(){
+                $('.search-results').slideUp("fast");
+            });
+        });
+    </script>
     @yield('js')
     </body>
 </html>

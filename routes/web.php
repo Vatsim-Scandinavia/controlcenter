@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', 'UserController@settings')->name('user.settings');
     Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
 
+    Route::get('/user/search/action', 'UserSearchController@action')->name('user.search');
+
     // Reports
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.country');
