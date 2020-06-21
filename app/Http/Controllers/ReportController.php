@@ -73,7 +73,6 @@ class ReportController extends Controller
 
         } else {
             $data = Training::select([
-                // This aggregates the data and makes available a 'count' attribute
                 DB::raw('count(id) as `count`'), 
                 // This throws away the timestamp portion of the date
                 DB::raw('DATE(created_at) as day')
@@ -90,14 +89,15 @@ class ReportController extends Controller
         }
 
         // Calculate new and requests last 6 months
-        $monthTranslator = [];
-        $monthTranslator[(int)Carbon::now()->format('m')] = 6;
-        $monthTranslator[(int)Carbon::now()->subMonths(1)->format('m')] = 5;
-        $monthTranslator[(int)Carbon::now()->subMonths(2)->format('m')] = 4;
-        $monthTranslator[(int)Carbon::now()->subMonths(3)->format('m')] = 3;
-        $monthTranslator[(int)Carbon::now()->subMonths(4)->format('m')] = 2;
-        $monthTranslator[(int)Carbon::now()->subMonths(5)->format('m')] = 1;
-        $monthTranslator[(int)Carbon::now()->subMonths(6)->format('m')] = 0;
+        $monthTranslator = [
+            (int)Carbon::now()->format('m') => 6,
+            (int)Carbon::now()->subMonths(1)->format('m') => 5,
+            (int)Carbon::now()->subMonths(2)->format('m') => 4,
+            (int)Carbon::now()->subMonths(3)->format('m') => 3,
+            (int)Carbon::now()->subMonths(4)->format('m') => 2,
+            (int)Carbon::now()->subMonths(5)->format('m') => 1,
+            (int)Carbon::now()->subMonths(6)->format('m') => 0,
+        ];
 
         $newRequests = [];
         $completedRequests = [];
@@ -110,37 +110,37 @@ class ReportController extends Controller
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
                     // New requests
-                    foreach($rating->trainings->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months'))) as $training){
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->where('country_id', $filterCountry)
+                        ->groupBy('month')
+                        ->get();
 
-                        $newData = $training->select([
-                            // This aggregates the data and makes available a 'count' attribute
-                            DB::raw('count(id) as `count`'), 
-                            // This throws away the timestamp portion of the date
-                            DB::raw('MONTH(created_at) as month')
-                        ])->where('country_id', $filterCountry)->groupBy('month')->get();
-
-                        foreach($newData as $newDataEntry) {
-                            $newRequests[$rating->name][$monthTranslator[$newDataEntry->month]] = $newDataEntry->count;
-                        }
-
+                    foreach($query as $entry) {
+                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                     }
 
                     // Completed requests
-                    foreach($rating->trainings->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months'))) as $training){
-                        $finshedData = $training->select([
-                            // This aggregates the data and makes available a 'count' attribute
-                            DB::raw('count(id) as `count`'), 
-                            // This throws away the timestamp portion of the date
-                            DB::raw('MONTH(created_at) as month')
-                        ])->where('country_id', $filterCountry)->groupBy('month')->get();
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->where('status', 3)
+                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->where('country_id', $filterCountry)
+                        ->groupBy('month')
+                        ->get();
 
-                        foreach($finshedData as $completedDataEntry) {
-                            $completedRequests[$rating->name][$monthTranslator[$completedDataEntry->month]] = $completedDataEntry->count;
-                        }
-
+                    foreach($query as $entry) {
+                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                     }
 
-                    dd($completedRequests);
+                    //dd($newRequests, $completedRequests);
                 }
             }
 
