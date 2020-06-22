@@ -2,10 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Mail\ContinuedTrainingInterestEmail;
 use App\Training;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 
@@ -43,27 +42,13 @@ class ContinuedTrainingInterestNotification extends Notification // implements S
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param mixed $notifiable
+     * @return ContinuedTrainingInterestEmail
      */
     public function toMail($notifiable)
     {
-
-        $this->addToDB();
-
-        $mailMessage = (new MailMessage)
-            ->subject('Confirm your continued interest in your training')
-            ->greeting('Dear ' . $this->training->user->first_name . ',')
-            ->line('Please confirm your continued interest in your training for the following ratings:');
-
-        foreach ($this->training->ratings as $rating) {
-            $mailMessage->line(' - ' . $rating->name);
-        }
-
-        $mailMessage->line('Deadline: ' . $this->deadline->format('d-m-Y'));
-        $mailMessage->action('Confirm interest', url(route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] )));
-
-        return $mailMessage;
+        return (new ContinuedTrainingInterestEmail($this->training, $this->key, $this->deadline))
+                ->to($this->training->user->email);
     }
 
     /**
