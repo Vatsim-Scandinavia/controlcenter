@@ -2,11 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\ContinuedTrainingInterestEmail;
 use App\Notifications\ContinuedTrainingInterestNotification;
 use App\Training;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class SendContinuedInterestNotifications extends Command
 {
@@ -77,8 +79,9 @@ class SendContinuedInterestNotifications extends Command
 
                 } elseif ($created_at->diffInDays(now()) >= 7) {
                     // Reminder should be sent
-                    // TODO Send reminder
-
+                    $key = $last->key;
+                    $deadline = $last->deadline;
+                    Mail::to($training->user)->send(new ContinuedTrainingInterestEmail($training, $key, $deadline));
                 }
 
             }
