@@ -196,8 +196,15 @@ class TrainingController extends Controller
         if (key_exists('mentors', $attributes)) {
 
             foreach ((array) $attributes['mentors'] as $mentor) {
-                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country))
+                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
+                }
+            }
+
+            foreach ($training->mentors as $mentor) {
+                if (!in_array($mentor->id, (array) $attributes['mentors'])) {
+                    $training->mentors()->detach($mentor);
+                }
             }
 
             unset($attributes['mentors']);
