@@ -224,7 +224,7 @@ class TrainingController extends Controller
                             ->sortBy('created_at')
                             ->last();
 
-        if ($notification->key != $key || Auth::id() != $training->user->id) {
+        if ($notification->key != $key || Auth::id() != $training->user->id || $training->id != $notification->training_id) {
             return response('', 400);
         }
 
