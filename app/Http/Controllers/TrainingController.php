@@ -208,6 +208,9 @@ class TrainingController extends Controller
             }
 
             unset($attributes['mentors']);
+        } else {
+            // Detach all if no passed key, as that means the list is empty
+            $training->mentors()->detach();
         }
 
         $training->update($attributes);
