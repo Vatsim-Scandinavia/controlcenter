@@ -41,7 +41,10 @@ class ReportController extends Controller
      */
 
     public function mentors(){
-        return view('reports.mentors');
+
+        $mentors = User::where('group', '<=', 3)->get();
+
+        return view('reports.mentors', compact('mentors'));
     }
 
     /**
