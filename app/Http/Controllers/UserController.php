@@ -84,7 +84,16 @@ class UserController extends Controller
                 }
             }
 
+            foreach ($user->mentor_countries as $country) {
+                if (!in_array($country->id, (array) $data['countries'])) {
+                    $user->mentor_countries()->detach($country);
+                }
+            }
+
             unset($data['countries']);
+        } else {
+            // Detach all if no passed key, as that means the list is empty
+            $user->mentor_countries()->detach();
         }
 
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
