@@ -87,6 +87,9 @@ class UserController extends Controller
             foreach ($user->mentor_countries as $country) {
                 if (!in_array($country->id, (array) $data['countries'])) {
                     $user->mentor_countries()->detach($country);
+
+                    // Unassign this mentor from trainings from the specific country
+                    $user->teaches()->detach($user->teaches->where('country_id', $country->id));
                 }
             }
 
@@ -94,6 +97,9 @@ class UserController extends Controller
         } else {
             // Detach all if no passed key, as that means the list is empty
             $user->mentor_countries()->detach();
+
+            // Unassign this mentor from all trainings
+            $user->teaches()->detach();
         }
 
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
