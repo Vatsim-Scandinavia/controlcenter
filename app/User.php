@@ -101,7 +101,7 @@ class User extends Authenticatable
 
     public function mentor_countries()
     {
-        return $this->belongsToMany(Country::class, 'mentor_country');
+        return $this->belongsToMany(Country::class, 'mentor_country')->withTimestamps();
     }
 
     public function vote(){

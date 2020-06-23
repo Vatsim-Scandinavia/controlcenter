@@ -19,7 +19,7 @@ class Country extends Model
 
     public function mentors()
     {
-        return $this->belongsToMany(User::class, 'mentor_country');
+        return $this->belongsToMany(User::class, 'mentor_country')->withTimestamps();
     }
 
 }
