@@ -7,8 +7,9 @@ use App\Training;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ContinuedTrainingInterestNotification extends Notification // implements ShouldQueue
+class ContinuedTrainingInterestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -48,7 +49,7 @@ class ContinuedTrainingInterestNotification extends Notification // implements S
     public function toMail($notifiable)
     {
         return (new ContinuedTrainingInterestEmail($this->training, $this->key, $this->deadline))
-                ->to($this->training->user->email);
+            ->to($this->training->user->email);
     }
 
     /**
