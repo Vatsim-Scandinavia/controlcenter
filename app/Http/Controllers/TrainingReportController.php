@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Position;
 use App\Training;
 use App\TrainingReport;
-use App\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class TrainingReportController extends Controller
 {
@@ -31,12 +30,13 @@ class TrainingReportController extends Controller
      * Show the form for creating a new resource.
      *
      * @param Training $training
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Training $training)
     {
         $this->authorize('createReport', $training);
+        if ($training->status != 1) { return redirect(null, 400)->back()->with('message', 'Training report cannot be created for a training not in progress.'); }
 
         $positions = Position::all();
 

@@ -49,9 +49,14 @@ Route::middleware('auth')->group(function () {
     // Users
     Route::get('/user/{user}', 'UserController@show')->name('user.show');
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');
+    Route::get('/settings', 'UserController@settings')->name('user.settings');
+    Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
+
+    Route::get('/user/search/action', 'UserSearchController@action')->name('user.search');
 
     // Reports
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
+    Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.country');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
     Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
 
@@ -60,14 +65,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/settings', 'GlobalSettingController@edit')->name('admin.settings.store');
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
 
-    // User-specific Navigation
-    Route::get('/settings', 'UserSettingController@index')->name('settings');
-
     // Training routes
     Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
     Route::post('/training/store', 'TrainingController@store');
     Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
+
+    Route::get('/training/{training}/confirm/{key}', 'TrainingController@confirmInterest')->name('training.confirm.interest');
 
     // Training report routes
     Route::get('/training/report/{report}', 'TrainingReportController@edit')->name('training.report.edit');
@@ -109,7 +113,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/vatbook/store', 'VatbookController@store');
     Route::post('/vatbook/update', 'VatbookController@update');
 
+<<<<<<< HEAD
     // Mentor Routes
     Route::get('/mentor', 'MyStudentsController@index')->name('mentor');
 
+=======
+    // Vote routes
+    Route::get('/votes', 'VoteController@index')->name('vote.overview');
+    Route::get('/vote/create', 'VoteController@create')->name('vote.create');
+    Route::post('/vote/store', 'VoteController@store')->name('vote.store');
+    Route::patch('/vote/{id}', 'VoteController@update')->name('vote.update');
+    Route::get('/vote/{id}', 'VoteController@show')->name('vote.show');
+>>>>>>> d7b253a779aea5613d981e361b965e22d0435273
 });

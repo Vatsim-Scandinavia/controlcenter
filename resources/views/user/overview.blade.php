@@ -26,54 +26,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><a href="#">1300001</a></td>
-                                <td>Test</td>
-                                <td>Testersen</td>
-                                <td>None</td>
-                                <td>NO</td>
-                                <td>3 minutes ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300002</a></td>
-                                <td>Testorino</td>
-                                <td>Ripperino</td>
-                                <td>S1</td>
-                                <td>NO</td>
-                                <td>3 hours ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300003</a></td>
-                                <td>Pizza</td>
-                                <td>Napoli</td>
-                                <td>S2</td>
-                                <td>NO</td>
-                                <td>5 days ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300004</a></td>
-                                <td>Adam</td>
-                                <td>Banana</td>
-                                <td>S3</td>
-                                <td>NO</td>
-                                <td>3 minutes ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300005</a></td>
-                                <td>Test</td>
-                                <td>Testersen</td>
-                                <td>C1</td>
-                                <td>NO</td>
-                                <td>2 weeks ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300006</a></td>
-                                <td>Eve</td>
-                                <td>Appelina</td>
-                                <td>C3</td>
-                                <td>NO</td>
-                                <td>One year ago</td>
-                            </tr>
+                            @foreach($users as $user)
+                                @if($user->subdivision == "VATSCA")
+                                    <tr>
+                                        <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
+                                        <td>{{ $user->first_name }}</td>
+                                        <td>{{ $user->last_name }}</td>
+                                        <td>{{ $user->rating_short }}</td>
+                                        <td>{{ $user->country }}</td>
+                                        <td>{{ $user->last_login }}</td>
+                                    </tr>
+                                @endif
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -103,72 +67,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><a href="#">1300001</a></td>
-                                <td>Test</td>
-                                <td>Testersen</td>
-                                <td>None</td>
-                                <td><i class="fas fa-check"></i></td>
-                                <td>EUD</td>
-                                <td>ITA</td>
-                                <td>ITA</td>
-                                <td>3 minutes ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300002</a></td>
-                                <td>Testorino</td>
-                                <td>Ripperino</td>
-                                <td>S1</td>
-                                <td><i class="fas fa-check"></i></td>
-                                <td>EUD</td>
-                                <td>ITA</td>
-                                <td>ITA</td>
-                                <td>3 hours ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300003</a></td>
-                                <td>Pizza</td>
-                                <td>Napoli</td>
-                                <td>S2</td>
-                                <td><i class="fas fa-times"></i></td>
-                                <td>EUD</td>
-                                <td>ITA</td>
-                                <td>ITA</td>
-                                <td>5 days ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300004</a></td>
-                                <td>Adam</td>
-                                <td>Banana</td>
-                                <td>S3</td>
-                                <td><i class="fas fa-times"></i></td>
-                                <td>EUD</td>
-                                <td>GER</td>
-                                <td>GER</td>
-                                <td>3 minutes ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300005</a></td>
-                                <td>Test</td>
-                                <td>Testersen</td>
-                                <td>C1</td>
-                                <td><i class="fas fa-times"></i></td>
-                                <td>EUD</td>
-                                <td>ITA</td>
-                                <td>ITA</td>
-                                <td>2 weeks ago</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#">1300006</a></td>
-                                <td>Eve</td>
-                                <td>Appelina</td>
-                                <td>C3</td>
-                                <td><i class="fas fa-times"></i></td>
-                                <td>UK</td>
-                                <td>UK</td>
-                                <td>UK</td>
-                                <td>One year ago</td>
-                            </tr>
+                            @foreach($users as $user)
+                                @if($user->subdivision != "VATSCA")
+                                    <tr>
+                                        <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
+                                        <td>{{ $user->first_name }}</td>
+                                        <td>{{ $user->last_name }}</td>
+                                        <td>{{ $user->rating_short }}</td>
+                                        <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
+                                        <td>{{ $user->division }}</td>
+                                        <td>{{ $user->subdivision }}</td>
+                                        <td>{{ $user->country }}</td>
+                                        <td>{{ Carbon\Carbon::make($user->last_login)->diffForHumans(['parts' => 2]) }}</td>
+                                    </tr>
+                                @endif
+                            @endforeach
                         </tbody>
                     </table>
                 </div>              

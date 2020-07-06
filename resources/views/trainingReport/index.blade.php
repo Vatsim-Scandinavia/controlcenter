@@ -53,7 +53,7 @@
                 </div>
                 <div class="row mt-8">
                     @if (\Illuminate\Support\Facades\Gate::inspect('update', $report)->allowed())
-                        <a href="{{ route('training.report.show', ['report' => $report->id]) }}" class="btn btn-primary ml-2 mx-1">Update report</a>
+                        <a href="{{ route('training.report.edit', ['report' => $report->id]) }}" class="btn btn-primary ml-2 mx-1">Update report</a>
                         <!--<a href="{{ route('training.report.update', ['report' => $report->id]) }}" class="btn btn-outline-secondary mx-1" id="draft-btn" data-report="{{ $report->id }}" data-draft="{{ $report->draft }}">
                             {{ $report->draft ? "Make report public" : "Turn into draft" }}
                         </a>-->

@@ -23,6 +23,7 @@ class CreateTrainingsTable extends Migration
             $table->text('motivation');
             $table->boolean('english_only_training');
             $table->boolean('paused')->default(false);
+            $table->unsignedInteger('paused_length')->nullable();
             $table->string('closed_reason')->nullable();
             $table->timestamps();
             $table->timestamp('started_at')->nullable();

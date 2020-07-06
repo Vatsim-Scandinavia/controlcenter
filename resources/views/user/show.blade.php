@@ -96,7 +96,7 @@
 
                     <div class="form-group">
                         <label class="@error('countries') is-invalid @enderror" for="assignCountries">Mentoring countries: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="countries[]" id="assignCountries">
+                        <select multiple class="form-control" name="countries[]" id="assignCountries" size="5">
                             @foreach($countries as $country)
                                 <option value="{{ $country->id }}" {{ ($user->mentor_countries->contains($country->id)) ? "selected" : "" }}>{{ $country->name }}</option>
                             @endforeach

@@ -3,11 +3,10 @@
 namespace App;
 
 use App\Exceptions\MissingHandoverObjectException;
-use App\Exceptions\PolicyMissingException;
 use App\Exceptions\PolicyMethodMissingException;
+use App\Exceptions\PolicyMissingException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -15,6 +14,9 @@ class User extends Authenticatable
     use Notifiable;
 
     public $timestamps = false;
+    protected $dates = [
+        'last_login',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -38,11 +40,18 @@ class User extends Authenticatable
     /**
      * Link to handover data
      *
-     * @return \App\Handover
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @throws MissingHandoverObjectException
      */
     public function handover()
     {
-        return $this->hasOne(Handover::class, 'id');
+        $handover = $this->hasOne(Handover::class, 'id');
+
+        if ($handover->first() == null) {
+            throw new MissingHandoverObjectException($this->id);
+        }
+
+        return $handover;
     }
 
     /**
@@ -92,18 +101,22 @@ class User extends Authenticatable
 
     public function mentor_countries()
     {
-        return $this->belongsToMany(Country::class, 'mentor_country');
+        return $this->belongsToMany(Country::class, 'mentor_country')->withTimestamps();
+    }
+
+    public function vote(){
+        return $this->hasMany(Vote::class);
     }
 
     // Get properties from Handover, the variable names here break with the convention.
     public function getLastNameAttribute()
     {
-        return $this->getHandoverAttr('last_name');
+        return $this->handover->last_name;
     }
 
     public function getFirstNameAttribute()
     {
-        return $this->getHandoverAttr('first_name');
+        return $this->handover->first_name;
     }
 
     public function getNameAttribute()
@@ -111,53 +124,44 @@ class User extends Authenticatable
         return $this->first_name . " " . $this->last_name;
     }
 
+    public function getEmailAttribute()
+    {
+        return $this->handover->email;
+    }
+
     public function getRatingAttribute()
     {
-        return $this->getHandoverAttr('rating');
+        return $this->handover->rating;
     }
 
     public function getRatingShortAttribute()
     {
-        return $this->getHandoverAttr('rating_short');
+        return $this->handover->rating_short;
     }
 
     public function getRatingLongAttribute()
     {
-        return $this->getHandoverAttr('rating_long');
+        return $this->handover->rating_long;
     }
 
     public function getDivisionAttribute(){
-        return $this->getHandoverAttr('division');
+        return $this->handover->division;
     }
 
     public function getSubdivisionAttribute(){
-        return $this->getHandoverAttr('subdivision');
+        return $this->handover->subdivision;
+    }
+
+    public function getCountryAttribute(){
+        return $this->handover->country;
     }
 
     public function getVisitingControllerAttribute(){
-        return $this->getHandoverAttr('visiting_controller');
+        return $this->handover->visiting_controller;
     }
 
     public function getActiveAttribute(){
-        return $this->getHandoverAttr('atc_active');
-    }
-
-    /**
-     * Get an attribute from the user's Handover object
-     *
-     * @param string $key
-     * @return mixed
-     * @throws MissingHandoverObjectException
-     */
-    public function getHandoverAttr(string $key)
-    {
-        $handover = $this->handover;
-
-        if ($handover == null) {
-            throw new MissingHandoverObjectException($this->id);
-        }
-
-        return $handover->$key;
+        return $this->handover->atc_active;
     }
 
     /**

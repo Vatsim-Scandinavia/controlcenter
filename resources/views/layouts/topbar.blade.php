@@ -6,14 +6,17 @@
     </button>
 
     <!-- Topbar Search -->
-    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" id="user-search-form">
         <div class="input-group">
-        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for user" aria-label="Search" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
-            <i class="fas fa-search fa-sm"></i>
-            </button>
-        </div>
+            <input type="text" name="search" id="search" class="form-control bg-light border-0 small" placeholder="Search for user" aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search fa-sm"></i>
+                </button>
+            </div>
+            <div class="search-results bg-light">
+                
+            </div>
         </div>
     </form>
 
@@ -28,14 +31,14 @@
         <!-- Dropdown - Messages -->
         <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
             <form class="form-inline mr-auto w-100 navbar-search">
-            <div class="input-group">
-                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                    <i class="fas fa-search fa-sm"></i>
-                </button>
+                <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                    </div>
                 </div>
-            </div>
             </form>
         </div>
         </li>
@@ -100,7 +103,7 @@
         </a>
         <!-- Dropdown - User Information -->
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="{{ route('settings') }}">
+            <a class="dropdown-item" href="{{ route('user.settings') }}">
             <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
             Settings
             </a>

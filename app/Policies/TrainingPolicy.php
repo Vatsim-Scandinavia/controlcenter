@@ -66,13 +66,13 @@ class TrainingPolicy
     public function createReport(User $user, Training $training)
     {
         // Check if mentor is mentoring country, not filling their own training and the training is in progress
-        return $user->isMentor($training->country) && $user->isNot($training->user) && $training->status == 1;
+        return $user->isMentor($training->country) && $user->isNot($training->user);
     }
 
     public function createExamination(User $user, Training $training)
     {
         // Check if mentor is mentoring country, not filling their own training and the training is awaing an exam.
-        return $user->isMentor($training->country) && $user->isNot($training->user) && $training->status == 2;
+        return $user->isMentor($training->country) && $user->isNot($training->user);
     }
 
 }

@@ -12,4 +12,5 @@ yarn-error.log
 /.phpstorm.meta.php
 /_ide_helper.php
 .idea/
+.vscode/
 .DS_Store

@@ -34,12 +34,20 @@ class Kernel extends ConsoleKernel
             DB::table('bookings')->where('date', '<', date('Y-m-d'))->delete();
         })->daily();
 
+        // Update training queue calculations
+        $schedule->command('update:queuecalculation')
+            ->daily();
+
         // Update Vatbook bookings
         $schedule->command('update:bookings')
             ->everyFiveMinutes();
 
         // Clean up expired solo endorsements
         $schedule->command('clean:endorsements')
+            ->everyMinute();
+
+        // Close expired votes
+        $schedule->command('clean:votes')
             ->everyMinute();
     }
 

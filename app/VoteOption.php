@@ -4,11 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserSetting extends Model
+class VoteOption extends Model
 {
     public $timestamps = false;
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function vote(){
+        return $this->belongsTo(Vote::class);
     }
 }

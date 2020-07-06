@@ -256,10 +256,14 @@
                 @endif
 
                 @can('createReport', $training)
+                @if($training->status == 1)
                 <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
+                @endif
                 @endcan
                 @can('createExamination', $training)
+                @if($training->status == 2)
                 <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-success">Create examination report</a>
+                @endif
                 @endcan
                 @can('viewReports', $training)
                 <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 btn-outline-secondary">See all reports</a>

@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Country;
+use App\Notifications\ContinuedTrainingInterestNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 
 class TrainingController extends Controller
@@ -174,17 +178,6 @@ class TrainingController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Training  $training
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Training $training)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param Training $training
@@ -203,11 +196,21 @@ class TrainingController extends Controller
         if (key_exists('mentors', $attributes)) {
 
             foreach ((array) $attributes['mentors'] as $mentor) {
-                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country))
+                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
+                }
+            }
+
+            foreach ($training->mentors as $mentor) {
+                if (!in_array($mentor->id, (array) $attributes['mentors'])) {
+                    $training->mentors()->detach($mentor);
+                }
             }
 
             unset($attributes['mentors']);
+        } else {
+            // Detach all if no passed key, as that means the list is empty
+            $training->mentors()->detach();
         }
 
         $training->update($attributes);
@@ -216,14 +219,34 @@ class TrainingController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Confirm the continued interest in the training
      *
-     * @param  \App\Training  $training
-     * @return \Illuminate\Http\Response
+     * @param Training $training
+     * @param string $key
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
-    public function destroy(Training $training)
+    public function confirmInterest(Training $training, string $key)
     {
-        //
+
+        $notification = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+                            ->where('training_id', '=', $training->id)
+                            ->get()
+                            ->sortBy('created_at')
+                            ->last();
+
+        if ($notification->key != $key || Auth::id() != $training->user->id || $training->id != $notification->training_id) {
+            return response('', 400);
+        }
+
+        DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+                ->where('notification_id', $notification->notification_id)
+                ->update([
+                    'confirmed_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+        return redirect()->to($training->path())->with('message', 'Interest successfully confirmed');
+
     }
 
     /**
