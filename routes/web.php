@@ -113,16 +113,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/vatbook/store', 'VatbookController@store');
     Route::post('/vatbook/update', 'VatbookController@update');
 
-<<<<<<< HEAD
     // Mentor Routes
     Route::get('/mentor', 'MyStudentsController@index')->name('mentor');
 
-=======
     // Vote routes
     Route::get('/votes', 'VoteController@index')->name('vote.overview');
     Route::get('/vote/create', 'VoteController@create')->name('vote.create');
     Route::post('/vote/store', 'VoteController@store')->name('vote.store');
     Route::patch('/vote/{id}', 'VoteController@update')->name('vote.update');
     Route::get('/vote/{id}', 'VoteController@show')->name('vote.show');
->>>>>>> d7b253a779aea5613d981e361b965e22d0435273
 });
