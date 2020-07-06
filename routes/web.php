@@ -108,4 +108,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/vatbook/{id}', 'VatbookController@show');
     Route::post('/vatbook/store', 'VatbookController@store');
     Route::post('/vatbook/update', 'VatbookController@update');
+
+    // Mentor Routes
+    Route::get('/mentor', 'MyStudentsController@index')->name('mentor');
+
 });
