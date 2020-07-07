@@ -69,7 +69,7 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Last training</div>
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">My last training</div>
             <div class="row no-gutters align-items-center">
                 <div class="col-auto">
                 @if ($data['report'] != null) <a href="{{ $data['report']->path() }}"> @endif
