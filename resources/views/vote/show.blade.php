@@ -27,7 +27,7 @@
 
                 @else
 
-                    @if($vote->user()->exists(\Auth::user()))
+                    @if($vote->user()->where('user_id', \Auth::user()->id)->exists())
 
                         <p>You've already voted.</p>
 
