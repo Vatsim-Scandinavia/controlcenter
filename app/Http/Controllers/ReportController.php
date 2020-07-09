@@ -83,7 +83,7 @@ class ReportController extends Controller
         } else {
             foreach(Country::all() as $country){
                 $payload["waiting"] = $payload["waiting"] + $country->trainings->where('status', 0)->count();
-                $cardNumbers["training"] = $payload["training"] + $country->trainings->where('status', 1)->count();
+                $payload["training"] = $payload["training"] + $country->trainings->where('status', 1)->count();
                 $payload["exam"] = $payload["exam"] + $country->trainings->where('status', 2)->count();
                 $payload["completed"] = $payload["completed"] + $country->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
             }

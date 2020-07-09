@@ -69,7 +69,7 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Last training</div>
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">My last training</div>
             <div class="row no-gutters align-items-center">
                 <div class="col-auto">
                 @if ($data['report'] != null) <a href="{{ $data['report']->path() }}"> @endif
@@ -163,7 +163,7 @@
         <div class="text-center">
             <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="images/undraw_aircraft_fbvl.svg" alt="">
         </div>
-        <p>Are you interested in becoming an air traffic controller, or get a higher rank? Here you can request your training, and you will be notified when it's your turn.</p>
+        <p>Are you interested in becoming an air traffic controller, or apply for a higher rank? Request you training below, and you'll be notified when it's your turn.</p>
         <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
             Request training
         </a>

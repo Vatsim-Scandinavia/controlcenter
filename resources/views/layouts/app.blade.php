@@ -62,18 +62,20 @@
                     dataType:'json',
                     success:function(data)
                     {
-                        var html = '';
-
                         if(data.length > 0){
+
+                            var html = '';
                             var baseUrl = '{{ URL::to('/user') }}\/'
-                            for(var i=0; i<data.length; i++){
-                                html += html + '<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
+
+                            for(var i=0; i < data.length; i++){
+                                html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
                             }
+
                             $('.search-results').html(html);
                         } else {
                             $('.search-results').html("No results");
                         }
-                        
+
                         $('.search-results').slideDown("fast");
                     }
                 })
