@@ -17,7 +17,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Trainings</h6> 
+                <h6 class="m-0 font-weight-bold text-primary">Trainings</h6>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -47,7 +47,11 @@
                                 <input type="url" class="form-control @error('trainingSOP') is-invalid @enderror" id="spoUrl" placeholder="Url to PDF" name="trainingSOP" value="{{ Setting::get("trainingSOP") }}">
                                 <small id="spoUrl" class="form-text text-muted">Displayed when applying for training</small>
                             </div>
-                            
+
+                            <div class="form-group">
+                                <label for="trainingSubDivisions">Subdivisions allowed to apply for training (separated by comma)</label>
+                                <input type="text" class="form-control @error('trainingSubDivisions') is-invalid @enderror" id="trainingSubDivisions" placeholder="E.g. SCA, ITA..." name="trainingSubDivisions" value="{{ Setting::get("trainingSubDivisions") }}">
+                            </div>
 
                             <button class="btn btn-success mt-3" type="submit">Save</button>
                         </form>

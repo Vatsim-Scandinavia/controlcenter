@@ -29,15 +29,17 @@ class GlobalSettingController extends Controller
         $data = $request->validate([
             'trainingEnabled' => '',
             'trainingShowEstimate' => '',
-            'trainingSOP' => 'required|url'
+            'trainingSOP' => 'required|url',
+            'trainingSubDivisions' => 'required'
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
         isset($data['trainingShowEstimate']) ? $trainingShowEstimate = true : $trainingShowEstimate = false;
-        
+
         Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingShowEstimate', $trainingShowEstimate);
         Setting::set('trainingSOP', $data['trainingSOP']);
+        Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
         Setting::save();
 
         return redirect()->intended(route('admin.settings'))->withSuccess("Server settings successfully changed");
