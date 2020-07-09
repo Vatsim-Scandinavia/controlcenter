@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Training;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use anlutro\LaravelSettings\Facade as Setting;
 
 class TrainingPolicy
 {
@@ -47,6 +48,22 @@ class TrainingPolicy
     public function delete(User $user, Training $training)
     {
         return $user->isModerator();
+    }
+
+    /**
+     * Check whether the given user is allowed to apply for training
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function apply(User $user)
+    {
+        $allowedSubDivisions = Setting::get('trainingSubDivisions');
+
+        if ($allowedSubDivisions == null)
+            return !$user->hasActiveTrainings();
+
+        return in_array($user->handover->subdivision, (array) $allowedSubDivisions) && !$user->hasActiveTrainings();
     }
 
     /**

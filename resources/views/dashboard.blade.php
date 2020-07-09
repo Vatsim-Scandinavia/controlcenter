@@ -151,6 +151,7 @@
     </div>
     </div>
 
+    @can('apply', \App\Training::class)
     <!-- Pie Chart -->
     <div class="col-xl-4 col-lg-5">
     <div class="card shadow mb-4">
@@ -170,6 +171,7 @@
         </div>
     </div>
     </div>
+    @endcan
 
 </div>
 <style>

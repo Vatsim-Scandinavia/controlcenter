@@ -196,6 +196,21 @@ class User extends Authenticatable
 
     }
 
+    /**
+     * Return whether or not the user has active trainings.
+     * A country can be provided to check if the user has an active training in the specified country.
+     *
+     * @param Country|null $country
+     * @return bool
+     */
+    public function hasActiveTrainings(Country $country = null)
+    {
+        if ($country == null)
+            return count($this->trainings()->whereIn('status', [0, 1, 2])->get()) > 0;
+
+        return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2])->get()) > 0;
+    }
+
     // User group checks
     public function isMentor(Country $country = null)
     {

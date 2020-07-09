@@ -66,9 +66,11 @@ class TrainingController extends Controller
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
+        $this->authorize('apply', Training::class);
 
         // Get relevant user data
         $user = Auth::user();
@@ -125,11 +127,14 @@ class TrainingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return Training|\Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
+        $this->authorize('apply', Training::class);
+
         $data = $this->validateRequest();
 
         $ratings = explode("+", $data["training_level"]);
