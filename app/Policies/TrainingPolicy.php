@@ -58,12 +58,12 @@ class TrainingPolicy
      */
     public function apply(User $user)
     {
-        $allowedSubDivisions = Setting::get('trainingSubDivisions');
+        $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
 
         if ($allowedSubDivisions == null)
             return !$user->hasActiveTrainings();
 
-        return in_array($user->handover->subdivision, (array) $allowedSubDivisions) && !$user->hasActiveTrainings();
+        return in_array($user->handover->subdivision, $allowedSubDivisions) && !$user->hasActiveTrainings();
     }
 
     /**
