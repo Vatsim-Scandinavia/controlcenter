@@ -47,6 +47,8 @@ class TrainingController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \App\Exceptions\PolicyMethodMissingException
+     * @throws \App\Exceptions\PolicyMissingException
      */
     public function index()
     {
@@ -68,7 +70,7 @@ class TrainingController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create()
+    public function apply()
     {
         $this->authorize('apply', Training::class);
 
@@ -124,26 +126,35 @@ class TrainingController extends Controller
         ]);
     }
 
+    public function create(Request $request)
+    {
+        $this->authorize('create', Training::class);
+
+        $ratings = Country::with('ratings')->get()->toArray();
+
+        return view('training.create', compact('ratings'));
+    }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return Training|\Illuminate\Http\Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return Training|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $this->authorize('apply', Training::class);
-
         $data = $this->validateRequest();
+
+        if (isset($data['user_id']) && User::find($data['user_id']) == null)
+            return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
 
         $ratings = Rating::find(explode("+", $data["training_level"]));
 
         $training = new Training();
-        $training->user_id = \Auth::id();
+        $training->user_id = isset($data['user_id']) ? $data['user_id'] : \Auth::id();
         $training->country_id = $data["training_country"];
-        $training->notes = $data["comment"];
-        $training->motivation = $data["motivation"];
+        $training->notes = isset($data["comment"]) ? $data["comment"] : '';
+        $training->motivation = isset($data["motivation"]) ? $data["motivation"] : '';
 
         $training->english_only_training = key_exists("englishOnly", $data) ? true : false;
 
@@ -155,7 +166,11 @@ class TrainingController extends Controller
 
         $training->save();
 
-        return $training;
+        if ($request->expectsJson()) {
+            return $training;
+        } else {
+            return redirect()->back()->with(['message' => 'Training successfully added']);
+        }
     }
 
     /**
@@ -259,6 +274,7 @@ class TrainingController extends Controller
             'experience' => 'sometimes|required|integer|min:1|max:5',
             'englishOnly' => 'nullable',
             'motivation' => 'sometimes|required|min:400|max:1500',
+            'user_id' => 'sometimes|required|integer',
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
             'training_country' => 'sometimes|required',

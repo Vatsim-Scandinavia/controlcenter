@@ -10,7 +10,10 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Open training requests</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Open training requests</h6>
+                @if (\Auth::user()->isModerator())
+                    <a href="{{ route('training.create') }}" class="btn btn-success">Add new request</a>
+                @endif
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -76,7 +79,7 @@
                                         {{ $training->mentors->first()->name }}
                                     @elseif ($training->mentors->count() > 1)
                                         @foreach($training->mentors as $mentor)
-                                            {{ $mentor->name }}, 
+                                            {{ $mentor->name }},
                                         @endforeach
                                     @endif
 
@@ -94,7 +97,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Closed training requests</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Closed training requests</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -139,7 +142,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}     
+                                    <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
                                     @if ($training->started_at == null && $training->finished_at == null)

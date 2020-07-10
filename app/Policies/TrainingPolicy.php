@@ -67,6 +67,17 @@ class TrainingPolicy
     }
 
     /**
+     * Check if the user has access to create a training manually
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function create(User $user)
+    {
+        return $user->isModerator();
+    }
+
+    /**
      * Determines whether the user can access the training reports associated with the training
      *
      * @param User $user

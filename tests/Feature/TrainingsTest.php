@@ -27,7 +27,7 @@ class TrainingsTest extends TestCase
             'training_country' => \App\Country::find($this->faker->numberBetween(1,5))->id
         ];
 
-        $this->assertJson($this->post('/training/store', $attributes)->content());
+        $this->assertJson($this->postJson('/training/store', $attributes)->content());
         $this->assertDatabaseHas('trainings', ['motivation' => $attributes['motivation']]);
     }
 

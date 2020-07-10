@@ -66,8 +66,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
 
     // Training routes
-    Route::get('/training/apply', 'TrainingController@create')->name('training.apply');
-    Route::post('/training/store', 'TrainingController@store');
+    Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');
+    Route::get('/training/create', 'TrainingController@create')->name('training.create');
+    Route::post('/training/store', 'TrainingController@store')->name('training.store');
     Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 
