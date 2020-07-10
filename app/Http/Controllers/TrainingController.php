@@ -137,11 +137,7 @@ class TrainingController extends Controller
 
         $data = $this->validateRequest();
 
-        $ratings = explode("+", $data["training_level"]);
-        $modelRatings = [];
-        foreach ($ratings as $rating) {
-            array_push($modelRatings, Rating::find($rating));
-        }
+        $ratings = Rating::find(explode("+", $data["training_level"]));
 
         $training = new Training();
         $training->user_id = \Auth::id();
@@ -155,7 +151,7 @@ class TrainingController extends Controller
 
         $training->fresh();
 
-        $training->ratings()->saveMany($modelRatings);
+        $training->ratings()->saveMany($ratings);
 
         $training->save();
 
