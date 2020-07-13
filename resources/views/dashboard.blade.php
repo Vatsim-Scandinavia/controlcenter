@@ -151,27 +151,31 @@
     </div>
     </div>
 
-    @can('apply', \App\Training::class)
     <!-- Pie Chart -->
     <div class="col-xl-4 col-lg-5">
-    <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-white">Training</h6>
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-        <div class="text-center">
-            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="images/undraw_aircraft_fbvl.svg" alt="">
-        </div>
-        <p>Are you interested in becoming an air traffic controller, or apply for a higher rank? Request you training below, and you'll be notified when it's your turn.</p>
-        <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
-            Request training
-        </a>
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-white">Training</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="text-center">
+                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="images/undraw_aircraft_fbvl.svg" alt="">
+                </div>
+                <p>Are you interested in becoming an air traffic controller, or apply for a higher rank? Request you training below, and you'll be notified when it's your turn.</p>
+                @can('apply', \App\Training::class)
+                    <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
+                        Request training
+                    </a>
+                @else
+                    <a href="#" class="btn btn-primary btn-block disabled" role="button" aria-disabled="true">
+                        You already have a pending request or are not a member of VATSIM Scandinavia
+                    </a>
+                @endcan
+            </div>
         </div>
     </div>
-    </div>
-    @endcan
 
 </div>
 <style>
