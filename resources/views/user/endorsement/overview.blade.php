@@ -57,7 +57,7 @@
                                     @if($user->isModerator())
                                         <a href="/users/endorsements/{{ $endorsement->id }}/delete"><i class="fas fa-times"></i> Remove</a>
                                     @else
-                                        Delete
+                                        No access
                                     @endif
                                 </td>
                             </tr>
