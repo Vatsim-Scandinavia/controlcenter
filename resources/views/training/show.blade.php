@@ -219,54 +219,67 @@
             </div>
             <div class="card-body">
 
-                @foreach($examinations as $examination)
-                        <div class="card bg-light mb-3">
-                            <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}</div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    {{ $examination->result }}
-                                </p>
-                            </div>
-                        </div>
-                @endforeach
-
-                @if (sizeof($training->reports) == 0)
-                        <div class="card-text text-primary">
-                            No training reports yet.
-                        </div>
-                @else
-                    @foreach($training->reports as $report)
+                
+                @can('viewReports', $training)
+                    @foreach($examinations as $examination)
                             <div class="card bg-light mb-3">
-                                <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}</div>
+                                <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}</div>
                                 <div class="card-body">
                                     <p class="card-text">
-                                        {{ $report->content }}
+                                        {{ $examination->result }}
                                     </p>
                                 </div>
-                                @if ($report->mentor_notes != null)
-                                <div class="card-header text-primary">Mentor notes</div>
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        {{ $report->mentor_notes }}
-                                    </p>
-                                </div>
-                                @endif
                             </div>
                     @endforeach
+
+                    @if (sizeof($training->reports) == 0)
+                            <div class="card-text text-primary">
+                                No training reports yet.
+                            </div>
+                    @else
+                        @foreach($training->reports as $report)
+                                <div class="card bg-light mb-3">
+                                    <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}</div>
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            {{ $report->content }}
+                                        </p>
+                                    </div>
+                                    @if ($report->mentor_notes != null)
+                                    <div class="card-header text-primary">Mentor notes</div>
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            {{ $report->mentor_notes }}
+                                        </p>
+                                    </div>
+                                    @endif
+                                </div>
+                        @endforeach
+                    @endif
+                @else
+                    <div class="card-text text-primary">
+                        You don't have access to see this training reports.
+                    </div>
+                @endcan
+
+                @if($training->status == 1)
+                    @can('createReport', $training)
+                        <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
+                    @else
+                        <a href="#" class="btn mt-4 mr-2 btn-primary disabled">Create report</a>
+                    @endcan
                 @endif
 
-                @can('createReport', $training)
-                @if($training->status == 1)
-                <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
-                @endif
-                @endcan
-                @can('createExamination', $training)
                 @if($training->status == 2)
-                <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-success">Create examination report</a>
+                    @can('createExamination', $training)
+                        <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-success">Create examination report</a>
+                    @else
+                        <a href="#" class="btn mt-4 mr-2 btn-success disabled">Create examination report</a>
+                    @endcan
                 @endif
-                @endcan
+
                 @can('viewReports', $training)
-                <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 btn-outline-secondary">See all reports</a>
+                    <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 btn-outline-secondary">See all reports</a>
                 @endcan
             </div>
         </div>
