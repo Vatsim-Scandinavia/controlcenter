@@ -1,4 +1,4 @@
-## SANTA
+## Control Center
 Scandinavian Training System. Created using `Laravel 6`, based on `SB Admin 2` boostrap theme.
 
 ## Setup and install

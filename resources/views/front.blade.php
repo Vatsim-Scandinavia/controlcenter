@@ -18,7 +18,7 @@
                 </div>
             @endif
             
-            <div class="content-title"><i class="fas fa-sleigh"></i> {{ config('app.name') }}</div>
+            <div class="content-title"><i class="far fa-radar"></i> {{ config('app.name') }}</div>
             <div class="content-description">Scandinavian Training Administration</div>
             <a href="{{ route('login') }}" class="btn btn-success">Login</a>
         </div>

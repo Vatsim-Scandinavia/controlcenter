@@ -122,7 +122,7 @@
         z-index: 1;
 
         .sidebar-brand-icon i {
-            font-size: 2rem;
+            font-size: 2.1rem;
         }
         .sidebar-brand-text {
             display: none;
@@ -205,9 +205,13 @@
         }
         .sidebar-brand {
             .sidebar-brand-icon i {
-                font-size: 2rem;
+                font-size: 2.1rem;
             }
             .sidebar-brand-text {
+                width: 65px;
+                font-size: 0.95rem;
+                text-align: left;
+                line-height: 18px;
                 display: inline;
             }
         }
@@ -262,7 +266,7 @@
             }
             .sidebar-brand {
                 .sidebar-brand-icon i {
-                    font-size: 2rem;
+                    font-size: 2.1rem;
                 }
                 .sidebar-brand-text {
                     display: none;

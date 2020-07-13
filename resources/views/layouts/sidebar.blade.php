@@ -2,9 +2,9 @@
 <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
+    <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
-            <i class="fas fa-sleigh"></i>
+            <i class="far fa-radar"></i>
         </div>
 
     <div class="sidebar-brand-text mx-3">{{ config('app.name') }}</div>

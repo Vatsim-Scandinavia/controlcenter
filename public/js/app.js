@@ -102387,14 +102387,14 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\chart.js\dist\Chart.bundle.js */"./node_modules/chart.js/dist/Chart.bundle.js");
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\bootstrap-table\dist\bootstrap-table.js */"./node_modules/bootstrap-table/dist/bootstrap-table.js");
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\bootstrap-table\dist\locale\bootstrap-table-en-US.js */"./node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js");
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\bootstrap-table\dist\extensions\filter-control\bootstrap-table-filter-control.js */"./node_modules/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js");
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\node_modules\moment\moment.js */"./node_modules/moment/moment.js");
-__webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\resources\sass\app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! C:\Users\Daniel\Documents\GitHub\santa\resources\sass\vendor.scss */"./resources/sass/vendor.scss");
+__webpack_require__(/*! D:\GitHub\santa\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! D:\GitHub\santa\node_modules\chart.js\dist\Chart.bundle.js */"./node_modules/chart.js/dist/Chart.bundle.js");
+__webpack_require__(/*! D:\GitHub\santa\node_modules\bootstrap-table\dist\bootstrap-table.js */"./node_modules/bootstrap-table/dist/bootstrap-table.js");
+__webpack_require__(/*! D:\GitHub\santa\node_modules\bootstrap-table\dist\locale\bootstrap-table-en-US.js */"./node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js");
+__webpack_require__(/*! D:\GitHub\santa\node_modules\bootstrap-table\dist\extensions\filter-control\bootstrap-table-filter-control.js */"./node_modules/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js");
+__webpack_require__(/*! D:\GitHub\santa\node_modules\moment\moment.js */"./node_modules/moment/moment.js");
+__webpack_require__(/*! D:\GitHub\santa\resources\sass\app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! D:\GitHub\santa\resources\sass\vendor.scss */"./resources/sass/vendor.scss");
 
 
 /***/ })
