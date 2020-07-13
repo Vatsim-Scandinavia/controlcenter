@@ -14,13 +14,13 @@
         <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
-        <li class="nav-item active">
+        <li class="nav-item {{ Route::is('dashboard') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('vatbook') }}">
             <i class="fas fa-fw fa-calendar"></i>
             <span>Vatbook</span></a>
@@ -36,13 +36,13 @@
         Training
         </div>
 
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('mentor') }}">
             <i class="fas fa-fw fa-chalkboard-teacher"></i>
             <span>My students</span></a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('sweatbox') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('sweatbox') }}">
             <i class="fas fa-fw fa-calendar-alt"></i>
             <span>Sweatbox Calendar</span></a>
@@ -50,7 +50,7 @@
 
         @if (\Auth::user()->isModerator())
 
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('requests') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('requests') }}">
             <i class="fas fa-fw fa-flag"></i>
             <span>Requests</span></a>
@@ -67,13 +67,13 @@
         Members
         </div>
 
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('users') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users') }}">
             <i class="fas fa-fw fa-users"></i>
             <span>Overview</span></a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('users.endorsements') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users.endorsements') }}">
             <i class="fas fa-fw fa-check-square"></i>
             <span>Solo Endorsements</span></a>
@@ -83,7 +83,7 @@
         <hr class="sidebar-divider">
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.atc') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-clipboard-list"></i>
             <span>Reports</span>
@@ -98,7 +98,7 @@
         </li>
 
         <!-- Nav Item - Utilities Collapse Menu -->
-        <li class="nav-item">
+        <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-fw fa-cogs"></i>
             <span>Administration</span>
