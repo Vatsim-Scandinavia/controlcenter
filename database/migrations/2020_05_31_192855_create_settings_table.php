@@ -37,7 +37,9 @@ class CreateSettingsTable extends Migration
 		DB::table(Config::get('settings.table'))->insert([
 			['key' => "trainingEnabled", 'value' => false],
 			['key' => "trainingShowEstimate", 'value' => false],
-			['key' => "trainingSOP", 'value' => "https://google.com"],
+			['key' => "trainingSOP", 'value' => "https://vatsim-scandinavia.org/applications/core/interface/file/attachment.php?id=2049"],
+			['key' => "trainingSubDivisions", 'value' => "SCA"],
+			['key' => "trainingQueue", 'value' => "The queue length varies between countries, but you can expect to wait between 6-12 months."],
         ]);
 	}
 

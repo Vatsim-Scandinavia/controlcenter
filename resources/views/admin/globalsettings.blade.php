@@ -47,13 +47,29 @@
                                 <input type="url" class="form-control @error('trainingSOP') is-invalid @enderror" id="spoUrl" placeholder="Url to PDF" name="trainingSOP" value="{{ Setting::get("trainingSOP") }}">
                                 <small id="spoUrl" class="form-text text-muted">Displayed when applying for training</small>
                             </div>
+                            @error('trainingSOP')
+                                <span class="text-danger">{{ $errors->first('trainingSOP') }}</span>
+                            @enderror
 
                             <div class="form-group">
                                 <label for="trainingSubDivisions">Subdivisions allowed to apply for training (separated by comma)</label>
                                 <input type="text" class="form-control @error('trainingSubDivisions') is-invalid @enderror" id="trainingSubDivisions" placeholder="E.g. SCA, ITA..." name="trainingSubDivisions" value="{{ Setting::get("trainingSubDivisions") }}">
                             </div>
+                            @error('trainingSubDivisions')
+                                <span class="text-danger">{{ $errors->first('trainingSubDivisions') }}</span>
+                            @enderror
 
-                            <button class="btn btn-success mt-3" type="submit">Save</button>
+                            <div class="form-group">
+                                <label for="trainingQueue">Training queue text for FAQ</label>
+                                <input type="text" class="form-control @error('trainingQueue') is-invalid @enderror" id="trainingQueue" placeholder="Write your text here, keep it short." name="trainingQueue" value="{{ Setting::get("trainingQueue") }}">
+                            </div>
+                            @error('trainingQueue')
+                                <span class="text-danger">{{ $errors->first('trainingQueue') }}</span>
+                            @enderror
+                            
+                            <div>
+                                <button class="btn btn-success mt-3" type="submit">Save</button>
+                            </div>
                         </form>
                     </div>
                 </div>

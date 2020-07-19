@@ -30,7 +30,8 @@ class GlobalSettingController extends Controller
             'trainingEnabled' => '',
             'trainingShowEstimate' => '',
             'trainingSOP' => 'required|url',
-            'trainingSubDivisions' => 'required'
+            'trainingSubDivisions' => 'required',
+            'trainingQueue' => 'required|min:10|max:250'
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
@@ -40,6 +41,7 @@ class GlobalSettingController extends Controller
         Setting::set('trainingShowEstimate', $trainingShowEstimate);
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
+        Setting::set('trainingQueue', $data['trainingQueue']);
         Setting::save();
 
         return redirect()->intended(route('admin.settings'))->withSuccess("Server settings successfully changed");

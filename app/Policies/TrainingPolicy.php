@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Training;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use anlutro\LaravelSettings\Facade as Setting;
 
 class TrainingPolicy
@@ -59,11 +60,11 @@ class TrainingPolicy
     public function apply(User $user)
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
+        
+        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null)
+            return Response::deny("You must join Scandinavia subdivision to apply for training");
 
-        if ($allowedSubDivisions == null)
-            return !$user->hasActiveTrainings();
-
-        return in_array($user->handover->subdivision, $allowedSubDivisions) && !$user->hasActiveTrainings();
+        return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You already have a pending training request");
     }
 
     /**

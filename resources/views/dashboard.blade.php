@@ -164,14 +164,22 @@
                     <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="images/undraw_aircraft_fbvl.svg" alt="">
                 </div>
                 <p>Are you interested in becoming an air traffic controller, or apply for a higher rank? Request you training below, and you'll be notified when it's your turn.</p>
+                
                 @can('apply', \App\Training::class)
                     <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
                         Request training
                     </a>
                 @else
                     <a href="#" class="btn btn-primary btn-block disabled" role="button" aria-disabled="true">
-                        You already have a pending request or are not a member of VATSIM Scandinavia
+                        {{ Gate::inspect('apply', \App\Training::class)->message() }}
                     </a>
+                    <div class="alert alert-primary" role="alert">
+                        <p><b>FAQ</b></p>
+                        <p><b>How do I join the division?</b> <a href="https://vatsim-scandinavia.org/about/join/" target="_blank">Read about joining here.</a><br>
+                        <b>How to apply to be a visiting controller?</b> <a href="https://vatsim-scandinavia.org/atc/visiting-controller/" target="_blank">Check this page for more information.</a><br>
+                        <b>How long is the queue?</b> {{ Setting::get('trainingQueue') }}
+                    </p>
+                    </div>
                 @endcan
             </div>
         </div>
