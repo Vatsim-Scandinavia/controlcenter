@@ -130,9 +130,10 @@ class TrainingController extends Controller
     {
         $this->authorize('create', Training::class);
 
+        $students = User::all();
         $ratings = Country::with('ratings')->get()->toArray();
 
-        return view('training.create', compact('ratings'));
+        return view('training.create', compact('students', 'ratings'));
     }
 
     /**
