@@ -15,6 +15,12 @@ a {
 	}
 }
 
+p {
+	a {
+		text-decoration: underline;
+	}
+}
+
 // Main page wrapper
 #wrapper {
 	display: flex;
