@@ -54,7 +54,7 @@
                             <select class="form-control" name="result" id="result">
                                 <option value="FAILED">Failed</option>
                                 <option value="PASSED">Passed</option>
-                                <option value="CANCELLED">Cancelled</option>
+                                <option value="INCOMPLETE">Incomplete</option>
                                 <option value="POSTPONED">Postponed</option>
                             </select>
                         </div>

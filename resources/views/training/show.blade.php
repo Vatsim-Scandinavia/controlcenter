@@ -220,8 +220,14 @@
                     @foreach($examinations as $examination)
                             <div class="card bg-light mb-3">
                                 <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}
-                                    @if($report->draft)
-                                        <span class='badge badge-danger'>Draft</span>
+                                    @if($examination->result == "PASSED")
+                                        <span class='badge badge-success'>PASSED</span>
+                                    @elseif($examination->result == "FAILED")
+                                        <span class='badge badge-danger'>FAILED</span>
+                                    @elseif($examination->result == "INCOMPLETE")
+                                        <span class='badge badge-primary'>INCOMPLETE</span>
+                                    @elseif($examination->result == "POSTPONED")
+                                        <span class='badge badge-warning'>POSTPONED</span>
                                     @endif
                                 </div>
                                 <div class="card-body">
@@ -276,7 +282,7 @@
 
                 @if($training->status == 2)
                     @can('createExamination', $training)
-                        <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-success">Create examination report</a>
+                        <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-danger">Create examination report</a>
                     @else
                         <a href="#" class="btn mt-4 mr-2 btn-success disabled">Create examination report</a>
                     @endcan

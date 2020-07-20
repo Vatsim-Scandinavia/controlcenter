@@ -131,7 +131,7 @@ class TrainingExaminationController extends Controller
     {
         return request()->validate([
             'position' => 'required|exists:positions,callsign',
-            'result' => ['required', Rule::in(['FAILED', 'PASSED', 'CANCELLED', 'POSTPONED'])],
+            'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date:Y-m-d',
             'examination_sheet' => 'sometimes|file'
         ]);
