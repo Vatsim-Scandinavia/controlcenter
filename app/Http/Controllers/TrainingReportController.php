@@ -23,7 +23,7 @@ class TrainingReportController extends Controller
 
         $reports = Auth::user()->viewableModels(TrainingReport::class, [['training_id', '=', $training->id]]);
 
-        return view('trainingReport.index', compact('training', 'reports'));
+        return view('training.report.index', compact('training', 'reports'));
     }
 
     /**
@@ -40,7 +40,7 @@ class TrainingReportController extends Controller
 
         $positions = Position::all();
 
-        return view('trainingReport.create', compact('training', 'positions'));
+        return view('training.report.create', compact('training', 'positions'));
     }
 
     /**
@@ -84,7 +84,7 @@ class TrainingReportController extends Controller
     public function edit(TrainingReport $report)
     {
         $positions = Position::all();
-        return view('trainingReport.edit', compact('report', 'positions'));
+        return view('training.report.edit', compact('report', 'positions'));
     }
 
     /**

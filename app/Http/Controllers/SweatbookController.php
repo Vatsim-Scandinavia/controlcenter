@@ -19,7 +19,7 @@ class SweatbookController extends Controller
         $user = Auth::user();
         $bookings = Sweatbook::all()->sortBy('date');
         
-        if($user->isMentor()) return view('sweatbox.calendar', compact('bookings', 'user'));
+        if($user->isMentor()) return view('sweatbook.calendar', compact('bookings', 'user'));
         
         abort(403);
     }
@@ -33,7 +33,7 @@ class SweatbookController extends Controller
         $user = Auth::user();
         $positions = Position::all();
 
-        if($user->isMentor()) return view('sweatbox.create', compact('positions'));
+        if($user->isMentor()) return view('sweatbook.create', compact('positions'));
 
         abort(403);
     }
@@ -49,7 +49,7 @@ class SweatbookController extends Controller
         $positions = Position::all();
         $user = Auth::user();
 
-        if ($booking->mentor == $user->id || $user->isModerator()) return view('sweatbox.show', compact('booking', 'positions'));
+        if ($booking->mentor == $user->id || $user->isModerator()) return view('sweatbook.show', compact('booking', 'positions'));
 
         abort(403);
     }
@@ -89,7 +89,7 @@ class SweatbookController extends Controller
             $booking->save();
         }
 
-        return redirect('/sweatbox')->withSuccess("Booking successfully added.");
+        return redirect('/sweatbook')->withSuccess("Booking successfully added.");
     }
     
     /**
@@ -128,7 +128,7 @@ class SweatbookController extends Controller
             $booking->save();
         }
 
-        return redirect('/sweatbox')->withSuccess("Booking successfully added.");
+        return redirect('/sweatbook')->withSuccess("Booking successfully added.");
     }
 
     /**
@@ -144,6 +144,6 @@ class SweatbookController extends Controller
 
         if($user->id == $booking->mentor || $user->isModerator()) $booking->delete();
 
-        return redirect('/sweatbox');
+        return redirect('/sweatbook');
     }
 }

@@ -167,7 +167,7 @@
     $(document).ready(function() {
         $('div').tooltip();
 
-        var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $report->date)->format('d/m/Y') : old('date') }}"
+        var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
         $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
 
         $('.flatpickr-input:visible').on('focus', function () {

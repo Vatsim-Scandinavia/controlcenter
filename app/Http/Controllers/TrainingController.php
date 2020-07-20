@@ -61,7 +61,7 @@ class TrainingController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
 
-        return view('training.overview', compact('openTrainings', 'closedTrainings', 'statuses', 'types'));
+        return view('training.index', compact('openTrainings', 'closedTrainings', 'statuses', 'types'));
     }
 
     /**

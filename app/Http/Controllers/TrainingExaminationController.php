@@ -40,7 +40,7 @@ class TrainingExaminationController extends Controller
 
         $positions = Position::all();
 
-        return view('trainingExam.create', compact('training', 'positions'));
+        return view('training.exam.create', compact('training', 'positions'));
     }
 
     /**

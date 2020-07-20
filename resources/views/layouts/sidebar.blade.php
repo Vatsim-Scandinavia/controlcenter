@@ -42,8 +42,8 @@
             <span>My students</span></a>
         </li>
 
-        <li class="nav-item {{ Route::is('sweatbox') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('sweatbox') }}">
+        <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('sweatbook') }}">
             <i class="fas fa-fw fa-calendar-alt"></i>
             <span>Sweatbox Calendar</span></a>
         </li>

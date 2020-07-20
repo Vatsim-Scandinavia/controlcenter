@@ -35,7 +35,7 @@
                                 <td> 
                                     <span style="display: none">{{ date('Y-m-d', strtotime($booking->date)) }}</span>
                                     @if ($booking->mentor == $user->id || $user->isModerator())
-                                        <a href="/sweatbox/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}</a>
+                                        <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}</a>
                                     @else
                                         {{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
                                     @endif
@@ -67,7 +67,7 @@
             
         </div>
         <div class="align-items-left">
-            <a href="{{ route('sweatbox.create') }}" class="btn btn-success">Add Booking</a>
+            <a href="{{ route('sweatbook.create') }}" class="btn btn-success">Add Booking</a>
         </div>
     </div>
     

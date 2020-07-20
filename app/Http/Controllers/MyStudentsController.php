@@ -19,7 +19,7 @@ class MyStudentsController extends Controller
         $trainings = Training::all()->sortBy('id');
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        if($user->isMentor()) return view('mentor.students', compact('trainings', 'user', 'statuses', 'types'));
+        if($user->isMentor()) return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
         
         abort(403);
     }

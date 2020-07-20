@@ -97,13 +97,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/files', 'FileController@store')->name('file.store');
     Route::delete('/files/{file}', 'FileController@destroy')->name('file.delete');
 
-    // Sweatbox routes
-    Route::get('/sweatbox', 'SweatbookController@index')->name('sweatbox');
-    Route::get('/sweatbox/create', 'SweatbookController@create')->name('sweatbox.create');
-    Route::get('/sweatbox/{id}/delete', 'SweatbookController@delete')->name('sweatbox.delete');
-    Route::get('/sweatbox/{id}', 'SweatbookController@show');
-    Route::post('/sweatbox/store', 'SweatbookController@store');
-    Route::post('/sweatbox/update', 'SweatbookController@update');
+    // Sweatbook routes
+    Route::get('/sweatbook', 'SweatbookController@index')->name('sweatbook');
+    Route::get('/sweatbook/create', 'SweatbookController@create')->name('sweatbook.create');
+    Route::get('/sweatbook/{id}/delete', 'SweatbookController@delete')->name('sweatbook.delete');
+    Route::get('/sweatbook/{id}', 'SweatbookController@show');
+    Route::post('/sweatbook/store', 'SweatbookController@store');
+    Route::post('/sweatbook/update', 'SweatbookController@update');
 
     // Vatbook routes
     Route::get('/vatbook', 'VatbookController@index')->name('vatbook');

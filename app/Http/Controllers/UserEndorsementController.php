@@ -19,7 +19,7 @@ class UserEndorsementController extends Controller
     {
         $user = Auth::user();
         $endorsements = UserEndorsement::all();
-        if($user->isMentor()) return view('user.endorsement.overview', compact('user', 'endorsements'));
+        if($user->isMentor()) return view('user.endorsement.index', compact('user', 'endorsements'));
 
         abort(403);
     }

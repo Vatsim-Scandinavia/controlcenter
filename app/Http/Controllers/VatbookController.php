@@ -19,7 +19,7 @@ class VatbookController extends Controller
         $user = Auth::user();
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
 
-        return view('vatbook.calendar', compact('bookings', 'user'));
+        return view('vatbook.index', compact('bookings', 'user'));
     }
 
     /**
