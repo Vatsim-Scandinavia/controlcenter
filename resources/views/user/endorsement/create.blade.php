@@ -74,7 +74,7 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-success">Create</button>
+                    <button type="submit" class="btn btn-success">Create endorsement</button>
                 </form>
             </div>
         </div>
