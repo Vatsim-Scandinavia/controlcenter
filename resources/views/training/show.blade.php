@@ -263,6 +263,19 @@
                                         </p>
                                     </div>
                                     @endif
+
+                                    @if($report->attachments->count() > 0)
+                                        <div class="card-body">
+                                            @foreach($report->attachments as $attachment)
+                                                <div>
+                                                    <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                        <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
+                                                    </a>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
                                 </div>
                         @endforeach
                     @endif
