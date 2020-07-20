@@ -84,6 +84,7 @@ class VatbookController extends Controller
         $booking->user_id = $user->id;
 
         if($start_at->diffInMinutes($end_at, false) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
+        if($start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
         if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
         ->where('time_end', '!=', $booking->time_start)
@@ -152,6 +153,7 @@ class VatbookController extends Controller
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
 
             if($start_at->diffInMinutes($end_at, false) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
+            if($start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
             if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
