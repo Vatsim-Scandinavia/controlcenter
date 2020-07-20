@@ -219,19 +219,19 @@
                     @foreach($examinations as $examination)
                             <div class="card bg-light mb-3">
                                 <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}
-                                    @if($examination->result == "PASSED")
-                                        <span class='badge badge-success'>PASSED</span>
-                                    @elseif($examination->result == "FAILED")
-                                        <span class='badge badge-danger'>FAILED</span>
-                                    @elseif($examination->result == "INCOMPLETE")
-                                        <span class='badge badge-primary'>INCOMPLETE</span>
-                                    @elseif($examination->result == "POSTPONED")
-                                        <span class='badge badge-warning'>POSTPONED</span>
-                                    @endif
+                                    
                                 </div>
                                 <div class="card-body">
                                     <p class="card-text">
-                                        {{ $examination->result }}
+                                        @if($examination->result == "PASSED")
+                                            <span class='badge badge-success'>PASSED</span>
+                                        @elseif($examination->result == "FAILED")
+                                            <span class='badge badge-danger'>FAILED</span>
+                                        @elseif($examination->result == "INCOMPLETE")
+                                            <span class='badge badge-primary'>INCOMPLETE</span>
+                                        @elseif($examination->result == "POSTPONED")
+                                            <span class='badge badge-warning'>POSTPONED</span>
+                                        @endif
                                     </p>
                                 </div>
                             </div>
