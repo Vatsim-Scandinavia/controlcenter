@@ -83,7 +83,7 @@ class SweatboxController extends Controller
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
-            if($booking->start_at->diffInHours($booking->end_at) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
+            if($booking->start_at->diffInHours($booking->end_at) <= 0) return back()->withInput()->withErrors('Booking need to have a valid duration!');
 
             $booking->save();
         }
@@ -121,7 +121,7 @@ class SweatboxController extends Controller
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
-            if($booking->start_at->diffInHours($booking->end_at) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
+            if($booking->start_at->diffInHours($booking->end_at) <= 0) return back()->withInput()->withErrors('Booking need to have a valid duration!');
 
             $booking->save();
         }

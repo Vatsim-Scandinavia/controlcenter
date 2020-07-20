@@ -92,11 +92,10 @@
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $('div').tooltip();
-        if({!! json_encode(old('date')) !!}) { 
-            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "d/m/Y", defaultDate: new Date({!! json_encode(old('date')) !!}) });
-        } else {
-            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "d/m/Y" });
-        }
+
+        var defaultDate = "{{ old('date') }}"
+        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
+
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
         });
