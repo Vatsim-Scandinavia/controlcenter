@@ -34,16 +34,16 @@
                                 <td> 
                                     <span style="display: none">{{ date('Y-m-d', strtotime($booking->time_start)) }}</span>
                                     @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null)
-                                        <a href="/vatbook/{{ $booking->id }}">{{ date('F d, Y', strtotime($booking->time_start)) }}</a>
+                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}</a>
                                     @else
-                                        {{ date('F d, Y', strtotime($booking->time_start)) }}
+                                        {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
                                     @endif
                                 </td>
                                 <td>
-                                    {{ date('H:i', strtotime($booking->time_start)) }}z
+                                    {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanTime() }}
                                 </td>
                                 <td>
-                                    {{ date('H:i', strtotime($booking->time_end)) }}z
+                                    {{ \Carbon\Carbon::create($booking->time_end)->toEuropeanTime() }}
                                 </td>
                                 <td>
                                     {{ $booking->position->callsign }} ({{ $booking->position->name }})
