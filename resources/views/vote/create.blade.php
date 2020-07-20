@@ -16,32 +16,42 @@
                     @csrf
                     <div class="form-group">
                         <label for="date">End Date</label>
-                        <input id="date" class="datepicker form-control" type="text" name="expire_date" value="{{ old('expire_date') }}" required>
+                        <input id="date" class="datepicker form-control @error('expire_date') is-invalid @enderror" type="text" name="expire_date" value="{{ old('expire_date') }}" required>
+                        @error('expire_date')
+                            <span class="text-danger">{{ $errors->first('expire_date') }}</span>
+                        @enderror
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="end_at">End Time (Zulu)</label>
-                        <input id="end_at" class="endtimepicker form-control" type="text" name="expire_time" value="{{ old('expire_time') }}" required>
+                        <input id="end_at" class="endtimepicker form-control @error('expire_time') is-invalid @enderror" type="text" name="expire_time" value="{{ old('expire_time') }}" required>
+                        @error('expire_time')
+                            <span class="text-danger">{{ $errors->first('expire_time') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
                         <label for="question">Question</label>
-                        <input id="question" class="form-control" type="text" name="question" value="{{ old('question') }}" required>
+                        <input id="question" class="form-control @error('question') is-invalid @enderror" type="text" name="question" value="{{ old('question') }}" required>
+                        @error('question')
+                            <span class="text-danger">{{ $errors->first('question') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
                         <label for="vote_alternatives">Answer Options</label>
-                        <textarea class="form-control" id="vote_alternatives" rows="8" placeholder="Write options here, separated by new line" name="vote_options">{{ old('vote_options') }}</textarea>
+                        <textarea class="form-control @error('vote_options') is-invalid @enderror" id="vote_alternatives" rows="8" placeholder="Write options here, separated by new line" name="vote_options">{{ old('vote_options') }}</textarea>
+                        @error('vote_options')
+                            <span class="text-danger">{{ $errors->first('vote_options') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input @error('require_active') is-invalid @enderror" type="checkbox" id="check1" name="require_active" {{ old('require_active') ? "checked" : "" }}>
+                        <input class="form-check-input" type="checkbox" id="check1" name="require_active" {{ old('require_active') ? "checked" : "" }}>
                         <label class="form-check-label" for="check1">
                             Only ATC active members can vote
                         </label>
                     </div>
-
-                    <br>
 
                     <button type="submit" class="btn btn-primary">Create</button>
 

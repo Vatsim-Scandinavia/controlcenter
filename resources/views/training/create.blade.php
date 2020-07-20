@@ -40,19 +40,25 @@
 
                     <div class="form-group">
                         <label class="my-1 mr-2" for="countrySelect">Training country</label>
-                        <select id="countrySelect" name="training_country" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
+                        <select id="countrySelect" name="training_country" class="custom-select my-1 mr-sm-2 @error('training_country') is-invalid @enderror" @change="onChange($event)">
                             <option selected disabled>Choose training country</option>
                             @foreach($ratings as $countryId => $country)
                                 <option data-id="{{ $countryId }}" value="{{ $country['id'] }}">{{ $country['name'] }}</option>
                             @endforeach
                         </select>
+                        @error('training_country')
+                            <span class="text-danger">{{ $errors->first('training_country') }}</span>
+                        @enderror
                     </div>
  
                     <div class="form-group">
                         <label class="my-1 mr-2" for="ratingSelect">Training type <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple id="ratingSelect" name="training_level" class="custom-select my-1 mr-sm-2" size="5">
+                        <select multiple id="ratingSelect" name="training_level" class="custom-select my-1 mr-sm-2 @error('training_level') is-invalid @enderror" size="5">
                             <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                         </select>
+                        @error('training_level')
+                            <span class="text-danger">{{ $errors->first('training_level') }}</span>
+                        @enderror
                     </div>
                     
                     <button type="submit" class="btn btn-success">Create training</button>

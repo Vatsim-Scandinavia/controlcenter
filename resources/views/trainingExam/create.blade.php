@@ -62,9 +62,12 @@
                         <div class="form-group">
                             <label for="attachments">Attachments</label>
                             <div class="custom-file" id="attachments">
-                                <input type="file" class="custom-file-input" id="customFile">
+                                <input type="file" class="custom-file-input @error('file') is-invalid @enderror" id="customFile" name="file">
                                 <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
+                            @error('file')
+                                <span class="text-danger">{{ $errors->first('file') }}</span>
+                            @enderror
                         </div>
 
                         <button type="submit" id="training-submit-btn" class="btn btn-success">Publish examination report</button>

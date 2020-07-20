@@ -16,27 +16,40 @@
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control" type="text" name="date" required>
+                        <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
+                        @error('date')
+                            <span class="text-danger">{{ $errors->first('date') }}</span>
+                        @enderror
                     </div>
+                    
 
                     <div class="form-group">
                         <label for="start_at">Start (Zulu)</label>
-                        <input id="start_at" class="starttimepicker form-control" type="text" name="start_at" required>
+                        <input id="start_at" class="starttimepicker form-control @error('date') is-invalid @enderror" type="text" name="start_at" required>
+                        @error('start_at')
+                            <span class="text-danger">{{ $errors->first('start_at') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
                         <label for="end_at">End (Zulu)</label>
-                        <input id="end_at" class="endtimepicker form-control" type="text" name="end_at" required>
+                        <input id="end_at" class="endtimepicker form-control @error('date') is-invalid @enderror" type="text" name="end_at" required>
+                        @error('end_at')
+                            <span class="text-danger">{{ $errors->first('end_at') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
+                        <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
                                 <option value="{{ $position->callsign }}">{{ $position->name }}</option>
                             @endforeach
                         </datalist>
+                        @error('position')
+                            <span class="text-danger">{{ $errors->first('position') }}</span>
+                        @enderror
                     </div>
 
                     @if ($user->isMentor())

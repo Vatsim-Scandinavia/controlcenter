@@ -46,20 +46,29 @@
 
                     <div class="form-group">
                         <label for="contentBox">Report</label>
-                        <textarea class="form-control" name="content" id="contentBox" rows="8" placeholder="Write the report here."></textarea>
+                        <textarea class="form-control @error('position') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here."></textarea>
+                        @error('content')
+                            <span class="text-danger">{{ $errors->first('content') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group">
                         <label for="attachments">Attachments</label>
                         <div class="custom-file" id="attachments">
-                            <input type="file" class="custom-file-input" id="customFile">
+                            <input type="file" class="custom-file-input @error('file') is-invalid @enderror" id="customFile" name="file">
                             <label class="custom-file-label" for="customFile">Choose file</label>
                         </div>
+                        @error('file')
+                            <span class="text-danger">{{ $errors->first('file') }}</span>
+                        @enderror
                     </div>
 
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="draftCheck">
+                        <input type="checkbox" class="form-check-input @error('draft') is-invalid @enderror" id="draftCheck">
                         <label class="form-check-label" name="draft" for="draftCheck">Draft</label>
+                        @error('draft')
+                            <span class="text-danger">{{ $errors->first('draft') }}</span>
+                        @enderror
                     </div>
 
                     <button type="submit" id="training-submit-btn" class="btn btn-success">Save report</button>
