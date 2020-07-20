@@ -215,7 +215,6 @@
             </div>
             <div class="card-body">
 
-                
                 @can('viewReports', $training)
                     @foreach($examinations as $examination)
                             <div class="card bg-light mb-3">
