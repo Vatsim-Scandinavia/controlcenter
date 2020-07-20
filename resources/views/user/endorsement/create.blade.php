@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Create Solo Endorsement')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Create Solo Endorsement</h1>
 
 <div class="row">
     <div class="col-xl-4 col-md-12 mb-12">

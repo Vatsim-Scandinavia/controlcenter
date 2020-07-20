@@ -31,7 +31,7 @@ class MentorController extends Controller
             return response()->json(['message' => 'Mentor successfully updated']);
         }
 
-        return redirect()->back()->with('message', 'Mentor successfully updated');
+        return redirect()->back()->withSuccess('Mentor successfully updated');
 
     }
 
@@ -56,7 +56,7 @@ class MentorController extends Controller
             return response()->json(['message' => 'Mentor successfully added']);
         }
 
-        return redirect()->back()->with('message', 'Mentor successfully added');
+        return redirect()->back()->withSuccess('Mentor successfully added');
     }
 
     /**
@@ -80,7 +80,7 @@ class MentorController extends Controller
             return response()->json(['message' => 'Mentor successfully updated']);
         }
 
-        return redirect()->back()->with('message', 'Mentor successfully updated');
+        return redirect()->back()->withSuccess('Mentor successfully updated');
 
     }
 
@@ -105,7 +105,7 @@ class MentorController extends Controller
             return response()->json(['message' => 'Mentor successfully removed']);
         }
 
-        return redirect()->back()->with('message', 'Mentor successfully removed');
+        return redirect()->back()->withSuccess('Mentor successfully removed');
 
     }
 

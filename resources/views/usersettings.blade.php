@@ -1,19 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'User Settings')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">User settings</h1>
 
 <div class="row">
-
     <div class="col-xl-6 col-md-12 mb-12">
-
-        @if(Session::has('success') OR isset($success))
-            <div class="alert alert-success" role="alert">
-                {!! Session::has('success') ? Session::pull("success") : $error !!}
-            </div>
-        @endif
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

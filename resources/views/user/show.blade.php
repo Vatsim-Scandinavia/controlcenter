@@ -1,26 +1,14 @@
 @extends('layouts.app')
 
 @section('title', 'Training')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">
-    {{ $user->name }}
-</h1>
 
 <div class="row">
-
     <div class="col-xl-12 col-md-12 mb-12">
-
-        @if(Session::has('success') OR isset($success))
-            <div class="alert alert-success" role="alert">
-                {!! Session::has('success') ? Session::pull("success") : $error !!}
-            </div>
-        @endif
-
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Details
+                    {{ $user->name }}'s details
                 </h6>
             </div>
             <div class="card-body p-0">
@@ -59,7 +47,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <div class="row">

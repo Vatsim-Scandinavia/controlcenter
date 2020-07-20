@@ -52,7 +52,7 @@ class FileController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('message', 'File successfully uploaded');
+        return redirect()->back()->withSuccess('File successfully uploaded');
     }
 
     /**
@@ -68,7 +68,7 @@ class FileController extends Controller
         $this->authorize('delete', $file);
 
         if (Storage::delete($file->full_path) == true) {
-            return redirect()->back()->with('message', 'File successfully deleted');
+            return redirect()->back()->withSuccess('File successfully deleted');
         }
 
         return redirect()->back()->with('error', 'An error occurred during the deletion of the file');

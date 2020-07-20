@@ -1,25 +1,21 @@
 @extends('layouts.app')
 
 @section('title', 'Training Report ' . $report->created_at->toFormattedDateString())
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">
-    Training Report {{ $report->created_at->toFormattedDateString() }} for {{ $report->training->user->firstName }}'s training for
-    @foreach($report->training->ratings as $rating)
-        @if ($loop->last)
-            {{ $rating->name }}
-        @else
-            {{ $rating->name . " + " }}
-        @endif
-    @endforeach
-</h1>
 
 <div class="row">
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Training report: {{ $report->created_at->toFormattedDateString() }} {{ $report->draft ? "(DRAFT)" : "" }}
+                    Training Report {{ $report->created_at->toFormattedDateString() }} {{ $report->draft ? "(DRAFT)" : "" }} for {{ $report->training->user->firstName }}'s training for
+                    @foreach($report->training->ratings as $rating)
+                        @if ($loop->last)
+                            {{ $rating->name }}
+                        @else
+                            {{ $rating->name . " + " }}
+                        @endif
+                    @endforeach
                 </h6>
             </div>
             <div class="card-body">

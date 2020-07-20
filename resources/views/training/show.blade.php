@@ -1,18 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Training')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">
-    {{ $training->user->firstName }}'s training for
-    @foreach($training->ratings as $rating)
-        @if ($loop->last)
-            {{ $rating->name }}
-        @else
-            {{ $rating->name . " + " }}
-        @endif
-    @endforeach
-</h1>
 
 <div class="row">
 
@@ -20,7 +9,14 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Details
+                    {{ $training->user->firstName }}'s training for
+                    @foreach($training->ratings as $rating)
+                        @if ($loop->last)
+                            {{ $rating->name }}
+                        @else
+                            {{ $rating->name . " + " }}
+                        @endif
+                    @endforeach
                 </h6>
             </div>
             <div class="card-body p-0">

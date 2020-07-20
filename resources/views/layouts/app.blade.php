@@ -29,6 +29,30 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
+                <h1 class="h3 mb-4 text-gray-800">@yield('title', 'Page Title')</h1>
+
+                <!-- Success or failure messages (if any) START -->
+                @if(Session::has('success') OR isset($success))
+                    <div class="alert alert-success" role="alert">
+                        {!! Session::pull("success") !!}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        @if(count($errors) > 1)
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            {{ $errors->first() }}
+                        @endif
+                    </div>
+                @endif
+                <!-- Success or failure messages END -->
+
                 @yield('content')
             </div>
             <!-- /.container-fluid -->

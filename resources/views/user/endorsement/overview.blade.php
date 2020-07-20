@@ -1,18 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'Solo Endorsements')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Solo Endorsements</h1>
 
 <div class="row">
     <div class="col-xl-6 col-md-12 mb-12">
-
-        @if(Session::has('success') OR isset($success))
-            <div class="alert alert-success" role="alert">
-                {!! Session::has('success') ? Session::pull("success") : $error !!}
-            </div>
-        @endif
         
         <div class="alert alert-info text-sm" style="font-size: 12px" role="alert">
             <i class="fas fa-info-circle"></i>&nbsp;All endorsements expire at 12:00z on the given day</a>.

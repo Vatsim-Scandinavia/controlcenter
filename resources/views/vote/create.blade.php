@@ -1,19 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Create Vote')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Create Vote</h1>
-
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 
 <div class="row">
     <div class="col-xl-4 col-md-12 mb-12">

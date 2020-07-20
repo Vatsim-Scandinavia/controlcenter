@@ -36,7 +36,7 @@ class TrainingReportController extends Controller
     public function create(Training $training)
     {
         $this->authorize('createReport', $training);
-        if ($training->status != 1) { return redirect(null, 400)->back()->with('message', 'Training report cannot be created for a training not in progress.'); }
+        if ($training->status != 1) { return redirect(null, 400)->back()->withSuccess('Training report cannot be created for a training not in progress.'); }
 
         $positions = Position::all();
 
@@ -100,7 +100,7 @@ class TrainingReportController extends Controller
 
         $report->update($this->validateRequest());
 
-        return redirect()->back()->with('message', 'Training report successfully updated');
+        return redirect()->back()->withSuccess('Training report successfully updated');
     }
 
     /**
@@ -116,7 +116,7 @@ class TrainingReportController extends Controller
 
         $report->delete();
 
-        return redirect(route('training.report.index', ['training' => $report->training->id]))->with('message', 'Training report deleted');
+        return redirect(route('training.report.index', ['training' => $report->training->id]))->withSuccess('Training report deleted');
     }
 
     /**

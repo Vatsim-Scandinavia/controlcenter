@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Training Statistics')
-
 @section('content')
+
 <h1 class="h3 mb-4 text-gray-800">Training Statistics
     <div class="dropdown show" style="display: inline;">
         <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -17,18 +17,6 @@
         </div>
     </div>
 </h1>
-
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-
 
 <div class="row">
 

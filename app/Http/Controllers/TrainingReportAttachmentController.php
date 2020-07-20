@@ -53,7 +53,7 @@ class TrainingReportAttachmentController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('message', 'Attachment successfully addded');
+        return redirect()->back()->withSuccess('Attachment successfully addded');
 
     }
 
@@ -113,6 +113,6 @@ class TrainingReportAttachmentController extends Controller
             return response()->json(['message' => 'Attachment successfully deleted']);
         }
 
-        return redirect()->back()->with('message', 'Attachment successfully deleted');
+        return redirect()->back()->withSuccess('Attachment successfully deleted');
     }
 }

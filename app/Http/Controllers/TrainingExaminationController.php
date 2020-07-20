@@ -36,7 +36,7 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('createExamination', $training);
-        if ($training->status != 2) { return redirect(null, 400)->back()->with('message', 'Training examination cannot be created for a training not awaiting exam.'); }
+        if ($training->status != 2) { return redirect(null, 400)->back()->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
 
         $positions = Position::all();
 
@@ -83,7 +83,7 @@ class TrainingExaminationController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('message', 'Examination successfully added');
+        return redirect()->back()->withSuccess('Examination successfully added');
 
     }
 
@@ -103,7 +103,7 @@ class TrainingExaminationController extends Controller
             return response()->json(['message' => 'Examination successfully updated']);
         }
 
-        return redirect()->back()->with('message', 'Examination successfully updated');
+        return redirect()->back()->withSuccess('Examination successfully updated');
 
     }
 
@@ -123,7 +123,7 @@ class TrainingExaminationController extends Controller
             return response()->json(['message' => 'Examination successfully deleted']);
         }
 
-        return redirect()->back()->with('message', 'Examination successfully deleted');
+        return redirect()->back()->withSuccess('Examination successfully deleted');
 
     }
 

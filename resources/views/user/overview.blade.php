@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Member overview')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Member overview</h1>
 
 <div class="row">
 

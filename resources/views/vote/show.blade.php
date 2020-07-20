@@ -1,15 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Votes')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Vote</h1>
-
-@if(Session::has('success') OR isset($success))
-        <div class="alert alert-success" role="alert">
-            {!! Session::has('success') ? Session::pull("success") : $error !!}
-        </div>
-    @endif
 
 <div class="row">
 

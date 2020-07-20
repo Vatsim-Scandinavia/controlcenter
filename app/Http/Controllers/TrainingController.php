@@ -170,7 +170,7 @@ class TrainingController extends Controller
         if ($request->expectsJson()) {
             return $training;
         } else {
-            return redirect()->back()->with(['message' => 'Training successfully added']);
+            return redirect()->back()->withSuccess('Training successfully added');
         }
     }
 
@@ -232,7 +232,7 @@ class TrainingController extends Controller
 
         $training->update($attributes);
 
-        return redirect($training->path())->with("message", "Training successfully updated");
+        return redirect($training->path())->withSuccess("Training successfully updated");
     }
 
     /**
@@ -262,7 +262,7 @@ class TrainingController extends Controller
                     'updated_at' => now()
                 ]);
 
-        return redirect()->to($training->path())->with('message', 'Interest successfully confirmed');
+        return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
 
     }
 

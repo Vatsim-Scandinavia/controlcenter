@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'My Students')
-
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">My Students</h1>
 
 <div class="row">
     <div class="col-xl-12 col-md-12 mb-12">

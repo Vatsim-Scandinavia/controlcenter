@@ -1,18 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Apply')
-
+@section('title', 'Add training request')
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Add training request</h1>
 
 <div class="row">
     <div class="col-xl-4 col-md-12 mb-12">
-
-        @if(Session::has('message') OR isset($success))
-            <div class="alert alert-success" role="alert">
-                {!! Session::has('message') ? Session::pull("message") : $error !!}
-            </div>
-        @endif
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">

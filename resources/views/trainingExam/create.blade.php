@@ -1,25 +1,21 @@
 @extends('layouts.app')
 
 @section('title', 'New Exam Report')
-
 @section('content')
-    <h1 class="h3 mb-4 text-gray-800">
-        New Examination Report for {{ $training->user->firstName }}'s
-        @foreach($training->ratings as $rating)
-            @if ($loop->last)
-                {{ $rating->name }}
-            @else
-                {{ $rating->name . " + " }}
-            @endif
-        @endforeach
-    </h1>
 
     <div class="row">
         <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-white">
-                        Report
+                        New Examination Report for {{ $training->user->firstName }}'s
+                        @foreach($training->ratings as $rating)
+                            @if ($loop->last)
+                                {{ $rating->name }}
+                            @else
+                                {{ $rating->name . " + " }}
+                            @endif
+                        @endforeach
                     </h6>
                 </div>
                 <div class="card-body">
