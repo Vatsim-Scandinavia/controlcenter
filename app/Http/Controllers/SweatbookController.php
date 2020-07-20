@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Booking;
+use App\Sweatbook;
 use App\Position;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class SweatboxController extends Controller
+class SweatbookController extends Controller
 {  
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class SweatboxController extends Controller
      */
     public function index(){
         $user = Auth::user();
-        $bookings = Booking::all()->sortBy('date');
+        $bookings = Sweatbook::all()->sortBy('date');
         
         if($user->isMentor()) return view('sweatbox.calendar', compact('bookings', 'user'));
         
@@ -45,7 +45,7 @@ class SweatboxController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id){
-        $booking = Booking::findOrFail($id);
+        $booking = Sweatbook::findOrFail($id);
         $positions = Position::all();
         $user = Auth::user();
 
@@ -74,7 +74,7 @@ class SweatboxController extends Controller
 
         if($user->isMentor()) {
             $date = Carbon::createFromFormat('d/m/Y', $data['date']);
-            $booking = new Booking();
+            $booking = new Sweatbook();
             
             $booking->user_id = $user->id;
             $booking->date = $date->format('Y-m-d'); 
@@ -109,7 +109,7 @@ class SweatboxController extends Controller
         ]);
 
         $user = Auth::user();
-        $booking = Booking::findOrFail($request->id);
+        $booking = Sweatbook::findOrFail($request->id);
 
         if($user->id == $booking->mentor || $user->isModerator()) {
             $date = Carbon::createFromFormat('d/m/Y', $data['date']);
@@ -138,7 +138,7 @@ class SweatboxController extends Controller
     public function delete($id)
     {
         $user = Auth::user();
-        $booking = Booking::findOrFail($id);
+        $booking = Sweatbook::findOrFail($id);
 
         if($user->id == $booking->mentor || $user->isModerator()) $booking->delete();
 

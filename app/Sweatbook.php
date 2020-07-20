@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class Sweatbook extends Model
 {
   public function position(){
     return $this->hasOne(Position::class, 'id', 'position_id');

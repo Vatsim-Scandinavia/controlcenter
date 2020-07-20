@@ -12,7 +12,7 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('SweatboxController@update') !!}" method="POST">
+                <form action="{!! action('SweatbookController@update') !!}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>

@@ -38,7 +38,7 @@ class CleanBookings extends Command
      */
     public function handle()
     {
-        DB::table('bookings')->where('date', '<', date('Y-m-d'))->delete();
+        DB::table('sweatbooks')->where('date', '<', date('Y-m-d'))->delete();
         $this->info('All old vatbooks have been cleaned.');
     }
 }
