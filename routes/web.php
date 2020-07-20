@@ -114,7 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/vatbook/update', 'VatbookController@update');
 
     // Mentor Routes
-    Route::get('/mentor', 'MyStudentsController@index')->name('mentor');
+    Route::get('/mentor', 'MentorController@index')->name('mentor');
 
     // Vote routes
     Route::get('/votes', 'VoteController@index')->name('vote.overview');
