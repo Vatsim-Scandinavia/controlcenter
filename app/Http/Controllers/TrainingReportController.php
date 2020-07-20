@@ -83,7 +83,8 @@ class TrainingReportController extends Controller
      */
     public function edit(TrainingReport $report)
     {
-        return view('trainingReport.edit', compact('report'));
+        $positions = Position::all();
+        return view('trainingReport.edit', compact('report', 'positions'));
     }
 
     /**

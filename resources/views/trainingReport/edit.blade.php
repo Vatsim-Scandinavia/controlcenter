@@ -3,78 +3,110 @@
 @section('title', 'Training Report')
 @section('content')
 
+
 <div class="row">
-    <div class="col-xl-12 col-md-12 mb-12">
+    <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    {{ $report->created_at->toFormattedDateString() }} {{ $report->draft ? "(DRAFT)" : "" }}, {{ $report->training->user->firstName }}'s training for
-                    @foreach($report->training->ratings as $rating)
-                        @if ($loop->last)
-                            {{ $rating->name }}
-                        @else
-                            {{ $rating->name . " + " }}
-                        @endif
-                    @endforeach
+                    {{ $report->training->user->firstName }}'s training {{ $report->created_at->toFormattedDateString() }}{{ $report->draft ? " (DRAFT)" : "" }}
                 </h6>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-xl-8 col-md-12 mb-12">
-                        <form action="{{ route('training.report.update', ['report' => $report->id]) }}" method="POST">
-                            @csrf
-                            @method('PATCH')
-                            <div class="row flex-row">
-                                <label for="position"><span class="font-weight-bold">Position: </span></label>
-                                <input name="position" id="position" type="text" placeholder="Position" value="{{ $report->position }}" class="ml-2">
-                            </div>
+                <form action="{{ route('training.report.update', ['report' => $report->id]) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input 
+                            id="position"
+                            class="form-control @error('position') is-invalid @enderror"
+                            type="text"
+                            name="position"
+                            list="positions"
+                            value="{{ empty(old('position')) ? $report->position : old('position')}}"
+                            required>
 
-                            <div class="row">
-                                <label for="content"><span class="font-weight-bold col-12 px-2 mx-2">Content: </span></label>
-                                <textarea rows="8" placeholder="Content..." name="content" class="mt-2 col-10 px-2 mx-2">{{ $report->content }}</textarea>
-                            </div>
-                            <div class="row">
-                                <label for="draft"><span class="font-weight-bold">Draft?</span></label>
-                                <input type="checkbox" name="draft" id="draft" {{ $report->draft ? "checked" : "" }}>
-                            </div>
-                            <div class="row mt-8">
-                                @if (\Illuminate\Support\Facades\Gate::inspect('update', $report)->allowed())
-                                    <button type="submit" class="btn btn-primary ml-2 mx-1">Update report</button>
-                                @endif
+                        <datalist id="positions">
+                            @foreach($positions as $position)
+                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                            @endforeach
+                        </datalist>
 
-                                @if (\Illuminate\Support\Facades\Gate::inspect('delete', $report)->allowed())
-                                    <a href="#" class="btn btn-danger mx-1" id="delete-btn" data-report="{{ $report->id }}">Delete report</a>
-                                @endif
-                            </div>
-                        </form>
+                        @error('position')
+                            <span class="text-danger">{{ $errors->first('position') }}</span>
+                        @enderror
                     </div>
-                    <div class="col-xl-4 col-md-12 border-left-primary">
-                        <div>
-                            <p><span class="font-weight-bold">Attachments:</span></p>
-                            <div>
-                                @if(count($report->attachments) == 0)
-                                    <span class="font-italic">No attachments to this report.</span>
-                                @endif
-                                @foreach($report->attachments as $attachment)
-                                    <div data-id="{{ $attachment->id }}">
-                                        <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
-                                            {{ $attachment->file->name }}
-                                        </a>
-                                        <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-times"></i>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div>
-                            <form method="post" id="file-form" action="{{ route('training.report.attachment.store', ['report' => $report->id]) }}" enctype="multipart/form-data">
-                                @csrf
-                                <label for="hidden" class="mt-3">Hidden?</label>
-                                <input type="checkbox" name="hidden" id="hidden"><br>
-                                <input type="file" name="file" id="add-file" onchange="uploadFile(this)" class="btn btn-primary">
-                            </form>
-                        </div>
+
+                    <div class="form-group">
+                        <label for="contentBox">Report</label>
+                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ empty(old('content')) ? $report->content : old('content') }}</textarea>
+                        @error('content')
+                            <span class="text-danger">{{ $errors->first('content') }}</span>
+                        @enderror
                     </div>
+
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input @error('draft') is-invalid @enderror" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
+                        <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
+                        @error('draft')
+                            <span class="text-danger">{{ $errors->first('draft') }}</span>
+                        @enderror
+                    </div>
+
+                    @if (\Illuminate\Support\Facades\Gate::inspect('update', $report)->allowed())
+                        <button type="submit" class="btn btn-success">Update report</button>
+                    @endif
+
+                    @if (\Illuminate\Support\Facades\Gate::inspect('delete', $report)->allowed())
+                        <a href="#" class="btn btn-danger" id="delete-btn" data-report="{{ $report->id }}">Delete report</a>
+                    @endif
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Manage attachments
+                </h6>
+            </div>
+            <div class="card-body">
+
+                <div>
+                    @if(count($report->attachments) == 0)
+                        <i>This report has no attachments.</i>
+                    @endif
+
+                    @foreach($report->attachments as $attachment)
+                        <div data-id="{{ $attachment->id }}">
+                            <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                {{ $attachment->file->name }}
+                            </a>
+                            <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger"></i>
+                        </div>
+                    @endforeach
                 </div>
+
+                <hr>
+
+                <form method="post" id="file-form" action="{{ route('training.report.attachment.store', ['report' => $report->id]) }}" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="form-group">
+                        <label for="attachments">Attachments</label>
+                        <div>
+                            <input type="file" name="file" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" onchange="uploadFile(this)" multiple>
+                        </div>
+                        @error('file')
+                            <span class="text-danger">{{ $errors->first('file') }}</span>
+                        @enderror
+                    </div>
+
+                </form>
+                
             </div>
         </div>
     </div>
@@ -103,13 +135,13 @@
                 '_token': "{!! csrf_token() !!}",
                 '_method': 'delete'
             },
-            success: function (data, id) {
+            success: function (data) {
                 if (data.message === 'Attachment successfully deleted') {
-                    $("div").find('[data-id="' + id + '"').remove();
+                    $("div[data-id="+id+"]").remove();
                 }
             },
             error: function (data) {
-                console.log("An error occurred");
+                console.log("An error occurred while attempting to delete attachment.");
             }
         });
 

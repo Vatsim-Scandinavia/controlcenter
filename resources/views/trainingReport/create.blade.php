@@ -54,7 +54,7 @@
 
                     <div class="form-group">
                         <label for="attachments">Attachments</label>
-                        <div class="custom-file" id="attachments">
+                        <div>
                             <input type="file" name="file" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" multiple>
                         </div>
                         @error('file')
@@ -62,9 +62,11 @@
                         @enderror
                     </div>
 
+                    <hr>
+
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input @error('draft') is-invalid @enderror" id="draftCheck">
-                        <label class="form-check-label" name="draft" for="draftCheck">Draft</label>
+                        <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
                         @error('draft')
                             <span class="text-danger">{{ $errors->first('draft') }}</span>
                         @enderror
