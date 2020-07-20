@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Training Statistics')
-@section('content')
-
-<h1 class="h3 mb-4 text-gray-800">Training Statistics
+@section('title-extension')
     <div class="dropdown show" style="display: inline;">
         <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{ $filterName }}
@@ -16,7 +14,8 @@
             @endforeach 
         </div>
     </div>
-</h1>
+@endsection
+@section('content')
 
 <div class="row">
 
