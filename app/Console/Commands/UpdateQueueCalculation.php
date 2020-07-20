@@ -53,16 +53,18 @@ class UpdateQueueCalculation extends Command
 
                     // Only include pure Vatsim ratings in calculation
                     if($training->ratings->count() == 1 && $training->ratings->first()->vatsim_rating){
-                        $trainingCreated = $training->created_at;
-                        $trainingStarted = $training->started_at;
+                        if($training->status == 3){
+                            $trainingCreated = $training->created_at;
+                            $trainingStarted = $training->started_at;
 
-                        // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
-                        $waitingTime = $trainingStarted->diffInSeconds($trainingCreated);
-                        $waitingTime = $waitingTime - $training->paused_length;
+                            // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
+                            $waitingTime = $trainingStarted->diffInSeconds($trainingCreated);
+                            $waitingTime = $waitingTime - $training->paused_length;
 
-                        // Inject this specific training's record into the average calculation
-                        $averageSum = $averageSum + $waitingTime;
-                        $averageNumber++;
+                            // Inject this specific training's record into the average calculation
+                            $averageSum = $averageSum + $waitingTime;
+                            $averageNumber++;
+                        }
                     }                    
                 }   
 
