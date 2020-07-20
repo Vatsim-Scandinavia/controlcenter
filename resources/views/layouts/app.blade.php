@@ -29,10 +29,10 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <h1 class="h3 mb-4 text-gray-800">
+                <h3 class="mb-4 text-gray-800">
                     @yield('title', 'Page Title')
                     @yield('title-extension')
-                </h1>
+                </h3>
 
                 <!-- Success or failure messages (if any) START -->
                 @if(Session::has('success') OR isset($success))
