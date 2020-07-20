@@ -9,7 +9,10 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    {{ $report->training->user->firstName }}'s training {{ $report->created_at->toFormattedDateString() }}{{ $report->draft ? " (DRAFT)" : "" }}
+                    {{ $report->training->user->firstName }}'s training {{ $report->created_at->toFormattedDateString() }}
+                    @if($report->draft)
+                        <span class='badge badge-danger'>Draft</span>
+                    @endif
                 </h6>
             </div>
             <div class="card-body">
@@ -36,6 +39,14 @@
 
                         @error('position')
                             <span class="text-danger">{{ $errors->first('position') }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" value="{{ empty(old('date')) ? $report->created_at : old('date')}}" required>
+                        @error('date')
+                            <span class="text-danger">{{ $errors->first('date') }}</span>
                         @enderror
                     </div>
 
@@ -147,5 +158,27 @@
 
     }
 
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    //Activate bootstrap tooltips
+    $(document).ready(function() {
+        $('div').tooltip();
+        if({!! json_encode(old('date')) !!}) { 
+            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "F d, Y", defaultDate: new Date({!! json_encode(old('date')) !!}) });
+            $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: {!! json_encode(old('start_at')) !!} });
+            $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: {!! json_encode(old('end_at')) !!} });
+        } else {
+            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "F d, Y" });
+            $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+            $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+        }
+        $('.flatpickr-input:visible').on('focus', function () {
+            $(this).blur();
+        });
+        $('.flatpickr-input:visible').prop('readonly', false);
+    })
 </script>
 @endsection
