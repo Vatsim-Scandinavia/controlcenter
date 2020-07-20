@@ -26,16 +26,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-
-        // Delete old Vatbook bookings
-        $schedule->call(function () {
-            DB::table('bookings')->where('date', '<', date('Y-m-d'))->delete();
-        })->daily();
 
         // Update training queue calculations
         $schedule->command('update:queuecalculation')
+            ->daily();
+
+        // Delete old Vatbook bookins
+        $schedule->command('clean:bookings')
             ->daily();
 
         // Update Vatbook bookings
