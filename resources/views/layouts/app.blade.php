@@ -34,7 +34,6 @@
                     @yield('title-extension')
                 </h3>
 
-                <!-- Success or failure messages (if any) START -->
                 @if(Session::has('success') OR isset($success))
                     <div class="alert alert-success" role="alert">
                         {!! Session::pull("success") !!}
@@ -54,7 +53,6 @@
                         @endif
                     </div>
                 @endif
-                <!-- Success or failure messages END -->
 
                 @yield('content')
             </div>

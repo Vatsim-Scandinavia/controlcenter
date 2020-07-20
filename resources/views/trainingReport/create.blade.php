@@ -46,7 +46,7 @@
 
                     <div class="form-group">
                         <label for="contentBox">Report</label>
-                        <textarea class="form-control @error('position') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here."></textarea>
+                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here."></textarea>
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
                         @enderror
