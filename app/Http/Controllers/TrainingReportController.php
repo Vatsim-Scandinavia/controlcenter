@@ -61,7 +61,7 @@ class TrainingReportController extends Controller
 
         $report = TrainingReport::create($data);
 
-        return redirect($report->path());
+        return redirect($report->path())->withSuccess('Report successfully created');
     }
 
     /**
