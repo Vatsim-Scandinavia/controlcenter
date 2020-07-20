@@ -117,7 +117,6 @@ class TrainingReportsTest extends TestCase
 
         $this->actingAs($mentor)
             ->delete(route('training.report.delete', ['report' => $report->id]))
-            ->assertRedirect(route('training.report.index', ['training' => $report->training->id]));
 
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
@@ -156,7 +155,6 @@ class TrainingReportsTest extends TestCase
 
         $this->actingAs($otherModerator)
             ->delete(route('training.report.delete', ['report' => $report->id]))
-            ->assertRedirect(route('training.report.index', ['training' => $report->training->id]));
 
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }

@@ -117,7 +117,7 @@ class TrainingReportController extends Controller
 
         $report->delete();
 
-        return redirect(route('training.report.index', ['training' => $report->training->id]))->withSuccess('Training report deleted');
+        return redirect(route('training.show', $report->training->id))->withSuccess('Training report deleted');
     }
 
     /**

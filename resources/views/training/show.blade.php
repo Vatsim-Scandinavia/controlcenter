@@ -239,7 +239,7 @@
                     @else
                         @foreach($training->reports as $report)
                                 <div class="card bg-light mb-3">
-                                    <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}
+                                    <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toFormattedDateString() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
                                         @if($report->draft)
                                             <span class='badge badge-danger'>Draft</span>
                                         @endif
@@ -281,10 +281,6 @@
                         <a href="#" class="btn mt-4 mr-2 btn-success disabled">Create examination report</a>
                     @endcan
                 @endif
-
-                @can('viewReports', $training)
-                    <a href="{{ route('training.report.index', ['training' => $training->id]) }}" class="btn mt-4 btn-outline-secondary">See all reports</a>
-                @endcan
             </div>
         </div>
     </div>
