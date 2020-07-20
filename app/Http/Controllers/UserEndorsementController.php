@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Position;
 use App\UserEndorsement;
-use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,7 +52,7 @@ class UserEndorsementController extends Controller
 
             $data = request()->validate([
                 'student' => 'required|numeric',
-                'expires' => 'required|date:Y-m-d|after_or_equal:today|before_or_equal:'.\Carbon\Carbon::createFromTime()->addMonth(),
+                'expires' => 'required|date_format:d/m/Y|after_or_equal:today|before_or_equal:'.\Carbon\Carbon::createFromTime()->addMonth(),
                 'position' => 'required|exists:positions,callsign'
             ]);
 
@@ -65,7 +64,7 @@ class UserEndorsementController extends Controller
             $existingEndorsement = UserEndorsement::where('user_id', $user->id)->count();
             if($existingEndorsement) return back()->withInput()->withErrors(['student' => 'This student already has an active solo endorsement']);
 
-            $expireDate = new DateTime($data['expires']);
+            $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
             $expireDate->setTime(12, 0);
 
             $endorsement = new UserEndorsement();

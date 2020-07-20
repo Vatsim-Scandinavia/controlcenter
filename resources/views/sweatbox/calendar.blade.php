@@ -35,16 +35,16 @@
                                 <td> 
                                     <span style="display: none">{{ date('Y-m-d', strtotime($booking->date)) }}</span>
                                     @if ($booking->mentor == $user->id || $user->isModerator())
-                                        <a href="/sweatbox/{{ $booking->id }}">{{ date('F d, Y', strtotime($booking->date)) }}</a>
+                                        <a href="/sweatbox/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}</a>
                                     @else
-                                        {{ date('F d, Y', strtotime($booking->date)) }}
+                                        {{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
                                     @endif
                                 </td>
                                 <td>
-                                    {{ date('H:i', strtotime($booking->start_at)) }}z
+                                    {{ Carbon\Carbon::create($booking->start_at)->toEuropeanTime() }}
                                 </td>
                                 <td>
-                                    {{ date('H:i', strtotime($booking->end_at)) }}z
+                                    {{ Carbon\Carbon::create($booking->end_at)->toEuropeanTime() }}
                                 </td>
                                 <td>
                                     {{ $booking->position->callsign }} ({{ $booking->position->name }})

@@ -93,9 +93,9 @@
     $(document).ready(function() {
         $('div').tooltip();
         if({!! json_encode(old('date')) !!}) { 
-            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "F d, Y", defaultDate: new Date({!! json_encode(old('date')) !!}) });
+            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "d/m/Y", defaultDate: new Date({!! json_encode(old('date')) !!}) });
         } else {
-            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "F d, Y" });
+            $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! \Carbon\Carbon::createFromTime()->addMonth(); !!}", dateFormat: "d/m/Y" });
         }
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();

@@ -62,13 +62,13 @@
                                     @if ($training->started_at == null && $training->finished_at == null)
                                         Training not started
                                     @elseif ($training->finished_at == null)
-                                        {{ $training->started_at->toFormattedDateString() }} -
+                                        {{ $training->started_at->toEuropeanDate() }} -
                                     @else
-                                        {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
-                                <td>{{ $training->created_at->toFormattedDateString() }}</td>
+                                <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
 
                                     @if ($training->mentors->count() == 0)
@@ -146,14 +146,14 @@
                                     @if ($training->started_at == null && $training->finished_at == null)
                                         Training never started
                                     @elseif ($training->finished_at == null)
-                                        {{ $training->started_at->toFormattedDateString() }} -
+                                        {{ $training->started_at->toEuropeanDate() }} -
                                     @else
-                                        {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
-                                <td>{{ $training->created_at->toFormattedDateString() }}</td>
-                                <td>{{ $training->finished_at->toFormattedDateString() }}</td>
+                                <td>{{ $training->created_at->toEuropeanDate() }}</td>
+                                <td>{{ $training->finished_at->toEuropeanDate() }}</td>
                             </tr>
                             @endforeach
 

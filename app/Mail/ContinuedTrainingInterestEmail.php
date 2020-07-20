@@ -44,7 +44,7 @@ class ContinuedTrainingInterestEmail extends Mailable
             $introLines[] = ' - ' . $rating->name;
         }
 
-        $introLines[] = 'Deadline: ' . $this->deadline->format('d-m-Y');
+        $introLines[] = 'Deadline: ' . $this->deadline->toEuropeanDate();
 
         // Create mail
         return $this->markdown('mail.notifications.continued-interest', [

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use DateTime;
+use Carbon\Carbon;
 use App\Position;
 use App\Training;
 use App\TrainingExamination;
@@ -57,14 +57,15 @@ class TrainingExaminationController extends Controller
 
         $data = $this->validateRequest();
 
-        $date = new DateTime($data['examination_date']);
+        $date = Carbon::createFromFormat('d/m/Y', $data['examination_date']);
+
         $position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
 
         $examination = TrainingExamination::create([
             'position_id' => $position_id,
             'training_id' => $training->id,
             'examiner_id' => Auth::id(),
-            'examination_date' => $date,
+            'examination_date' => $date->format('Y-m-d'),
         ]);
 
         if (key_exists('result', $data)) {
@@ -132,7 +133,7 @@ class TrainingExaminationController extends Controller
         return request()->validate([
             'position' => 'required|exists:positions,callsign',
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
-            'examination_date' => 'sometimes|date:Y-m-d',
+            'examination_date' => 'sometimes|date_format:d/m/Y',
             'examination_sheet' => 'sometimes|file'
         ]);
     }

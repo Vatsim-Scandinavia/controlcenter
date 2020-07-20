@@ -67,7 +67,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col-auto">
                 @if ($data['report'] != null) <a href="{{ $data['report']->path() }}"> @endif
-                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $data['report'] != null ? $data['report']->created_at->toFormattedDateString() : "-" }}</div>
+                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $data['report'] != null ? $data['report']->created_at->toEuropeanDate() : "-" }}</div>
                 @if ($data['report'] != null) </a> @endif
                 </div>
             </div>
@@ -124,9 +124,9 @@
                             @if ($training->started_at == null && $training->finished_at == null)
                                 Training not started
                             @elseif ($training->finished_at == null)
-                                {{ $training->started_at->toFormattedDateString() }} -
+                                {{ $training->started_at->toEuropeanDate() }} -
                             @else
-                                {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                                {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
                             @endif
                         </td>
                         <td>

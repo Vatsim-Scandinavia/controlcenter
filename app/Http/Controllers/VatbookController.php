@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Position;
 use App\Vatbook;
-use DateTime;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,18 +59,18 @@ class VatbookController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'date' => 'required|date:Y-m-d|after_or_equal:today',
-            'start_at' => 'required|regex:/^\d{2}:\d{2}$/',
-            'end_at' => 'required|regex:/^\d{2}:\d{2}$/',
+            'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            'start_at' => 'required|date_format:H:i',
+            'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
             'training' => 'nullable|numeric|size:1',
             'event' => 'nullable|numeric|size:1'
         ]);
 
         $user = Auth::user();
-        $date = new DateTime($data['date']);
-        $start_at = new DateTime($data['start_at']);
-        $end_at = new DateTime($data['end_at']);
+        $date = Carbon::createFromFormat('d/m/Y', $data['date']);
+        $start_at = Carbon::createFromFormat('H:i', $data['start_at']);
+        $end_at = Carbon::createFromFormat('H:i', $data['end_at']);
         $booking = new Vatbook();
 
         $booking->local_id = floor($user->id / date('z'));
@@ -83,7 +83,7 @@ class VatbookController extends Controller
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
 
-        if($booking->time_start === $booking->time_end) return back()->withErrors('Booking has to have a duration!')->withInput();
+        if($start_at->diffInHours($end_at) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
 
         if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
         ->where('time_end', '!=', $booking->time_start)
@@ -129,9 +129,9 @@ class VatbookController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
-            'date' => 'required|date:Y-m-d|after_or_equal:today',
-            'start_at' => 'required|regex:/^\d{2}:\d{2}$/',
-            'end_at' => 'required|regex:/^\d{2}:\d{2}$/',
+            'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            'start_at' => 'required|date_format:H:i',
+            'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
             'training' => 'nullable|numeric|size:1',
             'event' => 'nullable|numeric|size:1'
@@ -141,9 +141,9 @@ class VatbookController extends Controller
         $booking = Vatbook::findOrFail($request->id);
 
         if($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) {
-            $date = new DateTime($data['date']);
-            $start_at = new DateTime($data['start_at']);
-            $end_at = new DateTime($data['end_at']);
+            $date = Carbon::createFromFormat('d/m/Y', $data['date']);
+            $start_at = Carbon::createFromFormat('H:i', $data['start_at']);
+            $end_at = Carbon::createFromFormat('H:i', $data['end_at']);
 
             $booking->callsign = $data['position'];
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
@@ -151,7 +151,7 @@ class VatbookController extends Controller
             if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
 
-            if($booking->time_start === $booking->time_end) return back()->withErrors('Booking has to have a duration!')->withInput();
+            if($start_at->diffInHours($end_at) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
 
             if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)

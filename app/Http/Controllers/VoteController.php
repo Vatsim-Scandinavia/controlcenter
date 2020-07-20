@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Vote;
 use App\VoteOption;
-use DateTime;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class VoteController extends Controller
@@ -39,7 +39,7 @@ class VoteController extends Controller
     public function store(Request $request)
     {
         $data = request()->validate([
-            'expire_date' => 'required|date:Y-m-d|after_or_equal:today',
+            'expire_date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'expire_time' => 'required|regex:/^\d{2}:\d{2}$/',
             'require_active' => '',
             'question' => 'required|string',
@@ -47,7 +47,7 @@ class VoteController extends Controller
         ]);
 
         // Concat expire date and time
-        $expire = new DateTime($data['expire_date']);
+        $expire = Carbon::createFromFormat('d/m/Y', $data['expire_date']);
         $expire_time = explode(':', $data['expire_time']);
         $expire->setTime($expire_time[0], $expire_time[1]);
 

@@ -9,7 +9,6 @@ use App\User;
 use App\Country;
 use App\Training;
 use App\Rating;
-use DateTime;
 
 class ReportController extends Controller
 {

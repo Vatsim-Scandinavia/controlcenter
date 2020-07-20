@@ -40,10 +40,10 @@
                                     {{ $endorsement->position }}    
                                 </td>
                                 <td> 
-                                    {{ $endorsement->created_at->toFormattedDateString() }}
+                                    {{ $endorsement->created_at->toEuropeanDate() }}
                                 </td>
                                 <td> 
-                                    {{ $endorsement->expires_at->toFormattedDateString() }}                                
+                                    {{ $endorsement->expires_at->toEuropeanDate() }}                                
                                 </td>
                                 <td>
                                     @if($user->isModerator())

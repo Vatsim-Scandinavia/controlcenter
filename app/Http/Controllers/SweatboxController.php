@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Booking;
 use App\Position;
-use DateTime;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -63,9 +63,9 @@ class SweatboxController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'date' => 'required|date:Y-m-d|after_or_equal:today',
-            'start_at' => 'required|regex:/^\d{2}:\d{2}$/',
-            'end_at' => 'required|regex:/^\d{2}:\d{2}$/',
+            'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            'start_at' => 'required|date_format:H:i',
+            'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
             'mentor_notes' => 'nullable|string|max:255'
         ]);
@@ -73,22 +73,22 @@ class SweatboxController extends Controller
         $user = Auth::user();
 
         if($user->isMentor()) {
-            $date = new DateTime($data['date']);
+            $date = Carbon::createFromFormat('d/m/Y', $data['date']);
             $booking = new Booking();
             
             $booking->user_id = $user->id;
             $booking->date = $date->format('Y-m-d'); 
-            $booking->start_at = $data['start_at'];
-            $booking->end_at = $data['end_at'];
+            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at']);
+            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at']);
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
-            if($booking->start_at === $booking->end_at) return back()->withErrors('Booking has to have a duration!')->withInput();
+            if($booking->start_at->diffInHours($booking->end_at) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
 
             $booking->save();
         }
 
-        return redirect('/sweatbox');
+        return redirect('/sweatbox')->withSuccess("Booking successfully added.");
     }
     
     /**
@@ -101,9 +101,9 @@ class SweatboxController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
-            'date' => 'required|date:Y-m-d|after_or_equal:today',
-            'start_at' => 'required|regex:/^\d{2}:\d{2}$/',
-            'end_at' => 'required|regex:/^\d{2}:\d{2}$/',
+            'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            'start_at' => 'required|date_format:H:i',
+            'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
             'mentor_notes' => 'nullable|string|max:255'
         ]);
@@ -112,21 +112,21 @@ class SweatboxController extends Controller
         $booking = Booking::findOrFail($request->id);
 
         if($user->id == $booking->mentor || $user->isModerator()) {
-            $date = new DateTime($data['date']);
+            $date = Carbon::createFromFormat('d/m/Y', $data['date']);
 
             $booking->user_id = $booking->user_id;
             $booking->date = $date->format('Y-m-d'); 
-            $booking->start_at = $data['start_at'];
-            $booking->end_at = $data['end_at'];
+            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at']);
+            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at']);
             $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
-            if($booking->start_at === $booking->end_at) return back()->withErrors('Booking has to have a duration!')->withInput();
+            if($booking->start_at->diffInHours($booking->end_at) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
 
             $booking->save();
         }
 
-        return redirect('/sweatbox');
+        return redirect('/sweatbox')->withSuccess("Booking successfully added.");
     }
 
     /**

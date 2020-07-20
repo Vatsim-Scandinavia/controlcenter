@@ -63,16 +63,16 @@
                                     @if ($training->started_at == null && $training->finished_at == null)
                                         Training not started
                                     @elseif ($training->finished_at == null)
-                                        {{ $training->started_at->toFormattedDateString() }} -
+                                        {{ $training->started_at->toEuropeanDate() }} -
                                     @else
-                                        {{ $training->started_at->toFormattedDateString() }} - {{ $training->finished_at->toFormattedDateString() }}
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
-                                <td>{{ $training->created_at->toFormattedDateString() }}</td>
+                                <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
                                     @if ($training->finished_at != null)
-                                        {{ $training->finished_at->toFormattedDateString() }}
+                                        {{ $training->finished_at->toEuropeanDate() }}
                                     @else
                                         -
                                     @endif
@@ -218,9 +218,7 @@
                 @can('viewReports', $training)
                     @foreach($examinations as $examination)
                             <div class="card bg-light mb-3">
-                                <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}
-                                    
-                                </div>
+                                <div class="card-header text-danger">Examination report {{ $examination->examination_date->toEuropeanDate() }}</div>
                                 <div class="card-body">
                                     <p class="card-text">
                                         @if($examination->result == "PASSED")
@@ -244,7 +242,7 @@
                     @else
                         @foreach($training->reports as $report)
                                 <div class="card bg-light mb-3">
-                                    <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toFormattedDateString() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
+                                    <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toEuropeanDate() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
                                         @if($report->draft)
                                             <span class='badge badge-danger'>Draft</span>
                                         @endif
