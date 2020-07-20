@@ -219,7 +219,11 @@
                 @can('viewReports', $training)
                     @foreach($examinations as $examination)
                             <div class="card bg-light mb-3">
-                                <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}</div>
+                                <div class="card-header text-danger">Examination report {{ $examination->examination_date->toFormattedDateString() }}
+                                    @if($report->draft)
+                                        <span class='badge badge-danger'>Draft</span>
+                                    @endif
+                                </div>
                                 <div class="card-body">
                                     <p class="card-text">
                                         {{ $examination->result }}
@@ -235,7 +239,11 @@
                     @else
                         @foreach($training->reports as $report)
                                 <div class="card bg-light mb-3">
-                                    <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}</div>
+                                    <div class="card-header text-primary">Training report {{ $report->created_at->toFormattedDateString() }}
+                                        @if($report->draft)
+                                            <span class='badge badge-danger'>Draft</span>
+                                        @endif
+                                    </div>
                                     <div class="card-body">
                                         <p class="card-text">
                                             {{ $report->content }}
