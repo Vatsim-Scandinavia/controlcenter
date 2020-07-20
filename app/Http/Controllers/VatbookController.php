@@ -75,7 +75,7 @@ class VatbookController extends Controller
 
         $booking->local_id = floor($user->id / date('z'));
         $booking->callsign = $data['position'];
-        $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
         $booking->name = $user->name;
         $booking->time_start = date('Y-m-d H:i:s', strtotime($data['date'] . $data['start_at']));
         if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
@@ -146,7 +146,7 @@ class VatbookController extends Controller
             $end_at = Carbon::createFromFormat('H:i', $data['end_at']);
 
             $booking->callsign = $data['position'];
-            $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+            $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
             $booking->time_start = date('Y-m-d H:i:s', strtotime($data['date'] . $data['start_at']));
             if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
             else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));

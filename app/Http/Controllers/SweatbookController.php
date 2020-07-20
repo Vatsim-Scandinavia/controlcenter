@@ -80,7 +80,7 @@ class SweatbookController extends Controller
             $booking->date = $date->format('Y-m-d'); 
             $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at']);
             $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at']);
-            $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+            $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
             if($booking->start_at->diffInMinutes($booking->end_at, false) <= 0) return back()->withInput()->withErrors('Booking need to have a valid duration!');
@@ -118,7 +118,7 @@ class SweatbookController extends Controller
             $booking->date = $date->format('Y-m-d'); 
             $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at']);
             $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at']);
-            $booking->position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+            $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
             if($booking->start_at->diffInMinutes($booking->end_at, false) <= 0) return back()->withInput()->withErrors('Booking need to have a valid duration!');
