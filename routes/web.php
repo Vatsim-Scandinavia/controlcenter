@@ -99,7 +99,6 @@ Route::middleware('auth')->group(function () {
 
     // Sweatbook routes
     Route::get('/sweatbook', 'SweatbookController@index')->name('sweatbook');
-    Route::get('/sweatbook/create', 'SweatbookController@create')->name('sweatbook.create');
     Route::get('/sweatbook/{id}/delete', 'SweatbookController@delete')->name('sweatbook.delete');
     Route::get('/sweatbook/{id}', 'SweatbookController@show');
     Route::post('/sweatbook/store', 'SweatbookController@store');

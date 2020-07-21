@@ -18,8 +18,9 @@ class SweatbookController extends Controller
     public function index(){
         $user = Auth::user();
         $bookings = Sweatbook::all()->sortBy('date');
+        $positions = Position::all();
         
-        if($user->isMentor()) return view('sweatbook.calendar', compact('bookings', 'user'));
+        if($user->isMentor()) return view('sweatbook.index', compact('bookings', 'user', 'positions'));
         
         abort(403);
     }
