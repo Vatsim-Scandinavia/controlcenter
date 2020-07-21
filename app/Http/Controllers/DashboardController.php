@@ -27,7 +27,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $report = TrainingReport::whereIn('training_id', $user->trainings)->orderBy('created_at')->get()->last();
+        $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
 
         $data = [
             'rating' => $user->ratingLong,
