@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Training overview')
+@section('title', 'Training Requests')
+@section('title-extension')
+    @if (\Auth::user()->isModerator())
+        <a href="{{ route('training.create') }}" class="btn btn-sm btn-success">Add new request</a>
+    @endif
+@endsection
 @section('content')
 
 <div class="row">
@@ -9,9 +14,6 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">Open training requests</h6>
-                @if (\Auth::user()->isModerator())
-                    <a href="{{ route('training.create') }}" class="btn btn-success">Add new request</a>
-                @endif
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
