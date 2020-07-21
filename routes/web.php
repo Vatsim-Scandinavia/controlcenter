@@ -106,7 +106,6 @@ Route::middleware('auth')->group(function () {
 
     // Vatbook routes
     Route::get('/vatbook', 'VatbookController@index')->name('vatbook');
-    Route::get('/vatbook/create', 'VatbookController@create')->name('vatbook.create');
     Route::get('/vatbook/{id}/delete', 'VatbookController@delete')->name('vatbook.delete');
     Route::get('/vatbook/{id}', 'VatbookController@show');
     Route::post('/vatbook/store', 'VatbookController@store');

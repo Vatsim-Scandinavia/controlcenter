@@ -26,20 +26,6 @@ class SweatbookController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(){
-        $user = Auth::user();
-        $positions = Position::all();
-
-        if($user->isMentor()) return view('sweatbook.create', compact('positions'));
-
-        abort(403);
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  \App\Booking $booking

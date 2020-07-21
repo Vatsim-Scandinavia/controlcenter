@@ -18,20 +18,9 @@ class VatbookController extends Controller
     public function index(){
         $user = Auth::user();
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
-
-        return view('vatbook.index', compact('bookings', 'user'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(){
-        $user = Auth::user();
         $positions = Position::all();
 
-        return view('vatbook.create', compact('positions', 'user'));
+        return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
 
     /**
