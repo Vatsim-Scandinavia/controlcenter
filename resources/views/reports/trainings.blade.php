@@ -153,7 +153,7 @@
                         @foreach($queues as $queue => $time)
                             <tr>
                                 <td>{{ $queue }}</td>
-                                <td>{{ \Carbon\CarbonInterval::seconds($time)->cascade()->forHumans(['parts' => 2]) }}</td>
+                                <td>{{ \Carbon\CarbonInterval::seconds(round($time))->cascade()->forHumans(['parts' => 2]) }}</td>
                             </tr>
                         @endforeach
 
