@@ -31,13 +31,13 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:queuecalculation')
             ->daily();
 
-        // Delete old Vatbook bookins
-        $schedule->command('clean:bookings')
-            ->daily();
-
-        // Update Vatbook bookings
+        // Update Vatbook bookings, also deletes old bookings
         $schedule->command('update:bookings')
             ->everyFiveMinutes();
+
+        // Delete old Sweatbox bookings
+        $schedule->command('clean:sweatbooks')
+            ->daily();
 
         // Clean up expired solo endorsements
         $schedule->command('clean:endorsements')
