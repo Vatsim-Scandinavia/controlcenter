@@ -39,7 +39,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
+                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->name }}</a></td>
@@ -143,6 +143,18 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }}>
+                        <label class="form-check-label" for="check1">
+                            Paused
+                            @if(isset($training->paused_at))
+                                <span class='badge badge-danger'>{{ \Carbon\Carbon::create($training->paused_at)->diffForHumans(['parts' => 2]) }}</span>
+                            @endif
+                        </label>
+                    </div>
+
+                    <hr>
 
                     <div class="form-group">
                         <label for="internalTrainingComments">Internal training comments</label>
