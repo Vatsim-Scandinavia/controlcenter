@@ -84,7 +84,9 @@ class FilesTest extends TestCase
         $file_id = $response->decodeResponseJson('file_id');
         $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
 
-        $this->actingAs($user)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('message', 'File successfully deleted');
+        $this->actingAs($user)->delete(route('file.delete', ['file' => $file_id]))
+            ->assertRedirect()
+            ->assertSessionHas('success', 'File successfully deleted');
     }
 
     /** @test */
@@ -98,7 +100,7 @@ class FilesTest extends TestCase
 
         $moderator = factory(\App\User::class)->create(['group' => 2]);
 
-        $this->actingAs($moderator)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('message', 'File successfully deleted');
+        $this->actingAs($moderator)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('success', 'File successfully deleted');
     }
 
     /** @test */
