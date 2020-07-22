@@ -98,7 +98,10 @@ class FileController extends Controller
             $filename = now()->format('Ymd_His') . "_" . $id;
         }
 
-        $filename = $filename . "." . $extension;
+        if (!preg_match('/\.([a-zA-Z]*)/', $filename) && $extension != null) {
+            // Filename doesn't have anything that resembles and extension
+            $filename = $filename . "." . $extension;
+        }
 
         Storage::putFileAs('public/files/', $file, $filename);
 
