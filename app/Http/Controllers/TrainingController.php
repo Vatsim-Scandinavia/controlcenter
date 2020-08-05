@@ -170,7 +170,7 @@ class TrainingController extends Controller
         if ($request->expectsJson()) {
             return $training;
         } else {
-            return redirect()->back()->withSuccess('Training successfully added');
+            return redirect()->intended(route('requests'))->withSuccess('Training successfully added');
         }
     }
 

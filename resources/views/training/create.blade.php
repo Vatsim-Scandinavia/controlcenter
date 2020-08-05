@@ -22,7 +22,7 @@
                             id="student"
                             class="form-control @error('student') is-invalid @enderror"
                             type="text"
-                            name="student"
+                            name="user_id"
                             list="students"
                             value="{{ old('student') }}"
                             required>
