@@ -23,10 +23,10 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="input">Student</th>
-                                <th data-sortable="true" data-filter-control="select">Position</th>
-                                <th data-filter-control="select">Starts</th>
-                                <th data-filter-control="select">Expires</th>
+                                <th data-field="student" data-sortable="true" data-filter-control="input">Student</th>
+                                <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
+                                <th data-field="starts" data-filter-control="select">Starts</th>
+                                <th data-field="expires" data-filter-control="select">Expires</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>

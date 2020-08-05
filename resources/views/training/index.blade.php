@@ -24,19 +24,18 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="select">State</th>
-                                <th data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
-                                <th data-sortable="true" data-filter-control="input">Name</th>
-                                <th data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
-                                <th data-sortable="true" data-filter-control="select">Type</th>
-                                <th data-sortable="true" data-filter-control="input">Period</th>
-                                <th data-sortable="true" data-filter-control="select">Country</th>
-                                <th data-sortable="true" data-filter-control="input">Applied</th>
-                                <th data-sortable="true" data-filter-control="select">Mentor</th>
+                                <th data-field="state" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">State</th>
+                                <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
+                                <th data-field="name" data-sortable="true" data-filter-control="input">Name</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
+                                <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
+                                <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
+                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="applied" data-sortable="true" data-filter-control="input">Applied</th>
+                                <th data-field="mentor" data-sortable="true" data-filter-control="select">Mentor</th>
                             </tr>
                         </thead>
                         <tbody>
-
                             @foreach($openTrainings as $training)
                             <tr>
                                 <td>
@@ -108,15 +107,15 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="select">State</th>
-                                <th data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
-                                <th data-sortable="true" data-filter-control="input">Name</th>
-                                <th data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
-                                <th data-sortable="true" data-filter-control="select">Type</th>
-                                <th data-sortable="true" data-filter-control="input">Period</th>
-                                <th data-sortable="true" data-filter-control="select">Country</th>
-                                <th data-sortable="true" data-filter-control="input">Applied</th>
-                                <th data-sortable="true" data-filter-control="input">Closed</th>
+                                <th data-field="state" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">State</th>
+                                <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
+                                <th data-field="name" data-sortable="true" data-filter-control="input">Name</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
+                                <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
+                                <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
+                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="applied" data-sortable="true" data-filter-control="input">Applied</th>
+                                <th data-field="closed" data-sortable="true" data-filter-control="input">Closed</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -78,6 +78,11 @@
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
+        // Filter function to strip html from bootstrap table column filters
+        window.tableFilterStripHtml = function (value) {
+            return value.replace(/<[^>]+>/g, '').trim();
+        }
+
         // Search bar
         $(document).ready(function(){
 
