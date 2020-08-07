@@ -2,7 +2,7 @@ name: Test Application & Deploy to Test environment
 
 on:
   push:
-    branches: [ staging ]
+    branches: [ test ]
 
 jobs:
   test-and-deploy:
