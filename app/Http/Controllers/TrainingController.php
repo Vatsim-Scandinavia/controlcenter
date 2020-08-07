@@ -55,8 +55,8 @@ class TrainingController extends Controller
 
         $trainings = Auth::user()->viewableModels(\App\Training::class);
 
-        $openTrainings = $trainings->where('status', '>=', 0);
-        $closedTrainings =  $trainings->where('status', '<', 0);
+        $openTrainings = $trainings->where('status', '>=', 0)->sortByDesc('status');
+        $closedTrainings =  $trainings->where('status', '<', 0)->sortByDesc('status');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
