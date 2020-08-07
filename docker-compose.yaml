@@ -2,8 +2,8 @@ version: '3.1'
 
 services:
   web:
-      container_name: 'santa_web'
-      image: gustavkauman/docker-laravel:version-1.1.0-rc
+      container_name: 'cc_web'
+      image: gustavkauman/docker-laravel:latest
       expose:
           - 9000
       ports:
@@ -14,10 +14,8 @@ services:
           - db:mysql
           - handover-db:mysql
       working_dir: /var/www
-      environment:
-          XDEBUG_CONFIG: remote_host=192.168.1.209
   db:
-      container_name: 'santa_db'
+      container_name: 'cc_db'
       image: mysql:8.0.19
       ports:
           - 3306:3306

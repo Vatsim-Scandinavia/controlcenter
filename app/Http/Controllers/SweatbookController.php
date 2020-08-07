@@ -65,8 +65,8 @@ class SweatbookController extends Controller
             
             $booking->user_id = $user->id;
             $booking->date = $date->format('Y-m-d'); 
-            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at']);
-            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at']);
+            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($booking->date);
+            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($booking->date);
             $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
             $booking->mentor_notes = $data['mentor_notes'];
 
@@ -120,8 +120,8 @@ class SweatbookController extends Controller
 
             $booking->user_id = $booking->user_id;
             $booking->date = $date->format('Y-m-d'); 
-            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at']);
-            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at']);
+            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($booking->date);
+            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($booking->date);
             $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
             $booking->mentor_notes = $data['mentor_notes'];
 

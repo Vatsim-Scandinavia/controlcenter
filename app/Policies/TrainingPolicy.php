@@ -55,7 +55,7 @@ class TrainingPolicy
      * Check whether the given user is allowed to apply for training
      *
      * @param User $user
-     * @return bool
+     * @return Response
      */
     public function apply(User $user)
     {
@@ -63,7 +63,7 @@ class TrainingPolicy
 
         if(!Setting::get('trainingEnabled'))
             return Response::deny("Currently we don't accept any new training requests.");
-        
+
         if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null)
             return Response::deny("You must join Scandinavia subdivision to apply for training");
 

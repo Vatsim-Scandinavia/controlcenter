@@ -62,7 +62,7 @@ class TrainingsTest extends TestCase
         $this->actingAs($moderator)
             ->patch($training->path(), $attributes = ['status' => 0])
             ->assertRedirect($training->path())
-            ->assertSessionHas('message', 'Training successfully updated');
+            ->assertSessionHas('success', 'Training successfully updated');
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => $attributes['status']]);
 

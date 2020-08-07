@@ -20,12 +20,12 @@
                         data-page-list=[10,15,25,50]>
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="select">State</th>
-                                <th data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
-                                <th data-sortable="true" data-filter-control="input">Name</th>
-                                <th data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
-                                <th data-sortable="true" data-filter-control="select">Type</th>
-                                <th data-sortable="true" data-filter-control="input">Period</th>
+                                <th data-field="state" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">State</th>
+                                <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
+                                <th data-field="name" data-sortable="true" data-filter-control="input">Name</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
+                                <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
+                                <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-sortable="true" data-filter-control="input">Last Report</th>
                                 <th data-sortable="true" data-filter-control="select">Country</th>
                             </tr>

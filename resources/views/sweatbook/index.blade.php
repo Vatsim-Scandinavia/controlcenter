@@ -20,20 +20,19 @@
                         data-page-list=[10,15,25,50]>
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="select">Date</th>
-                                <th data-sortable="true" data-filter-control="select">Start (Zulu)</th>
-                                <th data-sortable="true" data-filter-control="select">End (Zulu)</th>
-                                <th data-sortable="true" data-filter-control="select">Position</th>
-                                <th data-sortable="true" data-filter-control="select">FIR</th>
-                                <th data-sortable="true" data-filter-control="select">Mentor</th>
+                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Date</th>
+                                <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
+                                <th data-field="end" data-sortable="true" data-filter-control="select">End (Zulu)</th>
+                                <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
+                                <th data-field="fir" data-sortable="true" data-filter-control="select">FIR</th>
+                                <th data-field="mentor" data-sortable="true" data-filter-control="select">Mentor</th>
                                 <th>Notes</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($bookings as $booking)
                             <tr>
-                                <td> 
-                                    <span style="display: none">{{ date('Y-m-d', strtotime($booking->date)) }}</span>
+                                <td>
                                     @if ($booking->mentor == $user->id || $user->isModerator())
                                         <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}</a>
                                     @else

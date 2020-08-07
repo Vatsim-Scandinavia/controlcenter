@@ -29,29 +29,32 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <h3 class="mb-4 text-gray-800">
-                    @yield('title', 'Page Title')
-                    @yield('title-extension')
-                </h3>
 
-                @if(Session::has('success') OR isset($success))
-                    <div class="alert alert-success" role="alert">
-                        {!! Session::pull("success") !!}
-                    </div>
-                @endif
+                @if(!Route::is('front'))
+                    <h3 class="mb-4 text-gray-800">
+                        @yield('title', 'Page Title')
+                        @yield('title-extension')
+                    </h3>
 
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        @if(count($errors) > 1)
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            {{ $errors->first() }}
-                        @endif
-                    </div>
+                    @if(Session::has('success') OR isset($success))
+                        <div class="alert alert-success" role="alert">
+                            {!! Session::pull("success") !!}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            @if(count($errors) > 1)
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                {{ $errors->first() }}
+                            @endif
+                        </div>
+                    @endif
                 @endif
 
                 @yield('content')
@@ -75,6 +78,21 @@
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
+        // Bootstrap-table: Filter function to strip html from bootstrap table column filters
+        window.tableFilterStripHtml = function (value) {
+            return value.replace(/<[^>]+>/g, '').trim();
+        }
+
+        // Bootstrap-table: Sort dates according to timetamp and not alphabethically
+        window.tableSortDates = function(a, b, rowA, rowB){
+            var a = moment(window.tableFilterStripHtml(a), "DD/MM/YYYY");
+            var b = moment(window.tableFilterStripHtml(b), "DD/MM/YYYY");
+
+            if (a.isAfter(b)) return 1;
+            if (a.isBefore(b)) return -1;
+            return 0;
+        }
+
         // Search bar
         $(document).ready(function(){
 

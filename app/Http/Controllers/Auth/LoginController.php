@@ -57,7 +57,7 @@ class LoginController extends Controller
         }
         $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
 
-        if (!isset($resourceOwner->id) && $resourceOwner->data->oauth->token_valid === "true") {
+        if (!isset($resourceOwner->data->id)) {
             return redirect()->route('front')->withError("You did not grant all data which is required to use this service.");
         }
 
@@ -71,15 +71,9 @@ class LoginController extends Controller
     protected function completeLogin($resourceOwner, $token)
     {
         $account = User::updateOrCreate(
-            ['id' => $resourceOwner->id],
+            ['id' => $resourceOwner->data->id],
             ['last_login' => \Carbon\Carbon::now()]
         );
-        
-        /*if ($resourceOwner->data->oauth->token_valid) { // User has given us permanent access to updated data
-            $account->access_token = $token->getToken();
-            $account->refresh_token = $token->getRefreshToken();
-            $account->token_expires = $token->getExpires();
-        }*/
 
         $account->save();
 

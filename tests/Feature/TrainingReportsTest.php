@@ -116,7 +116,7 @@ class TrainingReportsTest extends TestCase
         $report->training->country->mentors()->attach($mentor);
 
         $this->actingAs($mentor)
-            ->delete(route('training.report.delete', ['report' => $report->id]))
+            ->delete(route('training.report.delete', ['report' => $report->id]));
 
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
@@ -154,7 +154,7 @@ class TrainingReportsTest extends TestCase
         $otherModerator = factory(\App\User::class)->create(['group' => 1]);
 
         $this->actingAs($otherModerator)
-            ->delete(route('training.report.delete', ['report' => $report->id]))
+            ->delete(route('training.report.delete', ['report' => $report->id]));
 
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }

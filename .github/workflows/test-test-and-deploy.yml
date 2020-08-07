@@ -8,7 +8,7 @@ jobs:
   test-and-deploy:
 
     runs-on: ubuntu-18.04
-    
+
     steps:
       # Test application
     - uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
         chmod 700 -R ~/.ssh
         ssh-add ~/.ssh/id_rsa
     - name: Deploy on server
-      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull santa staging"
+      run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && git pull origin test"
     - name: Install Dependencies
       run: ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ secrets.TEST_FOLDER }} && composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist"
     - name: Migrate DBs

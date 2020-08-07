@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\TrainingExamination;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -35,6 +36,7 @@ class TrainingExaminationsTest extends TestCase
     {
 
         $data = $this->examination->getAttributes();
+        $data['examination_date'] = Carbon::parse($data['examination_date'])->format('d/m/Y');
         $data['position'] = \App\Position::find($data['position_id'])->callsign;
         unset($data['position_id']);
 
