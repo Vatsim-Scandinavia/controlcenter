@@ -25,8 +25,8 @@
                             <tr>
                                 <th data-field="student" data-sortable="true" data-filter-control="input">Student</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
-                                <th data-field="starts" data-filter-control="select">Starts</th>
-                                <th data-field="expires" data-filter-control="select">Expires</th>
+                                <th data-field="starts" data-sorter="tableSortDates" data-filter-control="select">Starts</th>
+                                <th data-field="expires" data-sorter="tableSortDates" data-filter-control="select">Expires</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>

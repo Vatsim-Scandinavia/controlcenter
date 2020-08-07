@@ -78,9 +78,19 @@
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        // Filter function to strip html from bootstrap table column filters
+        // Bootstrap-table: Filter function to strip html from bootstrap table column filters
         window.tableFilterStripHtml = function (value) {
             return value.replace(/<[^>]+>/g, '').trim();
+        }
+
+        // Bootstrap-table: Sort dates according to timetamp and not alphabethically
+        window.tableSortDates = function(a, b, rowA, rowB){
+            var a = moment(window.tableFilterStripHtml(a), "DD/MM/YYYY");
+            var b = moment(window.tableFilterStripHtml(b), "DD/MM/YYYY");
+
+            if (a.isAfter(b)) return 1;
+            if (a.isBefore(b)) return -1;
+            return 0;
         }
 
         // Search bar

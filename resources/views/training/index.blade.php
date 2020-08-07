@@ -31,7 +31,7 @@
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
-                                <th data-field="applied" data-sortable="true" data-filter-control="input">Applied</th>
+                                <th data-field="applied" data-sortable="true" data-sorter="tableSortDates" data-filter-control="input">Applied</th>
                                 <th data-field="mentor" data-sortable="true" data-filter-control="select">Mentor</th>
                             </tr>
                         </thead>
