@@ -69,7 +69,13 @@
                                         {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
                                     @endif
                                 </td>
-                                <td> null </td>
+                                <td>
+                                    @if(\App\TrainingReport::where('training_id', $training->id)->count() > 0)
+                                        {{ Carbon\Carbon::make(\App\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->created_at)->diffForHumans(['parts' => 2])}}
+                                    @else
+                                        No report yet
+                                    @endif
+                                </td>
                                 <td>{{ $training->country->name }}</td>
                             </tr>
                             @endforeach
