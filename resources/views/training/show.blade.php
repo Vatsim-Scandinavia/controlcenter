@@ -161,6 +161,7 @@
                         <textarea class="form-control" name="notes" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
                     </div>
 
+                    @if (\Auth::user()->isModerator())
                     <div class="form-group">
                         <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="mentors[]" id="assignMentors">
@@ -169,6 +170,7 @@
                             @endforeach
                         </select>
                     </div>
+                    @endif
 
                     <button type="submit" class="btn btn-primary">Save</button>
 
