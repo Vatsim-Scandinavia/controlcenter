@@ -64,8 +64,11 @@ class TrainingPolicy
         if(!Setting::get('trainingEnabled'))
             return Response::deny("Currently we don't accept any new training requests.");
 
-        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null)
-            return Response::deny("You must join Scandinavia subdivision to apply for training");
+        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
+            $subdiv = "none";
+            if(isset($user->handover->subdivision)) $subdiv = $user->handover->subdivision;
+            return Response::deny("You must join Scandinavia subdivision to apply for training. You currently belong to ".$subdiv);
+        }
 
         return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You already have a pending training request");
     }
