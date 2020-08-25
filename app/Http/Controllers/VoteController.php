@@ -76,6 +76,8 @@ class VoteController extends Controller
             $vote_option->save();
         }
 
+        ActivityLogController::danger("Created vote ".$vote->id." with question ".$vote->question);
+
         return redirect()->intended(route('vote.overview'))->withSuccess('Vote succesfully created.');
     }
 
@@ -115,6 +117,8 @@ class VoteController extends Controller
 
         $user = \Auth::user();
         $vote->user()->attach($user);
+
+        ActivityLogController::info("Voted in vote poll ".$vote->id);
 
         return redirect()->intended(route('vote.show', $vote->id))->withSuccess('Your vote is succesfully registered.');
     }

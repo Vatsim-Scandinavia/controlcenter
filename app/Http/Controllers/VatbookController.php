@@ -105,7 +105,9 @@ class VatbookController extends Controller
 
         $booking->eu_id = $matches[1][0];
         $booking->save();
-
+        
+        ActivityLogController::info("Created vatbook booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
+        
         return redirect('/vatbook');
     }
 
@@ -173,6 +175,8 @@ class VatbookController extends Controller
             }
 
             $booking->save();
+
+            ActivityLogController::info("Updated vatbook booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
         }
 
         return redirect('/vatbook');
@@ -195,6 +199,8 @@ class VatbookController extends Controller
             $booking->local_id = null;
             $booking->save();
         }
+
+        ActivityLogController::info("Deleted vatbook booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
 
         return redirect('/vatbook');
     }
