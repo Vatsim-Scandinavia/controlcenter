@@ -17,7 +17,11 @@ class ActivityLogController extends Controller
         $request = request();
 
         if(isset($request)){
-            $log->user_id = $request->user()->id;
+
+            if(isset($request->user()->id)){
+                $log->user_id = $request->user()->id;
+            }
+
             $log->ip_address = $request->ip();
             $log->user_agent = $request->userAgent();
         }
