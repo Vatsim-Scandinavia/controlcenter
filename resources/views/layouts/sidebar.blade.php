@@ -26,6 +26,12 @@
             <span>Vatbook</span></a>
         </li>
 
+        <li class="nav-item">
+        <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Moodle</span></a>
+        </li>
+
         @if (\Auth::user()->isMentor())
 
         <!-- Divider -->
