@@ -126,7 +126,7 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a> {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
-                                <td><a href="/user/{{ $training->user->id }}">{{ $endorsement->user->name }}</a></td>
+                                <td><a href="/user/{{ $training->user->id }}">{{ $training->user->name }}</a></td>
                                 <td>
                                     @if ( is_iterable($ratings = $training->ratings->toArray()) )
                                         @for( $i = 0; $i < sizeof($ratings); $i++ )
