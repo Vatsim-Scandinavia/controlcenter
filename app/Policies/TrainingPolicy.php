@@ -21,7 +21,7 @@ class TrainingPolicy
      */
     public function view(User $user, Training $training)
     {
-        return  $user->isMentor($training->country) ||
+        return  $training->mentors->contains($user) ||
                 $user->isModerator() ||
                 $user->is($training->user);
     }
@@ -64,8 +64,11 @@ class TrainingPolicy
         if(!Setting::get('trainingEnabled'))
             return Response::deny("Currently we don't accept any new training requests.");
 
-        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null)
-            return Response::deny("You must join Scandinavia subdivision to apply for training");
+        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
+            $subdiv = "none";
+            if(isset($user->handover->subdivision)) $subdiv = $user->handover->subdivision;
+            return Response::deny("You must join Scandinavia subdivision to apply for training. You currently belong to ".$subdiv);
+        }
 
         return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You already have a pending training request");
     }
@@ -90,7 +93,7 @@ class TrainingPolicy
      */
     public function viewReports(User $user, Training $training)
     {
-        return  $user->isMentor($training->country) ||
+        return  $training->mentors->contains($user) ||
                 $user->is($training->user) ||
                 $user->isAdmin();
     }
@@ -98,13 +101,13 @@ class TrainingPolicy
     public function createReport(User $user, Training $training)
     {
         // Check if mentor is mentoring country, not filling their own training and the training is in progress
-        return $user->isMentor($training->country) && $user->isNot($training->user);
+        return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
     public function createExamination(User $user, Training $training)
     {
         // Check if mentor is mentoring country, not filling their own training and the training is awaing an exam.
-        return $user->isMentor($training->country) && $user->isNot($training->user);
+        return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
 }

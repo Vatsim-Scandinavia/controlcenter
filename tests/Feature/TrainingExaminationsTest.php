@@ -22,6 +22,7 @@ class TrainingExaminationsTest extends TestCase
         $this->examination = factory(TrainingExamination::class)->make();
         $this->training = $this->examination->training;
         $this->training->country->mentors()->attach($this->examination->examiner);
+        $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);
     }
 
     /** @test */

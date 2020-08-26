@@ -90,9 +90,11 @@ class SweatbookController extends Controller
             ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             $booking->save();
+
+            ActivityLogController::info("Created sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
         }
 
-        return redirect('/sweatbook')->withSuccess("Booking successfully added.");
+        return redirect('/sweatbook')->withSuccess("Booking successfully save.");
     }
     
     /**
@@ -144,9 +146,11 @@ class SweatbookController extends Controller
             ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
             $booking->save();
+
+            ActivityLogController::info("Updated sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
         }
 
-        return redirect('/sweatbook')->withSuccess("Booking successfully added.");
+        return redirect('/sweatbook')->withSuccess("Booking successfully edited.");
     }
 
     /**
@@ -159,6 +163,8 @@ class SweatbookController extends Controller
     {
         $user = Auth::user();
         $booking = Sweatbook::findOrFail($id);
+
+        ActivityLogController::info("Deleted sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
 
         if($user->id == $booking->mentor || $user->isModerator()) $booking->delete();
 

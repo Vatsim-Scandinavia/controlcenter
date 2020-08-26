@@ -21,7 +21,7 @@ class TrainingReportPolicy
      */
     public function view(User $user, TrainingReport $trainingReport)
     {
-        return  $user->isMentor($trainingReport->training->country) ||
+        return  $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
                 ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
     }
@@ -46,7 +46,7 @@ class TrainingReportPolicy
      */
     public function update(User $user, TrainingReport $trainingReport)
     {
-        return $user->isMentor($trainingReport->training->country);
+        return $trainingReport->training->mentors->contains($user);
     }
 
     /**

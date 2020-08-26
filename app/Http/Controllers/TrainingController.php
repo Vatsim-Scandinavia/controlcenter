@@ -167,10 +167,12 @@ class TrainingController extends Controller
 
         $training->save();
 
+        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' for rating(s): '.$ratings->pluck('name').' for country: '.$training->country_id);
+
         if ($request->expectsJson()) {
             return $training;
         } else {
-            return redirect()->intended(route('requests'))->withSuccess('Training successfully added');
+            return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
         }
     }
 
@@ -240,6 +242,11 @@ class TrainingController extends Controller
         // Update the training
         $training->update($attributes);
 
+        ActivityLogController::warning('Updated training request '.$training->id.
+        '. Status: '.TrainingController::$statuses[$training->status]["text"].
+        ', training type: '.$training->type.
+        ', mentor: '.$training->mentors->pluck('name'));
+
         return redirect($training->path())->withSuccess("Training successfully updated");
     }
 
@@ -270,6 +277,7 @@ class TrainingController extends Controller
                     'updated_at' => now()
                 ]);
 
+        ActivityLogController::info('Training interest confirmed.');
         return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
 
     }

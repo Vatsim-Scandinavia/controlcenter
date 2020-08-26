@@ -46,6 +46,10 @@ class Kernel extends ConsoleKernel
         // Close expired votes
         $schedule->command('clean:votes')
             ->everyMinute();
+
+        // Clean IP addresses and user agent information from old logs and very old logs
+        $schedule->command('clean:logs')
+            ->daily();
     }
 
     /**

@@ -48,6 +48,7 @@
             <span>Sweatbox Calendar</span></a>
         </li>
 
+        @endif
         @if (\Auth::user()->isModerator())
 
         <li class="nav-item {{ Route::is('requests') ? 'active' : '' }}">
@@ -57,8 +58,8 @@
         </li>
 
         @endif
-        @endif
 
+        @if (\Auth::user()->isMentor())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -78,6 +79,10 @@
             <i class="fas fa-fw fa-check-square"></i>
             <span>Solo Endorsements</span></a>
         </li>
+
+        @endif
+
+        @if (\Auth::user()->isAdmin())
 
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -111,6 +116,8 @@
             </div>
         </div>
         </li>
+
+        @endif
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">

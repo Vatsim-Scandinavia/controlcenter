@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\ActivityLogController;
 use App\User;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Token;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OAuthController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
@@ -65,6 +67,10 @@ class LoginController extends Controller
 
         auth()->login($account, true);
 
+        $authLevel = "User";
+        if(!empty($authLevel)) $authLevel = \Auth::user()->group;
+        ActivityLogController::info("Logged in with access level ".$authLevel);
+
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
     }
 
@@ -82,6 +88,7 @@ class LoginController extends Controller
 
     public function logout()
     {
+        ActivityLogController::info("Logged out.");
         auth()->logout();
 
         return redirect(route('front'))->withSuccess('You have been successfully logged out');
