@@ -45,12 +45,14 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::find($id);
+        $this->authorize('view', $user);
+
         $groups = Group::all();
         $countries = Country::all();
 
