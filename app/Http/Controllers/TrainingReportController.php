@@ -61,7 +61,9 @@ class TrainingReportController extends Controller
         $data['written_by_id'] = Auth::id();
         $data['training_id'] = $training->id;
 
-        $report = TrainingReport::create($data);
+        $data2 = $data; // TODO this should be refactored to something better
+        unset($data2['files']);
+        $report = TrainingReport::create($data2);
 
         TrainingReportAttachmentController::saveAttachments($request, $report);
 

@@ -120,16 +120,18 @@ class TrainingReportAttachmentController extends Controller
     {
         $attachment_ids = array();
 
-        foreach ($request->allFiles() as $file) {
-            $file_id = FileController::saveFile($file);
+        foreach ($request->allFiles() as $files) {
+            foreach ($files as $file) {
+                $file_id = FileController::saveFile($file);
 
-            $attachment = TrainingReportAttachment::create([
-                'training_report_id' => $report->id,
-                'file_id' => $file_id,
-                'hidden' => false // We hardcode this to false for now
-            ]);
+                $attachment = TrainingReportAttachment::create([
+                    'training_report_id' => $report->id,
+                    'file_id' => $file_id,
+                    'hidden' => false // We hardcode this to false for now
+                ]);
 
-            $attachment_ids[] = $attachment->id;
+                $attachment_ids[] = $attachment->id;
+            }
         }
 
         return $attachment_ids;
