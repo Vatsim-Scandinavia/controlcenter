@@ -131,7 +131,7 @@
 
                             <div class="form-group">
                                 <label for="remarkTextarea">Comments or remarks</label>
-                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience, perferred training language, and other things you think want us to know." maxlength="500"></textarea>
+                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience, preferred training language, and other things you think want us to know." maxlength="500"></textarea>
                             </div>
                         </div>
 
