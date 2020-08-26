@@ -161,7 +161,7 @@ class TrainingController extends Controller
 
         $training->ratings()->saveMany($ratings);
 
-        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' for rating(s): '.$ratings->pluck('name').' for country: '.$training->country_id);
+        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Country::find($training->country_id)->name);
 
         if ($request->expectsJson()) {
             return $training;

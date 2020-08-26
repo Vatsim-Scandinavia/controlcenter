@@ -94,7 +94,7 @@ class SweatbookController extends Controller
             ActivityLogController::info("Created sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
         }
 
-        return redirect('/sweatbook')->withSuccess("Booking successfully save.");
+        return redirect('/sweatbook')->withSuccess("Booking successfully saved.");
     }
     
     /**
