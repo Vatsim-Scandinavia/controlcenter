@@ -19,12 +19,12 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('training.report.store', ['training' => $training->id]) }}" method="POST">
+                <form action="{{ route('training.report.store', ['training' => $training->id]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
+
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input 
+                        <input
                             id="position"
                             class="form-control @error('position') is-invalid @enderror"
                             type="text"
@@ -101,7 +101,7 @@
 
         var defaultDate = "{{ old('date') }}"
         $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
-        
+
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
         });

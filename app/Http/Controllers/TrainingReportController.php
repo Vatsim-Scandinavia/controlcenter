@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Position;
 use App\Training;
 use App\TrainingReport;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,6 +51,7 @@ class TrainingReportController extends Controller
      * @param Training $training
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function store(Request $request, Training $training)
     {
@@ -60,6 +62,8 @@ class TrainingReportController extends Controller
         $data['training_id'] = $training->id;
 
         $report = TrainingReport::create($data);
+
+        TrainingReportAttachmentController::saveAttachments($request, $report);
 
         return redirect($report->path())->withSuccess('Report successfully created');
     }
@@ -129,7 +133,8 @@ class TrainingReportController extends Controller
             'content' => 'sometimes|required',
             'mentor_notes' => 'nullable',
             'position' => 'nullable',
-            'draft' => 'sometimes|required|boolean'
+            'draft' => 'sometimes|required|boolean',
+            'files.*' => 'sometimes|file'
         ]);
     }
 }

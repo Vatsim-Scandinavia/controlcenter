@@ -38,18 +38,13 @@ class TrainingReportAttachmentController extends Controller
         ]);
 
         $this->authorize('create', TrainingReportAttachment::class);
-        $file = FileController::saveFile($request->file('file'));
 
-        $attachment = TrainingReportAttachment::create([
-            'training_report_id' => $report->id,
-            'file_id' => $file,
-            'hidden' => key_exists('hidden', $data) ? true : false
-        ]);
+        $attachment_ids = self::saveAttachments($request, $report);
 
         if ($request->expectsJson()) {
             return json_encode([
-                'id' => $attachment->id,
-                'message' => 'File successfully uploaded'
+                'id' => $attachment_ids,
+                'message' => 'File(s) successfully uploaded'
             ]);
         }
 
@@ -114,5 +109,29 @@ class TrainingReportAttachmentController extends Controller
         }
 
         return redirect()->back()->withSuccess('Attachment successfully deleted');
+    }
+
+    /**
+     * @param Request $request
+     * @param TrainingReport $report
+     * @return array
+     */
+    public static function saveAttachments(Request $request, TrainingReport $report)
+    {
+        $attachment_ids = array();
+
+        foreach ($request->allFiles() as $file) {
+            $file_id = FileController::saveFile($file);
+
+            $attachment = TrainingReportAttachment::create([
+                'training_report_id' => $report->id,
+                'file_id' => $file_id,
+                'hidden' => false // We hardcode this to false for now
+            ]);
+
+            $attachment_ids[] = $attachment->id;
+        }
+
+        return $attachment_ids;
     }
 }
