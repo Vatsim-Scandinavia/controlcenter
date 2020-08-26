@@ -13,7 +13,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Important information</h6>
             </div>
             <div class="card-body">
-                <h5 class="card-title">What is ATC trainig?</h5>
+                <h5 class="card-title">What is ATC training?</h5>
                 <p class="card-text">Welcome to the ATC Training Department of VATSIM Scandinavia. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
                 <hr>
                 <h5 class="card-title">What do we expect from you?</h5>
