@@ -19,10 +19,10 @@
                 <form action="{{ route('training.report.update', ['report' => $report->id]) }}" method="POST">
                     @csrf
                     @method('PATCH')
-                    
+
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input 
+                        <input
                             id="position"
                             class="form-control @error('position') is-invalid @enderror"
                             type="text"
@@ -96,7 +96,7 @@
                             <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                 {{ $attachment->file->name }}
                             </a>
-                            <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger"></i>
+                            <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger" style="cursor: pointer;"></i>
                         </div>
                     @endforeach
                 </div>
@@ -117,7 +117,7 @@
                     </div>
 
                 </form>
-                
+
             </div>
         </div>
     </div>
