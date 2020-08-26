@@ -151,29 +151,23 @@ class TrainingController extends Controller
 
         $ratings = Rating::find(explode("+", $data["training_level"]));
 
-        $training = new Training();
-        $training->user_id = isset($data['user_id']) ? $data['user_id'] : \Auth::id();
-        $training->country_id = $data["training_country"];
-        $training->notes = isset($data["comment"]) ? $data["comment"] : '';
-        $training->motivation = isset($data["motivation"]) ? $data["motivation"] : '';
-
-        $training->english_only_training = key_exists("englishOnly", $data) ? true : false;
-
-        $training->save();
-
-        $training->fresh();
+        $training = Training::create([
+            'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
+            'country_id' => $data['training_country'],
+            'notes' => $data['comment'],
+            'motivation' => $data['motivation'],
+            'english_only_training' => key_exists("englishOnly", $data) ? true : false
+        ]);
 
         $training->ratings()->saveMany($ratings);
-
-        $training->save();
 
         ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' for rating(s): '.$ratings->pluck('name').' for country: '.$training->country_id);
 
         if ($request->expectsJson()) {
             return $training;
-        } else {
-            return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
         }
+
+        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
     }
 
     /**
