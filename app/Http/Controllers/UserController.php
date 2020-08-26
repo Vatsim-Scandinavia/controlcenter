@@ -46,13 +46,16 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
      */
     public function show($id)
     {
         $user = User::find($id);
         $groups = Group::all();
         $countries = Country::all();
+
+        if ($user == null)
+            return abort(404);
 
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
@@ -140,7 +143,7 @@ class UserController extends Controller
     public function settings_update(Request $request, User $user)
     {
         $user = Auth::user();
-        
+
         $data = $request->validate([
             'setting_notify_newreport' => '',
             'setting_notify_newreq' => '',
@@ -152,7 +155,7 @@ class UserController extends Controller
         isset($data['setting_notify_newreq']) ? $setting_notify_newreq = true : $setting_notify_newreq = false;
         isset($data['setting_notify_closedreq']) ? $setting_notify_closedreq = true : $setting_notify_closedreq = false;
         isset($data['setting_notify_newexamreport']) ? $setting_notify_newexamreport = true : $setting_notify_newexamreport = false;
-        
+
         $user->setting_notify_newreport = $setting_notify_newreport;
         $user->setting_notify_newreq = $setting_notify_newreq;
         $user->setting_notify_closedreq = $setting_notify_closedreq;
@@ -161,5 +164,5 @@ class UserController extends Controller
 
         return redirect()->intended(route('user.settings'))->withSuccess("Settings successfully changed");
     }
-    
+
 }
