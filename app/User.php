@@ -206,9 +206,9 @@ class User extends Authenticatable
     public function hasActiveTrainings(Country $country = null)
     {
         if ($country == null)
-            return count($this->trainings()->whereIn('status', [0, 1, 2])->get()) > 0;
+            return count($this->trainings()->whereIn('status', [0, 1, 2, 3])->get()) > 0;
 
-        return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2])->get()) > 0;
+        return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
     }
 
     // User group checks
