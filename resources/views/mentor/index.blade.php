@@ -26,8 +26,8 @@
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
-                                <th data-sortable="true" data-filter-control="input">Last Report</th>
-                                <th data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="lastreport" data-sortable="true" data-filter-control="input">Last Report</th>
+                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
                             </tr>
                         </thead>
                         <tbody>
