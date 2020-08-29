@@ -60,19 +60,19 @@
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
-                                    @if ($training->started_at == null && $training->finished_at == null)
+                                    @if ($training->started_at == null && $training->closed_at == null)
                                         Training not started
-                                    @elseif ($training->finished_at == null)
+                                    @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
                                     @else
-                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
                                 <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
-                                    @if ($training->finished_at != null)
-                                        {{ $training->finished_at->toEuropeanDate() }}
+                                    @if ($training->closed_at != null)
+                                        {{ $training->closed_at->toEuropeanDate() }}
                                     @else
                                         -
                                     @endif

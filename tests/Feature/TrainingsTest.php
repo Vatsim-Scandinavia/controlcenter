@@ -108,7 +108,7 @@ class TrainingsTest extends TestCase
             'id' => $training->id,
             'status' => 3,
             'started_at' => $training->fresh()->started_at->format('Y-m-d H:i:s'),
-            'finished_at' => $training->fresh()->finished_at->format('Y-m-d H:i:s')
+            'closed_at' => $training->fresh()->closed_at->format('Y-m-d H:i:s')
         ]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
@@ -117,7 +117,7 @@ class TrainingsTest extends TestCase
             'id' => $training->id,
             'status' => 0,
             'started_at' => null,
-            'finished_at' => null
+            'closed_at' => null
         ]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => -1]);
@@ -126,7 +126,7 @@ class TrainingsTest extends TestCase
             'id' => $training->id,
             'status' => -1,
             'started_at' => null,
-            'finished_at' => null
+            'closed_at' => null
         ]);
 
     }

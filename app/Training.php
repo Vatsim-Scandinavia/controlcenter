@@ -13,7 +13,7 @@ class Training extends Model
 
     protected $dates = [
         'started_at',
-        'finished_at'
+        'closed_at'
     ];
 
     /**
@@ -39,7 +39,7 @@ class Training extends Model
 
         if (($status == 0 || $status == -1) && $status < $oldStatus) {
             // Training was set back in queue
-            $this->update(['started_at' => null, 'finished_at' => null]);
+            $this->update(['started_at' => null, 'closed_at' => null]);
         }
 
         if ($status == 1) {
@@ -47,15 +47,15 @@ class Training extends Model
                 // Training has begun
                 $this->update(['started_at' => now()]);
             } elseif ($status < $oldStatus) {
-                $this->update(['finished_at' => null]);
+                $this->update(['closed_at' => null]);
             }
         }
 
         if ($status == 3 && $status > $oldStatus) {
             if ($this->started_at == null) {
-                $this->update(['started_at' => now(), 'finished_at' => now()]);
+                $this->update(['started_at' => now(), 'closed_at' => now()]);
             } else {
-                $this->update(['finished_at' => now()]);
+                $this->update(['closed_at' => now()]);
             }
         }
 

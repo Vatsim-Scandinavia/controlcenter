@@ -27,7 +27,7 @@ class CreateTrainingsTable extends Migration
             $table->string('closed_reason')->nullable();
             $table->timestamps();
             $table->timestamp('started_at')->nullable();
-            $table->timestamp('finished_at')->nullable();
+            $table->timestamp('closed_at')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('country_id')->references('id')->on('countries');

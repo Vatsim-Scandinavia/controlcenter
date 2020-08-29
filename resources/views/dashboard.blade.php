@@ -121,12 +121,12 @@
                         </td>
                         <td>{{ $training->country->name }}</td>
                         <td>
-                            @if ($training->started_at == null && $training->finished_at == null)
+                            @if ($training->started_at == null && $training->closed_at == null)
                                 Training not started
-                            @elseif ($training->finished_at == null)
+                            @elseif ($training->closed_at == null)
                                 {{ $training->started_at->toEuropeanDate() }} -
                             @else
-                                {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
+                                {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
                             @endif
                         </td>
                         <td>
