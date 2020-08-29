@@ -67,7 +67,7 @@ class TrainingReportController extends Controller
 
         TrainingReportAttachmentController::saveAttachments($request, $report);
 
-        return redirect($report->path())->withSuccess('Report successfully created');
+        return redirect(route('training.show', $training->id))->withSuccess('Report successfully created');
     }
 
     /**
