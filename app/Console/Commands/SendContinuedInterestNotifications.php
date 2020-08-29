@@ -70,7 +70,7 @@ class SendContinuedInterestNotifications extends Command
 
                 if ($created_at->diffInDays(now()) >= 14 && $last->confirmed_at == null) {
                     // Training should be closed
-                    $training->setStatus(-3);
+                    $training->setStatus(-4);
 
                 } elseif ($created_at->diffInDays(now()) >= 30 && $training->created_at->diffInDays(now()) >= 30) {
                     // Send new notification

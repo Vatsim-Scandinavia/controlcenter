@@ -33,33 +33,38 @@ class Training extends Model
      *
      * @param int $status
      */
-    public function updateStatus(int $status)
+    public function updateStatus(int $newStatus)
     {
         $oldStatus = $this->fresh()->status;
 
-        if (($status == 0 || $status == -1) && $status < $oldStatus) {
-            // Training was set back in queue
-            $this->update(['started_at' => null, 'closed_at' => null]);
-        }
+        if($newStatus != $oldStatus){
 
-        if ($status == 1) {
-            if ($status > $oldStatus) {
-                // Training has begun
-                $this->update(['started_at' => now()]);
-            } elseif ($status < $oldStatus) {
-                $this->update(['closed_at' => null]);
+            // Training was put back in queue or closed
+            if($newStatus == 0){
+                $this->update(['started_at' => null, 'closed_at' => null]);
             }
-        }
 
-        if ($status == 3 && $status > $oldStatus) {
-            if ($this->started_at == null) {
-                $this->update(['started_at' => now(), 'closed_at' => now()]);
-            } else {
+            // If training is set as active
+            if($newStatus > 0 || $newStatus == -1){
+                
+                // In case someone resurrects a closed training
+                if($oldStatus < 0){
+                    $this->update(['closed_at' => null]);
+                }
+
+                if(!isset($this->started_at)){
+                    $this->update(['started_at' => now()]);
+                }
+            }
+
+            // If training is completed or closed
+            if($newStatus < 0){
                 $this->update(['closed_at' => now()]);
             }
+
+            $this->update(['status' => $newStatus]);
         }
 
-        $this->update(['status' => $status]);
     }
 
     /**

@@ -22,13 +22,14 @@ class TrainingController extends Controller
      *
      */
     public static $statuses = [
-        -3 => ["text" => "Closed by system", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
-        -2 => ["text" => "Closed by student", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
-        -1 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
+        -4 => ["text" => "Closed by system", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
+        -3 => ["text" => "Closed by student", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
+        -2 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
+        -1 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true],
         0 => ["text" => "In queue", "color" => "warning", "icon" => "fas fa-hourglass", "assignableByStaff" => true],
-        1 => ["text" => "In progress", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
-        2 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
-        3 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true]
+        1 => ["text" => "Pre-training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        2 => ["text" => "Mentor assigned", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        3 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
     ];
 
     /**
@@ -55,9 +56,9 @@ class TrainingController extends Controller
 
         $trainings = Auth::user()->viewableModels(\App\Training::class);
 
-        $openTrainings = $trainings->where('status', '>=', 0)->sortByDesc('status');
-        $closedTrainings =  $trainings->where('status', '<', 0)->sortByDesc('status');
-
+        $openTrainings = $trainings->where('status', '>=', 0)->sortBy('id');
+        $closedTrainings =  $trainings->where('status', '<', 0)->sortBy('id');
+        
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
 

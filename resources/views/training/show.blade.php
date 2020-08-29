@@ -296,7 +296,7 @@
                     </div>
                 @endcan
 
-                @if($training->status == 1)
+                @if($training->status == 1 || $training->status == 2)
                     @can('createReport', $training)
                         <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
                     @else
@@ -304,7 +304,7 @@
                     @endcan
                 @endif
 
-                @if($training->status == 2)
+                @if($training->status == 3)
                     @can('createExamination', $training)
                         <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-danger">Create examination report</a>
                     @else
