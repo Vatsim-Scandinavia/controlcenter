@@ -29,8 +29,13 @@ class DashboardController extends Controller
 
         $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
 
+        $subdivision = $user->subdivision;
+        if(empty($subdivision)) $subdivision = "No subdivision";
+
         $data = [
             'rating' => $user->ratingLong,
+            'division' => $user->division,
+            'subdivision' => $subdivision,
             'report' => $report
         ];
 
