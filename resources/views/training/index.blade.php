@@ -64,8 +64,10 @@
                                         Training not started
                                     @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
-                                    @else
+                                    @elseif ($training->stated_at != null)
                                         {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
+                                    @else
+                                        N/A
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
@@ -148,8 +150,10 @@
                                         Training never started
                                     @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
-                                    @else
+                                    @elseif ($training->stated_at != null)
                                         {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
+                                    @else
+                                        N/A
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
