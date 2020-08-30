@@ -57,32 +57,30 @@ class VatbookController extends Controller
         ]);
 
         $user = Auth::user();
-        $date = Carbon::createFromFormat('d/m/Y', $data['date']);
-        $start_at = Carbon::createFromFormat('H:i', $data['start_at']);
-        $end_at = Carbon::createFromFormat('H:i', $data['end_at']);
         $booking = new Vatbook();
+
+        $booking->date = Carbon::createFromFormat('d/m/Y', $data['date']);
+        $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($booking->date);
+        $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($booking->date);
 
         $booking->local_id = floor($user->id / date('z'));
         $booking->callsign = $data['position'];
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
         $booking->name = $user->name;
-        $booking->time_start = date('Y-m-d H:i:s', strtotime($data['date'] . $data['start_at']));
-        if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
-        else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
 
-        if($start_at->diffInMinutes($end_at, false) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
-        if($start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
+        if($booking->start_at->diffInMinutes($booking->end_at, false) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
+        if($booking->start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
-        if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-        ->where('time_end', '!=', $booking->time_start)
-        ->where('time_start', '!=', $booking->time_end)
+        if(!Vatbook::whereBetween('time_start', [$booking->start_at, $booking->end_at])
+        ->where('time_end', '!=', $booking->start_at)
+        ->where('time_start', '!=', $booking->end_at)
         ->where('position_id', $booking->position_id)
         ->where('deleted', false)
-        ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-        ->where('time_end', '!=', $booking->time_start)
-        ->where('time_start', '!=', $booking->time_end)
+        ->orWhereBetween('time_end', [$booking->start_at, $booking->end_at])
+        ->where('time_end', '!=', $booking->start_at)
+        ->where('time_start', '!=', $booking->end_at)
         ->where('position_id', $booking->position_id)
         ->where('deleted', false)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
@@ -94,14 +92,16 @@ class VatbookController extends Controller
         if(isset($data['event']) && $user->isModerator()) {
             $eventUrl = "vatsim-scandinavia.org";
             $booking->event = 1;
-            $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
+            $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$booking->date->format('d')}&b_month={$booking->date->format('m')}&b_year={$booking->date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->start_at->format('Hi')}&eTime={$booking->end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
         }
         else {
             $booking->event = 0;
-            $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
+            $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$booking->date->format('d')}&b_month={$booking->date->format('m')}&b_year={$booking->date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->start_at->format('Hi')}&eTime={$booking->end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
         }
 
         preg_match_all('/EU_ID=(\d+)/', $response, $matches);
+
+        dd($response, $matches);
 
         $booking->eu_id = $matches[1][0];
         $booking->save();
@@ -133,28 +133,25 @@ class VatbookController extends Controller
         $booking = Vatbook::findOrFail($request->id);
 
         if($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) {
-            $date = Carbon::createFromFormat('d/m/Y', $data['date']);
-            $start_at = Carbon::createFromFormat('H:i', $data['start_at']);
-            $end_at = Carbon::createFromFormat('H:i', $data['end_at']);
+            $booking->date = Carbon::createFromFormat('d/m/Y', $data['date']);
+            $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($booking->date);
+            $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($booking->date);
 
             $booking->callsign = $data['position'];
             $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
-            $booking->time_start = date('Y-m-d H:i:s', strtotime($data['date'] . $data['start_at']));
-            if(strtotime($data['end_at']) < strtotime($data['start_at'])) $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . "+1 day" . $data['end_at']));
-            else $booking->time_end = date('Y-m-d H:i:s', strtotime($data['date'] . $data['end_at']));
 
-            if($start_at->diffInMinutes($end_at, false) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
-            if($start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
+            if($booking->start_at->diffInMinutes($booking->end_at, false) <= 0) return back()->withErrors('Booking need to have a valid duration!')->withInput();
+            if($booking->start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
-            if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
+            if(!Vatbook::whereBetween('time_start', [$booking->start_at, $booking->end_at])
+            ->where('time_end', '!=', $booking->start_at)
+            ->where('time_start', '!=', $booking->end_at)
             ->where('position_id', $booking->position_id)
             ->where('deleted', false)
             ->where('id', '!=', $booking->id)
-            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
+            ->orWhereBetween('time_end', [$booking->start_at, $booking->end_at])
+            ->where('time_end', '!=', $booking->start_at)
+            ->where('time_start', '!=', $booking->end_at)
             ->where('position_id', $booking->position_id)
             ->where('deleted', false)
             ->where('id', '!=', $booking->id)
@@ -167,11 +164,11 @@ class VatbookController extends Controller
             if(isset($data['event']) && $user->isModerator()) {
                 $eventUrl = "vatsim-scandinavia.org";
                 $booking->event = 1;
-                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
+                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$booking->date->format('d')}&b_month={$booking->date->format('m')}&b_year={$booking->date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->start_at->format('Hi')}&eTime={$booking->end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {
                 $booking->event = 0;
-                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$start_at->format('Hi')}&eTime={$end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
+                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$booking->date->format('d')}&b_month={$booking->date->format('m')}&b_year={$booking->date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->start_at->format('Hi')}&eTime={$booking->end_at->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
             }
 
             $booking->save();
