@@ -2,7 +2,7 @@
 {{-- Header --}}
 @slot('header')
 @component('mail::header', ['url' => config('app.url')])
-Vatsim Scandinavia Control Center
+Vatsim Scandinavia<br><span style="font-weight: 400">Control Center</span>
 @endcomponent
 @endslot
 

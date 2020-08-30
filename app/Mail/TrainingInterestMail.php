@@ -37,7 +37,7 @@ class TrainingInterestMail extends Mailable
     {
         // Set up
         $introLines = [
-            'Please confirm your continued interest in your training for the following ratings:',
+            'Periodically we are asking you to confirm the interest for your ATC controller application with us. Please confirm your continued interest in your training for the following ratings:',
         ];
 
         foreach ($this->training->ratings as $rating) {
@@ -47,14 +47,11 @@ class TrainingInterestMail extends Mailable
         $introLines[] = 'Deadline: ' . $this->deadline->toEuropeanDate();
 
         // Create mail
-        return $this->markdown('mail.training.interest', [
-            'level' => '',
+        return $this->subject('Confirm continued training interest')->markdown('mail.training.interest', [
+            'greeting' => 'Hello ' . $this->training->user->first_name . ',',
+            'introLines' => $introLines,
             'actionUrl' => route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] ),
             'actionText' => 'Confirm Interest',
-            'greeting' => 'Dear ' . $this->training->user->first_name . ',',
-            'introLines' => $introLines,
-            'outroLines' => [],
-            'displayableActionUrl' => route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] ),
         ]);
     }
 }
