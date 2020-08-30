@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class TrainingReport extends Mailable
+class TrainingClosedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -28,6 +28,6 @@ class TrainingReport extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mail.training.report');
+        return $this->markdown('mail.training.closed');
     }
 }

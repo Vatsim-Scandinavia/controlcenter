@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ContinuedTrainingInterestEmail extends Mailable
+class TrainingInterestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -47,7 +47,7 @@ class ContinuedTrainingInterestEmail extends Mailable
         $introLines[] = 'Deadline: ' . $this->deadline->toEuropeanDate();
 
         // Create mail
-        return $this->markdown('mail.notifications.continued-interest', [
+        return $this->markdown('mail.training.interest', [
             'level' => '',
             'actionUrl' => route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] ),
             'actionText' => 'Confirm Interest',

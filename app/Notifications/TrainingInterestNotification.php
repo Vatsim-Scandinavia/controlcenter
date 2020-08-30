@@ -2,14 +2,14 @@
 
 namespace App\Notifications;
 
-use App\Mail\ContinuedTrainingInterestEmail;
+use App\Mail\TrainingInterestMail;
 use App\Training;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ContinuedTrainingInterestNotification extends Notification implements ShouldQueue
+class TrainingInterestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -44,11 +44,11 @@ class ContinuedTrainingInterestNotification extends Notification implements Shou
      * Get the mail representation of the notification.
      *
      * @param mixed $notifiable
-     * @return ContinuedTrainingInterestEmail
+     * @return TrainingInterestMail
      */
     public function toMail($notifiable)
     {
-        return (new ContinuedTrainingInterestEmail($this->training, $this->key, $this->deadline))
+        return (new TrainingInterestMail($this->training, $this->key, $this->deadline))
             ->to($this->training->user->email);
     }
 

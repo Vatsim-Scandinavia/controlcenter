@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\ContinuedTrainingInterestEmail;
-use App\Notifications\ContinuedTrainingInterestNotification;
+use App\Mail\TrainingInterestMail;
+use App\Notifications\TrainingInterestNotification;
 use App\Training;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class SendContinuedInterestNotifications extends Command
+class SendTrainingInterestNotifications extends Command
 {
 
     /**
@@ -59,7 +59,7 @@ class SendContinuedInterestNotifications extends Command
             if ($last == null) {
                 if ($training->created_at->diffInDays(now()) >= 30) {
                     $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
-                    $training->user->notify(new ContinuedTrainingInterestNotification($training, $key));
+                    $training->user->notify(new TrainingInterestNotification($training, $key));
                 }
             }
 
@@ -75,13 +75,13 @@ class SendContinuedInterestNotifications extends Command
                 } elseif ($created_at->diffInDays(now()) >= 30 && $training->created_at->diffInDays(now()) >= 30) {
                     // Send new notification
                     $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
-                    $training->user->notify(new ContinuedTrainingInterestNotification($training, $key));
+                    $training->user->notify(new TrainingInterestNotification($training, $key));
 
                 } elseif ($created_at->diffInDays(now()) >= 7) {
                     // Reminder should be sent
                     $key = $last->key;
                     $deadline = $last->deadline;
-                    Mail::to($training->user)->send(new ContinuedTrainingInterestEmail($training, $key, $deadline));
+                    Mail::to($training->user)->send(new TrainingInterestMail($training, $key, $deadline));
                 }
 
             }
