@@ -121,13 +121,16 @@
 
                             <div class="form-group">
                                 <label for="motivationTextarea">Letter of motivation</label>
-                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. For instance, tell us about why you want to apply for this training, what motivates you. Minimum 400 characters" maxlength="1500" onchange="function removeErr() {
+                                <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to Vatsim-Scandinavia</p>
+                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500" onchange="function removeErr() {
                                   $('#err-motivation').html('');
                                 }; removeErr();"></textarea>
                                 <div class="danger text-danger" id="err-motivation">
 
                                 </div>
                             </div>
+
+                            <hr>
 
                             <div class="form-group">
                                 <label for="remarkTextarea">Comments or remarks</label>

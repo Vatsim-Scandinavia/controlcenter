@@ -286,7 +286,7 @@ class TrainingController extends Controller
             'experience' => 'sometimes|required|integer|min:1|max:5',
             'englishOnly' => 'nullable',
             'paused_at' => 'sometimes',
-            'motivation' => 'sometimes|required|min:400|max:1500',
+            'motivation' => 'sometimes|required|min:250|max:1500',
             'user_id' => 'sometimes|required|integer',
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
