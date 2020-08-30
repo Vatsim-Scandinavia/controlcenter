@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Mail\TrainingCreatedMail;
 use App\Training;
+use App\Country;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,7 +14,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private $training;
+    private $training, $contactMail;
 
     /**
      * Create a new notification instance.
@@ -24,6 +25,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
     public function __construct(Training $training)
     {
         $this->training = $training;
+        $this->contactMail = Country::find($this->training->country_id)->contact;
     }
 
     /**
@@ -45,7 +47,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new TrainingCreatedMail($this->training))
+        return (new TrainingCreatedMail($this->training, $this->contactMail))
             ->to($this->training->user->email);
     }
 

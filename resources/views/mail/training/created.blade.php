@@ -9,4 +9,8 @@
 
 @endforeach
 
+@slot('subcopy')
+For questions regarding your training, contact [{{ $contactMail }}](mailto:{{ $contactMail }})
+@endslot
+
 @endcomponent

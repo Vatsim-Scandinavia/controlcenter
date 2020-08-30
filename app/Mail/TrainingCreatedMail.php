@@ -13,7 +13,7 @@ class TrainingCreatedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $training;
+    private $training, $contactMail;
 
      /**
      * Create a new message instance.
@@ -22,9 +22,10 @@ class TrainingCreatedMail extends Mailable
      * @param string $key
      * @param $deadline
      */
-    public function __construct(Training $training)
+    public function __construct(Training $training, string $contactMail)
     {
         $this->training = $training;
+        $this->contactMail = $contactMail;
     }
 
     /**
@@ -46,6 +47,7 @@ class TrainingCreatedMail extends Mailable
         return $this->subject('Confirmation of Training Request')->markdown('mail.training.created', [
             'greeting' => 'Hello ' . $this->training->user->first_name . ',',
             'introLines' => $introLines,
+            'contactMail' => $this->contactMail,
         ]);
     }
 }
