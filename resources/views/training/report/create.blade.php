@@ -61,6 +61,14 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="contentimprove">Areas to improve</label>
+                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?"></textarea>
+                        @error('contentimprove')
+                            <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label for="attachments">Attachments</label>
                         <div>
                             <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" multiple>

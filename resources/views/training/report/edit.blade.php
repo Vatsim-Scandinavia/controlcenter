@@ -58,6 +58,14 @@
                         @enderror
                     </div>
 
+                    <div class="form-group">
+                        <label for="contentimprove">Areas to improve</label>
+                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?"></textarea>
+                        @error('contentimprove')
+                            <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
+                        @enderror
+                    </div>
+
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input @error('draft') is-invalid @enderror" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
                         <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
