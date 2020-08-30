@@ -1,12 +1,12 @@
 @component('mail::message')
-# Introduction
 
-The body of your message.
+{{-- Greeting --}}
+# {{ $greeting }}
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+{{-- Intro Lines --}}
+@foreach ($introLines as $line)
+{{ $line }}
 
-Thanks,<br>
-{{ config('app.name') }}
+@endforeach
+
 @endcomponent

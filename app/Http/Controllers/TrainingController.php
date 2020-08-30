@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Country;
-use App\Notifications\ContinuedTrainingInterestNotification;
+use App\Notifications\TrainingCreatedNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
@@ -163,6 +163,9 @@ class TrainingController extends Controller
         $training->ratings()->saveMany($ratings);
 
         ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Country::find($training->country_id)->name);
+
+        // Send confimration mail
+        $training->user->notify(new TrainingCreatedNotification($training));
 
         if ($request->expectsJson()) {
             return $training;
