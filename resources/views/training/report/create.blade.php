@@ -100,7 +100,7 @@
         $('div').tooltip();
 
         var defaultDate = "{{ old('date') }}"
-        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
+        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
