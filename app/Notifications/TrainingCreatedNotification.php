@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Mail\TrainingCreatedMail;
+use App\Mail\TrainingMail;
 use App\Training;
 use App\Country;
 use Illuminate\Bus\Queueable;
@@ -25,7 +25,6 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
     public function __construct(Training $training)
     {
         $this->training = $training;
-        $this->contactMail = Country::find($this->training->country_id)->contact;
     }
 
     /**
@@ -47,7 +46,15 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new TrainingCreatedMail($this->training, $this->contactMail))
+
+        $textLines = [
+            'We herby confirm that we have received your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.'.',
+            'The request is now in queue. Expected waiting time: '.\Setting::get('trainingQueue'),
+        ];
+
+        $contactMail = Country::find($this->training->country_id)->contact;
+
+        return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email);
     }
 

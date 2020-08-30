@@ -68,6 +68,31 @@ class Training extends Model
     }
 
     /**
+     * Get a inline string of ratings associated with a training.
+     *
+     * @param string $status
+     */
+
+     public function getInlineRatings(){
+
+        $output = "";
+
+        if( is_iterable($ratings = $this->ratings->toArray()) ){
+            for( $i = 0; $i < sizeof($ratings); $i++ ){
+                if( $i == (sizeof($ratings) - 1) ){
+                    $output .= $ratings[$i]["name"];
+                } else {
+                    $output .= $ratings[$i]["name"] . " + ";
+                }
+            } 
+        } else {
+            $output .= $ratings["name"];
+        }
+
+        return $output;
+     }
+
+    /**
      * Get the student.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -3,8 +3,9 @@
 namespace App\Notifications;
 
 use App\Http\Controllers\TrainingController;
-use App\Mail\TrainingClosedMail;
+use App\Mail\TrainingMail;
 use App\Training;
+use App\Country;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -48,7 +49,15 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new TrainingClosedMail($this->training, $this->closedBy, $this->reason))
+
+        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.' has been *'.$this->closedBy.'*.';
+        if(isset($this->reason)){
+            $textLines[] = '**Reason for closure:** '.$this->reason;
+        }
+
+        $contactMail = Country::find($this->training->country_id)->contact;
+
+        return (new TrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email);
     }
 

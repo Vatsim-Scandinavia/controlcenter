@@ -2,8 +2,9 @@
 
 namespace App\Notifications;
 
-use App\Mail\TrainingInterestMail;
+use App\Mail\TrainingMail;
 use App\Training;
+use App\Country;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +49,17 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new TrainingInterestMail($this->training, $this->key, $this->deadline))
+        $textLines = [
+            'Periodically we are asking you to confirm the interest for your ATC controller application with us.',
+            'Please confirm your continued interest in your training for '.$this->training->getInlineRatings(),
+            '**Deadline:** '.$this->deadline->toEuropeanDate(),
+            '*If no confirmation is received within deadline, your training request will be automatically closed and your slot in the queue will be lost.*'
+        ];
+
+        $contactMail = Country::find($this->training->country_id)->contact;
+        $actionUrl = route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] );
+
+        return (new TrainingMail('Confirm Continued Training Interest', $this->training, $textLines, $contactMail, $actionUrl, 'Confirm Interest', 'success'))
             ->to($this->training->user->email);
     }
 
