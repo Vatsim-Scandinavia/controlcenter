@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Country;
 use App\Notifications\TrainingCreatedNotification;
+use App\Notifications\TrainingClosedNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
@@ -204,6 +205,7 @@ class TrainingController extends Controller
     public function update(Training $training)
     {
         $this->authorize('update', $training);
+        $oldStatus = $training->fresh()->status;
 
         $attributes = $this->validateRequest();
         if (key_exists('status', $attributes)) {
@@ -244,6 +246,14 @@ class TrainingController extends Controller
         '. Status: '.TrainingController::$statuses[$training->status]["text"].
         ', training type: '.$training->type.
         ', mentor: '.$training->mentors->pluck('name'));
+
+        // Send e-mail, if it's a new status and it goes from active to closed
+        if((int)$training->status != $oldStatus){
+            if((int)$training->status < 0){
+                $training->user->notify(new TrainingClosedNotification($training, (int)$training->status));
+                return redirect($training->path())->withSuccess("Training successfully closed. E-mail confirmation sent to student.");
+            }
+        }
 
         return redirect($training->path())->withSuccess("Training successfully updated");
     }

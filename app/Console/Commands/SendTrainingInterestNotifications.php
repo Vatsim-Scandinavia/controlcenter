@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Mail\TrainingInterestMail;
 use App\Notifications\TrainingInterestNotification;
+use App\Notifications\TrainingClosedNotification;
 use App\Training;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -70,7 +71,10 @@ class SendTrainingInterestNotifications extends Command
 
                 if ($created_at->diffInDays(now()) >= 14 && $last->confirmed_at == null) {
                     // Training should be closed
-                    $training->setStatus(-4);
+                    $training->updateStatus(-4);
+
+                    // Notify the student
+                    $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interested was not confirmed within deadline.'));
 
                 } elseif ($created_at->diffInDays(now()) >= 30 && $training->created_at->diffInDays(now()) >= 30) {
                     // Send new notification
