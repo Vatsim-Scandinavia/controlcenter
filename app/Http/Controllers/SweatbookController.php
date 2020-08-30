@@ -73,11 +73,7 @@ class SweatbookController extends Controller
             if($booking->start_at->diffInMinutes($booking->end_at, false) <= 0) return back()->withInput()->withErrors('Booking need to have a valid duration!');
             if($booking->start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
-
-            $fullStartDate = Carbon::create($booking->date)->setTime($booking->start_at->format('H'), $booking->start_at->format('i'));
-            $fullEndDate = Carbon::create($booking->date)->setTime($booking->end_at->format('H'), $booking->end_at->format('i'));
-
-            if(!Sweatbook::whereBetween('start_at', [$fullStartDate, $fullEndDate])
+            if(!Sweatbook::whereBetween('start_at', [$booking->start_at, $booking->end_at])
             ->where('end_at', '!=', $booking->start_at)
             ->where('start_at', '!=', $booking->end_at)
             ->where('position_id', $booking->position_id)
