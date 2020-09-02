@@ -69,7 +69,7 @@ class TrainingReportController extends Controller
         TrainingReportAttachmentController::saveAttachments($request, $report);
 
         // Notify student of new training request if it's not a draft
-        if($report->draft != true){
+        if($report->draft != true && $training->user->setting_notify_newreport){
             $training->user->notify(new TrainingReportNotification($training, $report));
         }
 
@@ -115,7 +115,7 @@ class TrainingReportController extends Controller
         $report->update($this->validateRequest());
 
         // Notify student of new training request if it's not a draft anymore
-        if($oldDraftStatus == false && $report->draft == true){
+        if($oldDraftStatus == false && $report->draft == true && $report->training->user->setting_notify_newreport){
             $report->training->user->notify(new TrainingReportNotification($report->training, $report));
         }
 

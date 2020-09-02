@@ -84,11 +84,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Rating::class);
     }
 
-    public function settings()
-    {
-        return $this->hasMany(UserSetting::class);
-    }
-
     public function bookings()
     {
         return $this->hasMany(Booking::class);

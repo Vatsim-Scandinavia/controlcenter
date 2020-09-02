@@ -6,6 +6,7 @@ use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
 use App\Training;
 use App\Country;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -57,8 +58,12 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
 
         $contactMail = Country::find($this->training->country_id)->contact;
 
+        // Find staff who wants notification of new training request
+        $bcc = User::where('setting_notify_closedreq', true)->where('group', '<=', '2')->get()->pluck('email');
+
         return (new TrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->email);
+            ->to($this->training->user->email)
+            ->bcc($bcc);
     }
 
     /**

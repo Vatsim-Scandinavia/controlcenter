@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
+use App\User;
 use App\Country;
 use App\Training;
 use App\TrainingExamination;
@@ -57,8 +58,12 @@ class TrainingExamNotification extends Notification implements ShouldQueue
             "*For questions regarding your examination, contact your mentor.*",
         ];
 
+        // Find staff who wants notification of new training request
+        $bcc = User::where('setting_notify_newexamreport', true)->where('group', '<=', '2')->get()->pluck('email');
+
         return (new TrainingMail('Training Examination Result', $this->training, $textLines, null, route('training.show', $this->training->id), "Read Report"))
-            ->to($this->training->user->email);
+            ->to($this->training->user->email)
+            ->bcc($bcc);
     }
 
     /**
