@@ -53,11 +53,15 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
             'The request is now in queue. Expected waiting time: '.\Setting::get('trainingQueue'),
         ];
 
-        $contactMail = Country::find($this->training->country_id)->contact;
+        $country = Country::find($this->training->country_id);
+        if(isset($country->template_newreq)){
+            $textLines[] = $country->template_newreq;
+        }
 
         // Find staff who wants notification of new training request
         $bcc = User::where('setting_notify_newreq', true)->where('group', '<=', '2')->get()->pluck('email');
 
+        $contactMail = $country->contact;
         return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email)
             ->bcc($bcc);

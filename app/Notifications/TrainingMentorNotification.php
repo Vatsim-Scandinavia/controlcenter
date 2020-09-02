@@ -53,8 +53,12 @@ class TrainingMentorNotification extends Notification implements ShouldQueue
             "Your mentor is: ".$this->training->getInlineMentors().". You can contact them through the message system at forums or search them up on Discord.",
         ];
 
-        $contactMail = Country::find($this->training->country_id)->contact;
+        $country = Country::find($this->training->country_id);
+        if(isset($country->template_newmentor)){
+            $textLines[] = $country->template_newmentor;
+        }
 
+        $contactMail = $country->contact;
         return (new TrainingMail('Training Mentor Assigned', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email);
     }
