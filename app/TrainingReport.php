@@ -22,7 +22,7 @@ class TrainingReport extends Model
         return $this->belongsTo(Training::class);
     }
 
-    public function user(){
+    public function author(){
         return $this->belongsTo(User::class, 'written_by_id');
     }
 

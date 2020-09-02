@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Position;
 use App\Training;
 use App\TrainingReport;
+use App\Notifications\TrainingReportNotification;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +68,11 @@ class TrainingReportController extends Controller
 
         TrainingReportAttachmentController::saveAttachments($request, $report);
 
+        // Notify student of new training request if it's not a draft
+        if($report->draft != true){
+            $training->user->notify(new TrainingReportNotification($training, $report));
+        }
+
         return redirect(route('training.show', $training->id))->withSuccess('Report successfully created');
     }
 
@@ -104,8 +110,14 @@ class TrainingReportController extends Controller
     public function update(Request $request, TrainingReport $report)
     {
         $this->authorize('update', $report);
+        $oldDraftStatus = $report->fresh()->draft;
 
         $report->update($this->validateRequest());
+
+        // Notify student of new training request if it's not a draft anymore
+        if($oldDraftStatus == false && $report->draft == true){
+            $report->training->user->notify(new TrainingReportNotification($report->training, $report));
+        }
 
         return redirect()->back()->withSuccess('Training report successfully updated');
     }
