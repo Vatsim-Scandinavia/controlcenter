@@ -92,6 +92,31 @@ class Training extends Model
         return $output;
      }
 
+     /**
+     * Get a inline string of ratings associated with a training.
+     *
+     * @param string $status
+     */
+
+    public function getInlineMentors(){
+
+        $output = "";
+
+        if( is_iterable($mentors = $this->mentors->pluck('name')->toArray()) ){
+            for( $i = 0; $i < sizeof($mentors); $i++ ){
+                if( $i == (sizeof($mentors) - 1) ){
+                    $output .= $mentors[$i];
+                } else {
+                    $output .= $mentors[$i] . " & ";
+                }
+            } 
+        } else {
+            $output .= $mentors;
+        }
+
+        return $output;
+     }
+
     /**
      * Get the student.
      *

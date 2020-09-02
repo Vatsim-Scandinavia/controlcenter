@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Country;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
+use App\Notifications\TrainingMentorNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
@@ -217,6 +218,9 @@ class TrainingController extends Controller
             foreach ((array) $attributes['mentors'] as $mentor) {
                 if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
+
+                    // Notify student of their new mentor
+                    $training->user->notify(new TrainingMentorNotification($training));
                 }
             }
 
