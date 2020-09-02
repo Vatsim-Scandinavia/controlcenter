@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Position;
 use App\Training;
 use App\TrainingExamination;
+use App\Notifications\TrainingExamNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -36,7 +37,7 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('createExamination', $training);
-        if ($training->status != 2) { return redirect(null, 400)->back()->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
+        if ($training->status != 3) { return redirect(null, 400)->back()->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
 
         $positions = Position::all();
 
@@ -76,6 +77,8 @@ class TrainingExaminationController extends Controller
             $id = FileController::saveFile($request->file('examination_sheet'), $request->file('examination_sheet')->getClientOriginalName());
             $examination->update(['examination_sheet' => $id]);
         }
+
+        $training->user->notify(new TrainingExamNotification($training, $examination));
 
         if ($request->expectsJson()) {
             return response()->json([
