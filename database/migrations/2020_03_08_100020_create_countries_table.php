@@ -16,6 +16,7 @@ class CreateCountriesTable extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('contact');
             $table->text('template_newreq')->nullable();
             $table->text('template_newmentor')->nullable();
         });
