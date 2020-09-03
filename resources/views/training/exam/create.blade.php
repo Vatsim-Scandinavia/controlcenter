@@ -19,7 +19,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('training.examination.store', ['training' => $training->id]) }}" method="POST">
+                    <form action="{{ route('training.examination.store', ['training' => $training->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group">
@@ -62,10 +62,10 @@
                         <div class="form-group">
                             <label for="attachments">Attachments</label>
                             <div>
-                                <input type="file" name="file" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" onchange="uploadFile(this)" multiple>
+                                <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" onchange="uploadFile(this)" multiple>
                             </div>
-                            @error('file')
-                                <span class="text-danger">{{ $errors->first('file') }}</span>
+                            @error('files')
+                                <span class="text-danger">{{ $errors->first('files') }}</span>
                             @enderror
                         </div>
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\File;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
+use \Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 

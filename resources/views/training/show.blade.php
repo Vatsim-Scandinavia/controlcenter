@@ -281,7 +281,7 @@
                                         <div class="card-body">
                                             @foreach($report->attachments as $attachment)
                                                 <div>
-                                                    <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                    <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                                         <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
                                                     </a>
                                                 </div>

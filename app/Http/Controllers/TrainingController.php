@@ -60,7 +60,7 @@ class TrainingController extends Controller
 
         $openTrainings = $trainings->where('status', '>=', 0)->sortBy('id');
         $closedTrainings =  $trainings->where('status', '<', 0)->sortBy('id');
-        
+
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
 
@@ -157,8 +157,8 @@ class TrainingController extends Controller
         $training = Training::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
             'country_id' => $data['training_country'],
-            'notes' => $data['comment'],
-            'motivation' => $data['motivation'],
+            'notes' => isset($data['comment']) ? $data['comment'] : '',
+            'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'english_only_training' => key_exists("englishOnly", $data) ? true : false
         ]);
 

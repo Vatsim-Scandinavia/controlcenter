@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TrainingReport extends Model
+class TrainingReport extends TrainingObject
 {
 
     protected $guarded = [];
@@ -24,9 +24,5 @@ class TrainingReport extends Model
 
     public function author(){
         return $this->belongsTo(User::class, 'written_by_id');
-    }
-
-    public function attachments(){
-        return $this->hasMany(TrainingReportAttachment::class);
     }
 }

@@ -73,10 +73,7 @@ class TrainingExaminationController extends Controller
             $examination->update(['result' => $data['result']]);
         }
 
-        if (key_exists('examination_sheet', $data)) {
-            $id = FileController::saveFile($request->file('examination_sheet'), $request->file('examination_sheet')->getClientOriginalName());
-            $examination->update(['examination_sheet' => $id]);
-        }
+        TrainingObjectAttachmentController::saveAttachments($request, $examination);
 
         $training->user->notify(new TrainingExamNotification($training, $examination));
 
@@ -137,7 +134,7 @@ class TrainingExaminationController extends Controller
             'position' => 'required|exists:positions,callsign',
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
-            'examination_sheet' => 'sometimes|file'
+            'files.*' => 'sometimes|file'
         ]);
     }
 

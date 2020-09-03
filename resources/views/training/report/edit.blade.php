@@ -101,7 +101,7 @@
 
                     @foreach($report->attachments as $attachment)
                         <div data-id="{{ $attachment->id }}">
-                            <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                            <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                 {{ $attachment->file->name }}
                             </a>
                             <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger" style="cursor: pointer;"></i>
@@ -111,7 +111,7 @@
 
                 <hr>
 
-                <form method="post" id="file-form" action="{{ route('training.report.attachment.store', ['report' => $report->id]) }}" enctype="multipart/form-data">
+                <form method="post" id="file-form" action="{{ route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $report->id]) }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group">

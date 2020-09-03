@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TrainingReportAttachment extends Model
+class TrainingObjectAttachment extends Model
 {
 
     protected $guarded = [];
@@ -13,8 +13,9 @@ class TrainingReportAttachment extends Model
         'hidden' => 'boolean'
     ];
 
-    public function report(){
-        return $this->belongsTo(TrainingReport::class, 'training_report_id');
+    public function object()
+    {
+        return $this->morphTo();
     }
 
     public function file()

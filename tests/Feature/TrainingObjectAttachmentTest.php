@@ -3,14 +3,14 @@
 namespace Tests\Feature;
 
 use App\File;
-use App\TrainingReportAttachment;
+use App\TrainingObjectAttachment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class TrainingReportAttachmentTest extends TestCase
+class TrainingObjectAttachmentTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
@@ -40,15 +40,16 @@ class TrainingReportAttachmentTest extends TestCase
     /** @test */
     public function mentor_can_upload_an_attachment()
     {
-        $mentor = $this->report->user;
+        $this->withoutExceptionHandling();
+        $mentor = $this->report->author;
         $file = UploadedFile::fake()->image($this->faker->word);
 
-        $response = $this->actingAs($mentor)->postJson(route('training.report.attachment.store', ['report' => $this->report]), ['file' => $file]);
-        $id = $response->decodeResponseJson('id')[0];
+        $response = $this->actingAs($mentor)->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file]);
+        $id = $response->decodeResponseJson('id');
 
-        $this->assertDatabaseHas('training_report_attachments', ['id' => $id]);
-        $attachment = TrainingReportAttachment::find($id);
-        Storage::disk('test')->assertExists($attachment->file->full_path);
+        $this->assertDatabaseHas('training_object_attachments', ['id' => $id]);
+        $attachments = TrainingObjectAttachment::find($id);
+        Storage::disk('test')->assertExists($attachments->first()->file->full_path);
     }
 
     /** @test */
@@ -57,25 +58,25 @@ class TrainingReportAttachmentTest extends TestCase
         $student = $this->report->training->user;
         $file = UploadedFile::fake()->image($this->faker->word);
 
-        $response = $this->actingAs($student)->postJson(route('training.report.attachment.store', ['report' => $this->report]), ['file' => $file]);
+        $response = $this->actingAs($student)->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file]);
         $response->assertStatus(403);
         $id = $response->decodeResponseJson('id');
 
-        $this->assertDatabaseMissing('training_report_attachments', ['id' => $id]);
+        $this->assertDatabaseMissing('training_object_attachments', ['id' => $id]);
         $this->assertNull(File::find($id));
     }
 
     /** @test */
     public function mentor_can_see_attachments()
     {
-        $mentor = $this->report->user;
+        $mentor = $this->report->author;
         $file = UploadedFile::fake()->image($this->faker->word);
 
         $id = $this->actingAs($mentor)
-            ->postJson(route('training.report.attachment.store', ['report' => $this->report]), ['file' => $file])
+            ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
             ->decodeResponseJson('id')[0];
 
-        $this->followingRedirects()->get(route('training.report.attachment.show', ['attachment' => $id]))
+        $this->followingRedirects()->get(route('training.object.attachment.show', ['attachment' => $id]))
             ->assertStatus(200);
     }
 
@@ -85,12 +86,12 @@ class TrainingReportAttachmentTest extends TestCase
         $student = $this->report->training->user;
         $file = UploadedFile::fake()->image($this->faker->word);
 
-        $id = $this->actingAs($this->report->user)
-            ->postJson(route('training.report.attachment.store', ['report' => $this->report]), ['file' => $file])
+        $id = $this->actingAs($this->report->author)
+            ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
             ->decodeResponseJson('id')[0];
 
         $this->actingAs($student)->followingRedirects()
-            ->get(route('training.report.attachment.show', ['attachment' => $id]))
+            ->get(route('training.object.attachment.show', ['attachment' => $id]))
             ->assertStatus(200);
 
     }
@@ -115,15 +116,15 @@ class TrainingReportAttachmentTest extends TestCase
     /** @test */
     public function mentor_can_access_hidden_attachment()
     {
-        $mentor = $this->report->user;
+        $mentor = $this->report->author;
         $file = UploadedFile::fake()->image($this->faker->word);
 
-        $id = $this->actingAs($this->report->user)
-            ->postJson(route('training.report.attachment.store', ['report' => $this->report, 'hidden' => true]), ['file' => $file])
+        $id = $this->actingAs($mentor)
+            ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report, 'hidden' => true]), ['file' => $file])
             ->decodeResponseJson('id')[0];
 
         $this->actingAs($mentor)->followingRedirects()
-            ->get(route('training.report.attachment.show', ['attachment' => $id]))
+            ->get(route('training.object.attachment.show', ['attachment' => $id]))
             ->assertStatus(200);
     }
 
