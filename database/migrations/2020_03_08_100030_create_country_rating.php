@@ -28,51 +28,56 @@ class CreateCountryRating extends Migration
 
         // Insert available VATSIM-Ratings
         DB::table('country_rating')->insert([
-            // Norway
+
+            // Denmark
             ['country_id' => 1, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 1, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 1, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Sweden
+            // Finland
             ['country_id' => 2, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 2, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 2, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Denmark
+            // Iceland
             ['country_id' => 3, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 3, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 3, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Finland
+            // Norway
             ['country_id' => 4, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 4, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 4, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Iceland
+            // Sweden
             ['country_id' => 5, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 5, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 5, 'rating_id' => 4, 'required_vatsim_rating' => 4],
+            
         ]);
 
         // Insert available Endorsement-Ratings
         DB::table('country_rating')->insert([
-            // Norway
-            ['country_id' => 1, 'rating_id' => 8, 'required_vatsim_rating' => 3],
-            ['country_id' => 1, 'rating_id' => 9, 'required_vatsim_rating' => 4],
-            ['country_id' => 1, 'rating_id' => 15, 'required_vatsim_rating' => 5],
-
-            // Sweden
-            ['country_id' => 2, 'rating_id' => 10, 'required_vatsim_rating' => 3],
-            ['country_id' => 2, 'rating_id' => 11, 'required_vatsim_rating' => 4],
 
             // Denmark
-            ['country_id' => 3, 'rating_id' => 12, 'required_vatsim_rating' => 3],
-            ['country_id' => 3, 'rating_id' => 13, 'required_vatsim_rating' => 4],
+            ['country_id' => 1, 'rating_id' => 12, 'required_vatsim_rating' => 3],
+            ['country_id' => 1, 'rating_id' => 13, 'required_vatsim_rating' => 4],
 
             // Finland: None
 
             // Iceland
-            ['country_id' => 5, 'rating_id' => 14, 'required_vatsim_rating' => 5]
+            ['country_id' => 3, 'rating_id' => 14, 'required_vatsim_rating' => 5],
+
+            // Norway
+            ['country_id' => 4, 'rating_id' => 8, 'required_vatsim_rating' => 3],
+            ['country_id' => 4, 'rating_id' => 9, 'required_vatsim_rating' => 4],
+            ['country_id' => 4, 'rating_id' => 15, 'required_vatsim_rating' => 5],
+
+            // Sweden
+            ['country_id' => 5, 'rating_id' => 10, 'required_vatsim_rating' => 3],
+            ['country_id' => 5, 'rating_id' => 11, 'required_vatsim_rating' => 4],
+
+           
         ]);
     }
 
