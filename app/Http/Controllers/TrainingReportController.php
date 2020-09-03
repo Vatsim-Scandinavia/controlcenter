@@ -148,7 +148,8 @@ class TrainingReportController extends Controller
             'mentor_notes' => 'nullable',
             'position' => 'nullable',
             'draft' => 'sometimes|required|boolean',
-            'files.*' => 'sometimes|file'
+            'files.*' => 'sometimes|file',
+            'contentimprove' => 'sometimes|string'
         ]);
     }
 }

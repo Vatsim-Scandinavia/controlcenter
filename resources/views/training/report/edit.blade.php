@@ -60,7 +60,7 @@
 
                     <div class="form-group">
                         <label for="contentimprove">Areas to improve</label>
-                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?"></textarea>
+                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ empty(old('contentimprove')) ? $report->contentimprove : old('contentimprove') }}</textarea>
                         @error('contentimprove')
                             <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
                         @enderror
