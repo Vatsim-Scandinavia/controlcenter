@@ -148,7 +148,7 @@
         input = $(input);
         let id = input.data('attachment');
 
-        $.ajax('/training/report/attachment/' + id, {
+        $.ajax('/training/attachment/' + id, {
             'method' : "post",
             'data' : {
                 '_token': "{!! csrf_token() !!}",

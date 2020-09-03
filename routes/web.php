@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
     // Training report attachment routes
     Route::get('/training/report/attachment/{attachment}', 'TrainingReportAttachmentController@show')->name('training.report.attachment.show');
     Route::post('/training/report/{report}/attachment', 'TrainingReportAttachmentController@store')->name('training.report.attachment.store');
-    Route::delete('/training/report/attachment/{attachment}', 'TrainingReportAttachmentController@destroy')->name('training.report.attachment.delete');
+    Route::delete('/training/attachment/{attachment}', 'TrainingReportAttachmentController@destroy')->name('training.report.attachment.delete');
 
     // Training examination routes
     Route::get('/training/examination/{examination}', 'TrainingExaminationController@show')->name('training.examination.show');
