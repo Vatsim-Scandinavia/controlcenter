@@ -41,7 +41,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        $user->isModerator();
+        return $user->isModerator();
     }
 
     /**
