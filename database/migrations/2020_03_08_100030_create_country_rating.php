@@ -28,30 +28,32 @@ class CreateCountryRating extends Migration
 
         // Insert available VATSIM-Ratings
         DB::table('country_rating')->insert([
-            // Norway
+
+            // Denmark
             ['country_id' => 1, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 1, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 1, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Sweden
+            // Finland
             ['country_id' => 2, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 2, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 2, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Denmark
+            // Iceland
             ['country_id' => 3, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 3, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 3, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Finland
+            // Norway
             ['country_id' => 4, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 4, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 4, 'rating_id' => 4, 'required_vatsim_rating' => 4],
 
-            // Iceland
+            // Sweden
             ['country_id' => 5, 'rating_id' => 2, 'required_vatsim_rating' => NULL],
             ['country_id' => 5, 'rating_id' => 3, 'required_vatsim_rating' => 3],
             ['country_id' => 5, 'rating_id' => 4, 'required_vatsim_rating' => 4],
+            
         ]);
 
         // Insert available Endorsement-Ratings
