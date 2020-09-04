@@ -281,11 +281,11 @@
                                             {{ $report->content }}
                                         </p>
                                     </div>
-                                    @if ($report->mentor_notes != null)
-                                    <div class="card-header text-primary">Mentor notes</div>
+                                    @if ($report->contentimprove != null)
+                                    <div class="card-header text-primary">Areas to improve</div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ $report->mentor_notes }}
+                                            {{ $report->contentimprove }}
                                         </p>
                                     </div>
                                     @endif
