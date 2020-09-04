@@ -248,6 +248,19 @@
                                         @endif
                                     </p>
                                 </div>
+
+                                @if($examination->attachments->count() > 0)
+                                    <div class="card-body">
+                                        @foreach($examination->attachments as $attachment)
+                                            <div>
+                                                <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                    <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
                             </div>
                     @endforeach
 
