@@ -44,9 +44,9 @@
 
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" value="{{ empty(old('date')) ? $report->created_at : old('date')}}" required>
-                        @error('date')
-                            <span class="text-danger">{{ $errors->first('date') }}</span>
+                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ empty(old('report_date')) ? $report->created_at : old('report_date')}}" required>
+                        @error('report_date')
+                            <span class="text-danger">{{ $errors->first('report_date') }}</span>
                         @enderror
                     </div>
 

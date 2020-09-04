@@ -6,6 +6,7 @@ use App\Position;
 use App\Training;
 use App\TrainingReport;
 use App\Notifications\TrainingReportNotification;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,6 +62,9 @@ class TrainingReportController extends Controller
         $data = $this->validateRequest();
         $data['written_by_id'] = Auth::id();
         $data['training_id'] = $training->id;
+
+        if (isset($data['report_date']))
+            $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
 
         $data2 = $data; // TODO this should be refactored to something better
         unset($data2['files']);
@@ -145,6 +149,7 @@ class TrainingReportController extends Controller
     {
         return request()->validate([
             'content' => 'sometimes|required',
+            'report_date' => 'required|date',
             'mentor_notes' => 'nullable',
             'position' => 'nullable',
             'draft' => 'sometimes|required|boolean',

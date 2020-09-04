@@ -46,9 +46,9 @@
 
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
-                        @error('date')
-                            <span class="text-danger">{{ $errors->first('date') }}</span>
+                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" required>
+                        @error('report_date')
+                            <span class="text-danger">{{ $errors->first('report_date') }}</span>
                         @enderror
                     </div>
 
@@ -107,7 +107,7 @@
     $(document).ready(function() {
         $('div').tooltip();
 
-        var defaultDate = "{{ old('date') }}"
+        var defaultDate = "{{ old('report_date') }}"
         $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
 
         $('.flatpickr-input:visible').on('focus', function () {
