@@ -100,12 +100,9 @@
                                   $('#err-experience').html('');
                                 }; removeErr();">
                                     <option selected disabled>Choose best fitting level...</option>
-                                    <option value="1">New to VATSIM</option>
-                                    <option value="2">Experienced on VATSIM</option>
-                                    <option value="3">Real world pilot</option>
-                                    <option value="4">Real world ATC</option>
-                                    <option value="5">Holding ATC rating from other vACC</option>
-                                    <option value="5">Holding ATC rating from other virtual network</option>
+                                    @foreach(\App\Http\Controllers\TrainingController::$experiences as $id => $data)
+                                        <option value="{{ $id }}">{{ $data["text"] }}</option>
+                                    @endforeach
                                 </select>
                                 <div class="danger text-danger" id="err-experience">
 

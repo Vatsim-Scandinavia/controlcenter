@@ -47,6 +47,19 @@ class TrainingController extends Controller
     ];
 
     /**
+     * A list of possible experiences
+     *
+     */
+    public static $experiences = [
+        1 => ["text" => "New to VATSIM"],
+        2 => ["text" => "Experienced on VATSIM"],
+        3 => ["text" => "Real world pilot"],
+        4 => ["text" => "Real world ATC"],
+        5 => ["text" => "Holding ATC rating from other vACC"],
+        6 => ["text" => "Holding ATC rating from other virtual network"],
+    ];
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -166,6 +179,7 @@ class TrainingController extends Controller
             'country_id' => $data['training_country'],
             'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
+            'experience' => isset($data['experience']) ? $data['experience'] : null,
             'english_only_training' => key_exists("englishOnly", $data) ? true : false
         ]);
 
@@ -203,8 +217,9 @@ class TrainingController extends Controller
         $trainingMentors = $training->country->mentors;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
+        $experiences = TrainingController::$experiences;
 
-        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types'));
+        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences'));
     }
 
     /**

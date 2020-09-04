@@ -207,6 +207,20 @@
                         </div>
                     </div>
                 </div>
+
+                @isset($training->experience)
+                    <div class="card-body">
+                        <div class="card bg-light mb-3">
+                            <div class="card-header text-primary">Experience</div>
+                            <div class="card-body">
+                            <p class="card-text">
+                                {{ $experiences[$training->experience]["text"] }}
+                            </p>
+                            </div>
+                        </div>
+                    </div>
+                @endisset
+                
                 <div class="card-body">
                     <div class="card bg-light mb-3">
                         <div class="card-header text-primary">Letter of motivation</div>
