@@ -231,7 +231,7 @@ class TrainingController extends Controller
             }
 
             unset($attributes['mentors']);
-        } else {
+        } else if (Auth::user()->isModerator()) { // XXX This is really hack since we don't send this attribute when mentors submit
             // Detach all if no passed key, as that means the list is empty
             $training->mentors()->detach();
         }

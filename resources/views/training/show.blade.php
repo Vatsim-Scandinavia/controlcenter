@@ -120,7 +120,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training state</label>
-                        <select class="form-control" name="status" id="trainingStateSelect">
+                        <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
                             @foreach($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -135,7 +135,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
-                        <select class="form-control" name="type" id="trainingStateSelect">
+                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
                             @foreach($types as $id => $data)
                                 @if($id == $training->type)
                                     <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
@@ -147,7 +147,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }}>
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModerator()) disabled @endif>
                         <label class="form-check-label" for="check1">
                             Paused
                             @if(isset($training->paused_at))
