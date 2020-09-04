@@ -53,11 +53,12 @@
  
                     <div class="form-group">
                         <label class="my-1 mr-2" for="ratingSelect">Training type <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple id="ratingSelect" name="training_level" class="custom-select my-1 mr-sm-2 @error('training_level') is-invalid @enderror" size="5">
+                        <select multiple id="ratingSelect" name="ratings[]" class="form-control @error('ratings') is-invalid @enderror" size="5">
                             <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                         </select>
-                        @error('training_level')
-                            <span class="text-danger">{{ $errors->first('training_level') }}</span>
+                        
+                        @error('ratings')
+                            <span class="text-danger">{{ $errors->first('ratings') }}</span>
                         @enderror
                     </div>
                     

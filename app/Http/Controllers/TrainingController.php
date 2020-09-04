@@ -152,17 +152,28 @@ class TrainingController extends Controller
         if (isset($data['user_id']) && User::find($data['user_id']) == null)
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
 
-        $ratings = Rating::find(explode("+", $data["training_level"]));
+        // Training_level comes from the application ratings comes from the manual creation, we need to seperate those.
+        if(isset($data['training_level'])){
+            $ratings = Rating::find(explode("+", $data["training_level"]));
+        } elseif(isset($data['ratings'])){
+            $ratings = Rating::find($data["ratings"]);
+        } else {
+            return redirect()->back()->withErrors('One or more ratings need to be selected to create training request.');
+        }
 
         $training = Training::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
             'country_id' => $data['training_country'],
-            'notes' => isset($data['comment']) ? $data['comment'] : '',
+            'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'english_only_training' => key_exists("englishOnly", $data) ? true : false
         ]);
 
-        $training->ratings()->saveMany($ratings);
+        if($ratings->count() > 1){
+            $training->ratings()->saveMany($ratings);
+        } else {
+            $training->ratings()->save($ratings->first());
+        }
 
         ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Country::find($training->country_id)->name);
 
@@ -307,11 +318,12 @@ class TrainingController extends Controller
             'user_id' => 'sometimes|required|integer',
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
+            'ratings' => 'sometimes|required',
             'training_country' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
             'type' => 'sometimes|required|integer',
             'notes' => 'nullable',
-            'mentors' => 'sometimes'
+            'mentors' => 'sometimes',
         ]);
     }
 }
