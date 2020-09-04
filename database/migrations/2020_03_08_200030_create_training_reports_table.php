@@ -17,7 +17,7 @@ class CreateTrainingReportsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('training_id');
             $table->unsignedBigInteger('written_by_id')->nullable();
-            $table->date('report_date');
+            $table->date('report_date')->default(today());
             $table->string('content');
             $table->string('mentor_notes')->nullable();
             $table->string('position')->nullable();
