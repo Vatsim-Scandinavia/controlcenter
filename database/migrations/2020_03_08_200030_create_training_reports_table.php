@@ -18,11 +18,10 @@ class CreateTrainingReportsTable extends Migration
             $table->unsignedBigInteger('training_id');
             $table->unsignedBigInteger('written_by_id')->nullable();
             $table->date('report_date');
-            $table->string('content');
-            $table->string('mentor_notes')->nullable();
+            $table->text('content');
+            $table->text('contentimprove')->nullable();
             $table->string('position')->nullable();
             $table->boolean('draft')->default(false);
-            $table->text('contentimprove')->nullable();
             $table->timestamps();
 
             $table->foreign('training_id')->references('id')->on('trainings')->onUpdate('CASCADE')->onDelete('CASCADE');

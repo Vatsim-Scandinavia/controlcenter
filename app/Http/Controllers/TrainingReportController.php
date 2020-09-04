@@ -161,8 +161,8 @@ class TrainingReportController extends Controller
     {
         return request()->validate([
             'content' => 'sometimes|required',
+            'contentimprove' => 'nullable',
             'report_date' => 'required|date',
-            'mentor_notes' => 'nullable',
             'position' => 'nullable',
             'draft' => 'sometimes',
             'files.*' => 'sometimes|file',
