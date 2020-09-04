@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateContinuedInterestNotificationLogTable extends Migration
+class CreateTrainingInterestLogTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateContinuedInterestNotificationLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('continued_interest_notification_log', function (Blueprint $table) {
+        Schema::create('training_interest_log', function (Blueprint $table) {
             $table->uuid('notification_id');
             $table->unsignedBigInteger('training_id');
             $table->string('key');
@@ -23,7 +23,7 @@ class CreateContinuedInterestNotificationLogTable extends Migration
 
             $table->primary('notification_id', 'ci_notification_id_pk');
 
-            $table->foreign('training_id', 'ci_training_id_fk')->references('id')->on('trainings');
+            $table->foreign('training_id')->references('id')->on('trainings');
         });
     }
 
@@ -34,6 +34,6 @@ class CreateContinuedInterestNotificationLogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('continued_interest_notification_log');
+        Schema::dropIfExists('training_interest_log');
     }
 }
