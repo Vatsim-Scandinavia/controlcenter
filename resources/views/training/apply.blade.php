@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training type</label>
-                            <select id="ratingSelect" class="custom-select my-1 mr-sm-2">
+                            <select id="ratingSelect" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
                                 <option selected disabled>Choose</option>
                                 <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                             </select>
@@ -165,7 +165,8 @@
         el: '#countrySelect',
         methods: {
             onChange(event) {
-                rating.update(event.srcElement.value)
+                rating.update(event.srcElement.value);
+                $(this.$el).removeClass('is-invalid');
             }
         }
 
@@ -179,16 +180,29 @@
         methods: {
             update: function(value){
                 this.ratings = payload[event.target.value].data
+            },
+            onChange(event) {
+                $(this.$el).removeClass('is-invalid');
             }
         }
     });
 
-    $('#continue-btn-step-1').click( function () {
+    $('#continue-btn-step-1').click( function (e) {
 
         let training_country = $('#countrySelect').val();
         sessionStorage.setItem('training_country', training_country);
         let training_level = $('#ratingSelect').val();
         sessionStorage.setItem('training_level', training_level);
+
+        if (training_country == null || training_level == null) {
+            e.preventDefault();
+        }
+
+        if (training_country == null)
+            $('#countrySelect').addClass('is-invalid');
+
+        if (training_level == null)
+            $('#ratingSelect').addClass('is-invalid');
 
     });
 
