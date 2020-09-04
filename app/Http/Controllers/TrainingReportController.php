@@ -116,7 +116,12 @@ class TrainingReportController extends Controller
         $this->authorize('update', $report);
         $oldDraftStatus = $report->fresh()->draft;
 
-        $report->update($this->validateRequest());
+        $data = $this->validateRequest();
+
+        if (isset($data['report_date']))
+            $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
+
+        $report->update($data);
 
         // Notify student of new training request if it's not a draft anymore
         if($oldDraftStatus == false && $report->draft == true && $report->training->user->setting_notify_newreport){
