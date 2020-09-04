@@ -210,6 +210,8 @@
 
         e.preventDefault();
 
+        $(this).prop('disabled', true);
+
         var form = document.getElementById('training-form');
         var data = new FormData(form);
 
