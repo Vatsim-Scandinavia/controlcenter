@@ -67,7 +67,7 @@
                     </div>
 
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input @error('draft') is-invalid @enderror" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
+                        <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
                         <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
                         @error('draft')
                             <span class="text-danger">{{ $errors->first('draft') }}</span>

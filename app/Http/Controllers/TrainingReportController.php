@@ -66,6 +66,8 @@ class TrainingReportController extends Controller
         if (isset($data['report_date']))
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
 
+        (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
+
         $data2 = $data; // TODO this should be refactored to something better
         unset($data2['files']);
         $report = TrainingReport::create($data2);
@@ -121,6 +123,8 @@ class TrainingReportController extends Controller
         if (isset($data['report_date']))
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
 
+        (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
+
         $report->update($data);
 
         // Notify student of new training request if it's not a draft anymore
@@ -157,9 +161,9 @@ class TrainingReportController extends Controller
             'report_date' => 'required|date',
             'mentor_notes' => 'nullable',
             'position' => 'nullable',
-            'draft' => 'sometimes|required|boolean',
+            'draft' => 'sometimes',
             'files.*' => 'sometimes|file',
-            'contentimprove' => 'sometimes|string'
+            'contentimprove' => 'sometimes|nullable|string'
         ]);
     }
 }
