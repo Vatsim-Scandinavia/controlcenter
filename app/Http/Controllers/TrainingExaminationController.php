@@ -84,7 +84,7 @@ class TrainingExaminationController extends Controller
             ]);
         }
 
-        return redirect()->back()->withSuccess('Examination successfully added');
+        return redirect(route('training.show', $training->id))->withSuccess('Examination successfully added');
 
     }
 
