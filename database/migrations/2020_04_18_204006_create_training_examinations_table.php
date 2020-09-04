@@ -18,7 +18,6 @@ class CreateTrainingExaminationsTable extends Migration
             $table->unsignedBigInteger('training_id');
             $table->unsignedBigInteger('position_id')->nullable();
             $table->unsignedBigInteger('examiner_id')->nullable();
-            $table->string('examination_sheet')->nullable();
             $table->enum('result', ['PASSED', 'FAILED', 'INCOMPLETE', 'POSTPONED'])->nullable();
             $table->date('examination_date');
             $table->timestamps();
