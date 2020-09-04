@@ -242,6 +242,8 @@
                     if (message.motivation)
                         $("#err-motivation").html(message.motivation[0]);
 
+                    $('#training-submit-btn').prop('disabled', false);
+
                 }
             }
         )
