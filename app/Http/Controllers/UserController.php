@@ -107,6 +107,14 @@ class UserController extends Controller
             $user->teaches()->detach();
         }
 
+        if($data['access'] == 0){
+            $user->group = null;
+        } else {
+            $user->group = $data['access'];
+        }
+
+        $user->save();
+
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
 
     }
