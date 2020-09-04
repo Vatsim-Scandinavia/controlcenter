@@ -96,11 +96,14 @@ class TrainingReportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\TrainingReport  $trainingReport
+     * @param TrainingReport $report
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(TrainingReport $report)
     {
+        $this->authorize('update', $report);
+
         $positions = Position::all();
         return view('training.report.edit', compact('report', 'positions'));
     }
