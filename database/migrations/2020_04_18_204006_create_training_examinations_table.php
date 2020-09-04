@@ -25,7 +25,6 @@ class CreateTrainingExaminationsTable extends Migration
             $table->foreign('training_id')->references('id')->on('trainings')->onDelete('CASCADE')->onUpdate('CASCADE');
             $table->foreign('position_id')->references('id')->on('positions')->onUpdate('CASCADE')->onDelete('NO ACTION');
             $table->foreign('examiner_id')->references('id')->on('users')->onDelete('SET NULL')->onUpdate('CASCADE');
-            $table->foreign('examination_sheet')->references('id')->on('files')->onDelete('SET NULL')->onUpdate('CASCADE');
         });
     }
 
