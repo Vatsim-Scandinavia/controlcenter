@@ -46,7 +46,7 @@
 
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" required>
+                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ old('report_date') }}" required>
                         @error('report_date')
                             <span class="text-danger">{{ $errors->first('report_date') }}</span>
                         @enderror
@@ -54,7 +54,7 @@
 
                     <div class="form-group">
                         <label for="contentBox">Report</label>
-                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here."></textarea>
+                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ old('content') }}</textarea>
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
                         @enderror
@@ -62,7 +62,7 @@
 
                     <div class="form-group">
                         <label for="contentimprove">Areas to improve</label>
-                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?"></textarea>
+                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ old('contentimprove') }}</textarea>
                         @error('contentimprove')
                             <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
                         @enderror
