@@ -20,8 +20,8 @@ class CreateTrainingUserTable extends Migration
             $table->timestamps();
 
             $table->primary(['user_id', 'training_id']);
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('training_id')->references('id')->on('trainings');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
         });
     }
 

@@ -20,7 +20,7 @@ class CreateRatingUser extends Migration
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('rating_id')->references('id')->on('ratings');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
         });
     }

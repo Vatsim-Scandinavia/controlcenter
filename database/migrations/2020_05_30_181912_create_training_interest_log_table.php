@@ -23,7 +23,7 @@ class CreateTrainingInterestLogTable extends Migration
 
             $table->primary('notification_id', 'ci_notification_id_pk');
 
-            $table->foreign('training_id')->references('id')->on('trainings');
+            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
         });
     }
 

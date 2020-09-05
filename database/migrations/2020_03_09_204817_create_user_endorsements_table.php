@@ -21,8 +21,8 @@ class CreateUserEndorsementsTable extends Migration
             $table->timestamp('expires_at');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('training_id')->references('id')->on('trainings');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
 
             
         });
