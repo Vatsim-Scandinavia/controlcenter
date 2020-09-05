@@ -33,6 +33,10 @@ class CreateTrainingsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('country_id')->references('id')->on('countries');
         });
+
+        // We start the trainings at 2000, so everything lower than this are converted old Training system IDs.
+        $prefix = DB::getTablePrefix();
+        DB::update("ALTER TABLE ".$prefix."trainings AUTO_INCREMENT = 2000;");
     }
 
     /**
