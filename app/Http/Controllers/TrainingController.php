@@ -30,7 +30,7 @@ class TrainingController extends Controller
         -1 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true],
         0 => ["text" => "In queue", "color" => "warning", "icon" => "fas fa-hourglass", "assignableByStaff" => true],
         1 => ["text" => "Pre-training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
-        2 => ["text" => "Mentor assigned", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        2 => ["text" => "Active training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
         3 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
     ];
 
@@ -69,7 +69,7 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortBy('id');
+        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortBy('status');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
