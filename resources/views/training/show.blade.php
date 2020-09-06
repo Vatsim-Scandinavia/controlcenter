@@ -292,14 +292,14 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ $report->content }}
+                                            {!! nl2br(e($report->content)) !!}
                                         </p>
                                     </div>
                                     @if ($report->contentimprove != null)
                                     <div class="card-header text-primary">Areas to improve</div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ $report->contentimprove }}
+                                            {!! nl2br(e($report->contentimprove)) !!}
                                         </p>
                                     </div>
                                     @endif
