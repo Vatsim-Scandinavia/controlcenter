@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/content', 'DashboardController@content')->name('content');
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
     Route::get('/trainings', 'TrainingController@index')->name('requests');
+    Route::get('/trainings/history', 'TrainingController@history')->name('requests.history');
     Route::get('/users', 'UserController@index')->name('users');
 
     // User endorsements

@@ -57,10 +57,18 @@
         @endif
         @if (\Auth::user()->isModerator())
 
-        <li class="nav-item {{ Route::is('requests') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('requests') }}">
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
             <i class="fas fa-fw fa-flag"></i>
-            <span>Requests</span></a>
+            <span>Requests</span>
+        </a>
+        <div id="collapseReq" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
+            <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
+            </div>
+        </div>
         </li>
 
         @endif

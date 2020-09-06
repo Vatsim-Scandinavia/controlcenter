@@ -70,14 +70,31 @@ class TrainingController extends Controller
     {
 
         $trainings = Auth::user()->viewableModels(\App\Training::class);
-
         $openTrainings = $trainings->where('status', '>=', 0)->sortBy('id');
-        $closedTrainings =  $trainings->where('status', '<', 0)->sortBy('id');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
 
-        return view('training.index', compact('openTrainings', 'closedTrainings', 'statuses', 'types'));
+        return view('training.index', compact('openTrainings', 'statuses', 'types'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \App\Exceptions\PolicyMethodMissingException
+     * @throws \App\Exceptions\PolicyMissingException
+     */
+    public function history()
+    {
+
+        $trainings = Auth::user()->viewableModels(\App\Training::class);
+        $closedTrainings = $trainings->where('status', '<', 0)->sortBy('id');
+
+        $statuses = TrainingController::$statuses;
+        $types = TrainingController::$types;
+
+        return view('training.history', compact('closedTrainings', 'statuses', 'types'));
     }
 
     /**
