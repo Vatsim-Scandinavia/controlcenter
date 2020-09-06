@@ -69,8 +69,7 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $trainings = Auth::user()->viewableModels(\App\Training::class);
-        $openTrainings = $trainings->where('status', '>=', 0)->sortBy('id');
+        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortBy('id');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -88,8 +87,7 @@ class TrainingController extends Controller
     public function history()
     {
 
-        $trainings = Auth::user()->viewableModels(\App\Training::class);
-        $closedTrainings = $trainings->where('status', '<', 0)->sortBy('id');
+        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sortBy('id');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
