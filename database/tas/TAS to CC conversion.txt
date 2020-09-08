@@ -1,0 +1,37 @@
+Prerequesites:
+	- All training requests must be accepted
+	- TAS must be closed for new requests to avoid duplicates and complications.
+	- Add temporary position id 400 "Unknown" that need to be manually overwritten later on
+	- Add temporary position id 401 "ESSA_TWR" 
+	- Add temporary position id 402 "ESSA_APP"
+	- 403 "ENGM_APP", 404 "ENGM_TWR"
+
+1. Make a table of all user-dependecies to feed to Handover to avoid non-existing user errors later on
+	- Go through all trainings in SCA vacc and the student's CIDs
+	- Go through all ACTIVE trainings in SCA, and the mentor's CIDs.
+	- Go through all reports in SCA and the author's CIDs.
+	- This can then be exported as INSERT IGNORE format for Handover
+
+2. Transfer all trainings from SCA
+	- Link up the training to the student's user
+	- Link up the training to the correct rating
+	- Link up the training to the correct country
+	- Link up created/ended dates
+
+3. Transfer all reports from SCA that are linked to the trainings in previous point
+	- Concat focus points and comments to the report field
+	- Copy improvements to improvement field
+	- Copy created date
+
+4. Transfer all examination results
+	- Copy the exam in itself
+	- Populate `files` and `training_object_attachments` correctly to upload all attachments to files/legacy
+
+Notes:
+- Mentors need to be re-assigned manually (caution about emails)
+- Long term paused trainings need to be paused again manually and timestamp revised in DB
+- Exam positions that are unknown need to be manually assigned to correct position.
+
+Todo:
+- Transfer ratings with PHP
+- Trasnfer file attachments with PHP
