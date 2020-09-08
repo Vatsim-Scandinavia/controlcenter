@@ -21,10 +21,6 @@ class TrainingReport extends TrainingObject
         return route('training.report.edit', ['report' => $this->id]);
     }
 
-    public function training(){
-        return $this->belongsTo(Training::class);
-    }
-
     public function author(){
         return $this->belongsTo(User::class, 'written_by_id');
     }

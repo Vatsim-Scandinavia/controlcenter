@@ -15,11 +15,6 @@ class TrainingExamination extends TrainingObject
         'draft' => 'boolean',
     ];
 
-    public function training()
-    {
-        return $this->belongsTo(Training::class);
-    }
-
     public function position()
     {
         return $this->hasOne(Position::class, 'id', 'position_id');
