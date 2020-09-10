@@ -78,7 +78,7 @@ class FileController extends Controller
     private function validateRequest()
     {
         return request()->validate([
-            'file' => 'required|file'
+            'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg'
         ]);
     }
 

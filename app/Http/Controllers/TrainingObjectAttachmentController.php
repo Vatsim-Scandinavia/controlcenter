@@ -25,7 +25,7 @@ class TrainingObjectAttachmentController extends Controller
     public function store(Request $request, TrainingObject $trainingObject)
     {
         $data = $request->validate([
-            'file' => 'required|file',
+            'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
             'hidden' => 'nullable'
         ]);
 
