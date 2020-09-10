@@ -86,8 +86,8 @@ class TrainingReportsTest extends TestCase
 
         $report->training->country->mentors()->attach($mentor);
 
-        $this->actingAs($mentor)
-            ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
+        $response = $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), ['report_date' => today()->format('d/m/Y'), 'content' => $content])
             ->assertRedirect();
 
         $this->assertDatabaseHas('training_reports', ['content' => $content]);

@@ -51,11 +51,10 @@ class TrainingsTest extends TestCase
     public function moderator_can_update_training_request()
     {
 
-        $moderator = factory(\App\User::class)->create();
-        $moderator->group = 2;
-        $moderator->save();
+        $moderator = factory(\App\User::class)->create(['group' => 2]);
 
         $training = factory(\App\Training::class)->create();
+        $training->country->training_roles()->attach($moderator);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
 
@@ -176,6 +175,7 @@ class TrainingsTest extends TestCase
     {
         $training = factory(\App\Training::class)->create();
         $moderator = factory(\App\User::class)->create(['group' => 2]);
+        $training->country->training_roles()->attach($moderator);
         $mentor = factory(\App\User::class)->create(['group' => 3]);
 
         $this->actingAs($moderator)

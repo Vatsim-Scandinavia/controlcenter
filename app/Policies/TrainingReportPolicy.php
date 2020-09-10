@@ -23,6 +23,7 @@ class TrainingReportPolicy
     {
         return  $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
+                $user->isModerator($trainingReport->training->country) ||
                 ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
     }
 
@@ -58,7 +59,7 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {
-        return ($user->isModerator() || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->country)))
+        return ($user->isModerator($trainingReport->training->country) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->country)))
             ? Response::allow()
             : Response::deny("Only moderators and the author of the training report can delete it.");
     }

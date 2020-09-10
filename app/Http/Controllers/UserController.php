@@ -84,14 +84,14 @@ class UserController extends Controller
         if (key_exists('countries', $data)) {
 
             foreach ((array) $data['countries'] as $country) {
-                if (!$user->mentor_countries->contains($country)){
-                    $user->mentor_countries()->attach($country);
+                if (!$user->training_role_countries->contains($country)){
+                    $user->training_role_countries()->attach($country);
                 }
             }
 
-            foreach ($user->mentor_countries as $country) {
+            foreach ($user->training_role_countries as $country) {
                 if (!in_array($country->id, (array) $data['countries'])) {
-                    $user->mentor_countries()->detach($country);
+                    $user->training_role_countries()->detach($country);
 
                     // Unassign this mentor from trainings from the specific country
                     $user->teaches()->detach($user->teaches->where('country_id', $country->id));
@@ -101,7 +101,7 @@ class UserController extends Controller
             unset($data['countries']);
         } else {
             // Detach all if no passed key, as that means the list is empty
-            $user->mentor_countries()->detach();
+            $user->training_role_countries()->detach();
 
             // Unassign this mentor from all trainings
             $user->teaches()->detach();

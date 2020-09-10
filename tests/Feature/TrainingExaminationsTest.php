@@ -152,6 +152,7 @@ class TrainingExaminationsTest extends TestCase
 
         $examination = factory(TrainingExamination::class)->create();
         $moderator = factory(User::class)->create(['group' => 2]);
+        $examination->training->country->training_roles()->attach($moderator);
 
         $this->actingAs($moderator)->followingRedirects()
             ->deleteJson(route('training.examination.delete', ['examination' => $examination]))

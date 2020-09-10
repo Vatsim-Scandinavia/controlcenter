@@ -22,7 +22,7 @@ class TrainingPolicy
     public function view(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModerator() ||
+                $user->isModerator($training->country) ||
                 $user->is($training->user);
     }
 
@@ -36,7 +36,7 @@ class TrainingPolicy
     public function update(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModerator();
+                $user->isModerator($training->country);
     }
 
     /**
@@ -48,7 +48,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training)
     {
-        return $user->isModerator();
+        return $user->isModerator($training->country);
     }
 
     /**

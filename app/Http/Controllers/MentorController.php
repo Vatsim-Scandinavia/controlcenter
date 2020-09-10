@@ -22,7 +22,7 @@ class MentorController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         if($user->isMentor()) return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
-        
+
         abort(403);
     }
 
@@ -41,7 +41,7 @@ class MentorController extends Controller
             'country' => 'required|integer'
         ]);
 
-        $user->mentor_countries()->attach($data['country'], ['inserted_by' => Auth::id()]);
+        $user->training_role_countries()->attach($data['country'], ['inserted_by' => Auth::id()]);
 
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Mentor successfully updated']);
@@ -90,7 +90,7 @@ class MentorController extends Controller
             'country' => 'required|integer'
         ]);
 
-        $user->mentor_countries()->detach($data['country']);
+        $user->training_role_countries()->detach($data['country']);
 
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Mentor successfully updated']);

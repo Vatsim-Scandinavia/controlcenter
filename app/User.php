@@ -94,9 +94,9 @@ class User extends Authenticatable
         return $this->hasMany(Vatbook::class);
     }
 
-    public function mentor_countries()
+    public function training_role_countries()
     {
-        return $this->belongsToMany(Country::class, 'mentor_country')->withTimestamps();
+        return $this->belongsToMany(Country::class, 'training_role_country')->withTimestamps();
     }
 
     public function vote(){
@@ -216,13 +216,21 @@ class User extends Authenticatable
 
         return $this->group <= 3 &&
             isset($this->group) &&
-            $country->mentors->contains($this);
+            $country->training_roles->contains($this);
 
     }
 
-    public function isModerator()
+    public function isModerator(Country $country = null)
     {
-        return $this->group <= 2 && isset($this->group);
+        if ($country == null)
+            return $this->group <= 2 && isset($this->group);
+
+        if ($this->isAdmin())
+            return $this->group <= 2 && isset($this->group);
+
+        return $this->group <= 2 &&
+            $country->training_roles->contains($this);
+            isset($this->group);
     }
 
     public function isAdmin()

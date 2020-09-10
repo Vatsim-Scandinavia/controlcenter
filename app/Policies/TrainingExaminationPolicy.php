@@ -42,7 +42,7 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
-        return $examination->draft ? ($user->isModerator() || $user->is($examination->examiner)) : $user->isModerator();
+        return $examination->draft ? ($user->isModerator($examination->training->country) || $user->is($examination->examiner)) : $user->isModerator($examination->training->country);
     }
 
     /**
@@ -54,6 +54,6 @@ class TrainingExaminationPolicy
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
-        return $user->isModerator();
+        return $user->isModerator($trainingExamination->training->country);
     }
 }

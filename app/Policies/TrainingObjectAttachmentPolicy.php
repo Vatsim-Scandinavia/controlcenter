@@ -38,9 +38,10 @@ class TrainingObjectAttachmentPolicy
      *
      * @param User $user
      * @param TrainingObjectAttachment $attachment
+     * @return bool
      */
     public function delete(User $user, TrainingObjectAttachment $attachment)
     {
-        return $user->isModerator() || $user->is($attachment->file->owner);
+        return $user->isModerator($attachment->object->training->country) || $user->is($attachment->file->owner);
     }
 }
