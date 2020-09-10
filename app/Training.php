@@ -46,7 +46,7 @@ class Training extends Model
 
             // If training is set as active
             if($newStatus > 0 || $newStatus == -1){
-                
+
                 // In case someone resurrects a closed training
                 if($oldStatus < 0){
                     $this->update(['closed_at' => null]);
@@ -71,8 +71,8 @@ class Training extends Model
      * Get a inline string of ratings associated with a training.
      *
      * @param string $status
+     * @return string
      */
-
      public function getInlineRatings(){
 
         $output = "";
@@ -84,7 +84,7 @@ class Training extends Model
                 } else {
                     $output .= $ratings[$i]["name"] . " + ";
                 }
-            } 
+            }
         } else {
             $output .= $ratings["name"];
         }
@@ -92,12 +92,12 @@ class Training extends Model
         return $output;
      }
 
-     /**
+    /**
      * Get a inline string of ratings associated with a training.
      *
      * @param string $status
+     * @return string
      */
-
     public function getInlineMentors(){
 
         $output = "";
@@ -109,7 +109,7 @@ class Training extends Model
                 } else {
                     $output .= $mentors[$i] . " & ";
                 }
-            } 
+            }
         } else {
             $output .= $mentors;
         }
