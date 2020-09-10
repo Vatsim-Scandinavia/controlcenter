@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTrainingUserTable extends Migration
+class CreateTrainingMentorTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTrainingUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('training_user', function (Blueprint $table) {
+        Schema::create('training_mentor', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('training_id');
             $table->timestamp('expire_at');
