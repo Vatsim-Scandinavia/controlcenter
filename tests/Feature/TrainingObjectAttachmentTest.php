@@ -42,7 +42,7 @@ class TrainingObjectAttachmentTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $mentor = $this->report->author;
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $response = $this->actingAs($mentor)->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file]);
         $id = $response->decodeResponseJson('id');
@@ -70,7 +70,7 @@ class TrainingObjectAttachmentTest extends TestCase
     public function mentor_can_see_attachments()
     {
         $mentor = $this->report->author;
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $id = $this->actingAs($mentor)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
@@ -84,7 +84,7 @@ class TrainingObjectAttachmentTest extends TestCase
     public function student_can_see_not_hidden_attachment()
     {
         $student = $this->report->training->user;
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $id = $this->actingAs($this->report->author)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
@@ -117,7 +117,7 @@ class TrainingObjectAttachmentTest extends TestCase
     public function mentor_can_access_hidden_attachment()
     {
         $mentor = $this->report->author;
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $id = $this->actingAs($mentor)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report, 'hidden' => true]), ['file' => $file])

@@ -24,12 +24,12 @@ class TrainingObjectAttachmentController extends Controller
      */
     public function store(Request $request, TrainingObject $trainingObject)
     {
+        $this->authorize('create', TrainingObjectAttachment::class);
+
         $data = $request->validate([
             'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
             'hidden' => 'nullable'
         ]);
-
-        $this->authorize('create', TrainingObjectAttachment::class);
 
         $attachment_ids = self::saveAttachments($request, $trainingObject);
 
@@ -97,15 +97,15 @@ class TrainingObjectAttachmentController extends Controller
                     'file_id' => $file_id,
                     'hidden' => false // We hardcode this to false for now
                 ]);
-            }
+            } else {
+                foreach ($file as $file2) {
+                    $file_id = FileController::saveFile($file2);
 
-            foreach ($file as $file2) {
-                $file_id = FileController::saveFile($file2);
-
-                $object->attachments()->create([
-                    'file_id' => $file_id,
-                    'hidden' => false // We hardcode this to false for now
-                ]);
+                    $object->attachments()->create([
+                        'file_id' => $file_id,
+                        'hidden' => false // We hardcode this to false for now
+                    ]);
+                }
             }
         }
 

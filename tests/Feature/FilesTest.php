@@ -42,7 +42,7 @@ class FilesTest extends TestCase
     public function mentor_can_upload_an_image_file()
     {
         $user = factory(\App\User::class)->create(['group' => 3]);
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file = File::find($response->decodeResponseJson('file_id'));
@@ -54,7 +54,7 @@ class FilesTest extends TestCase
     public function user_can_see_a_file_they_uploaded()
     {
         $user = factory(\App\User::class)->create(['group' => 3]);
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file = File::find($response->decodeResponseJson('file_id'));
@@ -79,7 +79,7 @@ class FilesTest extends TestCase
     public function owner_can_delete_their_own_files()
     {
         $user = factory(\App\User::class)->create(['group' => 3]);
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->decodeResponseJson('file_id');
         $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
@@ -93,7 +93,7 @@ class FilesTest extends TestCase
     public function moderator_can_delete_another_users_file()
     {
         $user = factory(\App\User::class)->create(['group' => 3]);
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->decodeResponseJson('file_id');
         $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
@@ -107,7 +107,7 @@ class FilesTest extends TestCase
     public function regular_user_cant_delete_another_users_file()
     {
         $user = factory(\App\User::class)->create(['group' => 3]);
-        $file = UploadedFile::fake()->image($this->faker->word);
+        $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->decodeResponseJson('file_id');
         $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
