@@ -268,7 +268,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'ENOV_I_TWR', 'name' => 'Hovden Information', 'fir' => 'ENOR'],
             ['callsign' => 'ENRA_I_TWR', 'name' => 'Røssvoll Information', 'fir' => 'ENOR'],
             ['callsign' => 'ENRM_I_TWR', 'name' => 'Rørvik Information', 'fir' => 'ENOR'],
-            ['callsign' => 'ENRO_APP', 'name' => 'Røros TWR', 'fir' => 'ENOR'],
+            ['callsign' => 'ENRO_I_TWR', 'name' => 'Røros Information', 'fir' => 'ENOR'],
             ['callsign' => 'ENRS_I_TWR', 'name' => 'Røst Information', 'fir' => 'ENOR'],
             ['callsign' => 'ENRY_TWR', 'name' => 'Rygge Tower', 'fir' => 'ENOR'],
             ['callsign' => 'ENRY_APP', 'name' => 'Farris Approach', 'fir' => 'ENOR'],
@@ -303,7 +303,6 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'ENZV_TWR', 'name' => 'Sola Tower', 'fir' => 'ENOR'],
             ['callsign' => 'ENZV_GND', 'name' => 'Sola Ground', 'fir' => 'ENOR'],
             ['callsign' => 'ENAS_I_TWR', 'name' => 'Ny Ålesund Information', 'fir' => 'ENOB'],
-            ['callsign' => 'ENJA_I_TWR', 'name' => 'Jan Mayen Information', 'fir' => 'ENOB'],
             ['callsign' => 'ENOB_CTR', 'name' => 'Bodø Oceanic Control', 'fir' => 'ENOB'],
             ['callsign' => 'ENSA_I_TWR', 'name' => 'Svea Information', 'fir' => 'ENOB'],
             ['callsign' => 'ENSB_I_TWR', 'name' => 'Longyear Information', 'fir' => 'ENOB']
