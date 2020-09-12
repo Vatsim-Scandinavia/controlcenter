@@ -31,6 +31,7 @@ Notes:
 - Mentors need to be re-assigned manually (caution about emails)
 - Long term paused trainings need to be paused again manually and timestamp revised in DB
 - Exam positions that are unknown need to be manually assigned to correct position.
+- Trainings without ratings (e.g. trainings with rating "Refresh" only need manual digging of the actual rating).
 
 Todo:
 - Transfer ratings with PHP

@@ -7,7 +7,7 @@ Insert all trainings reports
 /* Insert all report parents */
 INSERT IGNORE santa.training_reports (training_id, written_by_id, report_date, content, contentimprove, POSITION, draft, created_at, updated_at)
 	SELECT tas.training_reports.tra_id, tas.training_reports.mentor, FROM_UNIXTIME(tas.training_reports.date), CONCAT(tas.training_reports.focus_points, CHAR(13), CHAR(13), tas.training_reports.comments), tas.training_reports.improvements, tas.training_reports.position, FALSE, FROM_UNIXTIME(tas.training_reports.date), FROM_UNIXTIME(tas.training_reports.date)
-	FROM tas.training_reports
+	FROM tas.training_reports;
 
 
 /* Insert all exam parents */
