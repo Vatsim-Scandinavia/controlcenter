@@ -33,5 +33,3 @@ INSERT IGNORE santa.trainings (id, user_id, TYPE, STATUS, country_id, notes, mot
 		IF(tra_ended = 0, NULL, FROM_UNIXTIME(tra_ended))	
 	FROM tas.trainings;
 	
-/* Insert ratings from trainings */
-

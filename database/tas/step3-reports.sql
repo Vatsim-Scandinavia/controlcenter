@@ -14,7 +14,7 @@ INSERT IGNORE santa.training_reports (training_id, written_by_id, report_date, c
 INSERT IGNORE santa.training_examinations (training_id, position_id, examiner_id, result, examination_date, created_at, updated_at)	
 	SELECT
 		tas.training_assessment.training_id,
-		(SELECT santa.positions.id FROM santa.positions WHERE santa.positions.callsign LIKE CONCAT('%', tas.training_assessment.position, '%') LIMIT 1),
+		(SELECT santa.positions.id FROM santa.positions WHERE tas.training_assessment.position != '' AND santa.positions.callsign LIKE CONCAT('%', tas.training_assessment.position, '%') LIMIT 1),
 		tas.training_assessment.examinor,
 		CASE
 			WHEN tas.training_assessment.result = 'passed' THEN 'PASSED'
@@ -26,4 +26,3 @@ INSERT IGNORE santa.training_examinations (training_id, position_id, examiner_id
 		FROM_UNIXTIME(tas.training_assessment.time)
 	FROM tas.training_assessment;
 	
-/* Insert all exam attachments */
