@@ -261,6 +261,8 @@
                                             <span class='badge badge-warning'>POSTPONED</span>
                                         @endif
                                     </p>
+                                    <p>Examinator: <a href="{{ route('user.show', $examination->examiner_id) }}">{{ \App\User::find($examination->examiner_id)->name }}</a></p>
+                                    <p>Position: {{ \App\Position::find($examination->position_id)->callsign }}</p>
                                 </div>
 
                                 @if($examination->attachments->count() > 0)
