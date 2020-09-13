@@ -24,6 +24,7 @@
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (1, ".$row["id"].");";
                 break;
             case "S2":
+            case "S2 ":
             case "S2 + ":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (2, ".$row["id"].");";
                 break;
@@ -57,8 +58,13 @@
             case "C1 (refresh)":
             case "C1 + Refresh C1":
             case "C1 (refresh)":
+            case "C1 + refresh C1":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (4, ".$row["id"].");";
                 $insertSql[] = "UPDATE santa.trainings SET santa.trainings.type = 2 WHERE santa.trainings.id = ".$row["id"].";";
+                break;
+            case "C1 + Fast Track":
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (4, ".$row["id"].");";
+                $insertSql[] = "UPDATE santa.trainings SET santa.trainings.type = 4 WHERE santa.trainings.id = ".$row["id"].";";
                 break;
             case "S2 + MAE ESSA TWR":
             case "S2+ESSA_TWR MAE":
@@ -90,6 +96,10 @@
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (4, ".$row["id"].");";
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (14, ".$row["id"].");";
                 break;
+            case "C1 BIRD familiarisation":
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (4, ".$row["id"].");";
+                $insertSql[] = "UPDATE santa.trainings SET santa.trainings.type = 5 WHERE santa.trainings.id = ".$row["id"].";";
+                break;
             case "C1 + OCEANIC ENOB":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (4, ".$row["id"].");";
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (15, ".$row["id"].");";
@@ -115,6 +125,10 @@
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (8, ".$row["id"].");";
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (9, ".$row["id"].");";
                 break;
+            case "MAE ENGM TWR+APP":
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (8, ".$row["id"].");";
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (9, ".$row["id"].");";
+                break;
             case "S3 + MAE ENGM TWR+APP":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (3, ".$row["id"].");";
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (8, ".$row["id"].");";
@@ -123,6 +137,10 @@
             case "S3 + MAE ENGM TWR":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (3, ".$row["id"].");";
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (8, ".$row["id"].");";
+                break;
+            case "S3 + MAE":
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (8, ".$row["id"].");";
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (9, ".$row["id"].");";
                 break;
             case "S3+EKCH_APP MA refresh":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (3, ".$row["id"].");";
@@ -134,6 +152,13 @@
             case "S3 + EKCH_APP MA":
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (3, ".$row["id"].");";
                 $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (13, ".$row["id"].");";
+                break;
+            case "EKCH_TWR/APP MA":
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (12, ".$row["id"].");";
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (13, ".$row["id"].");";
+                break;
+            case "EKCH_TWR MA":
+                $insertSql[] = "INSERT IGNORE santa.rating_training (rating_id, training_id) VALUES (12, ".$row["id"].");";
                 break;
                 
         }

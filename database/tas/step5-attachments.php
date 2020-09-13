@@ -24,8 +24,13 @@
         $queryFiles = "INSERT IGNORE santa.files (id, uploaded_by, name, path, created_at, updated_at) VALUES ('".$id."', ".$examinator.", '".$fileName."', 'legacy/".$fileName."', FROM_UNIXTIME(".$row["time"]."), FROM_UNIXTIME(".$row["time"]."))";
         $db->query($queryFiles) or die(mysqli_error($db));
 
-        $queryFileObject = "INSERT IGNORE santa.training_object_attachments (object_type, object_id, file_id, hidden, created_at, updated_at) VALUES ('App\\\\TrainingExamination', (SELECT santa.training_examinations.id FROM santa.training_examinations WHERE santa.training_examinations.training_id = ".$row["training_id"]."), '".$id."', 0, FROM_UNIXTIME(".$row["time"]."), FROM_UNIXTIME(".$row["time"]."))";
-        $db->query($queryFileObject) or die(mysqli_error($db));
+        $queryAmountExams = "SELECT santa.training_examinations.id FROM santa.training_examinations WHERE santa.training_examinations.training_id = ".$row["training_id"]." AND santa.training_examinations.created_at = FROM_UNIXTIME(".$row["time"].")";
+        $amountExams = $db->query($queryAmountExams) or die(mysqli_error($db));
+
+        while($row2 = $amountExams->fetch_assoc()) {
+            $queryFileObject = "INSERT IGNORE santa.training_object_attachments (object_type, object_id, file_id, hidden, created_at, updated_at) VALUES ('App\\\\TrainingExamination', ".$row2["id"].", '".$id."', 0, FROM_UNIXTIME(".$row["time"]."), FROM_UNIXTIME(".$row["time"]."))";
+            $db->query($queryFileObject) or die(mysqli_error($db));
+        }
         
     }
     
