@@ -18,7 +18,13 @@ class MentorController extends Controller
      */
     public function index(){
         $user = Auth::user();
-        $trainings = Training::all()->sortBy('id');
+        $trainings = $user->viewableModels(Training::class)->sortBy('id');
+
+        foreach ($trainings as $key => $training) {
+            if (!$training->mentors->contains($user))
+                $trainings->pull($key);
+        }
+
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         if($user->isMentor()) return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
