@@ -31,13 +31,13 @@ class TrainingExaminationController extends Controller
      *
      * @param Request $request
      * @param Training $training
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Request $request, Training $training)
     {
         $this->authorize('createExamination', $training);
-        if ($training->status != 3) { return redirect(null, 400)->back()->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
+        if ($training->status != 3) { return abort(400, 'Training examination cannot be created for a training not awaiting exam.'); }
 
         $positions = Position::all();
 
