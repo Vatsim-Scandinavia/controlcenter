@@ -192,6 +192,23 @@ class User extends Authenticatable
     }
 
     /**
+     * @return mixed
+     * @throws PolicyMethodMissingException
+     * @throws PolicyMissingException
+     */
+    public function mentoringTrainings()
+    {
+        $trainings = $this->viewableModels(Training::class, [['status', '>=', 2]])->sortBy('id');
+
+        foreach ($trainings as $key => $training) {
+            if (!$training->mentors->contains($this))
+                $trainings->pull($key);
+        }
+
+        return $trainings;
+    }
+
+    /**
      * Return whether or not the user has active trainings.
      * A country can be provided to check if the user has an active training in the specified country.
      *
