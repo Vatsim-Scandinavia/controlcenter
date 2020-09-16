@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\OneTimeLink;
 use App\Position;
 use App\Training;
 use App\TrainingReport;
@@ -77,6 +78,14 @@ class TrainingReportController extends Controller
         // Notify student of new training request if it's not a draft
         if($report->draft != true && $training->user->setting_notify_newreport){
             $training->user->notify(new TrainingReportNotification($training, $report));
+        }
+
+        if (($key = session()->get('onetimekey')) != null) {
+            // Remove the link
+            OneTimeLink::where('key', $key)->delete();
+            session()->pull('onetimekey');
+
+            return redirect('dashboard')->withSuccess('Report successfully created');
         }
 
         return redirect(route('training.show', $training->id))->withSuccess('Report successfully created');
@@ -162,7 +171,7 @@ class TrainingReportController extends Controller
         return request()->validate([
             'content' => 'sometimes|required',
             'contentimprove' => 'nullable',
-            'report_date' => 'required|date',
+            'report_date' => 'required|date_format:d/m/Y',
             'position' => 'nullable',
             'draft' => 'sometimes',
             'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',

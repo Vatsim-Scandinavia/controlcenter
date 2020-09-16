@@ -166,4 +166,14 @@ class Training extends Model
     {
         return $this->belongsToMany(User::class, 'training_mentor')->withPivot('expire_at');
     }
+
+    /**
+     * Get the one time link associated with the training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function onetimelink()
+    {
+        return $this->hasMany(OneTimeLink::class);
+    }
 }

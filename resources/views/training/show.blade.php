@@ -18,6 +18,12 @@
                         @endif
                     @endforeach
                 </h6>
+                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]))
+                    <button id="getOneTimeLinkReport">Get one time link (report)</button>
+                @endif
+                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
+                    <button id="getOneTimeLinkExam">Get one time link (report)</button>
+                @endif
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -220,7 +226,7 @@
                         </div>
                     </div>
                 @endisset
-                
+
                 <div class="card-body">
                     <div class="card bg-light mb-3">
                         <div class="card-header text-primary">Letter of motivation</div>
@@ -345,4 +351,61 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+
+        $('#getOneTimeLinkReport').click(async function (event) {
+            event.preventDefault();
+            $(this).prop('disabled', true);
+            let route = await getOneTimeLink('{!! \App\OneTimeLink::TRAINING_REPORT_TYPE !!}');
+            $(this).prop('disabled', false);
+
+            // Anything below this point can be changed
+            alert(route);
+        });
+
+        $('#getOneTimeLinkExam').click(async function (event) {
+            event.preventDefault();
+            $(this).prop('disabled', true);
+            let route = await getOneTimeLink('{!! \App\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
+            $(this).prop('disabled', false);
+
+            // Anything below this point can be changed
+            alert(route);
+        });
+
+        async function getOneTimeLink(type) {
+            return '{!! env('APP_URL') !!}' + '/training/onetime/' + await getOneTimeLinkKey(type);
+        }
+
+        async function getOneTimeLinkKey(type) {
+            let key, result;
+            result = await $.ajax('{!! route('training.onetimelink.store', ['training' => $training]) !!}', {
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{!! csrf_token() !!}"
+                },
+                data: {
+                    'type': type
+                },
+                success: function (response) {
+                    return response;
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+
+            try {
+                key = JSON.parse(result).key
+            } catch (error) {
+                console.log(error);
+            }
+
+            return key;
+        }
+
+    </script>
 @endsection

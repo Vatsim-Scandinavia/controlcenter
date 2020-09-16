@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\OneTimeLink;
 use App\Training;
 use App\TrainingReport;
 use App\User;
@@ -35,6 +36,12 @@ class TrainingReportPolicy
      */
     public function create(User $user)
     {
+        if (($key = session()->get('onetimekey')) != null) {
+            $link = OneTimeLink::where('key', $key)->get()->first();
+
+            return $link != null && $user->isMentor($link->training->country);
+        }
+
         return $user->isMentor();
     }
 

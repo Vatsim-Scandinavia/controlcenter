@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\OneTimeLink;
 use App\TrainingExamination;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -30,6 +31,12 @@ class TrainingExaminationPolicy
      */
     public function create(User $user)
     {
+        if (($key = session()->get('onetimekey')) != null) {
+            $link = OneTimeLink::where('key', $key)->get()->first();
+
+            return $link != null && $user->isMentor($link->training->country);
+        }
+
         return $user->isMentor();
     }
 

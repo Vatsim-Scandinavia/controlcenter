@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\OneTimeLink;
 use App\Training;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -100,14 +101,37 @@ class TrainingPolicy
 
     public function createReport(User $user, Training $training)
     {
+        if (($link = $this->getOneTimeLink($training)) != null) {
+            return $user->isMentor($link->training->country);
+        }
+
         // Check if mentor is mentoring country, not filling their own training and the training is in progress
         return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
     public function createExamination(User $user, Training $training)
     {
+        if (($link = $this->getOneTimeLink($training)) != null) {
+            return $user->isMentor($link->training->country);
+        }
+
         // Check if mentor is mentoring country, not filling their own training and the training is awaing an exam.
         return $training->mentors->contains($user) && $user->isNot($training->user);
+    }
+
+    private function getOneTimeLink($training) {
+        $link = null;
+
+        $key = session()->get('onetimekey');
+
+        if ($key != null) {
+            $link = OneTimeLink::where([
+                ['training_id', '=', $training->id],
+                ['key', '=', $key]
+            ])->get()->first();
+        }
+
+        return $link;
     }
 
 }

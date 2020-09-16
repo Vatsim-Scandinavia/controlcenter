@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\OneTimeLink;
 use Carbon\Carbon;
 use App\Position;
 use App\Training;
@@ -76,6 +77,14 @@ class TrainingExaminationController extends Controller
         TrainingObjectAttachmentController::saveAttachments($request, $examination);
 
         $training->user->notify(new TrainingExamNotification($training, $examination));
+
+        if (($key = session()->get('onetimekey')) != null) {
+            // Remove the link
+            OneTimeLink::where('key', $key)->delete();
+            session()->pull('onetimekey');
+
+            return redirect('dashboard')->withSuccess('Examination successfully added');
+        }
 
         if ($request->expectsJson()) {
             return response()->json([
