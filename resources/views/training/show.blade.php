@@ -18,12 +18,23 @@
                         @endif
                     @endforeach
                 </h6>
-                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]))
-                    <button id="getOneTimeLinkReport">Get one time link (report)</button>
+
+                @if(\Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
+                    <div class="dropdown">
+                        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Generate one-time link
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE])
+                                <button class="dropdown-item" id="getOneTimeLinkReport">Report</a>
+                            @endif
+                            @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE])
+                                <button class="dropdown-item" id="getOneTimeLinkExam">Examination</a>
+                            @endif
+                        </div>
+                    </div>
                 @endif
-                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
-                    <button id="getOneTimeLinkExam">Get one time link (report)</button>
-                @endif
+
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -363,7 +374,7 @@
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
-            alert(route);
+            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
         });
 
         $('#getOneTimeLinkExam').click(async function (event) {
@@ -373,7 +384,7 @@
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
-            alert(route);
+            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
         });
 
         async function getOneTimeLink(type) {
