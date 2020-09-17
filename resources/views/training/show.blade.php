@@ -22,7 +22,7 @@
                     <button id="getOneTimeLinkReport">Get one time link (report)</button>
                 @endif
                 @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
-                    <button id="getOneTimeLinkExam">Get one time link (report)</button>
+                    <button id="getOneTimeLinkExam">Get one time link (examination)</button>
                 @endif
             </div>
             <div class="card-body p-0">
