@@ -46,7 +46,7 @@ class SendTrainingInterestNotifications extends Command
     public function handle()
     {
 
-        $trainings = Training::where([['started_at', null], ['created_at', '<=', now()->subtract('d', 30)], ['status', '>=', 0]])->get();
+        $trainings = Training::where([['started_at', null], ['created_at', '<=', now()->subtract('d', 30)], ['status', '=', 0]])->get();
 
         foreach ($trainings as $training) {
 
