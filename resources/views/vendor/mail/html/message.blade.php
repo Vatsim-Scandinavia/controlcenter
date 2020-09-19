@@ -23,7 +23,7 @@ Vatsim Scandinavia<br><span style="font-weight: 400">Control Center</span>
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-![Logo]({{ asset('images/vatsca-logo-email.png') }})\
+[![Logo]({{ asset('images/vatsca-logo-email.png') }})](https://vatsim-scandinavia.org/)\
 [Change your e-mail settings here]({{ route('user.settings') }})
 @endcomponent
 @endslot
