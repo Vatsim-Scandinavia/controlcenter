@@ -292,9 +292,19 @@ class TrainingController extends Controller
         ', training type: '.$training->type.
         ', mentor: '.$training->mentors->pluck('name'));
 
-        // Send e-mail, if it's a new status and it goes from active to closed
+        // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if((int)$training->status != $oldStatus){
             if((int)$training->status < 0){
+
+                // If the training was completed and double checked with a passed exam result, store the relevant endorsements
+                if((int)$training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()){
+                    foreach($training->ratings as $rating){
+                        if($rating->vatsim_rating == null){
+                            $training->user->ratings()->attach($rating->id);
+                        }
+                    }
+                }
+
                 $training->user->notify(new TrainingClosedNotification($training, (int)$training->status));
                 return redirect($training->path())->withSuccess("Training successfully closed. E-mail confirmation sent to student.");
             }
