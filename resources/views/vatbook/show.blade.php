@@ -88,9 +88,9 @@
     $(document).ready(function() {
         $('div').tooltip();
 
-        var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $booking->date)->format('d/m/Y') : old('date') }}"
-        var startTime = "{{ empty(old('start_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->start_at)->format('H:i') : old('start_at') }}"
-        var endTime = "{{ empty(old('end_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->end_at)->format('H:i') : old('end_at') }}"
+        var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_start)->format('d/m/Y') : old('date') }}"
+        var startTime = "{{ empty(old('start_at')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_start)->format('H:i') : old('start_at') }}"
+        var endTime = "{{ empty(old('end_at')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_end)->format('H:i') : old('end_at') }}"
 
         $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
         $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: startTime});

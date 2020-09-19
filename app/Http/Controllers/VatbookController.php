@@ -33,7 +33,7 @@ class VatbookController extends Controller
         $booking = Vatbook::findOrFail($id);
         $positions = Position::all();
         $user = Auth::user();
-
+        
         if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) return view('vatbook.show', compact('booking', 'positions', 'user'));
 
         abort(403);
