@@ -62,8 +62,9 @@ class UserController extends Controller
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
+        $endorsements = $user->ratings;
 
-        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types'));
+        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types', 'endorsements'));
     }
 
     /**

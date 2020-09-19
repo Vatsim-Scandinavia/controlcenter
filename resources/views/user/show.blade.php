@@ -113,9 +113,9 @@
                     <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                         <thead class="thead-light">
                             <tr>
-                                <th data-sortable="true" data-filter-control="select">State</th>
-                                <th data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
-                                <th data-sortable="true" data-filter-control="select">Type</th>
+                                <th>State</th>
+                                <th>Level</th>
+                                <th>Type</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -147,7 +147,36 @@
                 </div>
             </div>
         </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Active Endorsements
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Endorsement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($endorsements as $endorsement)
+                            <tr>
+                                <td>
+                                    {{ $endorsement->name }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+    
 
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
