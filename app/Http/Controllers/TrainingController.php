@@ -256,12 +256,14 @@ class TrainingController extends Controller
 
         if (key_exists('mentors', $attributes)) {
 
+            $notifyOfNewMentor = false;
+
             foreach ((array) $attributes['mentors'] as $mentor) {
                 if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
 
                     // Notify student of their new mentor
-                    $training->user->notify(new TrainingMentorNotification($training));
+                    $notifyOfNewMentor = true;
                 }
             }
 
@@ -270,6 +272,9 @@ class TrainingController extends Controller
                     $training->mentors()->detach($mentor);
                 }
             }
+
+            // Notify student of their new mentor. We put this here so detached mentors ain't included.
+            if($notifyOfNewMentor) $training->user->notify(new TrainingMentorNotification($training));
 
             unset($attributes['mentors']);
         } else if (Auth::user()->isModerator()) { // XXX This is really hack since we don't send this attribute when mentors submit
