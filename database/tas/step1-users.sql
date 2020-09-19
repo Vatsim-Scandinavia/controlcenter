@@ -20,8 +20,8 @@ INSERT IGNORE temp.users_to_transfer SELECT tas.training_assessment.examinor FRO
 DELETE FROM temp.users_to_transfer WHERE id = 0;
 
 /* Handover */
-INSERT IGNORE handover.users (id, email, first_name, last_name, rating, rating_short, rating_long, pilot_rating, region, accepted_privacy, last_login)
-	SELECT temp.users_to_transfer.id, IF(tas.users.email = '', 'void@void.void', tas.users.email), tas.users.name_first, tas.users.name_last, tas.users.rating_id, 'N/A', 'N/A', tas.users.pilot_rating, tas.users.region_code, FALSE, FROM_UNIXTIME(tas.users.login_last)
+INSERT IGNORE handover.users (id, email, first_name, last_name, rating, rating_short, rating_long, pilot_rating, region, division, subdivision, accepted_privacy, last_login)
+	SELECT temp.users_to_transfer.id, IF(tas.users.email = '', 'void@void.void', tas.users.email), tas.users.name_first, tas.users.name_last, tas.users.rating_id, 'N/A', 'N/A', tas.users.pilot_rating, tas.users.region_code, tas.users.division_code, tas.users.subdivision_code, FALSE, FROM_UNIXTIME(tas.users.login_last)
 	FROM temp.users_to_transfer RIGHT JOIN tas.users ON temp.users_to_transfer.id = tas.users.id 
 	WHERE temp.users_to_transfer.id IS NOT NULL;
 
