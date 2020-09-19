@@ -8,6 +8,88 @@
 	  exit();
     }
 
+    // Transfer endorsements
+
+    $usersQuery = "SELECT * FROM temp.users_to_transfer";
+    $userResult = $db->query($usersQuery) or die(mysqli_error($db));
+
+    $users = [];
+    while($row = $userResult->fetch_assoc()) {
+        $users[] = $row['id'];
+    }
+
+    foreach($users as $user){
+        $maeQuery = "SELECT tas.users.mae FROM tas.users WHERE tas.users.id = ".$user;
+        $maeResult = $db->query($maeQuery) or die(mysqli_error($db));
+
+        while($row = $maeResult->fetch_assoc()) {
+
+            $insertSql = [];
+            
+            $mae = explode(',', $row['mae']);
+
+            foreach($mae as $m){
+                switch($m){
+            
+                    case 1:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (12, ".$user.");";
+                        break;
+                    case 2:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (13, ".$user.");";
+                        break;
+                    case 13:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (12, ".$user.");";
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (13, ".$user.");";
+                        break;
+                    case 15:
+                    case 17:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (10, ".$user.");";
+                        break;
+                    case 18:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (11, ".$user.");";
+                        break;
+                    case 19:
+                    case 21:
+                    case 23:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (10, ".$user.");";
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (11, ".$user.");";
+                        break;
+                    case 30:
+                    case 32:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (8, ".$user.");";
+                        break;
+                    case 33:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (9, ".$user.");";
+                        break;
+                    case 34:
+                    case 36:
+                    case 39:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (8, ".$user.");";
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (9, ".$user.");";
+                        break;
+                    case 41:
+                    case 46:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (14, ".$user.");";
+                        break;
+                    case 37:
+                    case 40:
+                        $insertSql[] = "INSERT IGNORE santa.rating_user (rating_id, user_id) VALUES (15, ".$user.");";
+                        break;
+                    
+                }
+            }
+    
+            if(!empty($insertSql)){
+    
+                foreach($insertSql as $q){
+                    $db->query($q) or die(mysqli_error($db));
+                }
+               
+            }
+        }
+
+        
+    }
 
     // Transfer ratings
 
