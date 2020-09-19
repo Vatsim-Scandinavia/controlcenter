@@ -26,8 +26,8 @@
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
-                                <th data-sortable="true" data-filter-control="input">Last Report</th>
-                                <th data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="lastreport" data-sortable="true" data-filter-control="input">Last Report</th>
+                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,12 +61,14 @@
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
-                                    @if ($training->started_at == null && $training->finished_at == null)
+                                    @if ($training->started_at == null && $training->closed_at == null)
                                         Training not started
-                                    @elseif ($training->finished_at == null)
+                                    @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
+                                    @elseif ($training->stated_at != null)
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
                                     @else
-                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
+                                        N/A
                                     @endif
                                 </td>
                                 <td>

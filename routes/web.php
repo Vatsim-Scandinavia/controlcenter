@@ -33,13 +33,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/content', 'DashboardController@content')->name('content');
     Route::get('/mentor', 'DashboardController@mentor')->name('mentor');
     Route::get('/trainings', 'TrainingController@index')->name('requests');
+    Route::get('/trainings/history', 'TrainingController@history')->name('requests.history');
     Route::get('/users', 'UserController@index')->name('users');
 
     // User endorsements
-    Route::get('/users/endorsements', 'UserEndorsementController@index')->name('users.endorsements');
-    Route::get('/users/endorsements/create', 'UserEndorsementController@create')->name('users.endorsements.create');
-    Route::get('/users/endorsements/{id}/delete', 'UserEndorsementController@delete');
-    Route::post('/users/endorsements/store', 'UserEndorsementController@store');
+    Route::get('/users/endorsements', 'SoloEndorsementController@index')->name('users.soloendorsements');
+    Route::get('/users/endorsements/create', 'SoloEndorsementController@create')->name('users.soloendorsements.create');
+    Route::get('/users/endorsements/{id}/delete', 'SoloEndorsementController@delete');
+    Route::post('/users/endorsements/store', 'SoloEndorsementController@store');
 
     Route::post('/mentor/{user}/country', 'MentorController@addCountry')->name('mentor.add.country');
     Route::post('/country/{country}/mentor', 'MentorController@addMentor')->name('country.add.mentor');
@@ -81,10 +82,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/training/report/{report}', 'TrainingReportController@update')->name('training.report.update');
     Route::delete('/training/report/{report}', 'TrainingReportController@destroy')->name('training.report.delete');
 
-    // Training report attachment routes
-    Route::get('/training/report/attachment/{attachment}', 'TrainingReportAttachmentController@show')->name('training.report.attachment.show');
-    Route::post('/training/report/{report}/attachment', 'TrainingReportAttachmentController@store')->name('training.report.attachment.store');
-    Route::delete('/training/report/attachment/{attachment}', 'TrainingReportAttachmentController@destroy')->name('training.report.attachment.delete');
+    // Training object routes
+    Route::get('/training/onetime/{key}', 'OneTimeLinkController@redirect')->name('training.onetimelink.redirect');
+    Route::post('/training/{training}/onetime', 'OneTimeLinkController@store')->name('training.onetimelink.store');
+
+    // Training object attachment routes
+    Route::get('/training/attachment/{attachment}', 'TrainingObjectAttachmentController@show')->name('training.object.attachment.show');
+    Route::post('/training/{trainingObjectType}/{trainingObject}/attachment', 'TrainingObjectAttachmentController@store')->name('training.object.attachment.store');
+    Route::delete('/training/attachment/{attachment}', 'TrainingObjectAttachmentController@destroy')->name('training.object.attachment.delete');
 
     // Training examination routes
     Route::get('/training/examination/{examination}', 'TrainingExaminationController@show')->name('training.examination.show');

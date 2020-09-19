@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Country;
-use App\Notifications\ContinuedTrainingInterestNotification;
+use App\Notifications\TrainingCreatedNotification;
+use App\Notifications\TrainingClosedNotification;
+use App\Notifications\TrainingMentorNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
@@ -22,13 +24,14 @@ class TrainingController extends Controller
      *
      */
     public static $statuses = [
-        -3 => ["text" => "Closed by system", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
-        -2 => ["text" => "Closed by student", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
-        -1 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
+        -4 => ["text" => "Closed by system", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
+        -3 => ["text" => "Closed by student", "color" => "danger", "icon" => "fa fa-ban", "assignableByStaff" => false],
+        -2 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
+        -1 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true],
         0 => ["text" => "In queue", "color" => "warning", "icon" => "fas fa-hourglass", "assignableByStaff" => true],
-        1 => ["text" => "In progress", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
-        2 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
-        3 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true]
+        1 => ["text" => "Pre-training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        2 => ["text" => "Active training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        3 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
     ];
 
     /**
@@ -44,6 +47,19 @@ class TrainingController extends Controller
     ];
 
     /**
+     * A list of possible experiences
+     *
+     */
+    public static $experiences = [
+        1 => ["text" => "New to VATSIM"],
+        2 => ["text" => "Experienced on VATSIM"],
+        3 => ["text" => "Real world pilot"],
+        4 => ["text" => "Real world ATC"],
+        5 => ["text" => "Holding ATC rating from other vACC"],
+        6 => ["text" => "Holding ATC rating from other virtual network"],
+    ];
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -53,15 +69,30 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $trainings = Auth::user()->viewableModels(\App\Training::class);
-
-        $openTrainings = $trainings->where('status', '>=', 0)->sortByDesc('status');
-        $closedTrainings =  $trainings->where('status', '<', 0)->sortByDesc('status');
+        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortByDesc('status');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
 
-        return view('training.index', compact('openTrainings', 'closedTrainings', 'statuses', 'types'));
+        return view('training.index', compact('openTrainings', 'statuses', 'types'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \App\Exceptions\PolicyMethodMissingException
+     * @throws \App\Exceptions\PolicyMissingException
+     */
+    public function history()
+    {
+
+        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sortBy('id');
+
+        $statuses = TrainingController::$statuses;
+        $types = TrainingController::$types;
+
+        return view('training.history', compact('closedTrainings', 'statuses', 'types'));
     }
 
     /**
@@ -149,31 +180,40 @@ class TrainingController extends Controller
         if (isset($data['user_id']) && User::find($data['user_id']) == null)
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
 
-        $ratings = Rating::find(explode("+", $data["training_level"]));
+        // Training_level comes from the application ratings comes from the manual creation, we need to seperate those.
+        if(isset($data['training_level'])){
+            $ratings = Rating::find(explode("+", $data["training_level"]));
+        } elseif(isset($data['ratings'])){
+            $ratings = Rating::find($data["ratings"]);
+        } else {
+            return redirect()->back()->withErrors('One or more ratings need to be selected to create training request.');
+        }
 
-        $training = new Training();
-        $training->user_id = isset($data['user_id']) ? $data['user_id'] : \Auth::id();
-        $training->country_id = $data["training_country"];
-        $training->notes = isset($data["comment"]) ? $data["comment"] : '';
-        $training->motivation = isset($data["motivation"]) ? $data["motivation"] : '';
+        $training = Training::create([
+            'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
+            'country_id' => $data['training_country'],
+            'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
+            'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
+            'experience' => isset($data['experience']) ? $data['experience'] : null,
+            'english_only_training' => key_exists("englishOnly", $data) ? true : false
+        ]);
 
-        $training->english_only_training = key_exists("englishOnly", $data) ? true : false;
+        if($ratings->count() > 1){
+            $training->ratings()->saveMany($ratings);
+        } else {
+            $training->ratings()->save($ratings->first());
+        }
 
-        $training->save();
+        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Country::find($training->country_id)->name);
 
-        $training->fresh();
-
-        $training->ratings()->saveMany($ratings);
-
-        $training->save();
-
-        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' for rating(s): '.$ratings->pluck('name').' for country: '.$training->country_id);
+        // Send confimration mail
+        $training->user->notify(new TrainingCreatedNotification($training));
 
         if ($request->expectsJson()) {
             return $training;
-        } else {
-            return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
         }
+
+        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
     }
 
     /**
@@ -192,8 +232,9 @@ class TrainingController extends Controller
         $trainingMentors = $training->country->mentors;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
+        $experiences = TrainingController::$experiences;
 
-        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types'));
+        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences'));
     }
 
     /**
@@ -206,6 +247,7 @@ class TrainingController extends Controller
     public function update(Training $training)
     {
         $this->authorize('update', $training);
+        $oldStatus = $training->fresh()->status;
 
         $attributes = $this->validateRequest();
         if (key_exists('status', $attributes)) {
@@ -214,9 +256,14 @@ class TrainingController extends Controller
 
         if (key_exists('mentors', $attributes)) {
 
+            $notifyOfNewMentor = false;
+
             foreach ((array) $attributes['mentors'] as $mentor) {
                 if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
+
+                    // Notify student of their new mentor
+                    $notifyOfNewMentor = true;
                 }
             }
 
@@ -226,8 +273,11 @@ class TrainingController extends Controller
                 }
             }
 
+            // Notify student of their new mentor. We put this here so detached mentors ain't included.
+            if($notifyOfNewMentor) $training->user->notify(new TrainingMentorNotification($training));
+
             unset($attributes['mentors']);
-        } else {
+        } else if (Auth::user()->isModerator()) { // XXX This is really hack since we don't send this attribute when mentors submit
             // Detach all if no passed key, as that means the list is empty
             $training->mentors()->detach();
         }
@@ -246,6 +296,24 @@ class TrainingController extends Controller
         '. Status: '.TrainingController::$statuses[$training->status]["text"].
         ', training type: '.$training->type.
         ', mentor: '.$training->mentors->pluck('name'));
+
+        // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
+        if((int)$training->status != $oldStatus){
+            if((int)$training->status < 0){
+
+                // If the training was completed and double checked with a passed exam result, store the relevant endorsements
+                if((int)$training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()){
+                    foreach($training->ratings as $rating){
+                        if($rating->vatsim_rating == null){
+                            $training->user->ratings()->attach($rating->id);
+                        }
+                    }
+                }
+
+                $training->user->notify(new TrainingClosedNotification($training, (int)$training->status));
+                return redirect($training->path())->withSuccess("Training successfully closed. E-mail confirmation sent to student.");
+            }
+        }
 
         return redirect($training->path())->withSuccess("Training successfully updated");
     }
@@ -291,15 +359,16 @@ class TrainingController extends Controller
             'experience' => 'sometimes|required|integer|min:1|max:5',
             'englishOnly' => 'nullable',
             'paused_at' => 'sometimes',
-            'motivation' => 'sometimes|required|min:400|max:1500',
+            'motivation' => 'sometimes|required|min:250|max:1500',
             'user_id' => 'sometimes|required|integer',
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
+            'ratings' => 'sometimes|required',
             'training_country' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
             'type' => 'sometimes|required|integer',
             'notes' => 'nullable',
-            'mentors' => 'sometimes'
+            'mentors' => 'sometimes',
         ]);
     }
 }

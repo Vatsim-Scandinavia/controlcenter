@@ -13,7 +13,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Important information</h6>
             </div>
             <div class="card-body">
-                <h5 class="card-title">What is ATC trainig?</h5>
+                <h5 class="card-title">What is ATC training?</h5>
                 <p class="card-text">Welcome to the ATC Training Department of VATSIM Scandinavia. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
                 <hr>
                 <h5 class="card-title">What do we expect from you?</h5>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training type</label>
-                            <select id="ratingSelect" class="custom-select my-1 mr-sm-2">
+                            <select id="ratingSelect" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
                                 <option selected disabled>Choose</option>
                                 <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                             </select>
@@ -100,12 +100,9 @@
                                   $('#err-experience').html('');
                                 }; removeErr();">
                                     <option selected disabled>Choose best fitting level...</option>
-                                    <option value="1">New to VATSIM</option>
-                                    <option value="2">Experienced on VATSIM</option>
-                                    <option value="3">Real world pilot</option>
-                                    <option value="4">Real world ATC</option>
-                                    <option value="5">Holding ATC rating from other vACC</option>
-                                    <option value="5">Holding ATC rating from other virtual network</option>
+                                    @foreach(\App\Http\Controllers\TrainingController::$experiences as $id => $data)
+                                        <option value="{{ $id }}">{{ $data["text"] }}</option>
+                                    @endforeach
                                 </select>
                                 <div class="danger text-danger" id="err-experience">
 
@@ -121,7 +118,8 @@
 
                             <div class="form-group">
                                 <label for="motivationTextarea">Letter of motivation</label>
-                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Write a short letter of motivation here. For instance, tell us about why you want to apply for this training, what motivates you. Minimum 400 characters" maxlength="1500" onchange="function removeErr() {
+                                <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to Vatsim-Scandinavia</p>
+                                <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500" onchange="function removeErr() {
                                   $('#err-motivation').html('');
                                 }; removeErr();"></textarea>
                                 <div class="danger text-danger" id="err-motivation">
@@ -129,9 +127,11 @@
                                 </div>
                             </div>
 
+                            <hr>
+
                             <div class="form-group">
                                 <label for="remarkTextarea">Comments or remarks</label>
-                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience, perferred training language, and other things you think want us to know." maxlength="500"></textarea>
+                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience, preferred training language, and other things you think want us to know." maxlength="500"></textarea>
                             </div>
                         </div>
 
@@ -162,7 +162,8 @@
         el: '#countrySelect',
         methods: {
             onChange(event) {
-                rating.update(event.srcElement.value)
+                rating.update(event.srcElement.value);
+                $(this.$el).removeClass('is-invalid');
             }
         }
 
@@ -176,22 +177,37 @@
         methods: {
             update: function(value){
                 this.ratings = payload[event.target.value].data
+            },
+            onChange(event) {
+                $(this.$el).removeClass('is-invalid');
             }
         }
     });
 
-    $('#continue-btn-step-1').click( function () {
+    $('#continue-btn-step-1').click( function (e) {
 
         let training_country = $('#countrySelect').val();
         sessionStorage.setItem('training_country', training_country);
         let training_level = $('#ratingSelect').val();
         sessionStorage.setItem('training_level', training_level);
 
+        if (training_country == null || training_level == null) {
+            e.preventDefault();
+        }
+
+        if (training_country == null)
+            $('#countrySelect').addClass('is-invalid');
+
+        if (training_level == null)
+            $('#ratingSelect').addClass('is-invalid');
+
     });
 
     $('#training-submit-btn').click( function (e) {
 
         e.preventDefault();
+
+        $(this).prop('disabled', true);
 
         var form = document.getElementById('training-form');
         var data = new FormData(form);
@@ -222,6 +238,8 @@
 
                     if (message.motivation)
                         $("#err-motivation").html(message.motivation[0]);
+
+                    $('#training-submit-btn').prop('disabled', false);
 
                 }
             }

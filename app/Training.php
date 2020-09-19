@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Training extends Model
 {
 
-    const CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE = 'continued_interest_notification_log';
+    const CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE = 'training_interest_log';
 
     protected $guarded = [];
 
     protected $dates = [
         'started_at',
-        'finished_at'
+        'closed_at'
     ];
 
     /**
@@ -33,34 +33,89 @@ class Training extends Model
      *
      * @param int $status
      */
-    public function updateStatus(int $status)
+    public function updateStatus(int $newStatus)
     {
         $oldStatus = $this->fresh()->status;
 
-        if (($status == 0 || $status == -1) && $status < $oldStatus) {
-            // Training was set back in queue
-            $this->update(['started_at' => null, 'finished_at' => null]);
-        }
+        if($newStatus != $oldStatus){
 
-        if ($status == 1) {
-            if ($status > $oldStatus) {
-                // Training has begun
-                $this->update(['started_at' => now()]);
-            } elseif ($status < $oldStatus) {
-                $this->update(['finished_at' => null]);
+            // Training was put back in queue or closed
+            if($newStatus == 0){
+                $this->update(['started_at' => null, 'closed_at' => null]);
             }
-        }
 
-        if ($status == 3 && $status > $oldStatus) {
-            if ($this->started_at == null) {
-                $this->update(['started_at' => now(), 'finished_at' => now()]);
-            } else {
-                $this->update(['finished_at' => now()]);
+            // If training is set as active
+            if($newStatus > 0 || $newStatus == -1){
+
+                // In case someone resurrects a closed training
+                if($oldStatus < 0){
+                    $this->update(['closed_at' => null]);
+                }
+
+                if(!isset($this->started_at)){
+                    $this->update(['started_at' => now()]);
+                }
             }
+
+            // If training is completed or closed
+            if($newStatus < 0){
+                $this->update(['closed_at' => now()]);
+            }
+
+            $this->update(['status' => $newStatus]);
         }
 
-        $this->update(['status' => $status]);
     }
+
+    /**
+     * Get a inline string of ratings associated with a training.
+     *
+     * @param string $status
+     * @return string
+     */
+     public function getInlineRatings(){
+
+        $output = "";
+
+        if( is_iterable($ratings = $this->ratings->toArray()) ){
+            for( $i = 0; $i < sizeof($ratings); $i++ ){
+                if( $i == (sizeof($ratings) - 1) ){
+                    $output .= $ratings[$i]["name"];
+                } else {
+                    $output .= $ratings[$i]["name"] . " + ";
+                }
+            }
+        } else {
+            $output .= $ratings["name"];
+        }
+
+        return $output;
+     }
+
+    /**
+     * Get a inline string of ratings associated with a training.
+     *
+     * @param string $status
+     * @return string
+     */
+    public function getInlineMentors(){
+
+        $output = "";
+
+        if( is_iterable($mentors = $this->mentors->pluck('name')->toArray()) ){
+            for( $i = 0; $i < sizeof($mentors); $i++ ){
+                if( $i == (sizeof($mentors) - 1) ){
+                    $output .= $mentors[$i];
+                } else {
+                    $output .= $mentors[$i] . " & ";
+                }
+            }
+        } else {
+            $output .= $mentors;
+        }
+
+        return $output;
+     }
 
     /**
      * Get the student.
@@ -109,6 +164,16 @@ class Training extends Model
      */
     public function mentors()
     {
-        return $this->belongsToMany(User::class)->withPivot('expire_at');
+        return $this->belongsToMany(User::class, 'training_mentor')->withPivot('expire_at');
+    }
+
+    /**
+     * Get the one time link associated with the training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function onetimelink()
+    {
+        return $this->hasMany(OneTimeLink::class);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\File;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
+use \Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -78,7 +78,7 @@ class FileController extends Controller
     private function validateRequest()
     {
         return request()->validate([
-            'file' => 'required|file'
+            'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg'
         ]);
     }
 
@@ -91,7 +91,7 @@ class FileController extends Controller
      */
     public static function saveFile(UploadedFile $file, string $filename = null)
     {
-        $extension = $file->getExtension();
+        $extension = $file->getClientOriginalExtension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
 
         if ($filename == null) {

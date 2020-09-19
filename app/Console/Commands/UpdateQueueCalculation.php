@@ -53,7 +53,7 @@ class UpdateQueueCalculation extends Command
 
                     // Only include pure Vatsim ratings in calculation
                     if($training->ratings->count() == 1 && $training->ratings->first()->vatsim_rating){
-                        if($training->status == 3){
+                        if($training->status == -1){
                             $trainingCreated = $training->created_at;
                             $trainingStarted = $training->started_at;
 

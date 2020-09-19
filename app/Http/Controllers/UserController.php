@@ -45,20 +45,26 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::find($id);
+        $this->authorize('view', $user);
+
         $groups = Group::all();
         $countries = Country::all();
+
+        if ($user == null)
+            return abort(404);
 
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
+        $endorsements = $user->ratings;
 
-        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types'));
+        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types', 'endorsements'));
     }
 
     /**
@@ -79,14 +85,14 @@ class UserController extends Controller
         if (key_exists('countries', $data)) {
 
             foreach ((array) $data['countries'] as $country) {
-                if (!$user->mentor_countries->contains($country)){
-                    $user->mentor_countries()->attach($country);
+                if (!$user->training_role_countries->contains($country)){
+                    $user->training_role_countries()->attach($country);
                 }
             }
 
-            foreach ($user->mentor_countries as $country) {
+            foreach ($user->training_role_countries as $country) {
                 if (!in_array($country->id, (array) $data['countries'])) {
-                    $user->mentor_countries()->detach($country);
+                    $user->training_role_countries()->detach($country);
 
                     // Unassign this mentor from trainings from the specific country
                     $user->teaches()->detach($user->teaches->where('country_id', $country->id));
@@ -96,11 +102,19 @@ class UserController extends Controller
             unset($data['countries']);
         } else {
             // Detach all if no passed key, as that means the list is empty
-            $user->mentor_countries()->detach();
+            $user->training_role_countries()->detach();
 
             // Unassign this mentor from all trainings
             $user->teaches()->detach();
         }
+
+        if($data['access'] == 0){
+            $user->group = null;
+        } else {
+            $user->group = $data['access'];
+        }
+
+        $user->save();
 
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
 
@@ -140,7 +154,7 @@ class UserController extends Controller
     public function settings_update(Request $request, User $user)
     {
         $user = Auth::user();
-        
+
         $data = $request->validate([
             'setting_notify_newreport' => '',
             'setting_notify_newreq' => '',
@@ -152,7 +166,7 @@ class UserController extends Controller
         isset($data['setting_notify_newreq']) ? $setting_notify_newreq = true : $setting_notify_newreq = false;
         isset($data['setting_notify_closedreq']) ? $setting_notify_closedreq = true : $setting_notify_closedreq = false;
         isset($data['setting_notify_newexamreport']) ? $setting_notify_newexamreport = true : $setting_notify_newexamreport = false;
-        
+
         $user->setting_notify_newreport = $setting_notify_newreport;
         $user->setting_notify_newreq = $setting_notify_newreq;
         $user->setting_notify_closedreq = $setting_notify_closedreq;
@@ -161,5 +175,5 @@ class UserController extends Controller
 
         return redirect()->intended(route('user.settings'))->withSuccess("Settings successfully changed");
     }
-    
+
 }

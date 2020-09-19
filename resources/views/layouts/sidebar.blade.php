@@ -26,6 +26,12 @@
             <span>Vatbook</span></a>
         </li>
 
+        <li class="nav-item">
+        <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Moodle</span></a>
+        </li>
+
         @if (\Auth::user()->isMentor())
 
         <!-- Divider -->
@@ -51,10 +57,18 @@
         @endif
         @if (\Auth::user()->isModerator())
 
-        <li class="nav-item {{ Route::is('requests') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('requests') }}">
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
             <i class="fas fa-fw fa-flag"></i>
-            <span>Requests</span></a>
+            <span>Requests</span>
+        </a>
+        <div id="collapseReq" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
+            <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
+            </div>
+        </div>
         </li>
 
         @endif
@@ -74,8 +88,8 @@
             <span>Overview</span></a>
         </li>
 
-        <li class="nav-item {{ Route::is('users.endorsements') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('users.endorsements') }}">
+        <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('users.soloendorsements') }}">
             <i class="fas fa-fw fa-check-square"></i>
             <span>Solo Endorsements</span></a>
         </li>

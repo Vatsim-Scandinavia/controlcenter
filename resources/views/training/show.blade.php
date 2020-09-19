@@ -18,6 +18,23 @@
                         @endif
                     @endforeach
                 </h6>
+
+                @if(\Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
+                    <div class="dropdown">
+                        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Generate one-time link
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE])
+                                <button class="dropdown-item" id="getOneTimeLinkReport">Report</a>
+                            @endif
+                            @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE])
+                                <button class="dropdown-item" id="getOneTimeLinkExam">Examination</a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -60,19 +77,21 @@
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
-                                    @if ($training->started_at == null && $training->finished_at == null)
+                                    @if ($training->started_at == null && $training->closed_at == null)
                                         Training not started
-                                    @elseif ($training->finished_at == null)
+                                    @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
+                                    @elseif ($training->stated_at != null)
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
                                     @else
-                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
+                                        N/A
                                     @endif
                                 </td>
                                 <td>{{ $training->country->name }}</td>
                                 <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
-                                    @if ($training->finished_at != null)
-                                        {{ $training->finished_at->toEuropeanDate() }}
+                                    @if ($training->closed_at != null)
+                                        {{ $training->closed_at->toEuropeanDate() }}
                                     @else
                                         -
                                     @endif
@@ -118,7 +137,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training state</label>
-                        <select class="form-control" name="status" id="trainingStateSelect">
+                        <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
                             @foreach($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -133,7 +152,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
-                        <select class="form-control" name="type" id="trainingStateSelect">
+                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
                             @foreach($types as $id => $data)
                                 @if($id == $training->type)
                                     <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
@@ -145,7 +164,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }}>
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModerator()) disabled @endif>
                         <label class="form-check-label" for="check1">
                             Paused
                             @if(isset($training->paused_at))
@@ -205,6 +224,20 @@
                         </div>
                     </div>
                 </div>
+
+                @isset($training->experience)
+                    <div class="card-body">
+                        <div class="card bg-light mb-3">
+                            <div class="card-header text-primary">Experience</div>
+                            <div class="card-body">
+                            <p class="card-text">
+                                {{ $experiences[$training->experience]["text"] }}
+                            </p>
+                            </div>
+                        </div>
+                    </div>
+                @endisset
+
                 <div class="card-body">
                     <div class="card bg-light mb-3">
                         <div class="card-header text-primary">Letter of motivation</div>
@@ -245,7 +278,22 @@
                                             <span class='badge badge-warning'>POSTPONED</span>
                                         @endif
                                     </p>
+                                    <p>Examinator: <a href="{{ route('user.show', $examination->examiner_id) }}">{{ \App\User::find($examination->examiner_id)->name }}</a></p>
+                                    <p>Position: {{ \App\Position::find($examination->position_id)->callsign }}</p>
                                 </div>
+
+                                @if($examination->attachments->count() > 0)
+                                    <div class="card-body">
+                                        @foreach($examination->attachments as $attachment)
+                                            <div>
+                                                <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                    <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
                             </div>
                     @endforeach
 
@@ -263,14 +311,14 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ $report->content }}
+                                            {!! nl2br(e($report->content)) !!}
                                         </p>
                                     </div>
-                                    @if ($report->mentor_notes != null)
-                                    <div class="card-header text-primary">Mentor notes</div>
+                                    @if ($report->contentimprove != null)
+                                    <div class="card-header text-primary">Areas to improve</div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ $report->mentor_notes }}
+                                            {!! nl2br(e($report->contentimprove)) !!}
                                         </p>
                                     </div>
                                     @endif
@@ -279,7 +327,7 @@
                                         <div class="card-body">
                                             @foreach($report->attachments as $attachment)
                                                 <div>
-                                                    <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                    <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                                         <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
                                                     </a>
                                                 </div>
@@ -296,7 +344,7 @@
                     </div>
                 @endcan
 
-                @if($training->status == 1)
+                @if($training->status == 1 || $training->status == 2)
                     @can('createReport', $training)
                         <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
                     @else
@@ -304,7 +352,7 @@
                     @endcan
                 @endif
 
-                @if($training->status == 2)
+                @if($training->status == 3)
                     @can('createExamination', $training)
                         <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-danger">Create examination report</a>
                     @else
@@ -314,4 +362,61 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+
+        $('#getOneTimeLinkReport').click(async function (event) {
+            event.preventDefault();
+            $(this).prop('disabled', true);
+            let route = await getOneTimeLink('{!! \App\OneTimeLink::TRAINING_REPORT_TYPE !!}');
+            $(this).prop('disabled', false);
+
+            // Anything below this point can be changed
+            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
+        });
+
+        $('#getOneTimeLinkExam').click(async function (event) {
+            event.preventDefault();
+            $(this).prop('disabled', true);
+            let route = await getOneTimeLink('{!! \App\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
+            $(this).prop('disabled', false);
+
+            // Anything below this point can be changed
+            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
+        });
+
+        async function getOneTimeLink(type) {
+            return '{!! env('APP_URL') !!}' + '/training/onetime/' + await getOneTimeLinkKey(type);
+        }
+
+        async function getOneTimeLinkKey(type) {
+            let key, result;
+            result = await $.ajax('{!! route('training.onetimelink.store', ['training' => $training]) !!}', {
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{!! csrf_token() !!}"
+                },
+                data: {
+                    'type': type
+                },
+                success: function (response) {
+                    return response;
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+
+            try {
+                key = JSON.parse(result).key
+            } catch (error) {
+                console.log(error);
+            }
+
+            return key;
+        }
+
+    </script>
 @endsection

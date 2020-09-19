@@ -76,17 +76,12 @@ class User extends Authenticatable
 
     public function teaches()
     {
-        return $this->belongsToMany(Training::class)->withPivot('expire_at');
+        return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');
     }
 
     public function ratings()
     {
         return $this->belongsToMany(Rating::class);
-    }
-
-    public function settings()
-    {
-        return $this->hasMany(UserSetting::class);
     }
 
     public function bookings()
@@ -99,9 +94,9 @@ class User extends Authenticatable
         return $this->hasMany(Vatbook::class);
     }
 
-    public function mentor_countries()
+    public function training_role_countries()
     {
-        return $this->belongsToMany(Country::class, 'mentor_country')->withTimestamps();
+        return $this->belongsToMany(Country::class, 'training_role_country')->withTimestamps();
     }
 
     public function vote(){
@@ -197,6 +192,23 @@ class User extends Authenticatable
     }
 
     /**
+     * @return mixed
+     * @throws PolicyMethodMissingException
+     * @throws PolicyMissingException
+     */
+    public function mentoringTrainings()
+    {
+        $trainings = $this->viewableModels(Training::class, [['status', '>=', 2]])->sortBy('id');
+
+        foreach ($trainings as $key => $training) {
+            if (!$training->mentors->contains($this))
+                $trainings->pull($key);
+        }
+
+        return $trainings;
+    }
+
+    /**
      * Return whether or not the user has active trainings.
      * A country can be provided to check if the user has an active training in the specified country.
      *
@@ -206,9 +218,9 @@ class User extends Authenticatable
     public function hasActiveTrainings(Country $country = null)
     {
         if ($country == null)
-            return count($this->trainings()->whereIn('status', [0, 1, 2])->get()) > 0;
+            return count($this->trainings()->whereIn('status', [0, 1, 2, 3])->get()) > 0;
 
-        return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2])->get()) > 0;
+        return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
     }
 
     // User group checks
@@ -221,13 +233,21 @@ class User extends Authenticatable
 
         return $this->group <= 3 &&
             isset($this->group) &&
-            $country->mentors->contains($this);
+            $country->training_roles->contains($this);
 
     }
 
-    public function isModerator()
+    public function isModerator(Country $country = null)
     {
-        return $this->group <= 2 && isset($this->group);
+        if ($country == null)
+            return $this->group <= 2 && isset($this->group);
+
+        if ($this->isAdmin())
+            return $this->group <= 2 && isset($this->group);
+
+        return $this->group <= 2 &&
+            $country->training_roles->contains($this);
+            isset($this->group);
     }
 
     public function isAdmin()

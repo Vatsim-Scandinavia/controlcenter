@@ -19,10 +19,10 @@
                 <form action="{{ route('training.report.update', ['report' => $report->id]) }}" method="POST">
                     @csrf
                     @method('PATCH')
-                    
+
                     <div class="form-group">
                         <label for="position">Position</label>
-                        <input 
+                        <input
                             id="position"
                             class="form-control @error('position') is-invalid @enderror"
                             type="text"
@@ -44,9 +44,9 @@
 
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" value="{{ empty(old('date')) ? $report->created_at : old('date')}}" required>
-                        @error('date')
-                            <span class="text-danger">{{ $errors->first('date') }}</span>
+                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ empty(old('report_date')) ? $report->created_at : old('report_date')}}" required>
+                        @error('report_date')
+                            <span class="text-danger">{{ $errors->first('report_date') }}</span>
                         @enderror
                     </div>
 
@@ -58,8 +58,16 @@
                         @enderror
                     </div>
 
+                    <div class="form-group">
+                        <label for="contentimprove">Areas to improve</label>
+                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ empty(old('contentimprove')) ? $report->contentimprove : old('contentimprove') }}</textarea>
+                        @error('contentimprove')
+                            <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
+                        @enderror
+                    </div>
+
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input @error('draft') is-invalid @enderror" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
+                        <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
                         <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
                         @error('draft')
                             <span class="text-danger">{{ $errors->first('draft') }}</span>
@@ -93,17 +101,17 @@
 
                     @foreach($report->attachments as $attachment)
                         <div data-id="{{ $attachment->id }}">
-                            <a href="{{ route('training.report.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                            <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                 {{ $attachment->file->name }}
                             </a>
-                            <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger"></i>
+                            <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger" style="cursor: pointer;"></i>
                         </div>
                     @endforeach
                 </div>
 
                 <hr>
 
-                <form method="post" id="file-form" action="{{ route('training.report.attachment.store', ['report' => $report->id]) }}" enctype="multipart/form-data">
+                <form method="post" id="file-form" action="{{ route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $report->id]) }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group">
@@ -117,7 +125,7 @@
                     </div>
 
                 </form>
-                
+
             </div>
         </div>
     </div>
@@ -140,7 +148,7 @@
         input = $(input);
         let id = input.data('attachment');
 
-        $.ajax('/training/report/attachment/' + id, {
+        $.ajax('/training/attachment/' + id, {
             'method' : "post",
             'data' : {
                 '_token': "{!! csrf_token() !!}",
@@ -168,7 +176,7 @@
         $('div').tooltip();
 
         var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
-        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
+        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();

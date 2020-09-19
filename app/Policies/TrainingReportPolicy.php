@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\OneTimeLink;
 use App\Training;
 use App\TrainingReport;
 use App\User;
@@ -23,6 +24,7 @@ class TrainingReportPolicy
     {
         return  $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
+                $user->isModerator($trainingReport->training->country) ||
                 ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
     }
 
@@ -34,6 +36,12 @@ class TrainingReportPolicy
      */
     public function create(User $user)
     {
+        if (($key = session()->get('onetimekey')) != null) {
+            $link = OneTimeLink::where('key', $key)->get()->first();
+
+            return $link != null && $user->isMentor($link->training->country);
+        }
+
         return $user->isMentor();
     }
 
@@ -58,7 +66,7 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {
-        return ($user->isModerator() || ($user->is($trainingReport->user) && $user->isMentor($trainingReport->training->country)))
+        return ($user->isModerator($trainingReport->training->country) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->country)))
             ? Response::allow()
             : Response::deny("Only moderators and the author of the training report can delete it.");
     }

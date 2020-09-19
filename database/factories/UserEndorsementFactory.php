@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\UserEndorsement;
+use App\SoloEndorsement;
 use Faker\Generator as Faker;
 
-$factory->define(UserEndorsement::class, function (Faker $faker) {
+$factory->define(SoloEndorsement::class, function (Faker $faker) {
     return [
         //
     ];

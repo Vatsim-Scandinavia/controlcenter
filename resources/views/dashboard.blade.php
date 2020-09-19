@@ -21,14 +21,16 @@
     </div>
     </div>
 
-    <!-- Favorite position card -->
+    <!-- Division card -->
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Your favorite position</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">ENGM_W_APP</div>
+            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Your associated division</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ $data['division'] }}/{{ $data['subdivision'] }}
+            </div>
             </div>
             <div class="col-auto">
             <i class="fas fa-star fa-2x text-gray-300"></i>
@@ -44,8 +46,8 @@
         <div class="card-body">
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">ATC Hours (Annual)</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">245 of 60 hours</div>
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">ATC Hours (Last 12 months)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Coming soon</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -85,62 +87,122 @@
 <div class="row">
     <!-- Area Chart -->
     <div class="col-xl-8 col-lg-7">
+
+    @if(\Auth::user()->isMentor())
+        @php
+            $student_trainings = \Auth::user()->mentoringTrainings();
+        @endphp
+
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">My Students</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body {{ sizeof($student_trainings) == 0 ? '' : 'p-0' }}">
+
+                    @if (sizeof($student_trainings) == 0)
+                        <p>You have no students.</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Level</th>
+                                    <th>Country</th>
+                                    <th>State</th>
+                                    <th>Reports</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($student_trainings as $training)
+                                    <tr class="link-row" data-href="{{ $training->path() }}">
+                                        <td>{{ $training->user->name }}</td>
+                                        <td>
+                                            @foreach($training->ratings as $rating)
+                                                @if ($loop->last)
+                                                    {{ $rating->name }}
+                                                @else
+                                                    {{ $rating->name . " + " }}
+                                                @endif
+                                            @endforeach
+                                        </td>
+                                        <td>{{ $training->country->name }}</td>
+                                        <td>
+                                            <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+    @endif
+
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-white">My Trainings</h6>
+            <h6 class="m-0 font-weight-bold text-white">My Trainings</h6>
         </div>
         <!-- Card Body -->
         <div class="card-body {{ sizeof($trainings) == 0 ? '' : 'p-0' }}">
 
-        @if (sizeof($trainings) == 0)
-            <p>You have no registered trainings.</p>
-        @else
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-            <thead class="thead-light">
-                <tr>
-                <th>Level</th>
-                <th>Country</th>
-                <th>Period</th>
-                <th>State</th>
-                <th>Reports</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($trainings as $training)
-                    <tr class="link-row" data-href="{{ $training->path() }}">
-                        <td>
-                            @foreach($training->ratings as $rating)
-                                @if ($loop->last)
-                                    {{ $rating->name }}
-                                @else
-                                    {{ $rating->name . " + " }}
-                                @endif
-                            @endforeach
-                        </td>
-                        <td>{{ $training->country->name }}</td>
-                        <td>
-                            @if ($training->started_at == null && $training->finished_at == null)
-                                Training not started
-                            @elseif ($training->finished_at == null)
-                                {{ $training->started_at->toEuropeanDate() }} -
-                            @else
-                                {{ $training->started_at->toEuropeanDate() }} - {{ $training->finished_at->toEuropeanDate() }}
-                            @endif
-                        </td>
-                        <td>
-                            <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
-                        </td>
-                        <td>
-                            <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-            </table>
-        </div>
-        @endif
+            @if (sizeof($trainings) == 0)
+                <p>You have no registered trainings.</p>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Level</th>
+                            <th>Country</th>
+                            <th>Period</th>
+                            <th>State</th>
+                            <th>Reports</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($trainings as $training)
+                            <tr class="link-row" data-href="{{ $training->path() }}">
+                                <td>
+                                    @foreach($training->ratings as $rating)
+                                        @if ($loop->last)
+                                            {{ $rating->name }}
+                                        @else
+                                            {{ $rating->name . " + " }}
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td>{{ $training->country->name }}</td>
+                                <td>
+                                    @if ($training->started_at == null && $training->closed_at == null)
+                                        Training not started
+                                    @elseif ($training->closed_at == null)
+                                        {{ $training->started_at->toEuropeanDate() }} -
+                                    @elseif ($training->stated_at != null)
+                                        {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                                <td>
+                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                </td>
+                                <td>
+                                    <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
     </div>
@@ -158,7 +220,7 @@
                     <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="images/undraw_aircraft_fbvl.svg" alt="">
                 </div>
                 <p>Are you interested in becoming an air traffic controller, or apply for a higher rank? Request you training below, and you'll be notified when it's your turn.</p>
-                
+
                 @can('apply', \App\Training::class)
                     <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
                         Request training

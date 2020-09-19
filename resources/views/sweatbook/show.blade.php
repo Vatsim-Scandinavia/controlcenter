@@ -78,8 +78,8 @@
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $booking->date)->format('d/m/Y') : old('date') }}"
         var startTime = "{{ empty(old('start_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->start_at)->format('H:i') : old('start_at') }}"
         var endTime = "{{ empty(old('end_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->end_at)->format('H:i') : old('end_at') }}"
-
-        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
+        
+        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 }});
         $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: startTime});
         $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: endTime });
 

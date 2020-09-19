@@ -47,7 +47,7 @@ class FileUnitTest extends TestCase
     public function file_can_be_saved_with_fixed_filename()
     {
         $file = UploadedFile::fake()->image('image_test');
-        $filename = 'test_image_filename';
+        $filename = 'test_image_filename' . "." . $file->extension();
         $id = FileController::saveFile($file, $filename);
 
         $modelFile = File::find($id);

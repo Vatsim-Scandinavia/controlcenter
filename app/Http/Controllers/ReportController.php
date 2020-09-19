@@ -78,13 +78,13 @@ class ReportController extends Controller
             $payload["waiting"] = Country::find($countryFilter)->trainings->where('status', 0)->count();
             $payload["training"] = Country::find($countryFilter)->trainings->where('status', 1)->count();
             $payload["exam"] = Country::find($countryFilter)->trainings->where('status', 2)->count();
-            $payload["completed"] = Country::find($countryFilter)->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+            $payload["completed"] = Country::find($countryFilter)->trainings->where('status', 3)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
         } else {
             foreach(Country::all() as $country){
                 $payload["waiting"] = $payload["waiting"] + $country->trainings->where('status', 0)->count();
                 $payload["training"] = $payload["training"] + $country->trainings->where('status', 1)->count();
                 $payload["exam"] = $payload["exam"] + $country->trainings->where('status', 2)->count();
-                $payload["completed"] = $payload["completed"] + $country->trainings->where('status', 3)->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+                $payload["completed"] = $payload["completed"] + $country->trainings->where('status', 3)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
             }
         }
 
@@ -171,11 +171,11 @@ class ReportController extends Controller
 
                     // Completed requests
                     $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
                         ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                         ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
                         ->where('status', 3)
-                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
                         ->where('country_id', $countryFilter)
                         ->groupBy('month')
@@ -211,11 +211,11 @@ class ReportController extends Controller
 
                     // Completed requests
                     $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.finished_at) as month'))
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
                         ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                         ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
                         ->where('status', 3)
-                        ->where('finished_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
                         ->groupBy('month')
                         ->get();

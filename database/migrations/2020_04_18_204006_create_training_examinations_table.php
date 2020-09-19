@@ -18,7 +18,6 @@ class CreateTrainingExaminationsTable extends Migration
             $table->unsignedBigInteger('training_id');
             $table->unsignedBigInteger('position_id')->nullable();
             $table->unsignedBigInteger('examiner_id')->nullable();
-            $table->string('examination_sheet')->nullable();
             $table->enum('result', ['PASSED', 'FAILED', 'INCOMPLETE', 'POSTPONED'])->nullable();
             $table->date('examination_date');
             $table->timestamps();
@@ -26,7 +25,6 @@ class CreateTrainingExaminationsTable extends Migration
             $table->foreign('training_id')->references('id')->on('trainings')->onDelete('CASCADE')->onUpdate('CASCADE');
             $table->foreign('position_id')->references('id')->on('positions')->onUpdate('CASCADE')->onDelete('NO ACTION');
             $table->foreign('examiner_id')->references('id')->on('users')->onDelete('SET NULL')->onUpdate('CASCADE');
-            $table->foreign('examination_sheet')->references('id')->on('files')->onDelete('SET NULL')->onUpdate('CASCADE');
         });
     }
 

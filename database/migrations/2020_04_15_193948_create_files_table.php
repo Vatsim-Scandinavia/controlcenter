@@ -27,11 +27,6 @@ class CreateFilesTable extends Migration
             $table->foreign('uploaded_by')->references('id')->on('users')->onDelete('SET NULL')->onUpdate('CASCADE');
 
         });
-
-        Schema::table('training_report_attachments', function ($table) {
-            $table->foreign('training_report_id')->references('id')->on('training_reports');
-            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE')->onUpdate('CASCADE');
-        });
     }
 
     /**

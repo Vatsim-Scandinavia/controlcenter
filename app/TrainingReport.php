@@ -4,10 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TrainingReport extends Model
+class TrainingReport extends TrainingObject
 {
 
     protected $guarded = [];
+
+    protected $dates = ['report_date'];
+//    protected $dateFormat = 'd/m/Y';
 
     protected $casts = [
         'draft' => 'boolean'
@@ -18,15 +21,7 @@ class TrainingReport extends Model
         return route('training.report.edit', ['report' => $this->id]);
     }
 
-    public function training(){
-        return $this->belongsTo(Training::class);
-    }
-
-    public function user(){
+    public function author(){
         return $this->belongsTo(User::class, 'written_by_id');
-    }
-
-    public function attachments(){
-        return $this->hasMany(TrainingReportAttachment::class);
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\OneTimeLink;
 use Carbon\Carbon;
 use App\Position;
 use App\Training;
 use App\TrainingExamination;
+use App\Notifications\TrainingExamNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -36,7 +38,7 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('createExamination', $training);
-        if ($training->status != 2) { return redirect(null, 400)->back()->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
+        if ($training->status != 3) { return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
 
         $positions = Position::all();
 
@@ -72,9 +74,16 @@ class TrainingExaminationController extends Controller
             $examination->update(['result' => $data['result']]);
         }
 
-        if (key_exists('examination_sheet', $data)) {
-            $id = FileController::saveFile($request->file('examination_sheet'), $request->file('examination_sheet')->getClientOriginalName());
-            $examination->update(['examination_sheet' => $id]);
+        TrainingObjectAttachmentController::saveAttachments($request, $examination);
+
+        $training->user->notify(new TrainingExamNotification($training, $examination));
+
+        if (($key = session()->get('onetimekey')) != null) {
+            // Remove the link
+            OneTimeLink::where('key', $key)->delete();
+            session()->pull('onetimekey');
+
+            return redirect('dashboard')->withSuccess('Examination successfully added');
         }
 
         if ($request->expectsJson()) {
@@ -84,7 +93,7 @@ class TrainingExaminationController extends Controller
             ]);
         }
 
-        return redirect()->back()->withSuccess('Examination successfully added');
+        return redirect(route('training.show', $training->id))->withSuccess('Examination successfully added');
 
     }
 
@@ -134,7 +143,7 @@ class TrainingExaminationController extends Controller
             'position' => 'required|exists:positions,callsign',
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
-            'examination_sheet' => 'sometimes|file'
+            'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg'
         ]);
     }
 

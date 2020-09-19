@@ -16,14 +16,17 @@ class CreateCountriesTable extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('contact');
+            $table->text('template_newreq')->nullable();
+            $table->text('template_newmentor')->nullable();
         });
 
         DB::table('countries')->insert([
-            ['name' => "Norway"],
-            ['name' => "Sweden"],
-            ['name' => "Denmark"],
-            ['name' => "Finland"],
-            ['name' => "Iceland"],
+            ['name' => "Denmark", 'contact' => "training-denmark@vatsim-scandinavia.org"],
+            ['name' => "Finland", 'contact' => "training-finland@vatsim-scandinavia.org"],
+            ['name' => "Iceland", 'contact' => "training-iceland@vatsim-scandinavia.org"],
+            ['name' => "Norway", 'contact' => "training-norway@vatsim-scandinavia.org"],
+            ['name' => "Sweden", 'contact' => "training-sweden@vatsim-scandinavia.org"],
         ]);
     }
 

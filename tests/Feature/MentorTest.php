@@ -25,8 +25,8 @@ class MentorTest extends TestCase
                 ->assertStatus(200)
                 ->assertJson(['message' => 'Mentor successfully updated']);
 
-        $this->assertTrue($mentor->mentor_countries->contains($country));
-        $this->assertDatabaseHas('mentor_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
+        $this->assertTrue($mentor->training_role_countries->contains($country));
+        $this->assertDatabaseHas('training_role_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
     }
 
     /** @test */
@@ -41,7 +41,7 @@ class MentorTest extends TestCase
                 ->assertStatus(200)
                 ->assertJson(['message' => 'Mentor successfully added']);
 
-        $this->assertDatabaseHas('mentor_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
+        $this->assertDatabaseHas('training_role_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
         $this->assertTrue($country->mentors->contains($mentor));
     }
 
@@ -57,8 +57,8 @@ class MentorTest extends TestCase
             ->assertStatus(200)
             ->assertJson(['message' => 'Mentor successfully updated']);
 
-        $this->assertTrue( ! $mentor->mentor_countries->contains($country));
-        $this->assertDatabaseMissing('mentor_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
+        $this->assertTrue( ! $mentor->training_role_countries->contains($country));
+        $this->assertDatabaseMissing('training_role_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
     }
 
     /** @test */
@@ -73,7 +73,7 @@ class MentorTest extends TestCase
             ->assertStatus(200)
             ->assertJson(['message' => 'Mentor successfully removed']);
 
-        $this->assertDatabaseMissing('mentor_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
+        $this->assertDatabaseMissing('training_role_country', ['user_id' => $mentor->id, 'country_id' => $country->id]);
         $this->assertTrue( ! $country->mentors->contains($mentor));
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ActivityLogController;
 use App\User;
+use App\Group;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Token;
 use App\Http\Controllers\Controller;
@@ -68,8 +69,8 @@ class LoginController extends Controller
         auth()->login($account, true);
 
         $authLevel = "User";
-        if(!empty($authLevel)) $authLevel = \Auth::user()->group;
-        ActivityLogController::info("Logged in with access level ".$authLevel);
+        if(isset(\Auth::user()->group)) $authLevel = Group::find(\Auth::user()->group)->name;
+        ActivityLogController::info("Logged in with ".$authLevel." access");
 
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
     }

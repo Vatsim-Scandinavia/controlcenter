@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TrainingExamination extends Model
+class TrainingExamination extends TrainingObject
 {
 
     protected $guarded = [];
@@ -15,11 +15,6 @@ class TrainingExamination extends Model
         'draft' => 'boolean',
     ];
 
-    public function training()
-    {
-        return $this->belongsTo(Training::class);
-    }
-
     public function position()
     {
         return $this->hasOne(Position::class, 'id', 'position_id');
@@ -28,11 +23,6 @@ class TrainingExamination extends Model
     public function examiner()
     {
         return $this->hasOne(User::class, 'id', 'examiner_id');
-    }
-
-    public function examination_sheet()
-    {
-        return $this->hasOne(File::class);
     }
 
 }
