@@ -47,7 +47,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">ATC Hours (Last 12 months)</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">15 of 10 hours</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Coming soon</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-clock fa-2x text-gray-300"></i>
