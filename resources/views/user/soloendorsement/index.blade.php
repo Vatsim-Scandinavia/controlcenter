@@ -64,7 +64,7 @@
 
         @if($user->isModerator())
             <div class="align-items-left">
-                <a href="{{ route('users.endorsements.create') }}" class="btn btn-success">Add Endorsement</a>
+                <a href="{{ route('users.soloendorsements.create') }}" class="btn btn-success">Add Endorsement</a>
             </div>
         @endif
     </div>

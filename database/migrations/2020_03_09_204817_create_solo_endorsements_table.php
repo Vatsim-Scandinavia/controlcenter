@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserEndorsementsTable extends Migration
+class CreateSoloEndorsementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateUserEndorsementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_endorsements', function (Blueprint $table) {
+        Schema::create('solo_endorsements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->unique();
             $table->unsignedBigInteger('training_id');
@@ -35,6 +35,6 @@ class CreateUserEndorsementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_endorsements');
+        Schema::dropIfExists('solo_endorsements');
     }
 }

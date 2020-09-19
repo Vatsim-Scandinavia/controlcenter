@@ -38,7 +38,7 @@ class CleanEndorsements extends Command
      */
     public function handle()
     {
-        DB::table('user_endorsements')->where('expires_at', '<', date('Y-m-d H:i:s'))->delete();
+        DB::table('solo_endorsements')->where('expires_at', '<', date('Y-m-d H:i:s'))->delete();
         $this->info('All expired solo endorsements have been cleaned.');
     }
 }

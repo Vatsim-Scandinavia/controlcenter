@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Position;
-use App\UserEndorsement;
+use App\SoloEndorsement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-class UserEndorsementController extends Controller
+class SoloEndorsementController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,8 +19,8 @@ class UserEndorsementController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $endorsements = UserEndorsement::all();
-        if($user->isMentor()) return view('user.endorsement.index', compact('user', 'endorsements'));
+        $endorsements = SoloEndorsement::all();
+        if($user->isMentor()) return view('user.soloendorsement.index', compact('user', 'endorsements'));
 
         abort(403);
     }
@@ -36,7 +36,7 @@ class UserEndorsementController extends Controller
         $students = User::with('trainings')->has('trainings')->get();
         $positions = Position::all();
 
-        if($user->isModerator()) return view('user.endorsement.create', compact('students', 'positions'));
+        if($user->isModerator()) return view('user.soloendorsement.create', compact('students', 'positions'));
 
         abort(403);
     }
@@ -62,13 +62,13 @@ class UserEndorsementController extends Controller
             if(!$user) return back()->withInput()->withErrors(['student' => 'Invalid user']);
         
             // Check if endoresement for this student already exists
-            $existingEndorsement = UserEndorsement::where('user_id', $user->id)->count();
+            $existingEndorsement = SoloEndorsement::where('user_id', $user->id)->count();
             if($existingEndorsement) return back()->withInput()->withErrors(['student' => 'This student already has an active solo endorsement']);
 
             $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
             $expireDate->setTime(12, 0);
 
-            $endorsement = new UserEndorsement();
+            $endorsement = new SoloEndorsement();
 
             $endorsement->user_id = $user->id;
             $endorsement->training_id = $user->trainings->first()->id;
@@ -77,7 +77,7 @@ class UserEndorsementController extends Controller
 
             $endorsement->save();
 
-            return redirect()->intended(route('users.endorsements'))->withSuccess($user->name . "'s endorsement created");
+            return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement created");
         }
 
         abort(403);
@@ -92,10 +92,10 @@ class UserEndorsementController extends Controller
     public function delete($id)
     {
         $user = Auth::user();
-        $endorsement = UserEndorsement::findOrFail($id);
+        $endorsement = SoloEndorsement::findOrFail($id);
 
         if($user->isModerator()) $endorsement->delete();
 
-        return redirect()->intended(route('users.endorsements'))->withSuccess($user->name . "'s endorsement deleted");
+        return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement deleted");
     }
 }

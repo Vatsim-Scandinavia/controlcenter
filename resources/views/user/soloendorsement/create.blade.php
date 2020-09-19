@@ -12,7 +12,7 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('UserEndorsementController@store') !!}" method="POST">
+                <form action="{!! action('SoloEndorsementController@store') !!}" method="POST">
                     @csrf
 
                     <div class="form-group">

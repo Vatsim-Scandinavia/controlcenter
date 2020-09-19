@@ -37,10 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/users', 'UserController@index')->name('users');
 
     // User endorsements
-    Route::get('/users/endorsements', 'UserEndorsementController@index')->name('users.endorsements');
-    Route::get('/users/endorsements/create', 'UserEndorsementController@create')->name('users.endorsements.create');
-    Route::get('/users/endorsements/{id}/delete', 'UserEndorsementController@delete');
-    Route::post('/users/endorsements/store', 'UserEndorsementController@store');
+    Route::get('/users/endorsements', 'SoloEndorsementController@index')->name('users.soloendorsements');
+    Route::get('/users/endorsements/create', 'SoloEndorsementController@create')->name('users.soloendorsements.create');
+    Route::get('/users/endorsements/{id}/delete', 'SoloEndorsementController@delete');
+    Route::post('/users/endorsements/store', 'SoloEndorsementController@store');
 
     Route::post('/mentor/{user}/country', 'MentorController@addCountry')->name('mentor.add.country');
     Route::post('/country/{country}/mentor', 'MentorController@addMentor')->name('country.add.mentor');
