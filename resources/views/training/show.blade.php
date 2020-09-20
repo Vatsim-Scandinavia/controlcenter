@@ -123,7 +123,7 @@
 <div class="row">
 
     @can('update', $training)
-    <div class="col-xl-12 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -199,7 +199,7 @@
     </div>
     @endcan
 
-    <div class="col-xl-12 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -253,7 +253,7 @@
     </div>
 
 
-    <div class="col-xl-12 col-md-12 mb-12">
+    <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
