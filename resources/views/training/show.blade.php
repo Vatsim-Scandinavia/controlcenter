@@ -376,7 +376,8 @@
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
-            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
+            alert("Link generated, click OK and copy the link displayed in the next prompt. Valid for 7 days.");
+            alert(route);
         });
 
         $('#getOneTimeLinkExam').click(async function (event) {
@@ -386,7 +387,8 @@
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
-            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
+            alert("Link generated, click OK and copy the link displayed in the next prompt. Valid for 7 days.");
+            alert(route);
         });
 
         async function getOneTimeLink(type) {
