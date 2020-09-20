@@ -301,6 +301,9 @@ class TrainingController extends Controller
         if((int)$training->status != $oldStatus){
             if((int)$training->status < 0){
 
+                // Detach all mentors
+                $training->mentors()->detach();
+
                 // If the training was completed and double checked with a passed exam result, store the relevant endorsements
                 if((int)$training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()){
                     foreach($training->ratings as $rating){
