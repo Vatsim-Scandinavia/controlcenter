@@ -3,6 +3,9 @@
 @section('title', 'Dashboard')
 @section('content')
 
+<!-- Success message fed via JS for TR -->
+<div class="row" id="success-message"></div>
+
 <div class="row">
     <!-- Current rank card  -->
     <div class="col-xl-3 col-md-6 mb-4">
