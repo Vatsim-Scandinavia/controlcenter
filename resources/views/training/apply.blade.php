@@ -71,9 +71,9 @@
             </div>
             <div class="card-body">
 
-                <p>Please read through the standard operating procedures for students below, and accept the terms by continuing to the next step.</p>
+                <p>Please read through the standard operating procedures for students below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ Setting::get('trainingSOP') }}" target="_blank">click here</a>.</p>
 
-                <embed src="https://drive.google.com/viewerng/viewer?embedded=true&url=https://vatsim-scandinavia.org/applications/core/interface/file/attachment.php?id=2049" type="application/pdf" width="100%" height="800px">
+                <embed src="{{ Setting::get('trainingSOP') }}" type="application/pdf" width="100%" height="800px">
 
                 <a class="btn btn-success" href="?step=3">I accept</a>
             </div>

@@ -123,7 +123,7 @@
 <div class="row">
 
     @can('update', $training)
-    <div class="col-xl col-md-12 mb-12">
+    <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -199,7 +199,7 @@
     </div>
     @endcan
 
-    <div class="col-xl col-md-12 mb-12">
+    <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -253,7 +253,7 @@
     </div>
 
 
-    <div class="col-xl col-md-12 mb-12">
+    <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -303,6 +303,7 @@
                             </div>
                     @else
                         @foreach($training->reports as $report)
+                            @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
                                 <div class="card bg-light mb-3">
                                     <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toEuropeanDate() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
                                         @if($report->draft)
@@ -336,6 +337,7 @@
                                     @endif
 
                                 </div>
+                            @endif
                         @endforeach
                     @endif
                 @else
@@ -374,7 +376,8 @@
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
-            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
+            alert("Link generated, click OK and copy the link displayed in the next prompt. Valid for 7 days.");
+            alert(route);
         });
 
         $('#getOneTimeLinkExam').click(async function (event) {
@@ -384,7 +387,8 @@
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
-            alert("Link generated, copy the link below. Valid for 7 days.\n\n" + route);
+            alert("Link generated, click OK and copy the link displayed in the next prompt. Valid for 7 days.");
+            alert(route);
         });
 
         async function getOneTimeLink(type) {
