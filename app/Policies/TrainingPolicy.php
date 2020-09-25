@@ -96,6 +96,7 @@ class TrainingPolicy
     {
         return  $training->mentors->contains($user) ||
                 $user->is($training->user) ||
+                $user->isModerator($training->country) ||
                 $user->isAdmin();
     }
 
