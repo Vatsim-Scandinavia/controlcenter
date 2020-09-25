@@ -1733,7 +1733,7 @@ __webpack_require__.r(__webpack_exports__);
 	undefined;
 }(this, (function ($) { 'use strict';
 
-	$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
+	$ = $ && Object.prototype.hasOwnProperty.call($, 'default') ? $['default'] : $;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -3723,6 +3723,15 @@ __webpack_require__.r(__webpack_exports__);
 	  parseInt: _parseInt
 	});
 
+	var MATCH = wellKnownSymbol('match');
+
+	// `IsRegExp` abstract operation
+	// https://tc39.github.io/ecma262/#sec-isregexp
+	var isRegexp = function (it) {
+	  var isRegExp;
+	  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
+	};
+
 	// `RegExp.prototype.flags` getter implementation
 	// https://tc39.github.io/ecma262/#sec-get-regexp.prototype.flags
 	var regexpFlags = function () {
@@ -3762,6 +3771,101 @@ __webpack_require__.r(__webpack_exports__);
 		BROKEN_CARET: BROKEN_CARET
 	};
 
+	var SPECIES$3 = wellKnownSymbol('species');
+
+	var setSpecies = function (CONSTRUCTOR_NAME) {
+	  var Constructor = getBuiltIn(CONSTRUCTOR_NAME);
+	  var defineProperty = objectDefineProperty.f;
+
+	  if (descriptors && Constructor && !Constructor[SPECIES$3]) {
+	    defineProperty(Constructor, SPECIES$3, {
+	      configurable: true,
+	      get: function () { return this; }
+	    });
+	  }
+	};
+
+	var defineProperty$5 = objectDefineProperty.f;
+	var getOwnPropertyNames$1 = objectGetOwnPropertyNames.f;
+
+
+
+
+
+	var setInternalState$2 = internalState.set;
+
+
+
+	var MATCH$1 = wellKnownSymbol('match');
+	var NativeRegExp = global_1.RegExp;
+	var RegExpPrototype = NativeRegExp.prototype;
+	var re1 = /a/g;
+	var re2 = /a/g;
+
+	// "new" should create a new object, old webkit bug
+	var CORRECT_NEW = new NativeRegExp(re1) !== re1;
+
+	var UNSUPPORTED_Y$1 = regexpStickyHelpers.UNSUPPORTED_Y;
+
+	var FORCED$4 = descriptors && isForced_1('RegExp', (!CORRECT_NEW || UNSUPPORTED_Y$1 || fails(function () {
+	  re2[MATCH$1] = false;
+	  // RegExp constructor can alter flags and IsRegExp works correct with @@match
+	  return NativeRegExp(re1) != re1 || NativeRegExp(re2) == re2 || NativeRegExp(re1, 'i') != '/a/i';
+	})));
+
+	// `RegExp` constructor
+	// https://tc39.github.io/ecma262/#sec-regexp-constructor
+	if (FORCED$4) {
+	  var RegExpWrapper = function RegExp(pattern, flags) {
+	    var thisIsRegExp = this instanceof RegExpWrapper;
+	    var patternIsRegExp = isRegexp(pattern);
+	    var flagsAreUndefined = flags === undefined;
+	    var sticky;
+
+	    if (!thisIsRegExp && patternIsRegExp && pattern.constructor === RegExpWrapper && flagsAreUndefined) {
+	      return pattern;
+	    }
+
+	    if (CORRECT_NEW) {
+	      if (patternIsRegExp && !flagsAreUndefined) pattern = pattern.source;
+	    } else if (pattern instanceof RegExpWrapper) {
+	      if (flagsAreUndefined) flags = regexpFlags.call(pattern);
+	      pattern = pattern.source;
+	    }
+
+	    if (UNSUPPORTED_Y$1) {
+	      sticky = !!flags && flags.indexOf('y') > -1;
+	      if (sticky) flags = flags.replace(/y/g, '');
+	    }
+
+	    var result = inheritIfRequired(
+	      CORRECT_NEW ? new NativeRegExp(pattern, flags) : NativeRegExp(pattern, flags),
+	      thisIsRegExp ? this : RegExpPrototype,
+	      RegExpWrapper
+	    );
+
+	    if (UNSUPPORTED_Y$1 && sticky) setInternalState$2(result, { sticky: sticky });
+
+	    return result;
+	  };
+	  var proxy = function (key) {
+	    key in RegExpWrapper || defineProperty$5(RegExpWrapper, key, {
+	      configurable: true,
+	      get: function () { return NativeRegExp[key]; },
+	      set: function (it) { NativeRegExp[key] = it; }
+	    });
+	  };
+	  var keys$2 = getOwnPropertyNames$1(NativeRegExp);
+	  var index = 0;
+	  while (keys$2.length > index) proxy(keys$2[index++]);
+	  RegExpPrototype.constructor = RegExpWrapper;
+	  RegExpWrapper.prototype = RegExpPrototype;
+	  redefine(global_1, 'RegExp', RegExpWrapper);
+	}
+
+	// https://tc39.github.io/ecma262/#sec-get-regexp-@@species
+	setSpecies('RegExp');
+
 	var nativeExec = RegExp.prototype.exec;
 	// This always refers to the native implementation, because the
 	// String#replace polyfill uses ./fix-regexp-well-known-symbol-logic.js,
@@ -3778,18 +3882,18 @@ __webpack_require__.r(__webpack_exports__);
 	  return re1.lastIndex !== 0 || re2.lastIndex !== 0;
 	})();
 
-	var UNSUPPORTED_Y$1 = regexpStickyHelpers.UNSUPPORTED_Y || regexpStickyHelpers.BROKEN_CARET;
+	var UNSUPPORTED_Y$2 = regexpStickyHelpers.UNSUPPORTED_Y || regexpStickyHelpers.BROKEN_CARET;
 
 	// nonparticipating capturing group, copied from es5-shim's String#split patch.
 	var NPCG_INCLUDED = /()??/.exec('')[1] !== undefined;
 
-	var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y$1;
+	var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y$2;
 
 	if (PATCH) {
 	  patchedExec = function exec(str) {
 	    var re = this;
 	    var lastIndex, reCopy, match, i;
-	    var sticky = UNSUPPORTED_Y$1 && re.sticky;
+	    var sticky = UNSUPPORTED_Y$2 && re.sticky;
 	    var flags = regexpFlags.call(re);
 	    var source = re.source;
 	    var charsAdded = 0;
@@ -3851,8 +3955,8 @@ __webpack_require__.r(__webpack_exports__);
 	});
 
 	var TO_STRING = 'toString';
-	var RegExpPrototype = RegExp.prototype;
-	var nativeToString = RegExpPrototype[TO_STRING];
+	var RegExpPrototype$1 = RegExp.prototype;
+	var nativeToString = RegExpPrototype$1[TO_STRING];
 
 	var NOT_GENERIC = fails(function () { return nativeToString.call({ source: 'a', flags: 'b' }) != '/a/b'; });
 	// FF44- RegExp#toString has a wrong name
@@ -3865,19 +3969,10 @@ __webpack_require__.r(__webpack_exports__);
 	    var R = anObject(this);
 	    var p = String(R.source);
 	    var rf = R.flags;
-	    var f = String(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype) ? regexpFlags.call(R) : rf);
+	    var f = String(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype$1) ? regexpFlags.call(R) : rf);
 	    return '/' + p + '/' + f;
 	  }, { unsafe: true });
 	}
-
-	var MATCH = wellKnownSymbol('match');
-
-	// `IsRegExp` abstract operation
-	// https://tc39.github.io/ecma262/#sec-isregexp
-	var isRegexp = function (it) {
-	  var isRegExp;
-	  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
-	};
 
 	var notARegexp = function (it) {
 	  if (isRegexp(it)) {
@@ -3885,7 +3980,7 @@ __webpack_require__.r(__webpack_exports__);
 	  } return it;
 	};
 
-	var MATCH$1 = wellKnownSymbol('match');
+	var MATCH$2 = wellKnownSymbol('match');
 
 	var correctIsRegexpLogic = function (METHOD_NAME) {
 	  var regexp = /./;
@@ -3893,7 +3988,7 @@ __webpack_require__.r(__webpack_exports__);
 	    '/./'[METHOD_NAME](regexp);
 	  } catch (e) {
 	    try {
-	      regexp[MATCH$1] = false;
+	      regexp[MATCH$2] = false;
 	      return '/./'[METHOD_NAME](regexp);
 	    } catch (f) { /* empty */ }
 	  } return false;
@@ -3938,13 +4033,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 	var STRING_ITERATOR = 'String Iterator';
-	var setInternalState$2 = internalState.set;
+	var setInternalState$3 = internalState.set;
 	var getInternalState$2 = internalState.getterFor(STRING_ITERATOR);
 
 	// `String.prototype[@@iterator]` method
 	// https://tc39.github.io/ecma262/#sec-string.prototype-@@iterator
 	defineIterator(String, 'String', function (iterated) {
-	  setInternalState$2(this, {
+	  setInternalState$3(this, {
 	    type: STRING_ITERATOR,
 	    string: String(iterated),
 	    index: 0
@@ -3962,7 +4057,7 @@ __webpack_require__.r(__webpack_exports__);
 	  return { value: point, done: false };
 	});
 
-	var SPECIES$3 = wellKnownSymbol('species');
+	var SPECIES$4 = wellKnownSymbol('species');
 
 	var REPLACE_SUPPORTS_NAMED_GROUPS = !fails(function () {
 	  // #replace needs built-in support for named groups.
@@ -4016,7 +4111,7 @@ __webpack_require__.r(__webpack_exports__);
 	      // RegExp[@@split] doesn't call the regex's exec method, but first creates
 	      // a new one. We need to return the patched regex when creating the new one.
 	      re.constructor = {};
-	      re.constructor[SPECIES$3] = function () { return re; };
+	      re.constructor[SPECIES$4] = function () { return re; };
 	      re.flags = '';
 	      re[SYMBOL] = /./[SYMBOL];
 	    }
@@ -4244,14 +4339,14 @@ __webpack_require__.r(__webpack_exports__);
 	  ];
 	});
 
-	var SPECIES$4 = wellKnownSymbol('species');
+	var SPECIES$5 = wellKnownSymbol('species');
 
 	// `SpeciesConstructor` abstract operation
 	// https://tc39.github.io/ecma262/#sec-speciesconstructor
 	var speciesConstructor = function (O, defaultConstructor) {
 	  var C = anObject(O).constructor;
 	  var S;
-	  return C === undefined || (S = anObject(C)[SPECIES$4]) == undefined ? defaultConstructor : aFunction$1(S);
+	  return C === undefined || (S = anObject(C)[SPECIES$5]) == undefined ? defaultConstructor : aFunction$1(S);
 	};
 
 	var arrayPush = [].push;
@@ -4580,7 +4675,7 @@ __webpack_require__.r(__webpack_exports__);
 	  throw new TypeError("Invalid attempt to destructure non-iterable instance");
 	}
 
-	var VERSION = '1.16.0';
+	var VERSION = '1.18.0';
 	var bootstrapVersion = 4;
 
 	try {
@@ -4589,6 +4684,16 @@ __webpack_require__.r(__webpack_exports__);
 
 	  if (rawVersion !== undefined) {
 	    bootstrapVersion = parseInt(rawVersion, 10);
+	  }
+	} catch (e) {// ignore
+	}
+
+	try {
+	  // eslint-disable-next-line no-undef
+	  var _rawVersion = bootstrap.Tooltip.VERSION;
+
+	  if (_rawVersion !== undefined) {
+	    bootstrapVersion = parseInt(_rawVersion, 10);
 	  }
 	} catch (e) {// ignore
 	}
@@ -4685,11 +4790,58 @@ __webpack_require__.r(__webpack_exports__);
 	      searchButton: '<button class="%s" type="button" name="search" title="%s">%s %s</button>',
 	      searchClearButton: '<button class="%s" type="button" name="clearSearch" title="%s">%s %s</button>'
 	    }
+	  },
+	  5: {
+	    iconsPrefix: 'fa',
+	    icons: {
+	      paginationSwitchDown: 'fa-caret-square-down',
+	      paginationSwitchUp: 'fa-caret-square-up',
+	      refresh: 'fa-sync',
+	      toggleOff: 'fa-toggle-off',
+	      toggleOn: 'fa-toggle-on',
+	      columns: 'fa-th-list',
+	      detailOpen: 'fa-plus',
+	      detailClose: 'fa-minus',
+	      fullscreen: 'fa-arrows-alt',
+	      search: 'fa-search',
+	      clearSearch: 'fa-trash'
+	    },
+	    classes: {
+	      buttonsPrefix: 'btn',
+	      buttons: 'secondary',
+	      buttonsGroup: 'btn-group',
+	      buttonsDropdown: 'btn-group',
+	      pull: 'float',
+	      inputGroup: 'btn-group',
+	      inputPrefix: 'form-control-',
+	      input: 'form-control',
+	      paginationDropdown: 'btn-group dropdown',
+	      dropup: 'dropup',
+	      dropdownActive: 'active',
+	      paginationActive: 'active',
+	      buttonActive: 'active'
+	    },
+	    html: {
+	      toolbarDropdown: ['<div class="dropdown-menu dropdown-menu-right">', '</div>'],
+	      toolbarDropdownItem: '<label class="dropdown-item dropdown-item-marker">%s</label>',
+	      pageDropdown: ['<div class="dropdown-menu">', '</div>'],
+	      pageDropdownItem: '<a class="dropdown-item %s" href="#">%s</a>',
+	      toolbarDropdownSeparator: '<div class="dropdown-divider"></div>',
+	      dropdownCaret: '<span class="caret"></span>',
+	      pagination: ['<ul class="pagination%s">', '</ul>'],
+	      paginationItem: '<li class="page-item%s"><a class="page-link" aria-label="%s" href="javascript:void(0)">%s</a></li>',
+	      icon: '<i class="%s %s"></i>',
+	      inputGroup: '<div class="input-group">%s<div class="input-group-append">%s</div></div>',
+	      searchInput: '<input class="%s%s" type="text" placeholder="%s">',
+	      searchButton: '<button class="%s" type="button" name="search" title="%s">%s %s</button>',
+	      searchClearButton: '<button class="%s" type="button" name="clearSearch" title="%s">%s %s</button>'
+	    }
 	  }
 	}[bootstrapVersion];
 	var DEFAULTS = {
 	  height: undefined,
 	  classes: 'table table-bordered table-hover',
+	  buttons: {},
 	  theadClasses: '',
 	  headerStyle: function headerStyle(column) {
 	    return {};
@@ -4708,7 +4860,8 @@ __webpack_require__.r(__webpack_exports__);
 	  sortClass: undefined,
 	  silentSort: true,
 	  sortName: undefined,
-	  sortOrder: 'asc',
+	  sortOrder: undefined,
+	  sortReset: false,
 	  sortStable: false,
 	  rememberOrder: false,
 	  serverSort: true,
@@ -4733,8 +4886,9 @@ __webpack_require__.r(__webpack_exports__);
 	  totalField: 'total',
 	  totalNotFilteredField: 'totalNotFiltered',
 	  dataField: 'rows',
+	  footerField: 'footer',
 	  pagination: false,
-	  onlyInfoPagination: false,
+	  paginationParts: ['pageInfo', 'pageSize', 'pageList'],
 	  showExtendedPagination: false,
 	  paginationLoop: true,
 	  sidePagination: 'client',
@@ -4759,8 +4913,10 @@ __webpack_require__.r(__webpack_exports__);
 	  paginationUseIntermediate: false,
 	  // Calculate intermediate pages for quick access
 	  search: false,
+	  searchHighlight: false,
 	  searchOnEnterKey: false,
 	  strictSearch: false,
+	  searchSelector: false,
 	  visibleSearch: false,
 	  showButtonIcons: true,
 	  showButtonText: false,
@@ -4776,6 +4932,7 @@ __webpack_require__.r(__webpack_exports__);
 	  footerStyle: function footerStyle(column) {
 	    return {};
 	  },
+	  searchAccentNeutralise: false,
 	  showColumns: false,
 	  showColumnsToggleAll: false,
 	  showColumnsSearch: false,
@@ -4805,6 +4962,7 @@ __webpack_require__.r(__webpack_exports__);
 	  detailView: false,
 	  detailViewIcon: true,
 	  detailViewByClick: false,
+	  detailViewAlign: 'left',
 	  detailFormatter: function detailFormatter(index, row) {
 	    return '';
 	  },
@@ -4819,10 +4977,13 @@ __webpack_require__.r(__webpack_exports__);
 	  buttonsPrefix: CONSTANTS.classes.buttonsPrefix,
 	  buttonsClass: CONSTANTS.classes.buttons,
 	  icons: CONSTANTS.icons,
-	  html: CONSTANTS.html,
 	  iconSize: undefined,
 	  iconsPrefix: CONSTANTS.iconsPrefix,
 	  // glyphicon or fa(font-awesome)
+	  loadingFontSize: 'auto',
+	  loadingTemplate: function loadingTemplate(loadingMessage) {
+	    return "<span class=\"loading-wrap\">\n      <span class=\"loading-text\">".concat(loadingMessage, "</span>\n      <span class=\"animation-wrap\"><span class=\"animation-dot\"></span></span>\n      </span>\n    ");
+	  },
 	  onAll: function onAll(name, args) {
 	    return false;
 	  },
@@ -5013,10 +5174,11 @@ __webpack_require__.r(__webpack_exports__);
 	  footerFormatter: undefined,
 	  detailFormatter: undefined,
 	  searchFormatter: true,
+	  searchHighlightFormatter: false,
 	  escape: false,
 	  events: undefined
 	};
-	var METHODS = ['getOptions', 'refreshOptions', 'getData', 'getSelections', 'getAllSelections', 'load', 'append', 'prepend', 'remove', 'removeAll', 'insertRow', 'updateRow', 'getRowByUniqueId', 'updateByUniqueId', 'removeByUniqueId', 'updateCell', 'updateCellByUniqueId', 'showRow', 'hideRow', 'getHiddenRows', 'showColumn', 'hideColumn', 'getVisibleColumns', 'getHiddenColumns', 'showAllColumns', 'hideAllColumns', 'mergeCells', 'checkAll', 'uncheckAll', 'checkInvert', 'check', 'uncheck', 'checkBy', 'uncheckBy', 'refresh', 'destroy', 'resetView', 'showLoading', 'hideLoading', 'togglePagination', 'toggleFullscreen', 'toggleView', 'resetSearch', 'filterBy', 'scrollTo', 'getScrollPosition', 'selectPage', 'prevPage', 'nextPage', 'toggleDetailView', 'expandRow', 'collapseRow', 'expandAllRows', 'collapseAllRows', 'updateColumnTitle', 'updateFormatText'];
+	var METHODS = ['getOptions', 'refreshOptions', 'getData', 'getSelections', 'load', 'append', 'prepend', 'remove', 'removeAll', 'insertRow', 'updateRow', 'getRowByUniqueId', 'updateByUniqueId', 'removeByUniqueId', 'updateCell', 'updateCellByUniqueId', 'showRow', 'hideRow', 'getHiddenRows', 'showColumn', 'hideColumn', 'getVisibleColumns', 'getHiddenColumns', 'showAllColumns', 'hideAllColumns', 'mergeCells', 'checkAll', 'uncheckAll', 'checkInvert', 'check', 'uncheck', 'checkBy', 'uncheckBy', 'refresh', 'destroy', 'resetView', 'showLoading', 'hideLoading', 'togglePagination', 'toggleFullscreen', 'toggleView', 'resetSearch', 'filterBy', 'scrollTo', 'getScrollPosition', 'selectPage', 'prevPage', 'nextPage', 'toggleDetailView', 'expandRow', 'collapseRow', 'expandRowByUniqueId', 'collapseRowByUniqueId', 'expandAllRows', 'collapseAllRows', 'updateColumnTitle', 'updateFormatText'];
 	var EVENTS = {
 	  'all.bs.table': 'onAll',
 	  'click-row.bs.table': 'onClickRow',
@@ -5072,7 +5234,78 @@ __webpack_require__.r(__webpack_exports__);
 	  }
 	});
 
+	var getOwnPropertyDescriptor$3 = objectGetOwnPropertyDescriptor.f;
+
+
+
+
+
+
+	var nativeEndsWith = ''.endsWith;
+	var min$5 = Math.min;
+
+	var CORRECT_IS_REGEXP_LOGIC = correctIsRegexpLogic('endsWith');
+	// https://github.com/zloirock/core-js/pull/702
+	var MDN_POLYFILL_BUG =  !CORRECT_IS_REGEXP_LOGIC && !!function () {
+	  var descriptor = getOwnPropertyDescriptor$3(String.prototype, 'endsWith');
+	  return descriptor && !descriptor.writable;
+	}();
+
+	// `String.prototype.endsWith` method
+	// https://tc39.github.io/ecma262/#sec-string.prototype.endswith
+	_export({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGEXP_LOGIC }, {
+	  endsWith: function endsWith(searchString /* , endPosition = @length */) {
+	    var that = String(requireObjectCoercible(this));
+	    notARegexp(searchString);
+	    var endPosition = arguments.length > 1 ? arguments[1] : undefined;
+	    var len = toLength(that.length);
+	    var end = endPosition === undefined ? len : min$5(toLength(endPosition), len);
+	    var search = String(searchString);
+	    return nativeEndsWith
+	      ? nativeEndsWith.call(that, search, end)
+	      : that.slice(end - search.length, end) === search;
+	  }
+	});
+
+	var getOwnPropertyDescriptor$4 = objectGetOwnPropertyDescriptor.f;
+
+
+
+
+
+
+	var nativeStartsWith = ''.startsWith;
+	var min$6 = Math.min;
+
+	var CORRECT_IS_REGEXP_LOGIC$1 = correctIsRegexpLogic('startsWith');
+	// https://github.com/zloirock/core-js/pull/702
+	var MDN_POLYFILL_BUG$1 =  !CORRECT_IS_REGEXP_LOGIC$1 && !!function () {
+	  var descriptor = getOwnPropertyDescriptor$4(String.prototype, 'startsWith');
+	  return descriptor && !descriptor.writable;
+	}();
+
+	// `String.prototype.startsWith` method
+	// https://tc39.github.io/ecma262/#sec-string.prototype.startswith
+	_export({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG$1 && !CORRECT_IS_REGEXP_LOGIC$1 }, {
+	  startsWith: function startsWith(searchString /* , position = 0 */) {
+	    var that = String(requireObjectCoercible(this));
+	    notARegexp(searchString);
+	    var index = toLength(min$6(arguments.length > 1 ? arguments[1] : undefined, that.length));
+	    var search = String(searchString);
+	    return nativeStartsWith
+	      ? nativeStartsWith.call(that, search, index)
+	      : that.slice(index, index + search.length) === search;
+	  }
+	});
+
 	var Utils = {
+	  getSearchInput: function getSearchInput(that) {
+	    if (typeof that.options.searchSelector === 'string') {
+	      return $(that.options.searchSelector);
+	    }
+
+	    return that.$toolbar.find('.search input');
+	  },
 	  // it only does '%s', and return '' when arguments are undefined
 	  sprintf: function sprintf(_str) {
 	    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -5094,6 +5327,9 @@ __webpack_require__.r(__webpack_exports__);
 	    });
 
 	    return flag ? str : '';
+	  },
+	  isObject: function isObject(val) {
+	    return val instanceof Object && !Array.isArray(val);
 	  },
 	  isEmptyObject: function isEmptyObject() {
 	    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -5192,12 +5428,10 @@ __webpack_require__.r(__webpack_exports__);
 	            r.colspanGroup = r.colspan;
 	          }
 
-	          for (var k = 0; k < rowspan; k++) {
-	            flag[_i + k][index] = true;
-	          }
-
-	          for (var _k = 0; _k < colspan; _k++) {
-	            flag[_i][index + _k] = true;
+	          for (var _j = 0; _j < rowspan; _j++) {
+	            for (var k = 0; k < colspan; k++) {
+	              flag[_i + _j][index + k] = true;
+	            }
 	          }
 	        }
 	      } catch (err) {
@@ -5215,6 +5449,13 @@ __webpack_require__.r(__webpack_exports__);
 	        }
 	      }
 	    }
+	  },
+	  normalizeAccent: function normalizeAccent(value) {
+	    if (typeof value !== 'string') {
+	      return value;
+	    }
+
+	    return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 	  },
 	  updateFieldGroup: function updateFieldGroup(columns) {
 	    var _ref;
@@ -5307,7 +5548,9 @@ __webpack_require__.r(__webpack_exports__);
 
 	    return this.cachedWidth;
 	  },
-	  calculateObjectValue: function calculateObjectValue(self, name, args, defaultValue) {
+	  calculateObjectValue: function calculateObjectValue(self, name) {
+	    var args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+	    var defaultValue = arguments.length > 3 ? arguments[3] : undefined;
 	    var func = name;
 
 	    if (typeof name === 'string') {
@@ -5379,6 +5622,13 @@ __webpack_require__.r(__webpack_exports__);
 	  escapeHTML: function escapeHTML(text) {
 	    if (typeof text === 'string') {
 	      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/`/g, '&#x60;');
+	    }
+
+	    return text;
+	  },
+	  unescapeHTML: function unescapeHTML(text) {
+	    if (typeof text === 'string') {
+	      return text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, '\'').replace(/&#x60;/g, '`');
 	    }
 
 	    return text;
@@ -5472,14 +5722,17 @@ __webpack_require__.r(__webpack_exports__);
 	    var data = [];
 	    var m = [];
 	    $els.each(function (y, el) {
+	      var $el = $(el);
 	      var row = {}; // save tr's id, class and data-* attributes
 
-	      row._id = $(el).attr('id');
-	      row._class = $(el).attr('class');
-	      row._data = _this.getRealDataAttr($(el).data());
-	      $(el).find('>td,>th').each(function (_x, el) {
-	        var cspan = +$(el).attr('colspan') || 1;
-	        var rspan = +$(el).attr('rowspan') || 1;
+	      row._id = $el.attr('id');
+	      row._class = $el.attr('class');
+	      row._data = _this.getRealDataAttr($el.data());
+	      row._style = $el.attr('style');
+	      $el.find('>td,>th').each(function (_x, el) {
+	        var $el = $(el);
+	        var cspan = +$el.attr('colspan') || 1;
+	        var rspan = +$el.attr('rowspan') || 1;
 	        var x = _x; // skip already occupied cells in current row
 
 	        for (; m[y] && m[y][x]; x++) {} // ignore
@@ -5498,14 +5751,15 @@ __webpack_require__.r(__webpack_exports__);
 	        }
 
 	        var field = columns[x].field;
-	        row[field] = $(el).html().trim(); // save td's id, class and data-* attributes
+	        row[field] = $el.html().trim(); // save td's id, class and data-* attributes
 
-	        row["_".concat(field, "_id")] = $(el).attr('id');
-	        row["_".concat(field, "_class")] = $(el).attr('class');
-	        row["_".concat(field, "_rowspan")] = $(el).attr('rowspan');
-	        row["_".concat(field, "_colspan")] = $(el).attr('colspan');
-	        row["_".concat(field, "_title")] = $(el).attr('title');
-	        row["_".concat(field, "_data")] = _this.getRealDataAttr($(el).data());
+	        row["_".concat(field, "_id")] = $el.attr('id');
+	        row["_".concat(field, "_class")] = $el.attr('class');
+	        row["_".concat(field, "_rowspan")] = $el.attr('rowspan');
+	        row["_".concat(field, "_colspan")] = $el.attr('colspan');
+	        row["_".concat(field, "_title")] = $el.attr('title');
+	        row["_".concat(field, "_data")] = _this.getRealDataAttr($el.data());
+	        row["_".concat(field, "_style")] = $el.attr('style');
 	      });
 	      data.push(row);
 	    });
@@ -5557,10 +5811,57 @@ __webpack_require__.r(__webpack_exports__);
 
 	    return order;
 	  },
-	  getResizeEventName: function getResizeEventName() {
-	    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	  getEventName: function getEventName(eventPrefix) {
+	    var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 	    id = id || "".concat(+new Date()).concat(~~(Math.random() * 1000000));
-	    return "resize.bootstrap-table-".concat(id);
+	    return "".concat(eventPrefix, "-").concat(id);
+	  },
+	  hasDetailViewIcon: function hasDetailViewIcon(options) {
+	    return options.detailView && options.detailViewIcon && !options.cardView;
+	  },
+	  getDetailViewIndexOffset: function getDetailViewIndexOffset(options) {
+	    return this.hasDetailViewIcon(options) && options.detailViewAlign !== 'right' ? 1 : 0;
+	  },
+	  checkAutoMergeCells: function checkAutoMergeCells(data) {
+	    var _iteratorNormalCompletion9 = true;
+	    var _didIteratorError9 = false;
+	    var _iteratorError9 = undefined;
+
+	    try {
+	      for (var _iterator9 = data[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+	        var row = _step9.value;
+
+	        for (var _i4 = 0, _Object$keys = Object.keys(row); _i4 < _Object$keys.length; _i4++) {
+	          var key = _Object$keys[_i4];
+
+	          if (key.startsWith('_') && (key.endsWith('_rowspan') || key.endsWith('_colspan'))) {
+	            return true;
+	          }
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError9 = true;
+	      _iteratorError9 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+	          _iterator9.return();
+	        }
+	      } finally {
+	        if (_didIteratorError9) {
+	          throw _iteratorError9;
+	        }
+	      }
+	    }
+
+	    return false;
+	  },
+	  deepCopy: function deepCopy(arg) {
+	    if (arg === undefined) {
+	      return arg;
+	    }
+
+	    return $.extend(true, Array.isArray(arg) ? [] : {}, arg);
 	  }
 	};
 
@@ -5727,7 +6028,6 @@ __webpack_require__.r(__webpack_exports__);
 	    this.$el_ = this.$el.clone();
 	    this.timeoutId_ = 0;
 	    this.timeoutFooter_ = 0;
-	    this.init();
 	  }
 
 	  _createClass(BootstrapTable, [{
@@ -5754,6 +6054,7 @@ __webpack_require__.r(__webpack_exports__);
 	      this.constants.theme = $.fn.bootstrapTable.theme;
 	      var buttonsPrefix = opts.buttonsPrefix ? "".concat(opts.buttonsPrefix, "-") : '';
 	      this.constants.buttonsClass = [opts.buttonsPrefix, buttonsPrefix + opts.buttonsClass, Utils.sprintf("".concat(buttonsPrefix, "%s"), opts.iconSize)].join(' ').trim();
+	      this.buttons = Utils.calculateObjectValue(this, opts.buttons, [], []);
 	    }
 	  }, {
 	    key: "initLocale",
@@ -5781,7 +6082,8 @@ __webpack_require__.r(__webpack_exports__);
 	    value: function initContainer() {
 	      var topPagination = ['top', 'both'].includes(this.options.paginationVAlign) ? '<div class="fixed-table-pagination clearfix"></div>' : '';
 	      var bottomPagination = ['bottom', 'both'].includes(this.options.paginationVAlign) ? '<div class="fixed-table-pagination"></div>' : '';
-	      this.$container = $("\n      <div class=\"bootstrap-table ".concat(this.constants.theme, "\">\n      <div class=\"fixed-table-toolbar\"></div>\n      ").concat(topPagination, "\n      <div class=\"fixed-table-container\">\n      <div class=\"fixed-table-header\"><table></table></div>\n      <div class=\"fixed-table-body\">\n      <div class=\"fixed-table-loading\">\n      <span class=\"loading-wrap\">\n      <span class=\"loading-text\">").concat(this.options.formatLoadingMessage(), "</span>\n      <span class=\"animation-wrap\"><span class=\"animation-dot\"></span></span>\n      </span>\n      </div>\n      </div>\n      <div class=\"fixed-table-footer\"><table><thead><tr></tr></thead></table></div>\n      </div>\n      ").concat(bottomPagination, "\n      </div>\n    "));
+	      var loadingTemplate = Utils.calculateObjectValue(this.options, this.options.loadingTemplate, [this.options.formatLoadingMessage()]);
+	      this.$container = $("\n      <div class=\"bootstrap-table ".concat(this.constants.theme, "\">\n      <div class=\"fixed-table-toolbar\"></div>\n      ").concat(topPagination, "\n      <div class=\"fixed-table-container\">\n      <div class=\"fixed-table-header\"><table></table></div>\n      <div class=\"fixed-table-body\">\n      <div class=\"fixed-table-loading\">\n      ").concat(loadingTemplate, "\n      </div>\n      </div>\n      <div class=\"fixed-table-footer\"><table><thead><tr></tr></thead></table></div>\n      </div>\n      ").concat(bottomPagination, "\n      </div>\n    "));
 	      this.$container.insertAfter(this.$el);
 	      this.$tableContainer = this.$container.find('.fixed-table-container');
 	      this.$tableHeader = this.$container.find('.fixed-table-header');
@@ -5831,23 +6133,35 @@ __webpack_require__.r(__webpack_exports__);
 	        this.$header.addClass(this.options.theadClasses);
 	      }
 
+	      this._headerTrClasses = [];
+	      this._headerTrStyles = [];
 	      this.$header.find('tr').each(function (i, el) {
+	        var $tr = $(el);
 	        var column = [];
-	        $(el).find('th').each(function (i, el) {
-	          // #2014: getFieldIndex and elsewhere assume this is string, causes issues if not
-	          if (typeof $(el).data('field') !== 'undefined') {
-	            $(el).data('field', "".concat($(el).data('field')));
+	        $tr.find('th').each(function (i, el) {
+	          var $th = $(el); // #2014: getFieldIndex and elsewhere assume this is string, causes issues if not
+
+	          if (typeof $th.data('field') !== 'undefined') {
+	            $th.data('field', "".concat($th.data('field')));
 	          }
 
 	          column.push($.extend({}, {
-	            title: $(el).html(),
-	            'class': $(el).attr('class'),
-	            titleTooltip: $(el).attr('title'),
-	            rowspan: $(el).attr('rowspan') ? +$(el).attr('rowspan') : undefined,
-	            colspan: $(el).attr('colspan') ? +$(el).attr('colspan') : undefined
-	          }, $(el).data()));
+	            title: $th.html(),
+	            'class': $th.attr('class'),
+	            titleTooltip: $th.attr('title'),
+	            rowspan: $th.attr('rowspan') ? +$th.attr('rowspan') : undefined,
+	            colspan: $th.attr('colspan') ? +$th.attr('colspan') : undefined
+	          }, $th.data()));
 	        });
 	        columns.push(column);
+
+	        if ($tr.attr('class')) {
+	          _this._headerTrClasses.push($tr.attr('class'));
+	        }
+
+	        if ($tr.attr('style')) {
+	          _this._headerTrStyles.push($tr.attr('style'));
+	        }
 	      });
 
 	      if (!Array.isArray(this.options.columns[0])) {
@@ -5872,14 +6186,17 @@ __webpack_require__.r(__webpack_exports__);
 	      }); // if options.data is setting, do not process tbody and tfoot data
 
 	      if (!this.options.data.length) {
-	        this.options.data = Utils.trToData(this.columns, this.$el.find('>tbody>tr'));
+	        var htmlData = Utils.trToData(this.columns, this.$el.find('>tbody>tr'));
 
-	        if (this.options.data.length) {
+	        if (htmlData.length) {
+	          this.options.data = htmlData;
 	          this.fromHtml = true;
 	        }
 	      }
 
-	      this.footerData = Utils.trToData(this.columns, this.$el.find('>tfoot>tr'));
+	      if (!(this.options.pagination && this.options.sidePagination !== 'server')) {
+	        this.footerData = Utils.trToData(this.columns, this.$el.find('>tfoot>tr'));
+	      }
 
 	      if (this.footerData) {
 	        this.$el.find('tfoot').html('<tr></tr>');
@@ -5912,10 +6229,15 @@ __webpack_require__.r(__webpack_exports__);
 	      };
 	      Utils.updateFieldGroup(this.options.columns);
 	      this.options.columns.forEach(function (columns, i) {
-	        html.push('<tr>');
+	        html.push("<tr".concat(Utils.sprintf(' class="%s"', _this2._headerTrClasses[i]), " ").concat(Utils.sprintf(' style="%s"', _this2._headerTrStyles[i]), ">"));
+	        var detailViewTemplate = '';
 
-	        if (i === 0 && !_this2.options.cardView && _this2.options.detailView && _this2.options.detailViewIcon) {
-	          html.push("<th class=\"detail\" rowspan=\"".concat(_this2.options.columns.length, "\">\n          <div class=\"fht-cell\"></div>\n          </th>\n        "));
+	        if (i === 0 && Utils.hasDetailViewIcon(_this2.options)) {
+	          detailViewTemplate = "<th class=\"detail\" rowspan=\"".concat(_this2.options.columns.length, "\">\n          <div class=\"fht-cell\"></div>\n          </th>");
+	        }
+
+	        if (detailViewTemplate && _this2.options.detailViewAlign !== 'right') {
+	          html.push(detailViewTemplate);
 	        }
 
 	        columns.forEach(function (column, j) {
@@ -6003,6 +6325,11 @@ __webpack_require__.r(__webpack_exports__);
 	          html.push('</div>');
 	          html.push('</th>');
 	        });
+
+	        if (detailViewTemplate && _this2.options.detailViewAlign === 'right') {
+	          html.push(detailViewTemplate);
+	        }
+
 	        html.push('</tr>');
 	      });
 	      this.$header.html(html.join(''));
@@ -6032,7 +6359,7 @@ __webpack_require__.r(__webpack_exports__);
 	          }
 	        }
 	      });
-	      var resizeEvent = Utils.getResizeEventName(this.$el.attr('id'));
+	      var resizeEvent = Utils.getEventName('resize.bootstrap-table', this.$el.attr('id'));
 	      $(window).off(resizeEvent);
 
 	      if (!this.options.showHeader || this.options.cardView) {
@@ -6068,10 +6395,15 @@ __webpack_require__.r(__webpack_exports__);
 	      } else if (type === 'prepend') {
 	        this.options.data = [].concat(data).concat(this.options.data);
 	      } else {
-	        this.options.data = data || this.options.data;
+	        data = data || Utils.deepCopy(this.options.data);
+	        this.options.data = Array.isArray(data) ? data : data[this.options.dataField];
 	      }
 
-	      this.data = this.options.data;
+	      this.data = _toConsumableArray(this.options.data);
+
+	      if (this.options.sortReset) {
+	        this.unsortedData = _toConsumableArray(this.data);
+	      }
 
 	      if (this.options.sidePagination === 'server') {
 	        return;
@@ -6132,6 +6464,8 @@ __webpack_require__.r(__webpack_exports__);
 	            _this3.$el.find("tr td:nth-child(".concat(index + 1, ")")).addClass(_this3.options.sortClass);
 	          }, 250);
 	        }
+	      } else if (this.options.sortReset) {
+	        this.data = _toConsumableArray(this.unsortedData);
 	      }
 	    }
 	  }, {
@@ -6144,7 +6478,19 @@ __webpack_require__.r(__webpack_exports__);
 	      this.$header.add(this.$header_).find('span.order').remove();
 
 	      if (this.options.sortName === $this.data('field')) {
-	        this.options.sortOrder = this.options.sortOrder === 'asc' ? 'desc' : 'asc';
+	        var currentSortOrder = this.options.sortOrder;
+
+	        if (currentSortOrder === undefined) {
+	          this.options.sortOrder = 'asc';
+	        } else if (currentSortOrder === 'asc') {
+	          this.options.sortOrder = 'desc';
+	        } else if (this.options.sortOrder === 'desc') {
+	          this.options.sortOrder = this.options.sortReset ? undefined : 'asc';
+	        }
+
+	        if (this.options.sortOrder === undefined) {
+	          this.options.sortName = undefined;
+	        }
 	      } else {
 	        this.options.sortName = $this.data('field');
 
@@ -6197,63 +6543,153 @@ __webpack_require__.r(__webpack_exports__);
 	        opts.icons = Utils.calculateObjectValue(null, opts.icons);
 	      }
 
-	      var buttonsHtml = {
-	        paginationSwitch: "<button class=\"".concat(this.constants.buttonsClass, "\" type=\"button\" name=\"paginationSwitch\"\n        aria-label=\"Pagination Switch\" title=\"").concat(opts.formatPaginationSwitch(), "\">\n        ").concat(opts.showButtonIcons ? Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, opts.icons.paginationSwitchDown) : '', "\n        ").concat(opts.showButtonText ? opts.formatPaginationSwitchUp() : '', "\n        </button>"),
-	        refresh: "<button class=\"".concat(this.constants.buttonsClass, "\" type=\"button\" name=\"refresh\"\n        aria-label=\"Refresh\" title=\"").concat(opts.formatRefresh(), "\">\n        ").concat(opts.showButtonIcons ? Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, opts.icons.refresh) : '', "\n        ").concat(opts.showButtonText ? opts.formatRefresh() : '', "\n        </button>"),
-	        toggle: "<button class=\"".concat(this.constants.buttonsClass, "\" type=\"button\" name=\"toggle\"\n        aria-label=\"Toggle\" title=\"").concat(opts.formatToggle(), "\">\n        ").concat(opts.showButtonIcons ? Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, opts.icons.toggleOff) : '', "\n        ").concat(opts.showButtonText ? opts.formatToggleOn() : '', "\n        </button>"),
-	        fullscreen: "<button class=\"".concat(this.constants.buttonsClass, "\" type=\"button\" name=\"fullscreen\"\n        aria-label=\"Fullscreen\" title=\"").concat(opts.formatFullscreen(), "\">\n        ").concat(opts.showButtonIcons ? Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, opts.icons.fullscreen) : '', "\n        ").concat(opts.showButtonText ? opts.formatFullscreen() : '', "\n        </button>"),
-	        columns: function () {
-	          var html = [];
-	          html.push("<div class=\"keep-open ".concat(_this4.constants.classes.buttonsDropdown, "\" title=\"").concat(opts.formatColumns(), "\">\n          <button class=\"").concat(_this4.constants.buttonsClass, " dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\"\n          aria-label=\"Columns\" title=\"").concat(opts.formatColumns(), "\">\n          ").concat(opts.showButtonIcons ? Utils.sprintf(_this4.constants.html.icon, opts.iconsPrefix, opts.icons.columns) : '', "\n          ").concat(opts.showButtonText ? opts.formatColumns() : '', "\n          ").concat(_this4.constants.html.dropdownCaret, "\n          </button>\n          ").concat(_this4.constants.html.toolbarDropdown[0]));
-
-	          if (opts.showColumnsSearch) {
-	            html.push(Utils.sprintf(_this4.constants.html.toolbarDropdownItem, Utils.sprintf('<input type="text" class="%s" id="columnsSearch" placeholder="%s" autocomplete="off">', _this4.constants.classes.input, opts.formatSearch())));
-	            html.push(_this4.constants.html.toolbarDropdownSeparator);
-	          }
-
-	          if (opts.showColumnsToggleAll) {
-	            var allFieldsVisible = _this4.getVisibleColumns().length === _this4.columns.filter(function (column) {
-	              return !_this4.isSelectionColumn(column);
-	            }).length;
-
-	            html.push(Utils.sprintf(_this4.constants.html.toolbarDropdownItem, Utils.sprintf('<input type="checkbox" class="toggle-all" %s> <span>%s</span>', allFieldsVisible ? 'checked="checked"' : '', opts.formatColumnsToggleAll())));
-	            html.push(_this4.constants.html.toolbarDropdownSeparator);
-	          }
-
-	          var visibleColumns = 0;
-
-	          _this4.columns.forEach(function (column, i) {
-	            if (column.visible) {
-	              visibleColumns++;
-	            }
-	          });
-
-	          _this4.columns.forEach(function (column, i) {
-	            if (_this4.isSelectionColumn(column)) {
-	              return;
-	            }
-
-	            if (opts.cardView && !column.cardVisible) {
-	              return;
-	            }
-
-	            var checked = column.visible ? ' checked="checked"' : '';
-	            var disabled = visibleColumns <= _this4.options.minimumCountColumns && checked ? ' disabled="disabled"' : '';
-
-	            if (column.switchable) {
-	              html.push(Utils.sprintf(_this4.constants.html.toolbarDropdownItem, Utils.sprintf('<input type="checkbox" data-field="%s" value="%s"%s%s> <span>%s</span>', column.field, i, checked, disabled, column.title)));
-	              switchableCount++;
-	            }
-	          });
-
-	          html.push(_this4.constants.html.toolbarDropdown[1], '</div>');
-	          return html.join('');
-	        }()
-	      };
-
 	      if (typeof opts.buttonsOrder === 'string') {
 	        opts.buttonsOrder = opts.buttonsOrder.replace(/\[|\]| |'/g, '').toLowerCase().split(',');
 	      }
+
+	      this.buttons = Object.assign(this.buttons, {
+	        paginationSwitch: {
+	          text: opts.pagination ? opts.formatPaginationSwitchUp() : opts.formatPaginationSwitchDown(),
+	          icon: opts.pagination ? opts.icons.paginationSwitchDown : opts.icons.paginationSwitchUp,
+	          render: false,
+	          event: this.togglePagination,
+	          attributes: {
+	            'aria-label': opts.formatPaginationSwitch(),
+	            title: opts.formatPaginationSwitch()
+	          }
+	        },
+	        refresh: {
+	          text: opts.formatRefresh(),
+	          icon: opts.icons.refresh,
+	          render: false,
+	          event: this.refresh,
+	          attributes: {
+	            'aria-label': opts.formatRefresh(),
+	            title: opts.formatRefresh()
+	          }
+	        },
+	        toggle: {
+	          text: opts.formatToggle(),
+	          icon: opts.icons.toggleOff,
+	          render: false,
+	          event: this.toggleView,
+	          attributes: {
+	            'aria-label': opts.formatToggleOn(),
+	            title: opts.formatToggleOn()
+	          }
+	        },
+	        fullscreen: {
+	          text: opts.formatFullscreen(),
+	          icon: opts.icons.fullscreen,
+	          render: false,
+	          event: this.toggleFullscreen,
+	          attributes: {
+	            'aria-label': opts.formatFullscreen(),
+	            title: opts.formatFullscreen()
+	          }
+	        },
+	        columns: {
+	          render: false,
+	          html: function html() {
+	            var html = [];
+	            html.push("<div class=\"keep-open ".concat(_this4.constants.classes.buttonsDropdown, "\" title=\"").concat(opts.formatColumns(), "\">\n            <button class=\"").concat(_this4.constants.buttonsClass, " dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\"\n            aria-label=\"Columns\" title=\"").concat(opts.formatColumns(), "\">\n            ").concat(opts.showButtonIcons ? Utils.sprintf(_this4.constants.html.icon, opts.iconsPrefix, opts.icons.columns) : '', "\n            ").concat(opts.showButtonText ? opts.formatColumns() : '', "\n            ").concat(_this4.constants.html.dropdownCaret, "\n            </button>\n            ").concat(_this4.constants.html.toolbarDropdown[0]));
+
+	            if (opts.showColumnsSearch) {
+	              html.push(Utils.sprintf(_this4.constants.html.toolbarDropdownItem, Utils.sprintf('<input type="text" class="%s" name="columnsSearch" placeholder="%s" autocomplete="off">', _this4.constants.classes.input, opts.formatSearch())));
+	              html.push(_this4.constants.html.toolbarDropdownSeparator);
+	            }
+
+	            if (opts.showColumnsToggleAll) {
+	              var allFieldsVisible = _this4.getVisibleColumns().length === _this4.columns.filter(function (column) {
+	                return !_this4.isSelectionColumn(column);
+	              }).length;
+
+	              html.push(Utils.sprintf(_this4.constants.html.toolbarDropdownItem, Utils.sprintf('<input type="checkbox" class="toggle-all" %s> <span>%s</span>', allFieldsVisible ? 'checked="checked"' : '', opts.formatColumnsToggleAll())));
+	              html.push(_this4.constants.html.toolbarDropdownSeparator);
+	            }
+
+	            var visibleColumns = 0;
+
+	            _this4.columns.forEach(function (column, i) {
+	              if (column.visible) {
+	                visibleColumns++;
+	              }
+	            });
+
+	            _this4.columns.forEach(function (column, i) {
+	              if (_this4.isSelectionColumn(column)) {
+	                return;
+	              }
+
+	              if (opts.cardView && !column.cardVisible) {
+	                return;
+	              }
+
+	              var checked = column.visible ? ' checked="checked"' : '';
+	              var disabled = visibleColumns <= opts.minimumCountColumns && checked ? ' disabled="disabled"' : '';
+
+	              if (column.switchable) {
+	                html.push(Utils.sprintf(_this4.constants.html.toolbarDropdownItem, Utils.sprintf('<input type="checkbox" data-field="%s" value="%s"%s%s> <span>%s</span>', column.field, i, checked, disabled, column.title)));
+	                switchableCount++;
+	              }
+	            });
+
+	            html.push(_this4.constants.html.toolbarDropdown[1], '</div>');
+	            return html.join('');
+	          }
+	        }
+	      });
+	      var buttonsHtml = {};
+
+	      for (var _i2 = 0, _Object$entries2 = Object.entries(this.buttons); _i2 < _Object$entries2.length; _i2++) {
+	        var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
+	            buttonName = _Object$entries2$_i[0],
+	            buttonConfig = _Object$entries2$_i[1];
+
+	        var buttonHtml = void 0;
+
+	        if (buttonConfig.hasOwnProperty('html')) {
+	          buttonHtml = Utils.calculateObjectValue(opts, buttonConfig.html);
+	        } else {
+	          buttonHtml = "<button class=\"".concat(this.constants.buttonsClass, "\" type=\"button\" name=\"").concat(buttonName, "\"");
+
+	          if (buttonConfig.hasOwnProperty('attributes')) {
+	            for (var _i4 = 0, _Object$entries4 = Object.entries(buttonConfig.attributes); _i4 < _Object$entries4.length; _i4++) {
+	              var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
+	                  attributeName = _Object$entries4$_i[0],
+	                  value = _Object$entries4$_i[1];
+
+	              buttonHtml += " ".concat(attributeName, "=\"").concat(Utils.calculateObjectValue(opts, value), "\"");
+	            }
+	          }
+
+	          buttonHtml += '>';
+
+	          if (opts.showButtonIcons && buttonConfig.hasOwnProperty('icon')) {
+	            var icon = Utils.calculateObjectValue(opts, buttonConfig.icon);
+	            buttonHtml += Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, icon) + ' ';
+	          }
+
+	          if (opts.showButtonText && buttonConfig.hasOwnProperty('text')) {
+	            buttonHtml += Utils.calculateObjectValue(opts, buttonConfig.text);
+	          }
+
+	          buttonHtml += '</button>';
+	        }
+
+	        buttonsHtml[buttonName] = buttonHtml;
+	        var optionName = "show".concat(buttonName.charAt(0).toUpperCase()).concat(buttonName.substring(1));
+	        var showOption = opts[optionName];
+
+	        if ((!buttonConfig.hasOwnProperty('render') || buttonConfig.hasOwnProperty('render') && buttonConfig.render) && (showOption === undefined || showOption === true)) {
+	          opts[optionName] = true;
+	        }
+
+	        if (!opts.buttonsOrder.includes(buttonName)) {
+	          opts.buttonsOrder.push(buttonName);
+	        }
+	      } // Adding the button html to the final toolbar html when the showOption is true
+
 
 	      var _iteratorNormalCompletion = true;
 	      var _didIteratorError = false;
@@ -6262,8 +6698,9 @@ __webpack_require__.r(__webpack_exports__);
 	      try {
 	        for (var _iterator = opts.buttonsOrder[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	          var button = _step.value;
+	          var _showOption = opts["show".concat(button.charAt(0).toUpperCase()).concat(button.substring(1))];
 
-	          if (opts['show' + button.charAt(0).toUpperCase() + button.substring(1)]) {
+	          if (_showOption) {
 	            html.push(buttonsHtml[button]);
 	          }
 	        }
@@ -6288,28 +6725,42 @@ __webpack_require__.r(__webpack_exports__);
 	        this.$toolbar.append(html.join(''));
 	      }
 
-	      if (opts.showPaginationSwitch) {
-	        this.$toolbar.find('button[name="paginationSwitch"]').off('click').on('click', function () {
-	          return _this4.togglePagination();
-	        });
-	      }
+	      for (var _i3 = 0, _Object$entries3 = Object.entries(this.buttons); _i3 < _Object$entries3.length; _i3++) {
+	        var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
+	            _buttonName = _Object$entries3$_i[0],
+	            _buttonConfig = _Object$entries3$_i[1];
 
-	      if (opts.showFullscreen) {
-	        this.$toolbar.find('button[name="fullscreen"]').off('click').on('click', function () {
-	          return _this4.toggleFullscreen();
-	        });
-	      }
+	        if (_buttonConfig.hasOwnProperty('event')) {
+	          if (typeof _buttonConfig.event === 'function' || typeof _buttonConfig.event === 'string') {
+	            var _ret = function () {
+	              var event = typeof _buttonConfig.event === 'string' ? window[_buttonConfig.event] : _buttonConfig.event;
 
-	      if (opts.showRefresh) {
-	        this.$toolbar.find('button[name="refresh"]').off('click').on('click', function () {
-	          return _this4.refresh();
-	        });
-	      }
+	              _this4.$toolbar.find("button[name=\"".concat(_buttonName, "\"]")).off('click').on('click', function () {
+	                return event.call(_this4);
+	              });
 
-	      if (opts.showToggle) {
-	        this.$toolbar.find('button[name="toggle"]').off('click').on('click', function () {
-	          _this4.toggleView();
-	        });
+	              return "continue";
+	            }();
+
+	            if (_ret === "continue") continue;
+	          }
+
+	          var _loop = function _loop() {
+	            var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
+	                eventType = _Object$entries5$_i[0],
+	                eventFunction = _Object$entries5$_i[1];
+
+	            var event = typeof eventFunction === 'string' ? window[eventFunction] : eventFunction;
+
+	            _this4.$toolbar.find("button[name=\"".concat(_buttonName, "\"]")).off(eventType).on(eventType, function () {
+	              return event.call(_this4);
+	            });
+	          };
+
+	          for (var _i5 = 0, _Object$entries5 = Object.entries(_buttonConfig.event); _i5 < _Object$entries5.length; _i5++) {
+	            _loop();
+	          }
+	        }
 	      }
 
 	      if (opts.showColumns) {
@@ -6343,7 +6794,7 @@ __webpack_require__.r(__webpack_exports__);
 	        });
 
 	        if (opts.showColumnsSearch) {
-	          var $columnsSearch = $keepOpen.find('#columnsSearch');
+	          var $columnsSearch = $keepOpen.find('[name="columnsSearch"]');
 	          var $listItems = $keepOpen.find('.dropdown-item-marker');
 	          $columnsSearch.on('keyup paste change', function (_ref4) {
 	            var currentTarget = _ref4.currentTarget;
@@ -6361,14 +6812,35 @@ __webpack_require__.r(__webpack_exports__);
 	            });
 	          });
 	        }
-	      } // Fix #4516: this.showSearchClearButton is for extensions
+	      }
+
+	      var handleInputEvent = function handleInputEvent($searchInput) {
+	        var eventTriggers = 'keyup drop blur mouseup';
+	        $searchInput.off(eventTriggers).on(eventTriggers, function (event) {
+	          if (opts.searchOnEnterKey && event.keyCode !== 13) {
+	            return;
+	          }
+
+	          if ([37, 38, 39, 40].includes(event.keyCode)) {
+	            return;
+	          }
+
+	          clearTimeout(timeoutId); // doesn't matter if it's 0
+
+	          timeoutId = setTimeout(function () {
+	            _this4.onSearch({
+	              currentTarget: event.currentTarget
+	            });
+	          }, opts.searchTimeOut);
+	        });
+	      }; // Fix #4516: this.showSearchClearButton is for extensions
 
 
-	      if (opts.search || this.showSearchClearButton) {
+	      if ((opts.search || this.showSearchClearButton) && typeof opts.searchSelector !== 'string') {
 	        html = [];
 	        var showSearchButton = Utils.sprintf(this.constants.html.searchButton, this.constants.buttonsClass, opts.formatSearch(), opts.showButtonIcons ? Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, opts.icons.search) : '', opts.showButtonText ? opts.formatSearch() : '');
 	        var showSearchClearButton = Utils.sprintf(this.constants.html.searchClearButton, this.constants.buttonsClass, opts.formatClearSearch(), opts.showButtonIcons ? Utils.sprintf(this.constants.html.icon, opts.iconsPrefix, opts.icons.clearSearch) : '', opts.showButtonText ? opts.formatClearSearch() : '');
-	        var searchInputHtml = "<input class=\"".concat(this.constants.classes.input, "\n        ").concat(Utils.sprintf(' %s%s', this.constants.classes.inputPrefix, opts.iconSize), "\n        search-input\" type=\"text\" placeholder=\"").concat(opts.formatSearch(), "\" autocomplete=\"off\">");
+	        var searchInputHtml = "<input class=\"".concat(this.constants.classes.input, "\n        ").concat(Utils.sprintf(' %s%s', this.constants.classes.inputPrefix, opts.iconSize), "\n        search-input\" type=\"search\" placeholder=\"").concat(opts.formatSearch(), "\" autocomplete=\"off\">");
 	        var searchInputFinalHtml = searchInputHtml;
 
 	        if (opts.showSearchButton || opts.showSearchClearButton) {
@@ -6379,28 +6851,7 @@ __webpack_require__.r(__webpack_exports__);
 
 	        html.push(Utils.sprintf("\n        <div class=\"".concat(this.constants.classes.pull, "-").concat(opts.searchAlign, " search ").concat(this.constants.classes.inputGroup, "\">\n          %s\n        </div>\n      "), searchInputFinalHtml));
 	        this.$toolbar.append(html.join(''));
-	        var $searchInput = this.$toolbar.find('.search input');
-
-	        var handleInputEvent = function handleInputEvent() {
-	          var eventTriggers = "keyup drop blur ".concat(Utils.isIEBrowser() ? 'mouseup' : '');
-	          $searchInput.off(eventTriggers).on(eventTriggers, function (event) {
-	            if (opts.searchOnEnterKey && event.keyCode !== 13) {
-	              return;
-	            }
-
-	            if ([37, 38, 39, 40].includes(event.keyCode)) {
-	              return;
-	            }
-
-	            clearTimeout(timeoutId); // doesn't matter if it's 0
-
-	            timeoutId = setTimeout(function () {
-	              _this4.onSearch({
-	                currentTarget: event.currentTarget
-	              });
-	            }, opts.searchTimeOut);
-	          });
-	        };
+	        var $searchInput = Utils.getSearchInput(this);
 
 	        if (opts.showSearchButton) {
 	          this.$toolbar.find('.search button[name=search]').off('click').on('click', function (event) {
@@ -6414,10 +6865,10 @@ __webpack_require__.r(__webpack_exports__);
 	          });
 
 	          if (opts.searchOnEnterKey) {
-	            handleInputEvent();
+	            handleInputEvent($searchInput);
 	          }
 	        } else {
-	          handleInputEvent();
+	          handleInputEvent($searchInput);
 	        }
 
 	        if (opts.showSearchClearButton) {
@@ -6425,6 +6876,10 @@ __webpack_require__.r(__webpack_exports__);
 	            _this4.resetSearch();
 	          });
 	        }
+	      } else if (typeof opts.searchSelector === 'string') {
+	        var _$searchInput = Utils.getSearchInput(this);
+
+	        handleInputEvent(_$searchInput);
 	      }
 	    }
 	  }, {
@@ -6443,11 +6898,11 @@ __webpack_require__.r(__webpack_exports__);
 	          $(currentTarget).val(text);
 	        }
 
-	        if (this.searchText === text && text.length > 0) {
+	        if (this.searchText === text) {
 	          return;
 	        }
 
-	        if ($(currentTarget).hasClass('search-input')) {
+	        if (currentTarget === Utils.getSearchInput(this)[0] || $(currentTarget).hasClass('search-input')) {
 	          this.searchText = text;
 	          this.options.searchText = text;
 	        }
@@ -6479,6 +6934,11 @@ __webpack_require__.r(__webpack_exports__);
 	      if (this.options.sidePagination !== 'server') {
 	        if (this.options.customSearch) {
 	          this.data = Utils.calculateObjectValue(this.options, this.options.customSearch, [this.options.data, this.searchText, this.filterColumns]);
+
+	          if (this.options.sortReset) {
+	            this.unsortedData = _toConsumableArray(this.data);
+	          }
+
 	          return;
 	        }
 
@@ -6512,7 +6972,7 @@ __webpack_require__.r(__webpack_exports__);
 	            }
 
 	            return true;
-	          }) : this.options.data;
+	          }) : _toConsumableArray(this.options.data);
 	        }
 
 	        var visibleFields = this.getVisibleFields();
@@ -6530,13 +6990,17 @@ __webpack_require__.r(__webpack_exports__);
 	              value = item;
 	              var props = key.split('.');
 
-	              for (var _i2 = 0; _i2 < props.length; _i2++) {
-	                if (value[props[_i2]] !== null) {
-	                  value = value[props[_i2]];
+	              for (var _i6 = 0; _i6 < props.length; _i6++) {
+	                if (value[props[_i6]] !== null) {
+	                  value = value[props[_i6]];
 	                }
 	              }
 	            } else {
 	              value = item[key];
+	            }
+
+	            if (_this5.options.searchAccentNeutralise) {
+	              value = Utils.normalizeAccent(value);
 	            } // Fix #142: respect searchFormatter boolean
 
 
@@ -6596,9 +7060,13 @@ __webpack_require__.r(__webpack_exports__);
 
 	          return false;
 	        }) : this.data;
-	      }
 
-	      this.initSort();
+	        if (this.options.sortReset) {
+	          this.unsortedData = _toConsumableArray(this.data);
+	        }
+
+	        this.initSort();
+	      }
 	    }
 	  }, {
 	    key: "initPagination",
@@ -6638,6 +7106,11 @@ __webpack_require__.r(__webpack_exports__);
 
 	        return value;
 	      });
+	      this.paginationParts = opts.paginationParts;
+
+	      if (typeof this.paginationParts === 'string') {
+	        this.paginationParts = this.paginationParts.replace(/\[|\]| |'/g, '').split(',');
+	      }
 
 	      if (opts.sidePagination !== 'server') {
 	        opts.totalRows = data.length;
@@ -6674,10 +7147,16 @@ __webpack_require__.r(__webpack_exports__);
 	        this.options.totalNotFiltered = undefined;
 	      }
 
-	      var paginationInfo = opts.onlyInfoPagination ? opts.formatDetailPagination(opts.totalRows) : opts.formatShowingRows(this.pageFrom, this.pageTo, opts.totalRows, opts.totalNotFiltered);
-	      html.push("<div class=\"".concat(this.constants.classes.pull, "-").concat(opts.paginationDetailHAlign, " pagination-detail\">\n      <span class=\"pagination-info\">\n      ").concat(paginationInfo, "\n      </span>"));
+	      if (this.paginationParts.includes('pageInfo') || this.paginationParts.includes('pageInfoShort') || this.paginationParts.includes('pageSize')) {
+	        html.push("<div class=\"".concat(this.constants.classes.pull, "-").concat(opts.paginationDetailHAlign, " pagination-detail\">"));
+	      }
 
-	      if (!opts.onlyInfoPagination) {
+	      if (this.paginationParts.includes('pageInfo') || this.paginationParts.includes('pageInfoShort')) {
+	        var paginationInfo = this.paginationParts.includes('pageInfoShort') ? opts.formatDetailPagination(opts.totalRows) : opts.formatShowingRows(this.pageFrom, this.pageTo, opts.totalRows, opts.totalNotFiltered);
+	        html.push("<span class=\"pagination-info\">\n      ".concat(paginationInfo, "\n      </span>"));
+	      }
+
+	      if (this.paginationParts.includes('pageSize')) {
 	        html.push('<span class="page-list">');
 	        var pageNumber = ["<span class=\"".concat(this.constants.classes.paginationDropdown, "\">\n        <button class=\"").concat(this.constants.buttonsClass, " dropdown-toggle\" type=\"button\" data-toggle=\"dropdown\">\n        <span class=\"page-size\">\n        ").concat(allSelected ? opts.formatAllRows() : opts.pageSize, "\n        </span>\n        ").concat(this.constants.html.dropdownCaret, "\n        </button>\n        ").concat(this.constants.html.pageDropdown[0])];
 	        pageList.forEach(function (page, i) {
@@ -6695,7 +7174,13 @@ __webpack_require__.r(__webpack_exports__);
 	        });
 	        pageNumber.push("".concat(this.constants.html.pageDropdown[1], "</span>"));
 	        html.push(opts.formatRecordsPerPage(pageNumber.join('')));
+	      }
+
+	      if (this.paginationParts.includes('pageInfo') || this.paginationParts.includes('pageInfoShort') || this.paginationParts.includes('pageSize')) {
 	        html.push('</span></div>');
+	      }
+
+	      if (this.paginationParts.includes('pageList')) {
 	        html.push("<div class=\"".concat(this.constants.classes.pull, "-").concat(opts.paginationHAlign, " pagination\">"), Utils.sprintf(this.constants.html.pagination[0], Utils.sprintf(' pagination-%s', opts.iconSize)), Utils.sprintf(this.constants.html.paginationItem, ' page-pre', opts.formatSRPaginationPreText(), opts.paginationPreText));
 
 	        if (this.totalPages < opts.paginationSuccessivelySize) {
@@ -6848,14 +7333,13 @@ __webpack_require__.r(__webpack_exports__);
 	      }
 
 	      this.initPagination();
+	      this.trigger('page-change', this.options.pageNumber, this.options.pageSize);
 
 	      if (this.options.sidePagination === 'server') {
 	        this.initServer();
 	      } else {
 	        this.initBody();
 	      }
-
-	      this.trigger('page-change', this.options.pageNumber, this.options.pageSize);
 	    }
 	  }, {
 	    key: "onPageListChange",
@@ -6928,10 +7412,10 @@ __webpack_require__.r(__webpack_exports__);
 	      style = Utils.calculateObjectValue(this.options, this.options.rowStyle, [item, i], style);
 
 	      if (style && style.css) {
-	        for (var _i3 = 0, _Object$entries2 = Object.entries(style.css); _i3 < _Object$entries2.length; _i3++) {
-	          var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i3], 2),
-	              key = _Object$entries2$_i[0],
-	              value = _Object$entries2$_i[1];
+	        for (var _i7 = 0, _Object$entries6 = Object.entries(style.css); _i7 < _Object$entries6.length; _i7++) {
+	          var _Object$entries6$_i = _slicedToArray(_Object$entries6[_i7], 2),
+	              key = _Object$entries6$_i[0],
+	              value = _Object$entries6$_i[1];
 
 	          csses.push("".concat(key, ": ").concat(value));
 	        }
@@ -6940,20 +7424,20 @@ __webpack_require__.r(__webpack_exports__);
 	      attributes = Utils.calculateObjectValue(this.options, this.options.rowAttributes, [item, i], attributes);
 
 	      if (attributes) {
-	        for (var _i4 = 0, _Object$entries3 = Object.entries(attributes); _i4 < _Object$entries3.length; _i4++) {
-	          var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i4], 2),
-	              _key2 = _Object$entries3$_i[0],
-	              _value = _Object$entries3$_i[1];
+	        for (var _i8 = 0, _Object$entries7 = Object.entries(attributes); _i8 < _Object$entries7.length; _i8++) {
+	          var _Object$entries7$_i = _slicedToArray(_Object$entries7[_i8], 2),
+	              _key2 = _Object$entries7$_i[0],
+	              _value = _Object$entries7$_i[1];
 
 	          htmlAttributes.push("".concat(_key2, "=\"").concat(Utils.escapeHTML(_value), "\""));
 	        }
 	      }
 
 	      if (item._data && !Utils.isEmptyObject(item._data)) {
-	        for (var _i5 = 0, _Object$entries4 = Object.entries(item._data); _i5 < _Object$entries4.length; _i5++) {
-	          var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i5], 2),
-	              k = _Object$entries4$_i[0],
-	              v = _Object$entries4$_i[1];
+	        for (var _i9 = 0, _Object$entries8 = Object.entries(item._data); _i9 < _Object$entries8.length; _i9++) {
+	          var _Object$entries8$_i = _slicedToArray(_Object$entries8[_i9], 2),
+	              k = _Object$entries8$_i[0],
+	              v = _Object$entries8$_i[1];
 
 	          // ignore data-index
 	          if (k === 'index') {
@@ -6964,20 +7448,26 @@ __webpack_require__.r(__webpack_exports__);
 	        }
 	      }
 
-	      html.push('<tr', Utils.sprintf(' %s', htmlAttributes.length ? htmlAttributes.join(' ') : undefined), Utils.sprintf(' id="%s"', Array.isArray(item) ? undefined : item._id), Utils.sprintf(' class="%s"', style.classes || (Array.isArray(item) ? undefined : item._class)), " data-index=\"".concat(i, "\""), Utils.sprintf(' data-uniqueid="%s"', Utils.getItemField(item, this.options.uniqueId, false)), Utils.sprintf(' data-has-detail-view="%s"', !this.options.cardView && this.options.detailView && Utils.calculateObjectValue(null, this.options.detailFilter, [i, item]) ? 'true' : undefined), Utils.sprintf('%s', data_), '>');
+	      html.push('<tr', Utils.sprintf(' %s', htmlAttributes.length ? htmlAttributes.join(' ') : undefined), Utils.sprintf(' id="%s"', Array.isArray(item) ? undefined : item._id), Utils.sprintf(' class="%s"', style.classes || (Array.isArray(item) ? undefined : item._class)), Utils.sprintf(' style="%s"', Array.isArray(item) ? undefined : item._style), " data-index=\"".concat(i, "\""), Utils.sprintf(' data-uniqueid="%s"', Utils.getItemField(item, this.options.uniqueId, false)), Utils.sprintf(' data-has-detail-view="%s"', this.options.detailView && Utils.calculateObjectValue(null, this.options.detailFilter, [i, item]) ? 'true' : undefined), Utils.sprintf('%s', data_), '>');
 
 	      if (this.options.cardView) {
 	        html.push("<td colspan=\"".concat(this.header.fields.length, "\"><div class=\"card-views\">"));
 	      }
 
-	      if (!this.options.cardView && this.options.detailView && this.options.detailViewIcon) {
-	        html.push('<td>');
+	      var detailViewTemplate = '';
+
+	      if (Utils.hasDetailViewIcon(this.options)) {
+	        detailViewTemplate = '<td>';
 
 	        if (Utils.calculateObjectValue(null, this.options.detailFilter, [i, item])) {
-	          html.push("\n          <a class=\"detail-icon\" href=\"#\">\n          ".concat(Utils.sprintf(this.constants.html.icon, this.options.iconsPrefix, this.options.icons.detailOpen), "\n          </a>\n        "));
+	          detailViewTemplate += "\n          <a class=\"detail-icon\" href=\"#\">\n          ".concat(Utils.sprintf(this.constants.html.icon, this.options.iconsPrefix, this.options.icons.detailOpen), "\n          </a>\n        ");
 	        }
 
-	        html.push('</td>');
+	        detailViewTemplate += '</td>';
+	      }
+
+	      if (detailViewTemplate && this.options.detailViewAlign !== 'right') {
+	        html.push(detailViewTemplate);
 	      }
 
 	      this.header.fields.forEach(function (field, j) {
@@ -6989,13 +7479,14 @@ __webpack_require__.r(__webpack_exports__);
 	        var id_ = '';
 	        var class_ = _this7.header.classes[j];
 	        var style_ = '';
+	        var styleToAdd_ = '';
 	        var data_ = '';
 	        var rowspan_ = '';
 	        var colspan_ = '';
 	        var title_ = '';
 	        var column = _this7.columns[j];
 
-	        if (_this7.fromHtml && typeof value_ === 'undefined') {
+	        if ((_this7.fromHtml || _this7.autoMergeCells) && typeof value_ === 'undefined') {
 	          if (!column.checkbox && !column.radio) {
 	            return;
 	          }
@@ -7011,11 +7502,21 @@ __webpack_require__.r(__webpack_exports__);
 
 	        if (column.escape) {
 	          value_ = Utils.escapeHTML(value_);
-	        }
+	        } // Style concat
+
 
 	        if (csses.concat([_this7.header.styles[j]]).length) {
-	          style_ = " style=\"".concat(csses.concat([_this7.header.styles[j]]).join('; '), "\"");
-	        } // handle td's id and class
+	          styleToAdd_ += "".concat(csses.concat([_this7.header.styles[j]]).join('; '));
+	        }
+
+	        if (item["_".concat(field, "_style")]) {
+	          styleToAdd_ += "".concat(item["_".concat(field, "_style")]);
+	        }
+
+	        if (styleToAdd_) {
+	          style_ = " style=\"".concat(styleToAdd_, "\"");
+	        } // Style concat
+	        // handle id and class of td
 
 
 	        if (item["_".concat(field, "_id")]) {
@@ -7047,10 +7548,10 @@ __webpack_require__.r(__webpack_exports__);
 	        if (cellStyle.css) {
 	          var csses_ = [];
 
-	          for (var _i6 = 0, _Object$entries5 = Object.entries(cellStyle.css); _i6 < _Object$entries5.length; _i6++) {
-	            var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i6], 2),
-	                _key3 = _Object$entries5$_i[0],
-	                _value2 = _Object$entries5$_i[1];
+	          for (var _i10 = 0, _Object$entries9 = Object.entries(cellStyle.css); _i10 < _Object$entries9.length; _i10++) {
+	            var _Object$entries9$_i = _slicedToArray(_Object$entries9[_i10], 2),
+	                _key3 = _Object$entries9$_i[0],
+	                _value2 = _Object$entries9$_i[1];
 
 	            csses_.push("".concat(_key3, ": ").concat(_value2));
 	          }
@@ -7060,11 +7561,15 @@ __webpack_require__.r(__webpack_exports__);
 
 	        value = Utils.calculateObjectValue(column, _this7.header.formatters[j], [value_, item, i, field], value_);
 
+	        if (_this7.searchText !== '' && _this7.options.searchHighlight) {
+	          value = Utils.calculateObjectValue(column, column.searchHighlightFormatter, [value, _this7.searchText], value.replace(new RegExp('(' + _this7.searchText + ')', 'gim'), '<mark>$1</mark>'));
+	        }
+
 	        if (item["_".concat(field, "_data")] && !Utils.isEmptyObject(item["_".concat(field, "_data")])) {
-	          for (var _i7 = 0, _Object$entries6 = Object.entries(item["_".concat(field, "_data")]); _i7 < _Object$entries6.length; _i7++) {
-	            var _Object$entries6$_i = _slicedToArray(_Object$entries6[_i7], 2),
-	                _k = _Object$entries6$_i[0],
-	                _v = _Object$entries6$_i[1];
+	          for (var _i11 = 0, _Object$entries10 = Object.entries(item["_".concat(field, "_data")]); _i11 < _Object$entries10.length; _i11++) {
+	            var _Object$entries10$_i = _slicedToArray(_Object$entries10[_i11], 2),
+	                _k = _Object$entries10$_i[0],
+	                _v = _Object$entries10$_i[1];
 
 	            // ignore data-index
 	            if (_k === 'index') {
@@ -7079,7 +7584,7 @@ __webpack_require__.r(__webpack_exports__);
 	          type = column.checkbox ? 'checkbox' : type;
 	          type = column.radio ? 'radio' : type;
 	          var c = column['class'] || '';
-	          var isChecked = (value === true || value_ || value && value.checked) && value !== false;
+	          var isChecked = Utils.isObject(value) && value.hasOwnProperty('checked') ? value.checked : (value === true || value_) && value !== false;
 	          var isDisabled = !column.checkboxEnabled || value && value.disabled;
 	          text = [_this7.options.cardView ? "<div class=\"card-view ".concat(c, "\">") : "<td class=\"bs-checkbox ".concat(c, "\"").concat(class_).concat(style_, ">"), "<label>\n            <input\n            data-index=\"".concat(i, "\"\n            name=\"").concat(_this7.options.selectItemName, "\"\n            type=\"").concat(type, "\"\n            ").concat(Utils.sprintf('value="%s"', item[_this7.options.idField]), "\n            ").concat(Utils.sprintf('checked="%s"', isChecked ? 'checked' : undefined), "\n            ").concat(Utils.sprintf('disabled="%s"', isDisabled ? 'disabled' : undefined), " />\n            <span></span>\n            </label>"), _this7.header.formatters[j] && typeof value === 'string' ? value : '', _this7.options.cardView ? '</div>' : '</td>'].join('');
 	          item[_this7.header.stateField] = value === true || !!value_ || value && value.checked;
@@ -7100,6 +7605,10 @@ __webpack_require__.r(__webpack_exports__);
 
 	        html.push(text);
 	      });
+
+	      if (detailViewTemplate && this.options.detailViewAlign === 'right') {
+	        html.push(detailViewTemplate);
+	      }
 
 	      if (this.options.cardView) {
 	        html.push('</div></td>');
@@ -7130,6 +7639,7 @@ __webpack_require__.r(__webpack_exports__);
 	      var rows = [];
 	      var trFragments = $(document.createDocumentFragment());
 	      var hasTr = false;
+	      this.autoMergeCells = Utils.checkAutoMergeCells(data.slice(this.pageFrom - 1, this.pageTo));
 
 	      for (var i = this.pageFrom - 1; i < this.pageTo; i++) {
 	        var item = data[i];
@@ -7147,7 +7657,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 	      if (!hasTr) {
-	        this.$body.html("<tr class=\"no-records-found\">".concat(Utils.sprintf('<td colspan="%s">%s</td>', this.$header.find('th').length, this.options.formatNoMatches()), "</tr>"));
+	        this.$body.html("<tr class=\"no-records-found\">".concat(Utils.sprintf('<td colspan="%s">%s</td>', this.getVisibleFields().length + Utils.getDetailViewIndexOffset(this.options), this.options.formatNoMatches()), "</tr>"));
 	      } else {
 	        if (!this.options.virtualScroll) {
 	          this.$body.html(trFragments);
@@ -7203,7 +7713,7 @@ __webpack_require__.r(__webpack_exports__);
 
 	        var fields = _this9.getVisibleFields();
 
-	        var field = fields[_this9.options.detailView && _this9.options.detailViewIcon && !_this9.options.cardView ? index - 1 : index];
+	        var field = fields[index - Utils.getDetailViewIndexOffset(_this9.options)];
 	        var column = _this9.columns[_this9.fieldsColumnsIndex[field]];
 	        var value = Utils.getItemField(item, field, _this9.options.escape);
 
@@ -7266,11 +7776,9 @@ __webpack_require__.r(__webpack_exports__);
 	          return;
 	        }
 
-	        if (_this9.options.detailView && !_this9.options.cardView) {
-	          fieldIndex += 1;
-	        }
+	        fieldIndex += Utils.getDetailViewIndexOffset(_this9.options);
 
-	        var _loop = function _loop(key) {
+	        var _loop2 = function _loop2(key) {
 	          if (!events.hasOwnProperty(key)) {
 	            return "continue";
 	          }
@@ -7293,9 +7801,9 @@ __webpack_require__.r(__webpack_exports__);
 	        };
 
 	        for (var key in events) {
-	          var _ret = _loop(key);
+	          var _ret2 = _loop2(key);
 
-	          if (_ret === "continue") continue;
+	          if (_ret2 === "continue") continue;
 	        }
 	      });
 	    }
@@ -7338,6 +7846,38 @@ __webpack_require__.r(__webpack_exports__);
 
 	          if (params.limit === 0) {
 	            delete params.limit;
+	          }
+	        }
+	      }
+
+	      if (this.options.search && this.options.sidePagination === 'server' && this.columns.filter(function (column) {
+	        return !column.searchable;
+	      }).length) {
+	        params.searchable = [];
+	        var _iteratorNormalCompletion2 = true;
+	        var _didIteratorError2 = false;
+	        var _iteratorError2 = undefined;
+
+	        try {
+	          for (var _iterator2 = this.columns[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var column = _step2.value;
+
+	            if (!column.checkbox && column.searchable && (this.options.visibleSearch && column.visible || !this.options.visibleSearch)) {
+	              params.searchable.push(column.field);
+	            }
+	          }
+	        } catch (err) {
+	          _didIteratorError2 = true;
+	          _iteratorError2 = err;
+	        } finally {
+	          try {
+	            if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+	              _iterator2.return();
+	            }
+	          } finally {
+	            if (_didIteratorError2) {
+	              throw _iteratorError2;
+	            }
 	          }
 	        }
 	      }
@@ -7415,7 +7955,7 @@ __webpack_require__.r(__webpack_exports__);
 	        this.searchText = '';
 
 	        if (this.options.searchText !== '') {
-	          var $search = this.$toolbar.find('.search input');
+	          var $search = Utils.getSearchInput(this);
 	          $search.val(this.options.searchText);
 	          this.onSearch({
 	            currentTarget: $search,
@@ -7454,13 +7994,13 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "resetRows",
 	    value: function resetRows() {
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
+	      var _iteratorNormalCompletion3 = true;
+	      var _didIteratorError3 = false;
+	      var _iteratorError3 = undefined;
 
 	      try {
-	        for (var _iterator2 = this.data[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	          var row = _step2.value;
+	        for (var _iterator3 = this.data[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	          var row = _step3.value;
 	          this.$selectAll.prop('checked', false);
 	          this.$selectItem.prop('checked', false);
 
@@ -7469,16 +8009,16 @@ __webpack_require__.r(__webpack_exports__);
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _didIteratorError3 = true;
+	        _iteratorError3 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-	            _iterator2.return();
+	          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+	            _iterator3.return();
 	          }
 	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
+	          if (_didIteratorError3) {
+	            throw _iteratorError3;
 	          }
 	        }
 	      }
@@ -7488,7 +8028,7 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "trigger",
 	    value: function trigger(_name) {
-	      var _this$options;
+	      var _this$options, _this$options2;
 
 	      var name = "".concat(_name, ".bs.table");
 
@@ -7496,11 +8036,17 @@ __webpack_require__.r(__webpack_exports__);
 	        args[_key4 - 1] = arguments[_key4];
 	      }
 
-	      (_this$options = this.options)[BootstrapTable.EVENTS[name]].apply(_this$options, args);
+	      (_this$options = this.options)[BootstrapTable.EVENTS[name]].apply(_this$options, [].concat(args, [this]));
 
-	      this.$el.trigger($.Event(name), args);
-	      this.options.onAll(name, args);
-	      this.$el.trigger($.Event('all.bs.table'), [name, args]);
+	      this.$el.trigger($.Event(name, {
+	        sender: this
+	      }), args);
+
+	      (_this$options2 = this.options).onAll.apply(_this$options2, [name].concat([].concat(args, [this])));
+
+	      this.$el.trigger($.Event('all.bs.table', {
+	        sender: this
+	      }), [name, args]);
 	    }
 	  }, {
 	    key: "resetHeader",
@@ -7570,25 +8116,22 @@ __webpack_require__.r(__webpack_exports__);
 	        $tr = $tr.next();
 	      }
 
+	      var trLength = $tr.find('> *').length;
 	      $tr.find('> *').each(function (i, el) {
 	        var $this = $(el);
-	        var index = i;
 
-	        if (_this14.options.detailView && _this14.options.detailViewIcon && !_this14.options.cardView) {
-	          if (i === 0) {
+	        if (Utils.hasDetailViewIcon(_this14.options)) {
+	          if (i === 0 && _this14.options.detailViewAlign !== 'right' || i === trLength - 1 && _this14.options.detailViewAlign === 'right') {
 	            var $thDetail = $ths.filter('.detail');
 
 	            var _zoomWidth = $thDetail.innerWidth() - $thDetail.find('.fht-cell').width();
 
 	            $thDetail.find('.fht-cell').width($this.innerWidth() - _zoomWidth);
+	            return;
 	          }
-
-	          index = i - 1;
 	        }
 
-	        if (index === -1) {
-	          return;
-	        }
+	        var index = i - Utils.getDetailViewIndexOffset(_this14.options);
 
 	        var $th = _this14.$header_.find(Utils.sprintf('th[data-field="%s"]', visibleFields[index]));
 
@@ -7612,25 +8155,30 @@ __webpack_require__.r(__webpack_exports__);
 
 	      var data = this.getData();
 	      var html = [];
+	      var detailTemplate = '';
 
-	      if (!this.options.cardView && this.options.detailView && this.options.detailViewIcon) {
-	        html.push('<th class="detail"><div class="th-inner"></div><div class="fht-cell"></div></th>');
+	      if (Utils.hasDetailViewIcon(this.options)) {
+	        detailTemplate = '<th class="detail"><div class="th-inner"></div><div class="fht-cell"></div></th>';
 	      }
 
-	      var _iteratorNormalCompletion3 = true;
-	      var _didIteratorError3 = false;
-	      var _iteratorError3 = undefined;
+	      if (detailTemplate && this.options.detailViewAlign !== 'right') {
+	        html.push(detailTemplate);
+	      }
+
+	      var _iteratorNormalCompletion4 = true;
+	      var _didIteratorError4 = false;
+	      var _iteratorError4 = undefined;
 
 	      try {
-	        for (var _iterator3 = this.columns[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	          var column = _step3.value;
+	        for (var _iterator4 = this.columns[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	          var column = _step4.value;
 	          var falign = '';
 	          var valign = '';
 	          var csses = [];
 	          var style = {};
 	          var class_ = Utils.sprintf(' class="%s"', column['class']);
 
-	          if (!column.visible) {
+	          if (!column.visible || this.footerData && this.footerData.length > 0 && !(column.field in this.footerData[0])) {
 	            continue;
 	          }
 
@@ -7643,12 +8191,12 @@ __webpack_require__.r(__webpack_exports__);
 	          style = Utils.calculateObjectValue(null, this.options.footerStyle, [column]);
 
 	          if (style && style.css) {
-	            for (var _i8 = 0, _Object$entries7 = Object.entries(style.css); _i8 < _Object$entries7.length; _i8++) {
-	              var _Object$entries7$_i = _slicedToArray(_Object$entries7[_i8], 2),
-	                  key = _Object$entries7$_i[0],
-	                  value = _Object$entries7$_i[1];
+	            for (var _i12 = 0, _Object$entries11 = Object.entries(style.css); _i12 < _Object$entries11.length; _i12++) {
+	              var _Object$entries11$_i = _slicedToArray(_Object$entries11[_i12], 2),
+	                  key = _Object$entries11$_i[0],
+	                  _value3 = _Object$entries11$_i[1];
 
-	              csses.push("".concat(key, ": ").concat(value));
+	              csses.push("".concat(key, ": ").concat(_value3));
 	            }
 	          }
 
@@ -7656,27 +8204,48 @@ __webpack_require__.r(__webpack_exports__);
 	            class_ = Utils.sprintf(' class="%s"', column['class'] ? [column['class'], style.classes].join(' ') : style.classes);
 	          }
 
-	          html.push('<th', class_, Utils.sprintf(' style="%s"', falign + valign + csses.concat().join('; ')), '>');
+	          html.push('<th', class_, Utils.sprintf(' style="%s"', falign + valign + csses.concat().join('; ')));
+	          var colspan = 0;
+
+	          if (this.footerData && this.footerData.length > 0) {
+	            colspan = this.footerData[0]['_' + column.field + '_colspan'] || 0;
+	          }
+
+	          if (colspan) {
+	            html.push(" colspan=\"".concat(colspan, "\" "));
+	          }
+
+	          html.push('>');
 	          html.push('<div class="th-inner">');
-	          html.push(Utils.calculateObjectValue(column, column.footerFormatter, [data], this.footerData[0] && this.footerData[0][column.field] || ''));
+	          var value = '';
+
+	          if (this.footerData && this.footerData.length > 0) {
+	            value = this.footerData[0][column.field] || '';
+	          }
+
+	          html.push(Utils.calculateObjectValue(column, column.footerFormatter, [data, value], value));
 	          html.push('</div>');
 	          html.push('<div class="fht-cell"></div>');
 	          html.push('</div>');
 	          html.push('</th>');
 	        }
 	      } catch (err) {
-	        _didIteratorError3 = true;
-	        _iteratorError3 = err;
+	        _didIteratorError4 = true;
+	        _iteratorError4 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-	            _iterator3.return();
+	          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+	            _iterator4.return();
 	          }
 	        } finally {
-	          if (_didIteratorError3) {
-	            throw _iteratorError3;
+	          if (_didIteratorError4) {
+	            throw _iteratorError4;
 	          }
 	        }
+	      }
+
+	      if (detailTemplate && this.options.detailViewAlign === 'right') {
+	        html.push(detailTemplate);
 	      }
 
 	      if (!this.options.height && !this.$tableFooter.length) {
@@ -7705,29 +8274,25 @@ __webpack_require__.r(__webpack_exports__);
 	      var visibleFields = this.getVisibleFields();
 	      var $ths = this.$tableFooter.find('th');
 	      var $tr = this.$body.find('>tr:first-child:not(.no-records-found)');
+	      $ths.find('.fht-cell').width('auto');
 
 	      while ($tr.length && $tr.find('>td[colspan]:not([colspan="1"])').length) {
 	        $tr = $tr.next();
 	      }
 
+	      var trLength = $tr.find('> *').length;
 	      $tr.find('> *').each(function (i, el) {
 	        var $this = $(el);
-	        var index = i;
 
-	        if (_this15.options.detailView && !_this15.options.cardView) {
-	          if (i === 0) {
+	        if (Utils.hasDetailViewIcon(_this15.options)) {
+	          if (i === 0 && _this15.options.detailViewAlign === 'left' || i === trLength - 1 && _this15.options.detailViewAlign === 'right') {
 	            var $thDetail = $ths.filter('.detail');
 
 	            var _zoomWidth2 = $thDetail.innerWidth() - $thDetail.find('.fht-cell').width();
 
 	            $thDetail.find('.fht-cell').width($this.innerWidth() - _zoomWidth2);
+	            return;
 	          }
-
-	          index = i - 1;
-	        }
-
-	        if (index === -1) {
-	          return;
 	        }
 
 	        var $th = $ths.eq(i);
@@ -7761,13 +8326,13 @@ __webpack_require__.r(__webpack_exports__);
 	    key: "getVisibleFields",
 	    value: function getVisibleFields() {
 	      var visibleFields = [];
-	      var _iteratorNormalCompletion4 = true;
-	      var _didIteratorError4 = false;
-	      var _iteratorError4 = undefined;
+	      var _iteratorNormalCompletion5 = true;
+	      var _didIteratorError5 = false;
+	      var _iteratorError5 = undefined;
 
 	      try {
-	        for (var _iterator4 = this.header.fields[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-	          var field = _step4.value;
+	        for (var _iterator5 = this.header.fields[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	          var field = _step5.value;
 	          var column = this.columns[this.fieldsColumnsIndex[field]];
 
 	          if (!column || !column.visible) {
@@ -7777,16 +8342,16 @@ __webpack_require__.r(__webpack_exports__);
 	          visibleFields.push(field);
 	        }
 	      } catch (err) {
-	        _didIteratorError4 = true;
-	        _iteratorError4 = err;
+	        _didIteratorError5 = true;
+	        _iteratorError5 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-	            _iterator4.return();
+	          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+	            _iterator5.return();
 	          }
 	        } finally {
-	          if (_didIteratorError4) {
-	            throw _iteratorError4;
+	          if (_didIteratorError5) {
+	            throw _iteratorError5;
 	          }
 	        }
 	      }
@@ -7824,9 +8389,11 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "getData",
 	    value: function getData(params) {
+	      var _this17 = this;
+
 	      var data = this.options.data;
 
-	      if ((this.searchText || this.options.customSearch || this.options.sortName || !Utils.isEmptyObject(this.filterColumns) || !Utils.isEmptyObject(this.filterColumnsPartial)) && (!params || !params.unfiltered)) {
+	      if ((this.searchText || this.options.customSearch || this.options.sortName !== undefined || !Utils.isEmptyObject(this.filterColumns) || !Utils.isEmptyObject(this.filterColumnsPartial)) && (!params || !params.unfiltered)) {
 	        data = this.data;
 	      }
 
@@ -7841,21 +8408,29 @@ __webpack_require__.r(__webpack_exports__);
 	        });
 	      }
 
+	      if (params && params.formatted) {
+	        data.forEach(function (row) {
+	          for (var _i13 = 0, _Object$entries12 = Object.entries(row); _i13 < _Object$entries12.length; _i13++) {
+	            var _Object$entries12$_i = _slicedToArray(_Object$entries12[_i13], 2),
+	                key = _Object$entries12$_i[0],
+	                value = _Object$entries12$_i[1];
+
+	            var column = _this17.columns[_this17.fieldsColumnsIndex[key]];
+
+	            if (!column) {
+	              return;
+	            }
+
+	            row[key] = Utils.calculateObjectValue(column, _this17.header.formatters[column.fieldIndex], [value, row, row.index, column.field], value);
+	          }
+	        });
+	      }
+
 	      return data;
 	    }
 	  }, {
 	    key: "getSelections",
 	    value: function getSelections() {
-	      var _this17 = this;
-
-	      // fix #2424: from html with checkbox
-	      return this.data.filter(function (row) {
-	        return row[_this17.header.stateField] === true;
-	      });
-	    }
-	  }, {
-	    key: "getAllSelections",
-	    value: function getAllSelections() {
 	      var _this18 = this;
 
 	      return this.options.data.filter(function (row) {
@@ -7870,10 +8445,8 @@ __webpack_require__.r(__webpack_exports__);
 
 	      if (this.options.pagination && this.options.sidePagination === 'server') {
 	        this.options.totalRows = data[this.options.totalField];
-	      }
-
-	      if (this.options.pagination && this.options.sidePagination === 'server') {
 	        this.options.totalNotFiltered = data[this.options.totalNotFilteredField];
+	        this.footerData = data[this.options.footerField] ? [data[this.options.footerField]] : undefined;
 	      }
 
 	      fixedScroll = data.fixedScroll;
@@ -7913,13 +8486,18 @@ __webpack_require__.r(__webpack_exports__);
 	      }
 
 	      for (i = len - 1; i >= 0; i--) {
+	        var exists = false;
 	        row = this.options.data[i];
 
-	        if (!row.hasOwnProperty(params.field)) {
+	        if (!row.hasOwnProperty(params.field) && params.field !== '$index') {
 	          continue;
+	        } else if (!row.hasOwnProperty(params.field) && params.field === '$index') {
+	          exists = params.values.includes(i);
+	        } else {
+	          exists = params.values.includes(row[params.field]);
 	        }
 
-	        if (params.values.includes(row[params.field])) {
+	        if (exists) {
 	          this.options.data.splice(i, 1);
 
 	          if (this.options.sidePagination === 'server') {
@@ -7964,19 +8542,17 @@ __webpack_require__.r(__webpack_exports__);
 	    key: "updateRow",
 	    value: function updateRow(params) {
 	      var allParams = Array.isArray(params) ? params : [params];
-	      var _iteratorNormalCompletion5 = true;
-	      var _didIteratorError5 = false;
-	      var _iteratorError5 = undefined;
+	      var _iteratorNormalCompletion6 = true;
+	      var _didIteratorError6 = false;
+	      var _iteratorError6 = undefined;
 
 	      try {
-	        for (var _iterator5 = allParams[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-	          var _params = _step5.value;
+	        for (var _iterator6 = allParams[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+	          var _params = _step6.value;
 
 	          if (!_params.hasOwnProperty('index') || !_params.hasOwnProperty('row')) {
 	            continue;
 	          }
-
-	          $.extend(this.options.data[_params.index], _params.row);
 
 	          if (_params.hasOwnProperty('replace') && _params.replace) {
 	            this.options.data[_params.index] = _params.row;
@@ -7985,16 +8561,16 @@ __webpack_require__.r(__webpack_exports__);
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError5 = true;
-	        _iteratorError5 = err;
+	        _didIteratorError6 = true;
+	        _iteratorError6 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-	            _iterator5.return();
+	          if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+	            _iterator6.return();
 	          }
 	        } finally {
-	          if (_didIteratorError5) {
-	            throw _iteratorError5;
+	          if (_didIteratorError6) {
+	            throw _iteratorError6;
 	          }
 	        }
 	      }
@@ -8050,13 +8626,13 @@ __webpack_require__.r(__webpack_exports__);
 	    key: "updateByUniqueId",
 	    value: function updateByUniqueId(params) {
 	      var allParams = Array.isArray(params) ? params : [params];
-	      var _iteratorNormalCompletion6 = true;
-	      var _didIteratorError6 = false;
-	      var _iteratorError6 = undefined;
+	      var _iteratorNormalCompletion7 = true;
+	      var _didIteratorError7 = false;
+	      var _iteratorError7 = undefined;
 
 	      try {
-	        for (var _iterator6 = allParams[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-	          var _params2 = _step6.value;
+	        for (var _iterator7 = allParams[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+	          var _params2 = _step7.value;
 
 	          if (!_params2.hasOwnProperty('id') || !_params2.hasOwnProperty('row')) {
 	            continue;
@@ -8075,16 +8651,16 @@ __webpack_require__.r(__webpack_exports__);
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError6 = true;
-	        _iteratorError6 = err;
+	        _didIteratorError7 = true;
+	        _iteratorError7 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
-	            _iterator6.return();
+	          if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+	            _iterator7.return();
 	          }
 	        } finally {
-	          if (_didIteratorError6) {
-	            throw _iteratorError6;
+	          if (_didIteratorError7) {
+	            throw _iteratorError7;
 	          }
 	        }
 	      }
@@ -8132,10 +8708,6 @@ __webpack_require__.r(__webpack_exports__);
 	    key: "updateCellByUniqueId",
 	    value: function updateCellByUniqueId(params) {
 	      var _this19 = this;
-
-	      if (!params.hasOwnProperty('id') || !params.hasOwnProperty('field') || !params.hasOwnProperty('value')) {
-	        return;
-	      }
 
 	      var allParams = Array.isArray(params) ? params : [params];
 	      allParams.forEach(function (_ref6) {
@@ -8192,12 +8764,8 @@ __webpack_require__.r(__webpack_exports__);
 	        this.hiddenRows.splice(index, 1);
 	      }
 
-	      if (visible) {
-	        this.updatePagination();
-	      } else {
-	        this.initBody(true);
-	        this.initPagination();
-	      }
+	      this.initBody(true);
+	      this.initPagination();
 	    }
 	  }, {
 	    key: "getHiddenRows",
@@ -8205,34 +8773,35 @@ __webpack_require__.r(__webpack_exports__);
 	      if (show) {
 	        this.initHiddenRows();
 	        this.initBody(true);
+	        this.initPagination();
 	        return;
 	      }
 
 	      var data = this.getData();
 	      var rows = [];
-	      var _iteratorNormalCompletion7 = true;
-	      var _didIteratorError7 = false;
-	      var _iteratorError7 = undefined;
+	      var _iteratorNormalCompletion8 = true;
+	      var _didIteratorError8 = false;
+	      var _iteratorError8 = undefined;
 
 	      try {
-	        for (var _iterator7 = data[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-	          var row = _step7.value;
+	        for (var _iterator8 = data[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+	          var row = _step8.value;
 
 	          if (this.hiddenRows.includes(row)) {
 	            rows.push(row);
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError7 = true;
-	        _iteratorError7 = err;
+	        _didIteratorError8 = true;
+	        _iteratorError8 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
-	            _iterator7.return();
+	          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
+	            _iterator8.return();
 	          }
 	        } finally {
-	          if (_didIteratorError7) {
-	            throw _iteratorError7;
+	          if (_didIteratorError8) {
+	            throw _iteratorError8;
 	          }
 	        }
 	      }
@@ -8322,13 +8891,13 @@ __webpack_require__.r(__webpack_exports__);
 	    value: function _toggleAllColumns(visible) {
 	      var _this23 = this;
 
-	      var _iteratorNormalCompletion8 = true;
-	      var _didIteratorError8 = false;
-	      var _iteratorError8 = undefined;
+	      var _iteratorNormalCompletion9 = true;
+	      var _didIteratorError9 = false;
+	      var _iteratorError9 = undefined;
 
 	      try {
-	        for (var _iterator8 = this.columns.slice().reverse()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-	          var column = _step8.value;
+	        for (var _iterator9 = this.columns.slice().reverse()[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+	          var column = _step9.value;
 
 	          if (column.switchable) {
 	            if (!visible && this.options.showColumns && this.getVisibleColumns().length === this.options.minimumCountColumns) {
@@ -8339,16 +8908,16 @@ __webpack_require__.r(__webpack_exports__);
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError8 = true;
-	        _iteratorError8 = err;
+	        _didIteratorError9 = true;
+	        _iteratorError9 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
-	            _iterator8.return();
+	          if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+	            _iterator9.return();
 	          }
 	        } finally {
-	          if (_didIteratorError8) {
-	            throw _iteratorError8;
+	          if (_didIteratorError9) {
+	            throw _iteratorError9;
 	          }
 	        }
 	      }
@@ -8386,11 +8955,7 @@ __webpack_require__.r(__webpack_exports__);
 	      var i;
 	      var j;
 	      var $tr = this.$body.find('>tr');
-
-	      if (this.options.detailView && !this.options.cardView) {
-	        col += 1;
-	      }
-
+	      col += Utils.getDetailViewIndexOffset(this.options);
 	      var $td = $tr.eq(row).find('>td').eq(col);
 
 	      if (row < 0 || col < 0 || row >= this.data.length) {
@@ -8422,6 +8987,7 @@ __webpack_require__.r(__webpack_exports__);
 	      this.$selectAll.add(this.$selectAll_).prop('checked', checked);
 	      this.$selectItem.filter(':enabled').prop('checked', checked);
 	      this.updateRows();
+	      this.updateSelected();
 	      var rowsAfter = this.getSelections();
 
 	      if (checked) {
@@ -8459,29 +9025,29 @@ __webpack_require__.r(__webpack_exports__);
 	    key: "_toggleCheck",
 	    value: function _toggleCheck(checked, index) {
 	      var $el = this.$selectItem.filter("[data-index=\"".concat(index, "\"]"));
-	      var row = this.data[index];
+	      var row = this.options.data[index];
 
 	      if ($el.is(':radio') || this.options.singleSelect || this.options.multipleSelectRow && !this.multipleSelectRowCtrlKey && !this.multipleSelectRowShiftKey) {
-	        var _iteratorNormalCompletion9 = true;
-	        var _didIteratorError9 = false;
-	        var _iteratorError9 = undefined;
+	        var _iteratorNormalCompletion10 = true;
+	        var _didIteratorError10 = false;
+	        var _iteratorError10 = undefined;
 
 	        try {
-	          for (var _iterator9 = this.options.data[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-	            var r = _step9.value;
+	          for (var _iterator10 = this.options.data[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+	            var r = _step10.value;
 	            r[this.header.stateField] = false;
 	          }
 	        } catch (err) {
-	          _didIteratorError9 = true;
-	          _iteratorError9 = err;
+	          _didIteratorError10 = true;
+	          _iteratorError10 = err;
 	        } finally {
 	          try {
-	            if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
-	              _iterator9.return();
+	            if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
+	              _iterator10.return();
 	            }
 	          } finally {
-	            if (_didIteratorError9) {
-	              throw _iteratorError9;
+	            if (_didIteratorError10) {
+	              throw _iteratorError10;
 	            }
 	          }
 	        }
@@ -8614,6 +9180,11 @@ __webpack_require__.r(__webpack_exports__);
 	        this.$tableContainer.css('height', '');
 	        this.$tableContainer.css('width', '');
 	      } else if (this.options.height) {
+	        if (this.$tableBorder) {
+	          this.$tableBorder.css('width', '');
+	          this.$tableBorder.css('height', '');
+	        }
+
 	        var toolbarHeight = this.$toolbar.outerHeight(true);
 	        var paginationHeight = this.$pagination.outerHeight(true);
 	        var height = this.options.height - toolbarHeight - paginationHeight;
@@ -8621,7 +9192,7 @@ __webpack_require__.r(__webpack_exports__);
 	        var tableHeight = $bodyTable.outerHeight();
 	        this.$tableContainer.css('height', "".concat(height, "px"));
 
-	        if (this.$tableBorder) {
+	        if (this.$tableBorder && $bodyTable.is(':visible')) {
 	          var tableBorderHeight = height - tableHeight - 2;
 
 	          if (this.$tableBody[0].scrollWidth - this.$tableBody.innerWidth()) {
@@ -8649,12 +9220,22 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "showLoading",
 	    value: function showLoading() {
-	      this.$tableLoading.css('display', 'flex');
+	      this.$tableLoading.toggleClass('open', true);
+	      var fontSize = this.options.loadingFontSize;
+
+	      if (this.options.loadingFontSize === 'auto') {
+	        fontSize = this.$tableLoading.width() * 0.04;
+	        fontSize = Math.max(12, fontSize);
+	        fontSize = Math.min(32, fontSize);
+	        fontSize = "".concat(fontSize, "px");
+	      }
+
+	      this.$tableLoading.find('.loading-text').css('font-size', fontSize);
 	    }
 	  }, {
 	    key: "hideLoading",
 	    value: function hideLoading() {
-	      this.$tableLoading.css('display', 'none');
+	      this.$tableLoading.toggleClass('open', false);
 	    }
 	  }, {
 	    key: "togglePagination",
@@ -8685,7 +9266,7 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "resetSearch",
 	    value: function resetSearch(text) {
-	      var $search = this.$toolbar.find('.search input');
+	      var $search = Utils.getSearchInput(this);
 	      $search.val(text || '');
 	      this.onSearch({
 	        currentTarget: $search
@@ -8703,10 +9284,6 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "scrollTo",
 	    value: function scrollTo(params) {
-	      if (typeof params === 'undefined') {
-	        return this.$tableBody.scrollTop();
-	      }
-
 	      var options = {
 	        unit: 'px',
 	        value: 0
@@ -8716,7 +9293,7 @@ __webpack_require__.r(__webpack_exports__);
 	        options = Object.assign(options, params);
 	      } else if (typeof params === 'string' && params === 'bottom') {
 	        options.value = this.$tableBody[0].scrollHeight;
-	      } else if (typeof params === 'string') {
+	      } else if (typeof params === 'string' || typeof params === 'number') {
 	        options.value = params;
 	      }
 
@@ -8734,7 +9311,7 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "getScrollPosition",
 	    value: function getScrollPosition() {
-	      return this.scrollTo();
+	      return this.$tableBody.scrollTop();
 	    }
 	  }, {
 	    key: "selectPage",
@@ -8799,6 +9376,17 @@ __webpack_require__.r(__webpack_exports__);
 	      this.trigger('expand-row', index, row, $element);
 	    }
 	  }, {
+	    key: "expandRowByUniqueId",
+	    value: function expandRowByUniqueId(uniqueId) {
+	      var row = this.getRowByUniqueId(uniqueId);
+
+	      if (!row) {
+	        return;
+	      }
+
+	      this.expandRow(this.data.indexOf(row));
+	    }
+	  }, {
 	    key: "collapseRow",
 	    value: function collapseRow(index) {
 	      var row = this.data[index];
@@ -8814,6 +9402,17 @@ __webpack_require__.r(__webpack_exports__);
 
 	      this.trigger('collapse-row', index, row, $tr.next());
 	      $tr.next().remove();
+	    }
+	  }, {
+	    key: "collapseRowByUniqueId",
+	    value: function collapseRowByUniqueId(uniqueId) {
+	      var row = this.getRowByUniqueId(uniqueId);
+
+	      if (!row) {
+	        return;
+	      }
+
+	      this.collapseRow(this.data.indexOf(row));
 	    }
 	  }, {
 	    key: "expandAllRows",
@@ -8915,7 +9514,9 @@ __webpack_require__.r(__webpack_exports__);
 	    }
 
 	    if (!data) {
-	      $(el).data('bootstrap.table', data = new $.BootstrapTable(el, options));
+	      data = new $.BootstrapTable(el, options);
+	      $(el).data('bootstrap.table', data);
+	      data.init();
 	    }
 	  });
 	  return typeof value === 'undefined' ? this : value;
@@ -8956,7 +9557,7 @@ __webpack_require__.r(__webpack_exports__);
 	undefined;
 }(this, (function ($) { 'use strict';
 
-	$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
+	$ = $ && Object.prototype.hasOwnProperty.call($, 'default') ? $['default'] : $;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -9897,43 +10498,54 @@ __webpack_require__.r(__webpack_exports__);
 	  }
 	});
 
-	var nativeJoin = [].join;
+	var nativeAssign = Object.assign;
+	var defineProperty = Object.defineProperty;
 
-	var ES3_STRINGS = indexedObject != Object;
-	var SLOPPY_METHOD$1 = sloppyArrayMethod('join', ',');
+	// `Object.assign` method
+	// https://tc39.github.io/ecma262/#sec-object.assign
+	var objectAssign = !nativeAssign || fails(function () {
+	  // should have correct order of operations (Edge bug)
+	  if (descriptors && nativeAssign({ b: 1 }, nativeAssign(defineProperty({}, 'a', {
+	    enumerable: true,
+	    get: function () {
+	      defineProperty(this, 'b', {
+	        value: 3,
+	        enumerable: false
+	      });
+	    }
+	  }), { b: 2 })).b !== 1) return true;
+	  // should work with symbols and should have deterministic property order (V8 bug)
+	  var A = {};
+	  var B = {};
+	  // eslint-disable-next-line no-undef
+	  var symbol = Symbol();
+	  var alphabet = 'abcdefghijklmnopqrst';
+	  A[symbol] = 7;
+	  alphabet.split('').forEach(function (chr) { B[chr] = chr; });
+	  return nativeAssign({}, A)[symbol] != 7 || objectKeys(nativeAssign({}, B)).join('') != alphabet;
+	}) ? function assign(target, source) { // eslint-disable-line no-unused-vars
+	  var T = toObject(target);
+	  var argumentsLength = arguments.length;
+	  var index = 1;
+	  var getOwnPropertySymbols = objectGetOwnPropertySymbols.f;
+	  var propertyIsEnumerable = objectPropertyIsEnumerable.f;
+	  while (argumentsLength > index) {
+	    var S = indexedObject(arguments[index++]);
+	    var keys = getOwnPropertySymbols ? objectKeys(S).concat(getOwnPropertySymbols(S)) : objectKeys(S);
+	    var length = keys.length;
+	    var j = 0;
+	    var key;
+	    while (length > j) {
+	      key = keys[j++];
+	      if (!descriptors || propertyIsEnumerable.call(S, key)) T[key] = S[key];
+	    }
+	  } return T;
+	} : nativeAssign;
 
-	// `Array.prototype.join` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.join
-	_export({ target: 'Array', proto: true, forced: ES3_STRINGS || SLOPPY_METHOD$1 }, {
-	  join: function join(separator) {
-	    return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
-	  }
-	});
-
-	var test = [];
-	var nativeSort = test.sort;
-
-	// IE8-
-	var FAILS_ON_UNDEFINED = fails(function () {
-	  test.sort(undefined);
-	});
-	// V8 bug
-	var FAILS_ON_NULL = fails(function () {
-	  test.sort(null);
-	});
-	// Old WebKit
-	var SLOPPY_METHOD$2 = sloppyArrayMethod('sort');
-
-	var FORCED$1 = FAILS_ON_UNDEFINED || !FAILS_ON_NULL || SLOPPY_METHOD$2;
-
-	// `Array.prototype.sort` method
-	// https://tc39.github.io/ecma262/#sec-array.prototype.sort
-	_export({ target: 'Array', proto: true, forced: FORCED$1 }, {
-	  sort: function sort(comparefn) {
-	    return comparefn === undefined
-	      ? nativeSort.call(toObject(this))
-	      : nativeSort.call(toObject(this), aFunction$1(comparefn));
-	  }
+	// `Object.assign` method
+	// https://tc39.github.io/ecma262/#sec-object.assign
+	_export({ target: 'Object', stat: true, forced: Object.assign !== objectAssign }, {
+	  assign: objectAssign
 	});
 
 	var FAILS_ON_PRIMITIVES = fails(function () { objectKeys(1); });
@@ -9947,11 +10559,11 @@ __webpack_require__.r(__webpack_exports__);
 	});
 
 	var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-	var test$1 = {};
+	var test = {};
 
-	test$1[TO_STRING_TAG] = 'z';
+	test[TO_STRING_TAG] = 'z';
 
-	var toStringTagSupport = String(test$1) === '[object z]';
+	var toStringTagSupport = String(test) === '[object z]';
 
 	var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag');
 	// ES3 wrong here
@@ -10023,11 +10635,11 @@ __webpack_require__.r(__webpack_exports__);
 
 	var nativeParseInt = global_1.parseInt;
 	var hex = /^[+-]?0[Xx]/;
-	var FORCED$2 = nativeParseInt(whitespaces + '08') !== 8 || nativeParseInt(whitespaces + '0x16') !== 22;
+	var FORCED$1 = nativeParseInt(whitespaces + '08') !== 8 || nativeParseInt(whitespaces + '0x16') !== 22;
 
 	// `parseInt` method
 	// https://tc39.github.io/ecma262/#sec-parseint-string-radix
-	var _parseInt = FORCED$2 ? function parseInt(string, radix) {
+	var _parseInt = FORCED$1 ? function parseInt(string, radix) {
 	  var S = trim(String(string));
 	  return nativeParseInt(S, (radix >>> 0) || (hex.test(S) ? 16 : 10));
 	} : nativeParseInt;
@@ -10220,6 +10832,255 @@ __webpack_require__.r(__webpack_exports__);
 	  includes: function includes(searchString /* , position = 0 */) {
 	    return !!~String(requireObjectCoercible(this))
 	      .indexOf(notARegexp(searchString), arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+
+	var non = '\u200B\u0085\u180E';
+
+	// check that a method works with the correct list
+	// of whitespaces and has a correct name
+	var forcedStringTrimMethod = function (METHOD_NAME) {
+	  return fails(function () {
+	    return !!whitespaces[METHOD_NAME]() || non[METHOD_NAME]() != non || whitespaces[METHOD_NAME].name !== METHOD_NAME;
+	  });
+	};
+
+	var $trim = stringTrim.trim;
+
+
+	// `String.prototype.trim` method
+	// https://tc39.github.io/ecma262/#sec-string.prototype.trim
+	_export({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
+	  trim: function trim() {
+	    return $trim(this);
+	  }
+	});
+
+	// iterable DOM collections
+	// flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
+	var domIterables = {
+	  CSSRuleList: 0,
+	  CSSStyleDeclaration: 0,
+	  CSSValueList: 0,
+	  ClientRectList: 0,
+	  DOMRectList: 0,
+	  DOMStringList: 0,
+	  DOMTokenList: 1,
+	  DataTransferItemList: 0,
+	  FileList: 0,
+	  HTMLAllCollection: 0,
+	  HTMLCollection: 0,
+	  HTMLFormElement: 0,
+	  HTMLSelectElement: 0,
+	  MediaList: 0,
+	  MimeTypeArray: 0,
+	  NamedNodeMap: 0,
+	  NodeList: 1,
+	  PaintRequestList: 0,
+	  Plugin: 0,
+	  PluginArray: 0,
+	  SVGLengthList: 0,
+	  SVGNumberList: 0,
+	  SVGPathSegList: 0,
+	  SVGPointList: 0,
+	  SVGStringList: 0,
+	  SVGTransformList: 0,
+	  SourceBufferList: 0,
+	  StyleSheetList: 0,
+	  TextTrackCueList: 0,
+	  TextTrackList: 0,
+	  TouchList: 0
+	};
+
+	var $forEach = arrayIteration.forEach;
+
+
+	// `Array.prototype.forEach` method implementation
+	// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+	var arrayForEach = sloppyArrayMethod('forEach') ? function forEach(callbackfn /* , thisArg */) {
+	  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	} : [].forEach;
+
+	for (var COLLECTION_NAME in domIterables) {
+	  var Collection = global_1[COLLECTION_NAME];
+	  var CollectionPrototype = Collection && Collection.prototype;
+	  // some Chrome versions have non-configurable methods on DOMTokenList
+	  if (CollectionPrototype && CollectionPrototype.forEach !== arrayForEach) try {
+	    createNonEnumerableProperty(CollectionPrototype, 'forEach', arrayForEach);
+	  } catch (error) {
+	    CollectionPrototype.forEach = arrayForEach;
+	  }
+	}
+
+	function _typeof(obj) {
+	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+	    _typeof = function (obj) {
+	      return typeof obj;
+	    };
+	  } else {
+	    _typeof = function (obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+
+	function _defineProperties(target, props) {
+	  for (var i = 0; i < props.length; i++) {
+	    var descriptor = props[i];
+	    descriptor.enumerable = descriptor.enumerable || false;
+	    descriptor.configurable = true;
+	    if ("value" in descriptor) descriptor.writable = true;
+	    Object.defineProperty(target, descriptor.key, descriptor);
+	  }
+	}
+
+	function _createClass(Constructor, protoProps, staticProps) {
+	  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+	  if (staticProps) _defineProperties(Constructor, staticProps);
+	  return Constructor;
+	}
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function");
+	  }
+
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) _setPrototypeOf(subClass, superClass);
+	}
+
+	function _getPrototypeOf(o) {
+	  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+	    return o.__proto__ || Object.getPrototypeOf(o);
+	  };
+	  return _getPrototypeOf(o);
+	}
+
+	function _setPrototypeOf(o, p) {
+	  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+	    o.__proto__ = p;
+	    return o;
+	  };
+
+	  return _setPrototypeOf(o, p);
+	}
+
+	function _assertThisInitialized(self) {
+	  if (self === void 0) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+
+	  return self;
+	}
+
+	function _possibleConstructorReturn(self, call) {
+	  if (call && (typeof call === "object" || typeof call === "function")) {
+	    return call;
+	  }
+
+	  return _assertThisInitialized(self);
+	}
+
+	function _superPropBase(object, property) {
+	  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+	    object = _getPrototypeOf(object);
+	    if (object === null) break;
+	  }
+
+	  return object;
+	}
+
+	function _get(target, property, receiver) {
+	  if (typeof Reflect !== "undefined" && Reflect.get) {
+	    _get = Reflect.get;
+	  } else {
+	    _get = function _get(target, property, receiver) {
+	      var base = _superPropBase(target, property);
+
+	      if (!base) return;
+	      var desc = Object.getOwnPropertyDescriptor(base, property);
+
+	      if (desc.get) {
+	        return desc.get.call(receiver);
+	      }
+
+	      return desc.value;
+	    };
+	  }
+
+	  return _get(target, property, receiver || target);
+	}
+
+	function _toConsumableArray(arr) {
+	  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+	}
+
+	function _arrayWithoutHoles(arr) {
+	  if (Array.isArray(arr)) {
+	    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+	    return arr2;
+	  }
+	}
+
+	function _iterableToArray(iter) {
+	  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+	}
+
+	function _nonIterableSpread() {
+	  throw new TypeError("Invalid attempt to spread non-iterable instance");
+	}
+
+	var nativeJoin = [].join;
+
+	var ES3_STRINGS = indexedObject != Object;
+	var SLOPPY_METHOD$1 = sloppyArrayMethod('join', ',');
+
+	// `Array.prototype.join` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.join
+	_export({ target: 'Array', proto: true, forced: ES3_STRINGS || SLOPPY_METHOD$1 }, {
+	  join: function join(separator) {
+	    return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
+	  }
+	});
+
+	var test$1 = [];
+	var nativeSort = test$1.sort;
+
+	// IE8-
+	var FAILS_ON_UNDEFINED = fails(function () {
+	  test$1.sort(undefined);
+	});
+	// V8 bug
+	var FAILS_ON_NULL = fails(function () {
+	  test$1.sort(null);
+	});
+	// Old WebKit
+	var SLOPPY_METHOD$2 = sloppyArrayMethod('sort');
+
+	var FORCED$2 = FAILS_ON_UNDEFINED || !FAILS_ON_NULL || SLOPPY_METHOD$2;
+
+	// `Array.prototype.sort` method
+	// https://tc39.github.io/ecma262/#sec-array.prototype.sort
+	_export({ target: 'Array', proto: true, forced: FORCED$2 }, {
+	  sort: function sort(comparefn) {
+	    return comparefn === undefined
+	      ? nativeSort.call(toObject(this))
+	      : nativeSort.call(toObject(this), aFunction$1(comparefn));
 	  }
 	});
 
@@ -10665,681 +11526,527 @@ __webpack_require__.r(__webpack_exports__);
 	  ];
 	}, !SUPPORTS_Y);
 
-	var non = '\u200B\u0085\u180E';
-
-	// check that a method works with the correct list
-	// of whitespaces and has a correct name
-	var forcedStringTrimMethod = function (METHOD_NAME) {
-	  return fails(function () {
-	    return !!whitespaces[METHOD_NAME]() || non[METHOD_NAME]() != non || whitespaces[METHOD_NAME].name !== METHOD_NAME;
-	  });
-	};
-
-	var $trim = stringTrim.trim;
-
-
-	// `String.prototype.trim` method
-	// https://tc39.github.io/ecma262/#sec-string.prototype.trim
-	_export({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
-	  trim: function trim() {
-	    return $trim(this);
-	  }
-	});
-
-	// iterable DOM collections
-	// flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
-	var domIterables = {
-	  CSSRuleList: 0,
-	  CSSStyleDeclaration: 0,
-	  CSSValueList: 0,
-	  ClientRectList: 0,
-	  DOMRectList: 0,
-	  DOMStringList: 0,
-	  DOMTokenList: 1,
-	  DataTransferItemList: 0,
-	  FileList: 0,
-	  HTMLAllCollection: 0,
-	  HTMLCollection: 0,
-	  HTMLFormElement: 0,
-	  HTMLSelectElement: 0,
-	  MediaList: 0,
-	  MimeTypeArray: 0,
-	  NamedNodeMap: 0,
-	  NodeList: 1,
-	  PaintRequestList: 0,
-	  Plugin: 0,
-	  PluginArray: 0,
-	  SVGLengthList: 0,
-	  SVGNumberList: 0,
-	  SVGPathSegList: 0,
-	  SVGPointList: 0,
-	  SVGStringList: 0,
-	  SVGTransformList: 0,
-	  SourceBufferList: 0,
-	  StyleSheetList: 0,
-	  TextTrackCueList: 0,
-	  TextTrackList: 0,
-	  TouchList: 0
-	};
-
-	var $forEach = arrayIteration.forEach;
-
-
-	// `Array.prototype.forEach` method implementation
-	// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
-	var arrayForEach = sloppyArrayMethod('forEach') ? function forEach(callbackfn /* , thisArg */) {
-	  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-	} : [].forEach;
-
-	for (var COLLECTION_NAME in domIterables) {
-	  var Collection = global_1[COLLECTION_NAME];
-	  var CollectionPrototype = Collection && Collection.prototype;
-	  // some Chrome versions have non-configurable methods on DOMTokenList
-	  if (CollectionPrototype && CollectionPrototype.forEach !== arrayForEach) try {
-	    createNonEnumerableProperty(CollectionPrototype, 'forEach', arrayForEach);
-	  } catch (error) {
-	    CollectionPrototype.forEach = arrayForEach;
-	  }
-	}
-
-	function _typeof(obj) {
-	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-	    _typeof = function (obj) {
-	      return typeof obj;
-	    };
-	  } else {
-	    _typeof = function (obj) {
-	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-	    };
-	  }
-
-	  return _typeof(obj);
-	}
-
-	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-
-	function _defineProperties(target, props) {
-	  for (var i = 0; i < props.length; i++) {
-	    var descriptor = props[i];
-	    descriptor.enumerable = descriptor.enumerable || false;
-	    descriptor.configurable = true;
-	    if ("value" in descriptor) descriptor.writable = true;
-	    Object.defineProperty(target, descriptor.key, descriptor);
-	  }
-	}
-
-	function _createClass(Constructor, protoProps, staticProps) {
-	  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-	  if (staticProps) _defineProperties(Constructor, staticProps);
-	  return Constructor;
-	}
-
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function");
-	  }
-
-	  subClass.prototype = Object.create(superClass && superClass.prototype, {
-	    constructor: {
-	      value: subClass,
-	      writable: true,
-	      configurable: true
-	    }
-	  });
-	  if (superClass) _setPrototypeOf(subClass, superClass);
-	}
-
-	function _getPrototypeOf(o) {
-	  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-	    return o.__proto__ || Object.getPrototypeOf(o);
-	  };
-	  return _getPrototypeOf(o);
-	}
-
-	function _setPrototypeOf(o, p) {
-	  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-	    o.__proto__ = p;
-	    return o;
-	  };
-
-	  return _setPrototypeOf(o, p);
-	}
-
-	function _assertThisInitialized(self) {
-	  if (self === void 0) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }
-
-	  return self;
-	}
-
-	function _possibleConstructorReturn(self, call) {
-	  if (call && (typeof call === "object" || typeof call === "function")) {
-	    return call;
-	  }
-
-	  return _assertThisInitialized(self);
-	}
-
-	function _superPropBase(object, property) {
-	  while (!Object.prototype.hasOwnProperty.call(object, property)) {
-	    object = _getPrototypeOf(object);
-	    if (object === null) break;
-	  }
-
-	  return object;
-	}
-
-	function _get(target, property, receiver) {
-	  if (typeof Reflect !== "undefined" && Reflect.get) {
-	    _get = Reflect.get;
-	  } else {
-	    _get = function _get(target, property, receiver) {
-	      var base = _superPropBase(target, property);
-
-	      if (!base) return;
-	      var desc = Object.getOwnPropertyDescriptor(base, property);
-
-	      if (desc.get) {
-	        return desc.get.call(receiver);
-	      }
-
-	      return desc.value;
-	    };
-	  }
-
-	  return _get(target, property, receiver || target);
-	}
-
-	/**
-	 * @author: Dennis Hernández
-	 * @webSite: http://djhvscf.github.io/Blog
-	 * @version: v2.2.0
-	 */
-
 	var Utils = $.fn.bootstrapTable.utils;
-	var UtilsFilterControl = {
-	  getOptionsFromSelectControl: function getOptionsFromSelectControl(selectControl) {
-	    return selectControl.get(selectControl.length - 1).options;
-	  },
-	  getControlContainer: function getControlContainer() {
-	    if (UtilsFilterControl.bootstrapTableInstance.options.filterControlContainer) {
-	      return $("".concat(UtilsFilterControl.bootstrapTableInstance.options.filterControlContainer));
-	    }
+	var searchControls = 'select, input:not([type="checkbox"]):not([type="radio"])';
+	function getOptionsFromSelectControl(selectControl) {
+	  return selectControl.get(selectControl.length - 1).options;
+	}
+	function getControlContainer(that) {
+	  if (that.options.filterControlContainer) {
+	    return $("".concat(that.options.filterControlContainer));
+	  }
 
-	    return UtilsFilterControl.getCurrentHeader(UtilsFilterControl.bootstrapTableInstance);
-	  },
-	  getSearchControls: function getSearchControls(scope) {
-	    var header = UtilsFilterControl.getControlContainer();
-	    var searchControls = UtilsFilterControl.getCurrentSearchControls(scope);
-	    return header.find(searchControls);
-	  },
-	  hideUnusedSelectOptions: function hideUnusedSelectOptions(selectControl, uniqueValues) {
-	    var options = UtilsFilterControl.getOptionsFromSelectControl(selectControl);
+	  return that.$header;
+	}
+	function getSearchControls(that) {
+	  return getControlContainer(that).find(searchControls);
+	}
+	function hideUnusedSelectOptions(selectControl, uniqueValues) {
+	  var options = getOptionsFromSelectControl(selectControl);
 
-	    for (var i = 0; i < options.length; i++) {
-	      if (options[i].value !== '') {
-	        if (!uniqueValues.hasOwnProperty(options[i].value)) {
-	          selectControl.find(Utils.sprintf('option[value=\'%s\']', options[i].value)).hide();
-	        } else {
-	          selectControl.find(Utils.sprintf('option[value=\'%s\']', options[i].value)).show();
-	        }
+	  for (var i = 0; i < options.length; i++) {
+	    if (options[i].value !== '') {
+	      if (!uniqueValues.hasOwnProperty(options[i].value)) {
+	        selectControl.find(Utils.sprintf('option[value=\'%s\']', options[i].value)).hide();
+	      } else {
+	        selectControl.find(Utils.sprintf('option[value=\'%s\']', options[i].value)).show();
 	      }
 	    }
-	  },
-	  addOptionToSelectControl: function addOptionToSelectControl(selectControl, _value, text, selected) {
-	    var value = $.trim(_value);
-	    var $selectControl = $(selectControl.get(selectControl.length - 1));
+	  }
+	}
+	function existOptionInSelectControl(selectControl, value) {
+	  var options = getOptionsFromSelectControl(selectControl);
 
-	    if (!UtilsFilterControl.existOptionInSelectControl(selectControl, value)) {
-	      var option = $("<option value=\"".concat(value, "\">").concat(text, "</option>"));
-
-	      if (value === selected) {
-	        option.attr('selected', true);
-	      }
-
-	      $selectControl.append(option);
+	  for (var i = 0; i < options.length; i++) {
+	    if (options[i].value === value.toString()) {
+	      // The value is not valid to add
+	      return true;
 	    }
-	  },
-	  sortSelectControl: function sortSelectControl(selectControl, orderBy) {
-	    var $selectControl = $(selectControl.get(selectControl.length - 1));
-	    var $opts = $selectControl.find('option:gt(0)');
+	  } // If we get here, the value is valid to add
+
+
+	  return false;
+	}
+	function addOptionToSelectControl(selectControl, _value, text, selected) {
+	  var value = _value === undefined || _value === null ? '' : _value.toString().trim();
+	  var $selectControl = $(selectControl.get(selectControl.length - 1));
+
+	  if (!existOptionInSelectControl(selectControl, value)) {
+	    var option = $("<option value=\"".concat(value, "\">").concat(text, "</option>"));
+
+	    if (value === selected) {
+	      option.attr('selected', true);
+	    }
+
+	    $selectControl.append(option);
+	  }
+	}
+	function sortSelectControl(selectControl, orderBy) {
+	  var $selectControl = $(selectControl.get(selectControl.length - 1));
+	  var $opts = $selectControl.find('option:gt(0)');
+
+	  if (orderBy !== 'server') {
 	    $opts.sort(function (a, b) {
 	      return Utils.sort(a.textContent, b.textContent, orderBy === 'desc' ? -1 : 1);
 	    });
-	    $selectControl.find('option:gt(0)').remove();
-	    $selectControl.append($opts);
-	  },
-	  existOptionInSelectControl: function existOptionInSelectControl(selectControl, value) {
-	    var options = UtilsFilterControl.getOptionsFromSelectControl(selectControl);
+	  }
 
-	    for (var i = 0; i < options.length; i++) {
-	      if (options[i].value === value.toString()) {
-	        // The value is not valid to add
-	        return true;
-	      }
-	    } // If we get here, the value is valid to add
+	  $selectControl.find('option:gt(0)').remove();
+	  $selectControl.append($opts);
+	}
+	function fixHeaderCSS(_ref) {
+	  var $tableHeader = _ref.$tableHeader;
+	  $tableHeader.css('height', '89px');
+	}
+	function getElementClass($element) {
+	  return $element.attr('class').replace('form-control', '').replace('focus-temp', '').replace('search-input', '').trim();
+	}
+	function getCursorPosition(el) {
+	  if (Utils.isIEBrowser()) {
+	    if ($(el).is('input[type=text]')) {
+	      var pos = 0;
 
-
-	    return false;
-	  },
-	  fixHeaderCSS: function fixHeaderCSS(_ref) {
-	    var $tableHeader = _ref.$tableHeader;
-	    $tableHeader.css('height', '77px');
-	  },
-	  getCurrentHeader: function getCurrentHeader(_ref2) {
-	    var $header = _ref2.$header,
-	        options = _ref2.options,
-	        $tableHeader = _ref2.$tableHeader;
-	    var header = $header;
-
-	    if (options.height) {
-	      header = $tableHeader;
-	    }
-
-	    return header;
-	  },
-	  getCurrentSearchControls: function getCurrentSearchControls(_ref3) {
-	    var options = _ref3.options;
-	    var searchControls = 'select, input';
-
-	    if (options.height) {
-	      searchControls = 'table select, table input';
-	    }
-
-	    return searchControls;
-	  },
-	  getCursorPosition: function getCursorPosition(el) {
-	    if (Utils.isIEBrowser()) {
-	      if ($(el).is('input[type=text]')) {
-	        var pos = 0;
-
-	        if ('selectionStart' in el) {
-	          pos = el.selectionStart;
-	        } else if ('selection' in document) {
-	          el.focus();
-	          var Sel = document.selection.createRange();
-	          var SelLength = document.selection.createRange().text.length;
-	          Sel.moveStart('character', -el.value.length);
-	          pos = Sel.text.length - SelLength;
-	        }
-
-	        return pos;
+	      if ('selectionStart' in el) {
+	        pos = el.selectionStart;
+	      } else if ('selection' in document) {
+	        el.focus();
+	        var Sel = document.selection.createRange();
+	        var SelLength = document.selection.createRange().text.length;
+	        Sel.moveStart('character', -el.value.length);
+	        pos = Sel.text.length - SelLength;
 	      }
 
-	      return -1;
+	      return pos;
 	    }
 
 	    return -1;
-	  },
-	  setCursorPosition: function setCursorPosition(el) {
-	    $(el).val(el.value);
-	  },
-	  copyValues: function copyValues(that) {
-	    var searchControls = UtilsFilterControl.getSearchControls(that);
-	    that.options.valuesFilterControl = [];
-	    searchControls.each(function () {
-	      that.options.valuesFilterControl.push({
-	        field: $(this).closest('[data-field]').data('field'),
-	        value: $(this).val(),
-	        position: UtilsFilterControl.getCursorPosition($(this).get(0)),
-	        hasFocus: $(this).is(':focus')
-	      });
+	  }
+
+	  return -1;
+	}
+	function setCursorPosition(el) {
+	  $(el).val(el.value);
+	}
+	function copyValues(that) {
+	  var searchControls = getSearchControls(that);
+	  that.options.valuesFilterControl = [];
+	  searchControls.each(function () {
+	    var $field = $(this);
+
+	    if (that.options.height) {
+	      var fieldClass = getElementClass($field);
+	      $field = $(".fixed-table-header .".concat(fieldClass));
+	    }
+
+	    that.options.valuesFilterControl.push({
+	      field: $field.closest('[data-field]').data('field'),
+	      value: $field.val(),
+	      position: getCursorPosition($field.get(0)),
+	      hasFocus: $field.is(':focus')
 	    });
-	  },
-	  setValues: function setValues(that) {
-	    var field = null;
-	    var result = [];
-	    var searchControls = UtilsFilterControl.getSearchControls(that);
+	  });
+	}
+	function setValues(that) {
+	  var field = null;
+	  var result = [];
+	  var searchControls = getSearchControls(that);
 
-	    if (that.options.valuesFilterControl.length > 0) {
-	      //  Callback to apply after settings fields values
-	      var fieldToFocusCallback = null;
-	      searchControls.each(function (index, ele) {
-	        field = $(this).closest('[data-field]').data('field');
-	        result = that.options.valuesFilterControl.filter(function (valueObj) {
-	          return valueObj.field === field;
-	        });
-
-	        if (result.length > 0) {
-	          $(this).val(result[0].value);
-
-	          if (result[0].hasFocus && result[0].value !== '') {
-	            // set callback if the field had the focus.
-	            fieldToFocusCallback = function (fieldToFocus, carretPosition) {
-	              // Closure here to capture the field and cursor position
-	              var closedCallback = function closedCallback() {
-	                fieldToFocus.focus();
-	                UtilsFilterControl.setCursorPosition(fieldToFocus, carretPosition);
-	              };
-
-	              return closedCallback;
-	            }($(this).get(0), result[0].position);
-	          }
-	        }
-	      }); // Callback call.
-
-	      if (fieldToFocusCallback !== null) {
-	        fieldToFocusCallback();
-	      }
-	    }
-	  },
-	  collectBootstrapCookies: function collectBootstrapCookies() {
-	    var cookies = [];
-	    var foundCookies = document.cookie.match(/(?:bs.table.)(\w*)/g);
-	    var foundLocalStorage = localStorage;
-
-	    if (foundCookies) {
-	      $.each(foundCookies, function (i, _cookie) {
-	        var cookie = _cookie;
-
-	        if (/./.test(cookie)) {
-	          cookie = cookie.split('.').pop();
-	        }
-
-	        if ($.inArray(cookie, cookies) === -1) {
-	          cookies.push(cookie);
-	        }
+	  if (that.options.valuesFilterControl.length > 0) {
+	    //  Callback to apply after settings fields values
+	    var fieldToFocusCallback = null;
+	    searchControls.each(function (index, ele) {
+	      var $this = $(this);
+	      field = $this.closest('[data-field]').data('field');
+	      result = that.options.valuesFilterControl.filter(function (valueObj) {
+	        return valueObj.field === field;
 	      });
-	    }
 
-	    if (foundLocalStorage) {
-	      for (var i = 0; i < foundLocalStorage.length; i++) {
-	        var cookie = foundLocalStorage.key(i);
-
-	        if (/./.test(cookie)) {
-	          cookie = cookie.split('.').pop();
+	      if (result.length > 0) {
+	        if ($this.is('[type=radio]')) {
+	          return;
 	        }
 
-	        if (!cookies.includes(cookie)) {
-	          cookies.push(cookie);
+	        $this.val(result[0].value);
+
+	        if (result[0].hasFocus && result[0].value !== '') {
+	          // set callback if the field had the focus.
+	          fieldToFocusCallback = function (fieldToFocus, carretPosition) {
+	            // Closure here to capture the field and cursor position
+	            var closedCallback = function closedCallback() {
+	              fieldToFocus.focus();
+	              setCursorPosition(fieldToFocus);
+	            };
+
+	            return closedCallback;
+	          }($this.get(0), result[0].position);
 	        }
 	      }
+	    }); // Callback call.
+
+	    if (fieldToFocusCallback !== null) {
+	      fieldToFocusCallback();
 	    }
+	  }
+	}
+	function collectBootstrapCookies() {
+	  var cookies = [];
+	  var foundCookies = document.cookie.match(/(?:bs.table.)(\w*)/g);
+	  var foundLocalStorage = localStorage;
 
-	    return cookies;
-	  },
-	  escapeID: function escapeID(id) {
-	    // eslint-disable-next-line no-useless-escape
-	    return String(id).replace(/([:.\[\],])/g, '\\$1');
-	  },
-	  isColumnSearchableViaSelect: function isColumnSearchableViaSelect(_ref4) {
-	    var filterControl = _ref4.filterControl,
-	        searchable = _ref4.searchable;
-	    return filterControl && filterControl.toLowerCase() === 'select' && searchable;
-	  },
-	  isFilterDataNotGiven: function isFilterDataNotGiven(_ref5) {
-	    var filterData = _ref5.filterData;
-	    return filterData === undefined || filterData.toLowerCase() === 'column';
-	  },
-	  hasSelectControlElement: function hasSelectControlElement(selectControl) {
-	    return selectControl && selectControl.length > 0;
-	  },
-	  initFilterSelectControls: function initFilterSelectControls(that) {
-	    var data = that.data;
-	    var z = that.options.pagination ? that.options.sidePagination === 'server' ? that.pageTo : that.options.totalRows : that.pageTo;
-	    $.each(that.header.fields, function (j, field) {
-	      var column = that.columns[that.fieldsColumnsIndex[field]];
-	      var selectControl = UtilsFilterControl.getControlContainer().find(".bootstrap-table-filter-control-".concat(UtilsFilterControl.escapeID(column.field)));
+	  if (foundCookies) {
+	    $.each(foundCookies, function (i, _cookie) {
+	      var cookie = _cookie;
 
-	      if (UtilsFilterControl.isColumnSearchableViaSelect(column) && UtilsFilterControl.isFilterDataNotGiven(column) && UtilsFilterControl.hasSelectControlElement(selectControl)) {
-	        if (selectControl.get(selectControl.length - 1).options.length === 0) {
-	          // Added the default option
-	          UtilsFilterControl.addOptionToSelectControl(selectControl, '', column.filterControlPlaceholder, column.filterDefault);
-	        }
+	      if (/./.test(cookie)) {
+	        cookie = cookie.split('.').pop();
+	      }
 
-	        var uniqueValues = {};
-
-	        for (var i = 0; i < z; i++) {
-	          // Added a new value
-	          var fieldValue = data[i][field];
-	          var formatter = that.options.editable && column.editable ? column._formatter : that.header.formatters[j];
-	          var formattedValue = Utils.calculateObjectValue(that.header, formatter, [fieldValue, data[i], i], fieldValue);
-
-	          if (column.filterDataCollector) {
-	            formattedValue = Utils.calculateObjectValue(that.header, column.filterDataCollector, [fieldValue, data[i], formattedValue], formattedValue);
-	          }
-
-	          uniqueValues[formattedValue] = fieldValue;
-
-	          if (_typeof(formattedValue) === 'object' && formattedValue !== null) {
-	            formattedValue.forEach(function (value) {
-	              UtilsFilterControl.addOptionToSelectControl(selectControl, value, value, column.filterDefault);
-	            });
-	            continue;
-	          }
-
-	          UtilsFilterControl.addOptionToSelectControl(selectControl, formattedValue, formattedValue, column.filterDefault);
-	        }
-
-	        UtilsFilterControl.sortSelectControl(selectControl, column.filterOrderBy);
-
-	        if (that.options.hideUnusedSelectOptions) {
-	          UtilsFilterControl.hideUnusedSelectOptions(selectControl, uniqueValues);
-	        }
+	      if ($.inArray(cookie, cookies) === -1) {
+	        cookies.push(cookie);
 	      }
 	    });
-	    that.trigger('created-controls');
-	  },
-	  getFilterDataMethod: function getFilterDataMethod(objFilterDataMethod, searchTerm) {
-	    var keys = Object.keys(objFilterDataMethod);
+	  }
 
-	    for (var i = 0; i < keys.length; i++) {
-	      if (keys[i] === searchTerm) {
-	        return objFilterDataMethod[searchTerm];
+	  if (foundLocalStorage) {
+	    for (var i = 0; i < foundLocalStorage.length; i++) {
+	      var cookie = foundLocalStorage.key(i);
+
+	      if (/./.test(cookie)) {
+	        cookie = cookie.split('.').pop();
+	      }
+
+	      if (!cookies.includes(cookie)) {
+	        cookies.push(cookie);
+	      }
+	    }
+	  }
+
+	  return cookies;
+	}
+	function escapeID(id) {
+	  // eslint-disable-next-line no-useless-escape
+	  return String(id).replace(/([:.\[\],])/g, '\\$1');
+	}
+	function isColumnSearchableViaSelect(_ref2) {
+	  var filterControl = _ref2.filterControl,
+	      searchable = _ref2.searchable;
+	  return filterControl && filterControl.toLowerCase() === 'select' && searchable;
+	}
+	function isFilterDataNotGiven(_ref3) {
+	  var filterData = _ref3.filterData;
+	  return filterData === undefined || filterData.toLowerCase() === 'column';
+	}
+	function hasSelectControlElement(selectControl) {
+	  return selectControl && selectControl.length > 0;
+	}
+	function initFilterSelectControls(that) {
+	  var data = that.data;
+	  var z = that.options.pagination ? that.options.sidePagination === 'server' ? that.pageTo : that.options.totalRows : that.pageTo;
+	  $.each(that.header.fields, function (j, field) {
+	    var column = that.columns[that.fieldsColumnsIndex[field]];
+	    var selectControl = getControlContainer(that).find("select.bootstrap-table-filter-control-".concat(escapeID(column.field)));
+
+	    if (isColumnSearchableViaSelect(column) && isFilterDataNotGiven(column) && hasSelectControlElement(selectControl)) {
+	      if (selectControl.get(selectControl.length - 1).options.length === 0) {
+	        // Added the default option
+	        addOptionToSelectControl(selectControl, '', column.filterControlPlaceholder, column.filterDefault);
+	      }
+
+	      var uniqueValues = {};
+
+	      for (var i = 0; i < z; i++) {
+	        // Added a new value
+	        var fieldValue = data[i][field];
+	        var formatter = that.options.editable && column.editable ? column._formatter : that.header.formatters[j];
+	        var formattedValue = Utils.calculateObjectValue(that.header, formatter, [fieldValue, data[i], i], fieldValue);
+
+	        if (column.filterDataCollector) {
+	          formattedValue = Utils.calculateObjectValue(that.header, column.filterDataCollector, [fieldValue, data[i], formattedValue], formattedValue);
+	        }
+
+	        if (column.searchFormatter) {
+	          fieldValue = formattedValue;
+	        }
+
+	        uniqueValues[formattedValue] = fieldValue;
+
+	        if (_typeof(formattedValue) === 'object' && formattedValue !== null) {
+	          formattedValue.forEach(function (value) {
+	            addOptionToSelectControl(selectControl, value, value, column.filterDefault);
+	          });
+	          continue;
+	        }
+
+	        for (var key in uniqueValues) {
+	          addOptionToSelectControl(selectControl, uniqueValues[key], key, column.filterDefault);
+	        }
+	      }
+
+	      sortSelectControl(selectControl, column.filterOrderBy);
+
+	      if (that.options.hideUnusedSelectOptions) {
+	        hideUnusedSelectOptions(selectControl, uniqueValues);
+	      }
+	    }
+	  });
+	}
+	function getFilterDataMethod(objFilterDataMethod, searchTerm) {
+	  var keys = Object.keys(objFilterDataMethod);
+
+	  for (var i = 0; i < keys.length; i++) {
+	    if (keys[i] === searchTerm) {
+	      return objFilterDataMethod[searchTerm];
+	    }
+	  }
+
+	  return null;
+	}
+	function createControls(that, header) {
+	  var addedFilterControl = false;
+	  var html;
+	  $.each(that.columns, function (_, column) {
+	    html = [];
+
+	    if (!column.visible) {
+	      return;
+	    }
+
+	    if (!column.filterControl && !that.options.filterControlContainer) {
+	      html.push('<div class="no-filter-control"></div>');
+	    } else if (that.options.filterControlContainer) {
+	      var $filterControls = $(".bootstrap-table-filter-control-".concat(column.field));
+	      $.each($filterControls, function (_, filterControl) {
+	        var $filterControl = $(filterControl);
+
+	        if (!$filterControl.is('[type=radio]')) {
+	          var placeholder = column.filterControlPlaceholder ? column.filterControlPlaceholder : '';
+	          $filterControl.attr('placeholder', placeholder).val(column.filterDefault);
+	        }
+
+	        $filterControl.attr('data-field', column.field);
+	      });
+	      addedFilterControl = true;
+	    } else {
+	      var nameControl = column.filterControl.toLowerCase();
+	      html.push('<div class="filter-control">');
+	      addedFilterControl = true;
+
+	      if (column.searchable && that.options.filterTemplate[nameControl]) {
+	        html.push(that.options.filterTemplate[nameControl](that, column.field, column.filterControlPlaceholder ? column.filterControlPlaceholder : '', column.filterDefault));
 	      }
 	    }
 
-	    return null;
-	  },
-	  createControls: function createControls(that, header) {
-	    var addedFilterControl = false;
-	    var html;
-	    $.each(that.columns, function (i, column) {
-	      html = [];
+	    if (!column.filterControl && '' !== column.filterDefault && 'undefined' !== typeof column.filterDefault) {
+	      if ($.isEmptyObject(that.filterColumnsPartial)) {
+	        that.filterColumnsPartial = {};
+	      }
 
-	      if (!column.visible) {
+	      that.filterColumnsPartial[column.field] = column.filterDefault;
+	    }
+
+	    $.each(header.find('th'), function (i, th) {
+	      var $th = $(th);
+
+	      if ($th.data('field') === column.field) {
+	        $th.find('.fht-cell').append(html.join(''));
+	        return false;
+	      }
+	    });
+
+	    if (column.filterData && column.filterData.toLowerCase() !== 'column') {
+	      var filterDataType = getFilterDataMethod(
+	      /* eslint-disable no-use-before-define */
+	      filterDataMethods, column.filterData.substring(0, column.filterData.indexOf(':')));
+	      var filterDataSource;
+	      var selectControl;
+
+	      if (filterDataType) {
+	        filterDataSource = column.filterData.substring(column.filterData.indexOf(':') + 1, column.filterData.length);
+	        selectControl = header.find(".bootstrap-table-filter-control-".concat(escapeID(column.field)));
+	        addOptionToSelectControl(selectControl, '', column.filterControlPlaceholder, column.filterDefault);
+	        filterDataType(filterDataSource, selectControl, that.options.filterOrderBy, column.filterDefault);
+	      } else {
+	        throw new SyntaxError('Error. You should use any of these allowed filter data methods: var, obj, json, url, func.' + ' Use like this: var: {key: "value"}');
+	      }
+	    }
+	  });
+
+	  if (addedFilterControl) {
+	    header.off('keyup', 'input').on('keyup', 'input', function (_ref4, obj) {
+	      var currentTarget = _ref4.currentTarget,
+	          keyCode = _ref4.keyCode;
+	      syncControls(that); // Simulate enter key action from clear button
+
+	      keyCode = obj ? obj.keyCode : keyCode;
+
+	      if (that.options.searchOnEnterKey && keyCode !== 13) {
 	        return;
 	      }
 
-	      if (!column.filterControl && !that.options.filterControlContainer) {
-	        html.push('<div class="no-filter-control"></div>');
-	      } else if (that.options.filterControlContainer) {
-	        var $filterControl = $(".bootstrap-table-filter-control-".concat(column.field));
-	        var placeholder = column.filterControlPlaceholder ? column.filterControlPlaceholder : '';
-	        $filterControl.attr('placeholder', placeholder);
-	        $filterControl.val(column.filterDefault);
-	        $filterControl.attr('data-field', column.field);
-	        addedFilterControl = true;
+	      if ($.inArray(keyCode, [37, 38, 39, 40]) > -1) {
+	        return;
+	      }
+
+	      var $currentTarget = $(currentTarget);
+
+	      if ($currentTarget.is(':checkbox') || $currentTarget.is(':radio')) {
+	        return;
+	      }
+
+	      clearTimeout(currentTarget.timeoutId || 0);
+	      currentTarget.timeoutId = setTimeout(function () {
+	        that.onColumnSearch({
+	          currentTarget: currentTarget,
+	          keyCode: keyCode
+	        });
+	      }, that.options.searchTimeOut);
+	    });
+	    header.off('change', 'select:not(".ms-offscreen")').on('change', 'select:not(".ms-offscreen")', function (_ref5) {
+	      var currentTarget = _ref5.currentTarget,
+	          keyCode = _ref5.keyCode;
+	      syncControls(that);
+	      var $select = $(currentTarget);
+	      var value = $select.val();
+
+	      if (value && value.length > 0 && value.trim()) {
+	        $select.find('option[selected]').removeAttr('selected');
+	        $select.find('option[value="' + value + '"]').attr('selected', true);
 	      } else {
-	        var nameControl = column.filterControl.toLowerCase();
-	        html.push('<div class="filter-control">');
-	        addedFilterControl = true;
-
-	        if (column.searchable && that.options.filterTemplate[nameControl]) {
-	          html.push(that.options.filterTemplate[nameControl](that, column.field, column.filterControlPlaceholder ? column.filterControlPlaceholder : '', column.filterDefault));
-	        }
+	        $select.find('option[selected]').removeAttr('selected');
 	      }
 
-	      if (!column.filterControl && '' !== column.filterDefault && 'undefined' !== typeof column.filterDefault) {
-	        if ($.isEmptyObject(that.filterColumnsPartial)) {
-	          that.filterColumnsPartial = {};
-	        }
+	      clearTimeout(currentTarget.timeoutId || 0);
+	      currentTarget.timeoutId = setTimeout(function () {
+	        that.onColumnSearch({
+	          currentTarget: currentTarget,
+	          keyCode: keyCode
+	        });
+	      }, that.options.searchTimeOut);
+	    });
+	    header.off('mouseup', 'input:not([type=radio])').on('mouseup', 'input:not([type=radio])', function (_ref6) {
+	      var currentTarget = _ref6.currentTarget,
+	          keyCode = _ref6.keyCode;
+	      var $input = $(currentTarget);
+	      var oldValue = $input.val();
 
-	        that.filterColumnsPartial[column.field] = column.filterDefault;
+	      if (oldValue === '') {
+	        return;
 	      }
 
-	      $.each(header.children().children(), function (i, tr) {
-	        var $tr = $(tr);
+	      setTimeout(function () {
+	        syncControls(that);
+	        var newValue = $input.val();
 
-	        if ($tr.data('field') === column.field) {
-	          $tr.find('.fht-cell').append(html.join(''));
-	          return false;
+	        if (newValue === '') {
+	          clearTimeout(currentTarget.timeoutId || 0);
+	          currentTarget.timeoutId = setTimeout(function () {
+	            that.onColumnSearch({
+	              currentTarget: currentTarget,
+	              keyCode: keyCode
+	            });
+	          }, that.options.searchTimeOut);
 	        }
-	      });
-
-	      if (column.filterData !== undefined && column.filterData.toLowerCase() !== 'column') {
-	        var filterDataType = UtilsFilterControl.getFilterDataMethod(
-	        /* eslint-disable no-use-before-define */
-	        filterDataMethods, column.filterData.substring(0, column.filterData.indexOf(':')));
-	        var filterDataSource;
-	        var selectControl;
-
-	        if (filterDataType !== null) {
-	          filterDataSource = column.filterData.substring(column.filterData.indexOf(':') + 1, column.filterData.length);
-	          selectControl = UtilsFilterControl.getControlContainer().find(".bootstrap-table-filter-control-".concat(UtilsFilterControl.escapeID(column.field)));
-	          UtilsFilterControl.addOptionToSelectControl(selectControl, '', column.filterControlPlaceholder, column.filterDefault);
-	          filterDataType(filterDataSource, selectControl, that.options.filterOrderBy, column.filterDefault);
-	        } else {
-	          throw new SyntaxError('Error. You should use any of these allowed filter data methods: var, obj, json, url, func.' + ' Use like this: var: {key: "value"}');
-	        }
-	      }
+	      }, 1);
+	    });
+	    header.off('change', 'input[type=radio]').on('change', 'input[type=radio]', function (_ref7) {
+	      var currentTarget = _ref7.currentTarget,
+	          keyCode = _ref7.keyCode;
+	      clearTimeout(currentTarget.timeoutId || 0);
+	      currentTarget.timeoutId = setTimeout(function () {
+	        syncControls(that);
+	        that.onColumnSearch({
+	          currentTarget: currentTarget,
+	          keyCode: keyCode
+	        });
+	      }, that.options.searchTimeOut);
 	    });
 
-	    if (addedFilterControl) {
-	      UtilsFilterControl.getControlContainer().off('keyup', 'input').on('keyup', 'input', function (_ref6, obj) {
-	        var currentTarget = _ref6.currentTarget,
-	            keyCode = _ref6.keyCode;
-	        // Simulate enter key action from clear button
-	        keyCode = obj ? obj.keyCode : keyCode;
+	    if (header.find('.date-filter-control').length > 0) {
+	      $.each(that.columns, function (i, _ref8) {
+	        var filterControl = _ref8.filterControl,
+	            field = _ref8.field,
+	            filterDatepickerOptions = _ref8.filterDatepickerOptions;
 
-	        if (that.options.searchOnEnterKey && keyCode !== 13) {
-	          return;
-	        }
-
-	        if ($.inArray(keyCode, [37, 38, 39, 40]) > -1) {
-	          return;
-	        }
-
-	        var $currentTarget = $(currentTarget);
-
-	        if ($currentTarget.is(':checkbox') || $currentTarget.is(':radio')) {
-	          return;
-	        }
-
-	        clearTimeout(currentTarget.timeoutId || 0);
-	        currentTarget.timeoutId = setTimeout(function () {
-	          that.onColumnSearch({
-	            currentTarget: currentTarget,
-	            keyCode: keyCode
-	          });
-	        }, that.options.searchTimeOut);
-	      });
-	      UtilsFilterControl.getControlContainer().off('change', 'select').on('change', 'select', function (_ref7) {
-	        var currentTarget = _ref7.currentTarget,
-	            keyCode = _ref7.keyCode;
-
-	        if (that.options.searchOnEnterKey && keyCode !== 13) {
-	          return;
-	        }
-
-	        if ($.inArray(keyCode, [37, 38, 39, 40]) > -1) {
-	          return;
-	        }
-
-	        var $select = $(currentTarget);
-	        var value = $select.val();
-
-	        if ($.trim(value)) {
-	          $select.find('option[selected]').removeAttr('selected');
-	          $select.find('option[value="' + value + '"]').attr('selected', true);
-	        } else {
-	          $select.find('option[selected]').removeAttr('selected');
-	        }
-
-	        clearTimeout(currentTarget.timeoutId || 0);
-	        currentTarget.timeoutId = setTimeout(function () {
-	          that.onColumnSearch({
-	            currentTarget: currentTarget,
-	            keyCode: keyCode
-	          });
-	        }, that.options.searchTimeOut);
-	      });
-	      header.off('mouseup', 'input').on('mouseup', 'input', function (_ref8) {
-	        var currentTarget = _ref8.currentTarget,
-	            keyCode = _ref8.keyCode;
-	        var $input = $(currentTarget);
-	        var oldValue = $input.val();
-
-	        if (oldValue === '') {
-	          return;
-	        }
-
-	        setTimeout(function () {
-	          var newValue = $input.val();
-
-	          if (newValue === '') {
+	        if (filterControl !== undefined && filterControl.toLowerCase() === 'datepicker') {
+	          header.find(".date-filter-control.bootstrap-table-filter-control-".concat(field)).datepicker(filterDatepickerOptions).on('changeDate', function (_ref9) {
+	            var currentTarget = _ref9.currentTarget,
+	                keyCode = _ref9.keyCode;
 	            clearTimeout(currentTarget.timeoutId || 0);
 	            currentTarget.timeoutId = setTimeout(function () {
+	              syncControls(that);
 	              that.onColumnSearch({
 	                currentTarget: currentTarget,
 	                keyCode: keyCode
 	              });
 	            }, that.options.searchTimeOut);
-	          }
-	        }, 1);
+	          });
+	        }
+	      });
+	    }
+
+	    if (that.options.sidePagination !== 'server' && !that.options.height) {
+	      that.triggerSearch();
+	    }
+
+	    if (!that.options.filterControlVisible) {
+	      header.find('.filter-control, .no-filter-control').hide();
+	    }
+	  } else {
+	    header.find('.filter-control, .no-filter-control').hide();
+	  }
+
+	  that.trigger('created-controls');
+	}
+	function getDirectionOfSelectOptions(_alignment) {
+	  var alignment = _alignment === undefined ? 'left' : _alignment.toLowerCase();
+
+	  switch (alignment) {
+	    case 'left':
+	      return 'ltr';
+
+	    case 'right':
+	      return 'rtl';
+
+	    case 'auto':
+	      return 'auto';
+
+	    default:
+	      return 'ltr';
+	  }
+	}
+	function syncControls(that) {
+	  if (that.options.height) {
+	    var controlsTableHeader = that.$tableHeader.find(searchControls);
+	    that.$header.find(searchControls).each(function (_, control) {
+	      var $control = $(control);
+	      var controlClass = getElementClass($control);
+	      var foundControl = controlsTableHeader.filter(function (_, ele) {
+	        var eleClass = getElementClass($(ele));
+	        return controlClass === eleClass;
 	      });
 
-	      if (UtilsFilterControl.getControlContainer().find('.date-filter-control').length > 0) {
-	        $.each(that.columns, function (i, _ref9) {
-	          var filterControl = _ref9.filterControl,
-	              field = _ref9.field,
-	              filterDatepickerOptions = _ref9.filterDatepickerOptions;
-
-	          if (filterControl !== undefined && filterControl.toLowerCase() === 'datepicker') {
-	            UtilsFilterControl.getControlContainer().find(".date-filter-control.bootstrap-table-filter-control-".concat(field)).datepicker(filterDatepickerOptions).on('changeDate', function (_ref10) {
-	              var currentTarget = _ref10.currentTarget,
-	                  keyCode = _ref10.keyCode;
-	              clearTimeout(currentTarget.timeoutId || 0);
-	              currentTarget.timeoutId = setTimeout(function () {
-	                that.onColumnSearch({
-	                  currentTarget: currentTarget,
-	                  keyCode: keyCode
-	                });
-	              }, that.options.searchTimeOut);
-	            });
-	          }
-	        });
+	      if (foundControl.length === 0) {
+	        return;
 	      }
 
-	      if (that.options.sidePagination !== 'server') {
-	        that.triggerSearch();
+	      if ($control.is('select')) {
+	        $control.find('option:selected').removeAttr('selected');
+	        $control.find("option[value='".concat(foundControl.val(), "']")).attr('selected', true);
+	      } else {
+	        $control.val(foundControl.val());
 	      }
-	    } else {
-	      UtilsFilterControl.getControlContainer().find('.filterControl').hide();
-	    }
-	  },
-	  getDirectionOfSelectOptions: function getDirectionOfSelectOptions(_alignment) {
-	    var alignment = _alignment === undefined ? 'left' : _alignment.toLowerCase();
-
-	    switch (alignment) {
-	      case 'left':
-	        return 'ltr';
-
-	      case 'right':
-	        return 'rtl';
-
-	      case 'auto':
-	        return 'auto';
-
-	      default:
-	        return 'ltr';
-	    }
+	    });
 	  }
-	};
+	}
 	var filterDataMethods = {
 	  func: function func(filterDataSource, selectControl, filterOrderBy, selected) {
 	    var variableValues = window[filterDataSource].apply();
 
 	    for (var key in variableValues) {
-	      UtilsFilterControl.addOptionToSelectControl(selectControl, key, variableValues[key], selected);
+	      addOptionToSelectControl(selectControl, key, variableValues[key], selected);
 	    }
 
-	    UtilsFilterControl.sortSelectControl(selectControl, filterOrderBy);
+	    sortSelectControl(selectControl, filterOrderBy);
 	  },
 	  obj: function obj(filterDataSource, selectControl, filterOrderBy, selected) {
 	    var objectKeys = filterDataSource.split('.');
@@ -11353,19 +12060,24 @@ __webpack_require__.r(__webpack_exports__);
 	    }
 
 	    for (var key in variableValues) {
-	      UtilsFilterControl.addOptionToSelectControl(selectControl, key, variableValues[key], selected);
+	      addOptionToSelectControl(selectControl, key, variableValues[key], selected);
 	    }
 
-	    UtilsFilterControl.sortSelectControl(selectControl, filterOrderBy);
+	    sortSelectControl(selectControl, filterOrderBy);
 	  },
 	  var: function _var(filterDataSource, selectControl, filterOrderBy, selected) {
 	    var variableValues = window[filterDataSource];
+	    var isArray = Array.isArray(variableValues);
 
 	    for (var key in variableValues) {
-	      UtilsFilterControl.addOptionToSelectControl(selectControl, key, variableValues[key], selected);
+	      if (isArray) {
+	        addOptionToSelectControl(selectControl, variableValues[key], variableValues[key], selected);
+	      } else {
+	        addOptionToSelectControl(selectControl, key, variableValues[key], selected);
+	      }
 	    }
 
-	    UtilsFilterControl.sortSelectControl(selectControl, filterOrderBy);
+	    sortSelectControl(selectControl, filterOrderBy);
 	  },
 	  url: function url(filterDataSource, selectControl, filterOrderBy, selected) {
 	    $.ajax({
@@ -11373,10 +12085,10 @@ __webpack_require__.r(__webpack_exports__);
 	      dataType: 'json',
 	      success: function success(data) {
 	        for (var key in data) {
-	          UtilsFilterControl.addOptionToSelectControl(selectControl, key, data[key], selected);
+	          addOptionToSelectControl(selectControl, key, data[key], selected);
 	        }
 
-	        UtilsFilterControl.sortSelectControl(selectControl, filterOrderBy);
+	        sortSelectControl(selectControl, filterOrderBy);
 	      }
 	    });
 	  },
@@ -11384,40 +12096,45 @@ __webpack_require__.r(__webpack_exports__);
 	    var variableValues = JSON.parse(filterDataSource);
 
 	    for (var key in variableValues) {
-	      UtilsFilterControl.addOptionToSelectControl(selectControl, key, variableValues[key], selected);
+	      addOptionToSelectControl(selectControl, key, variableValues[key], selected);
 	    }
 
-	    UtilsFilterControl.sortSelectControl(selectControl, filterOrderBy);
+	    sortSelectControl(selectControl, filterOrderBy);
 	  }
 	};
+
+	var Utils$1 = $.fn.bootstrapTable.utils;
 	$.extend($.fn.bootstrapTable.defaults, {
 	  filterControl: false,
+	  filterControlVisible: true,
 	  onColumnSearch: function onColumnSearch(field, text) {
 	    return false;
 	  },
 	  onCreatedControls: function onCreatedControls() {
-	    return true;
+	    return false;
 	  },
 	  alignmentSelectControlOptions: undefined,
 	  filterTemplate: {
 	    input: function input(that, field, placeholder, value) {
-	      return Utils.sprintf('<input type="text" class="form-control bootstrap-table-filter-control-%s search-input" style="width: 100%;" placeholder="%s" value="%s">', field, 'undefined' === typeof placeholder ? '' : placeholder, 'undefined' === typeof value ? '' : value);
+	      return Utils$1.sprintf('<input type="search" class="form-control bootstrap-table-filter-control-%s search-input" style="width: 100%;" placeholder="%s" value="%s">', field, 'undefined' === typeof placeholder ? '' : placeholder, 'undefined' === typeof value ? '' : value);
 	    },
-	    select: function select(_ref11, field) {
-	      var options = _ref11.options;
-	      return Utils.sprintf('<select class="form-control bootstrap-table-filter-control-%s" style="width: 100%;" dir="%s"></select>', field, UtilsFilterControl.getDirectionOfSelectOptions(options.alignmentSelectControlOptions));
+	    select: function select(_ref, field) {
+	      var options = _ref.options;
+	      return Utils$1.sprintf('<select class="form-control bootstrap-table-filter-control-%s" style="width: 100%;" dir="%s"></select>', field, getDirectionOfSelectOptions(options.alignmentSelectControlOptions));
 	    },
 	    datepicker: function datepicker(that, field, value) {
-	      return Utils.sprintf('<input type="text" class="form-control date-filter-control bootstrap-table-filter-control-%s" style="width: 100%;" value="%s">', field, 'undefined' === typeof value ? '' : value);
+	      return Utils$1.sprintf('<input type="text" class="form-control date-filter-control bootstrap-table-filter-control-%s" style="width: 100%;" value="%s">', field, 'undefined' === typeof value ? '' : value);
 	    }
 	  },
 	  disableControlWhenSearch: false,
 	  searchOnEnterKey: false,
+	  showFilterControlSwitch: false,
 	  // internal variables
 	  valuesFilterControl: []
 	});
 	$.extend($.fn.bootstrapTable.columnDefaults, {
 	  filterControl: undefined,
+	  // input, select, datepicker
 	  filterDataCollector: undefined,
 	  filterData: undefined,
 	  filterDatepickerOptions: undefined,
@@ -11435,7 +12152,26 @@ __webpack_require__.r(__webpack_exports__);
 	$.extend($.fn.bootstrapTable.defaults.icons, {
 	  clear: {
 	    bootstrap3: 'glyphicon-trash icon-clear'
-	  }[$.fn.bootstrapTable.theme] || 'fa-trash'
+	  }[$.fn.bootstrapTable.theme] || 'fa-trash',
+	  filterControlSwitchHide: {
+	    bootstrap3: 'glyphicon-zoom-out icon-zoom-out',
+	    materialize: 'zoom_out'
+	  }[$.fn.bootstrapTable.theme] || 'fa-search-minus',
+	  filterControlSwitchShow: {
+	    bootstrap3: 'glyphicon-zoom-in icon-zoom-in',
+	    materialize: 'zoom_in'
+	  }[$.fn.bootstrapTable.theme] || 'fa-search-plus'
+	});
+	$.extend($.fn.bootstrapTable.locales, {
+	  formatFilterControlSwitch: function formatFilterControlSwitch() {
+	    return 'Hide/Show controls';
+	  },
+	  formatFilterControlSwitchHide: function formatFilterControlSwitchHide() {
+	    return 'Hide controls';
+	  },
+	  formatFilterControlSwitchShow: function formatFilterControlSwitchShow() {
+	    return 'Show controls';
+	  }
 	});
 	$.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales);
 	$.extend($.fn.bootstrapTable.defaults, {
@@ -11445,6 +12181,7 @@ __webpack_require__.r(__webpack_exports__);
 	});
 	$.fn.bootstrapTable.methods.push('triggerSearch');
 	$.fn.bootstrapTable.methods.push('clearFilterControl');
+	$.fn.bootstrapTable.methods.push('toggleFilterControl');
 
 	$.BootstrapTable =
 	/*#__PURE__*/
@@ -11462,38 +12199,38 @@ __webpack_require__.r(__webpack_exports__);
 	    value: function init() {
 	      var _this = this;
 
-	      UtilsFilterControl.bootstrapTableInstance = this; // Make sure that the filterControl option is set
-
+	      // Make sure that the filterControl option is set
 	      if (this.options.filterControl) {
-	        var that = this; // Make sure that the internal variables are set correctly
-
+	        // Make sure that the internal variables are set correctly
 	        this.options.valuesFilterControl = [];
 	        this.$el.on('reset-view.bs.table', function () {
 	          // Create controls on $tableHeader if the height is set
-	          if (!that.options.height) {
+	          if (!_this.options.height) {
 	            return;
 	          } // Avoid recreate the controls
 
 
-	          if (UtilsFilterControl.getControlContainer().find('select').length > 0 || UtilsFilterControl.getControlContainer().find('input').length > 0) {
+	          var $controlContainer = getControlContainer(_this);
+
+	          if ($controlContainer.find('select').length > 0 || $controlContainer.find('input:not([type="checkbox"]):not([type="radio"])').length > 0) {
 	            return;
 	          }
 
-	          UtilsFilterControl.createControls(that, UtilsFilterControl.getControlContainer());
+	          createControls(_this, $controlContainer);
 	        }).on('post-header.bs.table', function () {
-	          UtilsFilterControl.setValues(that);
+	          setValues(_this);
 	        }).on('post-body.bs.table', function () {
-	          if (that.options.height && !that.options.filterControlContainer) {
-	            UtilsFilterControl.fixHeaderCSS(that);
+	          if (_this.options.height && !_this.options.filterControlContainer) {
+	            fixHeaderCSS(_this);
 	          }
 
 	          _this.$tableLoading.css('top', _this.$header.outerHeight() + 1);
 	        }).on('column-switch.bs.table', function () {
-	          UtilsFilterControl.setValues(that);
+	          setValues(_this);
 	        }).on('load-success.bs.table', function () {
-	          that.enableControls(true);
+	          _this.enableControls(true);
 	        }).on('load-error.bs.table', function () {
-	          that.enableControls(true);
+	          _this.enableControls(true);
 	        });
 	      }
 
@@ -11504,39 +12241,36 @@ __webpack_require__.r(__webpack_exports__);
 	    value: function initHeader() {
 	      _get(_getPrototypeOf(_class.prototype), "initHeader", this).call(this);
 
-	      if (!this.options.filterControl) {
+	      if (!this.options.filterControl || this.options.height) {
 	        return;
 	      }
 
-	      UtilsFilterControl.createControls(this, UtilsFilterControl.getControlContainer());
+	      createControls(this, getControlContainer(this));
 	    }
 	  }, {
 	    key: "initBody",
 	    value: function initBody() {
 	      _get(_getPrototypeOf(_class.prototype), "initBody", this).call(this);
 
-	      UtilsFilterControl.initFilterSelectControls(this);
+	      syncControls(this);
+	      initFilterSelectControls(this);
 	    }
 	  }, {
 	    key: "initSearch",
 	    value: function initSearch() {
+	      var _this2 = this;
+
 	      var that = this;
 	      var fp = $.isEmptyObject(that.filterColumnsPartial) ? null : that.filterColumnsPartial;
 
-	      if (fp === null || Object.keys(fp).length <= 1) {
-	        _get(_getPrototypeOf(_class.prototype), "initSearch", this).call(this);
-	      }
+	      _get(_getPrototypeOf(_class.prototype), "initSearch", this).call(this);
 
-	      if (this.options.sidePagination === 'server') {
-	        return;
-	      }
-
-	      if (fp === null) {
+	      if (this.options.sidePagination === 'server' || fp === null) {
 	        return;
 	      } // Check partial column filter
 
 
-	      that.data = fp ? that.options.data.filter(function (item, i) {
+	      that.data = fp ? that.data.filter(function (item, i) {
 	        var itemIsExpected = [];
 	        var keys1 = Object.keys(item);
 	        var keys2 = Object.keys(fp);
@@ -11546,7 +12280,7 @@ __webpack_require__.r(__webpack_exports__);
 	        keys.forEach(function (key) {
 	          var thisColumn = that.columns[that.fieldsColumnsIndex[key]];
 	          var fval = (fp[key] || '').toLowerCase();
-	          var value = Utils.getItemField(item, key, false);
+	          var value = Utils$1.getItemField(item, key, false);
 	          var tmpItemIsExpected;
 
 	          if (fval === '') {
@@ -11560,58 +12294,24 @@ __webpack_require__.r(__webpack_exports__);
 	            if ($.inArray(key, that.header.fields) !== -1) {
 	              if (value === undefined || value === null) {
 	                tmpItemIsExpected = false;
+	              } else if (_typeof(value) === 'object') {
+	                value.forEach(function (objectValue) {
+	                  if (tmpItemIsExpected) {
+	                    return;
+	                  }
+
+	                  if (_this2.options.searchAccentNeutralise) {
+	                    objectValue = Utils$1.normalizeAccent(objectValue);
+	                  }
+
+	                  tmpItemIsExpected = that.isValueExpected(fval, objectValue, thisColumn, key);
+	                });
 	              } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-	                if (thisColumn.filterStrictSearch) {
-	                  tmpItemIsExpected = value.toString().toLowerCase() === fval.toString().toLowerCase();
-	                } else if (thisColumn.filterStartsWithSearch) {
-	                  tmpItemIsExpected = "".concat(value).toLowerCase().indexOf(fval) === 0;
-	                } else {
-	                  tmpItemIsExpected = "".concat(value).toLowerCase().includes(fval);
+	                if (_this2.options.searchAccentNeutralise) {
+	                  value = Utils$1.normalizeAccent(value);
 	                }
 
-	                var largerSmallerEqualsRegex = /(?:(<=|=>|=<|>=|>|<)(?:\s+)?(\d+)?|(\d+)?(\s+)?(<=|=>|=<|>=|>|<))/gm;
-	                var matches = largerSmallerEqualsRegex.exec(fval);
-
-	                if (matches) {
-	                  var operator = matches[1] || "".concat(matches[5], "l");
-	                  var comparisonValue = matches[2] || matches[3];
-	                  var int = parseInt(value, 10);
-	                  var comparisonInt = parseInt(comparisonValue, 10);
-
-	                  switch (operator) {
-	                    case '>':
-	                    case '<l':
-	                      tmpItemIsExpected = int > comparisonInt;
-	                      break;
-
-	                    case '<':
-	                    case '>l':
-	                      tmpItemIsExpected = int < comparisonInt;
-	                      break;
-
-	                    case '<=':
-	                    case '=<':
-	                    case '>=l':
-	                    case '=>l':
-	                      tmpItemIsExpected = int <= comparisonInt;
-	                      break;
-
-	                    case '>=':
-	                    case '=>':
-	                    case '<=l':
-	                    case '=<l':
-	                      tmpItemIsExpected = int >= comparisonInt;
-	                      break;
-	                  }
-	                }
-
-	                if (thisColumn.filterCustomSearch) {
-	                  var customSearchResult = Utils.calculateObjectValue(that, thisColumn.filterCustomSearch, [fval, value, key, that.options.data], true);
-
-	                  if (customSearchResult !== null) {
-	                    tmpItemIsExpected = customSearchResult;
-	                  }
-	                }
+	                tmpItemIsExpected = that.isValueExpected(fval, value, thisColumn, key);
 	              }
 	            }
 	          }
@@ -11620,11 +12320,71 @@ __webpack_require__.r(__webpack_exports__);
 	        });
 	        return !itemIsExpected.includes(false);
 	      }) : that.data;
+	      that.unsortedData = _toConsumableArray(that.data);
+	    }
+	  }, {
+	    key: "isValueExpected",
+	    value: function isValueExpected(searchValue, value, column, key) {
+	      var tmpItemIsExpected = false;
+
+	      if (column.filterStrictSearch) {
+	        tmpItemIsExpected = value.toString().toLowerCase() === searchValue.toString().toLowerCase();
+	      } else if (column.filterStartsWithSearch) {
+	        tmpItemIsExpected = "".concat(value).toLowerCase().indexOf(searchValue) === 0;
+	      } else {
+	        tmpItemIsExpected = "".concat(value).toLowerCase().includes(searchValue);
+	      }
+
+	      var largerSmallerEqualsRegex = /(?:(<=|=>|=<|>=|>|<)(?:\s+)?(\d+)?|(\d+)?(\s+)?(<=|=>|=<|>=|>|<))/gm;
+	      var matches = largerSmallerEqualsRegex.exec(searchValue);
+
+	      if (matches) {
+	        var operator = matches[1] || "".concat(matches[5], "l");
+	        var comparisonValue = matches[2] || matches[3];
+	        var int = parseInt(value, 10);
+	        var comparisonInt = parseInt(comparisonValue, 10);
+
+	        switch (operator) {
+	          case '>':
+	          case '<l':
+	            tmpItemIsExpected = int > comparisonInt;
+	            break;
+
+	          case '<':
+	          case '>l':
+	            tmpItemIsExpected = int < comparisonInt;
+	            break;
+
+	          case '<=':
+	          case '=<':
+	          case '>=l':
+	          case '=>l':
+	            tmpItemIsExpected = int <= comparisonInt;
+	            break;
+
+	          case '>=':
+	          case '=>':
+	          case '<=l':
+	          case '=<l':
+	            tmpItemIsExpected = int >= comparisonInt;
+	            break;
+	        }
+	      }
+
+	      if (column.filterCustomSearch) {
+	        var customSearchResult = Utils$1.calculateObjectValue(this, column.filterCustomSearch, [searchValue, value, key, this.options.data], true);
+
+	        if (customSearchResult !== null) {
+	          tmpItemIsExpected = customSearchResult;
+	        }
+	      }
+
+	      return tmpItemIsExpected;
 	    }
 	  }, {
 	    key: "initColumnSearch",
 	    value: function initColumnSearch(filterColumnsDefaults) {
-	      UtilsFilterControl.copyValues(this);
+	      copyValues(this);
 
 	      if (filterColumnsDefaults) {
 	        this.filterColumnsPartial = filterColumnsDefaults;
@@ -11637,17 +12397,18 @@ __webpack_require__.r(__webpack_exports__);
 	    }
 	  }, {
 	    key: "onColumnSearch",
-	    value: function onColumnSearch(_ref12) {
-	      var currentTarget = _ref12.currentTarget,
-	          keyCode = _ref12.keyCode;
+	    value: function onColumnSearch(_ref2) {
+	      var currentTarget = _ref2.currentTarget,
+	          keyCode = _ref2.keyCode;
 
 	      if ($.inArray(keyCode, [37, 38, 39, 40]) > -1) {
 	        return;
 	      }
 
-	      UtilsFilterControl.copyValues(this);
+	      copyValues(this);
 	      var text = $.trim($(currentTarget).val());
 	      var $field = $(currentTarget).closest('[data-field]').data('field');
+	      this.trigger('column-search', $field, text);
 
 	      if ($.isEmptyObject(this.filterColumnsPartial)) {
 	        this.filterColumnsPartial = {};
@@ -11664,12 +12425,26 @@ __webpack_require__.r(__webpack_exports__);
 	      this.onSearch({
 	        currentTarget: currentTarget
 	      }, false);
-	      this.trigger('column-search', $field, text);
 	    }
 	  }, {
 	    key: "initToolbar",
 	    value: function initToolbar() {
+	      this.showToolbar = this.showToolbar || this.options.showFilterControlSwitch;
 	      this.showSearchClearButton = this.options.filterControl && this.options.showSearchClearButton;
+
+	      if (this.options.showFilterControlSwitch) {
+	        this.buttons = Object.assign(this.buttons, {
+	          filterControlSwitch: {
+	            'text': this.options.filterControlVisible ? this.options.formatFilterControlSwitchHide() : this.options.formatFilterControlSwitchShow(),
+	            'icon': this.options.filterControlVisible ? this.options.icons.filterControlSwitchHide : this.options.icons.filterControlSwitchShow,
+	            'event': this.toggleFilterControl,
+	            'attributes': {
+	              'aria-label': this.options.formatFilterControlSwitch(),
+	              'title': this.options.formatFilterControlSwitch()
+	            }
+	          }
+	        });
+	      }
 
 	      _get(_getPrototypeOf(_class.prototype), "initToolbar", this).call(this);
 	    }
@@ -11687,11 +12462,10 @@ __webpack_require__.r(__webpack_exports__);
 	    value: function clearFilterControl() {
 	      if (this.options.filterControl) {
 	        var that = this;
-	        var cookies = UtilsFilterControl.collectBootstrapCookies();
-	        var header = UtilsFilterControl.getCurrentHeader(that);
-	        var table = header.closest('table');
-	        var controls = header.find(UtilsFilterControl.getCurrentSearchControls(that));
-	        var search = that.$toolbar.find('.search input');
+	        var cookies = collectBootstrapCookies();
+	        var table = this.$el.closest('table');
+	        var controls = getSearchControls(that);
+	        var search = Utils$1.getSearchInput(this);
 	        var hasValues = false;
 	        var timeoutId = 0;
 	        $.each(that.options.valuesFilterControl, function (i, item) {
@@ -11701,7 +12475,7 @@ __webpack_require__.r(__webpack_exports__);
 	        $.each(that.options.filterControls, function (i, item) {
 	          item.text = '';
 	        });
-	        UtilsFilterControl.setValues(that); // clear cookies once the filters are clean
+	        setValues(that); // clear cookies once the filters are clean
 
 	        clearTimeout(timeoutId);
 	        timeoutId = setTimeout(function () {
@@ -11736,7 +12510,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 	        if (that.options.sortName !== table.data('sortName') || that.options.sortOrder !== table.data('sortOrder')) {
-	          var sorter = header.find(Utils.sprintf('[data-field="%s"]', $(controls[0]).closest('table').data('sortName')));
+	          var sorter = this.$header.find(Utils$1.sprintf('[data-field="%s"]', $(controls[0]).closest('table').data('sortName')));
 
 	          if (sorter.length > 0) {
 	            that.onSort({
@@ -11751,7 +12525,7 @@ __webpack_require__.r(__webpack_exports__);
 	  }, {
 	    key: "triggerSearch",
 	    value: function triggerSearch() {
-	      var searchControls = UtilsFilterControl.getSearchControls(this);
+	      var searchControls = getSearchControls(this);
 	      searchControls.each(function () {
 	        var el = $(this);
 
@@ -11766,7 +12540,7 @@ __webpack_require__.r(__webpack_exports__);
 	    key: "enableControls",
 	    value: function enableControls(enable) {
 	      if (this.options.disableControlWhenSearch && this.options.sidePagination === 'server') {
-	        var searchControls = UtilsFilterControl.getSearchControls(this);
+	        var searchControls = getSearchControls(this);
 
 	        if (!enable) {
 	          searchControls.prop('disabled', 'disabled');
@@ -11774,6 +12548,23 @@ __webpack_require__.r(__webpack_exports__);
 	          searchControls.removeProp('disabled');
 	        }
 	      }
+	    }
+	  }, {
+	    key: "toggleFilterControl",
+	    value: function toggleFilterControl() {
+	      this.options.filterControlVisible = !this.options.filterControlVisible;
+	      var $filterControls = getControlContainer(this).find('.filter-control, .no-filter-control');
+
+	      if (this.options.filterControlVisible) {
+	        $filterControls.show();
+	      } else {
+	        $filterControls.hide();
+	        this.clearFilterControl();
+	      }
+
+	      var icon = this.options.showButtonIcons ? this.options.filterControlVisible ? this.options.icons.filterControlSwitchHide : this.options.icons.filterControlSwitchShow : '';
+	      var text = this.options.showButtonText ? this.options.filterControlVisible ? this.options.formatFilterControlSwitchHide() : this.options.formatFilterControlSwitchShow() : '';
+	      this.$toolbar.find('>.columns').find('.filter-control-switch').html(Utils$1.sprintf(this.constants.html.icon, this.options.iconsPrefix, icon) + ' ' + text);
 	    }
 	  }]);
 
@@ -11798,7 +12589,7 @@ __webpack_require__.r(__webpack_exports__);
 	undefined;
 }(this, (function ($) { 'use strict';
 
-	$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
+	$ = $ && Object.prototype.hasOwnProperty.call($, 'default') ? $['default'] : $;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -12468,6 +13259,12 @@ __webpack_require__.r(__webpack_exports__);
 	 */
 
 	$.fn.bootstrapTable.locales['en-US'] = {
+	  formatCopyRows: function formatCopyRows() {
+	    return 'Copy Rows';
+	  },
+	  formatPrint: function formatPrint() {
+	    return 'Print';
+	  },
 	  formatLoadingMessage: function formatLoadingMessage() {
 	    return 'Loading, please wait';
 	  },
@@ -12549,6 +13346,15 @@ __webpack_require__.r(__webpack_exports__);
 	  },
 	  formatAdvancedCloseButton: function formatAdvancedCloseButton() {
 	    return 'Close';
+	  },
+	  formatFilterControlSwitch: function formatFilterControlSwitch() {
+	    return 'Hide/Show controls';
+	  },
+	  formatFilterControlSwitchHide: function formatFilterControlSwitchHide() {
+	    return 'Hide controls';
+	  },
+	  formatFilterControlSwitchShow: function formatFilterControlSwitchShow() {
+	    return 'Show controls';
 	  }
 	};
 	$.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US']);
@@ -48697,7 +49503,7 @@ return jQuery;
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.20';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -52404,8 +53210,21 @@ return jQuery;
      * @returns {Array} Returns the new sorted array.
      */
     function baseOrderBy(collection, iteratees, orders) {
+      if (iteratees.length) {
+        iteratees = arrayMap(iteratees, function(iteratee) {
+          if (isArray(iteratee)) {
+            return function(value) {
+              return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
+            }
+          }
+          return iteratee;
+        });
+      } else {
+        iteratees = [identity];
+      }
+
       var index = -1;
-      iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(getIteratee()));
+      iteratees = arrayMap(iteratees, baseUnary(getIteratee()));
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
@@ -52662,6 +53481,10 @@ return jQuery;
         var key = toKey(path[index]),
             newValue = value;
 
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          return object;
+        }
+
         if (index != lastIndex) {
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -52814,11 +53637,14 @@ return jQuery;
      *  into `array`.
      */
     function baseSortedIndexBy(array, value, iteratee, retHighest) {
-      value = iteratee(value);
-
       var low = 0,
-          high = array == null ? 0 : array.length,
-          valIsNaN = value !== value,
+          high = array == null ? 0 : array.length;
+      if (high === 0) {
+        return 0;
+      }
+
+      value = iteratee(value);
+      var valIsNaN = value !== value,
           valIsNull = value === null,
           valIsSymbol = isSymbol(value),
           valIsUndefined = value === undefined;
@@ -54303,10 +55129,11 @@ return jQuery;
       if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
         return false;
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(array);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var arrStacked = stack.get(array);
+      var othStacked = stack.get(other);
+      if (arrStacked && othStacked) {
+        return arrStacked == other && othStacked == array;
       }
       var index = -1,
           result = true,
@@ -54468,10 +55295,11 @@ return jQuery;
           return false;
         }
       }
-      // Assume cyclic values are equal.
-      var stacked = stack.get(object);
-      if (stacked && stack.get(other)) {
-        return stacked == other;
+      // Check that cyclic values are equal.
+      var objStacked = stack.get(object);
+      var othStacked = stack.get(other);
+      if (objStacked && othStacked) {
+        return objStacked == other && othStacked == object;
       }
       var result = true;
       stack.set(object, other);
@@ -57852,6 +58680,10 @@ return jQuery;
      * // The `_.property` iteratee shorthand.
      * _.filter(users, 'active');
      * // => objects for ['barney']
+     *
+     * // Combining several predicates using `_.overEvery` or `_.overSome`.
+     * _.filter(users, _.overSome([{ 'age': 36 }, ['age', 40]]));
+     * // => objects for ['fred', 'barney']
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -58601,15 +59433,15 @@ return jQuery;
      * var users = [
      *   { 'user': 'fred',   'age': 48 },
      *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'fred',   'age': 30 },
      *   { 'user': 'barney', 'age': 34 }
      * ];
      *
      * _.sortBy(users, [function(o) { return o.user; }]);
-     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
+     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 30]]
      *
      * _.sortBy(users, ['user', 'age']);
-     * // => objects for [['barney', 34], ['barney', 36], ['fred', 40], ['fred', 48]]
+     * // => objects for [['barney', 34], ['barney', 36], ['fred', 30], ['fred', 48]]
      */
     var sortBy = baseRest(function(collection, iteratees) {
       if (collection == null) {
@@ -63484,11 +64316,11 @@ return jQuery;
 
       // Use a sourceURL for easier debugging.
       // The sourceURL gets injected into the source that's eval-ed, so be careful
-      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
-      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
+      // to normalize all kinds of whitespace, so e.g. newlines (and unicode versions of it) can't sneak in
+      // and escape the comment, thus injecting code that gets evaled.
       var sourceURL = '//# sourceURL=' +
         (hasOwnProperty.call(options, 'sourceURL')
-          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
+          ? (options.sourceURL + '').replace(/\s/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -63521,8 +64353,6 @@ return jQuery;
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      // Like with sourceURL, we take care to not check the option's prototype,
-      // as this configuration is a code injection vector.
       var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
@@ -64229,6 +65059,9 @@ return jQuery;
      * values against any array or object value, respectively. See `_.isEqual`
      * for a list of supported value comparisons.
      *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
+     *
      * @static
      * @memberOf _
      * @since 3.0.0
@@ -64244,6 +65077,10 @@ return jQuery;
      *
      * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
      * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+     *
+     * // Checking for several possible values
+     * _.filter(objects, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matches(source) {
       return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
@@ -64257,6 +65094,9 @@ return jQuery;
      * **Note:** Partial comparisons will match empty array and empty object
      * `srcValue` values against any array or object value, respectively. See
      * `_.isEqual` for a list of supported value comparisons.
+     *
+     * **Note:** Multiple values can be checked by combining several matchers
+     * using `_.overSome`
      *
      * @static
      * @memberOf _
@@ -64274,6 +65114,10 @@ return jQuery;
      *
      * _.find(objects, _.matchesProperty('a', 4));
      * // => { 'a': 4, 'b': 5, 'c': 6 }
+     *
+     * // Checking for several possible values
+     * _.filter(objects, _.overSome([_.matchesProperty('a', 1), _.matchesProperty('a', 4)]));
+     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
      */
     function matchesProperty(path, srcValue) {
       return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG));
@@ -64497,6 +65341,10 @@ return jQuery;
      * Creates a function that checks if **all** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -64523,6 +65371,10 @@ return jQuery;
      * Creates a function that checks if **any** of the `predicates` return
      * truthy when invoked with the arguments it receives.
      *
+     * Following shorthands are possible for providing predicates.
+     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -64542,6 +65394,9 @@ return jQuery;
      *
      * func(NaN);
      * // => false
+     *
+     * var matchesFunc = _.overSome([{ 'a': 1 }, { 'a': 2 }])
+     * var matchesPropertyFunc = _.overSome([['a', 1], ['a', 2]])
      */
     var overSome = createOver(arraySome);
 
@@ -65825,6 +66680,8 @@ var map = {
 	"./bm": "./node_modules/moment/locale/bm.js",
 	"./bm.js": "./node_modules/moment/locale/bm.js",
 	"./bn": "./node_modules/moment/locale/bn.js",
+	"./bn-bd": "./node_modules/moment/locale/bn-bd.js",
+	"./bn-bd.js": "./node_modules/moment/locale/bn-bd.js",
 	"./bn.js": "./node_modules/moment/locale/bn.js",
 	"./bo": "./node_modules/moment/locale/bo.js",
 	"./bo.js": "./node_modules/moment/locale/bo.js",
@@ -65873,6 +66730,8 @@ var map = {
 	"./es": "./node_modules/moment/locale/es.js",
 	"./es-do": "./node_modules/moment/locale/es-do.js",
 	"./es-do.js": "./node_modules/moment/locale/es-do.js",
+	"./es-mx": "./node_modules/moment/locale/es-mx.js",
+	"./es-mx.js": "./node_modules/moment/locale/es-mx.js",
 	"./es-us": "./node_modules/moment/locale/es-us.js",
 	"./es-us.js": "./node_modules/moment/locale/es-us.js",
 	"./es.js": "./node_modules/moment/locale/es.js",
@@ -66028,6 +66887,8 @@ var map = {
 	"./tg.js": "./node_modules/moment/locale/tg.js",
 	"./th": "./node_modules/moment/locale/th.js",
 	"./th.js": "./node_modules/moment/locale/th.js",
+	"./tk": "./node_modules/moment/locale/tk.js",
+	"./tk.js": "./node_modules/moment/locale/tk.js",
 	"./tl-ph": "./node_modules/moment/locale/tl-ph.js",
 	"./tl-ph.js": "./node_modules/moment/locale/tl-ph.js",
 	"./tlh": "./node_modules/moment/locale/tlh.js",
@@ -66448,16 +67309,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '1',
-            '2': '2',
-            '3': '3',
-            '4': '4',
-            '5': '5',
-            '6': '6',
-            '7': '7',
-            '8': '8',
-            '9': '9',
-            '0': '0',
+            1: '1',
+            2: '2',
+            3: '3',
+            4: '4',
+            5: '5',
+            6: '6',
+            7: '7',
+            8: '8',
+            9: '9',
+            0: '0',
         },
         pluralForm = function (n) {
             return n === 0
@@ -66683,8 +67544,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             yy: '%d سنوات',
         },
         week: {
-            dow: 6, // Saturday is the first day of the week.
-            doy: 12, // The week that contains Jan 12th is the first week of the year.
+            dow: 1, // Monday is the first day of the week.
+            doy: 4, // The week that contains Jan 4th is the first week of the year.
         },
     });
 
@@ -66714,16 +67575,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '١',
-            '2': '٢',
-            '3': '٣',
-            '4': '٤',
-            '5': '٥',
-            '6': '٦',
-            '7': '٧',
-            '8': '٨',
-            '9': '٩',
-            '0': '٠',
+            1: '١',
+            2: '٢',
+            3: '٣',
+            4: '٤',
+            5: '٥',
+            6: '٦',
+            7: '٧',
+            8: '٨',
+            9: '٩',
+            0: '٠',
         },
         numberMap = {
             '١': '1',
@@ -66914,16 +67775,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '١',
-            '2': '٢',
-            '3': '٣',
-            '4': '٤',
-            '5': '٥',
-            '6': '٦',
-            '7': '٧',
-            '8': '٨',
-            '9': '٩',
-            '0': '٠',
+            1: '١',
+            2: '٢',
+            3: '٣',
+            4: '٤',
+            5: '٥',
+            6: '٦',
+            7: '٧',
+            8: '٨',
+            9: '٩',
+            0: '٠',
         },
         numberMap = {
             '١': '1',
@@ -67171,7 +68032,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         relativeTime: {
             future: '%s sonra',
             past: '%s əvvəl',
-            s: 'birneçə saniyə',
+            s: 'bir neçə saniyə',
             ss: '%d saniyə',
             m: 'bir dəqiqə',
             mm: '%d dəqiqə',
@@ -67451,6 +68312,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d часа',
             d: 'ден',
             dd: '%d дена',
+            w: 'седмица',
+            ww: '%d седмици',
             M: 'месец',
             MM: '%d месеца',
             y: 'година',
@@ -67560,6 +68423,154 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 
 /***/ }),
 
+/***/ "./node_modules/moment/locale/bn-bd.js":
+/*!*********************************************!*\
+  !*** ./node_modules/moment/locale/bn-bd.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//! moment.js locale configuration
+//! locale : Bengali (Bangladesh) [bn-bd]
+//! author : Asraf Hossain Patoary : https://github.com/ashwoolford
+
+;(function (global, factory) {
+    true ? factory(__webpack_require__(/*! ../moment */ "./node_modules/moment/moment.js")) :
+   undefined
+}(this, (function (moment) { 'use strict';
+
+    //! moment.js locale configuration
+
+    var symbolMap = {
+            1: '১',
+            2: '২',
+            3: '৩',
+            4: '৪',
+            5: '৫',
+            6: '৬',
+            7: '৭',
+            8: '৮',
+            9: '৯',
+            0: '০',
+        },
+        numberMap = {
+            '১': '1',
+            '২': '2',
+            '৩': '3',
+            '৪': '4',
+            '৫': '5',
+            '৬': '6',
+            '৭': '7',
+            '৮': '8',
+            '৯': '9',
+            '০': '0',
+        };
+
+    var bnBd = moment.defineLocale('bn-bd', {
+        months: 'জানুয়ারি_ফেব্রুয়ারি_মার্চ_এপ্রিল_মে_জুন_জুলাই_আগস্ট_সেপ্টেম্বর_অক্টোবর_নভেম্বর_ডিসেম্বর'.split(
+            '_'
+        ),
+        monthsShort: 'জানু_ফেব্রু_মার্চ_এপ্রিল_মে_জুন_জুলাই_আগস্ট_সেপ্ট_অক্টো_নভে_ডিসে'.split(
+            '_'
+        ),
+        weekdays: 'রবিবার_সোমবার_মঙ্গলবার_বুধবার_বৃহস্পতিবার_শুক্রবার_শনিবার'.split(
+            '_'
+        ),
+        weekdaysShort: 'রবি_সোম_মঙ্গল_বুধ_বৃহস্পতি_শুক্র_শনি'.split('_'),
+        weekdaysMin: 'রবি_সোম_মঙ্গল_বুধ_বৃহ_শুক্র_শনি'.split('_'),
+        longDateFormat: {
+            LT: 'A h:mm সময়',
+            LTS: 'A h:mm:ss সময়',
+            L: 'DD/MM/YYYY',
+            LL: 'D MMMM YYYY',
+            LLL: 'D MMMM YYYY, A h:mm সময়',
+            LLLL: 'dddd, D MMMM YYYY, A h:mm সময়',
+        },
+        calendar: {
+            sameDay: '[আজ] LT',
+            nextDay: '[আগামীকাল] LT',
+            nextWeek: 'dddd, LT',
+            lastDay: '[গতকাল] LT',
+            lastWeek: '[গত] dddd, LT',
+            sameElse: 'L',
+        },
+        relativeTime: {
+            future: '%s পরে',
+            past: '%s আগে',
+            s: 'কয়েক সেকেন্ড',
+            ss: '%d সেকেন্ড',
+            m: 'এক মিনিট',
+            mm: '%d মিনিট',
+            h: 'এক ঘন্টা',
+            hh: '%d ঘন্টা',
+            d: 'এক দিন',
+            dd: '%d দিন',
+            M: 'এক মাস',
+            MM: '%d মাস',
+            y: 'এক বছর',
+            yy: '%d বছর',
+        },
+        preparse: function (string) {
+            return string.replace(/[১২৩৪৫৬৭৮৯০]/g, function (match) {
+                return numberMap[match];
+            });
+        },
+        postformat: function (string) {
+            return string.replace(/\d/g, function (match) {
+                return symbolMap[match];
+            });
+        },
+
+        meridiemParse: /রাত|ভোর|সকাল|দুপুর|বিকাল|সন্ধ্যা|রাত/,
+        meridiemHour: function (hour, meridiem) {
+            if (hour === 12) {
+                hour = 0;
+            }
+            if (meridiem === 'রাত') {
+                return hour < 4 ? hour : hour + 12;
+            } else if (meridiem === 'ভোর') {
+                return hour;
+            } else if (meridiem === 'সকাল') {
+                return hour;
+            } else if (meridiem === 'দুপুর') {
+                return hour >= 3 ? hour : hour + 12;
+            } else if (meridiem === 'বিকাল') {
+                return hour + 12;
+            } else if (meridiem === 'সন্ধ্যা') {
+                return hour + 12;
+            }
+        },
+
+        meridiem: function (hour, minute, isLower) {
+            if (hour < 4) {
+                return 'রাত';
+            } else if (hour < 6) {
+                return 'ভোর';
+            } else if (hour < 12) {
+                return 'সকাল';
+            } else if (hour < 15) {
+                return 'দুপুর';
+            } else if (hour < 18) {
+                return 'বিকাল';
+            } else if (hour < 20) {
+                return 'সন্ধ্যা';
+            } else {
+                return 'রাত';
+            }
+        },
+        week: {
+            dow: 0, // Sunday is the first day of the week.
+            doy: 6, // The week that contains Jan 6th is the first week of the year.
+        },
+    });
+
+    return bnBd;
+
+})));
+
+
+/***/ }),
+
 /***/ "./node_modules/moment/locale/bn.js":
 /*!******************************************!*\
   !*** ./node_modules/moment/locale/bn.js ***!
@@ -67579,16 +68590,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '১',
-            '2': '২',
-            '3': '৩',
-            '4': '৪',
-            '5': '৫',
-            '6': '৬',
-            '7': '৭',
-            '8': '৮',
-            '9': '৯',
-            '0': '০',
+            1: '১',
+            2: '২',
+            3: '৩',
+            4: '৪',
+            5: '৫',
+            6: '৬',
+            7: '৭',
+            8: '৮',
+            9: '৯',
+            0: '০',
         },
         numberMap = {
             '১': '1',
@@ -67717,16 +68728,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '༡',
-            '2': '༢',
-            '3': '༣',
-            '4': '༤',
-            '5': '༥',
-            '6': '༦',
-            '7': '༧',
-            '8': '༨',
-            '9': '༩',
-            '0': '༠',
+            1: '༡',
+            2: '༢',
+            3: '༣',
+            4: '༤',
+            5: '༥',
+            6: '༦',
+            7: '༧',
+            8: '༨',
+            9: '༩',
+            0: '༠',
         },
         numberMap = {
             '༡': '1',
@@ -68801,6 +69812,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             h: ['eine Stunde', 'einer Stunde'],
             d: ['ein Tag', 'einem Tag'],
             dd: [number + ' Tage', number + ' Tagen'],
+            w: ['eine Woche', 'einer Woche'],
             M: ['ein Monat', 'einem Monat'],
             MM: [number + ' Monate', number + ' Monaten'],
             y: ['ein Jahr', 'einem Jahr'],
@@ -68850,6 +69862,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d Stunden',
             d: processRelativeTime,
             dd: processRelativeTime,
+            w: processRelativeTime,
+            ww: '%d Wochen',
             M: processRelativeTime,
             MM: processRelativeTime,
             y: processRelativeTime,
@@ -68894,6 +69908,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             h: ['eine Stunde', 'einer Stunde'],
             d: ['ein Tag', 'einem Tag'],
             dd: [number + ' Tage', number + ' Tagen'],
+            w: ['eine Woche', 'einer Woche'],
             M: ['ein Monat', 'einem Monat'],
             MM: [number + ' Monate', number + ' Monaten'],
             y: ['ein Jahr', 'einem Jahr'],
@@ -68943,6 +69958,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d Stunden',
             d: processRelativeTime,
             dd: processRelativeTime,
+            w: processRelativeTime,
+            ww: '%d Wochen',
             M: processRelativeTime,
             MM: processRelativeTime,
             y: processRelativeTime,
@@ -68989,6 +70006,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             h: ['eine Stunde', 'einer Stunde'],
             d: ['ein Tag', 'einem Tag'],
             dd: [number + ' Tage', number + ' Tagen'],
+            w: ['eine Woche', 'einer Woche'],
             M: ['ein Monat', 'einem Monat'],
             MM: [number + ' Monate', number + ' Monaten'],
             y: ['ein Jahr', 'einem Jahr'],
@@ -69038,6 +70056,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d Stunden',
             d: processRelativeTime,
             dd: processRelativeTime,
+            w: processRelativeTime,
+            ww: '%d Wochen',
             M: processRelativeTime,
             MM: processRelativeTime,
             y: processRelativeTime,
@@ -70178,6 +71198,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d horas',
             d: 'un día',
             dd: '%d días',
+            w: 'una semana',
+            ww: '%d semanas',
             M: 'un mes',
             MM: '%d meses',
             y: 'un año',
@@ -70192,6 +71214,132 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     });
 
     return esDo;
+
+})));
+
+
+/***/ }),
+
+/***/ "./node_modules/moment/locale/es-mx.js":
+/*!*********************************************!*\
+  !*** ./node_modules/moment/locale/es-mx.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//! moment.js locale configuration
+//! locale : Spanish (Mexico) [es-mx]
+//! author : JC Franco : https://github.com/jcfranco
+
+;(function (global, factory) {
+    true ? factory(__webpack_require__(/*! ../moment */ "./node_modules/moment/moment.js")) :
+   undefined
+}(this, (function (moment) { 'use strict';
+
+    //! moment.js locale configuration
+
+    var monthsShortDot = 'ene._feb._mar._abr._may._jun._jul._ago._sep._oct._nov._dic.'.split(
+            '_'
+        ),
+        monthsShort = 'ene_feb_mar_abr_may_jun_jul_ago_sep_oct_nov_dic'.split('_'),
+        monthsParse = [
+            /^ene/i,
+            /^feb/i,
+            /^mar/i,
+            /^abr/i,
+            /^may/i,
+            /^jun/i,
+            /^jul/i,
+            /^ago/i,
+            /^sep/i,
+            /^oct/i,
+            /^nov/i,
+            /^dic/i,
+        ],
+        monthsRegex = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|ene\.?|feb\.?|mar\.?|abr\.?|may\.?|jun\.?|jul\.?|ago\.?|sep\.?|oct\.?|nov\.?|dic\.?)/i;
+
+    var esMx = moment.defineLocale('es-mx', {
+        months: 'enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre'.split(
+            '_'
+        ),
+        monthsShort: function (m, format) {
+            if (!m) {
+                return monthsShortDot;
+            } else if (/-MMM-/.test(format)) {
+                return monthsShort[m.month()];
+            } else {
+                return monthsShortDot[m.month()];
+            }
+        },
+        monthsRegex: monthsRegex,
+        monthsShortRegex: monthsRegex,
+        monthsStrictRegex: /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/i,
+        monthsShortStrictRegex: /^(ene\.?|feb\.?|mar\.?|abr\.?|may\.?|jun\.?|jul\.?|ago\.?|sep\.?|oct\.?|nov\.?|dic\.?)/i,
+        monthsParse: monthsParse,
+        longMonthsParse: monthsParse,
+        shortMonthsParse: monthsParse,
+        weekdays: 'domingo_lunes_martes_miércoles_jueves_viernes_sábado'.split('_'),
+        weekdaysShort: 'dom._lun._mar._mié._jue._vie._sáb.'.split('_'),
+        weekdaysMin: 'do_lu_ma_mi_ju_vi_sá'.split('_'),
+        weekdaysParseExact: true,
+        longDateFormat: {
+            LT: 'H:mm',
+            LTS: 'H:mm:ss',
+            L: 'DD/MM/YYYY',
+            LL: 'D [de] MMMM [de] YYYY',
+            LLL: 'D [de] MMMM [de] YYYY H:mm',
+            LLLL: 'dddd, D [de] MMMM [de] YYYY H:mm',
+        },
+        calendar: {
+            sameDay: function () {
+                return '[hoy a la' + (this.hours() !== 1 ? 's' : '') + '] LT';
+            },
+            nextDay: function () {
+                return '[mañana a la' + (this.hours() !== 1 ? 's' : '') + '] LT';
+            },
+            nextWeek: function () {
+                return 'dddd [a la' + (this.hours() !== 1 ? 's' : '') + '] LT';
+            },
+            lastDay: function () {
+                return '[ayer a la' + (this.hours() !== 1 ? 's' : '') + '] LT';
+            },
+            lastWeek: function () {
+                return (
+                    '[el] dddd [pasado a la' +
+                    (this.hours() !== 1 ? 's' : '') +
+                    '] LT'
+                );
+            },
+            sameElse: 'L',
+        },
+        relativeTime: {
+            future: 'en %s',
+            past: 'hace %s',
+            s: 'unos segundos',
+            ss: '%d segundos',
+            m: 'un minuto',
+            mm: '%d minutos',
+            h: 'una hora',
+            hh: '%d horas',
+            d: 'un día',
+            dd: '%d días',
+            w: 'una semana',
+            ww: '%d semanas',
+            M: 'un mes',
+            MM: '%d meses',
+            y: 'un año',
+            yy: '%d años',
+        },
+        dayOfMonthOrdinalParse: /\d{1,2}º/,
+        ordinal: '%dº',
+        week: {
+            dow: 0, // Sunday is the first day of the week.
+            doy: 4, // The week that contains Jan 4th is the first week of the year.
+        },
+        invalidDate: 'Fecha inválida',
+    });
+
+    return esMx;
 
 })));
 
@@ -70302,6 +71450,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d horas',
             d: 'un día',
             dd: '%d días',
+            w: 'una semana',
+            ww: '%d semanas',
             M: 'un mes',
             MM: '%d meses',
             y: 'un año',
@@ -70425,6 +71575,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d horas',
             d: 'un día',
             dd: '%d días',
+            w: 'una semana',
+            ww: '%d semanas',
             M: 'un mes',
             MM: '%d meses',
             y: 'un año',
@@ -70436,7 +71588,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             dow: 1, // Monday is the first day of the week.
             doy: 4, // The week that contains Jan 4th is the first week of the year.
         },
-        invalidDate: 'Fecha invalida',
+        invalidDate: 'Fecha inválida',
     });
 
     return es;
@@ -70646,16 +71798,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '۱',
-            '2': '۲',
-            '3': '۳',
-            '4': '۴',
-            '5': '۵',
-            '6': '۶',
-            '7': '۷',
-            '8': '۸',
-            '9': '۹',
-            '0': '۰',
+            1: '۱',
+            2: '۲',
+            3: '۳',
+            4: '۴',
+            5: '۵',
+            6: '۶',
+            7: '۷',
+            8: '۸',
+            9: '۹',
+            0: '۰',
         },
         numberMap = {
             '۱': '1',
@@ -70796,7 +71948,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             case 's':
                 return isFuture ? 'muutaman sekunnin' : 'muutama sekunti';
             case 'ss':
-                return isFuture ? 'sekunnin' : 'sekuntia';
+                result = isFuture ? 'sekunnin' : 'sekuntia';
+                break;
             case 'm':
                 return isFuture ? 'minuutin' : 'minuutti';
             case 'mm':
@@ -71251,6 +72404,24 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 
     //! moment.js locale configuration
 
+    var monthsStrictRegex = /^(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)/i,
+        monthsShortStrictRegex = /(janv\.?|févr\.?|mars|avr\.?|mai|juin|juil\.?|août|sept\.?|oct\.?|nov\.?|déc\.?)/i,
+        monthsRegex = /(janv\.?|févr\.?|mars|avr\.?|mai|juin|juil\.?|août|sept\.?|oct\.?|nov\.?|déc\.?|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)/i,
+        monthsParse = [
+            /^janv/i,
+            /^févr/i,
+            /^mars/i,
+            /^avr/i,
+            /^mai/i,
+            /^juin/i,
+            /^juil/i,
+            /^août/i,
+            /^sept/i,
+            /^oct/i,
+            /^nov/i,
+            /^déc/i,
+        ];
+
     var fr = moment.defineLocale('fr', {
         months: 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split(
             '_'
@@ -71258,7 +72429,13 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         monthsShort: 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split(
             '_'
         ),
-        monthsParseExact: true,
+        monthsRegex: monthsRegex,
+        monthsShortRegex: monthsRegex,
+        monthsStrictRegex: monthsStrictRegex,
+        monthsShortStrictRegex: monthsShortStrictRegex,
+        monthsParse: monthsParse,
+        longMonthsParse: monthsParse,
+        shortMonthsParse: monthsParse,
         weekdays: 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
         weekdaysShort: 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
         weekdaysMin: 'di_lu_ma_me_je_ve_sa'.split('_'),
@@ -71290,6 +72467,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d heures',
             d: 'un jour',
             dd: '%d jours',
+            w: 'une semaine',
+            ww: '%d semaines',
             M: 'un mois',
             MM: '%d mois',
             y: 'un an',
@@ -71856,8 +73035,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             }
         },
         week: {
-            dow: 1, // Monday is the first day of the week.
-            doy: 4, // The week that contains Jan 4th is the first week of the year.
+            dow: 0, // Sunday is the first day of the week
+            doy: 3, // The week that contains Jan 4th is the first week of the year (7 + 0 - 4)
         },
         meridiemParse: /राती|सकाळीं|दनपारां|सांजे/,
         meridiemHour: function (hour, meridiem) {
@@ -72000,8 +73179,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             }
         },
         week: {
-            dow: 1, // Monday is the first day of the week.
-            doy: 4, // The week that contains Jan 4th is the first week of the year.
+            dow: 0, // Sunday is the first day of the week
+            doy: 3, // The week that contains Jan 4th is the first week of the year (7 + 0 - 4)
         },
         meridiemParse: /rati|sokallim|donparam|sanje/,
         meridiemHour: function (hour, meridiem) {
@@ -72059,16 +73238,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '૧',
-            '2': '૨',
-            '3': '૩',
-            '4': '૪',
-            '5': '૫',
-            '6': '૬',
-            '7': '૭',
-            '8': '૮',
-            '9': '૯',
-            '0': '૦',
+            1: '૧',
+            2: '૨',
+            3: '૩',
+            4: '૪',
+            5: '૫',
+            6: '૬',
+            7: '૭',
+            8: '૮',
+            9: '૯',
+            0: '૦',
         },
         numberMap = {
             '૧': '1',
@@ -72114,7 +73293,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         },
         relativeTime: {
             future: '%s મા',
-            past: '%s પેહલા',
+            past: '%s પહેલા',
             s: 'અમુક પળો',
             ss: '%d સેકંડ',
             m: 'એક મિનિટ',
@@ -72314,16 +73493,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '१',
-            '2': '२',
-            '3': '३',
-            '4': '४',
-            '5': '५',
-            '6': '६',
-            '7': '७',
-            '8': '८',
-            '9': '९',
-            '0': '०',
+            1: '१',
+            2: '२',
+            3: '३',
+            4: '४',
+            5: '५',
+            6: '६',
+            7: '७',
+            8: '८',
+            9: '९',
+            0: '०',
         },
         numberMap = {
             '१': '1',
@@ -72618,6 +73797,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 //! moment.js locale configuration
 //! locale : Hungarian [hu]
 //! author : Adam Brunner : https://github.com/adambrunner
+//! author : Peter Viszt  : https://github.com/passatgt
 
 ;(function (global, factory) {
     true ? factory(__webpack_require__(/*! ../moment */ "./node_modules/moment/moment.js")) :
@@ -72676,9 +73856,10 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         months: 'január_február_március_április_május_június_július_augusztus_szeptember_október_november_december'.split(
             '_'
         ),
-        monthsShort: 'jan_feb_márc_ápr_máj_jún_júl_aug_szept_okt_nov_dec'.split(
+        monthsShort: 'jan._feb._márc._ápr._máj._jún._júl._aug._szept._okt._nov._dec.'.split(
             '_'
         ),
+        monthsParseExact: true,
         weekdays: 'vasárnap_hétfő_kedd_szerda_csütörtök_péntek_szombat'.split('_'),
         weekdaysShort: 'vas_hét_kedd_sze_csüt_pén_szo'.split('_'),
         weekdaysMin: 'v_h_k_sze_cs_p_szo'.split('_'),
@@ -73289,9 +74470,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             sameElse: 'L',
         },
         relativeTime: {
-            future: function (s) {
-                return (/^[0-9].+$/.test(s) ? 'tra' : 'in') + ' ' + s;
-            },
+            future: 'tra %s',
             past: '%s fa',
             s: 'alcuni secondi',
             ss: '%d secondi',
@@ -73301,6 +74480,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d ore',
             d: 'un giorno',
             dd: '%d giorni',
+            w: 'una settimana',
+            ww: '%d settimane',
             M: 'un mese',
             MM: '%d mesi',
             y: 'un anno',
@@ -73818,16 +74999,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '១',
-            '2': '២',
-            '3': '៣',
-            '4': '៤',
-            '5': '៥',
-            '6': '៦',
-            '7': '៧',
-            '8': '៨',
-            '9': '៩',
-            '0': '០',
+            1: '១',
+            2: '២',
+            3: '៣',
+            4: '៤',
+            5: '៥',
+            6: '៦',
+            7: '៧',
+            8: '៨',
+            9: '៩',
+            0: '០',
         },
         numberMap = {
             '១': '1',
@@ -73940,16 +75121,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '೧',
-            '2': '೨',
-            '3': '೩',
-            '4': '೪',
-            '5': '೫',
-            '6': '೬',
-            '7': '೭',
-            '8': '೮',
-            '9': '೯',
-            '0': '೦',
+            1: '೧',
+            2: '೨',
+            3: '೩',
+            4: '೪',
+            5: '೫',
+            6: '೬',
+            7: '೭',
+            8: '೮',
+            9: '೯',
+            0: '೦',
         },
         numberMap = {
             '೧': '1',
@@ -74178,16 +75359,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '١',
-            '2': '٢',
-            '3': '٣',
-            '4': '٤',
-            '5': '٥',
-            '6': '٦',
-            '7': '٧',
-            '8': '٨',
-            '9': '٩',
-            '0': '٠',
+            1: '١',
+            2: '٢',
+            3: '٣',
+            4: '٤',
+            5: '٥',
+            6: '٦',
+            7: '٧',
+            8: '٨',
+            9: '٩',
+            0: '٠',
         },
         numberMap = {
             '١': '1',
@@ -75459,16 +76640,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '१',
-            '2': '२',
-            '3': '३',
-            '4': '४',
-            '5': '५',
-            '6': '६',
-            '7': '७',
-            '8': '८',
-            '9': '९',
-            '0': '०',
+            1: '१',
+            2: '२',
+            3: '३',
+            4: '४',
+            5: '५',
+            6: '६',
+            7: '७',
+            8: '८',
+            9: '९',
+            0: '०',
         },
         numberMap = {
             '१': '1',
@@ -75948,16 +77129,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '၁',
-            '2': '၂',
-            '3': '၃',
-            '4': '၄',
-            '5': '၅',
-            '6': '၆',
-            '7': '၇',
-            '8': '၈',
-            '9': '၉',
-            '0': '၀',
+            1: '၁',
+            2: '၂',
+            3: '၃',
+            4: '၄',
+            5: '၅',
+            6: '၆',
+            7: '၇',
+            8: '၈',
+            9: '၉',
+            0: '၀',
         },
         numberMap = {
             '၁': '1',
@@ -76097,6 +77278,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d timer',
             d: 'en dag',
             dd: '%d dager',
+            w: 'en uke',
+            ww: '%d uker',
             M: 'en måned',
             MM: '%d måneder',
             y: 'ett år',
@@ -76136,16 +77319,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '१',
-            '2': '२',
-            '3': '३',
-            '4': '४',
-            '5': '५',
-            '6': '६',
-            '7': '७',
-            '8': '८',
-            '9': '९',
-            '0': '०',
+            1: '१',
+            2: '२',
+            3: '३',
+            4: '४',
+            5: '५',
+            6: '६',
+            7: '७',
+            8: '८',
+            9: '९',
+            0: '०',
         },
         numberMap = {
             '१': '1',
@@ -76476,6 +77659,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d uur',
             d: 'één dag',
             dd: '%d dagen',
+            w: 'één week',
+            ww: '%d weken',
             M: 'één maand',
             MM: '%d maanden',
             y: 'één jaar',
@@ -76559,6 +77744,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d timar',
             d: 'ein dag',
             dd: '%d dagar',
+            w: 'ei veke',
+            ww: '%d veker',
             M: 'ein månad',
             MM: '%d månader',
             y: 'eit år',
@@ -76701,16 +77888,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '੧',
-            '2': '੨',
-            '3': '੩',
-            '4': '੪',
-            '5': '੫',
-            '6': '੬',
-            '7': '੭',
-            '8': '੮',
-            '9': '੯',
-            '0': '੦',
+            1: '੧',
+            2: '੨',
+            3: '੩',
+            4: '੪',
+            5: '੫',
+            6: '੬',
+            7: '੭',
+            8: '੮',
+            9: '੯',
+            0: '੦',
         },
         numberMap = {
             '੧': '1',
@@ -76846,7 +78033,21 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         ),
         monthsSubjective = 'stycznia_lutego_marca_kwietnia_maja_czerwca_lipca_sierpnia_września_października_listopada_grudnia'.split(
             '_'
-        );
+        ),
+        monthsParse = [
+            /^sty/i,
+            /^lut/i,
+            /^mar/i,
+            /^kwi/i,
+            /^maj/i,
+            /^cze/i,
+            /^lip/i,
+            /^sie/i,
+            /^wrz/i,
+            /^paź/i,
+            /^lis/i,
+            /^gru/i,
+        ];
     function plural(n) {
         return n % 10 < 5 && n % 10 > 1 && ~~(n / 10) % 10 !== 1;
     }
@@ -76863,6 +78064,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
                 return withoutSuffix ? 'godzina' : 'godzinę';
             case 'hh':
                 return result + (plural(number) ? 'godziny' : 'godzin');
+            case 'ww':
+                return result + (plural(number) ? 'tygodnie' : 'tygodni');
             case 'MM':
                 return result + (plural(number) ? 'miesiące' : 'miesięcy');
             case 'yy':
@@ -76874,17 +78077,6 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         months: function (momentToFormat, format) {
             if (!momentToFormat) {
                 return monthsNominative;
-            } else if (format === '') {
-                // Hack: if format empty we know this is used to generate
-                // RegExp by moment. Give then back both valid forms of months
-                // in RegExp ready format.
-                return (
-                    '(' +
-                    monthsSubjective[momentToFormat.month()] +
-                    '|' +
-                    monthsNominative[momentToFormat.month()] +
-                    ')'
-                );
             } else if (/D MMMM/.test(format)) {
                 return monthsSubjective[momentToFormat.month()];
             } else {
@@ -76892,6 +78084,9 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             }
         },
         monthsShort: 'sty_lut_mar_kwi_maj_cze_lip_sie_wrz_paź_lis_gru'.split('_'),
+        monthsParse: monthsParse,
+        longMonthsParse: monthsParse,
+        shortMonthsParse: monthsParse,
         weekdays: 'niedziela_poniedziałek_wtorek_środa_czwartek_piątek_sobota'.split(
             '_'
         ),
@@ -76952,6 +78147,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: translate,
             d: '1 dzień',
             dd: '%d dni',
+            w: 'tydzień',
+            ww: translate,
             M: 'miesiąc',
             MM: translate,
             y: 'rok',
@@ -77039,6 +78236,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         },
         dayOfMonthOrdinalParse: /\d{1,2}º/,
         ordinal: '%dº',
+        invalidDate: 'Data inválida',
     });
 
     return ptBr;
@@ -77108,6 +78306,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d horas',
             d: 'um dia',
             dd: '%d dias',
+            w: 'uma semana',
+            ww: '%d semanas',
             M: 'um mês',
             MM: '%d meses',
             y: 'um ano',
@@ -77154,6 +78354,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
                 mm: 'minute',
                 hh: 'ore',
                 dd: 'zile',
+                ww: 'săptămâni',
                 MM: 'luni',
                 yy: 'ani',
             },
@@ -77202,6 +78403,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: relativeTimeWithPlural,
             d: 'o zi',
             dd: relativeTimeWithPlural,
+            w: 'o săptămână',
+            ww: relativeTimeWithPlural,
             M: 'o lună',
             MM: relativeTimeWithPlural,
             y: 'un an',
@@ -77254,6 +78457,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             mm: withoutSuffix ? 'минута_минуты_минут' : 'минуту_минуты_минут',
             hh: 'час_часа_часов',
             dd: 'день_дня_дней',
+            ww: 'неделя_недели_недель',
             MM: 'месяц_месяца_месяцев',
             yy: 'год_года_лет',
         };
@@ -77394,6 +78598,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: relativeTimeWithPlural,
             d: 'день',
             dd: relativeTimeWithPlural,
+            w: 'неделя',
+            ww: relativeTimeWithPlural,
             M: 'месяц',
             MM: relativeTimeWithPlural,
             y: 'год',
@@ -78158,6 +79364,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 //! moment.js locale configuration
 //! locale : Serbian Cyrillic [sr-cyrl]
 //! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
+//! author : Stefan Crnjaković <stefan@hotmail.rs> : https://github.com/crnjakovic
 
 ;(function (global, factory) {
     true ? factory(__webpack_require__(/*! ../moment */ "./node_modules/moment/moment.js")) :
@@ -78214,10 +79421,10 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         longDateFormat: {
             LT: 'H:mm',
             LTS: 'H:mm:ss',
-            L: 'DD.MM.YYYY',
-            LL: 'D. MMMM YYYY',
-            LLL: 'D. MMMM YYYY H:mm',
-            LLLL: 'dddd, D. MMMM YYYY H:mm',
+            L: 'D. M. YYYY.',
+            LL: 'D. MMMM YYYY.',
+            LLL: 'D. MMMM YYYY. H:mm',
+            LLLL: 'dddd, D. MMMM YYYY. H:mm',
         },
         calendar: {
             sameDay: '[данас у] LT',
@@ -78272,7 +79479,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         ordinal: '%d.',
         week: {
             dow: 1, // Monday is the first day of the week.
-            doy: 7, // The week that contains Jan 7th is the first week of the year.
+            doy: 7, // The week that contains Jan 1st is the first week of the year.
         },
     });
 
@@ -78293,6 +79500,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 //! moment.js locale configuration
 //! locale : Serbian [sr]
 //! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
+//! author : Stefan Crnjaković <stefan@hotmail.rs> : https://github.com/crnjakovic
 
 ;(function (global, factory) {
     true ? factory(__webpack_require__(/*! ../moment */ "./node_modules/moment/moment.js")) :
@@ -78351,10 +79559,10 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         longDateFormat: {
             LT: 'H:mm',
             LTS: 'H:mm:ss',
-            L: 'DD.MM.YYYY',
-            LL: 'D. MMMM YYYY',
-            LLL: 'D. MMMM YYYY H:mm',
-            LLLL: 'dddd, D. MMMM YYYY H:mm',
+            L: 'D. M. YYYY.',
+            LL: 'D. MMMM YYYY.',
+            LLL: 'D. MMMM YYYY. H:mm',
+            LLLL: 'dddd, D. MMMM YYYY. H:mm',
         },
         calendar: {
             sameDay: '[danas u] LT',
@@ -78641,7 +79849,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         weekdaysMin: 'J2_J3_J4_J5_Al_Ij_J1'.split('_'),
         weekdaysParseExact: true,
         longDateFormat: {
-            LT: 'HH:mm',
+            LT: 'hh:mm A',
             LTS: 'HH:mm:ss',
             L: 'DD.MM.YYYY',
             LL: 'D MMMM YYYY',
@@ -78704,16 +79912,16 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     //! moment.js locale configuration
 
     var symbolMap = {
-            '1': '௧',
-            '2': '௨',
-            '3': '௩',
-            '4': '௪',
-            '5': '௫',
-            '6': '௬',
-            '7': '௭',
-            '8': '௮',
-            '9': '௯',
-            '0': '௦',
+            1: '௧',
+            2: '௨',
+            3: '௩',
+            4: '௪',
+            5: '௫',
+            6: '௬',
+            7: '௭',
+            8: '௮',
+            9: '௯',
+            0: '௦',
         },
         numberMap = {
             '௧': '1',
@@ -79072,9 +80280,14 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     };
 
     var tg = moment.defineLocale('tg', {
-        months: 'январ_феврал_март_апрел_май_июн_июл_август_сентябр_октябр_ноябр_декабр'.split(
-            '_'
-        ),
+        months: {
+            format: 'январи_феврали_марти_апрели_майи_июни_июли_августи_сентябри_октябри_ноябри_декабри'.split(
+                '_'
+            ),
+            standalone: 'январ_феврал_март_апрел_май_июн_июл_август_сентябр_октябр_ноябр_декабр'.split(
+                '_'
+            ),
+        },
         monthsShort: 'янв_фев_мар_апр_май_июн_июл_авг_сен_окт_ноя_дек'.split('_'),
         weekdays: 'якшанбе_душанбе_сешанбе_чоршанбе_панҷшанбе_ҷумъа_шанбе'.split(
             '_'
@@ -79084,14 +80297,14 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         longDateFormat: {
             LT: 'HH:mm',
             LTS: 'HH:mm:ss',
-            L: 'DD/MM/YYYY',
+            L: 'DD.MM.YYYY',
             LL: 'D MMMM YYYY',
             LLL: 'D MMMM YYYY HH:mm',
             LLLL: 'dddd, D MMMM YYYY HH:mm',
         },
         calendar: {
             sameDay: '[Имрӯз соати] LT',
-            nextDay: '[Пагоҳ соати] LT',
+            nextDay: '[Фардо соати] LT',
             lastDay: '[Дирӯз соати] LT',
             nextWeek: 'dddd[и] [ҳафтаи оянда соати] LT',
             lastWeek: 'dddd[и] [ҳафтаи гузашта соати] LT',
@@ -79227,6 +80440,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d ชั่วโมง',
             d: '1 วัน',
             dd: '%d วัน',
+            w: '1 สัปดาห์',
+            ww: '%d สัปดาห์',
             M: '1 เดือน',
             MM: '%d เดือน',
             y: '1 ปี',
@@ -79235,6 +80450,117 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     });
 
     return th;
+
+})));
+
+
+/***/ }),
+
+/***/ "./node_modules/moment/locale/tk.js":
+/*!******************************************!*\
+  !*** ./node_modules/moment/locale/tk.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//! moment.js locale configuration
+//! locale : Turkmen [tk]
+//! author : Atamyrat Abdyrahmanov : https://github.com/atamyratabdy
+
+;(function (global, factory) {
+    true ? factory(__webpack_require__(/*! ../moment */ "./node_modules/moment/moment.js")) :
+   undefined
+}(this, (function (moment) { 'use strict';
+
+    //! moment.js locale configuration
+
+    var suffixes = {
+        1: "'inji",
+        5: "'inji",
+        8: "'inji",
+        70: "'inji",
+        80: "'inji",
+        2: "'nji",
+        7: "'nji",
+        20: "'nji",
+        50: "'nji",
+        3: "'ünji",
+        4: "'ünji",
+        100: "'ünji",
+        6: "'njy",
+        9: "'unjy",
+        10: "'unjy",
+        30: "'unjy",
+        60: "'ynjy",
+        90: "'ynjy",
+    };
+
+    var tk = moment.defineLocale('tk', {
+        months: 'Ýanwar_Fewral_Mart_Aprel_Maý_Iýun_Iýul_Awgust_Sentýabr_Oktýabr_Noýabr_Dekabr'.split(
+            '_'
+        ),
+        monthsShort: 'Ýan_Few_Mar_Apr_Maý_Iýn_Iýl_Awg_Sen_Okt_Noý_Dek'.split('_'),
+        weekdays: 'Ýekşenbe_Duşenbe_Sişenbe_Çarşenbe_Penşenbe_Anna_Şenbe'.split(
+            '_'
+        ),
+        weekdaysShort: 'Ýek_Duş_Siş_Çar_Pen_Ann_Şen'.split('_'),
+        weekdaysMin: 'Ýk_Dş_Sş_Çr_Pn_An_Şn'.split('_'),
+        longDateFormat: {
+            LT: 'HH:mm',
+            LTS: 'HH:mm:ss',
+            L: 'DD.MM.YYYY',
+            LL: 'D MMMM YYYY',
+            LLL: 'D MMMM YYYY HH:mm',
+            LLLL: 'dddd, D MMMM YYYY HH:mm',
+        },
+        calendar: {
+            sameDay: '[bugün sagat] LT',
+            nextDay: '[ertir sagat] LT',
+            nextWeek: '[indiki] dddd [sagat] LT',
+            lastDay: '[düýn] LT',
+            lastWeek: '[geçen] dddd [sagat] LT',
+            sameElse: 'L',
+        },
+        relativeTime: {
+            future: '%s soň',
+            past: '%s öň',
+            s: 'birnäçe sekunt',
+            m: 'bir minut',
+            mm: '%d minut',
+            h: 'bir sagat',
+            hh: '%d sagat',
+            d: 'bir gün',
+            dd: '%d gün',
+            M: 'bir aý',
+            MM: '%d aý',
+            y: 'bir ýyl',
+            yy: '%d ýyl',
+        },
+        ordinal: function (number, period) {
+            switch (period) {
+                case 'd':
+                case 'D':
+                case 'Do':
+                case 'DD':
+                    return number;
+                default:
+                    if (number === 0) {
+                        // special case for zero
+                        return number + "'unjy";
+                    }
+                    var a = number % 10,
+                        b = (number % 100) - a,
+                        c = number >= 100 ? 100 : null;
+                    return number + (suffixes[a] || suffixes[b] || suffixes[c]);
+            }
+        },
+        week: {
+            dow: 1, // Monday is the first day of the week.
+            doy: 7, // The week that contains Jan 7th is the first week of the year.
+        },
+    });
+
+    return tk;
 
 })));
 
@@ -79551,6 +80877,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d saat',
             d: 'bir gün',
             dd: '%d gün',
+            w: 'bir hafta',
+            ww: '%d hafta',
             M: 'bir ay',
             MM: '%d ay',
             y: 'bir yıl',
@@ -79849,7 +81177,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-//! moment.js language configuration
+//! moment.js locale configuration
 //! locale : Uyghur (China) [ug-cn]
 //! author: boyaq : https://github.com/boyaq
 
@@ -79858,7 +81186,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
    undefined
 }(this, (function (moment) { 'use strict';
 
-    //! moment.js language configuration
+    //! moment.js locale configuration
 
     var ugCn = moment.defineLocale('ug-cn', {
         months: 'يانۋار_فېۋرال_مارت_ئاپرېل_ماي_ئىيۇن_ئىيۇل_ئاۋغۇست_سېنتەبىر_ئۆكتەبىر_نويابىر_دېكابىر'.split(
@@ -80424,7 +81752,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
         months: 'tháng 1_tháng 2_tháng 3_tháng 4_tháng 5_tháng 6_tháng 7_tháng 8_tháng 9_tháng 10_tháng 11_tháng 12'.split(
             '_'
         ),
-        monthsShort: 'Th01_Th02_Th03_Th04_Th05_Th06_Th07_Th08_Th09_Th10_Th11_Th12'.split(
+        monthsShort: 'Thg 01_Thg 02_Thg 03_Thg 04_Thg 05_Thg 06_Thg 07_Thg 08_Thg 09_Thg 10_Thg 11_Thg 12'.split(
             '_'
         ),
         monthsParseExact: true,
@@ -80476,6 +81804,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d giờ',
             d: 'một ngày',
             dd: '%d ngày',
+            w: 'một tuần',
+            ww: '%d tuần',
             M: 'một tháng',
             MM: '%d tháng',
             y: 'một năm',
@@ -80781,6 +82111,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             hh: '%d 小时',
             d: '1 天',
             dd: '%d 天',
+            w: '1 周',
+            ww: '%d 周',
             M: '1 个月',
             MM: '%d 个月',
             y: '1 年',
@@ -81168,7 +82500,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var require;//! moment.js
-//! version : 2.26.0
+//! version : 2.29.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -84894,7 +86226,10 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
     function calendar$1(time, formats) {
         // Support for single parameter, formats only overload to the calendar function
         if (arguments.length === 1) {
-            if (isMomentInput(arguments[0])) {
+            if (!arguments[0]) {
+                time = undefined;
+                formats = undefined;
+            } else if (isMomentInput(arguments[0])) {
                 time = arguments[0];
                 formats = undefined;
             } else if (isCalendarSpec(arguments[0])) {
@@ -85572,7 +86907,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             eras = this.localeData().eras();
         for (i = 0, l = eras.length; i < l; ++i) {
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (eras[i].since <= val && val <= eras[i].until) {
                 return eras[i].name;
@@ -85592,7 +86927,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             eras = this.localeData().eras();
         for (i = 0, l = eras.length; i < l; ++i) {
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (eras[i].since <= val && val <= eras[i].until) {
                 return eras[i].narrow;
@@ -85612,7 +86947,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             eras = this.localeData().eras();
         for (i = 0, l = eras.length; i < l; ++i) {
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (eras[i].since <= val && val <= eras[i].until) {
                 return eras[i].abbr;
@@ -85635,7 +86970,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
             dir = eras[i].since <= eras[i].until ? +1 : -1;
 
             // truncate time
-            val = this.startOf('day').valueOf();
+            val = this.clone().startOf('day').valueOf();
 
             if (
                 (eras[i].since <= val && val <= eras[i].until) ||
@@ -86786,7 +88121,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 
     //! moment.js
 
-    hooks.version = '2.26.0';
+    hooks.version = '2.29.0';
 
     setHookCallback(createLocal);
 
@@ -90058,7 +91393,12 @@ function normalizeComponent (
     options._ssrRegister = hook
   } else if (injectStyles) {
     hook = shadowMode
-      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      ? function () {
+        injectStyles.call(
+          this,
+          (options.functional ? this.parent : this).$root.$options.shadowRoot
+        )
+      }
       : injectStyles
   }
 
@@ -90067,7 +91407,7 @@ function normalizeComponent (
       // for template-only hot-reload because in that case the render fn doesn't
       // go through the normalizer
       options._injectStyles = hook
-      // register for functioal component in vue file
+      // register for functional component in vue file
       var originalRender = options.render
       options.render = function renderWithStyleInjection (h, context) {
         hook.call(context)
@@ -90100,8 +91440,8 @@ function normalizeComponent (
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.6.11
- * (c) 2014-2019 Evan You
+ * Vue.js v2.6.12
+ * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
 
@@ -95540,7 +96880,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.6.11';
+Vue.version = '2.6.12';
 
 /*  */
 
@@ -97746,7 +99086,7 @@ function updateDOMProps (oldVnode, vnode) {
       // skip the update if old and new VDOM state is the same.
       // `value` is handled separately because the DOM value may be temporarily
       // out of sync with VDOM state due to focus, composition and modifiers.
-      // This  #4521 by skipping the unnecesarry `checked` update.
+      // This  #4521 by skipping the unnecessary `checked` update.
       cur !== oldProps[key]
     ) {
       // some property updates can throw
@@ -99991,7 +101331,7 @@ function parse (
       }
     },
     comment: function comment (text, start, end) {
-      // adding anyting as a sibling to the root node is forbidden
+      // adding anything as a sibling to the root node is forbidden
       // comments should still be allowed, but ignored
       if (currentParent) {
         var child = {
@@ -102387,14 +103727,14 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\GitHub\santa\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! D:\GitHub\santa\node_modules\chart.js\dist\Chart.bundle.js */"./node_modules/chart.js/dist/Chart.bundle.js");
-__webpack_require__(/*! D:\GitHub\santa\node_modules\bootstrap-table\dist\bootstrap-table.js */"./node_modules/bootstrap-table/dist/bootstrap-table.js");
-__webpack_require__(/*! D:\GitHub\santa\node_modules\bootstrap-table\dist\locale\bootstrap-table-en-US.js */"./node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js");
-__webpack_require__(/*! D:\GitHub\santa\node_modules\bootstrap-table\dist\extensions\filter-control\bootstrap-table-filter-control.js */"./node_modules/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js");
-__webpack_require__(/*! D:\GitHub\santa\node_modules\moment\moment.js */"./node_modules/moment/moment.js");
-__webpack_require__(/*! D:\GitHub\santa\resources\sass\app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! D:\GitHub\santa\resources\sass\vendor.scss */"./resources/sass/vendor.scss");
+__webpack_require__(/*! D:\GitHub\controlcenter\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! D:\GitHub\controlcenter\node_modules\chart.js\dist\Chart.bundle.js */"./node_modules/chart.js/dist/Chart.bundle.js");
+__webpack_require__(/*! D:\GitHub\controlcenter\node_modules\bootstrap-table\dist\bootstrap-table.js */"./node_modules/bootstrap-table/dist/bootstrap-table.js");
+__webpack_require__(/*! D:\GitHub\controlcenter\node_modules\bootstrap-table\dist\locale\bootstrap-table-en-US.js */"./node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js");
+__webpack_require__(/*! D:\GitHub\controlcenter\node_modules\bootstrap-table\dist\extensions\filter-control\bootstrap-table-filter-control.js */"./node_modules/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js");
+__webpack_require__(/*! D:\GitHub\controlcenter\node_modules\moment\moment.js */"./node_modules/moment/moment.js");
+__webpack_require__(/*! D:\GitHub\controlcenter\resources\sass\app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! D:\GitHub\controlcenter\resources\sass\vendor.scss */"./resources/sass/vendor.scss");
 
 
 /***/ })
