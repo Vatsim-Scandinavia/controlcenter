@@ -97,17 +97,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if (sizeof($training->mentors) == 0)
-                                        -
-                                    @else
-                                        @foreach($training->mentors as $mentor)
-                                            @if($loop->last)
-                                                {{ $mentor->name }}
-                                            @else
-                                                {{ $mentor->name . " + " }}
-                                            @endif
-                                        @endforeach
-                                    @endif
+                                    {{ $training->getInlineMentors() }}
                                 </td>
                             </tr>
 

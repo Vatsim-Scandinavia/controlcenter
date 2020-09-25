@@ -75,15 +75,7 @@
                                 <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
 
-                                    @if ($training->mentors->count() == 0)
-                                        -
-                                    @elseif ($training->mentors->count() == 1)
-                                        {{ $training->mentors->first()->name }}
-                                    @elseif ($training->mentors->count() > 1)
-                                        @foreach($training->mentors as $mentor)
-                                            {{ $mentor->name }},
-                                        @endforeach
-                                    @endif
+                                    {{ $training->getInlineMentors() }}
 
                                 </td>
                             </tr>

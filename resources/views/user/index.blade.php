@@ -12,14 +12,19 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
+                        data-page-size="10"
+                        data-toggle="table"
+                        data-pagination="true"
+                        data-strict-search="true"
+                        data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th>Vatsim ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>ATC Rating</th>
-                                <th>Country</th>
+                                <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
+                                <th data-field="firstname" data-sortable="true" data-filter-control="input">First Name</th>
+                                <th data-field="lastname" data-sortable="true" data-filter-control="input">Last Name</th>
+                                <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">ATC Rating</th>
+                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
                                 <th>Last login</th>
                             </tr>
                         </thead>
@@ -50,17 +55,22 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
+                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
+                        data-page-size="10"
+                        data-toggle="table"
+                        data-pagination="true"
+                        data-strict-search="true"
+                        data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th>Vatsim ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>ATC Rating</th>
+                                <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
+                                <th data-field="firstname" data-sortable="true" data-filter-control="input">First Name</th>
+                                <th data-field="lastname" data-sortable="true" data-filter-control="input">Last Name</th>
+                                <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">ATC Rating</th>                                
                                 <th>Visiting Controller</th>
-                                <th>Division</th>
-                                <th>Subdivision</th>
-                                <th>Country</th>
+                                <th data-field="division" data-sortable="true" data-filter-control="select">Division</th>
+                                <th data-field="subdivision" data-sortable="true" data-filter-control="select">Subdivision</th>
+                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
                                 <th>Last login</th>
                             </tr>
                         </thead>
