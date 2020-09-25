@@ -6,16 +6,21 @@
     </button>
 
     <!-- Topbar Search -->
-    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-        <div class="input-group">
-        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for user" aria-label="Search" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
-            <i class="fas fa-search fa-sm"></i>
-            </button>
-        </div>
-        </div>
-    </form>
+    @if(\Auth::user()->isMentor())
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" id="user-search-form">
+            <div class="input-group">
+                <input type="text" name="search" id="search" class="form-control bg-light border-0 small" placeholder="Search for user" aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+                <div class="search-results bg-light">
+                    
+                </div>
+            </div>
+        </form>
+    @endif
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
@@ -28,14 +33,14 @@
         <!-- Dropdown - Messages -->
         <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
             <form class="form-inline mr-auto w-100 navbar-search">
-            <div class="input-group">
-                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                    <i class="fas fa-search fa-sm"></i>
-                </button>
+                <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                    </div>
                 </div>
-            </div>
             </form>
         </div>
         </li>
@@ -45,36 +50,48 @@
         <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-bell fa-fw"></i>
             <!-- Counter - Alerts -->
-            <span class="badge badge-danger badge-counter">3+</span>
+            <!--<span class="badge badge-danger badge-counter">3+</span>-->
         </a>
         <!-- Dropdown - Alerts -->
         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
             <h6 class="dropdown-header">
-            Alerts Center
+            Alerts
             </h6>
+
             <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="mr-3">
-                <div class="icon-circle bg-success">
-                <i class="fas fa-check text-white"></i>
+                <div class="mr-3">
+                    <div class="icon-circle bg-warning">
+                    <i class="fas fa-exclamation text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div class="small text-gray-500">December 12, 2019</div>
-                Your student Name Nameson has passed their S3 ATSimTest
-            </div>
+                <div>
+                    Alerts will be implemented later. Please check your e-mail for alerts.
+                </div>
+            </a>
+            <!--
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="mr-3">
+                    <div class="icon-circle bg-success">
+                    <i class="fas fa-check text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="small text-gray-500">December 12, 2019</div>
+                    Your student Name Nameson has passed their S3 ATSimTest
+                </div>
             </a>
             <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="mr-3">
-                <div class="icon-circle bg-warning">
-                <i class="fas fa-exclamation-triangle text-white"></i>
+                <div class="mr-3">
+                    <div class="icon-circle bg-warning">
+                    <i class="fas fa-exclamation-triangle text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div class="small text-gray-500">December 2, 2019</div>
-                Your student Name Nameson has not had training in over two months.
-            </div>
+                <div>
+                    <div class="small text-gray-500">December 2, 2019</div>
+                    Your student Name Nameson has not had training in over two months.
+                </div>
             </a>
-            <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+            <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>-->
         </div>
         </li>
 
@@ -83,12 +100,12 @@
         <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Name Nameson</span>
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
             <i class="fas fa-user"></i>
         </a>
         <!-- Dropdown - User Information -->
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="{{ route('settings') }}">
+            <a class="dropdown-item" href="{{ route('user.settings') }}">
             <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
             Settings
             </a>

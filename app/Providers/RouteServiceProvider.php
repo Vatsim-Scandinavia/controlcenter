@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\TrainingExamination;
+use App\TrainingReport;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -23,9 +25,20 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
 
         parent::boot();
+
+        Route::pattern('trainingObjectType', 'report|examination');
+
+        Route::bind('trainingObject', function ($id) {
+            $type = app()->request->route('trainingObjectType');
+            $models = ['report' => TrainingReport::class, 'examination' => TrainingExamination::class];
+            $model = $models[$type];
+
+            unset(app()->request->route()->parameters['trainingObjectType']);
+
+            return $model::where('id', $id)->firstOrFail();
+        });
     }
 
     /**

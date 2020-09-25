@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Control Center'),
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'en_GB',
 
     /*
     |--------------------------------------------------------------------------
@@ -135,6 +135,17 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hotjar ID
+    |--------------------------------------------------------------------------
+    |
+    | Add the key of the Hotjar tracking code to track this website.
+    |
+    */
+
+    'hotjar' => env('APP_HOTJAR_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -187,7 +198,12 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Vatsim\OAuthLaravel\OAuthServiceProvider::class,
+
+        /*
+        * Custom providers
+        */
+
+        App\Providers\CarbonServiceProvider::class,
 
     ],
 
@@ -239,7 +255,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'VatsimSSO' => Vatsim\OAuthLaravel\SSOFacade::class,
 
     ],
 

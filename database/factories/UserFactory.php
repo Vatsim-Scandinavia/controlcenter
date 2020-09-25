@@ -18,9 +18,8 @@ use Faker\Generator as Faker;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
-        'id' => 1,
-        'visiting_controller' => false,
+        'id' => $faker->numberBetween(1),
         'last_login' => \Carbon\Carbon::now(),
-        'user_group' => 1,
+        'group' => 1,
     ];
 });

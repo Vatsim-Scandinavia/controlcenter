@@ -7,10 +7,10 @@ use Faker\Generator as Faker;
 
 $factory->define(Training::class, function (Faker $faker) {
     return [
-        'user_id' => 1,
+        'user_id' => factory(\App\User::class)->create(['group' => null])->id,
         'status' => 0,
         'country_id' => 1,
-        'motivation' => 'I love loss of separation!',
+        'motivation' => $faker->paragraph(15, false),
         'english_only_training' => false,
         'created_at' => \Carbon\Carbon::now(),
         'updated_at' => \Carbon\Carbon::now(),

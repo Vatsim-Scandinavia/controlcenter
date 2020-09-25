@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\TrainingReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -23,6 +25,33 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $user = Auth::user();
+
+        $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
+
+        $subdivision = $user->subdivision;
+        if(empty($subdivision)) $subdivision = "No subdivision";
+
+        $data = [
+            'rating' => $user->ratingLong,
+            'division' => $user->division,
+            'subdivision' => $subdivision,
+            'report' => $report
+        ];
+
+        $trainings = $user->trainings;
+        $statuses = TrainingController::$statuses;
+
+        return view('dashboard', compact('data', 'trainings', 'statuses'));
+    }
+
+    /**
+     * Show the training apply view
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+
+    public function apply(){
+        return view('trainingapply');
     }
 }
