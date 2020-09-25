@@ -11,8 +11,9 @@
     },
     "dependencies": {
         "bootstrap": "4.3.1",
-        "bootstrap-table": "^1.17.1",
         "chart.js": "^2.9.3",
+        "datatables.net-bs4": "1.10.19",
+        "bootstrap-table": "^1.17.1",
         "jquery": "^3.5.1",
         "jquery.easing": "^1.4.1",
         "moment": "^2.28.0"
@@ -21,7 +22,7 @@
         "@fortawesome/fontawesome-pro": "^5.14.0",
         "axios": "^0.18",
         "cross-env": "^5.1",
-        "laravel-mix": "^4.0.7",
+        "laravel-mix": "^5.0.5",
         "lodash": "^4.17.20",
         "popper.js": "^1.16.1",
         "resolve-url-loader": "^2.3.1",
