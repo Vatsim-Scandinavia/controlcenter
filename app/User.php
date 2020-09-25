@@ -246,7 +246,7 @@ class User extends Authenticatable
             return $this->group <= 2 && isset($this->group);
 
         return $this->group <= 2 &&
-            $country->training_roles->contains($this);
+            $country->training_roles->contains($this) &&
             isset($this->group);
     }
 
