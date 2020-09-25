@@ -3,11 +3,12 @@
 @section('title', 'Notification Templates')
 
 @section('content')
-<h1 class="h3 mb-4 text-gray-800">Notification Templates</h1>
 
 <div class="row">
-
-    WIP
+    
+    <div class="col-xl-6 col-md-12 mb-12">
+        <p>Coming soon</p>
+    </div>
 
 </div>
 @endsection
