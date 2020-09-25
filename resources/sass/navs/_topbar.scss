@@ -127,3 +127,20 @@
     }
   }
 }
+
+.search-results{
+  padding: 1rem;
+  width: 360px;
+
+  border: 1px solid lightgrey;
+  border-top: 2px solid grey;
+
+  position: absolute;
+  top: 35px;
+
+  display: none;
+
+  a{
+   display: block; 
+  }
+}

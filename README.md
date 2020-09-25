@@ -1,13 +1,14 @@
-## SANTA
-Scandinavian Training System. Created using `Laravel 6.0`, based on `SB Admin 2` boostrap theme.
+## Control Center
+Scandinavian Training System. Created using `Laravel 6`, based on `SB Admin 2` boostrap theme.
 
 ## Setup and install
 Just clone this repository and you're almost ready. First make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) on your computer.
 
 1. Duplicate `.env.example` file into `.env` and make sure you're running correct mysql settings
-2. In the project folder, run `composer update` to install PHP dependecies and `npm install` (requires Node.js) to run Front-end dependecies.
+2. In the project folder, run `composer install` to install PHP dependecies and `npm install` (requires Node.js) to run Front-end dependecies.
 3. Create app key `php artisan key:generate`
-4. Run `php artisan serve` to host the page at `localhost:8000`
+4. Migrate the database with `php artisan migrate`
+5. Run `php artisan serve` to host the page at `localhost:8000`
 
 ## Laravel
 
@@ -43,3 +44,4 @@ In order to keep a collaborative project in the same style and understandable, i
 ##### Other
 * We name our views with blade suffix for clearity, like `header.blade.php`
 * For more in-depth conventions which we try to follow, check out [Laravel best practices](https://www.laravelbestpractices.com)
+* We tab with 4 spaces for increased readability

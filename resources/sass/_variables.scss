@@ -4,6 +4,7 @@
 // Color Variables
 // Bootstrap Color Overrides
 
+$snow: #dfebeb !default;
 $white: #fff !default;
 $gray-100: #f8f9fc !default;
 $gray-200: #eaecf4 !default;
@@ -16,16 +17,21 @@ $gray-800: #5a5c69 !default;
 $gray-900: #3a3b45 !default;
 $black: #000 !default;
 
+$darkblue: #011328 !default;
 $blue: #1a475f !default;
 $indigo: #6610f2 !default;
 $purple: #6f42c1 !default;
 $pink: #e83e8c !default;
-$red: #e74a3b !default;
+$red: #b63f3f !default;
 $orange: #fd7e14 !default;
-$yellow: #f6c23e !default;
-$green: #1cc88a !default;
+$yellow: #ff9800 !default;
+$green: #41826e !default;
 $teal: #20c9a6 !default;
-$cyan: #36b9cc !default;
+$cyan: #43c6e7 !default;
+
+// Note: We don't have $primary here as it overrides bootstrap vars.
+$secondary: #484b4c;
+$tertiary: $darkblue;
 
 // Custom Colors
 $brand-google: #ea4335;
@@ -35,7 +41,7 @@ $brand-facebook: #3b5998;
 $yiq-contrasted-threshold: 195 !default;
 
 // Typography
-$body-color: $gray-600 !default;
+$body-color: $tertiary !default;
 
 $font-family-sans-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", 'Noto Color Emoji' !default;
 

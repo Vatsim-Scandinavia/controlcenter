@@ -15,6 +15,12 @@ a {
 	}
 }
 
+p {
+	a {
+		text-decoration: underline;
+	}
+}
+
 // Main page wrapper
 #wrapper {
 	display: flex;
@@ -62,7 +68,7 @@ a {
 // Custom extras
 .front-cover{
 	width: 100%;
-	height: 92vh;
+	height: 100vh;
 
     background: url(/images/front.jpg);	
 	background-size: cover;
@@ -79,9 +85,13 @@ a {
 		padding-top: 200px;
 
 		&-title{
-			font-size: 78px;
+			font-size: 3rem;
 			color: white;
 			line-height: 0;
+
+			img{
+				height: 78px;
+			}
 		}
 		
 		&-description{
@@ -96,4 +106,94 @@ a {
 		}
 
 	}
+
+	.logo{
+		position: absolute;
+		bottom: 20px;
+		left: calc(50vw - (215px / 2));
+
+		img{
+			width: 215px
+		}
+	}
+}
+
+.table{
+	&-leftpadded{
+		thead,tbody{
+			th:first-child,td:first-child{
+				padding-left: 15px;
+			}
+		}
+	}
+
+	.thead-dark, .tbody-dark{
+		th{
+			border-color: $blue;
+			background-color: $blue;
+		}
+	}
+
+	.thead-light{
+		th{
+			color: $gray-800;
+		}
+	}
+
+	tr{
+		color: $gray-800;
+	}
+}
+
+// Lets tweak a bit the style of bootstrap-table plugin
+table[data-toggle=table]{
+
+	th{
+		&:first-child{
+			padding-left: 10px !important;
+		}
+
+		&:last-child{
+			padding-right: 10px !important;
+		}
+	}
+
+	.filter-control{
+		input{
+			height: calc(1.25em + .5rem + 2px);
+			padding: .25rem .5rem;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+		select{
+			height: calc(1.25em + .5rem + 2px);
+			padding: .25rem .5rem;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+	}
+}
+
+.fixed-table-pagination{
+	padding-left: 15px;
+	padding-right: 15px;
+
+	// Forcefully changing the rows for each page dropdown, as we can't change the html afaik
+	div.float-left.pagination-detail > span.page-list > span > button{
+		color: $gray-900;
+		background-color: $gray-100 !important;
+		border-color: $gray-200 !important;
+
+		height: calc(1.5em + .5rem + 2px);
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		line-height: 1.5;
+	}
+
+}
+
+// Training page css
+.report-overflow-scroll{
+	height: 646px;
+	overflow-y: scroll;
 }

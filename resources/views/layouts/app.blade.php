@@ -6,6 +6,7 @@
     </head>
 
     <body id="page-top">
+    <div id='app'></div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -28,22 +29,40 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
+
+                @if(!Route::is('front'))
+                    <h3 class="mb-4 text-gray-800">
+                        @yield('title', 'Page Title')
+                        @yield('title-extension')
+                    </h3>
+
+                    @if(Session::has('success') OR isset($success))
+                        <div class="alert alert-success" role="alert">
+                            {!! Session::pull("success") !!}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            @if(count($errors) > 1)
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                {{ $errors->first() }}
+                            @endif
+                        </div>
+                    @endif
+                @endif
+
                 @yield('content')
             </div>
             <!-- /.container-fluid -->
 
         </div>
         <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-                <span>Copyright &copy; {{ config('app.owner') }} {{ date('Y') }}</span>
-            </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
 
         </div>
         <!-- End of Content Wrapper -->
@@ -58,6 +77,75 @@
 
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        // Bootstrap-table: Filter function to strip html from bootstrap table column filters
+        window.tableFilterStripHtml = function (value) {
+            return value.replace(/<[^>]+>/g, '').trim();
+        }
+
+        // Bootstrap-table: Sort dates according to timetamp and not alphabethically
+        window.tableSortDates = function(a, b, rowA, rowB){
+            var a = moment(window.tableFilterStripHtml(a), "DD/MM/YYYY");
+            var b = moment(window.tableFilterStripHtml(b), "DD/MM/YYYY");
+
+            if (a.isAfter(b)) return 1;
+            if (a.isBefore(b)) return -1;
+            return 0;
+        }
+
+        // Search bar
+        $(document).ready(function(){
+
+            function fetch_users(query = '')
+            {
+                $.ajax({
+                    url:"{{ route('user.search') }}",
+                    method:'GET',
+                    data:{query:query},
+                    dataType:'json',
+                    success:function(data)
+                    {
+                        if(data.length > 0){
+
+                            var html = '';
+                            var baseUrl = '{{ URL::to('/user') }}\/'
+
+                            for(var i=0; i < data.length; i++){
+                                html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
+                            }
+
+                            $('.search-results').html(html);
+                        } else {
+                            $('.search-results').html("No results");
+                        }
+
+                        $('.search-results').slideDown("fast");
+                    }
+                })
+            }
+    
+            var timer = null
+            $(document).on('keyup', '#search', function(){
+                var query = $(this).val();
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 500, query)
+            });
+
+            $('#user-search-form').on('submit', function(e){
+                
+                var query = $('#search').val();
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 500, query)
+
+                e.preventDefault();
+            });
+
+            $(document).on('focusout', '#search', function(){
+                $('.search-results').slideUp("fast");
+            });
+        });
+    </script>
+
     @yield('js')
     </body>
 </html>

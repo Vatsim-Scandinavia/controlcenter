@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use App\Position;
 use App\SoloEndorsement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class SoloEndorsementController extends Controller
 {
@@ -14,7 +18,11 @@ class SoloEndorsementController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $endorsements = SoloEndorsement::all();
+        if($user->isMentor()) return view('user.soloendorsement.index', compact('user', 'endorsements'));
+
+        abort(403);
     }
 
     /**
@@ -24,7 +32,13 @@ class SoloEndorsementController extends Controller
      */
     public function create()
     {
-        //
+        $user = Auth::user();
+        $students = User::with('trainings')->has('trainings')->get();
+        $positions = Position::all();
+
+        if($user->isModerator()) return view('user.soloendorsement.create', compact('students', 'positions'));
+
+        abort(403);
     }
 
     /**
@@ -33,53 +47,55 @@ class SoloEndorsementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
-    }
+        if(Auth::user()->isModerator()) {
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Endorsement  $endorsement
-     * @return \Illuminate\Http\Response
-     */
-    public function show(SoloEndorsement $endorsement)
-    {
-        //
-    }
+            $data = request()->validate([
+                'student' => 'required|numeric',
+                'expires' => 'required|date_format:d/m/Y|after_or_equal:today|before_or_equal:'.\Carbon\Carbon::createFromTime()->addMonth(),
+                'position' => 'required|exists:positions,callsign'
+            ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\SoloEndorsement  $endorsement
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(SoloEndorsement $endorsement)
-    {
-        //
-    }
+            // Check if student exists
+            $user = User::find($data['student']);
+            if(!$user) return back()->withInput()->withErrors(['student' => 'Invalid user']);
+        
+            // Check if endoresement for this student already exists
+            $existingEndorsement = SoloEndorsement::where('user_id', $user->id)->count();
+            if($existingEndorsement) return back()->withInput()->withErrors(['student' => 'This student already has an active solo endorsement']);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SoloEndorsement  $endorsement
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, SoloEndorsement $endorsement)
-    {
-        //
+            $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
+            $expireDate->setTime(12, 0);
+
+            $endorsement = new SoloEndorsement();
+
+            $endorsement->user_id = $user->id;
+            $endorsement->training_id = $user->trainings->first()->id;
+            $endorsement->position = $data['position'];
+            $endorsement->expires_at = $expireDate->format('Y-m-d H:i:s');
+
+            $endorsement->save();
+
+            return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement created");
+        }
+
+        abort(403);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\SoloEndorsement  $endorsement
+     * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SoloEndorsement $endorsement)
+    public function delete($id)
     {
-        //
+        $user = Auth::user();
+        $endorsement = SoloEndorsement::findOrFail($id);
+
+        if($user->isModerator()) $endorsement->delete();
+
+        return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement deleted");
     }
 }
