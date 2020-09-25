@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,7 +15,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CleanEndorsements::class,
     ];
 
     /**
@@ -24,8 +26,30 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+
+        // Update training queue calculations
+        $schedule->command('update:queuecalculation')
+            ->daily();
+
+        // Update Vatbook bookings, also deletes old bookings
+        $schedule->command('update:bookings')
+            ->everyFiveMinutes();
+
+        // Delete old Sweatbox bookings
+        $schedule->command('clean:sweatbooks')
+            ->daily();
+
+        // Clean up expired solo endorsements
+        $schedule->command('clean:endorsements')
+            ->everyMinute();
+
+        // Close expired votes
+        $schedule->command('clean:votes')
+            ->everyMinute();
+
+        // Clean IP addresses and user agent information from old logs and very old logs
+        $schedule->command('clean:logs')
+            ->daily();
     }
 
     /**

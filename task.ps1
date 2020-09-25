@@ -1,0 +1,1 @@
+php artisan schedule:run

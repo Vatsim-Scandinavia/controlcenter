@@ -12,4 +12,21 @@ class Country extends Model
     public function trainings(){
         return $this->hasMany(Training::class);
     }
+
+    public function ratings(){
+        return $this->belongsToMany(Rating::class)->withPivot('required_vatsim_rating', 'queue_length');
+    }
+
+    public function mentors()
+    {
+        return $this->belongsToMany(User::class, 'training_role_country')->withTimestamps();
+    }
+
+    public function training_roles()
+    {
+        return $this->belongsToMany(User::class, 'training_role_country')->withTimestamps();
+    }
+
 }
+
+

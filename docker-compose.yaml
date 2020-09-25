@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  web:
+      container_name: 'cc_web'
+      image: gustavkauman/docker-laravel:latest
+      expose:
+          - 9000
+      ports:
+          - 80:80
+      volumes:
+          - ./:/var/www
+      links:
+          - db:mysql
+          - handover-db:mysql
+      working_dir: /var/www
+  db:
+      container_name: 'cc_db'
+      image: mysql:8.0.19
+      ports:
+          - 3306:3306
+      environment:
+            MYSQL_DATABASE: santa
+            MYSQL_USER: santa
+            MYSQL_PASSWORD: santa
+            MYSQL_ROOT_PASSWORD: root
+
+  handover-db:
+      container_name: 'handover_db'
+      image: mysql:5.7.27
+      ports:
+          - 3308:3306
+      environment:
+            MYSQL_DATABASE: dev_handover
+            MYSQL_USER: handover
+            MYSQL_PASSWORD: handover
+            MYSQL_ROOT_PASSWORD: root
+
