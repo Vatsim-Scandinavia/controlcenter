@@ -11,6 +11,8 @@
     },
     "dependencies": {
         "bootstrap": "4.3.1",
+        "chart.js": "2.8.0",
+        "datatables.net-bs4": "1.10.19",
         "bootstrap-table": "^1.17.1",
         "chart.js": "^2.9.3",
         "jquery": "^3.5.1",
