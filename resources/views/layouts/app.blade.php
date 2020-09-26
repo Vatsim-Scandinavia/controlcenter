@@ -30,7 +30,7 @@
             <!-- Begin Page Content -->
             <div class="container-fluid">
 
-                @if(!Route::is('front'))
+                @if(!Route::is('front') && !Route::is('users.soloendorsements.sup'))
                     <h3 class="mb-4 text-gray-800">
                         @yield('title', 'Page Title')
                         @yield('title-extension')
