@@ -65,11 +65,13 @@
 
                     <div class="form-check">
                     @foreach($groups as $group)
-                        <label class="form-check-label @error('access') is-invalid @enderror">
-                            <input type="radio" class="form-check-input" name="access" value="{{ $group->id }}" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
-                            <div class="text-muted">{{ $group->description }}</div>
-                            <br>
-                        </label>
+                        @if ($group->id > \Auth::user()->group)
+                            <label class="form-check-label @error('access') is-invalid @enderror">
+                                <input type="radio" class="form-check-input" name="access" value="{{ $group->id }}" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
+                                <div class="text-muted">{{ $group->description }}</div>
+                                <br>
+                            </label>
+                        @endif
                     @endforeach
                     <label class="form-check-label @error('access') is-invalid @enderror">
                         <input type="radio" class="form-check-input" name="access" value="0" {{ !$user->group ? "checked" : "" }}>None
@@ -176,7 +178,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
