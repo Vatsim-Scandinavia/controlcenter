@@ -252,6 +252,21 @@ class User extends Authenticatable
         return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
     }
 
+    /**
+     * Return the active training for the user
+     *
+     * @param int $minStatus
+     * @param Country|null $country
+     * @return Training|null
+     */
+    public function getActiveTraining(int $minStatus = 0, Country $country = null)
+    {
+        if ($country == null)
+            return $this->trainings()->where([['status', '>=', $minStatus]])->get()->first();
+
+        return $this->trainings()->where([['status', '>=', $minStatus], ['country_id', '=', $country->id]])->get()->first();
+    }
+
     // User group checks
     public function isMentor(Country $country = null)
     {

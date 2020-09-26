@@ -20,11 +20,13 @@
             <span>Dashboard</span></a>
         </li>
 
+        @can('create', \App\Vatbook::class)
         <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('vatbook') }}">
             <i class="fas fa-fw fa-calendar"></i>
             <span>Vatbook</span></a>
         </li>
+        @endcan
 
         <li class="nav-item">
         <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
