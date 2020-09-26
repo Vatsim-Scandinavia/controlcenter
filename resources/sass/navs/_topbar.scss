@@ -130,7 +130,7 @@
 
 .search-results{
   padding: 1rem;
-  width: 360px;
+  width: 80%;
 
   border: 1px solid lightgrey;
   border-top: 2px solid grey;
@@ -140,6 +140,11 @@
 
   display: none;
   z-index: 10;
+
+  @include media-breakpoint-down(sm) {
+    top: 50px;
+    font-size: 1rem;
+  }
 
   a{
    display: block; 

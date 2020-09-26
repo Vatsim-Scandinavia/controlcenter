@@ -142,7 +142,7 @@
         </div>
 
         @if(Config::get('app.env') != "production")
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-warning" style="font-size: 80%;" role="alert">
                 Development Env
             </div>
         @endif
