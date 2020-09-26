@@ -122,8 +122,6 @@
         letter-spacing: 0.05rem;
         z-index: 1;
 
-        padding-left: 34px;
-
         .sidebar-brand-icon i {
             font-size: 2.1rem;
         }
@@ -275,6 +273,8 @@
                 }
             }
             .sidebar-brand {
+                padding-left: 34px;
+                
                 .sidebar-brand-icon i {
                     font-size: 2.1rem;
                 }
