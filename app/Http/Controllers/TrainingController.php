@@ -29,9 +29,9 @@ class TrainingController extends Controller
         -2 => ["text" => "Closed by staff", "color" => "danger", "icon" => "fas fa-ban", "assignableByStaff" => true],
         -1 => ["text" => "Completed", "color" => "success", "icon" => "fas fa-check", "assignableByStaff" => true],
         0 => ["text" => "In queue", "color" => "warning", "icon" => "fas fa-hourglass", "assignableByStaff" => true],
-        1 => ["text" => "Pre-training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
+        1 => ["text" => "Pre-training", "color" => "info", "icon" => "fas fa-book-open", "assignableByStaff" => true],
         2 => ["text" => "Active training", "color" => "success", "icon" => "fas fa-book-open", "assignableByStaff" => true],
-        3 => ["text" => "Awaiting exam", "color" => "success", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
+        3 => ["text" => "Awaiting exam", "color" => "warning", "icon" => "fas fa-graduation-cap", "assignableByStaff" => true],
     ];
 
     /**
