@@ -41,8 +41,12 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
+        if (!isset($model->group)) {
+            return $user->isModerator();
+        }
+
         return $user->isModerator() &&
-                isset($model->group) ? $user->group < $model->group : true;
+                $user->group < $model->group;
     }
 
     /**
