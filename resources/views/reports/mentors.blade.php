@@ -14,13 +14,19 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0"
+                        data-page-size="25"
+                        data-toggle="table"
+                        data-pagination="true"
+                        data-strict-search="true"
+                        data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th>Mentor ID</th>
-                                <th>Mentor</th>
-                                <th>Last training</th>
-                                <th>Teaching</th>
+                                <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Mentor ID</th>
+                                <th data-field="mentor" data-sortable="true" data-filter-control="input">Mentor</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select">FIR</th>
+                                <th data-field="applied" data-sortable="true">Last training</th>
+                                <th data-field="teaching" data-sortable="true" data-filter-control="input">Teaching</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,12 +35,16 @@
                                     <td><a href="{{ route('user.show', $mentor->id) }}">{{ $mentor->id }}</a></td>
                                     <td>{{ $mentor->name }}</td>
                                     <td>
+                                        {{ $mentor->getInlineMentoringCountries() }}
+                                    </td>
+                                    <td>
                                         @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
                                             {{ Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->created_at)->diffForHumans(['parts' => 2])}}
                                         @else
                                             No registered training yet
                                         @endif
                                     </td>
+                                    
                                     <td class="table-link-newline">
                                         @foreach($mentor->teaches as $training)
                                             <div><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a> / Last training: 

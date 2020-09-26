@@ -141,6 +141,12 @@
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
 
+        @if(Config::get('app.env') != "production")
+            <div class="alert alert-warning" role="alert">
+                Development Env
+            </div>
+        @endif
+
         <!-- Logo -->
         <img class="logo" src="{{ asset('images/vatsca-logo-negative.svg') }}">
     @else

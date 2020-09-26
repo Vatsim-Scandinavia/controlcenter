@@ -26,6 +26,21 @@ class SoloEndorsementController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sup()
+    {
+
+        if(\Auth::user()) return redirect(route('users.soloendorsements'));
+
+        $endorsements = SoloEndorsement::all();
+        return view('user.soloendorsement.sup', compact('endorsements'));
+
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

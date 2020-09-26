@@ -77,6 +77,8 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
 
+        $this->authorize('update', $user);
+
         $data = $request->validate([
             'access' => 'required|integer',
             'countries' => 'nullable|array'
