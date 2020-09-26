@@ -209,6 +209,35 @@ class User extends Authenticatable
     }
 
     /**
+     * Get a inline string of ratings associated countries for mentoring.
+     *
+     * @param string $status
+     * @return string
+     */
+    public function getInlineMentoringCountries(){
+
+        $output = "";
+
+        if( is_iterable($countries = $this->training_role_countries->toArray()) ){
+            for( $i = 0; $i < sizeof($countries); $i++ ){
+                if( $i == (sizeof($countries) - 1) ){
+                    $output .= $countries[$i]["name"];
+                } else {
+                    $output .= $countries[$i]["name"] . " & ";
+                }
+            }
+        } else {
+            $output .= $countries["name"];
+        }
+
+        if(empty($output)){
+            $output = "-";
+        }
+
+        return $output;
+     }
+
+    /**
      * Return whether or not the user has active trainings.
      * A country can be provided to check if the user has an active training in the specified country.
      *
