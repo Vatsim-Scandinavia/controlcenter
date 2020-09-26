@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Position;
 use App\Vatbook;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class VatbookController extends Controller
 {
+
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +37,7 @@ class VatbookController extends Controller
         $booking = Vatbook::findOrFail($id);
         $positions = Position::all();
         $user = Auth::user();
-        
+
         if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) return view('vatbook.show', compact('booking', 'positions', 'user'));
 
         abort(403);
@@ -42,11 +46,14 @@ class VatbookController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Vatbook::class);
+
         $data = $request->validate([
             'date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'start_at' => 'required|date_format:H:i',
@@ -105,9 +112,9 @@ class VatbookController extends Controller
 
         $booking->eu_id = $matches[1][0];
         $booking->save();
-        
+
         ActivityLogController::info("Created vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
-        
+
         return redirect('/vatbook');
     }
 
