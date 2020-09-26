@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
@@ -142,7 +142,7 @@
         </div>
 
         @if(Config::get('app.env') != "production")
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-warning" style="font-size: 80%;" role="alert">
                 Development Env
             </div>
         @endif

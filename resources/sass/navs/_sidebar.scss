@@ -127,6 +127,10 @@
         .sidebar-brand-text {
             display: none;
         }
+
+        @include media-breakpoint-down(sm) {
+            padding-left: 34px;
+        }
     }
     hr.sidebar-divider {
         margin: 0 1rem 1rem;
@@ -144,6 +148,11 @@
         position: absolute;
         bottom: 20px;
         left: 22px;
+
+        @include media-breakpoint-down(md) {
+            left: 10px;
+            width: 80%;
+        }
     }
 }
 

@@ -84,6 +84,10 @@ p {
 
 		padding-top: 200px;
 
+		@include media-breakpoint-down(md) {
+			width: 90%;
+		}
+
 		&-title{
 			font-size: 3rem;
 			color: white;
@@ -92,11 +96,19 @@ p {
 			img{
 				height: 78px;
 			}
+
+			@include media-breakpoint-down(sm) {
+				font-size: 2rem;
+			}
 		}
 		
 		&-description{
 			font-size: 22px;
 			color: white;
+
+			@include media-breakpoint-down(sm) {
+				font-size: 15px;
+			}
 		}
 
 		a{
