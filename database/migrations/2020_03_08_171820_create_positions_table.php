@@ -197,7 +197,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'ENAN_TWR', 'name' => 'Andøya Tower', 'fir' => 'ENOR'],
             ['callsign' => 'ENAT_TWR', 'name' => 'Alta Tower', 'fir' => 'ENOR'],
             ['callsign' => 'ENAT_APP', 'name' => 'Alta Tower', 'fir' => 'ENOR'],
-            ['callsign' => 'ENBD_H_CTR', 'name' => 'Norway Control (Helgeland)', 'fir' => 'ENOR'],
+            ['callsign' => 'ENBN_APP', 'name' => 'Norway Control (Helgeland)', 'fir' => 'ENOR'],
             ['callsign' => 'ENBD_S_CTR', 'name' => 'Norway Control', 'fir' => 'ENOR'],
             ['callsign' => 'ENBD_9_CTR', 'name' => 'Norway Control', 'fir' => 'ENOR'],
             ['callsign' => 'ENBD_C_CTR', 'name' => 'Norway Control', 'fir' => 'ENOR'],
