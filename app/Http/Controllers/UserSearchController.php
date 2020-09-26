@@ -20,11 +20,14 @@ class UserSearchController extends Controller
         $query = $request->get('query');
 
         $data = User::all();
-        if($data->count() > 0) {
+        $count = 0;
+        if($data->count() > 0 && strlen($query) >= 2) {
             foreach($data as $user)
             {
+                if($count >= 10) break;
                 if (stripos($user->name, (string)$query) !== false || $user->id == (int)$query) {
                     array_push($output, ['id' => $user->id, 'name' => $user->name]);
+                    $count++;
                 }
             }
 
