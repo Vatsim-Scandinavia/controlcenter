@@ -24,7 +24,7 @@
                     
                     <div class="form-group">
                         <label for="end_at">End Time (Zulu)</label>
-                        <input id="end_at" class="endtimepicker form-control @error('expire_time') is-invalid @enderror" type="text" name="expire_time" value="{{ old('expire_time') }}" required>
+                        <input id="end_at" class="form-control @error('expire_time') is-invalid @enderror" type="time" name="expire_time" placeholder="12:00" value="{{ old('expire_time') }}" required>
                         @error('expire_time')
                             <span class="text-danger">{{ $errors->first('expire_time') }}</span>
                         @enderror
@@ -74,12 +74,8 @@
         $('div').tooltip();
 
         var defaultDate = "{{ old('date') }}"
-        var startTime = "{{ old('start_at') }}"
-        var endTime = "{{ old('end_at') }}"
 
-        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
-        $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: startTime});
-        $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: endTime });
+        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();

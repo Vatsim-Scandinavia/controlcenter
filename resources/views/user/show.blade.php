@@ -19,6 +19,7 @@
                                 <th>Vatsim ID</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
+                                <th>Email</th>
                                 <th>ATC Rating</th>
                                 <th>Visiting Controller</th>
                                 <th>Division</th>
@@ -33,6 +34,7 @@
                                 <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
                                 <td>{{ $user->first_name }}</td>
                                 <td>{{ $user->last_name }}</td>
+                                <td>{{ $user->email }}</td>
                                 <td>{{ $user->rating_short }}</td>
                                 <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->division }}</td>

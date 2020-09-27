@@ -43,7 +43,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return TrainingCreatedMail
+     * @return TrainingMail
      */
     public function toMail($notifiable)
     {
@@ -59,12 +59,17 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
         }
 
         // Find staff who wants notification of new training request
-        $bcc = User::where('setting_notify_newreq', true)->where('group', '<=', '2')->get()->pluck('email');
+        $bcc = User::where('setting_notify_newreq', true)->where('group', '<=', '2')->get();
+
+        foreach ($bcc as $key => $user) {
+            if (!$user->isModerator($this->training->country))
+                $bcc->pull($key);
+        }
 
         $contactMail = $country->contact;
         return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email)
-            ->bcc($bcc);
+            ->bcc($bcc->pluck('email'));
     }
 
     /**

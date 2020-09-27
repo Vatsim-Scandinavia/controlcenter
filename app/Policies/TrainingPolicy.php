@@ -63,7 +63,7 @@ class TrainingPolicy
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
 
         if(!Setting::get('trainingEnabled'))
-            return Response::deny("Currently we don't accept any new training requests.");
+            return Response::deny("We are currently not accepting new training requests");
 
         if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
             $subdiv = "none";

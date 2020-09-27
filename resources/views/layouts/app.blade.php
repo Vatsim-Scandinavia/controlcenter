@@ -11,9 +11,11 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        @auth
-            @include('layouts.sidebar')
-        @endauth
+        @if(!Route::is('users.soloendorsements.sup'))
+            @auth
+                @include('layouts.sidebar')
+            @endauth
+        @endif
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -21,9 +23,11 @@
         <!-- Main Content -->
         <div id="content">
 
-            @auth
-                @include('layouts.topbar')
-            @endauth
+            @if(!Route::is('users.soloendorsements.sup'))
+                @auth
+                    @include('layouts.topbar')
+                @endauth
+            @endif
 
             @yield('content-master') <!-- For special things to be done outside the container -->
 
