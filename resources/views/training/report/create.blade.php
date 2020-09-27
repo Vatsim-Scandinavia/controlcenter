@@ -108,7 +108,7 @@
         $('div').tooltip();
 
         var defaultDate = "{{ old('report_date') }}"
-        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
