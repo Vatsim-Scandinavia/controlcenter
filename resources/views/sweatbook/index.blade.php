@@ -87,7 +87,7 @@
 
                     <div class="form-group">
                         <label for="start_at">Start (Zulu)</label>
-                        <input id="start_at" class="starttimepicker form-control @error('start_at') is-invalid @enderror" type="text" name="start_at" required>
+                        <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ old('start_at') }}" required>
                         @error('start_at')
                             <span class="text-danger">{{ $errors->first('start_at') }}</span>
                         @enderror
@@ -95,7 +95,7 @@
 
                     <div class="form-group">
                         <label for="end_at">End (Zulu)</label>
-                        <input id="end_at" class="endtimepicker form-control @error('end_at') is-invalid @enderror" type="text" name="end_at" required>
+                        <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ old('end_at') }}" required>
                         @error('end_at')
                             <span class="text-danger">{{ $errors->first('end_at') }}</span>
                         @enderror
@@ -142,12 +142,8 @@
         $('div').tooltip();
 
         var defaultDate = "{{ old('date') }}"
-        var startTime = "{{ old('start_at') }}"
-        var endTime = "{{ old('end_at') }}"
 
-        $(".datepicker").flatpickr({ minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
-        $(".starttimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: startTime});
-        $(".endtimepicker").flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, defaultDate: endTime });
+        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();

@@ -222,7 +222,7 @@
                 <div class="text-center">
                     <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="images/undraw_aircraft_fbvl.svg" alt="">
                 </div>
-                <p>Are you interested in becoming an air traffic controller, or apply for a higher rank? Request you training below, and you'll be notified when it's your turn.</p>
+                <p>Are you interested in becoming an Air Traffic Controller? Wish to receive training for a higher rank? Request training below and you will be notified when a space is available.</p>
 
                 @can('apply', \App\Training::class)
                     <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">

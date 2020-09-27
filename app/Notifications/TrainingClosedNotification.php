@@ -46,7 +46,7 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return TrainingClosedMail
+     * @return TrainingMail
      */
     public function toMail($notifiable)
     {
@@ -59,11 +59,16 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         $contactMail = Country::find($this->training->country_id)->contact;
 
         // Find staff who wants notification of new training request
-        $bcc = User::where('setting_notify_closedreq', true)->where('group', '<=', '2')->get()->pluck('email');
+        $bcc = User::where('setting_notify_closedreq', true)->where('group', '<=', '2')->get();
+
+        foreach ($bcc as $key => $user) {
+            if (!$user->isModerator($this->training->country))
+                $bcc->pull($key);
+        }
 
         return (new TrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email)
-            ->bcc($bcc);
+            ->bcc($bcc->pluck('email'));
     }
 
     /**

@@ -19,10 +19,14 @@ class SoloEndorsementController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $endorsements = SoloEndorsement::all();
-        if($user->isMentor()) return view('user.soloendorsement.index', compact('user', 'endorsements'));
 
-        abort(403);
+        if($user->isMentor()){
+            $endorsements = SoloEndorsement::all();
+            return view('user.soloendorsement.index', compact('user', 'endorsements'));
+        } else {
+            return redirect(route('users.soloendorsements.sup'));
+        }
+
     }
 
     /**
@@ -33,7 +37,7 @@ class SoloEndorsementController extends Controller
     public function sup()
     {
 
-        if(\Auth::user()) return redirect(route('users.soloendorsements'));
+        if(\Auth::user() && \Auth::user()->isMentor()) return redirect(route('users.soloendorsements'));
 
         $endorsements = SoloEndorsement::all();
         return view('user.soloendorsement.sup', compact('endorsements'));
