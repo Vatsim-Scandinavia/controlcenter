@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\User;
 
@@ -19,7 +20,7 @@ class UserSearchController extends Controller
 
         $query = $request->get('query');
 
-        $data = User::all();
+        $data = Auth::user()->viewableModels(\App\User::class);
         $count = 0;
         if($data->count() > 0 && strlen($query) >= 2) {
             foreach($data as $user)

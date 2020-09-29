@@ -84,11 +84,13 @@
         Members
         </div>
 
+        @if (\Auth::user()->isModerator())
         <li class="nav-item {{ Route::is('users') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users') }}">
             <i class="fas fa-fw fa-users"></i>
             <span>Overview</span></a>
         </li>
+        @endif
 
         <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users.soloendorsements') }}">
