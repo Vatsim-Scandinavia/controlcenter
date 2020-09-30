@@ -11,73 +11,35 @@ class VatbookPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view the vatbook.
+     * Determine whether the user can view bookings.
      *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $vatbook
      * @return mixed
      */
-    public function view(User $user, Vatbook $vatbook)
+    public function view()
     {
-        //
+        return true;
     }
 
     /**
-     * Determine whether the user can create vatbooks.
+     * Determine whether the user can create bookings.
      *
      * @param  \App\User  $user
      * @return mixed
      */
     public function create(User $user)
     {
-        return $user->rating >= 3 || $user->getActiveTraining(2) != null;
+        return $user->rating >= 3 || $user->getActiveTraining(2) != null || $user->isModerator();
     }
 
     /**
-     * Determine whether the user can update the vatbook.
+     * Determine whether the user can update the booking.
      *
      * @param  \App\User  $user
-     * @param  \App\Vatbook  $vatbook
+     * @param  \App\Vatbook  $booking
      * @return mixed
      */
-    public function update(User $user, Vatbook $vatbook)
+    public function update(User $user, Vatbook $booking)
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can delete the vatbook.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $vatbook
-     * @return mixed
-     */
-    public function delete(User $user, Vatbook $vatbook)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can restore the vatbook.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $vatbook
-     * @return mixed
-     */
-    public function restore(User $user, Vatbook $vatbook)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the vatbook.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $vatbook
-     * @return mixed
-     */
-    public function forceDelete(User $user, Vatbook $vatbook)
-    {
-        //
+        return $booking->local_id != null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id != null;
     }
 }

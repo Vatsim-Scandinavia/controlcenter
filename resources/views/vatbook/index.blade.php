@@ -4,7 +4,12 @@
 @section('content')
 
 <div class="row">
-    <div class="col-xl-8 col-lg-12 col-md-12 mb-12">
+    @can('create', \App\Vatbook::class)
+        <div class="col-xl-8 col-lg-12 col-md-12 mb-12">
+    @endcan
+    @cannot('create', \App\Vatbook::class)
+        <div class="col-lg-12 col-md-12 mb-12">
+    @endcannot
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">Booked Sessions</h6> 
@@ -65,6 +70,7 @@
             
         </div>
     </div>
+    @can('create', \App\Vatbook::class)
     <div class="col-xl-4 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -133,7 +139,7 @@
             </div>
         </div>
     </div>
-    
+    @endcan
 </div>
 
 @endsection
