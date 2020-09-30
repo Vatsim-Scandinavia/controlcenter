@@ -124,9 +124,7 @@
                             <input id="training" type="checkbox" name="training" value=1>
                             <label for="training">Training</label>
                         </div>
-                    @endif
 
-                    @if ($user->isModerator())
                         <div class="form-group">
                             <input id="event" type="checkbox" name="event" value=1>
                             <label for="event">Event</label>
