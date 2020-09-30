@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use DB;
 use App\Position;
 use App\Vatbook;
 use Illuminate\Console\Command;
@@ -57,6 +58,9 @@ class UpdateBookings extends Command
             }
             if($count !== 1) $booking->delete();
         }
+
+        // Remove expired bookings
+        DB::table('vatbooks')->where('time_end', '<', date('Y-m-d H:i:s'))->delete();
 
         $this->info('All Vatbook bookings have been updated.');
     }
