@@ -15,9 +15,9 @@ class UserPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function index(User $user)
     {
-        //
+        return $user->isModerator();
     }
 
     /**
@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->is($model) || $user->isModerator();
+        return $user->is($model) || $user->isModerator() || $user->teaches($model);
     }
 
     /**

@@ -69,7 +69,7 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortByDesc('status');
+        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortByDesc('status')->sortBy('created_at');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
