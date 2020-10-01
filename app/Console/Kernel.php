@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\CleanEndorsements::class,
+        Commands\UpdateMemberDetails::class,
     ];
 
     /**
@@ -50,6 +51,9 @@ class Kernel extends ConsoleKernel
         // Clean IP addresses and user agent information from old logs and very old logs
         $schedule->command('clean:logs')
             ->daily();
+
+        $schedule->command('update:members')
+                 ->daily();
     }
 
     /**
