@@ -20,7 +20,7 @@
             <span>Dashboard</span></a>
         </li>
 
-        @can('create', \App\Vatbook::class)
+        @can('view', \App\Vatbook::class)
         <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('vatbook') }}">
             <i class="fas fa-fw fa-calendar"></i>
@@ -84,11 +84,13 @@
         Members
         </div>
 
+        @if (\Auth::user()->isModerator())
         <li class="nav-item {{ Route::is('users') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users') }}">
             <i class="fas fa-fw fa-users"></i>
             <span>Overview</span></a>
         </li>
+        @endif
 
         <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users.soloendorsements') }}">
