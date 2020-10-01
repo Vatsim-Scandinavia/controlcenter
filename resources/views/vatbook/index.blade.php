@@ -37,8 +37,9 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
-                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null)
+                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) 
                                         <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}</a>
+                                        <i style="padding-left: 5px;" class="fa fa-pencil w3-tiny" aria-hidden="true"></i>
                                     @else
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
                                     @endif
