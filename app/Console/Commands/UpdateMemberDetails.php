@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\User;
 use Illuminate\Console\Command;
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Training;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class UpdateMemberDetails extends Command
@@ -44,6 +46,8 @@ class UpdateMemberDetails extends Command
 
         $bar = $this->output->createProgressBar($mentors->count());
 
+        echo "Starting removing mentors \n";
+
         $bar->start();
 
         foreach ($mentors as $mentor) {
@@ -59,5 +63,30 @@ class UpdateMemberDetails extends Command
         }
 
         $bar->finish();
+
+        echo "\nDone removing mentors.\n";
+
+        $trainings = Training::query()->where('status', '>=', 0)->get();
+
+        $newBar = $this->output->createProgressBar($trainings->count());
+
+        echo "Deleting trainings\n";
+
+        $newBar->start();
+
+        foreach ($trainings as $training) {
+
+            if ($training->user->handover->subdivision == Setting::get('trainingSubDivisions')) continue;
+
+            $training->status = -4;
+            $training->save();
+
+            $newBar->advance();
+
+        }
+
+        $newBar->finish();
+
+        echo "\nDone\n";
     }
 }
