@@ -42,51 +42,45 @@ class UpdateMemberDetails extends Command
      */
     public function handle()
     {
-        $mentors = User::query()->where('group', 3)->get();
+        $mentors = User::where('group', 3)->get();
 
-        $bar = $this->output->createProgressBar($mentors->count());
+        $this->info("Starting removing mentors");
 
-        echo "Starting removing mentors \n";
-
-        $bar->start();
-
+        //start the loop
         foreach ($mentors as $mentor) {
 
             if ($mentor->subdivision == Setting::get('trainingSubDivisions')) continue;
 
-            DB::table('training_role_country')->where('user_id', $mentor->id)->delete();
+            // remove any active trainings
+            $user->teaches()->detach();
 
+            // remove training roles in countries
+            $user->training_role_countries()->detach();
+
+            // change user group to null
             $mentor->group = null;
             $mentor->save();
-
-            $bar->advance();
         }
 
-        $bar->finish();
+        $this->info("Done removing mentors.");
 
-        echo "\nDone removing mentors.\n";
+        // get active trainings
+        $trainings = Training::where('status', '>=', 0)->get();
 
-        $trainings = Training::query()->where('status', '>=', 0)->get();
-
-        $newBar = $this->output->createProgressBar($trainings->count());
-
-        echo "Deleting trainings\n";
-
-        $newBar->start();
+        $this->info("Deleting trainings.");
 
         foreach ($trainings as $training) {
 
             if ($training->user->handover->subdivision == Setting::get('trainingSubDivisions')) continue;
 
+            // change it's status
             $training->status = -4;
             $training->save();
 
-            $newBar->advance();
+            // TODO: Add notifications
 
         }
 
-        $newBar->finish();
-
-        echo "\nDone\n";
+        $this->info("Done");
     }
 }
