@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\SoloEndorsement;
 use App\TrainingReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,5 +54,18 @@ class DashboardController extends Controller
 
     public function apply(){
         return view('trainingapply');
+    }
+
+    /**
+     * Show solo endorsements view
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+
+    public function endorsements(){
+
+        $endorsements = SoloEndorsement::all();
+
+        return view('endorsements', compact('endorsements'));
     }
 }
