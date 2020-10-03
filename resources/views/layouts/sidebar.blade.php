@@ -28,6 +28,12 @@
         </li>
         @endcan
 
+        <li class="nav-item {{ Route::is('solo.endorsements') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('solo.endorsements') }}">
+            <i class="fas fa-fw fa-check-square"></i>
+            <span>Solo Endorsements</span></a>
+        </li>
+
         <li class="nav-item">
         <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
             <i class="fas fa-graduation-cap"></i>
