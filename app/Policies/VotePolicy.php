@@ -10,7 +10,7 @@ class VotePolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -20,7 +20,7 @@ class VotePolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can create the model.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -30,7 +30,7 @@ class VotePolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can store the model.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -46,6 +46,36 @@ class VotePolicy
      * @return mixed
      */
     public function accessNotification(User $user) {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function accessTrainingReports(User $user) {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewMentors(User $user) {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAtcActivity(User $user) {
         return $user->isAdmin();
     }
 }

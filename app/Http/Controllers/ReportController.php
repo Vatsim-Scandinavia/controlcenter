@@ -9,6 +9,7 @@ use App\User;
 use App\Country;
 use App\Training;
 use App\Rating;
+use App\Vote;
 
 class ReportController extends Controller
 {
@@ -20,6 +21,7 @@ class ReportController extends Controller
 
     public function trainings($filterCountry = false){
 
+        $this->authorize('accessTrainingReports', Vote::class);
         // Get stats
         $cardStats = $this->getCardStats($filterCountry);
         $totalRequests = $this->getDailyRequestsStats($filterCountry);
@@ -41,6 +43,8 @@ class ReportController extends Controller
 
     public function mentors(){
 
+        $this->authorize('viewMentors', Vote::class);
+
         $mentors = User::where('group', '<=', 3)->get();
 
         return view('reports.mentors', compact('mentors'));
@@ -53,6 +57,8 @@ class ReportController extends Controller
      */
 
     public function atc(){
+
+        $this->authorize('viewAtcActivity', Vote::class);
 
         $controllers = User::all();
 
