@@ -47,40 +47,37 @@ class UpdateMemberDetails extends Command
 
         $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
 
-        $this->info("Starting removing mentors");
+        $this->info("Detaching mentors who no longer are in subdivision...");
 
-        //start the loop
+        // Start the loop
         foreach ($mentors as $mentor) {
 
             if (in_array($mentor->subdivision, $subdivisions)) continue;
 
-            // remove any active trainings
+            // Remove any active trainings and training roles
             $mentor->teaches()->detach();
-
-            // remove training roles in countries
             $mentor->training_role_countries()->detach();
 
-            // change user group to null
+            // Remove mentor usergroup
             $mentor->group = null;
             $mentor->save();
         }
 
-        $this->info("Done removing mentors.");
-
-        // get active trainings
+        // Get active trainings
         $trainings = Training::where('status', '>=', 0)->get();
 
-        $this->info("Deleting trainings.");
+        $this->info("Closing trainings for those who left subdivision...");
 
         foreach ($trainings as $training) {
 
             if (in_array($training->user->subdivision, $subdivisions)) continue;
 
-            // change it's status
+            // Close the training
             $training->updateStatus(-4);
             $training->closed_reason = 'Student has left the subdivision.';
             $training->save();
 
+            // Notify student of closure
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the subdivision.'));
             
         }

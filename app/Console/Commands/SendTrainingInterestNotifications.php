@@ -74,7 +74,7 @@ class SendTrainingInterestNotifications extends Command
                 $requestConfirmed = $lastInterestRequest->confirmed_at;
                 $requestUpdated = $lastInterestRequest->updated_at;
 
-                if ($requestDeadline->diffInDays(now()) <= 0 && $requestConfirmed == null) {
+                if ($requestDeadline->diffInMinutes(now(), false) >= 0 && $requestConfirmed == null) {
                     // If it's 14 days passed deadline, close the training
                     $this->info("Closing training ".$training->id);
 
@@ -82,8 +82,8 @@ class SendTrainingInterestNotifications extends Command
                     $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interested was not confirmed within deadline.'));
 
 
-                } elseif ($requestDeadline->diffInDays(now()) == 7 && $requestUpdated->diffInDays(now()) != 0 && $requestConfirmed == null) {
-                    // If the interest is not confirmed after 7 days, we remind
+                } elseif ($requestDeadline->diffInDays(now()) == 6 && $requestUpdated->diffInDays(now()) != 0 && $requestConfirmed == null) {
+                    // If the interest is not confirmed after 6 days, we remind
                     $this->info("Reminding training ".$training->id);
 
                     $requestUpdated = now();
