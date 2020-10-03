@@ -34,7 +34,8 @@
                             <tr>
                                 <td>
                                     @if ($booking->mentor == $user->id || $user->isModerator())
-                                        <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}</a>
+                                        <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
+                                        &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
                                     @else
                                         {{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
                                     @endif
