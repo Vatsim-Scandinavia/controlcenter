@@ -71,7 +71,7 @@
             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">My last training</div>
             <div class="row no-gutters align-items-center">
                 <div class="col-auto">
-                @if ($data['report'] != null) <a href="{{ $data['report']->path() }}"> @endif
+                @if ($data['report'] != null) <a href="{{ $data['report']->training->path() }}"> @endif
                 <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $data['report'] != null ? $data['report']->created_at->toEuropeanDate() : "-" }}</div>
                 @if ($data['report'] != null) </a> @endif
                 </div>
