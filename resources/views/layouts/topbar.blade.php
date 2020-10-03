@@ -15,6 +15,7 @@
                         <i class="fas fa-search fa-sm"></i>
                     </button>
                 </div>
+                <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
                 <div class="search-results bg-light">
                     
                 </div>
