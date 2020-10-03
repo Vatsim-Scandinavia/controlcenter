@@ -53,8 +53,8 @@ class Kernel extends ConsoleKernel
             ->daily();
 
         // Automaticaly clean memebers and trainings no longer eligble
-        $schedule->command('update:members')
-            ->daily();
+        /*$schedule->command('update:members')
+            ->daily();*/
 
         // Send our training interest e-mails
         $schedule->command('send:traininginterest')

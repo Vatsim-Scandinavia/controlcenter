@@ -66,7 +66,7 @@ class UpdateMemberDetails extends Command
         // Get active trainings
         $trainings = Training::where('status', '>=', 0)->where('type', '!=', 5)->get();
 
-        $this->info("Closing trainings for those who left subdivision...");
+        $this->info("Closing trainings for those who left subdivision: ".$trainings->count()." members.");
 
         foreach ($trainings as $training) {
 
@@ -74,7 +74,7 @@ class UpdateMemberDetails extends Command
 
             // Close the training
             $training->updateStatus(-4);
-            $training->closed_reason = 'Student has left the subdivision.';
+            $training->closed_reason = 'The student has left or is no longer part of our subdivision.';
             $training->save();
 
             // Notify student of closure
