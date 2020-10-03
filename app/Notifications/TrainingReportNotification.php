@@ -55,7 +55,7 @@ class TrainingReportNotification extends Notification implements ShouldQueue
         ];
 
         return (new TrainingMail('Training Report', $this->training, $textLines, null, route('training.show', $this->training->id), "Read Report"))
-            ->to($this->training->user->email);
+            ->to($this->training->user->email, $this->training->user->name);
     }
 
     /**

@@ -61,7 +61,7 @@ class TrainingMentorNotification extends Notification implements ShouldQueue
 
         $contactMail = $country->contact;
         return (new TrainingMail('Training Mentor Assigned', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->email);
+            ->to($this->training->user->email, $this->training->user->name);
     }
 
     /**

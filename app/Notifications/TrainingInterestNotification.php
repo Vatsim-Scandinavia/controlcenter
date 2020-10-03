@@ -73,7 +73,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         $actionUrl = route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->interest->key] );
 
         return (new TrainingMail($this->subjectPrefix.'Confirm Continued Training Interest', $this->training, $textLines, $contactMail, $actionUrl, 'Confirm Interest', 'success'))
-            ->to($this->training->user->email);
+            ->to($this->training->user->email, $this->training->user->name);
     }
 
     /**
