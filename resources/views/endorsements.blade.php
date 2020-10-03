@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="row">
-    <div class="col-xl-12 col-lg-12 mb-12">
+    <div class="col-xl-8 col-md-12 mb-12">
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
