@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Mail\TrainingMail;
 use App\Training;
 use App\Country;
+use App\Http\Controllers\TrainingController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
     use Queueable;
 
     private $training, $key, $deadline;
+    private $subjectPrefix = "";
 
     /**
      * Create a new notification instance.
@@ -22,12 +24,19 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
      * @param Training $training
      * @param string $key
      */
-    public function __construct(Training $training, string $key)
+    public function __construct(Training $training, string $key, $deadline = null)
     {
         $this->training = $training;
         $this->key = $key;
 
-        $this->deadline = now()->addDays(14);
+        // Check if deadline is manually set, because it's reminder
+        if(isset($deadline)){
+            $this->deadline = $deadline;
+            $this->subjectPrefix = "Reminder: ";
+        } else {
+            $this->deadline = now()->addDays(14);
+        }
+        
     }
 
     /**
@@ -49,9 +58,16 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+
+        // If training is not standard, specify this in the e-mail.
+        $trainingType = "";
+        if($this->training->type != 1){
+            $trainingType = strtolower(TrainingController::$types[$this->training->type]['text']) . " ";
+        }
+
         $textLines = [
             'Periodically we are asking you to confirm the interest for your ATC controller application with us.',
-            'Please confirm your continued interest in your training for '.$this->training->getInlineRatings(),
+            'Please confirm your continued interest for your *'.$trainingType.'training* for '.$this->training->getInlineRatings(),
             '**Deadline:** '.$this->deadline->toEuropeanDate(),
             '*If no confirmation is received within deadline, your training request will be automatically closed and your slot in the queue will be lost.*'
         ];
@@ -59,7 +75,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         $contactMail = Country::find($this->training->country_id)->contact;
         $actionUrl = route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->key] );
 
-        return (new TrainingMail('Confirm Continued Training Interest', $this->training, $textLines, $contactMail, $actionUrl, 'Confirm Interest', 'success'))
+        return (new TrainingMail($this->subjectPrefix.'Confirm Continued Training Interest', $this->training, $textLines, $contactMail, $actionUrl, 'Confirm Interest', 'success'))
             ->to($this->training->user->email);
     }
 
@@ -76,7 +92,8 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
 
         return [
             'training_id' => $this->training->id,
-            'key' => $this->key
+            'key' => $this->key,
+            'deadline' => $this->deadline
         ];
     }
 

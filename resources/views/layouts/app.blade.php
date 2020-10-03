@@ -124,6 +124,7 @@
                         }
 
                         $('.search-results').slideDown("fast");
+                        $('.search-spinner').css('visibility', 'hidden');
                     }
                 })
             }
@@ -132,6 +133,7 @@
             $(document).on('keyup', '#search', function(){
                 var query = $(this).val();
                 clearTimeout(timer);
+                $('.search-spinner').css('visibility', 'visible');
                 timer = setTimeout(fetch_users, 500, query)
             });
 
@@ -139,6 +141,7 @@
                 
                 var query = $('#search').val();
                 clearTimeout(timer);
+                $('.search-spinner').css('visibility', 'visible');
                 timer = setTimeout(fetch_users, 500, query)
 
                 e.preventDefault();
@@ -146,6 +149,7 @@
 
             $(document).on('focusout', '#search', function(){
                 $('.search-results').slideUp("fast");
+                $('.search-spinner').css('visibility', 'hidden');
             });
         });
     </script>

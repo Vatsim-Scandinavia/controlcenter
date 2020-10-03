@@ -240,6 +240,46 @@
                 </div>
             </div>
         </div>
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Training Interest Confirmations
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Interest sent</th>
+                                <th>Confirmation Deadline</th>
+                                <th>Interest confirmed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($trainingInterests as $interest)
+                            <tr>
+                                <td>
+                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $interest->created_at)->toEuropeanDate() }}
+                                </td>
+                                <td>
+                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $interest->deadline)->toEuropeanDate() }}
+                                </td>
+                                <td>
+                                    @if($interest->confirmed_at)
+                                        {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $interest->confirmed_at)->toEuropeanDate() }}
+                                    @else
+                                        Not confirmed
+                                    @endif
+                                    
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>            
+        </div>
     </div>
 
 

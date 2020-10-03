@@ -69,7 +69,13 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortByDesc('status');
+        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sort(function($a, $b) {
+            if ($a->status == $b->status) {
+                return $a->created_at->timestamp - $b->created_at->timestamp;
+            }
+        
+            return $b->status - $a->status;
+        });
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -87,7 +93,13 @@ class TrainingController extends Controller
     public function history()
     {
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sortBy('id');
+        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
+            if ($a->status == $b->status) {
+                return $b->created_at->timestamp - $a->created_at->timestamp;
+            }
+        
+            return $b->status - $a->status;
+        });
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -234,7 +246,13 @@ class TrainingController extends Controller
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
 
-        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences'));
+        $trainingInterests = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+            ->where('training_id', $training->id)
+            ->get()
+            ->sortBy('created_at');
+        
+
+        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
     }
 
     /**
@@ -338,7 +356,7 @@ class TrainingController extends Controller
                             ->last();
 
         if ($notification->key != $key || Auth::id() != $training->user->id || $training->id != $notification->training_id) {
-            return response('', 400);
+            return abort(403);
         }
 
         DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)

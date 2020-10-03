@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->is($model) || $user->isModerator() || $user->teaches->where('user_id', $model->id)->count() > 0;
+        return $user->is($model) || $user->isModerator() || $user->isTeaching($model);
     }
 
     /**
