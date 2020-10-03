@@ -113,7 +113,7 @@ class SendTrainingInterestNotifications extends Command
 
         }
 
-        $this->info('Notifications have been sent');
+        $this->info('Training interests have been updated and followed up.');
 
         return;
     }
