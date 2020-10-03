@@ -128,6 +128,14 @@
   }
 }
 
+.search-spinner{
+  position: relative;
+    left: -70px;
+    top: 8px;
+    z-index: 10;
+    visibility: hidden;
+}
+
 .search-results{
   padding: 1rem;
   width: 80%;
