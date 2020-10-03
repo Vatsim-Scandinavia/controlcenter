@@ -16,7 +16,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private $training, $interest;
+    private $training, $interest, $reminder;
     private $subjectPrefix = "";
 
     /**
@@ -29,8 +29,9 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
     {
         $this->training = $training;
         $this->interest = $interest;
+        $this->reminder = $reminder;
 
-        if($reminder){
+        if($this->reminder){
             $subjectPrefix = "Reminder: ";
         }
     }
@@ -86,7 +87,8 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         return [
             'training_id' => $this->training->id,
             'key' => $this->interest->key,
-            'deadline' => $this->interest->deadline->format("Y-m-d H:i:s")
+            'deadline' => $this->interest->deadline->format("Y-m-d H:i:s"),
+            'reminder' => $this->reminder
         ];
     }
 }
