@@ -260,14 +260,14 @@
                             @foreach($trainingInterests as $interest)
                             <tr>
                                 <td>
-                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $interest->created_at)->toEuropeanDate() }}
+                                    {{ $interest->created_at->toEuropeanDate() }}
                                 </td>
                                 <td>
-                                    {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $interest->deadline)->toEuropeanDate() }}
+                                    {{ $interest->deadline->toEuropeanDate() }}
                                 </td>
                                 <td>
                                     @if($interest->confirmed_at)
-                                        {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $interest->confirmed_at)->toEuropeanDate() }}
+                                        {{ $interest->confirmed_at->toEuropeanDate() }}
                                     @else
                                         Not confirmed
                                     @endif
