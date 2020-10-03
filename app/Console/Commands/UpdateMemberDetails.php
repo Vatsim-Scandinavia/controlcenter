@@ -74,11 +74,10 @@ class UpdateMemberDetails extends Command
             if ($training->user->handover->subdivision == Setting::get('trainingSubDivisions')) continue;
 
             // change it's status
-            $training->status = -4;
-            $training->save();
+            $training->updateStatus(-4);
 
-            // TODO: Add notifications
-
+            $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
+            
         }
 
         $this->info("Done");
