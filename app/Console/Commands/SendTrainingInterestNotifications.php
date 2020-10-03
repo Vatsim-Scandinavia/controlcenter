@@ -78,8 +78,11 @@ class SendTrainingInterestNotifications extends Command
                     // If it's 14 days passed deadline, close the training
                     $this->info("Closing training ".$training->id);
 
+                    // Update the training
                     $training->updateStatus(-4);
-                    $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interested was not confirmed within deadline.'));
+                    $training->closed_reason = 'Continued training interest was not confirmed within deadline.';
+                    $training->save();
+                    $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interest was not confirmed within deadline.'));
 
 
                 } elseif ($requestDeadline->diffInDays(now()) == 6 && $requestUpdated->diffInDays(now()) != 0 && $requestConfirmed == null) {
