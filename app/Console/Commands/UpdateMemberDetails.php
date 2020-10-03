@@ -76,7 +76,7 @@ class UpdateMemberDetails extends Command
             // change it's status
             $training->updateStatus(-4);
 
-            $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
+            $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interested was not confirmed within deadline.'));
             
         }
 
