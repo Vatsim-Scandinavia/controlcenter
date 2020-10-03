@@ -16,6 +16,7 @@ class VoteController extends Controller
      */
     public function index()
     {
+        $this->authorize('index', Vote::class);
         $votes = Vote::all();
         return view('vote.index', compact('votes'));
     }
@@ -27,6 +28,7 @@ class VoteController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Vote::class);
         return view('vote.create');
     }
 
@@ -38,6 +40,9 @@ class VoteController extends Controller
      */
     public function store(Request $request)
     {
+
+        $this->authorize('store', Vote::class);
+
         $data = request()->validate([
             'expire_date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'expire_time' => 'required|regex:/^\d{2}:\d{2}$/',
