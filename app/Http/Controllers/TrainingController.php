@@ -234,7 +234,13 @@ class TrainingController extends Controller
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
 
-        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences'));
+        $trainingInterests = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
+            ->where('training_id', $training->id)
+            ->get()
+            ->sortBy('created_at');
+        
+
+        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
     }
 
     /**

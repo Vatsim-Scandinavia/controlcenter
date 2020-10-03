@@ -47,7 +47,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -93,7 +93,6 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         return [
             'training_id' => $this->training->id,
             'key' => $this->key,
-            'type' => $this->training->type,
             'deadline' => $this->deadline
         ];
     }
