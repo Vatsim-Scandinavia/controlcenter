@@ -20,7 +20,7 @@
             <span>Dashboard</span></a>
         </li>
 
-        @can('create', \App\Vatbook::class)
+        @can('view', \App\Vatbook::class)
         <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('vatbook') }}">
             <i class="fas fa-fw fa-calendar"></i>
@@ -32,6 +32,12 @@
         <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
             <i class="fas fa-graduation-cap"></i>
             <span>Moodle</span></a>
+        </li>
+
+        <li class="nav-item {{ Route::is('member.endorsements') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('member.endorsements') }}">
+            <i class="fas fa-fw fa-check-square"></i>
+            <span>Endorsements List</span></a>
         </li>
 
         @if (\Auth::user()->isMentor())

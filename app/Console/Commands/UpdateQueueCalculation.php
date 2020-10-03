@@ -49,7 +49,7 @@ class UpdateQueueCalculation extends Command
                 $averageNumber = 0;
 
                 // Get the queue time from each training of this specific rating in the specific country
-                foreach($rating->trainings->where('country_id', $country->id) as $training){
+                foreach($rating->trainings->where('country_id', $country->id)->whereNotNull('created_at')->whereNotNull('started_at') as $training){
 
                     // Only include pure Vatsim ratings in calculation
                     if($training->ratings->count() == 1 && $training->ratings->first()->vatsim_rating){

@@ -2,10 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\TrainingInterestMail;
+use App\Http\Controllers\TrainingController;
 use App\Notifications\TrainingInterestNotification;
 use App\Notifications\TrainingClosedNotification;
 use App\Training;
+use App\TrainingInterest;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ class SendTrainingInterestNotifications extends Command
      *
      * @var string
      */
-    protected $signature = 'send:interest-notifications';
+    protected $signature = 'send:traininginterest';
 
     /**
      * The console command description.
@@ -46,53 +47,76 @@ class SendTrainingInterestNotifications extends Command
     public function handle()
     {
 
-        $trainings = Training::where([['started_at', null], ['created_at', '<=', now()->subtract('d', 30)], ['status', '=', 0]])->get();
+        $trainings = Training::where([['started_at', null], ['created_at', '<=', Carbon::now()->subDays(30)], ['status', '=', 0]])->get();
 
         foreach ($trainings as $training) {
 
-            $last = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
-                ->where('training_id', $training->id)
-                ->get()
-                ->sortBy('created_at')
-                ->last();
+            $lastInterestRequest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
 
-            // A notification hasn't been sent previously
-            if ($last == null) {
-                if ($training->created_at->diffInDays(now()) >= 30) {
-                    $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
-                    $training->user->notify(new TrainingInterestNotification($training, $key));
-                }
-            }
+            if($lastInterestRequest == null) {
+                // A notification has NOT been sent previously
+                // Generate training interest key and store it in the request
+                $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
 
-            // A notification has been sent previously
-            if ($last != null) {
+                $interest = TrainingInterest::create([
+                    'training_id' => $training->id,
+                    'key' => $key,
+                    'deadline' => now()->addDays(14),
+                ]);
 
-                $created_at = Carbon::make($last->created_at);
+                // Send notification to student
+                $training->user->notify(new TrainingInterestNotification($training, $interest));
+                
+            } else {
+                // A notification has been sent previously
 
-                if ($created_at->diffInDays(now()) >= 14 && $last->confirmed_at == null) {
-                    // Training should be closed
+                $requestDeadline = $lastInterestRequest->deadline;
+                $requestConfirmed = $lastInterestRequest->confirmed_at;
+                $requestUpdated = $lastInterestRequest->updated_at;
+
+                if ($requestDeadline->diffInMinutes(now(), false) >= 0 && $requestConfirmed == null) {
+                    // If it's 14 days passed deadline, close the training
+                    $this->info("Closing training ".$training->id);
+
+                    // Update the training
                     $training->updateStatus(-4);
+                    $training->closed_reason = 'Continued training interest was not confirmed within deadline.';
+                    $training->save();
+                    $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interest was not confirmed within deadline.'));
 
-                    // Notify the student
-                    $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interested was not confirmed within deadline.'));
 
-                } elseif ($created_at->diffInDays(now()) >= 30 && $training->created_at->diffInDays(now()) >= 30) {
-                    // Send new notification
+                } elseif ($requestDeadline->diffInDays(now()) == 6 && $requestUpdated->diffInDays(now()) != 0 && $requestConfirmed == null) {
+                    // If the interest is not confirmed after 6 days, we remind
+                    $this->info("Reminding training ".$training->id);
+
+                    $requestUpdated = now();
+                    $lastInterestRequest->save();
+
+                    $training->user->notify(new TrainingInterestNotification($training, $lastInterestRequest, true));     
+
+
+                } elseif ($lastInterestRequest->created_at->diffInDays(now()) >= 30) {
+                    // The training has been previously notified, after 30 days it's time for a new request
+                    // Generate training interest key and store it in the request
                     $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
-                    $training->user->notify(new TrainingInterestNotification($training, $key));
 
-                } elseif ($created_at->diffInDays(now()) >= 7) {
-                    // Reminder should be sent
-                    $key = $last->key;
-                    $deadline = $last->deadline;
-                    Mail::to($training->user)->send(new TrainingInterestMail($training, $key, $deadline));
+                    $interest = TrainingInterest::create([
+                        'training_id' => $training->id,
+                        'key' => $key,
+                        'deadline' => now()->addDays(14),
+                    ]);
+
+                    // Send notification to student
+                    $training->user->notify(new TrainingInterestNotification($training, $interest));
+
                 }
+
 
             }
 
         }
 
-        $this->info('Notifications have been sent');
+        $this->info('Training interests have been updated and followed up.');
 
         return;
     }

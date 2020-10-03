@@ -40,7 +40,7 @@ class TrainingExamNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -80,7 +80,8 @@ class TrainingExamNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'training_id' => $this->training->id
+            'training_id' => $this->training->id,
+            'training_examination_report' => $this->report->id
         ];
     }
 }

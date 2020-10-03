@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Vote;
 
 class NotificationController extends Controller
 {
@@ -13,6 +14,7 @@ class NotificationController extends Controller
      */
     public function index()
     {
+        $this->authorize('accessNotification', Vote::class);
         return view('admin.notificationtemplates');
     }
 

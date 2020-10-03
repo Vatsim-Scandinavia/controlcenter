@@ -9,6 +9,7 @@ use App\Notifications\TrainingMentorNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
+use App\TrainingInterest;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -69,7 +70,15 @@ class TrainingController extends Controller
     public function index()
     {
 
-        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sortByDesc('status');
+        $this->authorize('viewActiveRequests', Training::class);
+
+        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sort(function($a, $b) {
+            if ($a->status == $b->status) {
+                return $a->created_at->timestamp - $b->created_at->timestamp;
+            }
+        
+            return $b->status - $a->status;
+        });
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -87,7 +96,15 @@ class TrainingController extends Controller
     public function history()
     {
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sortBy('id');
+        $this->authorize('viewHistoricRequests', Training::class);
+
+        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
+            if ($a->status == $b->status) {
+                return $b->created_at->timestamp - $a->created_at->timestamp;
+            }
+        
+            return $b->status - $a->status;
+        });
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -234,7 +251,9 @@ class TrainingController extends Controller
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
 
-        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences'));
+        $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();        
+
+        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
     }
 
     /**
@@ -331,22 +350,15 @@ class TrainingController extends Controller
     public function confirmInterest(Training $training, string $key)
     {
 
-        $notification = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
-                            ->where('training_id', '=', $training->id)
-                            ->get()
-                            ->sortBy('created_at')
-                            ->last();
+        $interest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
 
-        if ($notification->key != $key || Auth::id() != $training->user->id || $training->id != $notification->training_id) {
-            return response('', 400);
+        if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
+            return abort(403);
         }
 
-        DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
-                ->where('notification_id', $notification->notification_id)
-                ->update([
-                    'confirmed_at' => now(),
-                    'updated_at' => now()
-                ]);
+        $interest->confirmed_at = now();
+        $interest->updated_at = now();
+        $interest->save();
 
         ActivityLogController::info('Training interest confirmed.');
         return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');

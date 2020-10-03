@@ -37,8 +37,9 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
-                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null)
+                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) 
                                         <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}</a>
+                                        &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i>
                                     @else
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
                                     @endif
@@ -124,9 +125,7 @@
                             <input id="training" type="checkbox" name="training" value=1>
                             <label for="training">Training</label>
                         </div>
-                    @endif
 
-                    @if ($user->isModerator())
                         <div class="form-group">
                             <input id="event" type="checkbox" name="event" value=1>
                             <label for="event">Event</label>

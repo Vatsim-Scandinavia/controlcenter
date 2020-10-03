@@ -60,6 +60,9 @@ class Training extends Model
             // If training is completed or closed
             if($newStatus < 0){
                 $this->update(['closed_at' => now()]);
+
+                // Delete all related training interest models, as they will only cause problems if training is re-opened.
+                TrainingInterest::where('training_id', $this->id)->delete();
             }
 
             $this->update(['status' => $newStatus]);
@@ -165,6 +168,16 @@ class Training extends Model
     public function mentors()
     {
         return $this->belongsToMany(User::class, 'training_mentor')->withPivot('expire_at');
+    }
+
+    /**
+     * Get training interests of this training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function interests()
+    {
+        return $this->hasMany(TrainingInterest::class);
     }
 
     /**

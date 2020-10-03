@@ -79,6 +79,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');
     }
 
+    public function isTeaching(User $user){
+        return $this->teaches->where('user_id', $user->id)->count() > 0;
+    }
+
     public function ratings()
     {
         return $this->belongsToMany(Rating::class);

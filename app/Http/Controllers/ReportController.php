@@ -9,6 +9,7 @@ use App\User;
 use App\Country;
 use App\Training;
 use App\Rating;
+use App\Vote;
 
 class ReportController extends Controller
 {
@@ -20,6 +21,7 @@ class ReportController extends Controller
 
     public function trainings($filterCountry = false){
 
+        $this->authorize('accessTrainingReports', Vote::class);
         // Get stats
         $cardStats = $this->getCardStats($filterCountry);
         $totalRequests = $this->getDailyRequestsStats($filterCountry);
@@ -41,6 +43,8 @@ class ReportController extends Controller
 
     public function mentors(){
 
+        $this->authorize('viewMentors', Vote::class);
+
         $mentors = User::where('group', '<=', 3)->get();
 
         return view('reports.mentors', compact('mentors'));
@@ -53,6 +57,8 @@ class ReportController extends Controller
      */
 
     public function atc(){
+
+        $this->authorize('viewAtcActivity', Vote::class);
 
         $controllers = User::all();
 
@@ -158,7 +164,7 @@ class ReportController extends Controller
                     $query = DB::table('trainings')
                         ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
                         ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                         ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
                         ->where('country_id', $countryFilter)
@@ -173,7 +179,7 @@ class ReportController extends Controller
                     $query = DB::table('trainings')
                         ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
                         ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                         ->where('status', -1)
                         ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
@@ -199,7 +205,7 @@ class ReportController extends Controller
                     $query = DB::table('trainings')
                         ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
                         ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                         ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
                         ->groupBy('month')
@@ -213,7 +219,7 @@ class ReportController extends Controller
                     $query = DB::table('trainings')
                         ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
                         ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                         ->where('status', -1)
                         ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
