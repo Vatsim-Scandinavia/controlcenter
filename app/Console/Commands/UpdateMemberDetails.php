@@ -74,7 +74,7 @@ class UpdateMemberDetails extends Command
 
             // Close the training
             $training->updateStatus(-4);
-            $training->closed_reason = 'Student has left the subdivision.';
+            $training->closed_reason = 'The student has left or is no longer part of our subdivision.';
             $training->save();
 
             // Notify student of closure
