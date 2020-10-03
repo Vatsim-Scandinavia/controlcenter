@@ -19,7 +19,7 @@ class SendTrainingInterestNotifications extends Command
      *
      * @var string
      */
-    protected $signature = 'send:interest-notifications';
+    protected $signature = 'send:traininginterest';
 
     /**
      * The console command description.
@@ -85,7 +85,7 @@ class SendTrainingInterestNotifications extends Command
                     // Reminder should be sent
                     $key = $last->key;
                     $deadline = $last->deadline;
-                    Mail::to($training->user)->send(new TrainingInterestMail($training, $key, $deadline));
+                    $training->user->notify(new TrainingInterestNotification($training, $key, $deadline));
                 }
 
             }

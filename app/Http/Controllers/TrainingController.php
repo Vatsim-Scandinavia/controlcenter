@@ -338,7 +338,7 @@ class TrainingController extends Controller
                             ->last();
 
         if ($notification->key != $key || Auth::id() != $training->user->id || $training->id != $notification->training_id) {
-            return response('', 400);
+            return abort(403);
         }
 
         DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
