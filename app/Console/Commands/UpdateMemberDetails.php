@@ -66,7 +66,7 @@ class UpdateMemberDetails extends Command
         // Get active trainings
         $trainings = Training::where('status', '>=', 0)->where('type', '!=', 5)->get();
 
-        $this->info("Closing trainings for those who left subdivision...");
+        $this->info("Closing trainings for those who left subdivision: ".$trainings->count()." members.");
 
         foreach ($trainings as $training) {
 
