@@ -38,8 +38,8 @@
                             <tr>
                                 <td>
                                     @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) 
-                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}</a>
-                                        &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i>
+                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
+                                        &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
                                     @else
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
                                     @endif
