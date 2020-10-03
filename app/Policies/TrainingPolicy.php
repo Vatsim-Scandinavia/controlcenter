@@ -135,4 +135,12 @@ class TrainingPolicy
         return $link;
     }
 
+    public function viewActiveRequests(User $user) {
+        return $user->isModerator();
+    }
+
+    public function viewHistoricRequests(User $user) {
+        return $user->isModerator();
+    }
+
 }
