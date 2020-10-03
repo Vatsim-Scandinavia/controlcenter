@@ -13,8 +13,10 @@ class GlobalSettingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Setting $setting)
     {
+        $this->authorize('index', $setting);
+
         return view('admin.globalsettings');
     }
 
@@ -24,8 +26,11 @@ class GlobalSettingController extends Controller
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function edit(Request $request, Setting $setting)
     {
+
+        $this->authorize('edit', $setting);
+
         $data = $request->validate([
             'trainingEnabled' => '',
             'trainingShowEstimate' => '',

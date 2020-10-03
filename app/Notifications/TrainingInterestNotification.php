@@ -32,7 +32,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         $this->reminder = $reminder;
 
         if($this->reminder){
-            $subjectPrefix = "Reminder: ";
+            $this->subjectPrefix = "Reminder: ";
         }
     }
 
