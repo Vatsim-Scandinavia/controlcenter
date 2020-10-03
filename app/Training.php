@@ -168,6 +168,16 @@ class Training extends Model
     }
 
     /**
+     * Get training interests of this training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function interests()
+    {
+        return $this->hasMany(TrainingInterest::class);
+    }
+
+    /**
      * Get the one time link associated with the training
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

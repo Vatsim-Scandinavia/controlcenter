@@ -8,6 +8,7 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App\Training;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\TrainingClosedNotification;
 
 class UpdateMemberDetails extends Command
 {
@@ -44,18 +45,20 @@ class UpdateMemberDetails extends Command
     {
         $mentors = User::where('group', 3)->get();
 
+        $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
+
         $this->info("Starting removing mentors");
 
         //start the loop
         foreach ($mentors as $mentor) {
 
-            if ($mentor->subdivision == Setting::get('trainingSubDivisions')) continue;
+            if (in_array($mentor->subdivision, $subdivisions)) continue;
 
             // remove any active trainings
-            $user->teaches()->detach();
+            $mentor->teaches()->detach();
 
             // remove training roles in countries
-            $user->training_role_countries()->detach();
+            $mentor->training_role_countries()->detach();
 
             // change user group to null
             $mentor->group = null;
@@ -71,12 +74,14 @@ class UpdateMemberDetails extends Command
 
         foreach ($trainings as $training) {
 
-            if ($training->user->handover->subdivision == Setting::get('trainingSubDivisions')) continue;
+            if (in_array($training->user->subdivision, $subdivisions)) continue;
 
             // change it's status
             $training->updateStatus(-4);
+            $training->closed_reason = 'Student has left the subdivision.';
+            $training->save();
 
-            $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interested was not confirmed within deadline.'));
+            $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the subdivision.'));
             
         }
 

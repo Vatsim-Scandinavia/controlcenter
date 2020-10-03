@@ -9,6 +9,7 @@ use App\Notifications\TrainingMentorNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingExamination;
+use App\TrainingInterest;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -246,11 +247,7 @@ class TrainingController extends Controller
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
 
-        $trainingInterests = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
-            ->where('training_id', $training->id)
-            ->get()
-            ->sortBy('created_at');
-        
+        $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();        
 
         return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
     }
@@ -349,22 +346,15 @@ class TrainingController extends Controller
     public function confirmInterest(Training $training, string $key)
     {
 
-        $notification = DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
-                            ->where('training_id', '=', $training->id)
-                            ->get()
-                            ->sortBy('created_at')
-                            ->last();
+        $interest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
 
-        if ($notification->key != $key || Auth::id() != $training->user->id || $training->id != $notification->training_id) {
+        if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
             return abort(403);
         }
 
-        DB::table(Training::CONTINUED_INTEREST_NOTIFICATION_LOG_TABLE)
-                ->where('notification_id', $notification->notification_id)
-                ->update([
-                    'confirmed_at' => now(),
-                    'updated_at' => now()
-                ]);
+        $interest->confirmed_at = now();
+        $interest->updated_at = now();
+        $interest->save();
 
         ActivityLogController::info('Training interest confirmed.');
         return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
