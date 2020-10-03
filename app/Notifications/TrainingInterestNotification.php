@@ -31,7 +31,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
 
         // Check if deadline is manually set, because it's reminder
         if(isset($deadline)){
-            $this->deadline = $deadline;
+            $this->deadline = \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $deadline);
             $this->subjectPrefix = "Reminder: ";
         } else {
             $this->deadline = now()->addDays(14);
@@ -67,7 +67,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
 
         $textLines = [
             'Periodically we are asking you to confirm the interest for your ATC controller application with us.',
-            'Please confirm your continued interest for your *'.$trainingType.'training* for '.$this->training->getInlineRatings(),
+            'Please confirm your continued interest for your '.$this->training->getInlineRatings().' '.$trainingType.'training.',
             '**Deadline:** '.$this->deadline->toEuropeanDate(),
             '*If no confirmation is received within deadline, your training request will be automatically closed and your slot in the queue will be lost.*'
         ];
@@ -93,7 +93,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         return [
             'training_id' => $this->training->id,
             'key' => $this->key,
-            'deadline' => $this->deadline
+            'deadline' => $this->deadline->format("Y-m-d H:i:s")
         ];
     }
 
