@@ -39,7 +39,7 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -80,7 +80,9 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'training_id' => $this->training->id
+            'training_id' => $this->training->id,
+            'new_status' => $this->training->status,
+            'reason' => $this->reason
         ];
     }
 }
