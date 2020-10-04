@@ -7,13 +7,8 @@ use Faker\Generator as Faker;
 
 $factory->define(TrainingReport::class, function (Faker $faker) {
 
-    $training = factory(\App\Training::class)->create();
-    $training->mentors()->attach($mentor = $mentor, ['expire_at' => now()->addCentury()]);
-
     return [
         'report_date' => today(),
-        'training_id' => $training->id,
-        'written_by_id' => $mentor->id,
         'content' => $faker->paragraph()
     ];
 });
