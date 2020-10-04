@@ -24,9 +24,12 @@ class DatabaseSeeder extends Seeder
         for ($i = 1; $i <= rand(100, 125); $i++) {
             $training = factory(App\Training::class)->create();
 
-            /*if ($i % 6 == 0) {
-                factory(App\SoloEndorsement::class)->create();
-            }*/
+            if ($i % 6 == 0 && !App\SoloEndorsement::where('user_id', $training->user_id)->exists()) {
+                factory(App\SoloEndorsement::class)->create([
+                    'user_id' => $training->user_id,
+                    'training_id' => $training->id,
+                ]);
+            }
 
             if ($i % 7 == 0) {
                 $training->mentors()->attach(App\User::where('group', 3)->inRandomOrder()->first(), ['expire_at' => now()->addYears(5)]);
