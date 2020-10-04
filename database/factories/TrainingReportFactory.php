@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(TrainingReport::class, function (Faker $faker) {
 
     $training = factory(\App\Training::class)->create();
-    $training->mentors()->attach($mentor = factory(\App\User::class)->create(['group' => 3]), ['expire_at' => now()->addCentury()]);
+    $training->mentors()->attach($mentor = $mentor, ['expire_at' => now()->addCentury()]);
 
     return [
         'report_date' => today(),

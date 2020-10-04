@@ -14,5 +14,6 @@ $factory->define(Training::class, function (Faker $faker) {
         'english_only_training' => false,
         'created_at' => \Carbon\Carbon::now(),
         'updated_at' => \Carbon\Carbon::now(),
+        'type' => $faker->numberBetween(1, 5),
     ];
 });
