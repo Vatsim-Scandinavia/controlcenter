@@ -20,5 +20,8 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'last_login' => \Carbon\Carbon::now(),
         'group' => $faker->numberBetween(1, 3),
+        'country' => $faker->randomElement([
+            null, 1, 2, 3, 4, 5,
+        ]),
     ];
 });
