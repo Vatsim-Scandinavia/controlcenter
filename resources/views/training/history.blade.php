@@ -65,7 +65,7 @@
                                         Training never started
                                     @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
-                                    @elseif ($training->stated_at != null)
+                                    @elseif ($training->started_at != null)
                                         {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
                                     @else
                                         N/A

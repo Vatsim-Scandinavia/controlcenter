@@ -48,9 +48,7 @@
                             @endif
                             <label for="training">Training</label>
                         </div>
-                    @endif
 
-                    @if ($user->isModerator())
                         <div class="form-group">
                             @if ($booking->event == 1)
                                 <input id="event" type="checkbox" name="event" value=1 checked>

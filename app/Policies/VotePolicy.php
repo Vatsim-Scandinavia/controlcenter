@@ -66,7 +66,8 @@ class VotePolicy
      * @return mixed
      */
     public function viewMentors(User $user) {
-        return $user->isAdmin();
+        return $user->isAdmin() ||
+            $user->isModerator();
     }
 
     /**

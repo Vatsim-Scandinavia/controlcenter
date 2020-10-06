@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -27,7 +28,7 @@ class ReportController extends Controller
         $totalRequests = $this->getDailyRequestsStats($filterCountry);
         list($newRequests, $completedRequests) = $this->getBiAnnualRequestsStats($filterCountry);
         $queues = $this->getQueueStats($filterCountry);
-    
+
         // Send it to the view
         ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All Countries';
         $countries = Country::all();
@@ -45,7 +46,14 @@ class ReportController extends Controller
 
         $this->authorize('viewMentors', Vote::class);
 
-        $mentors = User::where('group', '<=', 3)->get();
+        if (auth()->user()->isAdmin()) {
+            $mentors = User::where('group', '<=', 3)->get();
+        } else {
+            $mentors = User::where('group', '<=', 3)->whereHas('training_role_countries', function(Builder $query) {
+                $query->whereIn('country_id', auth()->user()->training_role_countries()->pluck('country_id'));
+            })->get();
+        }
+
 
         return view('reports.mentors', compact('mentors'));
     }
@@ -68,7 +76,7 @@ class ReportController extends Controller
 
     /**
      * Return the statistics for the cards (in queue, in training, awaiting exam, completed this year) on top of the page
-     * 
+     *
      * @return mixed
      */
     protected function getCardStats($countryFilter)
@@ -99,7 +107,7 @@ class ReportController extends Controller
 
     /**
      * Return the statistics the total amount of requests per day
-     * 
+     *
      * @return mixed
      */
     protected function getDailyRequestsStats($countryFilter)
@@ -118,7 +126,7 @@ class ReportController extends Controller
 
         } else {
             $data = Training::select([
-                DB::raw('count(id) as `count`'), 
+                DB::raw('count(id) as `count`'),
                 DB::raw('DATE(created_at) as day')
               ])->groupBy('day')
               ->where('created_at', '>=', Carbon::now()->subYear(1))
@@ -134,7 +142,7 @@ class ReportController extends Controller
 
     /**
      * Return the new/completed request statistics for 6 months
-     * 
+     *
      * @return mixed
      */
     protected function getBiAnnualRequestsStats($countryFilter)
@@ -239,7 +247,7 @@ class ReportController extends Controller
 
     /**
      * Return the new/completed request statistics for 6 months
-     * 
+     *
      * @return mixed
      */
     protected function getQueueStats($countryFilter)
@@ -281,5 +289,5 @@ class ReportController extends Controller
 
         return $payload;
     }
-    
+
 }

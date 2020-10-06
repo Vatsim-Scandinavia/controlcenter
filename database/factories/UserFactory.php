@@ -18,8 +18,10 @@ use Faker\Generator as Faker;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
-        'id' => $faker->numberBetween(1),
         'last_login' => \Carbon\Carbon::now(),
-        'group' => 1,
+        'group' => $faker->numberBetween(1, 3),
+        'country' => $faker->randomElement([
+            null, 1, 2, 3, 4, 5,
+        ]),
     ];
 });
