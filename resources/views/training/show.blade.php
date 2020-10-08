@@ -3,6 +3,17 @@
 @section('title', 'Training')
 @section('content')
 
+@if($training->status < -1)
+    <div class="alert alert-warning" role="alert">
+        Training is closed with reason: 
+        @if(isset($training->closed_reason))
+            {{ $training->closed_reason }}
+        @else
+            No reason given
+        @endif
+    </div>
+@endif
+
 <div class="row">
 
     <div class="col-xl-12 col-md-12 mb-12">
