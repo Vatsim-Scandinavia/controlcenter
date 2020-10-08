@@ -62,7 +62,7 @@
                         <div class="form-group">
                             <label for="attachments">Attachments</label>
                             <div>
-                                <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" multiple>
+                                <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf" multiple>
                             </div>
                             @error('files')
                                 <span class="text-danger">{{ $errors->first('files') }}</span>
