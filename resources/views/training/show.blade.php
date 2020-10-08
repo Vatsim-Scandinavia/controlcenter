@@ -327,12 +327,12 @@
                             </div>
                     @endforeach
 
-                    @if (sizeof($training->reports) == 0)
+                    @if ($reports->count() == 0)
                             <div class="card-text text-primary">
                                 No training reports yet.
                             </div>
                     @else
-                        @foreach($training->reports as $report)
+                        @foreach($reports as $report)
                             @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
                                 <div class="card bg-light mb-3">
                                     <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toEuropeanDate() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
