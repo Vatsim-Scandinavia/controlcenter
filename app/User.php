@@ -57,11 +57,11 @@ class User extends Authenticatable
     /**
      * Link user's endorsement
      *
-     * @return \App\Solo
+     * @return \App\SoloEndorsement
      */
     public function soloEndorsement()
     {
-        return $this->hasOne(Solo::class);
+        return $this->hasOne(SoloEndorsement::class);
     }
 
     public function trainings()
