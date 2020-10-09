@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Browser;
 use App\User;
 use App\Position;
 use App\SoloEndorsement;
@@ -53,9 +52,8 @@ class SoloEndorsementController extends Controller
         $user = Auth::user();
         $students = User::with('trainings')->has('trainings')->get();
         $positions = Position::all();
-        $firefox = Browser::isFirefox();
 
-        return view('user.soloendorsement.create', compact('students', 'positions', 'firefox'));
+        return view('user.soloendorsement.create', compact('students', 'positions'));
     }
 
     /**

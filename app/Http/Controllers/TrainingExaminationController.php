@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Browser;
 use App\OneTimeLink;
 use Carbon\Carbon;
 use App\Position;
@@ -42,9 +41,8 @@ class TrainingExaminationController extends Controller
         if ($training->status != 3) { return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
 
         $positions = Position::all();
-        $firefox = Browser::isFirefox();
 
-        return view('training.exam.create', compact('training', 'positions', 'firefox'));
+        return view('training.exam.create', compact('training', 'positions'));
     }
 
     /**

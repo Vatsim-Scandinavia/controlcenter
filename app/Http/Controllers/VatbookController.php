@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Browser;
 use App\User;
 use App\Position;
 use App\Vatbook;
@@ -29,9 +28,8 @@ class VatbookController extends Controller
         if($user->isModerator()) $positions = Position::all();
         else $positions = Position::where('rating', '<=', $user->rating)->get();
         if($user->soloEndorsement()->first()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
-        $firefox = Browser::isFirefox();
 
-        return view('vatbook.index', compact('bookings', 'user', 'positions', 'firefox'));
+        return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
 
     /**
@@ -47,9 +45,8 @@ class VatbookController extends Controller
         else $positions = Position::where('rating', '<=', $user->rating)->get();
         if($user->soloEndorsement()->first()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
         $this->authorize('update', $booking);
-        $firefox = Browser::isFirefox();
 
-        return view('vatbook.show', compact('booking', 'positions', 'user', 'firefox'));
+        return view('vatbook.show', compact('booking', 'positions', 'user'));
     }
 
     /**

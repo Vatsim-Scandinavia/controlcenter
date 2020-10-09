@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Browser;
 use App\Country;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
@@ -182,9 +181,8 @@ class TrainingController extends Controller
 
         $students = User::all();
         $ratings = Country::with('ratings')->get()->toArray();
-        $firefox = Browser::isFirefox();
 
-        return view('training.create', compact('students', 'ratings', 'firefox'));
+        return view('training.create', compact('students', 'ratings'));
     }
 
     /**

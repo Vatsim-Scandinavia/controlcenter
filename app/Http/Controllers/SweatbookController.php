@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Browser;
 use App\Sweatbook;
 use App\Position;
 use Carbon\Carbon;
@@ -25,9 +24,8 @@ class SweatbookController extends Controller
         $this->authorize('view', Sweatbook::class);
         $bookings = Sweatbook::all()->sortBy('date');
         $positions = Position::all();
-        $firefox = Browser::isFirefox();
         
-        return view('sweatbook.index', compact('bookings', 'user', 'positions', 'firefox'));
+        return view('sweatbook.index', compact('bookings', 'user', 'positions'));
     }
 
     /**
@@ -41,9 +39,8 @@ class SweatbookController extends Controller
         $positions = Position::all();
         $user = Auth::user();
         $this->authorize('update', $booking);
-        $firefox = Browser::isFirefox();
 
-        return view('sweatbook.show', compact('booking', 'positions', 'firefox'));
+        return view('sweatbook.show', compact('booking', 'positions'));
     }
 
     /**

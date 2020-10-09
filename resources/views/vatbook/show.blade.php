@@ -34,11 +34,11 @@
                     <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ $booking->position->callsign }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                @if ($firefox)
+                                @browser('isFirefox')
                                     <option>{{ $position->callsign }}</option>
                                 @else
                                     <option value="{{ $position->callsign }}">{{ $position->name }}</option>
-                                @endif
+                                @endbrowser
                             @endforeach
                         </datalist>
                     </div>
