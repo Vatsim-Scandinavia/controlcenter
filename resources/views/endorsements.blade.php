@@ -27,7 +27,11 @@
                             @foreach($users as $user)
                             <tr>
                                 <td>
-                                    {{ $user->name }} ({{ $user->id }})
+                                    @if($user->isModerator())
+                                        <a href="{{ route('user.show', $user->id) }}">{{ $user->name }} ({{ $user->id }})</a>
+                                    @else 
+                                        {{ $user->name }} ({{ $user->id }})
+                                    @endif  
                                 </td>
                                 <td>
                                     @foreach ($user->ratings as $rating)
