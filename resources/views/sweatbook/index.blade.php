@@ -33,12 +33,13 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
-                                    @if ($booking->mentor == $user->id || $user->isModerator())
+                                    @can('update', $booking)
                                         <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
                                         &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
-                                    @else
+                                    @endcan
+                                    @cannot('update', $booking)
                                         {{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
-                                    @endif
+                                    @endcannot
                                 </td>
                                 <td>
                                     {{ Carbon\Carbon::create($booking->start_at)->toEuropeanTime() }}
