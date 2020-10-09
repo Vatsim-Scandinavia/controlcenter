@@ -76,7 +76,7 @@ class SweatbookController extends Controller
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
         $booking->mentor_notes = $data['mentor_notes'];
 
-        if($booking->start_at->diffInMinutes($booking->end_at, false) <= 0) return back()->withInput()->withErrors('Booking need to have a valid duration!');
+        if($booking->start_at === $booking->end_at) return back()->withInput()->withErrors('Booking need to have a valid duration!');
         if($booking->start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
         if(!Sweatbook::whereBetween('start_at', [$booking->start_at, $booking->end_at])
