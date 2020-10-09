@@ -11,8 +11,11 @@
         "php": "^7.2",
         "anlutro/l4-settings": "^0.11.2",
         "fideloper/proxy": "^4.0",
+        "graham-campbell/markdown": "^13.1",
+        "hisorange/browser-detect": "^4.2",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
+        "league/commonmark": "^1.5",
         "league/oauth2-client": "^2.4",
         "wildside/userstamps": "^2.0"
     },

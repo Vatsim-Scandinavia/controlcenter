@@ -35,7 +35,11 @@
 
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @browser('isFirefox')
+                                    <option>{{ $position->callsign }}</option>
+                                @else
+                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @endbrowser
                             @endforeach
                         </datalist>
 
@@ -102,9 +106,14 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
+        var simplemde1 = new SimpleMDE({ element: document.getElementById("contentBox") });
+        var simplemde2 = new SimpleMDE({ element: document.getElementById("contentimprove") });
+
         $('div').tooltip();
 
         var defaultDate = "{{ old('report_date') }}"
