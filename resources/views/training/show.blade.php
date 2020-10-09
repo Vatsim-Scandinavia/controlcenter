@@ -353,14 +353,14 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ Illuminate\Mail\Markdown::parse($report->content) }}
+                                            {{ Illuminate\Mail\Markdown::parse(strip_tags($report->content)) }}
                                         </p>
                                     </div>
                                     @if ($report->contentimprove != null)
                                     <div class="card-header text-primary">Areas to improve</div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {{ Illuminate\Mail\Markdown::parse($report->contentimprove) }}
+                                            {{ Illuminate\Mail\Markdown::parse(strip_tags($report->contentimprove)) }}
                                         </p>
                                     </div>
                                     @endif
