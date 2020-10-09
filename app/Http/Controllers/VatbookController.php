@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use App\User;
 use App\Position;
 use App\Vatbook;
@@ -102,22 +103,27 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
+        
+        if(App::environment('production')) {
+            if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
+            else $booking->training = 0;
+            if(isset($data['event']) && $user->isModerator()) {
+                $eventUrl = "vatsim-scandinavia.org";
+                $booking->event = 1;
+                $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
+            }
+            else {
+                $booking->event = 0;
+                $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
+            }
 
-        if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-        else $booking->training = 0;
-        if(isset($data['event']) && $user->isModerator()) {
-            $eventUrl = "vatsim-scandinavia.org";
-            $booking->event = 1;
-            $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
+            preg_match_all('/EU_ID=(\d+)/', $response, $matches);
+            $booking->eu_id = $matches[1][0];
+        } else {
+            $booking->eu_id = 0;
         }
-        else {
-            $booking->event = 0;
-            $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
-        }
 
-        preg_match_all('/EU_ID=(\d+)/', $response, $matches);
-
-        $booking->eu_id = $matches[1][0];
+        
         $booking->save();
 
         ActivityLogController::info("Created vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
@@ -175,19 +181,19 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
-
-        if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-        else $booking->training = 0;
-        if(isset($data['event']) && $user->isModerator()) {
-            $eventUrl = "vatsim-scandinavia.org";
-            $booking->event = 1;
-            file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
+        if(App::environment('production')) {
+            if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
+            else $booking->training = 0;
+            if(isset($data['event']) && $user->isModerator()) {
+                $eventUrl = "vatsim-scandinavia.org";
+                $booking->event = 1;
+                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
+            }
+            else {
+                $booking->event = 0;
+                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
+            }
         }
-        else {
-            $booking->event = 0;
-            file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
-        }
-
         $booking->save();
 
         ActivityLogController::info("Updated vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
@@ -206,7 +212,9 @@ class VatbookController extends Controller
         $booking = Vatbook::findOrFail($id);
         $this->authorize('update', $booking);
 
-        file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $booking->eu_id . '&Local_ID=' . $booking->local_id);
+        if(App::environment('production')) {
+            file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $booking->eu_id . '&Local_ID=' . $booking->local_id);
+        }
         $booking->deleted = true;
         $booking->local_id = null;
         $booking->save();
