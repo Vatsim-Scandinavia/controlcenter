@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Browser;
+use App\User;
 use App\Position;
 use App\Vatbook;
 use Carbon\Carbon;
@@ -18,13 +19,16 @@ class VatbookController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function index(){
+    public function index(User $user){
         $user = Auth::user();
         $this->authorize('view', Vatbook::class);
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
-        $positions = Position::all();
+        if($user->isModerator()) $positions = Position::all();
+        else $positions = Position::where('rating', '<=', $user->rating)->get();
+        if($user->soloEndorsement()->first()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
         $firefox = Browser::isFirefox();
 
         return view('vatbook.index', compact('bookings', 'user', 'positions', 'firefox'));
@@ -38,8 +42,10 @@ class VatbookController extends Controller
      */
     public function show($id){
         $booking = Vatbook::findOrFail($id);
-        $positions = Position::all();
         $user = Auth::user();
+        if($user->isModerator()) $positions = Position::all();
+        else $positions = Position::where('rating', '<=', $user->rating)->get();
+        if($user->soloEndorsement()->first()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
         $this->authorize('update', $booking);
         $firefox = Browser::isFirefox();
 
@@ -79,6 +85,8 @@ class VatbookController extends Controller
         $booking->name = $user->name;
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
+
+        if($booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
 
         if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
         if($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
@@ -147,6 +155,8 @@ class VatbookController extends Controller
 
         $booking->callsign = $data['position'];
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+
+        if($booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
 
         if($booking->time_start->diffInMinutes($booking->time_end, false) <= 0) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
         if($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
