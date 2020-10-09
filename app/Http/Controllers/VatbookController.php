@@ -156,7 +156,8 @@ class VatbookController extends Controller
 
         if($booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
 
-        if($booking->time_start->diffInMinutes($booking->time_end, false) <= 0) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+        if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+        if($booking->time_start->diffInMinutes($booking->time_end, false) < 0) $booking->time_end->addDay();
         if($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
         if(!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
