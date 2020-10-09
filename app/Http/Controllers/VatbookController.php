@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Browser;
 use App\Position;
-use App\User;
 use App\Vatbook;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -25,8 +25,9 @@ class VatbookController extends Controller
         $this->authorize('view', Vatbook::class);
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
         $positions = Position::all();
+        $firefox = Browser::isFirefox();
 
-        return view('vatbook.index', compact('bookings', 'user', 'positions'));
+        return view('vatbook.index', compact('bookings', 'user', 'positions', 'firefox'));
     }
 
     /**
@@ -40,8 +41,9 @@ class VatbookController extends Controller
         $positions = Position::all();
         $user = Auth::user();
         $this->authorize('update', $booking);
+        $firefox = Browser::isFirefox();
 
-        return view('vatbook.show', compact('booking', 'positions', 'user'));
+        return view('vatbook.show', compact('booking', 'positions', 'user', 'firefox'));
     }
 
     /**

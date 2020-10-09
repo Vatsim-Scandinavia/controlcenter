@@ -29,7 +29,11 @@
 
                         <datalist id="students">
                             @foreach($students as $student)
+                                @if ($firefox)
+                                    <option>{{ $student->id }}</option>
+                                @else
                                 <option value="{{ $student->id }}">{{ $student->name }}</option>
+                                @endif
                             @endforeach
                         </datalist>
 

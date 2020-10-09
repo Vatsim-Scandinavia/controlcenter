@@ -107,7 +107,11 @@
                         <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @if ($firefox)
+                                    <option>{{ $position->callsign }}</option>
+                                @else
+                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @endif
                             @endforeach
                         </datalist>
                         @error('position')

@@ -28,7 +28,11 @@
 
                         <datalist id="students">
                             @foreach($students as $student)
+                                @if ($firefox)
+                                    <option>{{ $student->id }}</option>
+                                @else
                                 <option value="{{ $student->id }}">{{ $student->name }}</option>
+                                @endif
                             @endforeach
                         </datalist>
 
@@ -65,7 +69,11 @@
 
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @if ($firefox)
+                                    <option>{{ $position->callsign }}</option>
+                                @else
+                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @endif
                             @endforeach
                         </datalist>
 

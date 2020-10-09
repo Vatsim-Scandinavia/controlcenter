@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Browser;
 use App\OneTimeLink;
 use App\Position;
 use App\Training;
@@ -43,8 +44,9 @@ class TrainingReportController extends Controller
         if ($training->status != 1 && $training->status != 2) { return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.'); }
 
         $positions = Position::all();
+        $firefox = Browser::isFirefox();
 
-        return view('training.report.create', compact('training', 'positions'));
+        return view('training.report.create', compact('training', 'positions', 'firefox'));
     }
 
     /**
@@ -114,7 +116,9 @@ class TrainingReportController extends Controller
         $this->authorize('update', $report);
 
         $positions = Position::all();
-        return view('training.report.edit', compact('report', 'positions'));
+        $firefox = Browser::isFirefox();
+
+        return view('training.report.edit', compact('report', 'positions', 'firefox'));
     }
 
     /**

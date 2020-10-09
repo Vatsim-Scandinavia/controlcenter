@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Browser;
 use App\Sweatbook;
 use App\Position;
 use Carbon\Carbon;
@@ -19,8 +20,9 @@ class SweatbookController extends Controller
         $user = Auth::user();
         $bookings = Sweatbook::all()->sortBy('date');
         $positions = Position::all();
+        $firefox = Browser::isFirefox();
         
-        if($user->isMentor()) return view('sweatbook.index', compact('bookings', 'user', 'positions'));
+        if($user->isMentor()) return view('sweatbook.index', compact('bookings', 'user', 'positions', 'firefox'));
         
         abort(403);
     }
@@ -35,8 +37,9 @@ class SweatbookController extends Controller
         $booking = Sweatbook::findOrFail($id);
         $positions = Position::all();
         $user = Auth::user();
+        $firefox = Browser::isFirefox();
 
-        if ($booking->mentor == $user->id || $user->isModerator()) return view('sweatbook.show', compact('booking', 'positions'));
+        if ($booking->mentor == $user->id || $user->isModerator()) return view('sweatbook.show', compact('booking', 'positions', 'firefox'));
 
         abort(403);
     }
