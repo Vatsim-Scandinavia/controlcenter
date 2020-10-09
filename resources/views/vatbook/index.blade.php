@@ -37,12 +37,13 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
-                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) 
+                                    @can('update', $booking)
                                         <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
                                         &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
-                                    @else
+                                    @endcan
+                                    @cannot('update', $booking)
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
-                                    @endif
+                                    @endcannot
                                 </td>
                                 <td>
                                     {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanTime() }}

@@ -194,7 +194,6 @@ class VatbookController extends Controller
      */
     public function delete($id)
     {
-        $user = Auth::user();
         $booking = Vatbook::findOrFail($id);
         $this->authorize('update', $booking);
 
