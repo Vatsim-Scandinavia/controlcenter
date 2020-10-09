@@ -353,14 +353,14 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {!! nl2br(e($report->content)) !!}
+                                            @markdown($report->content)
                                         </p>
                                     </div>
                                     @if ($report->contentimprove != null)
                                     <div class="card-header text-primary">Areas to improve</div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {!! nl2br(e($report->contentimprove)) !!}
+                                            @markdown($report->contentimprove)
                                         </p>
                                     </div>
                                     @endif
