@@ -28,7 +28,7 @@ class VatbookController extends Controller
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
         if($user->isModerator()) $positions = Position::all();
         else $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->soloEndorsement()->first()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
+        if($user->soloEndorsement()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
 
         return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
@@ -44,7 +44,7 @@ class VatbookController extends Controller
         $user = Auth::user();
         if($user->isModerator()) $positions = Position::all();
         else $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->soloEndorsement()->first()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
+        if($user->soloEndorsement()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
         $this->authorize('update', $booking);
 
         return view('vatbook.show', compact('booking', 'positions', 'user'));
