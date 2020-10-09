@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'extensions' => [],
+    'extensions' => ["League\CommonMark\Extension\GithubFlavoredMarkdownExtension"],
 
     /*
     |--------------------------------------------------------------------------
