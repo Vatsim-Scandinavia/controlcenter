@@ -19,7 +19,7 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Student</th>
+                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="endorsements" class="w-50" data-sortable="false" data-filter-control="input">Endorsements</th>
                             </tr>
                         </thead>
