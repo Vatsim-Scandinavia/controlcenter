@@ -27,9 +27,9 @@ class VatbookController extends Controller
         $this->authorize('view', Vatbook::class);
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
         if($user->isModerator()) $positions = Position::all();
+        elseif($user->getActiveTraining(2) != null && $user->getActiveTraining(2)->ratings()->first()->vatsim_rating > $user->rating) $positions = Position::where('rating', '<=', $user->getActiveTraining(2)->ratings()->first()->vatsim_rating)->get();
         else $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->soloEndorsement()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
-
+        
         return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
 
@@ -43,8 +43,8 @@ class VatbookController extends Controller
         $booking = Vatbook::findOrFail($id);
         $user = Auth::user();
         if($user->isModerator()) $positions = Position::all();
+        elseif($user->getActiveTraining(2) != null && $user->getActiveTraining(2)->ratings()->first()->vatsim_rating > $user->rating) $positions = Position::where('rating', '<=', $user->getActiveTraining(2)->ratings()->first()->vatsim_rating)->get();
         else $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->soloEndorsement()->exists() && $user->rating < 5 && !$user->isModerator()) $positions->push(Position::where('callsign', $user->soloEndorsement()->first()->position)->first());
         $this->authorize('update', $booking);
 
         return view('vatbook.show', compact('booking', 'positions', 'user'));
@@ -84,7 +84,8 @@ class VatbookController extends Controller
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
 
-        if($booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
+        if($user->getActiveTraining(2) != null && $booking->position->rating > $user->getActiveTraining(2)->ratings()->first()->vatsim_rating && $booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
+        elseif($user->getActiveTraining(1) != null && $user->getActiveTraining(2) == null && $booking->position->rating > $user->rating) return back()->withErrors('You are not authorized to book this position!')->withInput();
 
         if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
         if($booking->time_start->diffInMinutes($booking->time_end, false) < 0) $booking->time_end->addDay();
@@ -103,10 +104,12 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
-        
+
+        if($booking->position->rating > $user->rating) $booking->training = 1;
+        else $booking->training = 0;
+
         if(App::environment('production')) {
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-            else $booking->training = 0;
             if(isset($data['event']) && $user->isModerator()) {
                 $eventUrl = "vatsim-scandinavia.org";
                 $booking->event = 1;
@@ -160,7 +163,8 @@ class VatbookController extends Controller
         $booking->callsign = $data['position'];
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
 
-        if($booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
+        if($user->getActiveTraining(2) != null && $booking->position->rating > $user->getActiveTraining(2)->ratings()->first()->vatsim_rating && $booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
+        elseif($user->getActiveTraining(1) != null && $user->getActiveTraining(2) == null && $booking->position->rating > $user->rating) return back()->withErrors('You are not authorized to book this position!')->withInput();
 
         if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
         if($booking->time_start->diffInMinutes($booking->time_end, false) < 0) $booking->time_end->addDay();
@@ -180,10 +184,12 @@ class VatbookController extends Controller
         ->where('id', '!=', $booking->id)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
+        if($booking->position->rating > $user->rating) $booking->training = 1;
+        else $booking->training = 0;
+
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
         if(App::environment('production')) {
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-            else $booking->training = 0;
             if(isset($data['event']) && $user->isModerator()) {
                 $eventUrl = "vatsim-scandinavia.org";
                 $booking->event = 1;
