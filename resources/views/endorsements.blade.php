@@ -24,17 +24,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($users as $user)
+                            @foreach($members as $member)
                             <tr>
                                 <td>
-                                    @if($user->isModerator())
-                                        <a href="{{ route('user.show', $user->id) }}">{{ $user->name }} ({{ $user->id }})</a>
+                                    @if(Auth::user()->isModerator())
+                                        <a href="{{ route('user.show', $member->id) }}">{{ $member->name }} ({{ $member->id }})</a>
                                     @else 
-                                        {{ $user->name }} ({{ $user->id }})
+                                        {{ $member->name }} ({{ $member->id }})
                                     @endif  
                                 </td>
                                 <td>
-                                    @foreach ($user->ratings as $rating)
+                                    @foreach ($member->ratings as $rating)
                                         {{ $rating->name }}@if(!$loop->last),&nbsp;@endif
                                     @endforeach   
                                 </td>
