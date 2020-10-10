@@ -16,8 +16,8 @@ class MentorTest extends TestCase
     /** @test */
     public function mentor_can_have_country_added()
     {
-        $mentor = factory(User::class)->create(['group' => 3]);
-        $admin = factory(User::class)->create(['group' => 2]);
+        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);
+        $admin = factory(User::class)->create(['group' => 2, 'id' => 10000002]);
 
         $country = Country::where('name', 'Denmark')->first();
 
@@ -32,8 +32,8 @@ class MentorTest extends TestCase
     /** @test */
     public function country_can_have_mentor_added()
     {
-        $mentor = factory(User::class)->create(['group' => 3]);
-        $admin = factory(User::class)->create(['group' => 2]);
+        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);
+        $admin = factory(User::class)->create(['group' => 2, 'id' => 10000002]);
 
         $country = Country::where('name', 'Denmark')->first();
 
@@ -48,8 +48,8 @@ class MentorTest extends TestCase
     /** @test */
     public function mentor_can_have_country_removed()
     {
-        $mentor = factory(User::class)->create(['group' => 3]);
-        $admin = factory(User::class)->create(['group' => 2]);
+        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);
+        $admin = factory(User::class)->create(['group' => 2, 'id' => 10000002]);
 
         $country = Country::where('name', 'Denmark')->first();
 
@@ -64,8 +64,8 @@ class MentorTest extends TestCase
     /** @test */
     public function country_can_have_mentor_removed()
     {
-        $mentor = factory(User::class)->create(['group' => 3]);
-        $admin = factory(User::class)->create(['group' => 2]);
+        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);
+        $admin = factory(User::class)->create(['group' => 2, 'id' => 10000002]);
 
         $country = Country::where('name', 'Denmark')->first();
 

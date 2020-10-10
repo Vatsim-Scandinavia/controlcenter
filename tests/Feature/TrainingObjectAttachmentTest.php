@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\File;
+use App\Training;
 use App\TrainingObjectAttachment;
+use App\TrainingReport;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -22,7 +25,13 @@ class TrainingObjectAttachmentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->report = factory(\App\TrainingReport::class)->create();
+        $this->report = factory(TrainingReport::class)->create([
+            'training_id' => factory(Training::class)->create()->id,
+            'written_by_id' => factory(User::class)->create([
+                'id' => 10000001,
+                'group' => 2,
+            ])->id,
+        ]);
 
     }
 
