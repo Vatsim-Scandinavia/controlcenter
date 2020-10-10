@@ -43,7 +43,7 @@ class CleanLogs extends Command
 
         $entries = ActivityLog::where('created_at', '<', Carbon::now()->subWeeks(2))->get();
         foreach($entries as $entry){
-            $entry->remote_addr = NULL;
+            $entry->ip_address = NULL;
             $entry->user_agent = NULL;
             $entry->save();
         }
