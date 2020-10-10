@@ -37,12 +37,13 @@
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
-                                    @if ($booking->local_id !== null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id !== null) 
+                                    @can('update', $booking)
                                         <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
                                         &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
-                                    @else
+                                    @endcan
+                                    @cannot('update', $booking)
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
-                                    @endif
+                                    @endcannot
                                 </td>
                                 <td>
                                     {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanTime() }}
@@ -112,7 +113,11 @@
                         <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @browser('isFirefox')
+                                    <option>{{ $position->callsign }}</option>
+                                @else
+                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @endbrowser
                             @endforeach
                         </datalist>
                         @error('position')

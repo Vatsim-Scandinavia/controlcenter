@@ -8,7 +8,6 @@ use App\Training;
 use App\TrainingReport;
 use App\Notifications\TrainingReportNotification;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -114,6 +113,7 @@ class TrainingReportController extends Controller
         $this->authorize('update', $report);
 
         $positions = Position::all();
+
         return view('training.report.edit', compact('report', 'positions'));
     }
 

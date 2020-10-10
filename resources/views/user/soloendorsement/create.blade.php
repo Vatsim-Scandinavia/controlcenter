@@ -28,7 +28,11 @@
 
                         <datalist id="students">
                             @foreach($students as $student)
-                                <option value="{{ $student->id }}">{{ $student->name }}</option>
+                                @browser('isFirefox')
+                                    <option>{{ $student->id }}</option>
+                                @else
+                                    <option value="{{ $student->id }}">{{ $student->name }}</option>
+                                @endbrowser
                             @endforeach
                         </datalist>
 
@@ -65,7 +69,11 @@
 
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @browser('isFirefox')
+                                    <option>{{ $position->callsign }}</option>
+                                @else
+                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @endbrowser
                             @endforeach
                         </datalist>
 

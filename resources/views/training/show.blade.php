@@ -3,6 +3,17 @@
 @section('title', 'Training')
 @section('content')
 
+@if($training->status < -1)
+    <div class="alert alert-warning" role="alert">
+        Training is closed with reason: 
+        @if(isset($training->closed_reason))
+            {{ $training->closed_reason }}
+        @else
+            No reason given
+        @endif
+    </div>
+@endif
+
 <div class="row">
 
     <div class="col-xl-12 col-md-12 mb-12">
@@ -81,7 +92,7 @@
                                         Training not started
                                     @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
-                                    @elseif ($training->stated_at != null)
+                                    @elseif ($training->started_at != null)
                                         {{ $training->started_at->toEuropeanDate() }} - {{ $training->closed_at->toEuropeanDate() }}
                                     @else
                                         N/A
@@ -327,12 +338,12 @@
                             </div>
                     @endforeach
 
-                    @if (sizeof($training->reports) == 0)
+                    @if ($reports->count() == 0)
                             <div class="card-text text-primary">
                                 No training reports yet.
                             </div>
                     @else
-                        @foreach($training->reports as $report)
+                        @foreach($reports as $report)
                             @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
                                 <div class="card bg-light mb-3">
                                     <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toEuropeanDate() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
@@ -342,14 +353,14 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {!! nl2br(e($report->content)) !!}
+                                            @markdown($report->content)
                                         </p>
                                     </div>
                                     @if ($report->contentimprove != null)
                                     <div class="card-header text-primary">Areas to improve</div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            {!! nl2br(e($report->contentimprove)) !!}
+                                            @markdown($report->contentimprove)
                                         </p>
                                     </div>
                                     @endif

@@ -19,7 +19,7 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Student</th>
+                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="endorsements" class="w-50" data-sortable="false" data-filter-control="input">Endorsements</th>
                             </tr>
                         </thead>
@@ -27,7 +27,11 @@
                             @foreach($users as $user)
                             <tr>
                                 <td>
-                                    {{ $user->name }} ({{ $user->id }})
+                                    @if($user->isModerator())
+                                        <a href="{{ route('user.show', $user->id) }}">{{ $user->name }} ({{ $user->id }})</a>
+                                    @else 
+                                        {{ $user->name }} ({{ $user->id }})
+                                    @endif  
                                 </td>
                                 <td>
                                     @foreach ($user->ratings as $rating)
