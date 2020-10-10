@@ -53,6 +53,11 @@
                                 </td>
                                 <td>
                                     {{ $booking->position->callsign }} ({{ $booking->position->name }})
+                                    @if($booking->training)
+                                        <span class="badge badge-primary">Training</span>
+                                    @elseif($booking->event)
+                                        <span class="badge badge-success">Event</span>
+                                    @endif
                                 </td>
                                 <td>
                                     {{ $booking->position->fir }}
