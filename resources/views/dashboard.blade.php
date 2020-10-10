@@ -6,6 +6,12 @@
 <!-- Success message fed via JS for TR -->
 <div class="row" id="success-message"></div>
 
+@if($dueInterestRequest)
+    <div class="alert alert-warning" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Please confirm your continued training interest by <a href="{{ route('training.confirm.interest', ['training' => $dueInterestRequest->training->id, 'key' => $dueInterestRequest->key] ) }}">clicking here</a>, within the deadline at {{ $dueInterestRequest->deadline->toEuropeanDate() }}. Your training will be otherwise be closed.
+    </div>
+@endif
+
 <div class="row">
     <!-- Current rating card  -->
     <div class="col-xl-3 col-md-6 mb-4">
