@@ -78,7 +78,7 @@ class VatbookController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->local_id = floor($user->id / date('z'));
-        $booking->callsign = $data['position'];
+        $booking->callsign = strtoupper($data['position']);
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
         $booking->name = $user->name;
         $booking->cid = $user->id;
@@ -157,7 +157,7 @@ class VatbookController extends Controller
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
-        $booking->callsign = $data['position'];
+        $booking->callsign = strtoupper($data['position']);
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
 
         if($booking->position->rating > $user->rating && !$user->isModerator()) return back()->withErrors('You are not authorized to book this position!')->withInput();
