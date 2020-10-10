@@ -17,8 +17,8 @@ class UserUnitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(\App\User::class)->create(['group' => null]);
-        $this->user->handover = factory(\App\Handover::class)->make();
+        $this->user = factory(\App\User::class)->create(['id' => 10000000]);
+        $this->user->handover = factory(\App\Handover::class)->make(['id' => 10000000]);
     }
 
     /** @test */
