@@ -179,8 +179,22 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        var simplemde1 = new SimpleMDE({ element: document.getElementById("contentBox") });
-        var simplemde2 = new SimpleMDE({ element: document.getElementById("contentimprove") });
+        var simplemde1 = new SimpleMDE({ 
+            element: document.getElementById("contentBox"), 
+            status: false, 
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "|", "guide"],
+            insertTexts: {
+                link: ["[","text](link)"],
+            }
+        });
+        var simplemde2 = new SimpleMDE({ 
+            element: document.getElementById("contentimprove"), 
+            status: false, 
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "|", "guide"],
+            insertTexts: {
+                link: ["[","text](link)"],
+            }
+        });
 
         $('div').tooltip();
 
