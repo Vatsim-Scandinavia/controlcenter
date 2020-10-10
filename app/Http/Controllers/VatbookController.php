@@ -105,7 +105,7 @@ class VatbookController extends Controller
 
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
 
-        if($booking->position->rating > $user->rating) $booking->training = 1;
+        if($booking->position->rating > $user->rating || $user->rating < 3) $booking->training = 1;
         else $booking->training = 0;
 
         if(App::environment('production')) {
@@ -184,7 +184,7 @@ class VatbookController extends Controller
         ->where('id', '!=', $booking->id)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if($booking->position->rating > $user->rating) $booking->training = 1;
+        if($booking->position->rating > $user->rating || $user->rating < 3) $booking->training = 1;
         else $booking->training = 0;
 
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
