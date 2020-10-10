@@ -79,10 +79,10 @@
         </div>
         </li>
 
-            <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('users.soloendorsements') }}">
+            <li class="nav-item {{ Route::is('reports.mentors') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('reports.mentors') }}">
                     <i class="fas fa-fw fa-check-square"></i>
-                    <span>Solo Endorsements</span></a>
+                    <span>Mentors</span></a>
             </li>
 
         @endif
