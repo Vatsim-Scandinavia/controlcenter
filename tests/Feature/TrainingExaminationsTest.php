@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Training;
 use App\TrainingExamination;
 use App\User;
 use Carbon\Carbon;
@@ -19,7 +20,13 @@ class TrainingExaminationsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->examination = factory(TrainingExamination::class)->make();
+        $this->examination = factory(TrainingExamination::class)->make([
+            'training_id' => factory(Training::class)->create()->id,
+            'examiner_id' => factory(User::class)->create([
+                'id' => 10000001,
+                'group' => 3,
+            ]),
+        ]);
         $this->training = $this->examination->training;
         $this->training->country->mentors()->attach($this->examination->examiner);
         $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);
@@ -150,8 +157,14 @@ class TrainingExaminationsTest extends TestCase
     public function moderator_can_delete_training_examination()
     {
 
-        $examination = factory(TrainingExamination::class)->create();
-        $moderator = factory(User::class)->create(['group' => 2]);
+        $examination = factory(TrainingExamination::class)->create([
+            'training_id' => factory(Training::class)->create()->id,
+            'examiner_id' => factory(User::class)->create([
+                'id' => 10000001,
+                'group' => 3,
+            ])->id,
+        ]);
+        $moderator = factory(User::class)->create(['group' => 2, 'id' => 10000004]);
         $examination->training->country->training_roles()->attach($moderator);
 
         $this->actingAs($moderator)->followingRedirects()
@@ -168,7 +181,7 @@ class TrainingExaminationsTest extends TestCase
     {
 
         $examination = factory(TrainingExamination::class)->create();
-        $mentor = factory(User::class)->create(['group' => 3]);
+        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);
 
         $this->actingAs($mentor)->followingRedirects()
             ->delete(route('training.examination.delete', ['examination' => $examination]))
