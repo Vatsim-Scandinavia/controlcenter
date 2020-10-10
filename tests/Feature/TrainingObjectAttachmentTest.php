@@ -18,6 +18,7 @@ class TrainingObjectAttachmentTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     private $report;
+    private $user;
 
     /**
      * Provide report to use throughout the tests
@@ -25,9 +26,10 @@ class TrainingObjectAttachmentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->user = factory(User::class)->create(['id' => 10000005]);
         $this->report = factory(TrainingReport::class)->create([
             'training_id' => factory(Training::class)->create([
-                'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+                'user_id' => $this->user->id,
             ])->id,
             'written_by_id' => factory(User::class)->create([
                 'id' => 10000001,
@@ -66,7 +68,7 @@ class TrainingObjectAttachmentTest extends TestCase
     /** @test */
     public function student_cant_upload_an_attachment()
     {
-        $student = $this->report->training->user;
+        $student = $this->user;
         $file = UploadedFile::fake()->image($this->faker->word);
 
         $response = $this->actingAs($student)->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file]);

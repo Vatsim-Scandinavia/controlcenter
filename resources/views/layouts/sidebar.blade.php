@@ -79,6 +79,12 @@
         </div>
         </li>
 
+            <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('users.soloendorsements') }}">
+                    <i class="fas fa-fw fa-check-square"></i>
+                    <span>Solo Endorsements</span></a>
+            </li>
+
         @endif
 
         @if (\Auth::user()->isMentor())

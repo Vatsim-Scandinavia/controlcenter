@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(TrainingExamination::class, function (Faker $faker) {
     return [
         'examination_date' => now()->addYears(5),
-        'position_id' => \App\Position::inRandomOrder()->first()->id,
+        'position_id' => \App\Position::query()->inRandomOrder()->first()->id,
         'result' => $faker->randomElement([
             'PASSED', 'FAILED', 'INCOMPLETE', 'POSTPONED',
         ]),

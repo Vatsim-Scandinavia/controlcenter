@@ -161,10 +161,10 @@ class TrainingExaminationsTest extends TestCase
 
         $examination = factory(TrainingExamination::class)->create([
             'training_id' => factory(Training::class)->create([
-                'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+                'user_id' => factory(User::class)->create(['id' => 10000009])->id,
             ])->id,
             'examiner_id' => factory(User::class)->create([
-                'id' => 10000001,
+                'id' => 10000007,
                 'group' => 3,
             ])->id,
         ]);
@@ -184,8 +184,12 @@ class TrainingExaminationsTest extends TestCase
     public function mentor_cant_delete_training_examination()
     {
 
-        $examination = factory(TrainingExamination::class)->create();
-        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);
+        $examination = factory(TrainingExamination::class)->create([
+            'training_id' => factory(Training::class)->create([
+                'user_id' => factory(User::class)->create(['id' => 10000035])->id,
+            ])->id,
+        ]);
+        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000010]);
 
         $this->actingAs($mentor)->followingRedirects()
             ->delete(route('training.examination.delete', ['examination' => $examination]))
