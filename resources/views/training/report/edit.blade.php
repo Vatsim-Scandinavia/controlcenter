@@ -182,7 +182,7 @@
         var simplemde1 = new SimpleMDE({ 
             element: document.getElementById("contentBox"), 
             status: false, 
-            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "|", "guide"],
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
                 link: ["[","text](link)"],
             }
@@ -190,7 +190,7 @@
         var simplemde2 = new SimpleMDE({ 
             element: document.getElementById("contentimprove"), 
             status: false, 
-            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "|", "guide"],
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
                 link: ["[","text](link)"],
             }

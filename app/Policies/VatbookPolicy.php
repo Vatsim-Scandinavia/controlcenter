@@ -28,7 +28,7 @@ class VatbookPolicy
      */
     public function create(User $user)
     {
-        return $user->rating >= 3 || $user->getActiveTraining(2) != null || $user->isModerator();
+        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModerator();
     }
 
     /**
