@@ -4,7 +4,7 @@
 @section('content')
 
 <!-- Success message fed via JS for TR -->
-<div class="row" id="success-message"></div>
+<div class="alert alert-success d-none" id="success-message"></div>
 
 @if($dueInterestRequest)
     <div class="alert alert-warning" role="alert">
@@ -221,7 +221,7 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-white">Training</h6>
+            <h6 class="m-0 font-weight-bold text-white">Request Training</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
@@ -236,6 +236,13 @@
                     </a>
                 @else
                     <a href="#" class="btn btn-primary btn-block disabled" role="button" aria-disabled="true">
+                        
+                        @if(\Auth::user()->hasActiveTrainings())
+                            <i class="fas fa-check"></i>
+                        @else
+                            <i class="fas fa-exclamation-triangle"></i>
+                        @endif
+                        &nbsp;
                         {{ Gate::inspect('apply', \App\Training::class)->message() }}
                     </a>
                     @if(Setting::get('trainingEnabled'))
@@ -264,16 +271,12 @@
     <script type="text/javascript">
 
         if (sessionStorage.getItem('successMessage') != null) {
-            document.getElementById("success-message").innerHTML = "<div class=\"col-xl-11 col-md-11 mx-auto mb-4 alert alert-success\">\n" +
-                "        You training request has been added to the queue!\n" +
-                "    </div>";
+            $('#success-message').removeClass('d-none');
+            document.getElementById("success-message").innerHTML = "<i class=\"fas fa-check\"></i>&nbsp;&nbsp;Training successfully created and placed in queue.";
+            sessionStorage.removeItem("successMessage");
         }
 
         $(document).ready( function () {
-            setTimeout(function () {
-                $("#success-message").css("display", "none");
-                sessionStorage.removeItem("successMessage");
-            }, 5000);
 
             $(".link-row").click(function () {
                 window.location = $(this).data('href');

@@ -231,7 +231,7 @@ class TrainingController extends Controller
             return $training;
         }
 
-        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
+        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully created!');
     }
 
     /**
@@ -379,7 +379,7 @@ class TrainingController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'experience' => 'sometimes|required|integer|min:1|max:5',
+            'experience' => 'sometimes|required|integer|min:1|max:6',
             'englishOnly' => 'nullable',
             'paused_at' => 'sometimes',
             'motivation' => 'sometimes|required|min:250|max:1500',
