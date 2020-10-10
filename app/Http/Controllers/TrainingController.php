@@ -354,16 +354,20 @@ class TrainingController extends Controller
 
         $interest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
 
-        if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
-            return abort(403);
+        if(isset($interest)){
+            if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
+                return abort(403);
+            }
+    
+            $interest->confirmed_at = now();
+            $interest->updated_at = now();
+            $interest->save();
+    
+            ActivityLogController::info('Training interest confirmed.');
+            return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }
 
-        $interest->confirmed_at = now();
-        $interest->updated_at = now();
-        $interest->save();
-
-        ActivityLogController::info('Training interest confirmed.');
-        return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
+        return redirect()->to($training->path())->withErrors('This training interest request link has expired. Please contact staff if this is an error.');
 
     }
 
