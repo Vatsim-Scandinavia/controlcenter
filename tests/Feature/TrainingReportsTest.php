@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
@@ -14,7 +15,9 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function mentor_can_access_training_reports()
     {
-        $training = factory(\App\Training::class)->create();
+        $training = factory(\App\Training::class)->create([
+            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        ]);
         $mentor = factory(\App\User::class)->create(['group' => 3]);
         $training->country->mentors()->attach($mentor);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addCentury()]);
@@ -25,14 +28,18 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function trainee_can_access_training_reports()
     {
-        $training = factory(\App\Training::class)->create();
+        $training = factory(\App\Training::class)->create([
+            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        ]);
         $this->actingAs($training->user)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
     }
 
     /** @test */
     public function a_regular_user_cant_access_training_reports()
     {
-        $training = factory(\App\Training::class)->create();
+        $training = factory(\App\Training::class)->create([
+            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        ]);
         $otherUser = factory(\App\User::class)->create(['group' => null]);
         $this->actingAs($otherUser)->assertTrue(Gate::inspect('viewReports', $training)->denied());
     }

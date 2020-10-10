@@ -26,7 +26,9 @@ class TrainingObjectAttachmentTest extends TestCase
     {
         parent::setUp();
         $this->report = factory(TrainingReport::class)->create([
-            'training_id' => factory(Training::class)->create()->id,
+            'training_id' => factory(Training::class)->create([
+                'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+            ])->id,
             'written_by_id' => factory(User::class)->create([
                 'id' => 10000001,
                 'group' => 2,

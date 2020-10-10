@@ -21,7 +21,9 @@ class TrainingExaminationsTest extends TestCase
     {
         parent::setUp();
         $this->examination = factory(TrainingExamination::class)->make([
-            'training_id' => factory(Training::class)->create()->id,
+            'training_id' => factory(Training::class)->create([
+                'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+            ])->id,
             'examiner_id' => factory(User::class)->create([
                 'id' => 10000001,
                 'group' => 3,
@@ -158,7 +160,9 @@ class TrainingExaminationsTest extends TestCase
     {
 
         $examination = factory(TrainingExamination::class)->create([
-            'training_id' => factory(Training::class)->create()->id,
+            'training_id' => factory(Training::class)->create([
+                'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+            ])->id,
             'examiner_id' => factory(User::class)->create([
                 'id' => 10000001,
                 'group' => 3,
