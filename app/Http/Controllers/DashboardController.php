@@ -65,8 +65,8 @@ class DashboardController extends Controller
 
     public function endorsements(){
 
-        $users = User::has('ratings')->get();
+        $members = User::has('ratings')->get();
 
-        return view('endorsements', compact('users'));
+        return view('endorsements', compact('members'));
     }
 }

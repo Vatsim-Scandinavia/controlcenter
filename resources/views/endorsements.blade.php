@@ -19,18 +19,22 @@
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Student</th>
+                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="endorsements" class="w-50" data-sortable="false" data-filter-control="input">Endorsements</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($users as $user)
+                            @foreach($members as $member)
                             <tr>
                                 <td>
-                                    {{ $user->name }} ({{ $user->id }})
+                                    @if(Auth::user()->isModerator())
+                                        <a href="{{ route('user.show', $member->id) }}">{{ $member->name }} ({{ $member->id }})</a>
+                                    @else 
+                                        {{ $member->name }} ({{ $member->id }})
+                                    @endif  
                                 </td>
                                 <td>
-                                    @foreach ($user->ratings as $rating)
+                                    @foreach ($member->ratings as $rating)
                                         {{ $rating->name }}@if(!$loop->last),&nbsp;@endif
                                     @endforeach   
                                 </td>

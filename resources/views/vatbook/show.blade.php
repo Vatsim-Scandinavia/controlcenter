@@ -34,7 +34,11 @@
                     <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ $booking->position->callsign }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
-                                <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @browser('isFirefox')
+                                    <option>{{ $position->callsign }}</option>
+                                @else
+                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                @endbrowser
                             @endforeach
                         </datalist>
                     </div>
@@ -48,9 +52,7 @@
                             @endif
                             <label for="training">Training</label>
                         </div>
-                    @endif
 
-                    @if ($user->isModerator())
                         <div class="form-group">
                             @if ($booking->event == 1)
                                 <input id="event" type="checkbox" name="event" value=1 checked>

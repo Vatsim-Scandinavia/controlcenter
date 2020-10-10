@@ -40,7 +40,11 @@
 
                             <datalist id="positions">
                                 @foreach($positions as $position)
-                                    <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                    @browser('isFirefox')
+                                        <option>{{ $position->callsign }}</option>
+                                    @else
+                                        <option value="{{ $position->callsign }}">{{ $position->name }}</option>
+                                    @endbrowser
                                 @endforeach
                             </datalist>
 
@@ -62,7 +66,7 @@
                         <div class="form-group">
                             <label for="attachments">Attachments</label>
                             <div>
-                                <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" multiple>
+                                <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf" multiple>
                             </div>
                             @error('files')
                                 <span class="text-danger">{{ $errors->first('files') }}</span>

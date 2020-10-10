@@ -3,21 +3,21 @@
 namespace App\Policies;
 
 use App\User;
-use App\Vatbook;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class VatbookPolicy
+class SoloEndorsementPolicy
 {
     use HandlesAuthorization;
 
     /**
      * Determine whether the user can view bookings.
      *
+     * @param  \App\User  $user
      * @return mixed
      */
-    public function view()
+    public function view(User $user)
     {
-        return true;
+        return $user->isMentor();
     }
 
     /**
@@ -28,18 +28,17 @@ class VatbookPolicy
      */
     public function create(User $user)
     {
-        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModerator();
+        return $user->isModerator();
     }
 
     /**
      * Determine whether the user can update the booking.
      *
      * @param  \App\User  $user
-     * @param  \App\Vatbook  $booking
      * @return mixed
      */
-    public function update(User $user, Vatbook $booking)
+    public function update(User $user)
     {
-        return $booking->local_id != null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id != null;
+        return $user->isModerator();
     }
 }

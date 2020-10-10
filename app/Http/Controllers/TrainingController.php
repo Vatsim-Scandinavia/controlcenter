@@ -8,6 +8,7 @@ use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Rating;
 use App\Training;
+use App\TrainingReport;
 use App\TrainingExamination;
 use App\TrainingInterest;
 use App\User;
@@ -245,6 +246,7 @@ class TrainingController extends Controller
         $this->authorize('view', $training);
 
         $examinations = TrainingExamination::where('training_id', $training->id)->get();
+        $reports = TrainingReport::where('training_id', $training->id)->get()->sortByDesc('created_at');
 
         $trainingMentors = $training->country->mentors;
         $statuses = TrainingController::$statuses;
@@ -253,7 +255,7 @@ class TrainingController extends Controller
 
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();        
 
-        return view('training.show', compact('training', 'examinations', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
+        return view('training.show', compact('training', 'examinations', 'reports', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
     }
 
     /**
