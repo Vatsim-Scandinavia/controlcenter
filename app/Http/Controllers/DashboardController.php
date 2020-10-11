@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\SoloEndorsement;
 use App\TrainingReport;
+use App\TrainingInterest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +45,9 @@ class DashboardController extends Controller
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
 
-        return view('dashboard', compact('data', 'trainings', 'statuses'));
+        $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->get()->first();
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest'));
     }
 
     /**
