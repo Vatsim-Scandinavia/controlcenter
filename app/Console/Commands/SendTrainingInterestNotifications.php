@@ -51,7 +51,7 @@ class SendTrainingInterestNotifications extends Command
 
         foreach ($trainings as $training) {
 
-            $lastInterestRequest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->orderBy('created_at')->get()->last();
+            $lastInterestRequest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
 
             if($lastInterestRequest == null) {
                 // A notification has NOT been sent previously
@@ -74,11 +74,12 @@ class SendTrainingInterestNotifications extends Command
                 $requestConfirmed = $lastInterestRequest->confirmed_at;
                 $requestUpdated = $lastInterestRequest->updated_at;
 
-                if ($requestDeadline->diffInMinutes(now(), false) >= 0 && $requestConfirmed == null) {
+                if ($requestDeadline->diffInMinutes(now(), false) >= 0 && $requestConfirmed == null && $lastInterestRequest->expired == false) {
                     // If it's 14 days passed deadline, close the training
                     $this->info("Closing training ".$training->id);
 
                     // Update the training
+                    // Note: The training interest is set to expire through updateStatus()
                     $training->updateStatus(-4);
                     $training->closed_reason = 'Continued training interest was not confirmed within deadline.';
                     $training->save();
@@ -95,7 +96,7 @@ class SendTrainingInterestNotifications extends Command
                     $training->user->notify(new TrainingInterestNotification($training, $lastInterestRequest, true));     
 
 
-                } elseif ($lastInterestRequest->created_at->diffInDays(now()) >= 30) {
+                } elseif ($lastInterestRequest->created_at->diffInDays(now()) >= 30 && $lastInterestRequest->expired == true) {
                     // The training has been previously notified, after 30 days it's time for a new request
                     // Generate training interest key and store it in the request
                     $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));
