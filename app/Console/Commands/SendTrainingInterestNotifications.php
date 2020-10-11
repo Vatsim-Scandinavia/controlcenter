@@ -51,7 +51,7 @@ class SendTrainingInterestNotifications extends Command
 
         foreach ($trainings as $training) {
 
-            $lastInterestRequest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
+            $lastInterestRequest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->orderBy('created_at')->get()->last();
 
             if($lastInterestRequest == null) {
                 // A notification has NOT been sent previously

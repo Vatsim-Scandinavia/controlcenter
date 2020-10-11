@@ -137,6 +137,13 @@
                     @csrf
 
                     <div class="form-group">
+
+                        @if($activeTrainingInterest)
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-triangle"></i>&nbsp;This training has an active interest request pending.
+                            </div>
+                        @endif
+
                         <label for="trainingStateSelect">Select training state</label>
                         <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
                             @foreach($statuses as $id => $data)
@@ -279,8 +286,10 @@
                                 <td>
                                     @if($interest->confirmed_at)
                                         {{ $interest->confirmed_at->toEuropeanDate() }}
-                                    @else
+                                    @elseif($interest->expired)
                                         Not confirmed
+                                    @else
+                                        Not confirmed yet
                                     @endif
                                     
                                 </td>

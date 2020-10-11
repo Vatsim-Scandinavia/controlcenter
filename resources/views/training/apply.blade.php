@@ -8,21 +8,21 @@
     @if(!Request::get('step'))
     <!-- Information about training -->
     <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
-        <div class="card shadow mb-4 border-left-danger">
+        <div class="card shadow mb-4 border-left-warning">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Important information</h6>
             </div>
             <div class="card-body">
-                <h5 class="card-title">What is ATC training?</h5>
+                <h5 class="card-title"><i class="fas fa-users-class"></i>&nbsp;What is ATC training?</h5>
                 <p class="card-text">Welcome to the ATC Training Department of VATSIM Scandinavia. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
                 <hr>
-                <h5 class="card-title">What do we expect from you?</h5>
+                <h5 class="card-title"><i class="fas fa-user"></i>&nbsp;What do we expect from you?</h5>
                 <p class="card-text">First of all, we expect that you take the training seriously and for you to show up on time and prepared for your online training sessions. We also expect that you respect that everyone in the Training Department is doing this as a hobby in their spare time. You have to be able to study on your own as part of the training program is designed as a self-study. We are not getting paid to do this job, but we simply want to see our network grow and be a great community.</p>
                 <hr>
-                <h5 class="card-title">What should you expect from us?</h5>
+                <h5 class="card-title"><i class="fas fa-chalkboard-teacher"></i>&nbsp;What should you expect from us?</h5>
                 <p class="card-text">You should expect that we will help you as best as we can to prepare you for your practical exam. You will be assigned to a mentor that will guide you on the way, and you should expect him to take you and your time seriously and to adapt the training to your level of competence.</p>
                 <hr>
-                <h5 class="card-title">How long is the training queue?</h5>
+                <h5 class="card-title"><i class="fas fa-hourglass-start"></i>&nbsp;How long is the training queue?</h5>
                 <p class="card-text">{{ Setting::get('trainingQueue') }}</p>
             </div>
         </div>
@@ -35,6 +35,11 @@
                     <h6 class="m-0 font-weight-bold text-primary">Training choices</h6>
                 </div>
                 <div class="card-body">
+
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle"></i>&nbsp;&nbsp;S2 is the lowest rating you can apply for in Scandinavia. S1 is included in this training.
+                    </p>
+
                     <div class="row">
                         <div class="col-xl-6 col-md-6 mb-12">
                             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training country</label>
@@ -55,7 +60,7 @@
                         </div>
                     </div>
 
-                    <a class="btn btn-success" id="continue-btn-step-1" href="?step=2">Continue</a>
+                    <a class="btn btn-success mt-2" id="continue-btn-step-1" href="?step=2">Continue</a>
                 </div>
             </div>
     </div>
@@ -118,7 +123,7 @@
 
                             <div class="form-group">
                                 <label for="motivationTextarea">Letter of motivation</label>
-                                <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to Vatsim-Scandinavia</p>
+                                <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to Vatsim Scandinavia</p>
                                 <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500" onchange="function removeErr() {
                                   $('#err-motivation').html('');
                                 }; removeErr();"></textarea>
@@ -141,7 +146,7 @@
 
                     </div>
 
-                    <button type="submit" id="training-submit-btn" class="btn btn-success">Submit training request</button>
+                    <button type="submit" id="training-submit-btn" class="btn btn-success">Submit training request<div class="submit-spinner spinner-border spinner-border-sm" role="status">&nbsp;</div></button>
                 </form>
             </div>
         </div>
@@ -208,13 +213,13 @@
         e.preventDefault();
 
         $(this).prop('disabled', true);
+        $('.submit-spinner').css('display', 'inherit');
 
         var form = document.getElementById('training-form');
         var data = new FormData(form);
 
         data.append('training_country', sessionStorage.getItem('training_country'));
         data.append('training_level', sessionStorage.getItem('training_level'));
-
 
         $.ajax('/training/store',
             {
@@ -226,7 +231,7 @@
                     sessionStorage.removeItem('training_country');
                     sessionStorage.removeItem('training_level');
 
-                    sessionStorage.setItem("successMessage", "You training request has been added to the queue!");
+                    sessionStorage.setItem("successMessage", "Your training request has been added to the queue!");
                     window.location = "/";
 
                 },
@@ -240,6 +245,7 @@
                         $("#err-motivation").html(message.motivation[0]);
 
                     $('#training-submit-btn').prop('disabled', false);
+                    $('.submit-spinner').hide();
 
                 }
             }

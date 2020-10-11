@@ -231,7 +231,7 @@ class TrainingController extends Controller
             return $training;
         }
 
-        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully added');
+        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully created!');
     }
 
     /**
@@ -253,9 +253,10 @@ class TrainingController extends Controller
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
 
-        $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();        
+        $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();
+        $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();     
 
-        return view('training.show', compact('training', 'examinations', 'reports', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests'));
+        return view('training.show', compact('training', 'examinations', 'reports', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests', 'activeTrainingInterest'));
     }
 
     /**
@@ -352,18 +353,23 @@ class TrainingController extends Controller
     public function confirmInterest(Training $training, string $key)
     {
 
-        $interest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
+        $interest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->orderBy('created_at')->get()->last();
 
-        if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
-            return abort(403);
+        if(isset($interest)){
+            if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
+                return abort(403);
+            }
+    
+            $interest->confirmed_at = now();
+            $interest->updated_at = now();
+            $interest->expired = true;
+            $interest->save();
+    
+            ActivityLogController::info('Training interest confirmed.');
+            return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }
 
-        $interest->confirmed_at = now();
-        $interest->updated_at = now();
-        $interest->save();
-
-        ActivityLogController::info('Training interest confirmed.');
-        return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
+        return redirect()->to($training->path())->withErrors('This training interest request link has expired. Please contact staff if this is an error.');
 
     }
 
@@ -373,7 +379,7 @@ class TrainingController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'experience' => 'sometimes|required|integer|min:1|max:5',
+            'experience' => 'sometimes|required|integer|min:1|max:6',
             'englishOnly' => 'nullable',
             'paused_at' => 'sometimes',
             'motivation' => 'sometimes|required|min:250|max:1500',
