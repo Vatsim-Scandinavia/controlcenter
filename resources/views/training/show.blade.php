@@ -287,7 +287,7 @@
                                     @if($interest->confirmed_at)
                                         {{ $interest->confirmed_at->toEuropeanDate() }}
                                     @elseif($interest->expired)
-                                        Expired / Overridden
+                                        Not confirmed
                                     @else
                                         Not confirmed yet
                                     @endif
