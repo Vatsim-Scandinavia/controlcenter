@@ -237,7 +237,7 @@
                 @else
                     <a href="#" class="btn btn-primary btn-block disabled" role="button" aria-disabled="true">
                         
-                        @if(\Auth::user()->hasActiveTrainings())
+                        @if(\Auth::user()->hasActiveTrainings() && Setting::get('trainingEnabled'))
                             <i class="fas fa-check"></i>
                         @else
                             <i class="fas fa-exclamation-triangle"></i>
