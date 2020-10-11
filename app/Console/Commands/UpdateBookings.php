@@ -7,7 +7,6 @@ use App\Position;
 use App\Vatbook;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Facades\Log;
 
 class UpdateBookings extends Command
 {
