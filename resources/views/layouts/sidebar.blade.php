@@ -79,6 +79,12 @@
         </div>
         </li>
 
+            <li class="nav-item {{ Route::is('reports.mentors') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('reports.mentors') }}">
+                    <i class="fas fa-fw fa-check-square"></i>
+                    <span>Mentors</span></a>
+            </li>
+
         @endif
 
         @if (\Auth::user()->isMentor())
