@@ -47,6 +47,7 @@ class UpdateBookings extends Command
         foreach($raw->children() as $booking){
             if(!Position::where('callsign', $booking->callsign)->get()->isEmpty()) {
                 User::Where('id', $booking->cid)->get()->isEmpty() ? $uid = null : $uid = User::where('id', $booking->cid)->first()->id;
+                $booking->callsign = strtoupper($booking->callsign);
                 Vatbook::updateOrCreate(['eu_id' => $booking->id], ['callsign' => $booking->callsign, 'position_id' => Position::all()->firstWhere('callsign', $booking->callsign)->id, 'name' => $booking->name, 'time_start' => $booking->time_start, 'time_end' => $booking->time_end, 'cid' => $booking->cid, 'user_id' => $uid, 'training' => false, 'event' => false]);
             }
         }
