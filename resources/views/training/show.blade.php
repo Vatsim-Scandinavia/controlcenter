@@ -289,7 +289,7 @@
                                     @elseif($interest->expired)
                                         Not confirmed
                                     @else
-                                        Not confirmed yet
+                                        Awaiting confirmation
                                     @endif
                                     
                                 </td>
