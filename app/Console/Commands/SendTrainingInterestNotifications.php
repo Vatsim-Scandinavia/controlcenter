@@ -90,7 +90,7 @@ class SendTrainingInterestNotifications extends Command
                     // If the interest is not confirmed after 6 days, we remind
                     $this->info("Reminding training ".$training->id);
 
-                    $requestUpdated = now();
+                    $lastInterestRequest->updated_at = now();
                     $lastInterestRequest->save();
 
                     $training->user->notify(new TrainingInterestNotification($training, $lastInterestRequest, true));     
