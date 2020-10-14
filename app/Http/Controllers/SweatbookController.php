@@ -22,7 +22,7 @@ class SweatbookController extends Controller
     public function index(){
         $user = Auth::user();
         $this->authorize('view', Sweatbook::class);
-        $bookings = Sweatbook::all()->sortBy('date');
+        $bookings = Sweatbook::all()->sortBy('date')->sortBy('start_at');
         $positions = Position::all();
         
         return view('sweatbook.index', compact('bookings', 'user', 'positions'));
@@ -77,11 +77,13 @@ class SweatbookController extends Controller
         if($booking->start_at->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
 
         if(!Sweatbook::whereBetween('start_at', [$booking->start_at, $booking->end_at])
+        ->where('date', $booking->date)
         ->where('end_at', '!=', $booking->start_at)
         ->where('start_at', '!=', $booking->end_at)
         ->where('position_id', $booking->position_id)
         ->where('id', '!=', $booking->id)
         ->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])
+        ->where('date', $booking->date)
         ->where('end_at', '!=', $booking->start_at)
         ->where('start_at', '!=', $booking->end_at)
         ->where('position_id', $booking->position_id)
@@ -131,11 +133,13 @@ class SweatbookController extends Controller
         $fullEndDate = Carbon::create($booking->date)->setTime($booking->end_at->format('H'), $booking->end_at->format('i'));
 
         if(!Sweatbook::whereBetween('start_at', [$fullStartDate, $fullEndDate])
+        ->where('date', $booking->date)
         ->where('end_at', '!=', $booking->start_at)
         ->where('start_at', '!=', $booking->end_at)
         ->where('position_id', $booking->position_id)
         ->where('id', '!=', $booking->id)
         ->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])
+        ->where('date', $booking->date)
         ->where('end_at', '!=', $booking->start_at)
         ->where('start_at', '!=', $booking->end_at)
         ->where('position_id', $booking->position_id)
