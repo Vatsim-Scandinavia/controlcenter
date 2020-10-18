@@ -48,7 +48,7 @@ class TrainingReportsTest extends TestCase
     public function trainee_cant_access_draft_training_report()
     {
         $training = factory(\App\Training::class)->create([
-            'user_id' => factory(User::class)->create(['id' => 10000067])->id,
+            'user_id' => factory(User::class)->create(['id' => 10000067, 'group' => null])->id,
         ]);
         $report = factory(\App\TrainingReport::class)->create(['draft' => true, 'training_id' => $training->id]);
         $this->actingAs($report->training->user)->assertTrue(Gate::inspect('view', $report)->denied());
@@ -64,6 +64,7 @@ class TrainingReportsTest extends TestCase
 
         $mentor = factory(User::class)->create(['id' => 10000080, 'group' => 3]);
         $report->training->country->mentors()->attach($mentor);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
         $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
     }
 
@@ -109,6 +110,7 @@ class TrainingReportsTest extends TestCase
         $content = $this->faker->paragraph();
 
         $report->training->country->mentors()->attach($mentor);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
 
         $response = $this->actingAs($mentor)
             ->patch(route('training.report.update', ['report' => $report->id]), ['report_date' => today()->format('d/m/Y'), 'content' => $content])
@@ -141,9 +143,13 @@ class TrainingReportsTest extends TestCase
     {
         $training = factory(\App\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000093])->id,
+            'id' => 2,
         ]);
         $report = factory(\App\TrainingReport::class)->create([
             'training_id' => $training->id,
+            'report_date' => now()->addYear(),
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam nulla, rutrum sed massa et, ornare condimentum dolor. Vivamus massa ipsum, tincidunt eget leo a, lacinia euismod elit. Sed sodales placerat sem, vel euismod neque pellentesque vitae. In id ultrices leo. Sed ut nibh facilisis, mollis arcu at, egestas risus. Vestibulum dolor metus, iaculis a condimentum sed, rhoncus eget urna. Mauris lacinia facilisis massa nec porta.',
+
         ]);
         $mentor = factory(User::class)->create(['id' => 10000016, 'group' => 3]);
 
