@@ -5,7 +5,7 @@
 
 @if($training->status < -1)
     <div class="alert alert-warning" role="alert">
-        Training is closed with reason: 
+        <b>Training is closed with reason: </b>
         @if(isset($training->closed_reason))
             {{ $training->closed_reason }}
         @else
@@ -285,11 +285,15 @@
                                 </td>
                                 <td>
                                     @if($interest->confirmed_at)
-                                        {{ $interest->confirmed_at->toEuropeanDate() }}
+                                        <i class="fas fa-check text-success"></i>&nbsp;{{ $interest->confirmed_at->toEuropeanDate() }}
                                     @elseif($interest->expired)
-                                        Not confirmed
+                                        @if($interest->expired == 1)
+                                            <i class="fas fa-times text-warning"></i>&nbsp;Invalidated
+                                        @else
+                                            <i class="fas fa-times text-danger"></i>&nbsp;Not confirmed
+                                        @endif
                                     @else
-                                        Awaiting confirmation
+                                        <i class="fas fa-hourglass text-warning"></i>&nbsp;Awaiting confirmation
                                     @endif
                                     
                                 </td>
