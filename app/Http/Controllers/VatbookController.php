@@ -103,10 +103,9 @@ class VatbookController extends Controller
         ->where('deleted', false)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
-
-        if($booking->position->rating > $user->rating || $user->rating < 3) $booking->training = 1;
+        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) $booking->training = 1;
         else $booking->training = 0;
+        if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
 
         if(App::environment('production')) {
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
@@ -184,10 +183,10 @@ class VatbookController extends Controller
         ->where('id', '!=', $booking->id)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if($booking->position->rating > $user->rating || $user->rating < 3) $booking->training = 1;
+        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModerator()) $booking->training = 1;
         else $booking->training = 0;
-
         if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
+
         if(App::environment('production')) {
             if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
             if(isset($data['event']) && $user->isModerator()) {

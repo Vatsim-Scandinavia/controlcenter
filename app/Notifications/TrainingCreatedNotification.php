@@ -51,6 +51,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
         $textLines = [
             'We herby confirm that we have received your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.'.',
             'The request is now in queue. Expected waiting time: '.\Setting::get('trainingQueue'),
+            'We will periodically ask you to confirm your continued interest for your application with us, it\'s your responsibility to check your email for these requests and reply within the deadline.'
         ];
 
         $country = Country::find($this->training->country_id);

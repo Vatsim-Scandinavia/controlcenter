@@ -55,14 +55,17 @@ class Training extends Model
                 if(!isset($this->started_at)){
                     $this->update(['started_at' => now()]);
                 }
+
+                // Expire all related training interest models, as we assume the student is contacted and interested if their training status changes positively.
+                TrainingInterest::where('training_id', $this->id)->update(['updated_at' => now(), 'expired' => true]);
             }
 
             // If training is completed or closed
             if($newStatus < 0){
                 $this->update(['closed_at' => now()]);
 
-                // Delete all related training interest models, as they will only cause problems if training is re-opened.
-                TrainingInterest::where('training_id', $this->id)->delete();
+                // Expire all related training interest models, as they will only cause problems if training is re-opened.
+                TrainingInterest::where('training_id', $this->id)->update(['updated_at' => now(), 'expired' => true]);
             }
 
             $this->update(['status' => $newStatus]);
