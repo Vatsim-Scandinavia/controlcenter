@@ -48,7 +48,7 @@ class TrainingReportsTest extends TestCase
     public function trainee_cant_access_draft_training_report()
     {
         $training = factory(\App\Training::class)->create([
-            'user_id' => factory(User::class)->create(['id' => 10000067])->id,
+            'user_id' => factory(User::class)->create(['id' => 10000067, 'group' => null])->id,
         ]);
         $report = factory(\App\TrainingReport::class)->create(['draft' => true, 'training_id' => $training->id]);
         $this->actingAs($report->training->user)->assertTrue(Gate::inspect('view', $report)->denied());
@@ -64,6 +64,7 @@ class TrainingReportsTest extends TestCase
 
         $mentor = factory(User::class)->create(['id' => 10000080, 'group' => 3]);
         $report->training->country->mentors()->attach($mentor);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
         $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
     }
 
@@ -109,6 +110,7 @@ class TrainingReportsTest extends TestCase
         $content = $this->faker->paragraph();
 
         $report->training->country->mentors()->attach($mentor);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
 
         $response = $this->actingAs($mentor)
             ->patch(route('training.report.update', ['report' => $report->id]), ['report_date' => today()->format('d/m/Y'), 'content' => $content])
@@ -141,11 +143,20 @@ class TrainingReportsTest extends TestCase
     {
         $training = factory(\App\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000093])->id,
+            'id' => 2,
         ]);
+
+        $mentor = factory(User::class)->create(['id' => 10000016, 'group' => 3]);
+
         $report = factory(\App\TrainingReport::class)->create([
             'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'report_date' => now()->addYear(),
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
+            'contentimprove' => null,
+            'position' => null,
+            'draft' => false,
         ]);
-        $mentor = factory(User::class)->create(['id' => 10000016, 'group' => 3]);
 
         $report->training->country->mentors()->attach($mentor);
 
