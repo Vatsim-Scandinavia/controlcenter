@@ -80,7 +80,7 @@ class SendTrainingInterestNotifications extends Command
 
                     // Update the training
                     // Note: The training interest is set to expire through updateStatus()
-                    $training->updateStatus(-4);
+                    $training->updateStatus(-4, true);
                     $training->closed_reason = 'Continued training interest was not confirmed within deadline.';
                     $training->save();
                     $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interest was not confirmed within deadline.'));
