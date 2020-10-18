@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training/{training}/report/create', 'TrainingReportController@create')->name('training.report.create');
     Route::post('/training/{training}/report', 'TrainingReportController@store')->name('training.report.store');
     Route::patch('/training/report/{report}', 'TrainingReportController@update')->name('training.report.update');
-    Route::delete('/training/report/{report}', 'TrainingReportController@destroy')->name('training.report.delete');
+    Route::get('/training/report/{report}/delete', 'TrainingReportController@destroy')->name('training.report.delete');
 
     // Training object routes
     Route::get('/training/onetime/{key}', 'OneTimeLinkController@redirect')->name('training.onetimelink.redirect');

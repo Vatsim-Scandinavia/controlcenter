@@ -83,7 +83,7 @@
                     @endif
 
                     @if (\Illuminate\Support\Facades\Gate::inspect('delete', $report)->allowed())
-                        <a href="#" class="btn btn-danger" id="delete-btn" data-report="{{ $report->id }}">Delete report</a>
+                        <a href="{{ route('training.report.delete', $report->id) }}" class="btn btn-danger" id="delete-btn" data-report="{{ $report->id }}">Delete report</a>
                     @endif
                 </form>
             </div>
