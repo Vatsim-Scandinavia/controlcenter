@@ -39,7 +39,20 @@
                                     </td>
                                     <td>
                                         @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
-                                            {{ Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
+                                            @php
+                                                $reportDate = Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
+                                            @endphp
+                                            <span title="{{ $reportDate->toEuropeanDate() }}">
+                                                @if($reportDate->isToday())
+                                                    Today
+                                                @elseif($reportDate->isYesterday())
+                                                    Yesterday
+                                                @elseif($reportDate->diffInDays() <= 7)
+                                                    {{ $reportDate->diffForHumans(['parts' => 1])}}
+                                                @else
+                                                    {{ $reportDate->diffForHumans(['parts' => 2])}}
+                                                @endif                                            
+                                            </span>
                                         @else
                                             No registered training yet
                                         @endif
@@ -50,7 +63,20 @@
                                             <div><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a> / Last training: 
                                                 @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
                                                     @if(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->count() > 0)
-                                                        {{ Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
+                                                        @php
+                                                            $reportDate = Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date);
+                                                        @endphp
+                                                        <span title="{{ $reportDate->toEuropeanDate() }}">
+                                                            @if($reportDate->isToday())
+                                                                Today
+                                                            @elseif($reportDate->isYesterday())
+                                                                Yesterday
+                                                            @elseif($reportDate->diffInDays() <= 7)
+                                                                {{ $reportDate->diffForHumans(['parts' => 1])}}
+                                                            @else
+                                                                {{ $reportDate->diffForHumans(['parts' => 2])}}
+                                                            @endif                                            
+                                                        </span>
                                                     @else
                                                         N/A
                                                     @endif
