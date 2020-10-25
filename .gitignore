@@ -3,6 +3,7 @@
 /public/storage
 public/css/*
 public/js/*
+public/fonts/vendor/@fortawesome/fontawesome-pro/*
 /storage/*.key
 /vendor
 .env
