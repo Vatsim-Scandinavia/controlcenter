@@ -116,7 +116,7 @@
 
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" name="englishOnly" for="exampleCheck1">I'm only able to receive training in English</label>
+                                <label class="form-check-label" name="englishOnly" for="exampleCheck1">I'm <u>only</u> able to receive training in English</label>
                             </div>
 
                             <hr>
@@ -136,7 +136,7 @@
 
                             <div class="form-group">
                                 <label for="remarkTextarea">Comments or remarks</label>
-                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience, preferred training language, and other things you think want us to know." maxlength="500"></textarea>
+                                <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience and other things you think want us to know." maxlength="500"></textarea>
                             </div>
                         </div>
 
