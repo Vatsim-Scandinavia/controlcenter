@@ -79,12 +79,6 @@
         </div>
         </li>
 
-            <li class="nav-item {{ Route::is('reports.mentors') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('reports.mentors') }}">
-                    <i class="fas fa-fw fa-check-square"></i>
-                    <span>Mentors</span></a>
-            </li>
-
         @endif
 
         @if (\Auth::user()->isMentor())
@@ -112,8 +106,7 @@
 
         @endif
 
-        @if (\Auth::user()->isAdmin())
-
+        @if (\Auth::user()->isModerator())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -125,12 +118,22 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
+            
+            @if (\Auth::user()->isAdmin())
+                <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
+            @endif
+
             <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
-            <a class="collapse-item" href="{{ route('reports.atc') }}">ATC Activity</a>
+
+            @if (\Auth::user()->isAdmin())
+                <a class="collapse-item" href="{{ route('reports.atc') }}">ATC Activity</a>
+            @endif
             </div>
         </div>
         </li>
+        @endif
+
+        @if (\Auth::user()->isAdmin())
 
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
