@@ -392,6 +392,7 @@ class TrainingController extends Controller
             'type' => 'sometimes|required|integer',
             'notes' => 'nullable',
             'mentors' => 'sometimes',
+            'closed_reason' => 'sometimes|max:50',
         ]);
     }
 }

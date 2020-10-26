@@ -418,6 +418,11 @@
                         </select>
                     </div>
 
+                    <div class="form-group" id="closedReasonInput" style="display: none">
+                        <label for="trainingCloseReason">Closed reason</label>
+                        <input type="text" id="trainingCloseReason" class="form-control" name="closed_reason" placeholder="No reason given" value="{{ $training->closed_reason }}" maxlength="50">
+                    </div>
+
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
                         <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
@@ -539,6 +544,23 @@
             }).on('hide.bs.collapse', function(){
                 $(this).prev(".card-header").find(".far").removeClass("fa-minus").addClass("fa-plus");
             });
+
+            // Closure reason input
+            toggleClosureReasonField($('#trainingStateSelect').val())
+
+            $('#trainingStateSelect').on('change', function () {
+                toggleClosureReasonField($('#trainingStateSelect').val())
+            });
+
+            function toggleClosureReasonField(val){
+                console.log(val)
+                if(val == -2){
+                    $('#closedReasonInput').slideDown(100)
+                } else {
+                    $('#closedReasonInput').hide()
+                }
+            }
+
         });
     </script>
 @endsection
