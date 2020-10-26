@@ -323,7 +323,7 @@
 
             <div class="p-4">
                 <p class="font-weight-bold text-primary">
-                    <i class="fas fa-clipboard-list-check"></i>&nbsp;Letter of motivation
+                    <i class="fas fa-envelope-open-text"></i>&nbsp;Letter of motivation
                 </p>
                 <p>{{ $training->motivation }}</p>
             </div>
