@@ -1,6 +1,28 @@
 @extends('layouts.app')
 
 @section('title', 'Training')
+@section('title-extension')
+    @if(\Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
+        <div class="dropdown" style="display: inline;">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Generate
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE])
+                    <button class="dropdown-item" id="getOneTimeLinkReport">Report one-time link</a>
+                @endif
+                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE])
+                    <button class="dropdown-item" id="getOneTimeLinkExam">Examination one-time link</a>
+                @endif
+            </div>
+        </div>
+    @endif
+
+    @if(\Auth::user()->can('close', $training))
+        <a class="btn btn-danger btn-sm" href="#">Close my training</a>
+    @endif
+
+@endsection
 @section('content')
 
 @if($training->status < -1)
@@ -29,23 +51,6 @@
                         @endif
                     @endforeach
                 </h6>
-
-                @if(\Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
-                    <div class="dropdown">
-                        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Generate one-time link
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE])
-                                <button class="dropdown-item" id="getOneTimeLinkReport">Report</a>
-                            @endif
-                            @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE])
-                                <button class="dropdown-item" id="getOneTimeLinkExam">Examination</a>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -123,11 +128,266 @@
 
 <div class="row">
 
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4 ">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Training Reports
+                </h6>
+
+                <div class="dropdown" style="display: inline;">
+                    <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Create
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">  
+                        @can('createReport', $training)
+                            @if($training->status == 1 || $training->status == 2)
+                                <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
+                            @endif
+                        @else
+                            <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
+                        @endcan
+        
+                        @can('createExamination', $training)
+                            @if($training->status == 3)
+                                <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}">Exam Report</a>
+                            @endif
+                        @else
+                            <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Exam Report</a>
+                        @endcan
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+
+                @can('viewReports', $training)
+                    <div class="accordion" id="reportAccordion">
+                        @if ($reports->count() == 0 && $examinations->count() == 0)
+                            <div class="card-text text-primary p-3">
+                                No training reports yet.
+                            </div>
+                        @else
+
+                            @foreach($examinations as $examination)
+
+                                @php
+                                    $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
+                                @endphp
+
+                                <div class="card">
+                                    <div class="card-header p-0">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                                <i class="far fa-plus mr-2"></i>{{ $examination->created_at->toEuropeanDate() }}
+                                            </button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="{{ $uuid }}" class="collapse" data-parent="#reportAccordion">
+                                        <div class="card-body">
+
+                                            <small class="text-muted">
+                                                @if(isset($examination->position))
+                                                    <i class="fas fa-radar"></i> {{ \App\Position::find($examination->position_id)->callsign }}&emsp;
+                                                @endif
+                                                <i class="fas fa-user-edit"></i> {{ \App\User::find($examination->examiner_id)->name }}
+
+                                            </small>
+
+                                            <div class="mt-2">
+                                                @if($examination->result == "PASSED")
+                                                    <span class='badge badge-success'>PASSED</span>
+                                                @elseif($examination->result == "FAILED")
+                                                    <span class='badge badge-danger'>FAILED</span>
+                                                @elseif($examination->result == "INCOMPLETE")
+                                                    <span class='badge badge-primary'>INCOMPLETE</span>
+                                                @elseif($examination->result == "POSTPONED")
+                                                    <span class='badge badge-warning'>POSTPONED</span>
+                                                @endif
+                                            </div>
+
+                                            @if($examination->attachments->count() > 0)
+                                                @foreach($examination->attachments as $attachment)
+                                                    <div>
+                                                        <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                            <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            @endforeach
+
+                            @foreach($reports as $report)
+                                @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
+
+                                    @php
+                                        $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
+                                    @endphp
+
+                                    <div class="card">
+                                        <div class="card-header p-0">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                                    <i class="far fa-plus mr-2"></i>{{ $report->created_at->toEuropeanDate() }}
+                                                    @if($report->draft)
+                                                        <span class='badge badge-danger'>Draft</span>
+                                                    @endif
+                                                </button>
+                                            </h5>
+                                        </div>
+
+                                        <div id="{{ $uuid }}" class="collapse" data-parent="#reportAccordion">
+                                            <div class="card-body">
+
+                                                <small class="text-muted">
+                                                    @if(isset($report->position))
+                                                        <i class="fas fa-radar"></i> {{ $report->position }}&emsp;
+                                                    @endif
+                                                    <i class="fas fa-user-edit"></i> {{ \App\User::find($report->written_by_id)->name }}
+                                                    @can('update', $report)
+                                                        <a class="float-right" href="{{ route('training.report.edit', $report->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
+                                                    @endcan
+                                                </small>
+
+                                                <div class="mt-2">
+                                                    @markdown($report->content)
+                                                </div>
+                                                
+                                                @if(isset($report->contentimprove))
+                                                    <hr>
+                                                    <p class="font-weight-bold text-primary">
+                                                        <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
+                                                    </p>
+                                                    @markdown($report->contentimprove)
+                                                @endif
+
+                                                @if($report->attachments->count() > 0)
+                                                    <hr>
+                                                    @foreach($report->attachments as $attachment)
+                                                        <div>
+                                                            <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                                <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                @endif
+                            @endforeach
+                        @endif
+                    </div>
+                @else
+                    <div class="card-text text-primary p-3">
+                        You don't have access to see the training reports.
+                    </div>
+                @endcan
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 mt-1 mb-2 font-weight-bold text-white">
+                    Application
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+    
+                        @if($training->english_only_training)
+                            <i class="fas fa-flag-usa"></i>&nbsp;&nbsp;Requesting training in English only<br>
+                        @else
+                            <i class="fas fa-flag-alt"></i>&nbsp;&nbsp;Requesting training in local language or English<br>
+                        @endif
+
+                        @isset($training->experience)
+                            <i class="fas fa-books"></i>&nbsp;&nbsp;{{ $experiences[$training->experience]["text"] }}
+                        @endisset
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <p class="font-weight-bold text-primary">
+                    <i class="fas fa-envelope-open-text"></i>&nbsp;Letter of motivation
+                </p>
+                <p>{{ $training->motivation }}</p>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Training Interest Confirmations
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Interest sent</th>
+                                <th>Confirmation Deadline</th>
+                                <th>Interest confirmed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if($trainingInterests->count() > 0)
+                                @foreach($trainingInterests as $interest)
+                                <tr>
+                                    <td>
+                                        {{ $interest->created_at->toEuropeanDate() }}
+                                    </td>
+                                    <td>
+                                        {{ $interest->deadline->toEuropeanDate() }}
+                                    </td>
+                                    <td>
+                                        @if($interest->confirmed_at)
+                                            <i class="fas fa-check text-success"></i>&nbsp;{{ $interest->confirmed_at->toEuropeanDate() }}
+                                        @elseif($interest->expired)
+                                            @if($interest->expired == 1)
+                                                <i class="fas fa-times text-warning"></i>&nbsp;Invalidated
+                                            @else
+                                                <i class="fas fa-times text-danger"></i>&nbsp;Not confirmed
+                                            @endif
+                                        @else
+                                            <i class="fas fa-hourglass text-warning"></i>&nbsp;Awaiting confirmation
+                                        @endif
+                                        
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td>No confirmation history</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+
     @can('update', $training)
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 m-0 mt-1 mb-2 font-weight-bold text-white">
                     Options
                 </h6>
             </div>
@@ -156,6 +416,11 @@
                                 @endif
                             @endforeach
                         </select>
+                    </div>
+
+                    <div class="form-group" id="closedReasonInput" style="display: none">
+                        <label for="trainingCloseReason">Closed reason</label>
+                        <input type="text" id="trainingCloseReason" class="form-control" name="closed_reason" placeholder="{{ $training->closed_reason }}" maxlength="50">
                     </div>
 
                     <div class="form-group">
@@ -207,217 +472,6 @@
     </div>
     @endcan
 
-    <div class="col-xl-4 col-md-12 mb-12">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Application
-                </h6>
-            </div>
-            <div class="report-overflow-scroll">
-                <div class="card-body">
-                    <div class="card bg-light mb-3">
-                        <div class="card-header text-primary">Language</div>
-                        <div class="card-body">
-                            @if($training->english_only_training)
-                                <p class="card-text text-warning">
-                                    The student wishes to receive training in English.
-                                </p>
-                            @else
-                                <p class="card-text">
-                                    The student is able to receive training in local and English language.
-                                </p>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
-
-                @isset($training->experience)
-                    <div class="card-body">
-                        <div class="card bg-light mb-3">
-                            <div class="card-header text-primary">Experience</div>
-                            <div class="card-body">
-                            <p class="card-text">
-                                {{ $experiences[$training->experience]["text"] }}
-                            </p>
-                            </div>
-                        </div>
-                    </div>
-                @endisset
-
-                <div class="card-body">
-                    <div class="card bg-light mb-3">
-                        <div class="card-header text-primary">Letter of motivation</div>
-                        <div class="card-body">
-                        <p class="card-text">
-                            {{ $training->motivation }}
-                        </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Training Interest Confirmations
-                </h6>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Interest sent</th>
-                                <th>Confirmation Deadline</th>
-                                <th>Interest confirmed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($trainingInterests as $interest)
-                            <tr>
-                                <td>
-                                    {{ $interest->created_at->toEuropeanDate() }}
-                                </td>
-                                <td>
-                                    {{ $interest->deadline->toEuropeanDate() }}
-                                </td>
-                                <td>
-                                    @if($interest->confirmed_at)
-                                        <i class="fas fa-check text-success"></i>&nbsp;{{ $interest->confirmed_at->toEuropeanDate() }}
-                                    @elseif($interest->expired)
-                                        @if($interest->expired == 1)
-                                            <i class="fas fa-times text-warning"></i>&nbsp;Invalidated
-                                        @else
-                                            <i class="fas fa-times text-danger"></i>&nbsp;Not confirmed
-                                        @endif
-                                    @else
-                                        <i class="fas fa-hourglass text-warning"></i>&nbsp;Awaiting confirmation
-                                    @endif
-                                    
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>            
-        </div>
-    </div>
-
-
-    <div class="col-xl-4 col-md-12 mb-12">
-        <div class="card shadow mb-4 ">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Reports
-                </h6>
-            </div>
-            <div class="card-body">
-
-                @can('viewReports', $training)
-                    @foreach($examinations as $examination)
-                            <div class="card bg-light mb-3">
-                                <div class="card-header text-danger">Examination report {{ $examination->examination_date->toEuropeanDate() }}</div>
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        @if($examination->result == "PASSED")
-                                            <span class='badge badge-success'>PASSED</span>
-                                        @elseif($examination->result == "FAILED")
-                                            <span class='badge badge-danger'>FAILED</span>
-                                        @elseif($examination->result == "INCOMPLETE")
-                                            <span class='badge badge-primary'>INCOMPLETE</span>
-                                        @elseif($examination->result == "POSTPONED")
-                                            <span class='badge badge-warning'>POSTPONED</span>
-                                        @endif
-                                    </p>
-                                    <p>Examinator: <a href="{{ route('user.show', $examination->examiner_id) }}">{{ \App\User::find($examination->examiner_id)->name }}</a></p>
-                                    <p>Position: {{ \App\Position::find($examination->position_id)->callsign }}</p>
-                                </div>
-
-                                @if($examination->attachments->count() > 0)
-                                    <div class="card-body">
-                                        @foreach($examination->attachments as $attachment)
-                                            <div>
-                                                <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
-                                                    <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
-                                                </a>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-
-                            </div>
-                    @endforeach
-
-                    @if ($reports->count() == 0)
-                            <div class="card-text text-primary">
-                                No training reports yet.
-                            </div>
-                    @else
-                        @foreach($reports as $report)
-                            @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
-                                <div class="card bg-light mb-3">
-                                    <div class="card-header text-primary"><a href="{{ route('training.report.edit', $report->id) }}">Training report {{ $report->created_at->toEuropeanDate() }}</a> by <a href="{{ route('user.show', $report->written_by_id) }}">{{ \App\User::find($report->written_by_id)->name }}</a>
-                                        @if($report->draft)
-                                            <span class='badge badge-danger'>Draft</span>
-                                        @endif
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            @markdown($report->content)
-                                        </p>
-                                    </div>
-                                    @if ($report->contentimprove != null)
-                                    <div class="card-header text-primary">Areas to improve</div>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            @markdown($report->contentimprove)
-                                        </p>
-                                    </div>
-                                    @endif
-
-                                    @if($report->attachments->count() > 0)
-                                        <div class="card-body">
-                                            @foreach($report->attachments as $attachment)
-                                                <div>
-                                                    <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
-                                                        <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
-                                                    </a>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
-
-                                </div>
-                            @endif
-                        @endforeach
-                    @endif
-                @else
-                    <div class="card-text text-primary">
-                        You don't have access to see this training reports.
-                    </div>
-                @endcan
-
-                @if($training->status == 1 || $training->status == 2)
-                    @can('createReport', $training)
-                        <a href="{{ route('training.report.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-primary">Create report</a>
-                    @else
-                        <a href="#" class="btn mt-4 mr-2 btn-primary disabled">Create report</a>
-                    @endcan
-                @endif
-
-                @if($training->status == 3)
-                    @can('createExamination', $training)
-                        <a href="{{ route('training.examination.create', ['training' => $training->id]) }}" class="btn mt-4 mr-2 btn-danger">Create examination report</a>
-                    @else
-                        <a href="#" class="btn mt-4 mr-2 btn-success disabled">Create examination report</a>
-                    @endcan
-                @endif
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('js')
@@ -476,5 +530,37 @@
             return key;
         }
 
+    </script>
+    <script>
+        $(document).ready(function(){
+            // Add minus icon for collapse element which is open by default
+            $(".collapse.show").each(function(){
+                $(this).prev(".card-header").find(".far").addClass("fa-minus").removeClass("fa-plus");
+            });
+            
+            // Toggle plus minus icon on show hide of collapse element
+            $(".collapse").on('show.bs.collapse', function(){
+                $(this).prev(".card-header").find(".far").removeClass("fa-plus").addClass("fa-minus");
+            }).on('hide.bs.collapse', function(){
+                $(this).prev(".card-header").find(".far").removeClass("fa-minus").addClass("fa-plus");
+            });
+
+            // Closure reason input
+            toggleClosureReasonField($('#trainingStateSelect').val())
+
+            $('#trainingStateSelect').on('change', function () {
+                toggleClosureReasonField($('#trainingStateSelect').val())
+            });
+
+            function toggleClosureReasonField(val){
+                console.log(val)
+                if(val == -2){
+                    $('#closedReasonInput').slideDown(100)
+                } else {
+                    $('#closedReasonInput').hide()
+                }
+            }
+
+        });
     </script>
 @endsection

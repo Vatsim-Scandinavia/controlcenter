@@ -56,8 +56,7 @@ class TrainingReportPolicy
     {
         return  $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
-                $user->isModerator($trainingReport->training->country) ||
-                ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
+                $user->isModerator($trainingReport->training->country);
     }
 
     /**
