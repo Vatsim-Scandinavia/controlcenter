@@ -119,6 +119,7 @@
                             <tr>
                                 <th>State</th>
                                 <th>Level</th>
+                                <th>Country</th>
                                 <th>Type</th>
                             </tr>
                         </thead>
@@ -140,6 +141,9 @@
                                     @else
                                         {{ $ratings["name"] }}
                                     @endif
+                                </td>
+                                <td>
+                                    {{ $training->country->name }}
                                 </td>
                                 <td>
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
