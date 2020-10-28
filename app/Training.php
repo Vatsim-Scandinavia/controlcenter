@@ -39,7 +39,7 @@ class Training extends Model
 
             // Training was put back in queue or closed
             if($newStatus == 0){
-                $this->update(['started_at' => null, 'closed_at' => null, 'closed_reason' => null]);
+                $this->update(['started_at' => null, 'closed_at' => null]);
             }
 
             // If training is set as active
@@ -47,7 +47,7 @@ class Training extends Model
 
                 // In case someone resurrects a closed training
                 if($oldStatus < 0){
-                    $this->update(['closed_at' => null, 'closed_reason' => null]);
+                    $this->update(['closed_at' => null]);
                 }
 
                 if(!isset($this->started_at)){
