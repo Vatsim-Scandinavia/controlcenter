@@ -176,7 +176,7 @@
 
                                 <div class="card">
                                     <div class="card-header p-0">
-                                        <h5 class="mb-0">
+                                        <h5 class="mb-0 bg-lightorange">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
                                                 <i class="far fa-plus mr-2"></i>{{ $examination->created_at->toEuropeanDate() }}
                                             </button>
