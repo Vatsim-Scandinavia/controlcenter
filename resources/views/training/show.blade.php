@@ -334,18 +334,21 @@
                     Training Interest Confirmations
                 </h6>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Interest sent</th>
-                                <th>Confirmation Deadline</th>
-                                <th>Interest confirmed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if($trainingInterests->count() > 0)
+            <div class="card-body {{ $trainingInterests->count() == 0 ? '' : 'p-0' }}">
+
+                @if($trainingInterests->count() == 0)
+                    <p class="mb-0">No confirmation history</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Interest sent</th>
+                                    <th>Confirmation Deadline</th>
+                                    <th>Interest confirmed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach($trainingInterests as $interest)
                                 <tr>
                                     <td>
@@ -370,14 +373,11 @@
                                     </td>
                                 </tr>
                                 @endforeach
-                            @else
-                                <tr>
-                                    <td>No confirmation history</td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+                
             </div>            
         </div>
     </div>
