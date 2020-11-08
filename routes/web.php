@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');
     Route::get('/training/create', 'TrainingController@create')->name('training.create');
     Route::post('/training/store', 'TrainingController@store')->name('training.store');
+    Route::get('/training/{training}/close', 'TrainingController@close')->name('training.close');
     Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 

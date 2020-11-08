@@ -18,14 +18,14 @@
         </div>
     @endif
 
-    @if(\Auth::user()->can('close', $training))
-        <a class="btn btn-danger btn-sm" href="#">Close my training</a>
-    @endif
+    @can('close', $training)
+        <a href="{{ route('training.close', $training->id) }}" class="btn btn-danger btn-sm">Close my training</a>
+    @endcan
 
 @endsection
 @section('content')
 
-@if($training->status < -1)
+@if($training->status < -1 && $training->status != -3)
     <div class="alert alert-warning" role="alert">
         <b>Training is closed with reason: </b>
         @if(isset($training->closed_reason))
@@ -33,6 +33,12 @@
         @else
             No reason given
         @endif
+    </div>
+@endif
+
+@if($training->status == -3)
+    <div class="alert alert-warning" role="alert">
+        <b>Training closed by student</b>
     </div>
 @endif
 

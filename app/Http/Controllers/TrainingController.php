@@ -344,6 +344,25 @@ class TrainingController extends Controller
     }
 
     /**
+     * Close the specified resource in storage.
+     *
+     * @param Training $training
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function close(Training $training)
+    {
+        $this->authorize('close', $training);
+        ActivityLogController::warning('Student closed training request '.$training->id.
+        '. Status: '.TrainingController::$statuses[$training->status]["text"].
+        ', training type: '.$training->type);
+        $training->mentors()->detach();
+        $training->updateStatus(-3);
+        $training->user->notify(new TrainingClosedNotification($training, (int)$training->status));
+        return redirect($training->path())->withSuccess("Training successfully closed.");
+    }
+
+    /**
      * Confirm the continued interest in the training
      *
      * @param Training $training
