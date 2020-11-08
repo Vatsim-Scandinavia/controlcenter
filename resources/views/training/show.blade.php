@@ -18,14 +18,14 @@
         </div>
     @endif
 
-    @if(\Auth::user()->can('close', $training))
-        <a class="btn btn-danger btn-sm" href="#">Close my training</a>
-    @endif
+    @can('close', $training)
+        <a href="{{ route('training.close', $training->id) }}" class="btn btn-danger btn-sm">Close my training</a>
+    @endcan
 
 @endsection
 @section('content')
 
-@if($training->status < -1)
+@if($training->status < -1 && $training->status != -3)
     <div class="alert alert-warning" role="alert">
         <b>Training is closed with reason: </b>
         @if(isset($training->closed_reason))
@@ -33,6 +33,12 @@
         @else
             No reason given
         @endif
+    </div>
+@endif
+
+@if($training->status == -3)
+    <div class="alert alert-warning" role="alert">
+        <b>Training closed by student</b>
     </div>
 @endif
 
@@ -178,7 +184,7 @@
                                     <div class="card-header p-0">
                                         <h5 class="mb-0 bg-lightorange">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                <i class="far fa-plus mr-2"></i>{{ $examination->created_at->toEuropeanDate() }}
+                                                <i class="far fa-plus mr-2"></i>{{ $examination->examination_date->toEuropeanDate() }}
                                             </button>
                                         </h5>
                                     </div>
@@ -234,7 +240,7 @@
                                         <div class="card-header p-0">
                                             <h5 class="mb-0">
                                                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                    <i class="far fa-plus mr-2"></i>{{ $report->created_at->toEuropeanDate() }}
+                                                    <i class="far fa-plus mr-2"></i>{{ $report->report_date->toEuropeanDate() }}
                                                     @if($report->draft)
                                                         <span class='badge badge-danger'>Draft</span>
                                                     @endif
@@ -334,18 +340,21 @@
                     Training Interest Confirmations
                 </h6>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Interest sent</th>
-                                <th>Confirmation Deadline</th>
-                                <th>Interest confirmed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if($trainingInterests->count() > 0)
+            <div class="card-body {{ $trainingInterests->count() == 0 ? '' : 'p-0' }}">
+
+                @if($trainingInterests->count() == 0)
+                    <p class="mb-0">No confirmation history</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Interest sent</th>
+                                    <th>Confirmation Deadline</th>
+                                    <th>Interest confirmed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach($trainingInterests as $interest)
                                 <tr>
                                     <td>
@@ -370,14 +379,11 @@
                                     </td>
                                 </tr>
                                 @endforeach
-                            @else
-                                <tr>
-                                    <td>No confirmation history</td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+                
             </div>            
         </div>
     </div>

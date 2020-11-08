@@ -19,9 +19,10 @@ use Faker\Generator as Faker;
 $factory->define(User::class, function (Faker $faker) {
     return [
         'last_login' => \Carbon\Carbon::now(),
-        'group' => $faker->numberBetween(1, 3),
-        'country' => $faker->randomElement([
-            null, 1, 2, 3, 4, 5,
-        ]),
+        'group' => null,
+        'setting_notify_newreport' => false,
+        'setting_notify_newreq' => false,
+        'setting_notify_closedreq' => false,
+        'setting_notify_newexamreport' => false,
     ];
 });
