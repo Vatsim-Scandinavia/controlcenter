@@ -99,6 +99,9 @@ class TrainingObjectAttachmentTest extends TestCase
         $student = $this->report->training->user;
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
+        // We force-update report to not be a draft
+        $this->report->update(['draft' => 0]);
+
         $id = $this->actingAs($this->report->author)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
             ->decodeResponseJson('id')[0];
