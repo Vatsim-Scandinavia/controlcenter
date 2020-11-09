@@ -53,6 +53,18 @@ class TrainingPolicy
     }
 
     /**
+     * Determine whether the user can close the training.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Training  $training
+     * @return mixed
+     */
+    public function close(User $user, Training $training)
+    {
+        return $user->is($training->user) && $training->status == 0;
+    }
+
+    /**
      * Check whether the given user is allowed to apply for training
      *
      * @param User $user

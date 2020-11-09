@@ -111,7 +111,7 @@
                 <div class="card-body {{ sizeof($student_trainings) == 0 ? '' : 'p-0' }}">
 
                     @if (sizeof($student_trainings) == 0)
-                        <p>You have no students.</p>
+                        <p class="mb-0">You have no students.</p>
                     @else
                         <div class="table-responsive">
                             <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
@@ -160,9 +160,9 @@
             <h6 class="m-0 font-weight-bold text-white">My Trainings</h6>
         </div>
         <!-- Card Body -->
-        <div class="card-body {{ sizeof($trainings) == 0 ? '' : 'p-0' }}">
+        <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
 
-            @if (sizeof($trainings) == 0)
+            @if ($trainings->count() == 0)
                 <p>You have no registered trainings.</p>
             @else
                 <div class="table-responsive">

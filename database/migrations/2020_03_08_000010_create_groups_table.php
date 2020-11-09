@@ -20,9 +20,9 @@ class CreateGroupsTable extends Migration
         });
 
         DB::table('groups')->insert([
-            ['id' => 1, 'name' => 'Administrator', 'description' => 'Rank ment for vACC Director, Training Director and technicaians, access to whole system.'],
-            ['id' => 2, 'name' => 'Moderator', 'description' => 'Access ment for FIR Director and Training assistants to have full control over trainings and statistics.'],
-            ['id' => 3, 'name' => 'Mentor', 'description' => 'Access ment for mentors, to give them mentor-related functionality.'],
+            ['id' => 1, 'name' => 'Administrator', 'description' => 'Rank meant for vACC Director, Training Director and technicaians, access to whole system.'],
+            ['id' => 2, 'name' => 'Moderator', 'description' => 'Access meant for FIR Director and Training assistants to have full control over trainings and statistics.'],
+            ['id' => 3, 'name' => 'Mentor', 'description' => 'Access meant for mentors, to give them mentor-related functionality.'],
         ]);
     }
 
