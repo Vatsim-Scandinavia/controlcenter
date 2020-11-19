@@ -16,7 +16,8 @@ class NotificationPolicy
      * @param User $user
      * @return bool
      */
-    public function modifyTemplates(User $user) {
+    public function modifyTemplates(User $user)
+    {
         return $user->isAdmin();
     }
 }
