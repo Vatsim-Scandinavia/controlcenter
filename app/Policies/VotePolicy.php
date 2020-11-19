@@ -45,16 +45,6 @@ class VotePolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function accessNotification(User $user) {
-        return $user->isAdmin();
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
     public function accessTrainingReports(User $user) {
         return $user->isAdmin();
     }
