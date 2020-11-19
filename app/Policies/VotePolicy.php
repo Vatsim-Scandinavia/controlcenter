@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\User;
+use App\Vote;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class VotePolicy
@@ -15,7 +16,8 @@ class VotePolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function index(User $user) {
+    public function index(User $user)
+    {
         return $user->isAdmin();
     }
 
@@ -25,7 +27,8 @@ class VotePolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function create(User $user) {
+    public function create(User $user)
+    {
         return $user->isAdmin();
     }
 
@@ -35,7 +38,30 @@ class VotePolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function store(User $user) {
+    public function store(User $user)
+    {
         return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can vote
+     *
+     * @param User $user
+     * @param Vote $vote
+     * @return bool
+     */
+    public function vote(User $user, Vote $vote)
+    {
+        $can = true;
+
+        if ($vote->require_active) {
+            ($can == false) ?: $can = $user->active;
+        }
+
+        if ($vote->require_vatsca_member) {
+            ($can == false) ?: $can = $user->sub_division == 'SCA';
+        }
+
+        return $can;
     }
 }

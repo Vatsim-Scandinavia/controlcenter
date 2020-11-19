@@ -50,6 +50,7 @@ class VoteController extends Controller
             'expire_date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'expire_time' => 'required|regex:/^\d{2}:\d{2}$/',
             'require_active' => '',
+            'require_vatsca_member' => '',
             'question' => 'required|string',
             'vote_options' => 'required|string'
         ]);
@@ -65,12 +66,14 @@ class VoteController extends Controller
 
         // Only ATC active can vote ticked?
         isset($data['require_active']) ? $require_active = true : $require_active = false;
+        isset($data['require_vatsca_member']) ? $require_vatsca_member = true : $require_vatsca_member = false;
 
         // Store the new data
         $vote = new Vote();
 
         $vote->question = $data['question'];
         $vote->require_active = $require_active;
+        $vote->require_vatsca_member = $require_vatsca_member;
         $vote->closed = false;
         $vote->end_at = $expire->format('Y-m-d H:i:s');;
 
