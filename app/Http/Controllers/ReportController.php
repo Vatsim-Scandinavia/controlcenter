@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use App\User;
 use App\Country;
-use App\Training;
+use App\ManagementReport;
 use App\Rating;
-use App\Vote;
+use App\Training;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -19,10 +18,9 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-
     public function trainings($filterCountry = false){
 
-        $this->authorize('accessTrainingReports', Vote::class);
+        $this->authorize('accessTrainingReports', ManagementReport::class);
         // Get stats
         $cardStats = $this->getCardStats($filterCountry);
         $totalRequests = $this->getDailyRequestsStats($filterCountry);
@@ -44,7 +42,7 @@ class ReportController extends Controller
 
     public function mentors(){
 
-        $this->authorize('viewMentors', Vote::class);
+        $this->authorize('viewMentors', ManagementReport::class);
 
         if (auth()->user()->isAdmin()) {
             $mentors = User::where('group', '<=', 3)->get();
@@ -66,7 +64,7 @@ class ReportController extends Controller
 
     public function atc(){
 
-        $this->authorize('viewAtcActivity', Vote::class);
+        $this->authorize('viewAtcActivity', ManagementReport::class);
 
         $controllers = User::all();
 
