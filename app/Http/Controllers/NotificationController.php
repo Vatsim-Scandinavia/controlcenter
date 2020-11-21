@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Country;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
 
@@ -12,53 +13,18 @@ class NotificationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($filterCountry = 1)
     {
         $this->authorize('modifyTemplates', Notification::class);
-        return view('admin.notificationtemplates');
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $countries = Country::all();
+        $filterName = Country::find($filterCountry)->name;
+        
+        $template_newreq = Country::find($filterCountry)->template_newreq;
+        $template_newmentor = Country::find($filterCountry)->template_newmentor;
+        $template_pretraining = Country::find($filterCountry)->template_pretraining;
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return view('admin.notificationtemplates', compact('countries', 'filterName', 'template_newreq', 'template_newmentor', 'template_pretraining'));
     }
 
     /**
@@ -68,19 +34,27 @@ class NotificationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+
+        $data = request()->validate([
+            'country' => 'required|int',
+            'newrequestaddition' => 'sometimes',
+            'newmentoraddition' => 'sometimes',
+            'pretrainingaddition' => 'sometimes',
+        ]);
+
+        $country = Country::find($data['country']);
+
+        $this->authorize('modifyCountryTemplate', [Notification::class, $country]);
+
+        $country->template_newreq = $data['newrequestaddition'];
+        $country->template_newmentor = $data['newmentoraddition'];
+        $country->template_pretraining = $data['pretrainingaddition'];
+        
+        $country->save();
+
+        return redirect()->intended(route('admin.templates.country', $country->id))->withSuccess($country->name."'s notifications updated.");
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
