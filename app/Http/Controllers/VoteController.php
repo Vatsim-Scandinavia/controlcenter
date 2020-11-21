@@ -12,7 +12,8 @@ class VoteController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
@@ -24,7 +25,8 @@ class VoteController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
@@ -35,8 +37,9 @@ class VoteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
@@ -47,6 +50,7 @@ class VoteController extends Controller
             'expire_date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'expire_time' => 'required|regex:/^\d{2}:\d{2}$/',
             'require_active' => '',
+            'require_vatsca_member' => '',
             'question' => 'required|string',
             'vote_options' => 'required|string'
         ]);
@@ -62,12 +66,14 @@ class VoteController extends Controller
 
         // Only ATC active can vote ticked?
         isset($data['require_active']) ? $require_active = true : $require_active = false;
+        isset($data['require_vatsca_member']) ? $require_vatsca_member = true : $require_vatsca_member = false;
 
         // Store the new data
         $vote = new Vote();
 
         $vote->question = $data['question'];
         $vote->require_active = $require_active;
+        $vote->require_vatsca_member = $require_vatsca_member;
         $vote->closed = false;
         $vote->end_at = $expire->format('Y-m-d H:i:s');;
 
@@ -90,7 +96,7 @@ class VoteController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Vote  $vote
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function show($id)
     {

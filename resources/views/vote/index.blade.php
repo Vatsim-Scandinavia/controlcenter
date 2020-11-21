@@ -9,7 +9,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Overview</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Overview</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -21,6 +21,7 @@
                                 <th>End</th>
                                 <th>Status</th>
                                 <th>Only for ATC Active</th>
+                                <th>Only for VATSCA members</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,6 +34,7 @@
                                     <td>{{ $vote->end_at }}</td>
                                     <td>{{ $vote->closed ? "Closed" : "Accepting answers" }}</td>
                                     <td><i class="fas fa-{{ $vote->require_active ? "check" : "times" }}"></i></td>
+                                    <td><i class="fas fa-{{ $vote->require_vatsca_member ? "check" : "times" }}"></i></td>
                                 </tr>
 
                             @endforeach

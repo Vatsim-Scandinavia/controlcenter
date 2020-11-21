@@ -8,14 +8,14 @@
     <div class="col-xl-6 col-md-6 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Cast your vote</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Cast your vote</h6>
             </div>
             <div class="card-body">
                 <h3>{{ $vote->question }}</h3>
 
-                @if( $vote->require_active && !\Auth::user()->active )
+                @cannot('vote', $vote)
 
-                    <p class="text-danger">Sorry, you do not qualify to participate in this vote. The vote is only for ATC active members.</p>
+                    <p class="text-danger">Sorry, you do not qualify to participate in this vote.</p>
 
                 @else
 
@@ -39,18 +39,16 @@
                             @error('vote')
                                 <span class="text-danger">{{ $errors->first('vote') }}</span>
                             @enderror
-                            
+
                             <br>
                             <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed</p>
                             <button type="submit" class="btn btn-success">Submit Vote</button>
-                            
+
                         </form>
 
                     @endif
 
-                @endif
-
-                
+                @endcan
             </div>
         </div>
     </div>
@@ -58,7 +56,7 @@
     <div class="col-xl-6 col-md-6 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Vote summary</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Vote summary</h6>
             </div>
             <div class="card-body">
 
@@ -91,7 +89,7 @@
     for (i = 0; i < vote.length; i++) {
         voteOption.push(vote[i]['option']);
         voteVotes.push(vote[i]['voted']);
-    }    
+    }
 
     var barChartData = {
         labels: voteOption,

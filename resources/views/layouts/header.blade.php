@@ -24,6 +24,7 @@
 <meta name="msapplication-TileColor" content="#2b5797">
 <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
 <meta name="theme-color" content="#1a475f">
+<meta name="robots" content="noindex">
 
 @yield('css')
 

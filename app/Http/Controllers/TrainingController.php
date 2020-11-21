@@ -338,6 +338,12 @@ class TrainingController extends Controller
                 $training->user->notify(new TrainingClosedNotification($training, (int)$training->status, $training->closed_reason));
                 return redirect($training->path())->withSuccess("Training successfully closed. E-mail confirmation sent to student.");
             }
+
+            if((int)$training->status == 1){
+                $training->user->notify(new TrainingPreStatusNotification($training));
+                return redirect($training->path())->withSuccess("Training successfully updated. E-mail confirmation of pre-training sent to student.");
+            }
+            
         }
 
         return redirect($training->path())->withSuccess("Training successfully updated");

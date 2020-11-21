@@ -160,7 +160,12 @@ class User extends Authenticatable
     }
 
     public function getActiveAttribute(){
-        return $this->handover->atc_active;
+        $val = $this->handover->atc_active;
+
+        if ($val == null)
+            return false;
+
+        return $val;
     }
 
     /**

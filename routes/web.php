@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/settings', 'GlobalSettingController@index')->name('admin.settings');
     Route::post('/admin/settings', 'GlobalSettingController@edit')->name('admin.settings.store');
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
+    Route::get('/admin/templates/{id}', 'NotificationController@index')->name('admin.templates.country');
+    Route::post('/admin/templates/update', 'NotificationController@update')->name('admin.templates.update');
 
     // Training routes
     Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');
