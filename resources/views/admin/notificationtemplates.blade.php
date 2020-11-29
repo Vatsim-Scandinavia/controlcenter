@@ -39,9 +39,9 @@
                         </select>
 
                         @can('modifyCountryTemplate', [App\Notification::class, $currentCountry])
-                            <button class="btn btn-success ml-2" type="submit">Save notifications</button>
+                            <button class="btn btn-success ml-2" type="submit">Save {{ $currentCountry->name }}'s notifications</button>
                         @else
-                            <button class="btn btn-success ml-2" disabled>Save notifications</button>
+                            <button class="btn btn-success ml-2" disabled>Save {{ $currentCountry->name }}'s notifications</button>
                         @endcan
                     </div>
 
