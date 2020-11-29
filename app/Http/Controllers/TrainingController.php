@@ -6,6 +6,7 @@ use App\Country;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingMentorNotification;
+use App\Notifications\TrainingPreStatusNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingReport;
