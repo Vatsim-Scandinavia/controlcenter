@@ -114,6 +114,12 @@ class UserController extends Controller
 
         if($data['access'] == 0){
             $user->group = null;
+
+            // Detach all country assosiciations if they are downgraded all the way to student.
+            $user->training_role_countries()->detach();
+
+            // Unassign this mentor from all trainings
+            $user->teaches()->detach();
         } else {
             $user->group = $data['access'];
         }
