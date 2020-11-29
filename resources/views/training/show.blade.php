@@ -481,8 +481,11 @@
 @endsection
 
 @section('js')
+
+    <!-- One Time Links -->
     <script type="text/javascript">
 
+        // Generate a one time report link
         $('#getOneTimeLinkReport').click(async function (event) {
             event.preventDefault();
             $(this).prop('disabled', true);
@@ -494,6 +497,7 @@
             alert(route);
         });
 
+        // Generate a one time exam report link
         $('#getOneTimeLinkExam').click(async function (event) {
             event.preventDefault();
             $(this).prop('disabled', true);
@@ -537,6 +541,8 @@
         }
 
     </script>
+
+    <!-- Training report accordian -->
     <script>
         $(document).ready(function(){
             // Add minus icon for collapse element which is open by default
