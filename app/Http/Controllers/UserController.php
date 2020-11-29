@@ -90,7 +90,7 @@ class UserController extends Controller
 
             foreach ((array) $data['countries'] as $country) {
                 if (!$user->training_role_countries->contains($country)){
-                    $user->training_role_countries()->attach($country);
+                    $user->training_role_countries()->attach($country, ['inserted_by' => Auth::id()]);
                 }
             }
 
