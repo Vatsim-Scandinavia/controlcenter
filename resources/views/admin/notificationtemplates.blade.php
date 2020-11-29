@@ -4,7 +4,7 @@
 @section('title-extension')
     <div class="dropdown show" style="display: inline;">
         <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ $filterName }}
+            {{ $currentCountry->name }}
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -19,13 +19,13 @@
 
 <form action="{{ route('admin.templates.update') }}" method="POST">
     @csrf
-    <input type="hidden" name="country" value="1">
+    <input type="hidden" name="country" value="{{ $currentCountry->id }}">
 
     <div class="row">
         <div class="col-xl-12 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">{{ $filterName }} 's Notifications</h6> 
+                    <h6 class="m-0 font-weight-bold text-white">{{ $currentCountry->name }}'s Notifications</h6> 
                 </div>        
                 <div class="card-body">
                     <p>These editors give you the possiblity to append your FIR-specific text to the templates available, for the e-mail notifications. The notification text must be in English.</p>
@@ -38,7 +38,11 @@
                             <option value="3">Pre-Training</option>
                         </select>
 
-                        <button class="btn btn-success ml-2" type="submit">Save notifications</button>
+                        @can('modifyCountryTemplate', [App\Notification::class, $currentCountry])
+                            <button class="btn btn-success ml-2" type="submit">Save {{ $currentCountry->name }}'s notifications</button>
+                        @else
+                            <button class="btn btn-success ml-2" disabled>Save {{ $currentCountry->name }}'s notifications</button>
+                        @endcan
                     </div>
 
                 </div>

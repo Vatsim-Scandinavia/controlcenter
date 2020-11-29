@@ -161,7 +161,7 @@ class ReportController extends Controller
         if($countryFilter){
 
             foreach(Rating::all() as $rating){
-                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+                if($rating->id >= 2){
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
@@ -202,7 +202,7 @@ class ReportController extends Controller
         } else {
 
             foreach(Rating::all() as $rating){
-                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+                if($rating->id >= 2){
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];

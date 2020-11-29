@@ -15,16 +15,16 @@ class NotificationController extends Controller
      */
     public function index($filterCountry = 1)
     {
-        $this->authorize('modifyTemplates', Notification::class);
+        $this->authorize('viewTemplates', Notification::class);
 
         $countries = Country::all();
-        $filterName = Country::find($filterCountry)->name;
+        $currentCountry = Country::find($filterCountry);
         
         $template_newreq = Country::find($filterCountry)->template_newreq;
         $template_newmentor = Country::find($filterCountry)->template_newmentor;
         $template_pretraining = Country::find($filterCountry)->template_pretraining;
 
-        return view('admin.notificationtemplates', compact('countries', 'filterName', 'template_newreq', 'template_newmentor', 'template_pretraining'));
+        return view('admin.notificationtemplates', compact('countries', 'currentCountry', 'template_newreq', 'template_newmentor', 'template_pretraining'));
     }
 
     /**

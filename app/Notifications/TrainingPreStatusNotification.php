@@ -49,16 +49,16 @@ class TrainingPreStatusNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
 
-        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.' has now been assigned to pre-training..';
+        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.' has now been assigned to pre-training.';
         $country = Country::find($this->training->country_id);
-        if(isset($country->template_newreq)){
-            $textLines[] = $country->template_newreq;
+        if(isset($country->template_pretraining)){
+            $textLines[] = $country->template_pretraining;
         }
 
         $contactMail = Country::find($this->training->country_id)->contact;
 
         return (new TrainingMail('Training Assigned', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->email, $this->training->user->name)
+            ->to($this->training->user->email, $this->training->user->name);
     }
 
     /**

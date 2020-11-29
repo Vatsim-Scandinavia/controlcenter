@@ -24,27 +24,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param User $user
@@ -90,7 +69,7 @@ class UserController extends Controller
 
             foreach ((array) $data['countries'] as $country) {
                 if (!$user->training_role_countries->contains($country)){
-                    $user->training_role_countries()->attach($country);
+                    $user->training_role_countries()->attach($country, ['inserted_by' => Auth::id()]);
                 }
             }
 
@@ -114,6 +93,12 @@ class UserController extends Controller
 
         if($data['access'] == 0){
             $user->group = null;
+
+            // Detach all country assosiciations if they are downgraded all the way to student.
+            $user->training_role_countries()->detach();
+
+            // Unassign this mentor from all trainings
+            $user->teaches()->detach();
         } else {
             $user->group = $data['access'];
         }
@@ -123,19 +108,6 @@ class UserController extends Controller
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
 
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
-
-
 
     /**
      * Display a listing of user's settings

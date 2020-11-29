@@ -17,9 +17,9 @@ class NotificationPolicy
      * @param User $user
      * @return bool
      */
-    public function modifyTemplates(User $user)
+    public function viewTemplates(User $user)
     {
-        return $user->isAdmin();
+        return $user->isModerator();
     }
 
     /**
