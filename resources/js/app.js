@@ -39,6 +39,8 @@ const app = new Vue({
         };
     });
 
+    var lastWindowWidth = $(window).width();
+
     // Close any open menu accordions when window is resized below 768px
     $(window).resize(function () {
         if ($(window).width() < 768) {
@@ -46,11 +48,13 @@ const app = new Vue({
         };
 
         // Toggle the side navigation when window is resized below 480px
-        if ($(window).width() < 480 && !$(".sidebar").hasClass("toggled")) {
+        if ($(window).width() < 480 && !$(".sidebar").hasClass("toggled") && $(window).width() > lastWindowWidth+20) {
             $("body").addClass("sidebar-toggled");
             $(".sidebar").addClass("toggled");
             $('.sidebar .collapse').collapse('hide');
         };
+
+        lastWindowWidth = $(window).width();
     });
 
     if ($(window).width() < 480) {
