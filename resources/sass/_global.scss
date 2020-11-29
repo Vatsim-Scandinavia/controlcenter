@@ -1,205 +1,181 @@
 // Global component styles
 
 html {
-	position: relative;
-	min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-	height: 100%;
+    height: 100%;
 }
 
 a {
-	&:focus {
-		outline: none;
-	}
+    &:focus {
+        outline: none;
+    }
 }
 
 p {
-	a {
-		text-decoration: underline;
-	}
+    a {
+        text-decoration: underline;
+    }
 }
 
 // Main page wrapper
 #wrapper {
-	display: flex;
-	#content-wrapper {
-		background-color: $gray-100;
-		width: 100%;
-		overflow-x: hidden;
-		#content {
-		flex: 1 0 auto;
-		}
-	}
+    display: flex;
+    #content-wrapper {
+        background-color: $gray-100;
+        width: 100%;
+        overflow-x: hidden;
+        #content {
+            flex: 1 0 auto;
+        }
+    }
 }
 
 // Set container padding to match gutter width instead of default 15px
 .container,
 .container-fluid {
-	padding-left: $grid-gutter-width;
-	padding-right: $grid-gutter-width;
-}
-
-// Scroll to top button
-.scroll-to-top {
-	position: fixed;
-	right: 1rem;
-	bottom: 1rem;
-	display: none;
-	width: 2.75rem;
-	height: 2.75rem;
-	text-align: center;
-	color: $white;
-	background: fade-out($gray-800, .5);
-	line-height: 46px;
-	&:focus,
-	&:hover {
-		color: white;
-	}
-	&:hover {
-		background: $gray-800;
-	}
-	i {
-		font-weight: 800;
-	}
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
 }
 
 // Custom extras
-.front-cover{
-	width: 100%;
-	height: 100vh;
+.front-cover {
+    width: 100%;
+    height: 100vh;
 
-    background: url(/images/front.jpg);	
-	background-size: cover;
+    background: url(/images/front.jpg);
+    background-size: cover;
     background-position: center center;
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
 
-	.content{
+    .content {
+        width: 500px;
+        margin: auto;
+        text-align: center;
 
-		width: 500px;
-		margin: auto;
-		text-align: center;
+        padding-top: 200px;
 
-		padding-top: 200px;
+        @include media-breakpoint-down(md) {
+            width: 90%;
+        }
 
-		@include media-breakpoint-down(md) {
-			width: 90%;
-		}
+        &-title {
+            font-size: 3rem;
+            color: white;
+            line-height: 0;
 
-		&-title{
-			font-size: 3rem;
-			color: white;
-			line-height: 0;
+            img {
+                height: 78px;
+            }
 
-			img{
-				height: 78px;
-			}
+            @include media-breakpoint-down(sm) {
+                font-size: 2rem;
+            }
+        }
 
-			@include media-breakpoint-down(sm) {
-				font-size: 2rem;
-			}
-		}
-		
-		&-description{
-			font-size: 22px;
-			color: white;
+        &-description {
+            font-size: 22px;
+            color: white;
 
-			@include media-breakpoint-down(sm) {
-				font-size: 15px;
-			}
-		}
+            @include media-breakpoint-down(sm) {
+                font-size: 15px;
+            }
+        }
 
-		a{
-			margin-top: 20px;
-			padding-top: 6px;
-			width: 72%;
-		}
+        a {
+            margin-top: 20px;
+            padding-top: 6px;
+            width: 72%;
+        }
+    }
 
-	}
+    .logo {
+        position: absolute;
+        bottom: 20px;
+        left: calc(50vw - (215px / 2));
 
-	.logo{
-		position: absolute;
-		bottom: 20px;
-		left: calc(50vw - (215px / 2));
-
-		img{
-			width: 215px
-		}
-	}
+        img {
+            width: 215px;
+        }
+    }
 }
 
-.table{
-	&-leftpadded{
-		thead,tbody{
-			th:first-child,td:first-child{
-				padding-left: 15px;
-			}
-		}
-	}
+.table {
+    &-leftpadded {
+        thead,
+        tbody {
+            th:first-child,
+            td:first-child {
+                padding-left: 15px;
+            }
+        }
+    }
 
-	.thead-dark, .tbody-dark{
-		th{
-			border-color: $blue;
-			background-color: $blue;
-		}
-	}
+    .thead-dark,
+    .tbody-dark {
+        th {
+            border-color: $blue;
+            background-color: $blue;
+        }
+    }
 
-	.thead-light{
-		th{
-			color: $gray-800;
-		}
-	}
+    .thead-light {
+        th {
+            color: $gray-800;
+        }
+    }
 
-	tr{
-		color: $gray-800;
-	}
+    tr {
+        color: $gray-800;
+    }
 }
 
 // Lets tweak a bit the style of bootstrap-table plugin
-table[data-toggle=table]{
+table[data-toggle="table"] {
+    th {
+        &:first-child {
+            padding-left: 10px !important;
+        }
 
-	th{
-		&:first-child{
-			padding-left: 10px !important;
-		}
+        &:last-child {
+            padding-right: 10px !important;
+        }
+    }
 
-		&:last-child{
-			padding-right: 10px !important;
-		}
-	}
-
-	.filter-control{
-		input{
-			height: calc(1.25em + .5rem + 2px);
-			padding: .25rem .5rem;
-			font-size: .875rem;
-			line-height: 1.5;
-		}
-		select{
-			height: calc(1.25em + .5rem + 2px);
-			padding: .25rem .5rem;
-			font-size: .875rem;
-			line-height: 1.5;
-		}
-	}
+    .filter-control {
+        input {
+            height: calc(1.25em + 0.5rem + 2px);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        select {
+            height: calc(1.25em + 0.5rem + 2px);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+    }
 }
 
-.fixed-table-pagination{
-	padding-left: 15px;
-	padding-right: 15px;
+// Tweaks to the pagination of bootstrap-table plugin, fixes padding issues and more
+.fixed-table-pagination {
+    padding-left: 15px;
+    padding-right: 15px;
 
-	// Forcefully changing the rows for each page dropdown, as we can't change the html afaik
-	div.float-left.pagination-detail > span.page-list > span > button{
-		color: $gray-900;
-		background-color: $gray-100 !important;
-		border-color: $gray-200 !important;
+    // Forcefully changing the rows for each page dropdown, as we can't change the html afaik
+    div.float-left.pagination-detail > span.page-list > span > button {
+        color: $gray-900;
+        background-color: $gray-100 !important;
+        border-color: $gray-200 !important;
 
-		height: calc(1.5em + .5rem + 2px);
-		padding: 0.25rem 0.5rem;
-		font-size: 0.875rem;
-		line-height: 1.5;
-	}
-
+        height: calc(1.5em + 0.5rem + 2px);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
 }
