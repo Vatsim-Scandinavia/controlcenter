@@ -9,11 +9,10 @@ use App\User;
 class UserSearchController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Run the request to database and echo the results out directly
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-
     function action(Request $request)
     {
         $output = [];

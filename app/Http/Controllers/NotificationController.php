@@ -6,12 +6,17 @@ use App\Country;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
 
+/**
+ * This controller manages each FIR's notifications settings to append
+ */
 class NotificationController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param int $filterCountry countryId to filter the index by
+     * @return \Illuminate\Contracts\Support\Renderable
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index($filterCountry = 1)
     {
@@ -31,8 +36,8 @@ class NotificationController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request)
     {

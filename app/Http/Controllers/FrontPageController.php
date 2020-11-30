@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * This controller controls the front page view when not logged in
+ */
 class FrontPageController extends Controller
 {
     /**

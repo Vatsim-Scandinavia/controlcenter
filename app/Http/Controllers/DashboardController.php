@@ -55,7 +55,6 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-
     public function apply(){
         return view('trainingapply');
     }
@@ -65,7 +64,6 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-
     public function endorsements(){
 
         $members = User::has('ratings')->get();

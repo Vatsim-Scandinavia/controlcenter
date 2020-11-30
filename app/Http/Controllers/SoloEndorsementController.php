@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+/**
+ * This controller handles the solo endorsement assignent.
+ */
 class SoloEndorsementController extends Controller
 {
 
@@ -17,7 +20,8 @@ class SoloEndorsementController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
@@ -29,9 +33,9 @@ class SoloEndorsementController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource available for everyone, but ment for SUPs
      *
-     * @return \Illuminate\Http\Response
+     * @return mixed
      */
     public function sup()
     {
@@ -44,7 +48,8 @@ class SoloEndorsementController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
@@ -59,8 +64,8 @@ class SoloEndorsementController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return mixed
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store()
     {
@@ -98,8 +103,9 @@ class SoloEndorsementController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Group  $group
+     * @param  int $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function delete($id)
     {

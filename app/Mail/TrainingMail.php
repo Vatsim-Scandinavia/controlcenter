@@ -24,6 +24,7 @@ class TrainingMail extends Mailable
      * @param string $actionUrl
      * @param string $actionText
      * @param string $actionColor
+     * @return void
      */
     public function __construct(string $mailSubject, Training $training, array $textLines, string $contactMail = null, string $actionUrl = null, string $actionText = null, string $actionColor = 'primary')
     {

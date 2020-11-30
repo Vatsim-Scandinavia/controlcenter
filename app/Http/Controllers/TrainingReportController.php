@@ -165,6 +165,8 @@ class TrainingReportController extends Controller
 
     /**
      * Validates the request data
+     * 
+     * @return mixed
      */
     protected function validateRequest()
     {
