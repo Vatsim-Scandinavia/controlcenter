@@ -66,7 +66,8 @@ class LoginController extends Controller
 
         $account = $this->completeLogin($resourceOwner, $accessToken);
 
-        auth()->login($account, true);
+        // Login the user and don't remember the session forever
+        auth()->login($account, false);
 
         $authLevel = "User";
         if(isset(\Auth::user()->group)) $authLevel = Group::find(\Auth::user()->group)->name;
