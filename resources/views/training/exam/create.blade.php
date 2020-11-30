@@ -4,14 +4,14 @@
 @section('content')
 
     <div class="row">
-        <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
+        <div class="col-xl-5 col-lg-12 col-md-12 mb-12 p-0">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-white">
                         {{ $training->user->name }}
                     </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                             <thead class="thead-light">
