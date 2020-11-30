@@ -8,6 +8,33 @@
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-white">
+                        {{ $training->user->name }}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Vatsim ID</th>
+                                    <th>ATC Rating</th>
+                                    <th>Subdivision</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ $training->user->id }}</td>
+                                    <td>{{ $training->user->rating_short }}</td>
+                                    <td>{{ $training->user->subdivision }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">
                         New Examination Report for {{ $training->user->firstName }}'s
                         @foreach($training->ratings as $rating)
                             @if ($loop->last)
