@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * Controller for mentor overview
+ * Controller for mentor's overview of their students, not the report.
  */
 class MentorController extends Controller
 {
