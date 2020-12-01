@@ -25,7 +25,7 @@
                         data-page-list=[10,15,25,50]>
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml">Date</th>
+                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Date</th>
                                 <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
                                 <th data-field="end" data-sortable="true" data-filter-control="select">End (Zulu)</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Position</th>
@@ -38,8 +38,8 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
-                                        &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
+                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
+                                           <i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
                                     @endcan
                                     @cannot('update', $booking)
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
