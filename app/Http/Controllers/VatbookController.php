@@ -20,7 +20,7 @@ class VatbookController extends Controller
      * Display a listing of the resource.
      *
      * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index(User $user){
         $user = Auth::user();
@@ -37,7 +37,7 @@ class VatbookController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Vatbook $booking
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
      */
     public function show($id){
         $booking = Vatbook::findOrFail($id);
@@ -54,7 +54,7 @@ class VatbookController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
@@ -156,7 +156,7 @@ class VatbookController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
 
     public function update(Request $request)
@@ -249,7 +249,7 @@ class VatbookController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Vatbook  $booking
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function delete($id)
     {
