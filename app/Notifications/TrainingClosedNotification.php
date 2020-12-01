@@ -22,8 +22,8 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      *
      * @param Training $training
-     * @param int $closedBy the training status code that indicates who closed it
-     * @param string $reason optional reason of closure communicated to the receiver
+     * @param int|null $closedBy the training status code that indicates who closed it
+     * @param string|null $reason optional reason of closure communicated to the receiver
      */
     public function __construct(Training $training, int $closedBy, string $reason = null)
     {
