@@ -114,7 +114,6 @@
     })
 
     change = (type) => {
-        console.log(type);
         let name = document.getElementsByName(type.name);
         let checked = document.getElementById(type.id);
 
