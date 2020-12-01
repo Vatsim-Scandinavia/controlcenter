@@ -19,11 +19,11 @@ class TrainingMail extends Mailable
      *
      * @param string $mailSubject
      * @param Training $training
-     * @param array $textLines
-     * @param string $contactMail
-     * @param string $actionUrl
-     * @param string $actionText
-     * @param string $actionColor
+     * @param array $textLines an array of markdown lines to add
+     * @param string $contactMail optional contact e-mail to put in footer
+     * @param string $actionUrl optinal action button url
+     * @param string $actionText optional action button text
+     * @param string $actionColor optional bootstrap button color override
      * @return void
      */
     public function __construct(string $mailSubject, Training $training, array $textLines, string $contactMail = null, string $actionUrl = null, string $actionText = null, string $actionColor = 'primary')

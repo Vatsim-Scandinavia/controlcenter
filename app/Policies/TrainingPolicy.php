@@ -18,7 +18,7 @@ class TrainingPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Training  $training
-     * @return mixed
+     * @return bool
      */
     public function view(User $user, Training $training)
     {
@@ -32,7 +32,7 @@ class TrainingPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Training  $training
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, Training $training)
     {
@@ -45,7 +45,7 @@ class TrainingPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Training  $training
-     * @return mixed
+     * @return bool
      */
     public function delete(User $user, Training $training)
     {
@@ -57,7 +57,7 @@ class TrainingPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Training  $training
-     * @return mixed
+     * @return bool
      */
     public function close(User $user, Training $training)
     {
@@ -68,7 +68,7 @@ class TrainingPolicy
      * Check whether the given user is allowed to apply for training
      *
      * @param User $user
-     * @return Response
+     * @return Illuminate\Auth\Access\Response
      */
     public function apply(User $user)
     {

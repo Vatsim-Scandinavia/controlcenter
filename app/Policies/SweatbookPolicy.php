@@ -14,7 +14,7 @@ class SweatbookPolicy
      * Determine whether the user can view bookings.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function view(User $user)
     {
@@ -25,7 +25,7 @@ class SweatbookPolicy
      * Determine whether the user can create bookings.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -37,7 +37,7 @@ class SweatbookPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Sweatbook  $booking
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, Sweatbook $booking)
     {

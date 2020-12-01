@@ -16,7 +16,7 @@ class TrainingExaminationPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingExamination  $examination
-     * @return mixed
+     * @return bool
      */
     public function view(User $user, TrainingExamination $examination)
     {
@@ -27,7 +27,7 @@ class TrainingExaminationPolicy
      * Determine whether the user can create training examinations.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -45,7 +45,7 @@ class TrainingExaminationPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingExamination  $examination
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, TrainingExamination $examination)
     {
@@ -57,7 +57,7 @@ class TrainingExaminationPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingExamination  $trainingExamination
-     * @return mixed
+     * @return bool
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
     {

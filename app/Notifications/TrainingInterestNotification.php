@@ -23,6 +23,8 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      *
      * @param Training $training
+     * @param TrainingInterest $interest reference to the interest model
+     * @param bool $reminder optional, default false, if this notification is a reminder
      * @param string $key
      */
     public function __construct(Training $training, TrainingInterest $interest, bool $reminder = false)
