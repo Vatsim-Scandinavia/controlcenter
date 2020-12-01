@@ -134,17 +134,17 @@
 
                     @if ($user->isMentor())
                         <div class="form-group">
-                            <input id="training" type="radio" name="tag" value=1>
+                            <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                             <label for="training">Training</label>
                         </div>
 
                         <div class="form-group">
-                            <input id="exam" type="radio" name="tag" value=2>
+                            <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
                             <label for="exam">Exam</label>
                         </div>
 
                         <div class="form-group">
-                            <input id="event" type="radio" name="tag" value=3>
+                            <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
                             <label for="event">Event</label>
                         </div>
                     @endif
@@ -177,5 +177,25 @@
         });
         $('.flatpickr-input:visible').prop('readonly', false);
     })
+
+    change = (type) => {
+        console.log(type);
+        let name = document.getElementsByName(type.name);
+        let checked = document.getElementById(type.id);
+
+        if (checked.checked) {
+            for(let i = 0; i < name.length; i++) {
+                if(!name[i].checked) {
+                    name[i].disabled = true;
+                } else {
+                    name[i].disabled = false;
+                }
+            }
+        } else {
+            for(let i = 0; i < name.length; i++) {
+                name[i].disabled = false;
+            }
+        }
+    }
 </script>
 @endsection
