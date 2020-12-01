@@ -42,4 +42,15 @@ class VatbookPolicy
     {
         return $booking->local_id != null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id != null;
     }
+
+    /**
+     * Determine whether the user can add tags.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function tags(User $user)
+    {
+        return $user->isMentor();
+    }
 }

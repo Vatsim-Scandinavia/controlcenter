@@ -57,6 +57,8 @@
                                         <span class="badge badge-primary">Training</span>
                                     @elseif($booking->event)
                                         <span class="badge badge-success">Event</span>
+                                    @elseif($booking->exam)
+                                        <span class="badge badge-danger">Exam</span>
                                     @endif
                                 </td>
                                 <td>
@@ -132,12 +134,17 @@
 
                     @if ($user->isMentor())
                         <div class="form-group">
-                            <input id="training" type="checkbox" name="training" value=1>
+                            <input id="training" type="radio" name="tag" value=1>
                             <label for="training">Training</label>
                         </div>
 
                         <div class="form-group">
-                            <input id="event" type="checkbox" name="event" value=1>
+                            <input id="exam" type="radio" name="tag" value=2>
+                            <label for="exam">Exam</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input id="event" type="radio" name="tag" value=3>
                             <label for="event">Event</label>
                         </div>
                     @endif

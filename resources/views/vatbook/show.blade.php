@@ -46,18 +46,27 @@
                     @if ($user->isMentor())
                         <div class="form-group">
                             @if ($booking->training == 1)
-                                <input id="training" type="checkbox" name="training" value=1 checked>
+                                <input id="training" type="radio" name="tag" value=1 checked>
                             @else
-                                <input id="training" type="checkbox" name="training" value=1>
+                                <input id="training" type="radio" name="tag" value=1>
                             @endif
                             <label for="training">Training</label>
                         </div>
 
                         <div class="form-group">
-                            @if ($booking->event == 1)
-                                <input id="event" type="checkbox" name="event" value=1 checked>
+                            @if ($booking->exam == 1)
+                                <input id="exam" type="radio" name="tag" value=2 checked>
                             @else
-                                <input id="event" type="checkbox" name="event" value=1>
+                                <input id="exam" type="radio" name="tag" value=2>
+                            @endif
+                            <label for="exam">Exam</label>
+                        </div>
+
+                        <div class="form-group">
+                            @if ($booking->event == 1)
+                                <input id="event" type="radio" name="tag" value=3 checked>
+                            @else
+                                <input id="event" type="radio" name="tag" value=3>
                             @endif
                             <label for="event">Event</label>
                         </div>

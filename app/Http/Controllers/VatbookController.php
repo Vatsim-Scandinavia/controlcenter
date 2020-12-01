@@ -66,8 +66,7 @@ class VatbookController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
-            'training' => 'nullable|numeric|size:1',
-            'event' => 'nullable|numeric|size:1'
+            'tag' => 'nullable|integer|between:1,3'
         ]);
 
         $user = Auth::user();
@@ -105,17 +104,37 @@ class VatbookController extends Controller
 
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) $booking->training = 1;
         else $booking->training = 0;
-        if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
+
+        if(isset($data['tag'])) {
+            $this->authorize('tags', $booking);
+            switch ($data['tag']) {
+                case 1:
+                    $booking->exam = 0;
+                    $booking->event = 0;
+                    $booking->training = 1;
+                    break;
+                case 2:
+                    $booking->training = 0;
+                    $booking->exam = 1;
+                    $booking->event = 0;
+                    break;
+                case 3:
+                    $booking->training = 0;
+                    $booking->exam = 0;
+                    $booking->event = 1;
+                    break;
+            }
+        } else {
+            $booking->exam = 0;
+            $booking->event = 0;
+        }
 
         if(App::environment('production')) {
-            if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-            if(isset($data['event']) && $user->isMentor()) {
+            if($booking->event) {
                 $eventUrl = "vatsim-scandinavia.org";
-                $booking->event = 1;
                 $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {
-                $booking->event = 0;
                 $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
             }
 
@@ -147,8 +166,7 @@ class VatbookController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
-            'training' => 'nullable|numeric|size:1',
-            'event' => 'nullable|numeric|size:1'
+            'tag' => 'nullable|integer|between:1,3'
         ]);
 
         $user = Auth::user();
@@ -185,20 +203,41 @@ class VatbookController extends Controller
 
         if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModerator()) $booking->training = 1;
         else $booking->training = 0;
-        if(isset($data['training']) && isset($data['event'])) return back()->withErrors('Cannot be training and event!')->withInput();
+
+        if(isset($data['tag'])) {
+            $this->authorize('tags', $booking);
+            switch ($data['tag']) {
+                case 1:
+                    $booking->exam = 0;
+                    $booking->event = 0;
+                    $booking->training = 1;
+                    break;
+                case 2:
+                    $booking->training = 0;
+                    $booking->exam = 1;
+                    $booking->event = 0;
+                    break;
+                case 3:
+                    $booking->training = 0;
+                    $booking->exam = 0;
+                    $booking->event = 1;
+                    break;
+            }
+        } else {
+            $booking->exam = 0;
+            $booking->event = 0;
+        }
 
         if(App::environment('production')) {
-            if(isset($data['training']) && $user->isMentor()) $booking->training = 1;
-            if(isset($data['event']) && $user->isMentor()) {
+            if($booking->event) {
                 $eventUrl = "vatsim-scandinavia.org";
-                $booking->event = 1;
                 file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {
-                $booking->event = 0;
                 file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
             }
         }
+        
         $booking->save();
 
         ActivityLogController::info("Updated vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
