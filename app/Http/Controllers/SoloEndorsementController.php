@@ -35,7 +35,7 @@ class SoloEndorsementController extends Controller
     /**
      * Display a listing of the resource available for everyone, but ment for SUPs
      *
-     * @return mixed
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function sup()
     {
@@ -64,7 +64,7 @@ class SoloEndorsementController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return mixed
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store()
