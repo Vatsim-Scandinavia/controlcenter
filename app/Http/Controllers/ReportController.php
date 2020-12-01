@@ -20,7 +20,7 @@ class ReportController extends Controller
      * Show the training statistics view
      *
      * @param int $filterCountry countryId to filter by
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function trainings($filterCountry = false){
@@ -42,7 +42,7 @@ class ReportController extends Controller
     /**
      * Show the mentors statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function mentors(){
@@ -64,7 +64,7 @@ class ReportController extends Controller
     /**
      * Show the atc active statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function atc(){

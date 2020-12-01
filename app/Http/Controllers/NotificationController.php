@@ -15,7 +15,7 @@ class NotificationController extends Controller
      * Display a listing of the resource.
      *
      * @param int $filterCountry countryId to filter the index by
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index($filterCountry = 1)

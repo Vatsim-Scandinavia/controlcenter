@@ -17,7 +17,7 @@ class SweatbookController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(){
@@ -33,7 +33,7 @@ class SweatbookController extends Controller
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id){

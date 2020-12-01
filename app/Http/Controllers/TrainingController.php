@@ -186,7 +186,7 @@ class TrainingController extends Controller
      * Create a new instance of the resourcebundle_count
      * 
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function create(Request $request)
     {

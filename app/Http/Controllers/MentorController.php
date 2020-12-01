@@ -14,7 +14,7 @@ class MentorController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function index(){
         $user = Auth::user();

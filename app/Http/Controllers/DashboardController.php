@@ -24,7 +24,7 @@ class DashboardController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -53,7 +53,7 @@ class DashboardController extends Controller
     /**
      * Show the training apply view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function apply(){
         return view('trainingapply');
@@ -62,7 +62,7 @@ class DashboardController extends Controller
     /**
      * Show member endorsements view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function endorsements(){
 
