@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 
+/**
+ * Controller for all trainings
+ */
 class TrainingController extends Controller
 {
     /**

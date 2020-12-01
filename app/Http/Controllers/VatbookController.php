@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller for handling Vatbook/vRoute bookings.
+ */
 class VatbookController extends Controller
 {
 

@@ -8,6 +8,9 @@ use App\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller to handle user views
+ */
 class UserController extends Controller
 {
     /**

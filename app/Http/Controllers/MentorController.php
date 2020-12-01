@@ -8,6 +8,9 @@ use App\Training;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller for mentor overview
+ */
 class MentorController extends Controller
 {
 
