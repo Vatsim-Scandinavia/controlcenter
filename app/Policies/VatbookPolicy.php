@@ -64,7 +64,7 @@ class VatbookPolicy
     public function position(User $user, Vatbook $booking)
     {
         if($booking->position->rating > $user->rating && !$user->isModerator()) {
-            if(($user->getActiveTraining(1)) && $user->getActiveTraining()->ratings()->first()->vatsim_rating == $booking->position->rating) {
+            if($user->getActiveTraining(1) && $user->getActiveTraining()->ratings()->first()->vatsim_rating == $booking->position->rating) {
                 return true;
             }
             return $this->deny('You are not authorized to book this position!');
