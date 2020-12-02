@@ -14,7 +14,7 @@ class ManagementReportPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function accessTrainingReports(User $user) {
         return $user->isAdmin();
@@ -24,7 +24,7 @@ class ManagementReportPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function viewMentors(User $user) {
         return $user->isAdmin() ||
@@ -35,7 +35,7 @@ class ManagementReportPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function viewAtcActivity(User $user) {
         return $user->isAdmin();

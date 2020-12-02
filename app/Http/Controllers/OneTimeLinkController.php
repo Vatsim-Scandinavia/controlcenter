@@ -8,6 +8,9 @@ use App\TrainingObject;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+/** 
+ * Controller for generating one time link for training and exams
+ */
 class OneTimeLinkController extends Controller
 {
 

@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\User;
 
+/**
+ * Controller for handling internal API request to search up users for search bar
+ */
 class UserSearchController extends Controller
 {
     /**

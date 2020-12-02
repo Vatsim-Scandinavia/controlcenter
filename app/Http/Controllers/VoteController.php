@@ -7,6 +7,9 @@ use App\VoteOption;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+/**
+ * Controller handling votes and results
+ */
 class VoteController extends Controller
 {
     /**

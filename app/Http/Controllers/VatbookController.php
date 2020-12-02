@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller for handling Vatbook/vRoute bookings.
+ */
 class VatbookController extends Controller
 {
 
@@ -20,7 +23,7 @@ class VatbookController extends Controller
      * Display a listing of the resource.
      *
      * @param  \App\User  $user
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function index(User $user){
         $user = Auth::user();
@@ -36,7 +39,7 @@ class VatbookController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Vatbook $booking
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function show($id){
         $booking = Vatbook::findOrFail($id);

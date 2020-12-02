@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 
+/**
+ * Controller for all trainings
+ */
 class TrainingController extends Controller
 {
     /**
@@ -186,7 +189,7 @@ class TrainingController extends Controller
      * Create a new instance of the resourcebundle_count
      * 
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function create(Request $request)
     {

@@ -13,7 +13,7 @@ class VatbookPolicy
     /**
      * Determine whether the user can view bookings.
      *
-     * @return mixed
+     * @return bool
      */
     public function view()
     {
@@ -24,7 +24,7 @@ class VatbookPolicy
      * Determine whether the user can create bookings.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -36,7 +36,7 @@ class VatbookPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Vatbook  $booking
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, Vatbook $booking)
     {
@@ -47,7 +47,7 @@ class VatbookPolicy
      * Determine whether the user can add tags.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function tags(User $user)
     {

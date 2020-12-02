@@ -77,7 +77,6 @@ class Training extends Model
     /**
      * Get a inline string of ratings associated with a training.
      *
-     * @param string $status
      * @return string
      */
      public function getInlineRatings(){
@@ -102,7 +101,6 @@ class Training extends Model
     /**
      * Get a inline string of ratings associated with a training.
      *
-     * @param string $status
      * @return string
      */
     public function getInlineMentors(){

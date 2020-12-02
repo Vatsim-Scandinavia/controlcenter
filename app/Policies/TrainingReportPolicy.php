@@ -18,7 +18,7 @@ class TrainingReportPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingReport  $trainingReport
-     * @return mixed
+     * @return bool
      */
     public function view(User $user, TrainingReport $trainingReport)
     {
@@ -32,7 +32,7 @@ class TrainingReportPolicy
      * Determine whether the user can create training reports.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -50,7 +50,7 @@ class TrainingReportPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingReport  $trainingReport
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, TrainingReport $trainingReport)
     {
@@ -64,7 +64,7 @@ class TrainingReportPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingReport  $trainingReport
-     * @return mixed
+     * @return Illuminate\Auth\Access\Response
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {

@@ -13,7 +13,7 @@ class FrontPageController extends Controller
     /**
      * Show the landing page if not logged in, or redirect if logged in.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function index()
     {
