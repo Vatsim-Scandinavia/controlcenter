@@ -53,4 +53,22 @@ class VatbookPolicy
     {
         return $user->isMentor();
     }
+
+    /**
+     * Determine whether the user can book this position.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Vatbook  $booking
+     * @return mixed
+     */
+    public function position(User $user, Vatbook $booking)
+    {
+        if($booking->position->rating > $user->rating && !$user->isModerator()) {
+            if(($user->getActiveTraining(1) or $user->getActiveTraining(2)) && $user->getActiveTraining()->ratings()->first()->vatsim_rating == $booking->position->rating) {
+                return true;
+            }
+            return $this->deny('You are not authorized to book this position!');
+        }
+        return true;
+    }
 }
