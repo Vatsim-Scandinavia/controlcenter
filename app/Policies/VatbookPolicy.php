@@ -67,7 +67,7 @@ class VatbookPolicy
             if(($user->getActiveTraining(1) or $user->getActiveTraining(2)) && $user->getActiveTraining()->ratings()->first()->vatsim_rating == $booking->position->rating) {
                 return true;
             }
-            return back()->withErrors('You are not authorized to book this position!')->withInput();
+            return $this->deny('You are not authorized to book this position!');
         }
         return true;
     }
