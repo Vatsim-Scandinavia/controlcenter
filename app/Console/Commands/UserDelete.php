@@ -47,6 +47,11 @@ class UserDelete extends Command
             // Training should be closed
             $training->updateStatus(-4);
 
+            // Detach mentors
+            foreach ($training->mentors as $mentor) {
+                $training->mentors()->detach($mentor);
+            }
+
             // Notify the student
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
 
