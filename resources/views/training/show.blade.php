@@ -331,7 +331,12 @@
                 <p class="font-weight-bold text-primary">
                     <i class="fas fa-envelope-open-text"></i>&nbsp;Letter of motivation
                 </p>
-                <p>{{ $training->motivation }}</p>
+
+                @if(empty($training->motivation))
+                    <p><i>Not provided</i></p>
+                @else
+                    <p>{{ $training->motivation }}</p>
+                @endif
             </div>
         </div>
         <div class="card shadow mb-4">
