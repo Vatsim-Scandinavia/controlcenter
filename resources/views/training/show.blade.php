@@ -255,7 +255,7 @@
                                                     @if(isset($report->position))
                                                         <i class="fas fa-radar"></i> {{ $report->position }}&emsp;
                                                     @endif
-                                                    <i class="fas fa-user-edit"></i> {{ \App\User::find($report->written_by_id)->name }}
+                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\User::find($report->written_by_id)->name) ? \App\User::find($report->written_by_id)->name : "Unknown"  }}
                                                     @can('update', $report)
                                                         <a class="float-right" href="{{ route('training.report.edit', $report->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
                                                     @endcan
