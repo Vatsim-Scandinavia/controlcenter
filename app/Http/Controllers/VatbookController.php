@@ -7,6 +7,7 @@ use App\User;
 use App\Position;
 use App\Vatbook;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +30,11 @@ class VatbookController extends Controller
         $user = Auth::user();
         $this->authorize('view', Vatbook::class);
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
-        $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge(Position::where('rating', '=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)->get());
+        $positions = new Collection();
+        if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
+        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
         if($user->isModerator()) $positions = Position::all();
+
         return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
 
@@ -44,8 +47,9 @@ class VatbookController extends Controller
     public function show($id){
         $booking = Vatbook::findOrFail($id);
         $user = Auth::user();
-        $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge(Position::where('rating', '=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)->get());
+        $positions = new Collection();
+        if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
+        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
         if($user->isModerator()) $positions = Position::all();
         $this->authorize('update', $booking);
 
