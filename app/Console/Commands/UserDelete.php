@@ -118,6 +118,9 @@ class UserDelete extends Command
                 $confirmed = $this->confirm("Are you sure you want to PERMANENTLY DELETE ".$userInfo."? This is IRREVERSIBLE!");
                 if($confirmed){
 
+                    // Remove notification logs as it's not cascaded due to morph data structure
+                    DB::table('notifications')->where('notifiable_type', 'App\User')->where('notifiable_id', $cid)->delete();
+
                     // Remove things from Control Center
                     $user->delete();
 
