@@ -196,7 +196,7 @@
                                                 @if(isset($examination->position))
                                                     <i class="fas fa-radar"></i> {{ \App\Position::find($examination->position_id)->callsign }}&emsp;
                                                 @endif
-                                                <i class="fas fa-user-edit"></i> {{ \App\User::find($examination->examiner_id)->name }}
+                                                <i class="fas fa-user-edit"></i> {{ isset(\App\User::find($examination->examiner_id)->name) ? \App\User::find($examination->examiner_id)->name : "Unknown" }}
 
                                             </small>
 
