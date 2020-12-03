@@ -53,6 +53,8 @@ class UserDelete extends Command
             }
 
             // Notify the student
+            $training->closed_reason = 'Closed due to data deletion request.';
+            $training->save();
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
 
         }
