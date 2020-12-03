@@ -13,7 +13,7 @@ class SoloEndorsementPolicy
      * Determine whether the user can view bookings.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function view(User $user)
     {
@@ -24,7 +24,7 @@ class SoloEndorsementPolicy
      * Determine whether the user can create bookings.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -35,7 +35,7 @@ class SoloEndorsementPolicy
      * Determine whether the user can update the booking.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function update(User $user)
     {

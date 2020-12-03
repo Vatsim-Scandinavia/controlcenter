@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * This controller controls the front page view when not logged in
+ */
 class FrontPageController extends Controller
 {
     /**
      * Show the landing page if not logged in, or redirect if logged in.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
      */
     public function index()
     {

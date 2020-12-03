@@ -11,12 +11,17 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * This controller handles the report views and statistics
+ */
 class ReportController extends Controller
 {
     /**
-     * Show the training apply view
+     * Show the training statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @param int $filterCountry countryId to filter by
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function trainings($filterCountry = false){
 
@@ -35,11 +40,11 @@ class ReportController extends Controller
     }
 
     /**
-     * Show the training apply view
+     * Show the mentors statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-
     public function mentors(){
 
         $this->authorize('viewMentors', ManagementReport::class);
@@ -57,11 +62,11 @@ class ReportController extends Controller
     }
 
     /**
-     * Show the training apply view
+     * Show the atc active statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-
     public function atc(){
 
         $this->authorize('viewAtcActivity', ManagementReport::class);
@@ -75,6 +80,7 @@ class ReportController extends Controller
     /**
      * Return the statistics for the cards (in queue, in training, awaiting exam, completed this year) on top of the page
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getCardStats($countryFilter)
@@ -106,6 +112,7 @@ class ReportController extends Controller
     /**
      * Return the statistics the total amount of requests per day
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getDailyRequestsStats($countryFilter)
@@ -141,6 +148,7 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getBiAnnualRequestsStats($countryFilter)
@@ -246,6 +254,7 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getQueueStats($countryFilter)

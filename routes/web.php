@@ -46,11 +46,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/endorsements/{id}/delete', 'SoloEndorsementController@delete');
     Route::post('/users/endorsements/store', 'SoloEndorsementController@store');
 
-    Route::post('/mentor/{user}/country', 'MentorController@addCountry')->name('mentor.add.country');
-    Route::post('/country/{country}/mentor', 'MentorController@addMentor')->name('country.add.mentor');
-    Route::delete('/mentor/{user}/country', 'MentorController@removeCountry')->name('mentor.remove.country');
-    Route::delete('/country/{country}/mentor', 'MentorController@removeMentor')->name('country.remove.mentor');
-
     // Users
     Route::get('/user/{user}', 'UserController@show')->name('user.show');
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');

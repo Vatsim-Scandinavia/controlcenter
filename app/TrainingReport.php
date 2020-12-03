@@ -8,10 +8,7 @@ class TrainingReport extends TrainingObject
 {
 
     protected $guarded = [];
-
     protected $dates = ['report_date'];
-//    protected $dateFormat = 'd/m/Y';
-
     protected $casts = [
         'draft' => 'boolean'
     ];

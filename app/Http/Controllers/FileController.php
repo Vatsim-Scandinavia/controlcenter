@@ -8,6 +8,9 @@ use \Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * This controls the uploaded file management 
+ */
 class FileController extends Controller
 {
 
@@ -75,6 +78,11 @@ class FileController extends Controller
 
     }
 
+    /**
+     * Validate the request data and filetypes
+     * @return mixed
+     * @throws \Illuminate\Validation\ValidationException
+     */
     private function validateRequest()
     {
         return request()->validate([

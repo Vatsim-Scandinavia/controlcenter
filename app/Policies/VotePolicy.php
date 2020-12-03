@@ -14,7 +14,7 @@ class VotePolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function index(User $user)
     {
@@ -25,7 +25,7 @@ class VotePolicy
      * Determine whether the user can create the model.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -36,7 +36,7 @@ class VotePolicy
      * Determine whether the user can store the model.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function store(User $user)
     {

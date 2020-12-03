@@ -16,7 +16,6 @@ class Training extends Model
 
     /**
      * Get the URL to the training page
-     *
      * @return string
      */
     public function path()
@@ -25,11 +24,11 @@ class Training extends Model
     }
 
     /**
-     * Update the status of the training.
-     * This method will make sure that when updating the status the training
-     * that the timestamps are also correctly updated.
+     * Update the status of the training. This method will make sure that when updating the status the training that the timestamps are also correctly updated.
      *
-     * @param int $status
+     * @param int $newStatus the new status to set
+     * @param bool $expiredInterest optional bool this expired an interest request
+     * @return void
      */
     public function updateStatus(int $newStatus, bool $expiredInterest = false)
     {
@@ -78,7 +77,6 @@ class Training extends Model
     /**
      * Get a inline string of ratings associated with a training.
      *
-     * @param string $status
      * @return string
      */
      public function getInlineRatings(){
@@ -103,7 +101,6 @@ class Training extends Model
     /**
      * Get a inline string of ratings associated with a training.
      *
-     * @param string $status
      * @return string
      */
     public function getInlineMentors(){

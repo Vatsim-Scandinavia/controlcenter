@@ -6,12 +6,17 @@ use App\GlobalSetting;
 use Illuminate\Http\Request;
 use anlutro\LaravelSettings\Facade as Setting;
 
+/**
+ * This controller controls the global, app-specific and toggleble settings, such as if trainings are enabled.
+ */
 class GlobalSettingController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param anlutro\LaravelSettings\Facade $setting
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Setting $setting)
     {
@@ -21,10 +26,12 @@ class GlobalSettingController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edit the requested resource
      *
-     * @param  \App\Group  $group
+     * @param  \Illuminate\Http\Request $request
+     * @param anlutro\LaravelSettings\Facade $setting
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(Request $request, Setting $setting)
     {

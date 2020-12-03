@@ -25,10 +25,10 @@
                         data-page-list=[10,15,25,50]>
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml">Date</th>
+                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Date</th>
                                 <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
                                 <th data-field="end" data-sortable="true" data-filter-control="select">End (Zulu)</th>
-                                <th data-field="position" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Position</th>
+                                <th data-field="position" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripBadge">Position</th>
                                 <th data-field="fir" data-sortable="true" data-filter-control="select">FIR</th>
                                 <th data-field="user" data-sortable="true" data-filter-control="select">User</th>
                             </tr>
@@ -38,8 +38,8 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
-                                        &nbsp;&nbsp;<i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
+                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
+                                           <i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
                                     @endcan
                                     @cannot('update', $booking)
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
@@ -57,6 +57,8 @@
                                         <span class="badge badge-primary">Training</span>
                                     @elseif($booking->event)
                                         <span class="badge badge-success">Event</span>
+                                    @elseif($booking->exam)
+                                        <span class="badge badge-danger">Exam</span>
                                     @endif
                                 </td>
                                 <td>
@@ -132,12 +134,17 @@
 
                     @if ($user->isMentor())
                         <div class="form-group">
-                            <input id="training" type="checkbox" name="training" value=1>
+                            <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                             <label for="training">Training</label>
                         </div>
 
                         <div class="form-group">
-                            <input id="event" type="checkbox" name="event" value=1>
+                            <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
+                            <label for="exam">Exam</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
                             <label for="event">Event</label>
                         </div>
                     @endif
@@ -170,5 +177,24 @@
         });
         $('.flatpickr-input:visible').prop('readonly', false);
     })
+
+    change = (type) => {
+        let name = document.getElementsByName(type.name);
+        let checked = document.getElementById(type.id);
+
+        if (checked.checked) {
+            for(let i = 0; i < name.length; i++) {
+                if(!name[i].checked) {
+                    name[i].disabled = true;
+                } else {
+                    name[i].disabled = false;
+                }
+            }
+        } else {
+            for(let i = 0; i < name.length; i++) {
+                name[i].disabled = false;
+            }
+        }
+    }
 </script>
 @endsection

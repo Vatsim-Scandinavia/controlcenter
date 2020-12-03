@@ -13,7 +13,7 @@ class VatbookPolicy
     /**
      * Determine whether the user can view bookings.
      *
-     * @return mixed
+     * @return bool
      */
     public function view()
     {
@@ -24,7 +24,7 @@ class VatbookPolicy
      * Determine whether the user can create bookings.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -36,10 +36,39 @@ class VatbookPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Vatbook  $booking
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, Vatbook $booking)
     {
         return $booking->local_id != null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id != null;
+    }
+
+    /**
+     * Determine whether the user can add tags.
+     *
+     * @param  \App\User  $user
+     * @return bool
+     */
+    public function tags(User $user)
+    {
+        return $user->isMentor();
+    }
+
+    /**
+     * Determine whether the user can book this position.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Vatbook  $booking
+     * @return mixed
+     */
+    public function position(User $user, Vatbook $booking)
+    {
+        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) {
+            if($user->getActiveTraining(1) && $user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating && $user->getActiveTraining()->country->id === $booking->position->country) {
+                return true;
+            }
+            return $this->deny('You are not authorized to book this position!');
+        }
+        return true;
     }
 }

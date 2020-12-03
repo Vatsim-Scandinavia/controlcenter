@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use function MongoDB\BSON\toJSON;
 
+/**
+ * Controller for object handling the attachments for trainings
+ */
 class TrainingObjectAttachmentController extends Controller
 {
 

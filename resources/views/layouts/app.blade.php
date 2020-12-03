@@ -92,6 +92,11 @@
             return 0;
         }
 
+        // Bootstrap-table: Filter function to strip badge from bootstrap table column filters
+        window.tableFilterStripBadge = (value) => {
+            return value.replace(/.*>/g, '').trim();
+        }
+
         // Search bar
         $(document).ready(function(){
 

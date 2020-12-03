@@ -7,6 +7,9 @@ use App\VoteOption;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+/**
+ * Controller handling votes and results
+ */
 class VoteController extends Controller
 {
     /**
@@ -95,7 +98,7 @@ class VoteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Vote  $vote
+     * @param  int  $id voteId
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function show($id)
@@ -108,7 +111,7 @@ class VoteController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Vote  $vote
+     * @param  int  $id voteId
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
