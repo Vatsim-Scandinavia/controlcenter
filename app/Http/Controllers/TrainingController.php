@@ -6,6 +6,7 @@ use App\Country;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingMentorNotification;
+use App\Notifications\TrainingPreStatusNotification;
 use App\Rating;
 use App\Training;
 use App\TrainingReport;
@@ -19,6 +20,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 
+/**
+ * Controller for all trainings
+ */
 class TrainingController extends Controller
 {
     /**
@@ -61,12 +65,14 @@ class TrainingController extends Controller
         6 => ["text" => "Holding ATC rating from other virtual network"],
     ];
 
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \App\Exceptions\PolicyMethodMissingException
      * @throws \App\Exceptions\PolicyMissingException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
@@ -87,12 +93,14 @@ class TrainingController extends Controller
         return view('training.index', compact('openTrainings', 'statuses', 'types'));
     }
 
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \App\Exceptions\PolicyMethodMissingException
      * @throws \App\Exceptions\PolicyMissingException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function history()
     {
@@ -112,6 +120,7 @@ class TrainingController extends Controller
 
         return view('training.history', compact('closedTrainings', 'statuses', 'types'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -175,6 +184,13 @@ class TrainingController extends Controller
         ]);
     }
 
+
+    /**
+     * Create a new instance of the resourcebundle_count
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
     public function create(Request $request)
     {
         $this->authorize('create', Training::class);
@@ -184,6 +200,7 @@ class TrainingController extends Controller
 
         return view('training.create', compact('students', 'ratings'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -338,6 +355,12 @@ class TrainingController extends Controller
                 $training->user->notify(new TrainingClosedNotification($training, (int)$training->status, $training->closed_reason));
                 return redirect($training->path())->withSuccess("Training successfully closed. E-mail confirmation sent to student.");
             }
+
+            if((int)$training->status == 1){
+                $training->user->notify(new TrainingPreStatusNotification($training));
+                return redirect($training->path())->withSuccess("Training successfully updated. E-mail confirmation of pre-training sent to student.");
+            }
+            
         }
 
         return redirect($training->path())->withSuccess("Training successfully updated");
@@ -349,6 +372,7 @@ class TrainingController extends Controller
      * @param Training $training
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @param string
      */
     public function close(Training $training)
     {

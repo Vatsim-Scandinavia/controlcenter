@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
+/** 
+ * Controller for training examinations
+ */
 class TrainingExaminationController extends Controller
 {
 
@@ -21,6 +24,7 @@ class TrainingExaminationController extends Controller
      * @param Request $request
      * @param TrainingExamination $examination
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return void
      */
     public function show(Request $request, TrainingExamination $examination)
     {

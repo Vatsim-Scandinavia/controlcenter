@@ -54,11 +54,6 @@ class User extends Authenticatable
         return $handover;
     }
 
-    /**
-     * Link user's endorsement
-     *
-     * @return \App\SoloEndorsement
-     */
     public function soloEndorsement()
     {
         return $this->hasOne(SoloEndorsement::class);
@@ -79,6 +74,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');
     }
 
+    /**
+     * Check is this user is teaching the queried user
+     * 
+     * @param \App\User $user to check for
+     * @return bool
+     */
     public function isTeaching(User $user){
         return $this->teaches->where('user_id', $user->id)->count() > 0;
     }
@@ -160,7 +161,12 @@ class User extends Authenticatable
     }
 
     public function getActiveAttribute(){
-        return $this->handover->atc_active;
+        $val = $this->handover->atc_active;
+
+        if ($val == null)
+            return false;
+
+        return $val;
     }
 
     /**
@@ -215,7 +221,6 @@ class User extends Authenticatable
     /**
      * Get a inline string of ratings associated countries for mentoring.
      *
-     * @param string $status
      * @return string
      */
     public function getInlineMentoringCountries(){
@@ -271,7 +276,12 @@ class User extends Authenticatable
         return $this->trainings()->where([['status', '>=', $minStatus], ['country_id', '=', $country->id]])->get()->first();
     }
 
-    // User group checks
+    /**
+     * Return if user is a mentor
+     * 
+     * @param Country|null $country
+     * @return bool
+     */
     public function isMentor(Country $country = null)
     {
 
@@ -285,6 +295,12 @@ class User extends Authenticatable
 
     }
 
+    /**
+     * Return if user is a moderator
+     * 
+     * @param Country|null $country
+     * @return bool
+     */
     public function isModerator(Country $country = null)
     {
         if ($country == null)
@@ -298,6 +314,11 @@ class User extends Authenticatable
             isset($this->group);
     }
 
+    /**
+     * Return if user is an admin
+     * 
+     * @return bool
+     */
     public function isAdmin()
     {
         return $this->group <= 1 && isset($this->group);

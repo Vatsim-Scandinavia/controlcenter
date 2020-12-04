@@ -46,18 +46,23 @@
                     @if ($user->isMentor())
                         <div class="form-group">
                             @if ($booking->training == 1)
-                                <input id="training" type="checkbox" name="training" value=1 checked>
+                            <input id="training" type="checkbox" name="tag" value=1 checked onClick="change(this)">
                             @else
-                                <input id="training" type="checkbox" name="training" value=1>
+                                <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                             @endif
                             <label for="training">Training</label>
-                        </div>
-
-                        <div class="form-group">
-                            @if ($booking->event == 1)
-                                <input id="event" type="checkbox" name="event" value=1 checked>
+                            &nbsp;&nbsp;&nbsp;
+                            @if ($booking->exam == 1)
+                                <input id="exam" type="checkbox" name="tag" value=2 checked onClick="change(this)">
                             @else
-                                <input id="event" type="checkbox" name="event" value=1>
+                                <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
+                            @endif
+                            <label for="exam">Exam</label>
+                            &nbsp;&nbsp;&nbsp;
+                            @if ($booking->event == 1)
+                                <input id="event" type="checkbox" name="tag" value=3 checked onClick="change(this)">
+                            @else
+                                <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
                             @endif
                             <label for="event">Event</label>
                         </div>
@@ -88,6 +93,10 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
+        let checkboxes = document.querySelectorAll('input[type=checkbox]'); 
+        let checked = [].filter.call(checkboxes, el => el.checked);
+        checked.forEach(checkbox => change(checkbox));
+
         $('div').tooltip();
 
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_start)->format('d/m/Y') : old('date') }}"
@@ -99,5 +108,24 @@
         });
         $('.flatpickr-input:visible').prop('readonly', false);
     })
+
+    change = (type) => {
+        let name = document.getElementsByName(type.name);
+        let checked = document.getElementById(type.id);
+
+        if (checked.checked) {
+            for(let i = 0; i < name.length; i++) {
+                if(!name[i].checked) {
+                    name[i].disabled = true;
+                } else {
+                    name[i].disabled = false;
+                }
+            }
+        } else {
+            for(let i = 0; i < name.length; i++) {
+                name[i].disabled = false;
+            }
+        }
+    }
 </script>
 @endsection

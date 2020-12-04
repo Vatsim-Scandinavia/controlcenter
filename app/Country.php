@@ -27,6 +27,9 @@ class Country extends Model
         return $this->belongsToMany(User::class, 'training_role_country')->withTimestamps();
     }
 
+    public function positions(){
+        return $this->hasMany(Position::class, 'country');
+    }
 }
 
 

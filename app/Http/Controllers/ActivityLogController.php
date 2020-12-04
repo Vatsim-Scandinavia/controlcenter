@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use App\ActivityLog;
 use Illuminate\Http\Request;
 
+/**
+ * This controller logs various activity and stores it in database for logging purposes.
+ */
 class ActivityLogController extends Controller
 {
 
+    /**
+     * Internal function to save the log according to type
+     * 
+     * @param string $type
+     * @param string $message
+     * @return void
+     */
     private static function log($type, $message){
         $log = new ActivityLog();
 
@@ -30,18 +40,42 @@ class ActivityLogController extends Controller
         $log->save();
     }
 
+    /**
+     * Store a debug log
+     * 
+     * @param string $message
+     * @return void
+     */
     public static function debug($message){
         ActivityLogController::log("DEBUG", $message);
     }
 
+    /**
+     * Store a info log
+     * 
+     * @param string $message
+     * @return void
+     */
     public static function info($message){
         ActivityLogController::log("INFO", $message);
     }
 
+    /**
+     * Store a warning log
+     * 
+     * @param string $message
+     * @return void
+     */
     public static function warning($message){
         ActivityLogController::log("WARNING", $message);
     }
 
+    /**
+     * Store a danger log
+     * 
+     * @param string $message
+     * @return void
+     */
     public static function danger($message){
         ActivityLogController::log("DANGER", $message);
     }

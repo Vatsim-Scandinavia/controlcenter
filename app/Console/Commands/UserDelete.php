@@ -47,7 +47,14 @@ class UserDelete extends Command
             // Training should be closed
             $training->updateStatus(-4);
 
+            // Detach mentors
+            foreach ($training->mentors as $mentor) {
+                $training->mentors()->detach($mentor);
+            }
+
             // Notify the student
+            $training->closed_reason = 'Closed due to data deletion request.';
+            $training->save();
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
 
         }
@@ -57,7 +64,7 @@ class UserDelete extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -110,6 +117,9 @@ class UserDelete extends Command
             } elseif($choice == $choices[1]){
                 $confirmed = $this->confirm("Are you sure you want to PERMANENTLY DELETE ".$userInfo."? This is IRREVERSIBLE!");
                 if($confirmed){
+
+                    // Remove notification logs as it's not cascaded due to morph data structure
+                    DB::table('notifications')->where('notifiable_type', 'App\User')->where('notifiable_id', $cid)->delete();
 
                     // Remove things from Control Center
                     $user->delete();

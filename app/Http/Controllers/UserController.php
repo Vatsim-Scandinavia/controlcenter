@@ -8,12 +8,16 @@ use App\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller to handle user views
+ */
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
@@ -21,27 +25,6 @@ class UserController extends Controller
 
         $users = User::all();
         return view('user.index', compact('users'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -75,6 +58,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, User $user)
     {
@@ -90,7 +74,7 @@ class UserController extends Controller
 
             foreach ((array) $data['countries'] as $country) {
                 if (!$user->training_role_countries->contains($country)){
-                    $user->training_role_countries()->attach($country);
+                    $user->training_role_countries()->attach($country, ['inserted_by' => Auth::id()]);
                 }
             }
 
@@ -114,6 +98,12 @@ class UserController extends Controller
 
         if($data['access'] == 0){
             $user->group = null;
+
+            // Detach all country assosiciations if they are downgraded all the way to student.
+            $user->training_role_countries()->detach();
+
+            // Unassign this mentor from all trainings
+            $user->teaches()->detach();
         } else {
             $user->group = $data['access'];
         }
@@ -123,19 +113,6 @@ class UserController extends Controller
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
 
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
-
-
 
     /**
      * Display a listing of user's settings

@@ -13,7 +13,7 @@ class UserPolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function index(User $user)
     {
@@ -25,7 +25,7 @@ class UserPolicy
      *
      * @param  \App\User  $user
      * @param  \App\User  $model
-     * @return mixed
+     * @return bool
      */
     public function view(User $user, User $model)
     {
@@ -37,7 +37,7 @@ class UserPolicy
      *
      * @param  \App\User  $user
      * @param  \App\User  $model
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, User $model)
     {
@@ -49,39 +49,4 @@ class UserPolicy
                 $user->group < $model->group;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function delete(User $user, User $model)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function restore(User $user, User $model)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function forceDelete(User $user, User $model)
-    {
-        //
-    }
 }

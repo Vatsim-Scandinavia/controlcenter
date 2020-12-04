@@ -21,7 +21,6 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      *
      * @param Training $training
-     * @param string $key
      */
     public function __construct(Training $training)
     {

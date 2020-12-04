@@ -1,7 +1,5 @@
 // Sidebar
 .sidebar {
-
-    
     width: $sidebar-collapsed-width;
     min-height: 100vh;
     position: relative;
@@ -128,7 +126,6 @@
         .sidebar-brand-text {
             display: none;
         }
-
     }
     hr.sidebar-divider {
         margin: 0 1rem 1rem;
@@ -141,7 +138,7 @@
         @extend .text-uppercase;
     }
 
-    img.logo{
+    img.logo {
         width: 175px;
         position: absolute;
         bottom: 20px;
@@ -239,7 +236,8 @@
                     // Grow In Animation for Toggled State
                     animation-name: growIn;
                     animation-duration: 200ms;
-                    animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
+                    animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1),
+                        opacity cubic-bezier(0, 1, 0.4, 1);
                     .collapse-inner {
                         box-shadow: $box-shadow;
                         border-radius: $border-radius;
@@ -274,7 +272,7 @@
             }
             .sidebar-brand {
                 padding-left: 34px;
-                
+
                 .sidebar-brand-icon i {
                     font-size: 2.1rem;
                 }
@@ -396,7 +394,7 @@
             color: fade-out($white, 0.5);
         }
 
-        img.logo{
+        img.logo {
             width: 75px;
             left: 14px;
         }

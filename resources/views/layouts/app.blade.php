@@ -74,11 +74,6 @@
     </div>
     <!-- End of Page Wrapper -->
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
@@ -95,6 +90,11 @@
             if (a.isAfter(b)) return 1;
             if (a.isBefore(b)) return -1;
             return 0;
+        }
+
+        // Bootstrap-table: Filter function to strip badge from bootstrap table column filters
+        window.tableFilterStripBadge = (value) => {
+            return value.replace(/.*>/g, '').trim();
         }
 
         // Search bar

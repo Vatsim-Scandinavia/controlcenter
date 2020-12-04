@@ -133,7 +133,7 @@
         </li>
         @endif
 
-        @if (\Auth::user()->isAdmin())
+        @if (\Auth::user()->isModerator())
 
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
@@ -143,9 +143,14 @@
         </a>
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
-            <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
-            <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
+            @if (\Auth::user()->isAdmin())
+                <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
+                <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
+            @endif
+
+            @if (\Auth::user()->isModerator())
+                <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
+            @endif
             </div>
         </div>
         </li>

@@ -8,8 +8,8 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Vote 
-                </h6> 
+                    Vote
+                </h6>
             </div>
             <div class="card-body">
                 <form action="{!! action('VoteController@store') !!}" method="POST">
@@ -21,7 +21,7 @@
                             <span class="text-danger">{{ $errors->first('expire_date') }}</span>
                         @enderror
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="end_at">End Time (Zulu)</label>
                         <input id="end_at" class="form-control @error('expire_time') is-invalid @enderror" type="time" name="expire_time" placeholder="12:00" value="{{ old('expire_time') }}" required>
@@ -50,6 +50,13 @@
                         <input class="form-check-input" type="checkbox" id="check1" name="require_active" {{ old('require_active') ? "checked" : "" }}>
                         <label class="form-check-label" for="check1">
                             Only ATC active members can vote
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="check1" name="require_vatsca_member" {{ old('require_vatsca_member') ? "checked" : "" }}>
+                        <label class="form-check-label" for="check1">
+                            Only VATSCA members can vote
                         </label>
                     </div>
 

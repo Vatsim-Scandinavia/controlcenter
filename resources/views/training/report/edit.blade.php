@@ -139,6 +139,8 @@
 @endsection
 
 @section('js')
+
+<!-- Attachment management -->
 <script type="text/javascript">
 
     function uploadFile(input) {
@@ -172,6 +174,7 @@
 
 </script>
 
+<!-- Report MD Editor -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">

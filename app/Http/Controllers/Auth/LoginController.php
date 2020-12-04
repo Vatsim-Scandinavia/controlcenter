@@ -35,6 +35,12 @@ class LoginController extends Controller
         $this->provider = new OAuthController();
     }
 
+    /**
+     * Login the user
+     * 
+     * @param \Illuminate\Http\Request $request request to proccess
+     * @return mixed
+     */
     public function login(Request $request)
     {
         if (! $request->has('code') || ! $request->has('state')) {
@@ -48,6 +54,12 @@ class LoginController extends Controller
         }
     }
 
+    /**
+     * Verify the login of the user's request before proceeding
+     * 
+     * @param \Illuminate\Http\Request $request request to proccess
+     * @return \Illuminate\Http\RedirectResponse
+     */
     protected function verifyLogin(Request $request)
     {
         try {
@@ -66,7 +78,8 @@ class LoginController extends Controller
 
         $account = $this->completeLogin($resourceOwner, $accessToken);
 
-        auth()->login($account, true);
+        // Login the user and don't remember the session forever
+        auth()->login($account, false);
 
         $authLevel = "User";
         if(isset(\Auth::user()->group)) $authLevel = Group::find(\Auth::user()->group)->name;
@@ -75,6 +88,13 @@ class LoginController extends Controller
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
     }
 
+    /**
+     * Complete the login by creating or updating the existing account and last login timestamp
+     * 
+     * @param mixed $resourceOwner
+     * @param mixed $token
+     * @return \App\User User's account data
+     */
     protected function completeLogin($resourceOwner, $token)
     {
         $account = User::updateOrCreate(
@@ -87,6 +107,11 @@ class LoginController extends Controller
         return $account;
     }
 
+    /**
+     * Log out he user and redirect to front page
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function logout()
     {
         ActivityLogController::info("Logged out.");

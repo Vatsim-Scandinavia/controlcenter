@@ -2,27 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use App\User;
 use App\Country;
-use App\Training;
+use App\ManagementReport;
 use App\Rating;
-use App\Vote;
+use App\Training;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * This controller handles the report views and statistics
+ */
 class ReportController extends Controller
 {
     /**
-     * Show the training apply view
+     * Show the training statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @param int $filterCountry countryId to filter by
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-
     public function trainings($filterCountry = false){
 
-        $this->authorize('accessTrainingReports', Vote::class);
+        $this->authorize('accessTrainingReports', ManagementReport::class);
         // Get stats
         $cardStats = $this->getCardStats($filterCountry);
         $totalRequests = $this->getDailyRequestsStats($filterCountry);
@@ -37,14 +40,14 @@ class ReportController extends Controller
     }
 
     /**
-     * Show the training apply view
+     * Show the mentors statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-
     public function mentors(){
 
-        $this->authorize('viewMentors', Vote::class);
+        $this->authorize('viewMentors', ManagementReport::class);
 
         if (auth()->user()->isAdmin()) {
             $mentors = User::where('group', '<=', 3)->get();
@@ -59,14 +62,14 @@ class ReportController extends Controller
     }
 
     /**
-     * Show the training apply view
+     * Show the atc active statistics view
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-
     public function atc(){
 
-        $this->authorize('viewAtcActivity', Vote::class);
+        $this->authorize('viewAtcActivity', ManagementReport::class);
 
         $controllers = User::all();
 
@@ -77,6 +80,7 @@ class ReportController extends Controller
     /**
      * Return the statistics for the cards (in queue, in training, awaiting exam, completed this year) on top of the page
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getCardStats($countryFilter)
@@ -108,6 +112,7 @@ class ReportController extends Controller
     /**
      * Return the statistics the total amount of requests per day
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getDailyRequestsStats($countryFilter)
@@ -143,6 +148,7 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getBiAnnualRequestsStats($countryFilter)
@@ -163,7 +169,7 @@ class ReportController extends Controller
         if($countryFilter){
 
             foreach(Rating::all() as $rating){
-                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+                if($rating->id >= 2){
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
@@ -204,7 +210,7 @@ class ReportController extends Controller
         } else {
 
             foreach(Rating::all() as $rating){
-                if($rating->vatsim_rating && $rating->id >= 2 && $rating->id <= 4){
+                if($rating->id >= 2){
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
@@ -248,6 +254,7 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
+     * @param int $countryFilter countryId to filter by
      * @return mixed
      */
     protected function getQueueStats($countryFilter)

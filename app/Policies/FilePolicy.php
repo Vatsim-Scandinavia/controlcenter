@@ -16,11 +16,10 @@ class FilePolicy
      *
      * @param  \App\User  $user
      * @param  \App\File  $file
-     * @return mixed
+     * @return bool
      */
     public function view(User $user, File $file)
     {
-        // TODO add more fitting permissions here.
         return  $user->isModerator() ||
                 $user->is($file->owner) ||
                 ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
@@ -30,7 +29,7 @@ class FilePolicy
      * Determine whether the user can create files.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {
@@ -42,7 +41,7 @@ class FilePolicy
      *
      * @param  \App\User  $user
      * @param  \App\File  $file
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, File $file)
     {
@@ -54,7 +53,7 @@ class FilePolicy
      *
      * @param  \App\User  $user
      * @param  \App\File  $file
-     * @return mixed
+     * @return bool
      */
     public function delete(User $user, File $file)
     {

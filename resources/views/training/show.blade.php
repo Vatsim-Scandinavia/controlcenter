@@ -196,7 +196,7 @@
                                                 @if(isset($examination->position))
                                                     <i class="fas fa-radar"></i> {{ \App\Position::find($examination->position_id)->callsign }}&emsp;
                                                 @endif
-                                                <i class="fas fa-user-edit"></i> {{ \App\User::find($examination->examiner_id)->name }}
+                                                <i class="fas fa-user-edit"></i> {{ isset(\App\User::find($examination->examiner_id)->name) ? \App\User::find($examination->examiner_id)->name : "Unknown" }}
 
                                             </small>
 
@@ -255,7 +255,7 @@
                                                     @if(isset($report->position))
                                                         <i class="fas fa-radar"></i> {{ $report->position }}&emsp;
                                                     @endif
-                                                    <i class="fas fa-user-edit"></i> {{ \App\User::find($report->written_by_id)->name }}
+                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\User::find($report->written_by_id)->name) ? \App\User::find($report->written_by_id)->name : "Unknown"  }}
                                                     @can('update', $report)
                                                         <a class="float-right" href="{{ route('training.report.edit', $report->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
                                                     @endcan
@@ -331,7 +331,12 @@
                 <p class="font-weight-bold text-primary">
                     <i class="fas fa-envelope-open-text"></i>&nbsp;Letter of motivation
                 </p>
-                <p>{{ $training->motivation }}</p>
+
+                @if(empty($training->motivation))
+                    <p><i>Not provided</i></p>
+                @else
+                    <p>{{ $training->motivation }}</p>
+                @endif
             </div>
         </div>
         <div class="card shadow mb-4">
@@ -481,8 +486,11 @@
 @endsection
 
 @section('js')
+
+    <!-- One Time Links -->
     <script type="text/javascript">
 
+        // Generate a one time report link
         $('#getOneTimeLinkReport').click(async function (event) {
             event.preventDefault();
             $(this).prop('disabled', true);
@@ -494,6 +502,7 @@
             alert(route);
         });
 
+        // Generate a one time exam report link
         $('#getOneTimeLinkExam').click(async function (event) {
             event.preventDefault();
             $(this).prop('disabled', true);
@@ -537,6 +546,8 @@
         }
 
     </script>
+
+    <!-- Training report accordian -->
     <script>
         $(document).ready(function(){
             // Add minus icon for collapse element which is open by default

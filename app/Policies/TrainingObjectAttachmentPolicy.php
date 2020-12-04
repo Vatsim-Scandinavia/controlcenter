@@ -15,7 +15,7 @@ class TrainingObjectAttachmentPolicy
      *
      * @param  \App\User  $user
      * @param  \App\TrainingObjectAttachment  $attachment
-     * @return mixed
+     * @return bool
      */
     public function view(User $user, TrainingObjectAttachment $attachment)
     {
@@ -26,7 +26,7 @@ class TrainingObjectAttachmentPolicy
      * Determine whether the user can create training report attachments.
      *
      * @param  \App\User  $user
-     * @return mixed
+     * @return bool
      */
     public function create(User $user)
     {

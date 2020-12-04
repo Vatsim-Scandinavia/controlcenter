@@ -11,7 +11,7 @@ class Vatbook extends Model
    *
    * @var array
    */
-  protected $fillable = ['eu_id', 'local_id', 'callsign', 'position_id', 'name', 'time_start', 'time_end', 'cid', 'user_id', 'training', 'event'];
+  protected $fillable = ['eu_id', 'local_id', 'callsign', 'position_id', 'name', 'time_start', 'time_end', 'cid', 'user_id', 'training', 'event', 'exam'];
 
   public function position(){
     return $this->hasOne(Position::class, 'id', 'position_id');
