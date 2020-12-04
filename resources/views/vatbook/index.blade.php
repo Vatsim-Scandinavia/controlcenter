@@ -136,14 +136,10 @@
                         <div class="form-group">
                             <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                             <label for="training">Training</label>
-                        </div>
-
-                        <div class="form-group">
+                            &nbsp;&nbsp;&nbsp;
                             <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
                             <label for="exam">Exam</label>
-                        </div>
-
-                        <div class="form-group">
+                            &nbsp;&nbsp;&nbsp;
                             <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
                             <label for="event">Event</label>
                         </div>
