@@ -137,32 +137,39 @@
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+
+                @if($training->status >= 1 && $training->status <= 3)
+                    <h6 class="m-0 font-weight-bold text-white">
+                @else
+                    <h6 class="m-0 mt-1 mb-2 font-weight-bold text-white">
+                @endif
                     Training Reports
                 </h6>
 
-                <div class="dropdown" style="display: inline;">
-                    <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Create
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">  
-                        @can('createReport', $training)
-                            @if($training->status == 1 || $training->status == 2)
-                                <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
-                            @endif
-                        @else
-                            <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
-                        @endcan
-        
-                        @can('createExamination', $training)
-                            @if($training->status == 3)
-                                <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}">Exam Report</a>
-                            @endif
-                        @else
-                            <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Exam Report</a>
-                        @endcan
+                @if($training->status >= 1 && $training->status <= 3)
+                    <div class="dropdown" style="display: inline;">
+                        <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Create
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">  
+                            @can('createReport', $training)
+                                @if($training->status == 1 || $training->status == 2)
+                                    <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
+                                @endif
+                            @else
+                                <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
+                            @endcan
+            
+                            @can('createExamination', $training)
+                                @if($training->status == 3)
+                                    <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}">Exam Report</a>
+                                @endif
+                            @else
+                                <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Exam Report</a>
+                            @endcan
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
             <div class="card-body p-0">
 
