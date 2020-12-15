@@ -51,7 +51,7 @@ class TrainingMentorNotification extends Notification implements ShouldQueue
         $textLines = [
             "It's your turn! You've been assigned a mentor for you training: ".$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.'.',
             "Your mentor is: **".$this->training->getInlineMentors()."**. You can contact them through the message system at forums or search them up on [Discord](http://discord.vatsim-scandinavia.org/).",
-            "If you do not contact your mentor within 7 days, your training request will be closed and you loose the place in the queue.",
+            "If you do not contact your mentor within 7 days, your training request will be closed and you lose the place in the queue.",
         ];
 
         $country = Country::find($this->training->country_id);
