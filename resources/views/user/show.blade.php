@@ -40,7 +40,7 @@
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
                                 <td>{{ $user->country }}</td>
-                                <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
+                                <td><i class="fas fa-{{ $user->active ? 'question' : 'question' }}"></i></td>
                                 <td>{{ $user->last_login }}</td>
                             </tr>
                         </tbody>
