@@ -109,7 +109,6 @@
                     dataType:'json',
                     success:function(data)
                     {
-                        console.log("Result");
                         if(data.length > 0){
 
                             var html = '';
@@ -141,11 +140,9 @@
 
             $('#user-search-form-desktop').on('submit', function(e){ e.preventDefault() });
             $('#user-search-form-mobile').on('submit', function(e){
-                console.log("hey mob"); 
                 $('.search-spinner').addClass('search-spinner-visible');
                 
                 var query = $('.search-input').val();
-                console.log(query);
                 clearTimeout(timer);
                 timer = setTimeout(fetch_users, 200, query)
 

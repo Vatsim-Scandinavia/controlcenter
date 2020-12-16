@@ -539,14 +539,14 @@
                     return response;
                 },
                 error: function (response) {
-                    console.log(response);
+                    console.error(response);
                 }
             });
 
             try {
                 key = JSON.parse(result).key
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
 
             return key;
