@@ -577,7 +577,6 @@
             });
 
             function toggleClosureReasonField(val){
-                console.log(val)
                 if(val == -2){
                     $('#closedReasonInput').slideDown(100)
                 } else {
