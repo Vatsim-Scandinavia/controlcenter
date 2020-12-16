@@ -166,7 +166,7 @@
                 }
             },
             error: function (data) {
-                console.log("An error occurred while attempting to delete attachment.");
+                console.error("An error occurred while attempting to delete attachment.");
             }
         });
 
