@@ -95,7 +95,6 @@
         },
         methods: {
             update: function(value){
-                console.log(payload);
                 this.ratings = payload[value.getAttribute('data-id')].ratings
             }
         }

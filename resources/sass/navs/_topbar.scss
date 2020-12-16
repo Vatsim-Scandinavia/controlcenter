@@ -110,9 +110,6 @@
     }
 }
 
-.topbar.navbar-dark {
-}
-
 .topbar.navbar-light {
     .navbar-nav {
         .nav-item {
@@ -129,33 +126,103 @@
     }
 }
 
-.search-spinner {
-    position: relative;
-    left: -70px;
-    top: 8px;
-    z-index: 10;
-    visibility: hidden;
-}
+.search{
 
-.search-results {
-    padding: 1rem;
-    width: 80%;
+    &.input-group{
+        width: 300px;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom 350ms;
 
-    border: 1px solid lightgrey;
-    border-top: 2px solid grey;
+        &:focus-within{
+            border-bottom: 1px solid $darkblue;
+        }
 
-    position: absolute;
-    top: 35px;
-
-    display: none;
-    z-index: 10;
-
-    @include media-breakpoint-down(sm) {
-        top: 50px;
-        font-size: 1rem;
+        @include media-breakpoint-down(sm) {
+            width: 100%;
+            border-bottom: 1px solid $darkblue;
+        }
+        
     }
 
-    a {
-        display: block;
+    &-input{
+        &:focus{
+            box-shadow: none;
+            outline: 0 none;
+        }
+    }
+
+    &-icon{
+        width: 40px;
+
+        color: $darkblue;
+
+        i{
+            padding-top: 11px;
+            padding-left: 15px;
+        }   
+    }
+
+    &-spinner{
+        color: darkgrey;
+        position: relative;
+        left: -30px;
+        top: 8px;
+        z-index: 10;
+        visibility: hidden;
+
+        &-visible{
+            visibility: visible;
+        }
+
+        @include media-breakpoint-down(sm) {
+            position: inherit;
+            margin: auto;
+            margin-top: 25px;
+            margin-bottom: 25px;
+
+            display: none;
+
+            &-visible{
+                display: block;
+            }
+        }
+    }
+
+    &-results{
+
+        padding: 15px 0;
+        width: 300px;
+
+        border-top: 1px solid $darkblue;
+
+        position: absolute;
+        top: 35px;
+
+        display: none;
+        z-index: 10;
+
+        background-color: white;
+
+        @include media-breakpoint-down(sm) {
+            position: inherit;
+            width: 100%;
+
+            font-size: 1rem;
+            border-top: 0;
+        }
+
+        a {
+            color: $darkblue;
+            display: block;
+            height: 25px;
+            line-height: 25px;
+            padding: 0 15px;
+        }
+
+        a:hover{
+            background-color: $gray-300;
+            text-decoration: none;
+        }
+
     }
 }

@@ -7,16 +7,17 @@
 
     <!-- Topbar Search -->
     @if(\Auth::user()->isMentor())
-        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" id="user-search-form">
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
             <div class="input-group">
-                <input type="text" name="search" id="search" class="form-control bg-light border-0 small" placeholder="Search for user" aria-label="Search" aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button">
+                <div class="search input-group input-lg">
+                    <div class="search-icon bg-light input-group-prepend">
                         <i class="fas fa-search fa-sm"></i>
-                    </button>
+                    </div>
+                    <input class="search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
                 </div>
+
                 <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
-                <div class="search-results bg-light">
+                <div class="search-results shadow-sm bg-light">
                     
                 </div>
             </div>
@@ -34,17 +35,17 @@
                 </a>
                 <!-- Dropdown - Messages -->
                 <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                    <form class="form-inline mr-auto w-100 navbar-search" id="user-search-form">
-                        <div class="input-group">
-                            <input type="text" name="search" id="search" class="form-control bg-light border-0 small" placeholder="Search for user" aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">
+                    <form class="form-inline mr-auto w-100 navbar-search" id="user-search-form-mobile">
+                        <div class="search input-group input-lg">
+                            <div class="search-icon bg-light input-group-prepend">
                                 <i class="fas fa-search fa-sm"></i>
-                            </button>
                             </div>
+                            <input class="search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
                         </div>
+
+                        <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
                         <div class="search-results bg-light">
-                            
+                
                         </div>
                     </form>
                 </div>
