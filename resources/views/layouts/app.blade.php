@@ -109,6 +109,7 @@
                     dataType:'json',
                     success:function(data)
                     {
+                        console.log("Result");
                         if(data.length > 0){
 
                             var html = '';
@@ -120,37 +121,47 @@
 
                             $('.search-results').html(html);
                         } else {
-                            $('.search-results').html("No results");
+                            $('.search-results').html("<a href='#''>No results</a>");
                         }
 
                         $('.search-results').slideDown("fast");
-                        $('.search-spinner').css('visibility', 'hidden');
+                        $('.search-spinner').removeClass('search-spinner-visible');
                     }
                 })
             }
     
             var timer = null
-            $(document).on('keyup', '#search', function(){
+            $(document).on('keyup', '.search-input', function(){
                 var query = $(this).val();
-                clearTimeout(timer);
-                $('.search-spinner').css('visibility', 'visible');
-                timer = setTimeout(fetch_users, 500, query)
-            });
-
-            $('#user-search-form').on('submit', function(e){
+                $('.search-spinner').addClass('search-spinner-visible');
                 
-                var query = $('#search').val();
                 clearTimeout(timer);
-                $('.search-spinner').css('visibility', 'visible');
-                timer = setTimeout(fetch_users, 500, query)
-
-                e.preventDefault();
+                timer = setTimeout(fetch_users, 200, query)
             });
 
-            $(document).on('focusout', '#search', function(){
-                $('.search-results').slideUp("fast");
-                $('.search-spinner').css('visibility', 'hidden');
+            $('#user-search-form-desktop').on('submit', function(e){ e.preventDefault() });
+            $('#user-search-form-mobile').on('submit', function(e){
+                console.log("hey mob"); 
+                $('.search-spinner').addClass('search-spinner-visible');
+                
+                var query = $('.search-input').val();
+                console.log(query);
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 200, query)
+
+                e.preventDefault() 
             });
+
+            $(document).on("click", function(event) {
+                var obj = $(".search-results");
+                if (!$(event.target).closest(obj).length) {
+                    
+                    $('.search-results').slideUp("fast");
+                    $('.search-spinner').removeClass('search-spinner-visible');
+                
+                }
+            });
+
         });
     </script>
 
