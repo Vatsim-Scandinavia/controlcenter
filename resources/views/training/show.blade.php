@@ -153,7 +153,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">  
                             @can('createReport', $training)
-                                @if($training->status == 1 || $training->status == 2)
+                                @if($training->status >= 1)
                                     <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
                                 @endif
                             @else

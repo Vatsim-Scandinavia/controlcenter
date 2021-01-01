@@ -17,7 +17,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-white">
-                        Reports for {{ $training->user->firstName }}'s training {{ $report->created_at->toEuropeanDate() }} {{ $report->draft ? "(DRAFT)" : "" }} for
+                        Reports for {{ $training->user->firstName }}'s training {{ $report->report_date->toEuropeanDate() }} {{ $report->draft ? "(DRAFT)" : "" }} for
                         @foreach($training->ratings as $rating)
                             @if ($loop->last)
                                 {{ $rating->name }}

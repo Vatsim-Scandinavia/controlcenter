@@ -9,7 +9,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    {{ $report->training->user->firstName }}'s training {{ $report->created_at->toEuropeanDate() }}
+                    {{ $report->training->user->firstName }}'s training {{ $report->report_date->toEuropeanDate() }}
                     @if($report->draft)
                         <span class='badge badge-danger'>Draft</span>
                     @endif
@@ -48,7 +48,7 @@
 
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ empty(old('report_date')) ? $report->created_at : old('report_date')}}" required>
+                        <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ empty(old('report_date')) ? $report->report_date->toEuropeanDate() : old('report_date')}}" required>
                         @error('report_date')
                             <span class="text-danger">{{ $errors->first('report_date') }}</span>
                         @enderror
@@ -202,7 +202,7 @@
         $('div').tooltip();
 
         var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: new Date("{{ $report->report_date }}"), locale: {firstDayOfWeek: 1 } });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
