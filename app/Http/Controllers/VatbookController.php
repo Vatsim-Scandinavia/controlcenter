@@ -82,7 +82,7 @@ class VatbookController extends Controller
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
-        $booking->local_id = floor($user->id / date('z'));
+        $booking->local_id = floor($user->id / (date('z') + 1));
         $booking->callsign = strtoupper($data['position']);
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
         $booking->name = $user->name;
