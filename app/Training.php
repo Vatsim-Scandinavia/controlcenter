@@ -6,8 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Training extends Model
 {
-    
+
     protected $guarded = [];
+
+    protected $connection = 'mysql';
+    protected $table = 'trainings';
 
     protected $dates = [
         'started_at',

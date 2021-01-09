@@ -13,6 +13,9 @@ class User extends Authenticatable
 
     use Notifiable;
 
+    protected $connection = 'mysql';
+    protected $table = 'users';
+
     public $timestamps = false;
     protected $dates = [
         'last_login',
@@ -76,7 +79,7 @@ class User extends Authenticatable
 
     /**
      * Check is this user is teaching the queried user
-     * 
+     *
      * @param \App\User $user to check for
      * @return bool
      */
@@ -278,7 +281,7 @@ class User extends Authenticatable
 
     /**
      * Return if user is a mentor
-     * 
+     *
      * @param Country|null $country
      * @return bool
      */
@@ -297,7 +300,7 @@ class User extends Authenticatable
 
     /**
      * Return if user is a moderator
-     * 
+     *
      * @param Country|null $country
      * @return bool
      */
@@ -316,7 +319,7 @@ class User extends Authenticatable
 
     /**
      * Return if user is an admin
-     * 
+     *
      * @return bool
      */
     public function isAdmin()
