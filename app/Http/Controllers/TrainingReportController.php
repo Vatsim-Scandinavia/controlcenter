@@ -42,7 +42,7 @@ class TrainingReportController extends Controller
     public function create(Training $training)
     {
         $this->authorize('createReport', $training);
-        if ($training->status != 1 && $training->status != 2) { return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.'); }
+        if ($training->status < 1) { return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.'); }
 
         $positions = Position::all();
 
