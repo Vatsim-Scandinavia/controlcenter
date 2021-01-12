@@ -141,7 +141,7 @@ class UpdateAtcActiveStatus extends Command
      */
     private function addNextPagesToResult(Collection &$results, $response, \GuzzleHttp\Client $client)
     {
-        if ($response['next'] == null || !$response['next'].equalToIgnoringCase(''))
+        if ($response['next'] == null || strcasecmp($response['next'], '') == 0)
             return;
 
         $next_response = $this->makeHttpGetRequest($client, $response['next']);
@@ -157,7 +157,7 @@ class UpdateAtcActiveStatus extends Command
 
         $results->add($parsed_data['results']);
 
-        if ($parsed_data['next'] != null && !$parsed_data['next'].equalToIgnoringCase(''))
+        if ($parsed_data['next'] != null && strcasecmp($parsed_data['next'], '') == 0)
             $this->addNextPagesToResult($results, $next_response, $client);
     }
 
