@@ -235,25 +235,40 @@
                         Request training
                     </a>
                 @else
-                    <a href="#" class="btn btn-primary btn-block disabled" role="button" aria-disabled="true">
-                        
+
+                    <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings() && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} btn-block disabled not-allowed" role="button" aria-disabled="true">
                         @if(\Auth::user()->hasActiveTrainings() && Setting::get('trainingEnabled'))
                             <i class="fas fa-check"></i>
                         @else
                             <i class="fas fa-exclamation-triangle"></i>
                         @endif
-                        &nbsp;
                         {{ Gate::inspect('apply', \App\Training::class)->message() }}
-                    </a>
+                    </div>
+
                     @if(Setting::get('trainingEnabled'))
                         <div class="alert alert-primary" role="alert">
-                            <p><b>FAQ</b></p>
-                            <p><b>How do I join the division?</b> <a href="https://vatsim-scandinavia.org/about/join/" target="_blank">Read about joining here.</a><br>
-                            <b>How to apply to be a visiting controller?</b> <a href="https://vatsim-scandinavia.org/atc/visiting-controller/" target="_blank">Check this page for more information.</a><br>
-                            <b>How long is the queue?</b> {{ Setting::get('trainingQueue') }}
-                        </p>
+                            <p class="small">
+                                <b><i class="fas fa-chevron-right"></i> How do I join the division?</b>
+                                <a href="https://vatsim-scandinavia.org/about/join/" target="_blank">Read about joining here.</a>
+
+                                <br>
+
+                                <b><i class="fas fa-chevron-right"></i> How to apply to be a visiting controller?</b>
+                                <a href="https://vatsim-scandinavia.org/atc/visiting-controller/" target="_blank">Check this page for more information.</a>
+
+                                <br>
+
+                                <b><i class="fas fa-chevron-right"></i> My rating is inactive?</b>
+                                <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff for refresh or transfer training.</a>
+
+                                <br>
+
+                                <b><i class="fas fa-chevron-right"></i> How long is the queue?</b>
+                                {{ Setting::get('trainingQueue') }}
+                            </p>
+                        </div>
                     @endif
-                    </div>
+
                 @endcan
             </div>
         </div>

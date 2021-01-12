@@ -2,3 +2,8 @@
 .o-hidden {
     overflow: hidden !important;
 }
+
+.not-allowed {
+    pointer-events: all !important;
+    cursor: not-allowed !important;
+}
