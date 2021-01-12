@@ -12,6 +12,12 @@
     </div>
 @endif
 
+@if($atcInactiveMessage)
+    <div class="alert alert-warning" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive. <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff</a> to request a refresh or transfer training, prior to connecting to the network as a controller.
+    </div>
+@endif
+
 <div class="row">
     <!-- Current rating card  -->
     <div class="col-xl-3 col-md-6 mb-4">

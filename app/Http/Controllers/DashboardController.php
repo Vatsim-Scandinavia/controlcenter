@@ -8,6 +8,7 @@ use App\TrainingInterest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use anlutro\LaravelSettings\Facade as Setting;
 
 /**
  * Controller for the dashboard
@@ -50,7 +51,10 @@ class DashboardController extends Controller
 
         $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->get()->first();
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest'));
+        $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
+        $atcInactiveMessage = ((in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active));
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage'));
     }
 
     /**
