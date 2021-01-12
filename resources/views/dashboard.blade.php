@@ -14,7 +14,7 @@
 
 @if($atcInactiveMessage)
     <div class="alert alert-warning" role="alert">
-        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive. <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff</a> to request a refresh or transfer training, prior to connecting to the network as a controller.
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in Scandinavia. <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff</a> to request a refresh or transfer training to be allowed to control in our airspace.
     </div>
 @endif
 
