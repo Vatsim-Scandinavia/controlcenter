@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-pro": "^5.15.1",
-        "axios": "^0.18",
+        "axios": "^0.21.1",
         "bootstrap": "4.3.1",
         "bootstrap-table": "^1.18.1",
         "chart.js": "^2.9.4",
@@ -23,7 +23,7 @@
         "moment": "^2.29.1",
         "popper.js": "^1.16.1",
         "resolve-url-loader": "^3.1.2",
-        "sass": "^1.30.0",
+        "sass": "^1.32.2",
         "sass-loader": "^8.0.2",
         "vue": "^2.6.12",
         "vue-template-compiler": "^2.6.12"
