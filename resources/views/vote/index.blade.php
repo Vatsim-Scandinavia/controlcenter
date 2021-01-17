@@ -30,8 +30,8 @@
 
                                 <tr>
                                     <td><a href="{{ route('vote.show', $vote->id) }}">{{ $vote->question }}</a></td>
-                                    <td>{{ $vote->created_at }}</td>
-                                    <td>{{ $vote->end_at }}</td>
+                                    <td>{{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $vote->created_at)->toEuropeanDateTime() }}</td>
+                                    <td>{{ \Carbon\Carbon::create($vote->end_at)->toEuropeanDateTime() }}</td>
                                     <td>{{ $vote->closed ? "Closed" : "Accepting answers" }}</td>
                                     <td><i class="fas fa-{{ $vote->require_active ? "check" : "times" }}"></i></td>
                                     <td><i class="fas fa-{{ $vote->require_vatsca_member ? "check" : "times" }}"></i></td>
