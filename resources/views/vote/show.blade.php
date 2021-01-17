@@ -17,7 +17,7 @@
 
                     @if($vote->user()->where('user_id', \Auth::user()->id)->exists())
 
-                        <p>You've already voted.</p>
+                        <p><i class="fas fa-check"></i> You've already voted.</p>
 
                     @else
                         <form action="{{ route('vote.update', $vote->id) }}" method="POST">
