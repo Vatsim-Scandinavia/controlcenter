@@ -15,7 +15,7 @@
 
                 @cannot('vote', $vote)
 
-                    <p class="text-danger">Sorry, you do not qualify to participate in this vote.</p>
+                    <p class="text-danger">{{ Gate::inspect('vote', $vote)->message() }}</p>
 
                 @else
 
@@ -41,7 +41,7 @@
                             @enderror
 
                             <br>
-                            <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed</p>
+                            <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed.</p>
                             <button type="submit" class="btn btn-success">Submit Vote</button>
 
                         </form>

@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\User;
 use App\Vote;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class VotePolicy
 {
@@ -52,16 +53,18 @@ class VotePolicy
      */
     public function vote(User $user, Vote $vote)
     {
-        $can = true;
+
+        if ($vote->closed) {
+            return Response::deny("The vote is closed and concluded.");
+        }
 
         if ($vote->require_active) {
-            ($can == false) ?: $can = $user->active;
+            if(!$user->active) return Response::deny("Sorry, you do not qualify to participate in this vote. You must hold an active ATC rank in our subdivision.");
         }
 
         if ($vote->require_vatsca_member) {
-            ($can == false) ?: $can = $user->sub_division == 'SCA';
-        }
+            if($user->sub_division != 'SCA') return Response::deny("Sorry, you do not qualify to participate in this vote. You must be a VATSCA Member to vote.");
+        }        
 
-        return $can;
     }
 }
