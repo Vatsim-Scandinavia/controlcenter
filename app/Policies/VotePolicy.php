@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\User;
 use App\Vote;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
@@ -49,13 +50,13 @@ class VotePolicy
      *
      * @param User $user
      * @param Vote $vote
-     * @return bool
+     * @return Illuminate\Auth\Access\Response
      */
     public function vote(User $user, Vote $vote)
     {
 
         if ($vote->closed) {
-            return Response::deny("The vote is closed and concluded.");
+            return Response::deny("The vote closed and concluded at ".Carbon::create($vote->end_at)->toEuropeanDateTime());
         }
 
         if ($vote->require_active) {
@@ -64,7 +65,9 @@ class VotePolicy
 
         if ($vote->require_vatsca_member) {
             if($user->sub_division != 'SCA') return Response::deny("Sorry, you do not qualify to participate in this vote. You must be a VATSCA Member to vote.");
-        }        
+        }
+
+        return Response::allow();
 
     }
 }

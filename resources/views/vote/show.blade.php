@@ -13,11 +13,7 @@
             <div class="card-body">
                 <h3>{{ $vote->question }}</h3>
 
-                @cannot('vote', $vote)
-
-                    <p class="text-danger">{{ Gate::inspect('vote', $vote)->message() }}</p>
-
-                @else
+                @can('vote', $vote)
 
                     @if($vote->user()->where('user_id', \Auth::user()->id)->exists())
 
@@ -48,7 +44,10 @@
 
                     @endif
 
+                @else
+                    <p class="text-danger">{{ Gate::inspect('vote', $vote)->message() }}</p>
                 @endcan
+
             </div>
         </div>
     </div>
@@ -67,7 +66,7 @@
 
                 @else
 
-                    <p>Summary will be publicly available once the vote closes at {{ $vote->end_at }}</p>
+                    <p>Summary will be publicly available once the vote closes at {{ \Carbon\Carbon::create($vote->end_at)->toEuropeanDateTime() }}</p>
 
                 @endif
 
