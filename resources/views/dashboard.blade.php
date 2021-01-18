@@ -18,6 +18,12 @@
     </div>
 @endif
 
+@if($activeVote)
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-box-ballot"></i>&nbsp;&nbsp;Vote <i>"{{ $activeVote->question }}"</i> is available. Vote closes {{ \Carbon\Carbon::create($activeVote->end_at)->toEuropeanDateTime() }}. <a href="{{ route('vote.show', $activeVote) }}">Click here to vote</a>.
+    </div>
+@endif
+
 <div class="row">
     <!-- Current rating card  -->
     <div class="col-xl-3 col-md-6 mb-4">
