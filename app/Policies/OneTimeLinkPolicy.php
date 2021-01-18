@@ -39,7 +39,7 @@ class OneTimeLinkPolicy
      */
     public function access(User $user, OneTimeLink $link)
     {
-        return $user->isMentor($link->training->country);
+        return $user->rating >= 3 && ($user->subdivision == "SCA" || $user->visiting_controller);
     }
 
 }
