@@ -256,9 +256,11 @@ class UpdateAtcActiveStatus extends Command
     private function getGracePeriodTrainings(Collection &$trainings)
     {
         foreach ($trainings as $key => $training) {
-            if (!$training->ratings->contains(Rating::where('vatsim_rating', 3)->get()->first()->id) || in_array($training->type, [2, 3, 4])) {
-                $trainings->pull($key);
+            if ($training->ratings->contains(Rating::where('vatsim_rating', 3)->get()->first()->id) || in_array($training->type, [2, 3, 4])) {
+				// Training is an S2 training or refresh, fast-track or familiarisation.
+				continue;
             }
+            $trainings->pull($key);
         }
     }
 
