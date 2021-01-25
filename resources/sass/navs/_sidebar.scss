@@ -149,6 +149,22 @@
             width: 80%;
         }
     }
+
+    span.version-sidebar{
+        text-align: center;
+        font-size: 10px;
+        color: #8da0ab;
+
+        position: absolute;
+        width: 160px;
+        
+        bottom: 15px;
+        left: 32px;
+
+        @include media-breakpoint-down(md) {
+            display: none;
+        }
+    }
 }
 
 @include media-breakpoint-up(md) {
@@ -397,6 +413,10 @@
         img.logo {
             width: 75px;
             left: 14px;
+        }
+
+        span.version-front{
+            display: none !important;
         }
     }
 }
