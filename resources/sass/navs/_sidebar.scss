@@ -108,6 +108,7 @@
             font-family: "Font Awesome 5 Pro";
             margin-left: 0.25rem;
         }
+        
     }
     .sidebar-brand {
         height: $topbar-base-height;
@@ -125,6 +126,9 @@
         }
         .sidebar-brand-text {
             display: none;
+        }
+        .sidebar-brand-icon{
+            padding-left: 17px;
         }
     }
     hr.sidebar-divider {
@@ -227,6 +231,7 @@
             .sidebar-brand-icon i {
                 font-size: 2.1rem;
             }
+
             .sidebar-brand-text {
                 width: 65px;
                 font-size: 0.95rem;
@@ -285,6 +290,7 @@
                         display: none;
                     }
                 }
+                
             }
             .sidebar-brand {
                 padding-left: 34px;
@@ -292,8 +298,13 @@
                 .sidebar-brand-icon i {
                     font-size: 2.1rem;
                 }
+
                 .sidebar-brand-text {
                     display: none;
+                }
+
+                .sidebar-brand-icon{
+                    padding-left: 0px;
                 }
             }
             .sidebar-heading {
