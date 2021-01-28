@@ -59,12 +59,12 @@ class VotePolicy
             return Response::deny("The vote closed and concluded at ".Carbon::create($vote->end_at)->toEuropeanDateTime());
         }
 
-        if ($vote->require_active) {
-            if(!$user->active) return Response::deny("Sorry, you do not qualify to participate in this vote. You must hold an active ATC rank in our subdivision to vote.");
+        if ($vote->require_vatsca_member) {
+            if($user->subdivision != 'SCA') return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to VATSIM Scandinavia subdivision to vote.");
         }
 
-        if ($vote->require_vatsca_member) {
-            if($user->sub_division != 'SCA') return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to VATSIM Scandinavia subdivision to vote.");
+        if ($vote->require_active) {
+            if(!$user->active) return Response::deny("Sorry, you do not qualify to participate in this vote. You must hold an active ATC rank to vote.");
         }
 
         return Response::allow();
