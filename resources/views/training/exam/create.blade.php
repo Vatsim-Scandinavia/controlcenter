@@ -17,7 +17,8 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>Vatsim ID</th>
-                                    <th>ATC Rating</th>
+                                    <th>Current Rating</th>
+                                    <th>Training Rating</th>
                                     <th>Subdivision</th>
                                 </tr>
                             </thead>
@@ -25,6 +26,15 @@
                                 <tr>
                                     <td>{{ $training->user->id }}</td>
                                     <td>{{ $training->user->rating_short }}</td>
+                                    <td>
+                                        @foreach($training->ratings as $rating)
+                                            @if ($loop->last)
+                                                {{ $rating->name }}
+                                            @else
+                                                {{ $rating->name . " + " }}
+                                            @endif
+                                        @endforeach
+                                    </td>
                                     <td>{{ $training->user->subdivision }}</td>
                                 </tr>
                             </tbody>
@@ -35,14 +45,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-white">
-                        New Examination Report for {{ $training->user->firstName }}'s
-                        @foreach($training->ratings as $rating)
-                            @if ($loop->last)
-                                {{ $rating->name }}
-                            @else
-                                {{ $rating->name . " + " }}
-                            @endif
-                        @endforeach
+                        New Examination Report
                     </h6>
                 </div>
                 <div class="card-body">
