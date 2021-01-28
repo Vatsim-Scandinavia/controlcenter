@@ -52,3 +52,11 @@
     align-items: center;
     justify-content: center;
 }
+
+blockquote{
+    padding-left: 10px;
+    border-left: 3px solid grey;
+    
+    color: $gray-900;
+    font-style: italic;
+}

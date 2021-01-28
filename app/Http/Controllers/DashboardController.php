@@ -6,8 +6,10 @@ use App\SoloEndorsement;
 use App\TrainingReport;
 use App\TrainingInterest;
 use App\User;
+use App\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use anlutro\LaravelSettings\Facade as Setting;
 
 /**
  * Controller for the dashboard
@@ -50,7 +52,14 @@ class DashboardController extends Controller
 
         $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->get()->first();
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest'));
+        // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
+        $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
+        $atcInactiveMessage = ((in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active));
+
+        // Check if there's an active vote running to advertise
+        $activeVote = Vote::where('closed', 0)->first();
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote'));
     }
 
     /**

@@ -108,6 +108,7 @@
             font-family: "Font Awesome 5 Pro";
             margin-left: 0.25rem;
         }
+        
     }
     .sidebar-brand {
         height: $topbar-base-height;
@@ -125,6 +126,9 @@
         }
         .sidebar-brand-text {
             display: none;
+        }
+        .sidebar-brand-icon{
+            padding-left: 17px;
         }
     }
     hr.sidebar-divider {
@@ -147,6 +151,22 @@
         @include media-breakpoint-down(md) {
             left: 10px;
             width: 80%;
+        }
+    }
+
+    span.version-sidebar{
+        text-align: center;
+        font-size: 10px;
+        color: #8da0ab;
+
+        position: absolute;
+        width: 160px;
+        
+        bottom: 15px;
+        left: 32px;
+
+        @include media-breakpoint-down(md) {
+            display: none;
         }
     }
 }
@@ -211,6 +231,7 @@
             .sidebar-brand-icon i {
                 font-size: 2.1rem;
             }
+
             .sidebar-brand-text {
                 width: 65px;
                 font-size: 0.95rem;
@@ -269,6 +290,7 @@
                         display: none;
                     }
                 }
+                
             }
             .sidebar-brand {
                 padding-left: 34px;
@@ -276,8 +298,13 @@
                 .sidebar-brand-icon i {
                     font-size: 2.1rem;
                 }
+
                 .sidebar-brand-text {
                     display: none;
+                }
+
+                .sidebar-brand-icon{
+                    padding-left: 0px;
                 }
             }
             .sidebar-heading {
@@ -397,6 +424,10 @@
         img.logo {
             width: 75px;
             left: 14px;
+        }
+
+        span.version-front{
+            display: none !important;
         }
     }
 }

@@ -104,6 +104,8 @@ class VoteController extends Controller
     public function show($id)
     {
         $vote = Vote::findOrFail($id);
+        $this->isVoteValid($vote);
+
         return view('vote.show', compact('vote'));
     }
 
@@ -117,6 +119,10 @@ class VoteController extends Controller
     public function update(Request $request, $id)
     {
         $vote = Vote::findOrFail($id);
+
+        if(!$this->isVoteValid($vote)){
+            return back()->withInput()->withErrors('You vote could not be registered. The vote deadline has passed.');
+        }
 
         $availableOptions = "";
         foreach($vote->option as $option) $availableOptions .= $option->id.',';
@@ -135,5 +141,22 @@ class VoteController extends Controller
         ActivityLogController::info("Voted in vote poll ".$vote->id);
 
         return redirect()->intended(route('vote.show', $vote->id))->withSuccess('Your vote is succesfully registered.');
+    }
+
+    /**
+     * Check and close vote if it's still active after deadline
+     * If a vote is submited after deadline and it's still open, let's close it. Cron handles closing, but this is an extra check
+     *
+     * @param  \App\Vote $vote
+     * @return void
+     */
+    private function isVoteValid(Vote $vote){
+        if ($vote->closed == false && Carbon::create($vote->end_at)->isPast()){
+            $vote->closed = true;
+            $vote->save();
+            return false;
+        }
+
+        return true;
     }
 }

@@ -17,6 +17,20 @@ use Illuminate\Support\Facades\Auth;
  */
 class VatbookController extends Controller
 {
+    /**
+     * Convert training rating to position id
+     *
+     */
+    public static $trainingRating = [
+        8 => [197, 200], // ENGM TWR
+        9 => [192, 193, 194, 195], // ENGM APP
+        10 => [374, 375, 376, 377], // ESSA TWR
+        11 => [367, 368, 370, 371, 372], // ESSA APP
+        12 => [13, 14, 15, 16], // EKCH TWR
+        13 => [7, 9, 12], // EKCH APP
+        14 => [117], // BICC
+        15 => [271] // ENOB
+    ];
 
     use AuthorizesRequests;
 
@@ -108,7 +122,11 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) $booking->training = 1;
-        else $booking->training = 0;
+        else if($user->getActiveTraining()->ratings->first()->id >= 8) {
+            foreach(VatbookController::$trainingRating[$user->getActiveTraining()->ratings->first()->id] as $position) {
+                if($booking->position->id === $position) $booking->training = 1;
+            }
+        } else $booking->training = 0;
 
         if(isset($data['tag'])) {
             $this->authorize('tags', $booking);
@@ -206,7 +224,11 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModerator()) $booking->training = 1;
-        else $booking->training = 0;
+        else if($user->getActiveTraining()->ratings->first()->id >= 8) {
+            foreach(VatbookController::$trainingRating[$user->getActiveTraining()->ratings->first()->id] as $position) {
+                if($booking->position->id === $position) $booking->training = 1;
+            }
+        } else $booking->training = 0;
 
         if(isset($data['tag'])) {
             $this->authorize('tags', $booking);
