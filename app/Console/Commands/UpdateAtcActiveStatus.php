@@ -295,9 +295,11 @@ class UpdateAtcActiveStatus extends Command
             return true;
 
         // Get completed trainings
-        $completed_trainings = $trainings->where('status', -1)->orWhere(function ($query) {
-            $query->where('status', -1)->whereIn('type', [2, 3, 4]);
-        })->sortBy('closed_at');
+        $completed_trainings = $trainings->where('status', -1);
+
+        $completed_tmp_tranings = $trainings->where('status', -1)->whereIn('type', [2, 3, 4]);
+
+        $completed_trainings = array_merge($completed_trainings, $completed_tmp_tranings);
 
         // Remove all non-S2 trainings
         $this->getGracePeriodTrainings($completed_trainings);
