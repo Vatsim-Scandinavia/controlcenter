@@ -125,6 +125,21 @@ class Training extends Model
         return $output;
      }
 
+     /**
+      * Check if training holds one or multiple MAE specific ratings
+      *
+      * @return boolean
+      */
+    public function isMaeTraining(){
+
+        foreach($this->ratings as $rating){
+            if($rating->vatsim_rating == NULL) return true;
+        }
+
+        return false;
+
+    }
+
     /**
      * Get the student.
      *
