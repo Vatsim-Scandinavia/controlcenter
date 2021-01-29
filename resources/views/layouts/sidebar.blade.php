@@ -172,8 +172,8 @@
         @endif
 
         <!-- Logo -->
-        <img class="logo" title="v.1.0" src="{{ asset('images/vatsca-logo-negative.svg') }}">
-        <span class="version-sidebar">Control Center v.{{ config('app.version') }}</span>
+        <img class="logo" src="{{ asset('images/vatsca-logo-negative.svg') }}">
+        <span class="version-sidebar">Control Center v{{ config('app.version') }}</span>
     @else
         <!-- Divider -->
         <hr class="sidebar-divider my-0">

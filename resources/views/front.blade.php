@@ -25,7 +25,7 @@
 
         <div class="logo">
             <img src="images/vatsca-logo-negative.svg">
-            <span class="version-front">Control Center v.{{ config('app.version') }}</span>
+            <span class="version-front">Control Center v{{ config('app.version') }}</span>
         </div>
     </div>
 @endsection
