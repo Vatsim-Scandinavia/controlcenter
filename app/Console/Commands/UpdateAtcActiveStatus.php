@@ -248,16 +248,19 @@ class UpdateAtcActiveStatus extends Command
     }
 
     /**
-     * Get S2 trainings from a collection of trainings
+     * Get trainings from a collection of trainings that should be
+     * used for counting the grace period.
      *
      * @param $trainings
      */
-    private function getS2Trainings(Collection &$trainings)
+    private function getGracePeriodTrainings(Collection &$trainings)
     {
         foreach ($trainings as $key => $training) {
-            if (!$training->ratings->contains(Rating::where('vatsim_rating', 3)->get()->first()->id)) {
-                $trainings->pull($key);
+            if ($training->ratings->contains(Rating::where('vatsim_rating', 3)->get()->first()->id) || in_array($training->type, [2, 3, 4])) {
+				// Training is an S2 training or refresh, fast-track or familiarisation.
+				continue;
             }
+            $trainings->pull($key);
         }
     }
 
@@ -274,8 +277,8 @@ class UpdateAtcActiveStatus extends Command
      */
     private function userShouldBeSetAsInactive(Handover $handover, $sum)
     {
-        // TODO: Move hardcoded 20 hrs to value that can be changed
-        if (round(($sum / 60)) >= 20)
+        // TODO: Move hardcoded 10 hrs to value that can be changed
+        if (round(($sum / 60)) >= 10)
             return false;
 
         $user = $handover->user;
@@ -292,13 +295,15 @@ class UpdateAtcActiveStatus extends Command
             return true;
 
         // Get completed trainings
-        $completed_trainings = $trainings->where('status', -1)->sortBy('closed_at');
+        $completed_trainings = $trainings->where('status', -1)->orWhere(function ($query) {
+            $query->where('status', -1)->whereIn('type', [2, 3, 4]);
+        })->sortBy('closed_at');
 
         // Remove all non-S2 trainings
-        $this->getS2Trainings($completed_trainings);
+        $this->getGracePeriodTrainings($completed_trainings);
 
         if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < 12) {
-            // User had S2 training and training was completed within last 12 months.
+            // User had trainings qualified for grace period and training was completed within last 12 months.
             // Do not set as inactive.
             return false;
         }

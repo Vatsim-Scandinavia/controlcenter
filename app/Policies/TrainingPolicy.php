@@ -74,16 +74,23 @@ class TrainingPolicy
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
 
+        // Global setting if trainings are enabled
         if(!Setting::get('trainingEnabled'))
             return Response::deny("We are currently not accepting new training requests");
 
+        // Only users within our subdivision should be allowed to apply
         if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
             $subdiv = "none";
             if(isset($user->handover->subdivision)) $subdiv = $user->handover->subdivision;
             return Response::deny("You must join Scandinavia subdivision to apply for training. You currently belong to ".$subdiv);
         }
 
-        return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You already have a pending training request");
+        // Not active users are forced to ask for a manual creation of refresh
+        if(!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active){
+            return Response::deny("Your ATC rating is inactive in Scandinavia");
+        }
+
+        return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You have an active training request");
     }
 
     /**

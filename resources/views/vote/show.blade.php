@@ -13,15 +13,11 @@
             <div class="card-body">
                 <h3>{{ $vote->question }}</h3>
 
-                @cannot('vote', $vote)
-
-                    <p class="text-danger">Sorry, you do not qualify to participate in this vote.</p>
-
-                @else
+                @can('vote', $vote)
 
                     @if($vote->user()->where('user_id', \Auth::user()->id)->exists())
 
-                        <p>You've already voted.</p>
+                        <p><i class="fas fa-check"></i> You've already voted.</p>
 
                     @else
                         <form action="{{ route('vote.update', $vote->id) }}" method="POST">
@@ -41,14 +37,17 @@
                             @enderror
 
                             <br>
-                            <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed</p>
+                            <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed.</p>
                             <button type="submit" class="btn btn-success">Submit Vote</button>
 
                         </form>
 
                     @endif
 
+                @else
+                    <p class="text-danger">{{ Gate::inspect('vote', $vote)->message() }}</p>
                 @endcan
+
             </div>
         </div>
     </div>
@@ -67,7 +66,7 @@
 
                 @else
 
-                    <p>Summary will be publicly available once the vote closes at {{ $vote->end_at }}</p>
+                    <p>Summary will be publicly available once the vote closes at {{ \Carbon\Carbon::create($vote->end_at)->toEuropeanDateTime() }}</p>
 
                 @endif
 
