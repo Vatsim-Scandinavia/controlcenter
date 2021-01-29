@@ -48,11 +48,12 @@ class UpdateMemberDetails extends Command
         $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
 
         $this->info("Detaching mentors who no longer are in subdivision...");
+        $count = 0;
 
         // Start the loop
         foreach ($mentors as $mentor) {
 
-            if (in_array($mentor->subdivision, $subdivisions)) continue;
+            if (in_array($mentor->subdivision, $subdivisions) || $mentor->visiting_controller == true) continue;
 
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();
@@ -61,12 +62,17 @@ class UpdateMemberDetails extends Command
             // Remove mentor usergroup
             $mentor->group = null;
             $mentor->save();
+
+            $count++;
         }
+
+        $this->info($count." users affected.");
 
         // Get active trainings
         $trainings = Training::where('status', '>=', 0)->where('type', '!=', 5)->get();
 
-        $this->info("Closing trainings for those who left subdivision: ".$trainings->count()." members.");
+        $this->info("Closing trainings for those who left subdivision...");
+        $count = 0;
 
         foreach ($trainings as $training) {
 
@@ -79,8 +85,12 @@ class UpdateMemberDetails extends Command
 
             // Notify student of closure
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the subdivision.'));
+
+            $count++;
             
         }
+
+        $this->info($count." trainings affected.");
 
         $this->info("Done");
     }
