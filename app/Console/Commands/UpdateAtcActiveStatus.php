@@ -63,6 +63,8 @@ class UpdateAtcActiveStatus extends Command
 
         foreach ($users as $user) {
 
+            $this->info("Checking {$user->id}");
+
             $url = $this->getQueryString($user->id);
             $response = $this->makeHttpGetRequest($client, $url);
 
@@ -256,7 +258,8 @@ class UpdateAtcActiveStatus extends Command
     private function getGracePeriodTrainings(Collection &$trainings)
     {
         foreach ($trainings as $key => $training) {
-            if ($training->ratings->contains(Rating::where('vatsim_rating', 3)->get()->first()->id) || in_array($training->type, [2, 3, 4])) {
+            $s2Id = Rating::where('vatsim_rating', 3)->get()->first()->id;
+            if ($training->ratings->contains($s2Id) || in_array($training->type, [2, 3, 4])) {
 				// Training is an S2 training or refresh, fast-track or familiarisation.
 				continue;
             }
@@ -295,9 +298,7 @@ class UpdateAtcActiveStatus extends Command
             return true;
 
         // Get completed trainings
-        $completed_trainings = $trainings->where('status', -1)->orWhere(function ($query) {
-            $query->where('status', -1)->whereIn('type', [2, 3, 4]);
-        })->sortBy('closed_at');
+        $completed_trainings = $trainings->where('status', -1)->sortBy('closed_at');
 
         // Remove all non-S2 trainings
         $this->getGracePeriodTrainings($completed_trainings);
