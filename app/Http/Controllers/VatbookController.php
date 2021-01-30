@@ -108,7 +108,7 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) $booking->training = 1;
-        else if($user->getActiveTraining()->isMaeTraining()){
+        else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
             if($booking->position->mae == true) $booking->training = 1;
         } else $booking->training = 0;
 
@@ -208,7 +208,7 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModerator()) $booking->training = 1;
-        else if($user->getActiveTraining()->isMaeTraining()){
+        else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
             if($booking->position->mae == true) $booking->training = 1;
         } else $booking->training = 0;
 
