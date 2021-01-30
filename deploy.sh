@@ -23,7 +23,6 @@ php artisan key:generate
 
 # Adjust directory permissions
 chmod -R 777 storage bootstrap/cache
-chmod -R 777 storage bootstrap/cache
 
 # Artisan magic
 php artisan migrate
