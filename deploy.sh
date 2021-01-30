@@ -1,4 +1,4 @@
-# !/bin/sh
+# ! /bin/sh
 # deploy.sh
 #
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -7,6 +7,9 @@
 #
 
 COMMAND=$1
+
+# Turn maintenance mode on
+php artisan down
 
 # Pull latest from Git
 git pull
@@ -18,21 +21,27 @@ php -r "file_exists('.env') || copy('.env.example', '.env');"
 composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 npm install
 
-# Generate PHP key
-php artisan key:generate
-
 # Adjust directory permissions
-chmod -R 777 storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 # Artisan magic
 php artisan migrate
 php artisan cache:clear
 php artisan config:clear
+php artisan view:cache
 
 # Create front-end assets
 
 if [ "$COMMAND" = "dev" ]; then
     npm run dev
+elif [ "$COMMAND" = "init" ]; then
+
+    # Generate PHP key
+    php artisan key:generate
+
 else
     npm run prod
 fi
+
+# Turn maintenance mode off
+php artisan up
