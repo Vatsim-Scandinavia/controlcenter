@@ -44,8 +44,10 @@ else
 
     # Create front-end assets
     npm run prod
-    
+
 fi
 
 # Turn maintenance mode off
 php artisan up
+
+ 
