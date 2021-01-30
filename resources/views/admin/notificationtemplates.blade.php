@@ -76,7 +76,7 @@
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>
-                    <p>We herby confirm that we have received your training request for (RATINGS) in (FIR).</p>
+                    <p>We hereby confirm that we have received your training request for (RATINGS) in (FIR).</p>
                     <p>The request is now in queue. Expected waiting time: {{ Setting::get('trainingQueue') }}</p>
                     <p>We will periodically ask you to confirm your continued interest for your application with us, it's your responsibility to check your email for these requests and reply within the deadline.</p>
 
