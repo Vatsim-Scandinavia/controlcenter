@@ -63,6 +63,8 @@ class UpdateAtcActiveStatus extends Command
 
         foreach ($users as $user) {
 
+            $this->info("Checking {$user->id}");
+
             $url = $this->getQueryString($user->id);
             $response = $this->makeHttpGetRequest($client, $url);
 
@@ -299,7 +301,7 @@ class UpdateAtcActiveStatus extends Command
 
         $completed_tmp_tranings = $trainings->where('status', -1)->whereIn('type', [2, 3, 4]);
 
-        $completed_trainings = array_merge($completed_trainings, $completed_tmp_tranings);
+        $completed_trainings = collect(array_merge($completed_trainings, $completed_tmp_tranings))->sortBy('closed_at');
 
         // Remove all non-S2 trainings
         $this->getGracePeriodTrainings($completed_trainings);
