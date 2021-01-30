@@ -1,16 +1,16 @@
-name: Test Application
+name: Test App
 
 on:
   pull_request:
     branches: [ master ]
 
 jobs:
-  test-application:
+  test-app:
 
     runs-on: ubuntu-18.04
     
     steps:
-      # Test application
+      # Test app
     - uses: actions/checkout@v2
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
