@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\SoloEndorsement;
-use App\TrainingReport;
-use App\TrainingInterest;
-use App\User;
-use App\Vote;
+use App\Models\SoloEndorsement;
+use App\Models\TrainingReport;
+use App\Models\TrainingInterest;
+use App\Models\User;
+use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use anlutro\LaravelSettings\Facade as Setting;

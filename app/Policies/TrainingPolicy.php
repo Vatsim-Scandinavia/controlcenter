@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\OneTimeLink;
-use App\Training;
-use App\User;
+use App\Models\OneTimeLink;
+use App\Models\Training;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use anlutro\LaravelSettings\Facade as Setting;
@@ -16,8 +16,8 @@ class TrainingPolicy
     /**
      * Determine whether the user can view the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function view(User $user, Training $training)
@@ -30,8 +30,8 @@ class TrainingPolicy
     /**
      * Determine whether the user can update the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function update(User $user, Training $training)
@@ -43,8 +43,8 @@ class TrainingPolicy
     /**
      * Determine whether the user can delete the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function delete(User $user, Training $training)
@@ -55,8 +55,8 @@ class TrainingPolicy
     /**
      * Determine whether the user can close the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function close(User $user, Training $training)

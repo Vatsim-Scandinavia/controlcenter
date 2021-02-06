@@ -242,7 +242,7 @@
                 </div>
                 <p>Are you interested in becoming an Air Traffic Controller? Wish to receive training for a higher rating? Request training below and you will be notified when a space is available.</p>
 
-                @can('apply', \App\Training::class)
+                @can('apply', \App\Models\Training::class)
                     <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
                         Request training
                     </a>
@@ -254,7 +254,7 @@
                         @else
                             <i class="fas fa-exclamation-triangle"></i>
                         @endif
-                        {{ Gate::inspect('apply', \App\Training::class)->message() }}
+                        {{ Gate::inspect('apply', \App\Models\Training::class)->message() }}
                     </div>
 
                     @if(Setting::get('trainingEnabled'))

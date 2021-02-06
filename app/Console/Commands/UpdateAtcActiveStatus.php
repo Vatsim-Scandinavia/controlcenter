@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Handover;
-use App\Rating;
+use App\Models\Handover;
+use App\Models\Rating;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;

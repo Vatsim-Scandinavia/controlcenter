@@ -72,8 +72,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if(\App\TrainingReport::where('training_id', $training->id)->count() > 0)
-                                        {{ Carbon\Carbon::make(\App\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
+                                    @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
+                                        {{ Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
                                     @else
                                         No report yet
                                     @endif

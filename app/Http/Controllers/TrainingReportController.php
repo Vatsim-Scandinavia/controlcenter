@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\OneTimeLink;
-use App\Position;
-use App\Training;
-use App\TrainingReport;
+use App\Models\OneTimeLink;
+use App\Models\Position;
+use App\Models\Training;
+use App\Models\TrainingReport;
 use App\Notifications\TrainingReportNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -96,7 +96,7 @@ class TrainingReportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\TrainingReport  $trainingReport
+     * @param  \App\Models\TrainingReport  $trainingReport
      * @return \Illuminate\Http\Response
      */
     public function show(TrainingReport $trainingReport)
@@ -124,7 +124,7 @@ class TrainingReportController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\TrainingReport $report
+     * @param \App\Models\TrainingReport $report
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -153,7 +153,7 @@ class TrainingReportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\TrainingReport $report
+     * @param \App\Models\TrainingReport $report
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Console\Command;
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Training;
+use App\Models\Training;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\TrainingClosedNotification;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\ActivityLog;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 /**

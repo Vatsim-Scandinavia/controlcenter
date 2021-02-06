@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Vote;
-use App\VoteOption;
+use App\Models\Vote;
+use App\Models\VoteOption;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -147,7 +147,7 @@ class VoteController extends Controller
      * Check and close vote if it's still active after deadline
      * If a vote is submited after deadline and it's still open, let's close it. Cron handles closing, but this is an extra check
      *
-     * @param  \App\Vote $vote
+     * @param  \App\Models\Vote $vote
      * @return void
      */
     private function isVoteValid(Vote $vote){

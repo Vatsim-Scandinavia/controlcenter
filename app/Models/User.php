@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMethodMissingException;
@@ -80,7 +80,7 @@ class User extends Authenticatable
     /**
      * Check is this user is teaching the queried user
      *
-     * @param \App\User $user to check for
+     * @param  \App\Models\User $user to check for
      * @return bool
      */
     public function isTeaching(User $user){

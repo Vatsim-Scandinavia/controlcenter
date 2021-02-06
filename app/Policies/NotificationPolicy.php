@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use Illuminate\Notifications\Notification;
-use App\User;
-use App\Country;
+use App\Models\User;
+use App\Models\Country;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class NotificationPolicy

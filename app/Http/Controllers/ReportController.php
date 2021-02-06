@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
-use App\ManagementReport;
-use App\Rating;
-use App\Training;
-use App\User;
+use App\Models\Country;
+use App\Models\ManagementReport;
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;

@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\TrainingExamination;
+use App\Models\TrainingExamination;
 use Faker\Generator as Faker;
 
 $factory->define(TrainingExamination::class, function (Faker $faker) {
@@ -11,7 +11,7 @@ $factory->define(TrainingExamination::class, function (Faker $faker) {
 
     return [
         'examination_date' => $date,
-        'position_id' => \App\Position::query()->inRandomOrder()->first()->id,
+        'position_id' => \App\Models\Position::query()->inRandomOrder()->first()->id,
         'result' => $faker->randomElement([
             'PASSED', 'FAILED', 'INCOMPLETE', 'POSTPONED',
         ]),

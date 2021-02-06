@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Sweatbook;
-use App\Position;
+use App\Models\SweatBook;
+use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;

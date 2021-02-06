@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Vatbook;
+use App\Models\User;
+use App\Models\Vatbook;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class VatbookPolicy
@@ -23,7 +23,7 @@ class VatbookPolicy
     /**
      * Determine whether the user can create bookings.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
@@ -34,8 +34,8 @@ class VatbookPolicy
     /**
      * Determine whether the user can update the booking.
      *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $booking
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Vatbook  $booking
      * @return bool
      */
     public function update(User $user, Vatbook $booking)
@@ -46,7 +46,7 @@ class VatbookPolicy
     /**
      * Determine whether the user can add tags.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function tags(User $user)
@@ -57,8 +57,8 @@ class VatbookPolicy
     /**
      * Determine whether the user can book this position.
      *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $booking
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Vatbook  $booking
      * @return mixed
      */
     public function position(User $user, Vatbook $booking)

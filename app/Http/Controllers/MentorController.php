@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
-use App\User;
-use App\Training;
+use App\Models\Country;
+use App\Models\User;
+use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

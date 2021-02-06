@@ -38,9 +38,9 @@
                                         {{ $mentor->getInlineMentoringCountries() }}
                                     </td>
                                     <td>
-                                        @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
+                                        @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
                                             @php
-                                                $reportDate = Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
+                                                $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
                                             @endphp
                                             <span title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
@@ -61,10 +61,10 @@
                                     <td class="table-link-newline">
                                         @foreach($mentor->teaches as $training)
                                             <div><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a> / Last training: 
-                                                @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
-                                                    @if(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->count() > 0)
+                                                @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
+                                                    @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->count() > 0)
                                                         @php
-                                                            $reportDate = Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date);
+                                                            $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date);
                                                         @endphp
                                                         <span title="{{ $reportDate->toEuropeanDate() }}">
                                                             @if($reportDate->isToday())

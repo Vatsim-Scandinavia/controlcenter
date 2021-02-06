@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -12,7 +12,7 @@ class UserPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function index(User $user)
@@ -23,8 +23,8 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $model
      * @return bool
      */
     public function view(User $user, User $model)
@@ -35,8 +35,8 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $model
      * @return bool
      */
     public function update(User $user, User $model)

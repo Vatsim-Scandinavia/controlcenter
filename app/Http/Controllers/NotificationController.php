@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
 

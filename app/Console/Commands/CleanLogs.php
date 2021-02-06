@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\ActivityLog;
+use App\Models\ActivityLog;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;

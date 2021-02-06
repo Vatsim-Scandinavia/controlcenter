@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
+use App\Models\Country;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
-use App\Rating;
-use App\Training;
-use App\TrainingReport;
-use App\TrainingExamination;
-use App\TrainingInterest;
-use App\User;
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\TrainingReport;
+use App\Models\TrainingExamination;
+use App\Models\TrainingInterest;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,7 +79,7 @@ class TrainingController extends Controller
 
         $this->authorize('viewActiveRequests', Training::class);
 
-        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sort(function($a, $b) {
+        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]])->sort(function($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
@@ -107,7 +107,7 @@ class TrainingController extends Controller
 
         $this->authorize('viewHistoricRequests', Training::class);
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
             if ($a->status == $b->status) {
                 return $b->created_at->timestamp - $a->created_at->timestamp;
             }
@@ -254,7 +254,7 @@ class TrainingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Training $training
+     * @param \App\Models\Training $training
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

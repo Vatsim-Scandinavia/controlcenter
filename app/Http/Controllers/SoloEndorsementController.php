@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use App\Position;
-use App\SoloEndorsement;
+use App\Models\User;
+use App\Models\Position;
+use App\Models\SoloEndorsement;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;

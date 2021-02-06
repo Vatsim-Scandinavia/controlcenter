@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\File;
+use App\Models\File;
 use App\Http\Controllers\FileController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

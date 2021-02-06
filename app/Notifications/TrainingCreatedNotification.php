@@ -3,9 +3,9 @@
 namespace App\Notifications;
 
 use App\Mail\TrainingMail;
-use App\Training;
-use App\Country;
-use App\User;
+use App\Models\Training;
+use App\Models\Country;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

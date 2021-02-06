@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\TrainingClosedNotification;
-use App\User;
-use App\Handover;
-use App\Training;
+use App\Models\User;
+use App\Models\Handover;
+use App\Models\Training;
 
 class UserDelete extends Command
 {
@@ -119,7 +119,7 @@ class UserDelete extends Command
                 if($confirmed){
 
                     // Remove notification logs as it's not cascaded due to morph data structure
-                    DB::table('notifications')->where('notifiable_type', 'App\User')->where('notifiable_id', $cid)->delete();
+                    DB::table('notifications')->where('notifiable_type', 'App\Models\User')->where('notifiable_id', $cid)->delete();
 
                     // Remove things from Control Center
                     $user->delete();

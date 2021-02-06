@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Training;
-use App\TrainingExamination;
-use App\User;
+use App\Models\Training;
+use App\Models\TrainingExamination;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -48,7 +48,7 @@ class TrainingExaminationsTest extends TestCase
 //
 //        $data = $this->examination->getAttributes();
 //        $data['examination_date'] = Carbon::parse($data['examination_date'])->format('d/m/Y');
-//        $data['position'] = \App\Position::find($data['position_id'])->callsign;
+//        $data['position'] = \App\Models\Position::find($data['position_id'])->callsign;
 //        unset($data['position_id']);
 //
 //        $this->actingAs($this->examination->examiner)->followingRedirects()

@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use DB;
-use App\Position;
-use App\Vatbook;
+use App\Models\Position;
+use App\Models\Vatbook;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Auth\User;
 

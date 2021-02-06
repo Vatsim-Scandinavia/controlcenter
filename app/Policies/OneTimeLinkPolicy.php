@@ -2,12 +2,12 @@
 
 namespace App\Policies;
 
-use App\OneTimeLink;
-use App\Training;
-use App\TrainingExamination;
-use App\TrainingObject;
-use App\TrainingReport;
-use App\User;
+use App\Models\OneTimeLink;
+use App\Models\Training;
+use App\Models\TrainingExamination;
+use App\Models\TrainingObject;
+use App\Models\TrainingReport;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class OneTimeLinkPolicy
@@ -17,7 +17,7 @@ class OneTimeLinkPolicy
     /**
      * Determine whether the user can create one time links.
      *
-     * @param \App\User $user
+     * @param  \App\Models\User $user
      * @param Training $training
      * @param string $type
      * @return bool

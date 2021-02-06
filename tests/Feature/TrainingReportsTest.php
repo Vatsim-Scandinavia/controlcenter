@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
@@ -15,10 +15,10 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function mentor_can_access_training_reports()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000005])->id,
         ]);
-        $mentor = factory(\App\User::class)->create(['group' => 3, 'id' => 10000400]);
+        $mentor = factory(\App\Models\User::class)->create(['group' => 3, 'id' => 10000400]);
         $training->country->mentors()->attach($mentor);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addCentury()]);
 
@@ -28,7 +28,7 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function trainee_can_access_training_reports()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000005])->id,
         ]);
         $this->actingAs($training->user)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
@@ -37,23 +37,23 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function a_regular_user_cant_access_training_reports()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000005])->id,
         ]);
-        $otherUser = factory(\App\User::class)->create(['group' => null, 'id' => 10000134]);
+        $otherUser = factory(\App\Models\User::class)->create(['group' => null, 'id' => 10000134]);
         $this->actingAs($otherUser)->assertTrue(Gate::inspect('viewReports', $training)->denied());
     }
 
     /** @test */
     public function trainee_cant_access_draft_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000067, 'group' => null])->id,
         ]);
 
         $mentor = factory(User::class)->create(['id' => 10000159, 'group' => 3]);
 
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
             'written_by_id' => $mentor->id,
             'report_date' => now()->addYear(),
@@ -68,13 +68,13 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function mentor_can_access_draft_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000042])->id,
         ]);
 
         $mentor = factory(User::class)->create(['id' => 10000080, 'group' => 3]);
 
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
             'written_by_id' => $mentor->id,
             'report_date' => now()->addYear(),
@@ -93,7 +93,7 @@ class TrainingReportsTest extends TestCase
 //    /** @test */
 //    public function mentor_can_create_training_report()
 //    {
-//        $report = factory(\App\TrainingReport::class)->make();
+//        $report = factory(\App\Models\TrainingReport::class)->make();
 //
 //        $this->actingAs($report->training->mentors()->first())
 //            ->post(route('training.report.store', ['training' => $report->training->id]), $report->getAttributes())
@@ -105,14 +105,14 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function a_regular_user_cant_create_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000090])->id,
         ]);
-        $report = factory(\App\TrainingReport::class)->make([
+        $report = factory(\App\Models\TrainingReport::class)->make([
             'training_id' => $training->id,
         ]);
 
-        $this->actingAs(factory(\App\User::class)->create(['group' => null]))
+        $this->actingAs(factory(\App\Models\User::class)->create(['group' => null]))
             ->post(route('training.report.store', ['training' => $report->training->id]), $report->getAttributes())
             ->assertStatus(403);
 
@@ -122,10 +122,10 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function mentor_can_update_a_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000091])->id,
         ]);
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
         ]);
         $mentor = factory(User::class)->create(['id' => 10000015, 'group' => 3]);
@@ -145,10 +145,10 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function a_regular_user_cant_update_a_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000092])->id,
         ]);
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
             'written_by_id' => null,
             'report_date' => now()->addYear(),
@@ -169,14 +169,14 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function mentor_can_delete_a_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000093])->id,
             'id' => 2,
         ]);
 
         $mentor = factory(User::class)->create(['id' => 10000500, 'group' => 3]);
 
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
             'written_by_id' => $mentor->id,
             'report_date' => now()->addYear(),
@@ -199,13 +199,13 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function another_mentor_cant_delete_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000094])->id,
         ]);
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
         ]);
-        $otherMentor = factory(\App\User::class)->create(['id' => 10000100, 'group' => 3]);
+        $otherMentor = factory(\App\Models\User::class)->create(['id' => 10000100, 'group' => 3]);
 
         $this->actingAs($otherMentor)
             ->get(route('training.report.delete', ['report' => $report->id]))
@@ -217,13 +217,13 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function regular_user_cant_delete_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000095])->id,
         ]);
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
         ]);
-        $regularUser = factory(\App\User::class)->create(['id' => 1000096, 'group' => null]);
+        $regularUser = factory(\App\Models\User::class)->create(['id' => 1000096, 'group' => null]);
 
         $this->actingAs($regularUser)
             ->get(route('training.report.delete', ['report' => $report->id]))
@@ -235,7 +235,7 @@ class TrainingReportsTest extends TestCase
     /** @test */
     public function another_moderator_can_delete_training_report()
     {
-        $training = factory(\App\Training::class)->create([
+        $training = factory(\App\Models\Training::class)->create([
             'user_id' => factory(User::class)->create(['id' => 10000098])->id,
         ]);
 
@@ -244,7 +244,7 @@ class TrainingReportsTest extends TestCase
             'group' => 3,
         ]);
 
-        $report = factory(\App\TrainingReport::class)->create([
+        $report = factory(\App\Models\TrainingReport::class)->create([
             'training_id' => $training->id,
             'written_by_id' => $mentor->id,
             'report_date' => now()->addYear(),
@@ -253,7 +253,7 @@ class TrainingReportsTest extends TestCase
             'position' => null,
             'draft' => false,
         ]);
-        $otherModerator = factory(\App\User::class)->create(['group' => 1, 'id' => 10000101]);
+        $otherModerator = factory(\App\Models\User::class)->create(['group' => 1, 'id' => 10000101]);
 
         $this->actingAs($otherModerator)
             ->get(route('training.report.delete', ['report' => $report->id]));

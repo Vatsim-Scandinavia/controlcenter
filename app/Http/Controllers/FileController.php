@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
+use App\Models\File;
 use Illuminate\Http\Request;
 use \Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Auth;

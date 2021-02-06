@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Handover;
+use App\Models\Handover;
 use Faker\Generator as Faker;
 use App\Helpers\FactoryHelper;
 

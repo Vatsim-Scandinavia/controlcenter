@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\OneTimeLink;
-use App\Training;
-use App\TrainingObject;
+use App\Models\OneTimeLink;
+use App\Models\Training;
+use App\Models\TrainingObject;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SoloEndorsementPolicy
@@ -12,7 +12,7 @@ class SoloEndorsementPolicy
     /**
      * Determine whether the user can view bookings.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function view(User $user)
@@ -23,7 +23,7 @@ class SoloEndorsementPolicy
     /**
      * Determine whether the user can create bookings.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
@@ -34,7 +34,7 @@ class SoloEndorsementPolicy
     /**
      * Determine whether the user can update the booking.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function update(User $user)

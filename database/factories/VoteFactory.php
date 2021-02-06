@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Vote;
+use App\Models\Vote;
 use Faker\Generator as Faker;
 
 $factory->define(Vote::class, function (Faker $faker) {

@@ -20,7 +20,7 @@
             <span>Dashboard</span></a>
         </li>
 
-        @can('view', \App\Vatbook::class)
+        @can('view', \App\Models\Vatbook::class)
         <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('vatbook') }}">
             <i class="fas fa-fw fa-calendar"></i>

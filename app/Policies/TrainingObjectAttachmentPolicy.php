@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\TrainingObjectAttachment;
-use App\User;
+use App\Models\TrainingObjectAttachment;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TrainingObjectAttachmentPolicy
@@ -13,8 +13,8 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can view the training report attachment.
      *
-     * @param  \App\User  $user
-     * @param  \App\TrainingObjectAttachment  $attachment
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\TrainingObjectAttachment  $attachment
      * @return bool
      */
     public function view(User $user, TrainingObjectAttachment $attachment)
@@ -25,7 +25,7 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can create training report attachments.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)

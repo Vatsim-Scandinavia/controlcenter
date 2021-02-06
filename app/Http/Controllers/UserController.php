@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use App\Group;
-use App\Country;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -56,7 +56,7 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -129,7 +129,7 @@ class UserController extends Controller
      * Update the user's settings to storage
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function settings_update(Request $request, User $user)

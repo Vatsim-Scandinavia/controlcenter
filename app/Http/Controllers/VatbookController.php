@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App;
-use App\User;
-use App\Position;
-use App\Vatbook;
+use App\Models\User;
+use App\Models\Position;
+use App\Models\Vatbook;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,7 +23,7 @@ class VatbookController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\View\View
      */
     public function index(User $user){
@@ -41,7 +41,7 @@ class VatbookController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Vatbook $booking
+     * @param  \App\Models\Vatbook $booking
      * @return \Illuminate\View\View
      */
     public function show($id){
@@ -256,7 +256,7 @@ class VatbookController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Vatbook  $booking
+     * @param  \App\Models\Vatbook  $booking
      * @return \Illuminate\Http\RedirectResponse
      */
     public function delete($id)

@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Country;
-use App\Training;
+use App\Models\Country;
+use App\Models\Training;
 use Carbon\Carbon;
 
 class UpdateQueueCalculation extends Command

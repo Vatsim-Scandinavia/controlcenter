@@ -4,10 +4,10 @@
 @section('content')
 
 <div class="row">
-    @can('create', \App\Vatbook::class)
+    @can('create', \App\Models\Vatbook::class)
         <div class="col-xl-8 col-lg-12 col-md-12 mb-12">
     @endcan
-    @cannot('create', \App\Vatbook::class)
+    @cannot('create', \App\Models\Vatbook::class)
         <div class="col-lg-12 col-md-12 mb-12">
     @endcannot
         <div class="card shadow mb-4">
@@ -79,7 +79,7 @@
             
         </div>
     </div>
-    @can('create', \App\Vatbook::class)
+    @can('create', \App\Models\Vatbook::class)
     <div class="col-xl-4 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">

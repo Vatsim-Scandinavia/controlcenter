@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\TrainingExamination;
-use App\TrainingReport;
+use App\Models\TrainingExamination;
+use App\Models\TrainingReport;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 

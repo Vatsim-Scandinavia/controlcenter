@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Training;
+use App\Models\Training;
 use Faker\Generator as Faker;
 
 $factory->define(Training::class, function (Faker $faker) {
@@ -16,7 +16,7 @@ $factory->define(Training::class, function (Faker $faker) {
     }
 
     return [
-        'user_id' => App\User::inRandomOrder()->first()->id,
+        'user_id' => App\Models\User::inRandomOrder()->first()->id,
         'status' => $status,
         'country_id' => 1,
         'motivation' => $faker->paragraph(15, false),

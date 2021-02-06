@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ActivityLogController;
-use App\User;
-use App\Group;
+use App\Models\User;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Token;
 use App\Http\Controllers\Controller;
@@ -93,7 +93,7 @@ class LoginController extends Controller
      * 
      * @param mixed $resourceOwner
      * @param mixed $token
-     * @return \App\User User's account data
+     * @return \App\Models\User User's account data
      */
     protected function completeLogin($resourceOwner, $token)
     {
