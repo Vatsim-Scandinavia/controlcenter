@@ -9,7 +9,7 @@
 COMMAND=$1
 
 # Turn maintenance mode on
-php artisan down
+php artisan down --render="errors.maintenance"
 
 # Pull latest from Git
 git pull
