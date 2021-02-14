@@ -1,21 +1,38 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\TrainingReport;
-use Faker\Generator as Faker;
+use App\Models\Position;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(TrainingReport::class, function (Faker $faker) {
+class TrainingReportFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = TrainingReport::class;
 
-    $date = $faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
 
-    return [
-        'report_date' => $date,
-        'content' => $faker->paragraph(),
-        'contentimprove' => $faker->paragraph(),
-        'position' => App\Models\Position::inRandomOrder()->first()->callsign,
-        'draft' => $faker->numberBetween(0, 1),
-        'created_at' => $date,
-        'updated_at' => $date,
-    ];
-});
+        $date = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
+
+        return [
+            'report_date' => $date,
+            'content' => $this->faker->paragraph(),
+            'contentimprove' => $this->faker->paragraph(),
+            'position' => Position::inRandomOrder()->first()->callsign,
+            'draft' => $this->faker->numberBetween(0, 1),
+            'created_at' => $date,
+            'updated_at' => $date,
+        ];
+    }
+}

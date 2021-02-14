@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Handover extends Model
 {
+
+    use HasFactory;
+
     /**
      * This model is special, as it's using the table non-prefixed mysql connection and garthers data provided by Handover
      */

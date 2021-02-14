@@ -7,11 +7,12 @@ use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
 
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     protected $connection = 'mysql';
     protected $table = 'users';
