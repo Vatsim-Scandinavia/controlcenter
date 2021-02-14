@@ -183,10 +183,10 @@ class UpdateAtcActiveStatus extends Command
      */
     private function getUsers()
     {
-        // Rating >= 2 means S1+
+        // Rating >= 3 means S2+
         // Subdivision only SCA
         return Handover::where([
-            ['rating', '>=', 2],
+            ['rating', '>=', 3],
             ['subdivision', '=', 'SCA']
         ])->get();
     }
