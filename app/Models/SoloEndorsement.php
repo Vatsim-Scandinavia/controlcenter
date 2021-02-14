@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SoloEndorsement extends Model
 {
+
+    use HasFactory;
 
     protected $dates = ['expires_at'];
 

@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace Database\Factories;
 
@@ -40,16 +40,16 @@ class HandoverFactory extends Factory
 
         // users rating id
 
-        $rating = $faker->numberBetween(1, 12);
+        $rating = $this->faker->numberBetween(1, 12);
 
         return [
-            'first_name' => $faker->firstName,
-            'last_name' => $faker->lastName,
-            'email' => $faker->email,
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
+            'email' => $this->faker->email,
             'rating' => $rating,
             'rating_short' => FactoryHelper::shortRating($rating),
             'rating_long' => FactoryHelper::longRating($rating),
-            'pilot_rating' => $faker->randomElement([
+            'pilot_rating' => $this->faker->randomElement([
                 0, 1, 3, 7, 15,
             ]),
             'country' => 'NO',

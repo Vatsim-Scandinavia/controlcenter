@@ -4,6 +4,13 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Helpers\FactoryHelper;
+use App\Models\User;
+use App\Models\Handover;
+use App\Models\Training;
+use App\Models\TrainingReport;
+use App\Models\TrainingExamination;
+use App\Models\SoloEndorsement;
+use App\Models\Rating;
 
 class DatabaseSeeder extends Seeder
 {
@@ -79,15 +86,11 @@ class DatabaseSeeder extends Seeder
                     break;
             }
 
-            factory(App\Models\User::class)->create([
+            User::factory()->create([
                 'id' => 10000000 + $i,
                 'group' => $group,
-                'setting_notify_newreport' => false,
-                'setting_notify_newreq' => false,
-                'setting_notify_closedreq' => false,
-                'setting_notify_newexamreport' => false,
             ]);
-            factory(App\Models\Handover::class)->create([
+            Handover::factory()->create([
                 'id' => 10000000 + $i,
                 'email' => $email,
                 'first_name' => $name_first,
@@ -103,10 +106,10 @@ class DatabaseSeeder extends Seeder
 
         // Create random Scandinavian users
         for ($i = 12; $i <= 125; $i++) {
-            factory(App\Models\User::class)->create([
+            User::factory()->create([
                 'id' => 10000000 + $i,
             ]);
-            factory(App\Models\Handover::class)->create([
+            Handover::factory()->create([
                 'id' => 10000000 + $i,
                 'region' => "EMEA",
                 'division' => "EUD",
@@ -116,23 +119,23 @@ class DatabaseSeeder extends Seeder
 
         // Create random users
         for ($i = 126; $i <= 250; $i++) {
-            factory(App\Models\User::class)->create([
+            User::factory()->create([
                 'id' => 10000000 + $i,
             ]);
-            factory(App\Models\Handover::class)->create([
+            Handover::factory()->create([
                 'id' => 10000000 + $i,
             ]);
         }
 
         // Populate trainings and other of the Scandinavian users
         for ($i = 1; $i <= rand(100, 125); $i++) {
-            $training = factory(App\Models\Training::class)->create();
-            $training->ratings()->attach(App\Models\Rating::where('vatsim_rating', '>', 1)->inRandomOrder()->first());
+            $training = Training::factory()->create();
+            $training->ratings()->attach(Rating::where('vatsim_rating', '>', 1)->inRandomOrder()->first());
 
             // Give all non-queued trainings a mentor
             if($training->status > 0){
-                $training->mentors()->attach(App\Models\User::where('group', 3)->inRandomOrder()->first(), ['expire_at' => now()->addYears(5)]);
-                factory(App\Models\TrainingReport::class)->create([
+                $training->mentors()->attach(User::where('group', 3)->inRandomOrder()->first(), ['expire_at' => now()->addYears(5)]);
+                TrainingReport::factory()->create([
                     'training_id' => $training->id,
                     'written_by_id' => $training->mentors()->inRandomOrder()->first(),
                 ]);
@@ -140,8 +143,8 @@ class DatabaseSeeder extends Seeder
 
             // Give all exam awaiting trainings a solo endorsement
             if($training->status == 3){
-                if (!App\Models\SoloEndorsement::where('user_id', $training->user_id)->exists()) {
-                    factory(App\Models\SoloEndorsement::class)->create([
+                if (!SoloEndorsement::where('user_id', $training->user_id)->exists()) {
+                    SoloEndorsement::factory()->create([
                         'user_id' => $training->user_id,
                         'training_id' => $training->id,
                     ]);
@@ -149,9 +152,9 @@ class DatabaseSeeder extends Seeder
 
                 // And some a exam result
                 if ($i % 7 == 0) {
-                    factory(App\Models\TrainingExamination::class)->create([
+                    TrainingExamination::factory()->create([
                         'training_id' => $training->id,
-                        'examiner_id' => App\Models\User::where('id', '!=', $training->user_id)->inRandomOrder()->first(),
+                        'examiner_id' => User::where('id', '!=', $training->user_id)->inRandomOrder()->first(),
                     ]);
                 }
             }
