@@ -7,6 +7,7 @@ use App\Models\Rating;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class UpdateAtcActiveStatus extends Command
 {
@@ -53,6 +54,9 @@ class UpdateAtcActiveStatus extends Command
         if ($this->option('dry-run') != null) {
             $this->dry_run = true;
         }
+
+        if (!$this->dry_run)
+            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> 'SCA' OR rating < 3");
 
         $users = $this->getUsers();
 
