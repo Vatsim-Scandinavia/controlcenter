@@ -54,6 +54,10 @@ class Kernel extends ConsoleKernel
 
         // Automaticaly clean memebers and trainings no longer eligble
         $schedule->command('update:members')
+            ->dailyAt('05:00');
+
+        // Automaticaly clean memebers and trainings no longer eligble
+        $schedule->command('update:atcactive')
             ->dailyAt('06:00');
 
         // Send our training interest e-mails
