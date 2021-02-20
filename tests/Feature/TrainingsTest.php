@@ -52,10 +52,10 @@ class TrainingsTest extends TestCase
     public function moderator_can_update_training_request()
     {
 
-        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
+        $moderator = \App\Models\User::factory()->create(['group' => 2]);
 
-        $training = factory(\App\Models\Training::class)->create([
-            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        $training = \App\Models\Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $training->country->training_roles()->attach($moderator);
 
@@ -74,8 +74,8 @@ class TrainingsTest extends TestCase
     public function a_regular_user_cant_update_a_training()
     {
 
-        $training = factory(\App\Models\Training::class)->create([
-            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        $training = \App\Models\Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $user = $training->user;
 
@@ -94,10 +94,10 @@ class TrainingsTest extends TestCase
 //    /** @test */
     public function moderator_can_update_the_trainings_status()
     {
-        $training = factory(\App\Models\Training::class)->create([
-            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        $training = \App\Models\Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $moderator = factory(\App\Models\User::class)->create();
+        $moderator = \App\Models\User::factory()->create();
         $moderator->update(['group' => 1]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
@@ -180,12 +180,12 @@ class TrainingsTest extends TestCase
     /** @test */
     public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_country()
     {
-        $training = factory(\App\Models\Training::class)->create([
-            'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        $training = \App\Models\Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
+        $moderator = \App\Models\User::factory()->create(['group' => 2]);
         $training->country->training_roles()->attach($moderator);
-        $mentor = factory(\App\Models\User::class)->create(['group' => 3]);
+        $mentor = \App\Models\User::factory()->create(['group' => 3]);
 
         $this->actingAs($moderator)
             ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])

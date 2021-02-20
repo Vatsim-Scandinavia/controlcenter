@@ -17,8 +17,8 @@ class UserUnitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(\App\Models\User::class)->create(['id' => 10000000]);
-        $this->user->handover = factory(\App\Models\Handover::class)->make(['id' => 10000000]);
+        $this->user = \App\Models\User::factory()->create(['id' => 10000000]);
+        $this->user->handover = \App\Models\Handover::factory()->make(['id' => 10000000]);
     }
 
     /** @test */
@@ -56,7 +56,7 @@ class UserUnitTest extends TestCase
     /** @test */
     public function user_can_have_trainings_they_can_access()
     {
-        $training = factory(\App\Models\Training::class)->create(['user_id' => $this->user->id]);
+        $training = \App\Models\Training::factory()->create(['user_id' => $this->user->id]);
 
         $this->user->can('view', $training)
             ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))
@@ -67,8 +67,8 @@ class UserUnitTest extends TestCase
     /** @test */
     public function trainings_can_exist_with_out_user_being_able_to_see_them()
     {
-        $otherUser = factory(\App\Models\User::class)->create(['id' => ($this->user->id + 1)]);
-        $training = factory(\App\Models\Training::class)->create(['user_id' => $otherUser->id]);
+        $otherUser = \App\Models\User::factory()->create(['id' => ($this->user->id + 1)]);
+        $training = \App\Models\Training::factory()->create(['user_id' => $otherUser->id]);
 
         $this->user->can('view', $training)
             ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))

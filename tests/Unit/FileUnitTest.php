@@ -39,7 +39,7 @@ class FileUnitTest extends TestCase
 
         $this->assertNotNull($modelFile);
         $this->assertDatabaseHas('files', ['id' => $id]);
-        $this->assertFileNotExists(Storage::path('public/files/' . $file->getClientOriginalName()));
+        $this->assertFileDoesNotExist(Storage::path('public/files/' . $file->getClientOriginalName()));
         $this->assertFileExists(Storage::path('public/files/' . $modelFile->path));
     }
 

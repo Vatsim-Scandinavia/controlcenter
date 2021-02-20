@@ -13,23 +13,28 @@ class MentorTest extends TestCase
 
     use WithFaker, RefreshDatabase;
 
+    /** @test */
+    public function this_passes()
+    {
+        $this->assertTrue(true);
+    }
 
-    /** 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
      * THESE TESTS ARE DISABLED BECAUSE COMMIT bc8f5ac REMOVED THE FUNCTIONS USED
      * The function were never used anywhere in CC, and also posing security risk as AUTH was not setup, ANYONE could call them!
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
+     *
+     *
+     *
     public function mentor_can_have_country_added()
     {
         $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000001]);

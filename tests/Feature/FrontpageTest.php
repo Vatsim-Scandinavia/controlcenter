@@ -22,7 +22,7 @@ class FrontpageTest extends TestCase
     public function user_gets_redirect_if_logged_in()
     {
 
-        $user = factory(User::class)->make();
+        $user = User::factory()->make();
         Auth::login($user);
 
         $response = $this->get('/');

@@ -20,11 +20,11 @@ class TrainingExaminationsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->examination = factory(TrainingExamination::class)->make([
-            'training_id' => factory(Training::class)->create([
-                'user_id' => factory(User::class)->create(['id' => 10000005])->id,
+        $this->examination = TrainingExamination::factory()->make([
+            'training_id' => Training::factory()->create([
+                'user_id' => User::factory()->create(['id' => 10000005])->id,
             ])->id,
-            'examiner_id' => factory(User::class)->create([
+            'examiner_id' => User::factory()->create([
                 'id' => 10000001,
                 'group' => 3,
             ]),
@@ -159,16 +159,16 @@ class TrainingExaminationsTest extends TestCase
     public function moderator_can_delete_training_examination()
     {
 
-        $examination = factory(TrainingExamination::class)->create([
-            'training_id' => factory(Training::class)->create([
-                'user_id' => factory(User::class)->create(['id' => 10000009])->id,
+        $examination = TrainingExamination::factory()->create([
+            'training_id' => Training::factory()->create([
+                'user_id' => User::factory()->create(['id' => 10000009])->id,
             ])->id,
-            'examiner_id' => factory(User::class)->create([
+            'examiner_id' => User::factory()->create([
                 'id' => 10000007,
                 'group' => 3,
             ])->id,
         ]);
-        $moderator = factory(User::class)->create(['group' => 2, 'id' => 10000004]);
+        $moderator = User::factory()->create(['group' => 2, 'id' => 10000004]);
         $examination->training->country->training_roles()->attach($moderator);
 
         $this->actingAs($moderator)->followingRedirects()
@@ -184,12 +184,12 @@ class TrainingExaminationsTest extends TestCase
     public function mentor_cant_delete_training_examination()
     {
 
-        $examination = factory(TrainingExamination::class)->create([
-            'training_id' => factory(Training::class)->create([
-                'user_id' => factory(User::class)->create(['id' => 10000035])->id,
+        $examination = TrainingExamination::factory()->create([
+            'training_id' => Training::factory()->create([
+                'user_id' => User::factory()->create(['id' => 10000035])->id,
             ])->id,
         ]);
-        $mentor = factory(User::class)->create(['group' => 3, 'id' => 10000010]);
+        $mentor = User::factory()->create(['group' => 3, 'id' => 10000010]);
 
         $this->actingAs($mentor)->followingRedirects()
             ->delete(route('training.examination.delete', ['examination' => $examination]))
