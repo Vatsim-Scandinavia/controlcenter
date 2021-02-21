@@ -60,7 +60,7 @@ class VotePolicy
         }
 
         if ($vote->require_vatsca_member) {
-            if($user->subdivision != 'SCA') return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to VATSIM Scandinavia subdivision to vote.");
+            if($user->subdivision != Config::get('app.owner.short')) return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to ".Config::get('app.owner')." subdivision to vote.");
         }
 
         if ($vote->require_active) {
