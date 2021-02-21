@@ -56,7 +56,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="check2" name="require_vatsca_member" {{ old('require_vatsca_member') ? "checked" : "" }}>
                         <label class="form-check-label" for="check2">
-                            Only VATSCA members can vote
+                            Only VAT{{ Config::get('app.owner.short') }} members can vote
                         </label>
                     </div>
 
