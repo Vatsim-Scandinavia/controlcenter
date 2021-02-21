@@ -42,6 +42,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Short name of application owner
+    |--------------------------------------------------------------------------
+    |
+    | Same as above, but this is the short name of your subdivision, excluding VAT prefix.
+    | For example 'SCA', NOT 'VATSCA' as that will break some checking logic.
+    |
+    */
+
+    'owner_short' => env('APP_OWNER_SHORT', 'NIL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
