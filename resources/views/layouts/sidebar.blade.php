@@ -172,7 +172,7 @@
         @endif
 
         <!-- Logo -->
-        <img class="logo" src="{{ asset('images/vatsca-logo-negative.svg') }}">
+        <img class="logo" src="{{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'.svg') }}">
         <span class="version-sidebar">Control Center v{{ config('app.version') }}</span>
     @else
         <!-- Divider -->

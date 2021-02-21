@@ -24,7 +24,7 @@
         </div>
 
         <div class="logo">
-            <img src="images/vatsca-logo-negative.svg">
+            <img src="images/logos/vat{{ mb_strtolower(Config::get('app.owner_short')) }}.svg">
             <span class="version-front">Control Center v{{ config('app.version') }}</span>
         </div>
     </div>
