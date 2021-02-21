@@ -8,7 +8,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">VAT{{ Config::get('app.owner.short') }} Members</h6> 
+                <h6 class="m-0 font-weight-bold text-white">VAT{{ Config::get('app.owner_short') }} Members</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -30,7 +30,7 @@
                         </thead>
                         <tbody>
                             @foreach($users as $user)
-                                @if($user->subdivision == {{ Config::get('app.owner.short') }})
+                                @if($user->subdivision == {{ Config::get('app.owner_short') }})
                                     <tr>
                                         <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
                                         <td>{{ $user->first_name }}</td>
@@ -51,7 +51,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Registered Non-VAT{{ Config::get('app.owner.short') }} Users</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Registered Non-VAT{{ Config::get('app.owner_short') }} Users</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

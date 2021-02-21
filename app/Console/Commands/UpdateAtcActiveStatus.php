@@ -56,7 +56,7 @@ class UpdateAtcActiveStatus extends Command
         }
 
         if (!$this->dry_run)
-            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> ".Config::get('app.owner.short')." OR rating < 3");
+            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> ".Config::get('app.owner_short')." OR rating < 3");
 
         $users = $this->getUsers();
 
@@ -191,7 +191,7 @@ class UpdateAtcActiveStatus extends Command
         // Subdivision only SCA
         return Handover::where([
             ['rating', '>=', 3],
-            ['subdivision', '=', Config::get('app.owner.short')]
+            ['subdivision', '=', Config::get('app.owner_short')]
         ])->get();
     }
 
