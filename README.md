@@ -9,18 +9,22 @@ Training Management System originally created by Daniel Lange (1352906), Gustav 
 Just clone this repository and you're almost ready. First, make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) in your environment.
 
 1. Run `./deploy init` to setup the required files
-2. Configure the .env file accordingly, everything including e-mail should be configured.
+2. Configure the .env file accordingly, everything from top down to and including e-mail should be configured, rest is optional.
 3. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
 4. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
+
+## Configuring
+To have Control Center reflect your subdivision correctly, you need to do some tweaks. Once you've made your user admin by manipulating the database, you can access `Administration -> Settings` in menu to tweak the most basic settings for your subdivision.
+
+*You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples*
 
 ## Deployment
 
 To deploy in development environment use `./deploy dev`, in production use `./deploy`. This will automatically put the site in maintenance mode while it's deploying and open back up when finished.
 
-## Contribution
+## Contribution and conventions
 Contributions are much appreciated to help everyone move this service forward with fixes and functionalities. We recommend you to fork this repository here on GitHub so you can easily create pull requests back to the main project.
 
-### Conventions
 In order to keep a collaborative project in the same style and understandable, it's important to follow some conventions:
 
 ##### GitHub Branches
@@ -47,9 +51,9 @@ We name branches with `topic/name-here` including fixes and features, for instan
 ##### Basics
 This project has a prerequisite that you're familiar with PHP and Object-oriented programming. If you're unfamiliar with Laravel, check out these resources:
 
-* Laravel Documentation: https://laravel.com/docs
-* Free and high-quality Laravel 6.0 tutorial: https://laracasts.com/series/laravel-6-from-scratch
-* Laravel essentials in 45 min: https://www.youtube.com/watch?v=ubfxi21M1vQ
+* [Laravel Documentation](https://laravel.com/docs)
+* [Free and high-quality Laravel 6.0 tutorial](https://laracasts.com/series/laravel-6-from-scratch)
+* [Laravel essentials in 45 min](https://www.youtube.com/watch?v=ubfxi21M1vQ)
 
 ##### Workspace
 Everyone has their own setup for workspace, but if you're new to Laravel and this project, we recommend to check out our setup:
