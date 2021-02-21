@@ -34,7 +34,7 @@
                                     <td>{{ \Carbon\Carbon::create($vote->end_at)->toEuropeanDateTime() }}</td>
                                     <td>{{ $vote->closed ? "Closed" : "Accepting answers" }}</td>
                                     <td><i class="fas fa-{{ $vote->require_active ? "check" : "times" }}"></i></td>
-                                    <td><i class="fas fa-{{ $vote->require_vatsca_member ? "check" : "times" }}"></i></td>
+                                    <td><i class="fas fa-{{ $vote->require_member ? "check" : "times" }}"></i></td>
                                 </tr>
 
                             @endforeach
