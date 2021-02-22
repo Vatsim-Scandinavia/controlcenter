@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'owner_short' => env('APP_OWNER_SHORT', 'NIL'),
+    'owner_short' => env('APP_OWNER_SHORT', 'SCA'),
 
     /*
     |--------------------------------------------------------------------------
