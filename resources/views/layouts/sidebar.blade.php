@@ -21,18 +21,20 @@
         </li>
 
         @can('view', \App\Models\Vatbook::class)
-        <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('vatbook') }}">
-            <i class="fas fa-fw fa-calendar"></i>
-            <span>Vatbook</span></a>
-        </li>
+            <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('vatbook') }}">
+                <i class="fas fa-fw fa-calendar"></i>
+                <span>Vatbook</span></a>
+            </li>
         @endcan
 
-        <li class="nav-item">
-        <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Moodle</span></a>
-        </li>
+        @if(Setting::get('linkMoodle') != "")
+            <li class="nav-item">
+            <a class="nav-link" href="{{ Setting::get('linkMoodle') }}" target="_blank">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Moodle</span></a>
+            </li>
+        @endif
 
         <li class="nav-item {{ Route::is('member.endorsements') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('member.endorsements') }}">
@@ -172,7 +174,7 @@
         @endif
 
         <!-- Logo -->
-        <img class="logo" src="{{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'.svg') }}">
+        <a href="{{ Setting::get('linkHome') }}"><img class="logo" src="{{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'.svg') }}"></a>
         <span class="version-sidebar">Control Center v{{ config('app.version') }}</span>
     @else
         <!-- Divider -->

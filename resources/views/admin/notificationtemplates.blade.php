@@ -83,7 +83,7 @@
                     <div id="newrequestaddition-preview"></div>
 
                     <hr>
-                    <p>For questions regarding your training, contact <a href="#">training-(FIR)@vatsim-scandinavia.org</a></p>
+                    <p>For questions regarding your training, contact <a href=#">(area){{ '@'.Setting::get('linkDomain') }}</a></p>
                 </div>
             </div>
         </div>
@@ -120,7 +120,7 @@
                     <div id="newmentoraddition-preview"></div>
 
                     <hr>
-                    <p>For questions regarding your training, contact <a href=#">training-(FIR)@vatsim-scandinavia.org</a></p>
+                    <p>For questions regarding your training, contact <a href=#">(area){{ '@'.Setting::get('linkDomain') }}</a></p>
                 </div>
             </div>
         </div>
@@ -155,7 +155,7 @@
                     <div id="pretrainingaddition-preview"></div>
 
                     <hr>
-                    <p>For questions regarding your training, contact <a href=#">training-(FIR)@vatsim-scandinavia.org</a></p>
+                    <p>For questions regarding your training, contact <a href=#">(area){{ '@'.Setting::get('linkDomain') }}</a></p>
                 </div>
             </div>
         </div>

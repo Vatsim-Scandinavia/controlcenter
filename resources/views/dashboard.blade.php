@@ -14,7 +14,7 @@
 
 @if($atcInactiveMessage)
     <div class="alert alert-warning" role="alert">
-        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in Scandinavia. <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff</a> to request a refresh or transfer training to be allowed to control in our airspace.
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in Scandinavia. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact local training staff</a> to request a refresh or transfer training to be allowed to control in our airspace.
     </div>
 @endif
 
@@ -261,17 +261,17 @@
                         <div class="alert alert-primary" role="alert">
                             <p class="small">
                                 <b><i class="fas fa-chevron-right"></i> How do I join the division?</b>
-                                <a href="https://vatsim-scandinavia.org/about/join/" target="_blank">Read about joining here.</a>
+                                <a href="{{ Setting::get('linkJoin') }}" target="_blank">Read about joining here.</a>
 
                                 <br>
 
                                 <b><i class="fas fa-chevron-right"></i> How to apply to be a visiting controller?</b>
-                                <a href="https://vatsim-scandinavia.org/atc/visiting-controller/" target="_blank">Check this page for more information.</a>
+                                <a href="{{ Setting::get('linkVisiting') }}" target="_blank">Check this page for more information.</a>
 
                                 <br>
 
                                 <b><i class="fas fa-chevron-right"></i> My rating is inactive?</b>
-                                <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff for refresh or transfer training.</a>
+                                <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact local training staff for refresh or transfer training.</a>
 
                                 <br>
 

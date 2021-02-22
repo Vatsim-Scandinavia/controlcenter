@@ -43,7 +43,17 @@ class GlobalSettingController extends Controller
             'trainingShowEstimate' => '',
             'trainingSOP' => 'required|url',
             'trainingSubDivisions' => 'required',
-            'trainingQueue' => 'required|min:10|max:250'
+            'trainingQueue' => 'required|min:10|max:250',
+            'atcActivityQualificationPeriod' => 'required|integer',
+            'atcActivityGracePeriod' => 'required|integer',
+            'atcActivityRequirement' => 'required|integer',
+            'linkDomain' => 'required',
+            'linkHome' => 'required|url',
+            'linkJoin' => 'required|url',
+            'linkContact' => 'required|url',
+            'linkVisiting' => 'required|url',
+            'linkDiscord' => 'required|url',
+            'linkMoodle' => '',
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
@@ -54,6 +64,16 @@ class GlobalSettingController extends Controller
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
         Setting::set('trainingQueue', $data['trainingQueue']);
+        Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
+        Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
+        Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
+        Setting::set('linkDomain', $data['linkDomain']);
+        Setting::set('linkHome', $data['linkHome']);
+        Setting::set('linkJoin', $data['linkJoin']);
+        Setting::set('linkContact', $data['linkContact']);
+        Setting::set('linkVisiting', $data['linkVisiting']);
+        Setting::set('linkDiscord', $data['linkDiscord']);
+        Setting::set('linkMoodle', $data['linkMoodle']);
         Setting::save();
 
         return redirect()->intended(route('admin.settings'))->withSuccess("Server settings successfully changed");

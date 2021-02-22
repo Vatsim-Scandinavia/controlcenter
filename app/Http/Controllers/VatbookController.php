@@ -138,7 +138,7 @@ class VatbookController extends Controller
 
         if(App::environment('production')) {
             if($booking->event) {
-                $eventUrl = "vatsim-scandinavia.org";
+                $eventUrl = Setting::get('linkDomain');
                 $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {
@@ -238,7 +238,7 @@ class VatbookController extends Controller
 
         if(App::environment('production')) {
             if($booking->event) {
-                $eventUrl = "vatsim-scandinavia.org";
+                $eventUrl = Setting::get('linkDomain');
                 file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {

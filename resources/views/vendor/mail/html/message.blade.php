@@ -23,7 +23,7 @@ Config::get('app.owner')<br><span style="font-weight: 400">Control Center</span>
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-[![Logo]({{ asset('images/vat{{ mb_strtolower(Config::get('app.owner_short')) }}-email.png') }})](https://vatsim-scandinavia.org/)\
+[![Logo]({{ asset('images/vat{{ mb_strtolower(Config::get('app.owner_short')) }}-email.png') }})]({{ Setting::get("linkHome") }})\
 [Change your e-mail settings here]({{ route('user.settings') }})
 @endcomponent
 @endslot
