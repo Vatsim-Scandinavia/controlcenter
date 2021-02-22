@@ -17,9 +17,10 @@ Just clone this repository and you're almost ready. First, make sure you've inst
 4. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
 
 ## Configuring
-To have Control Center reflect your division correctly, you need to do some tweaks. Once you've made your user admin by manipulating the database, you can access `Administration -> Settings` in menu to tweak the most basic settings for your division.
-
-*You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples*
+To have Control Center reflect your division correctly, you need to do some tweaks.
+- Once you've made your user admin by manipulating the database, you can access `Administration -> Settings` in menu to tweak the most basic settings for your division.
+- [Setup Cron in your environment](https://laravel.com/docs/8.x/scheduling#running-the-scheduler)
+- You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples
 
 ## Deployment
 
