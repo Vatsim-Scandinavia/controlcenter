@@ -26,6 +26,13 @@ To have Control Center reflect your division correctly, you need to do some twea
 
 To deploy in development environment use `./deploy dev`, in production use `./deploy`. This will automatically put the site in maintenance mode while it's deploying and open back up when finished.
 
+## Present automation
+There's quite a few automations in Control Center that are running through the Cron-jobs. They're as follows:
+- All trainings with status In Queue or Pre-Training are given a continued interest request each month, failing to reply within two weeks closes the request automatically.
+- ATC Active is flag given based on ATC activity. Refreshes daily with data from VATSIM Data API.
+- Daily member cleanup, if a member leaves the division, their training will be automatically closed. Same for mentors.
+- Other misc cleanups
+
 ## Contribution and conventions
 Contributions are much appreciated to help everyone move this service forward with fixes and functionalities. We recommend you to fork this repository here on GitHub so you can easily create pull requests back to the main project.
 
