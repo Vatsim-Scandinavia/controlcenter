@@ -37,7 +37,7 @@
                 <div class="card-body">
 
                     <p class="text-muted">
-                        <i class="fas fa-info-circle"></i>&nbsp;&nbsp;S2 is the lowest rating you can apply for in Scandinavia. S1 is included in this training.
+                        <i class="fas fa-info-circle"></i>&nbsp;&nbsp;S2 is the lowest rating you can apply for in {{ Config::get('app.owner') }}. S1 is included in this training.
                     </p>
 
                     <div class="row">

@@ -19,7 +19,13 @@
             @endif
             
             <div class="content-title"><i class="far fa-radar"></i> {{ config('app.name') }}</div>
-            <div class="content-description">Scandinavian Training Administration</div>
+            <div class="content-description">
+                @if(Config::get('app.owner_short') == 'SCA')
+                    Scandinavian Training Administration
+                @else
+                Training Administration
+                @endif
+            </div>
             <a href="{{ route('login') }}" class="btn btn-success">Login</a>
         </div>
 
