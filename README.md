@@ -1,9 +1,12 @@
 ## Control Center
-Training Management System originally created by Daniel Lange (1352906), Gustav Kauman (1262761) and others form Web Department at VATSIM Scandinavia. Running using `Laravel 8`, based on `SB Admin 2` boostrap theme.
+Training Management System originally created by [Daniel L.](https://github.com/blt950) (1352906), [Gustav K.](https://github.com/gustavkauman) (1262761) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 8`, based on `SB Admin 2` boostrap theme.
+
+The project is open source and contains some restirctions. Read the [LICENSE.md](LICENSE.md) for details.
 
 ## Prerequisites
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
 - [Laravel 8 Requirements](https://laravel.com/docs/8.x/deployment#server-requirements)
+- Using [Handover](https://github.com/Vatsim-Scandinavia/handover) as user data source
 
 ## Setup and install
 Just clone this repository and you're almost ready. First, make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) in your environment.
@@ -14,7 +17,7 @@ Just clone this repository and you're almost ready. First, make sure you've inst
 4. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
 
 ## Configuring
-To have Control Center reflect your subdivision correctly, you need to do some tweaks. Once you've made your user admin by manipulating the database, you can access `Administration -> Settings` in menu to tweak the most basic settings for your subdivision.
+To have Control Center reflect your division correctly, you need to do some tweaks. Once you've made your user admin by manipulating the database, you can access `Administration -> Settings` in menu to tweak the most basic settings for your division.
 
 *You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples*
 
