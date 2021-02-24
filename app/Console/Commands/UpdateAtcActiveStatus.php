@@ -7,7 +7,9 @@ use App\Models\Rating;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use anlutro\LaravelSettings\Facade as Setting;
 
 class UpdateAtcActiveStatus extends Command
 {
@@ -16,6 +18,9 @@ class UpdateAtcActiveStatus extends Command
     private $count_updated = 0;
     private $count_visited = 0;
     private $dry_run = false;
+    private $qualification_period; // Period to sum up by. In months.
+    private $grace_period; // Grace period in months.
+    private $hour_requirement; // Hours required to be deemed active.
 
     /**
      * The name and signature of the console command.
@@ -39,6 +44,10 @@ class UpdateAtcActiveStatus extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
+        $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
+        $this->hour_requirement = Setting::get('atcActivityRequirement', 10);
     }
 
     /**
@@ -56,7 +65,7 @@ class UpdateAtcActiveStatus extends Command
         }
 
         if (!$this->dry_run)
-            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> ".Config::get('app.owner_short')." OR rating < 3");
+            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
 
         $users = $this->getUsers();
 
@@ -205,7 +214,7 @@ class UpdateAtcActiveStatus extends Command
     {
         $query_string = $this->base_api_url . $user_id;
         $query_string .= '/atcsessions/';
-        $query_string .= '?start=' . Carbon::now()->subMonths(12)->format('Y-m-d');
+        $query_string .= '?start=' . Carbon::now()->subMonths($this->qualification_period)->format('Y-m-d');
         return $query_string;
     }
 
@@ -284,8 +293,7 @@ class UpdateAtcActiveStatus extends Command
      */
     private function userShouldBeSetAsInactive(Handover $handover, $sum)
     {
-        // TODO: Move hardcoded 10 hrs to value that can be changed
-        if (round(($sum / 60)) >= 10)
+        if (round(($sum / 60)) >= $this->hour_requirement)
             return false;
 
         $user = $handover->user;
@@ -307,7 +315,7 @@ class UpdateAtcActiveStatus extends Command
         // Remove all non-S2 trainings
         $this->getGracePeriodTrainings($completed_trainings);
 
-        if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < 12) {
+        if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < $this->grace_period) {
             // User had trainings qualified for grace period and training was completed within last 12 months.
             // Do not set as inactive.
             return false;
