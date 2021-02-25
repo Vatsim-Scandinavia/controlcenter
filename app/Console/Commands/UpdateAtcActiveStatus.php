@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Handover;
 use App\Models\Rating;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -248,6 +249,7 @@ class UpdateAtcActiveStatus extends Command
      */
     private function setAtcActiveStatus(Handover $user, bool $is_active)
     {
+        $user->setConnection('mysql-handover');
         $user = $user->fresh();
         if ($user->atc_active == $is_active)
             return;
@@ -293,10 +295,20 @@ class UpdateAtcActiveStatus extends Command
      */
     private function userShouldBeSetAsInactive(Handover $handover, $sum)
     {
+        $user = $handover->setConnection('mysql')->user;
+
+        if ($user != null) {
+            $connection = DB::connection('mysql')->table('atc_activity');
+
+            $connection->where('user_id', $handover->id)->delete();
+            $id = $connection->insertGetId([
+                'user_id' => $handover->id,
+                'atc_hours' => round(($sum / 60)),
+            ]);
+        }
+
         if (round(($sum / 60)) >= $this->hour_requirement)
             return false;
-
-        $user = $handover->user;
 
         if ($user == null) {
             // User does not exist in CC. Set as inactive.
@@ -318,6 +330,10 @@ class UpdateAtcActiveStatus extends Command
         if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < $this->grace_period) {
             // User had trainings qualified for grace period and training was completed within last 12 months.
             // Do not set as inactive.
+            DB::connection('mysql')->table('atc_activity')->where('id', $id)->update([
+                'inside_grace_period' => true,
+                'valid_until' => $completed_trainings->last()->closed_at->addMonths($this->grace_period)
+            ]);
             return false;
         }
 

@@ -10,6 +10,7 @@ use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use anlutro\LaravelSettings\Facade as Setting;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller for the dashboard
@@ -59,7 +60,10 @@ class DashboardController extends Controller
         // Check if there's an active vote running to advertise
         $activeVote = Vote::where('closed', 0)->first();
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote'));
+        $atcHoursDB = DB::table('atc_activity')->where('user_id', $user->id)->get()->first();
+        $atcHours = ($atcHoursDB == null) ? 'Unable to get ATC hours' : $atcHoursDB->atc_hours . ' hours';
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote', 'atcHours'));
     }
 
     /**
