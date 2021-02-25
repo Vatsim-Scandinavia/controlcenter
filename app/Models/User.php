@@ -92,6 +92,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Rating::class);
     }
 
+    public function permissions()
+    {
+        return $this->hasMany(Permission::class);
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);

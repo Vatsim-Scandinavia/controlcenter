@@ -39,7 +39,7 @@ class UserController extends Controller
         $this->authorize('view', $user);
 
         $groups = Group::all();
-        $countries = Country::all();
+        $areas = Country::all();
 
         if ($user == null)
             return abort(404);
@@ -49,7 +49,7 @@ class UserController extends Controller
         $types = TrainingController::$types;
         $endorsements = $user->ratings;
 
-        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types', 'endorsements'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements'));
     }
 
     /**

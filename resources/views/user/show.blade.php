@@ -65,39 +65,41 @@
                     @method('PATCH')
                     @csrf
 
-                    <div class="form-check">
-                    @foreach($groups as $group)
-                        @if ($group->id > \Auth::user()->group)
-                            <label class="form-check-label @error('access') is-invalid @enderror">
-                                <input type="radio" class="form-check-input" name="access" value="{{ $group->id }}" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
-                                <div class="text-muted">{{ $group->description }}</div>
-                                <br>
-                            </label>
-                        @endif
-                    @endforeach
-                    <label class="form-check-label @error('access') is-invalid @enderror">
-                        <input type="radio" class="form-check-input" name="access" value="0" {{ !$user->group ? "checked" : "" }}>None
-                        <div class="text-muted">No specific access, usually a student.</div>
-                        <br>
-                    </label>
-                    @error('access')
-                        <span class="text-danger">{{ $errors->first('access') }}</span>
-                    @enderror
-                    </div>
+                    <p>Select none, one or multiple permissions for the user.</p>
+
+                    <table class="table table-bordered table-hover table-responsive w-100 d-block d-md-table">
+                        <thead>
+                            <tr>
+                                <th>Area</th>
+                                @foreach($groups as $group)
+                                    <th class="text-center">{{ $group->name }} <i class="fas fa-question-circle text-gray-400" title="{{ $group->description }}"></i></th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach($areas as $area)
+                                <tr>
+                                    <td>{{ $area->name }}</td>
+
+                                    @foreach($groups as $group)
+                                        @if($group->id == 1)
+                                            <td class="text-center"><input type="checkbox" {{ $user->permissions->where('country_id', $area->id)->where('group_id', $group->id)->count() ? "checked" : "" }} disabled></td>
+                                        @else
+                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->permissions->where('country_id', $area->id)->where('group_id', $group->id)->count() ? "checked" : "" }}></td>
+                                        @endif
+                                        
+                                    @endforeach
+
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
 
                     <div class="form-group">
-                        <label class="@error('countries') is-invalid @enderror" for="assignCountries">Mentoring countries: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="countries[]" id="assignCountries" size="5">
-                            @foreach($countries as $country)
-                                <option value="{{ $country->id }}" {{ ($user->training_role_countries->contains($country->id)) ? "selected" : "" }}>{{ $country->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('countries')
-                            <span class="text-danger">{{ $errors->first('countries') }}</span>
-                        @enderror
+                        <button type="submit" class="btn btn-primary">Save access</button>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">Save access</button>
 
                 </form>
             </div>

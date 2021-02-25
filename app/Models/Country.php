@@ -17,6 +17,10 @@ class Country extends Model
         return $this->belongsToMany(Rating::class)->withPivot('required_vatsim_rating', 'queue_length');
     }
 
+    public function permissions(){
+        return $this->hasMany(Permission::class);
+    }
+
     public function mentors()
     {
         return $this->belongsToMany(User::class, 'training_role_country')->withTimestamps();
