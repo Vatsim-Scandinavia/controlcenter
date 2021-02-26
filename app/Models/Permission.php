@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+
+    protected $fillable = [
+        'user_id', 'country_id', 'group_id'
+    ];
+
     public function user(){
         return $this->belongsTo(User::class);
     }

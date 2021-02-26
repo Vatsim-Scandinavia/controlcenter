@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Country;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use League\CommonMark\Inline\Parser\NewlineParser;
 
 /**
  * Controller to handle user views
@@ -64,48 +66,53 @@ class UserController extends Controller
     {
 
         $this->authorize('update', $user);
+        $permissions = [];
 
-        $data = $request->validate([
-            'access' => 'required|integer',
-            'countries' => 'nullable|array'
-        ]);
+        // Generate a list of possible validations
+        foreach(Country::all() as $country){
+            foreach(Group::all() as $group){
+                // Don't list or allow admin ranks to be set through this interface
+                if($group->id == 1) { continue; }
 
-        if (key_exists('countries', $data)) {
-
-            foreach ((array) $data['countries'] as $country) {
-                if (!$user->training_role_countries->contains($country)){
-                    $user->training_role_countries()->attach($country, ['inserted_by' => Auth::id()]);
-                }
+                $key = $country->name.'_'.$group->name;
+                $permissions[$key] = '';
             }
-
-            foreach ($user->training_role_countries as $country) {
-                if (!in_array($country->id, (array) $data['countries'])) {
-                    $user->training_role_countries()->detach($country);
-
-                    // Unassign this mentor from trainings from the specific country
-                    $user->teaches()->detach($user->teaches->where('country_id', $country->id));
-                }
-            }
-
-            unset($data['countries']);
-        } else {
-            // Detach all if no passed key, as that means the list is empty
-            $user->training_role_countries()->detach();
-
-            // Unassign this mentor from all trainings
-            $user->teaches()->detach();
         }
 
-        if($data['access'] == 0){
-            $user->group = null;
+        // Valiate and allow these fields, then loop through permissions to set the final data set
+        $data = $request->validate($permissions);
+        foreach($permissions as $key => $value){
+            isset($data[$key]) ? $permissions[$key] = true : $permissions[$key] = false;
+        }
 
-            // Detach all country assosiciations if they are downgraded all the way to student.
-            $user->training_role_countries()->detach();
+        // Check and update the permissions
+        foreach($permissions as $key => $value){
+        
+            $str = explode('_', $key);
 
-            // Unassign this mentor from all trainings
-            $user->teaches()->detach();
-        } else {
-            $user->group = $data['access'];
+            $country_id = Country::where('name', $str[0])->get()->first()->id;
+            $group_id = Group::where('name', $str[1])->get()->first()->id;
+
+            // Check if permission is not set, and set it or other way around.
+            if($user->permissions->where('country_id', $country_id)->where('group_id', $group_id)->count() == 0){
+                if($value == true){
+
+                    $newPermission = new Permission([
+                        'user_id' => $user->id,
+                        'country_id' => $country_id,
+                        'group_id' => $group_id,
+                    ]);
+                    $newPermission->inserted_by = Auth::id();
+
+                    $user->permissions()->save($newPermission);
+
+                }
+            } else {
+                if($value == false){
+                    Permission::where('user_id', $user->id)->where('country_id', $country_id)->where('group_id', $group_id)->delete();
+                }
+            }
+        
         }
 
         $user->save();
