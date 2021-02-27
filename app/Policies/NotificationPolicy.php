@@ -30,6 +30,6 @@ class NotificationPolicy
      */
     public function modifyCountryTemplate(User $user, Country $country)
     {
-        return $user->isAdmin() || ($user->isModerator() && $country->training_roles->contains($user));
+        return $user->isAdmin() || ($user->isModerator() && $country->groups()->wherePivot('user_id', $user->id)->exists());
     }
 }

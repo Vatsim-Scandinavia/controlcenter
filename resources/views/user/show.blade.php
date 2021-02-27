@@ -84,9 +84,9 @@
 
                                     @foreach($groups as $group)
                                         @if($group->id == 1)
-                                            <td class="text-center"><input type="checkbox" {{ $user->permissions->where('country_id', $area->id)->where('group_id', $group->id)->count() ? "checked" : "" }} disabled></td>
+                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('country_id', $area->id)->count() ? "checked" : "" }} disabled></td>
                                         @else
-                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->permissions->where('country_id', $area->id)->where('group_id', $group->id)->count() ? "checked" : "" }}></td>
+                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('country_id', $area->id)->count() ? "checked" : "" }}></td>
                                         @endif
                                         
                                     @endforeach

@@ -18,17 +18,12 @@ class Country extends Model
     }
 
     public function permissions(){
-        return $this->hasMany(Permission::class);
+        return $this->belongsToMany(Group::class, 'permissions')->withPivot('country_id')->withTimestamps();
     }
 
     public function mentors()
     {
-        return $this->belongsToMany(User::class, 'training_role_country')->withTimestamps();
-    }
-
-    public function training_roles()
-    {
-        return $this->belongsToMany(User::class, 'training_role_country')->withTimestamps();
+        return $this->belongsToMany(User::class, 'permissions')->withPivot('group_id')->withTimestamps()->where('group_id', 2);
     }
 
     public function positions(){

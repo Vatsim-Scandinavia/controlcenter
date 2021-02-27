@@ -7,6 +7,7 @@ use App\Models\ManagementReport;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
+use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -50,13 +51,16 @@ class ReportController extends Controller
         $this->authorize('viewMentors', ManagementReport::class);
 
         if (auth()->user()->isAdmin()) {
-            $mentors = User::where('group', '<=', 3)->get();
-        } else {
-            $mentors = User::where('group', '<=', 3)->whereHas('training_role_countries', function(Builder $query) {
-                $query->whereIn('country_id', auth()->user()->training_role_countries()->pluck('country_id'));
-            })->get();
-        }
 
+            $mentors = Group::find(3)->users;
+
+        } else {
+
+            $mentors = Group::find(3)->users()->whereHas('permissions', function(Builder $query) {
+                $query->whereIn('country_id', auth()->user()->groups()->pluck('country_id'));
+            })->get();
+
+        }
 
         return view('reports.mentors', compact('mentors'));
     }

@@ -71,7 +71,7 @@ class UserController extends Controller
         // Generate a list of possible validations
         foreach(Country::all() as $country){
             foreach(Group::all() as $group){
-                // Don't list or allow admin ranks to be set through this interface
+                // Don't list or allow admin rank to be set through this interface
                 if($group->id == 1) { continue; }
 
                 $key = $country->name.'_'.$group->name;
@@ -90,32 +90,17 @@ class UserController extends Controller
         
             $str = explode('_', $key);
 
-            $country_id = Country::where('name', $str[0])->get()->first()->id;
-            $group_id = Group::where('name', $str[1])->get()->first()->id;
+            $country = Country::where('name', $str[0])->get()->first();
+            $group = Group::where('name', $str[1])->get()->first();
 
             // Check if permission is not set, and set it or other way around.
-            if($user->permissions->where('country_id', $country_id)->where('group_id', $group_id)->count() == 0){
-                if($value == true){
-
-                    $newPermission = new Permission([
-                        'user_id' => $user->id,
-                        'country_id' => $country_id,
-                        'group_id' => $group_id,
-                    ]);
-                    $newPermission->inserted_by = Auth::id();
-
-                    $user->permissions()->save($newPermission);
-
-                }
+            if($user->groups()->where('country_id', $country->id)->where('group_id', $group->id)->get()->count() == 0){
+                if($value == true) $user->groups()->attach($group, ['country_id' => $country->id, 'inserted_by' => Auth::id()]);
             } else {
-                if($value == false){
-                    Permission::where('user_id', $user->id)->where('country_id', $country_id)->where('group_id', $group_id)->delete();
-                }
+                if($value == false) $user->groups()->wherePivot('country_id', $country->id)->wherePivot('group_id', $group->id)->detach();
             }
         
         }
-
-        $user->save();
 
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
 

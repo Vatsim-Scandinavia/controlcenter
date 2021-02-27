@@ -67,11 +67,6 @@ class User extends Authenticatable
         return $this->hasMany(Training::class);
     }
 
-    public function group()
-    {
-        return $this->belongsTo(Group::class);
-    }
-
     public function teaches()
     {
         return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');
@@ -92,9 +87,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Rating::class);
     }
 
-    public function permissions()
+    public function groups()
     {
-        return $this->hasMany(Permission::class);
+        return $this->belongsToMany(Group::class, 'permissions')->withPivot('country_id')->withTimestamps();
     }
 
     public function bookings()
@@ -105,11 +100,6 @@ class User extends Authenticatable
     public function vatbooks()
     {
         return $this->hasMany(Vatbook::class);
-    }
-
-    public function training_role_countries()
-    {
-        return $this->belongsToMany(Country::class, 'training_role_country')->withTimestamps();
     }
 
     public function vote(){
@@ -235,7 +225,7 @@ class User extends Authenticatable
 
         $output = "";
 
-        if( is_iterable($countries = $this->training_role_countries->toArray()) ){
+        if( is_iterable($countries = $this->groups->toArray()) ){
             for( $i = 0; $i < sizeof($countries); $i++ ){
                 if( $i == (sizeof($countries) - 1) ){
                     $output .= $countries[$i]["name"];
@@ -294,12 +284,10 @@ class User extends Authenticatable
     {
 
         if ($country == null) {
-            return $this->group <= 3 && isset($this->group);
+            return $this->groups()->where('id', '<=', 3)->exists();
         }
 
-        return $this->group <= 3 &&
-            isset($this->group) &&
-            $country->training_roles->contains($this);
+        return $this->groups()->where('id', '<=', 3)->wherePivot('country_id', $country->id)->exists();
 
     }
 
@@ -312,14 +300,12 @@ class User extends Authenticatable
     public function isModerator(Country $country = null)
     {
         if ($country == null)
-            return $this->group <= 2 && isset($this->group);
+            return $this->groups()->where('id', '<=', 2)->exists();
 
         if ($this->isAdmin())
-            return $this->group <= 2 && isset($this->group);
+            return $this->groups()->where('id', '<=', 2)->exists();
 
-        return $this->group <= 2 &&
-            $country->training_roles->contains($this) &&
-            isset($this->group);
+        return $this->groups()->where('id', '<=', 2)->wherePivot('country_id', $country->id)->exists();
     }
 
     /**
@@ -329,6 +315,6 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        return $this->group <= 1 && isset($this->group);
+        return $this->groups->contains('id', 1);
     }
 }

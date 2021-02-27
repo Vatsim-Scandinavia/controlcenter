@@ -30,7 +30,7 @@
                         </thead>
                         <tbody>
                             @foreach($users as $user)
-                                @if($user->subdivision == {{ Config::get('app.owner_short') }})
+                                @if($user->subdivision == Config::get('app.owner_short'))
                                     <tr>
                                         <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
                                         <td>{{ $user->first_name }}</td>

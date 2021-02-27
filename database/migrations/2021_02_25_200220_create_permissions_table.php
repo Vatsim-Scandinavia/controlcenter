@@ -24,8 +24,6 @@ class CreatePermissionsTable extends Migration
             $table->timestamps();
         });
         
-        // To-do: Delete the old training_role_country table 
-        // and group and unused country column in users table
     }
 
     /**

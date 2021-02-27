@@ -10,10 +10,6 @@ class Group extends Model
     public $timestamps = false;
 
     public function users(){
-        return $this->hasMany(User::class);
-    }
-
-    public function permissions(){
-        return $this->hasMany(Permission::class);
+        return $this->belongsToMany(User::class, 'permissions')->withPivot('country_id')->withTimestamps();
     }
 }
