@@ -23,7 +23,6 @@ class UserFactory extends Factory
     {
         return [
             'last_login' => \Carbon\Carbon::now(),
-            'group' => null,
             'setting_notify_newreport' => false,
             'setting_notify_newreq' => false,
             'setting_notify_closedreq' => false,

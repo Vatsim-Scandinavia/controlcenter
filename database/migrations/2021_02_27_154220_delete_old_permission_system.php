@@ -15,11 +15,10 @@ class DeleteOldPermissionSystem extends Migration
     {
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('users_country_foreign');
-            $table->dropColumn('country');
-            
-            $table->dropForeign('users_group_foreign');
-            $table->dropColumn('group');
+            // $table->dropForeign('users_country_foreign');
+            // $table->dropForeign('users_group_foreign');
+
+            $table->dropColumn(['country', 'group']);
         });
 
         Schema::dropIfExists('training_role_country');

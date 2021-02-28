@@ -26,16 +26,17 @@ class TrainingObjectAttachmentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create(['id' => 10000005, 'group' => null]);
+        $this->user = User::factory()->create(['id' => 10000005]);
         $this->report = TrainingReport::factory()->create([
             'training_id' => Training::factory()->create([
                 'user_id' => $this->user->id,
             ])->id,
             'written_by_id' => User::factory()->create([
                 'id' => 10000001,
-                'group' => 2,
             ])->id,
         ]);
+
+        $this->report->author->groups()->attach(2, ['country_id' => $this->report->training->country->id]);
 
     }
 

@@ -52,12 +52,13 @@ class TrainingsTest extends TestCase
     public function moderator_can_update_training_request()
     {
 
-        $moderator = \App\Models\User::factory()->create(['group' => 2]);
+        $moderator = \App\Models\User::factory()->create();
 
         $training = \App\Models\Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $training->country->training_roles()->attach($moderator);
+
+        $moderator->groups()->attach(2, ['country_id' => $training->country->id]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
 
@@ -78,11 +79,9 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $user = $training->user;
+        $user->groups()->attach(3, ['country_id' => $training->country->id]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
-
-        $user->group = 3;
-        $user->save();
 
         $this->actingAs($user)
             ->patch($training->path(), $attributes = ['status' => 0])
@@ -98,7 +97,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $moderator = \App\Models\User::factory()->create();
-        $moderator->update(['group' => 1]);
+        $moderator->groups()->attach(1, ['country_id' => $training->country->id]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
 
@@ -183,9 +182,12 @@ class TrainingsTest extends TestCase
         $training = \App\Models\Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $moderator = \App\Models\User::factory()->create(['group' => 2]);
-        $training->country->training_roles()->attach($moderator);
-        $mentor = \App\Models\User::factory()->create(['group' => 3]);
+        $moderator = \App\Models\User::factory()->create();
+        $moderator->groups()->attach(2, ['country_id' => $training->country->id]);
+        $mentor = \App\Models\User::factory()->create();
+
+        // We hardcoded country id to 1 in the factory so anything other than 1 will work - let's pick 2 lol.
+        $mentor->groups()->attach(3, ['country_id' => 2]);
 
         $this->actingAs($moderator)
             ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])

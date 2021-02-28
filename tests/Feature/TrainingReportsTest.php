@@ -18,8 +18,8 @@ class TrainingReportsTest extends TestCase
         $training = \App\Models\Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $mentor = \App\Models\User::factory()->create(['group' => 3, 'id' => 10000400]);
-        $training->country->mentors()->attach($mentor);
+        $mentor = \App\Models\User::factory()->create(['id' => 10000400]);
+        $mentor->groups()->attach(3, ['country_id' => $training->country->id]);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addCentury()]);
 
         $this->actingAs($mentor)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
@@ -40,7 +40,7 @@ class TrainingReportsTest extends TestCase
         $training = \App\Models\Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $otherUser = \App\Models\User::factory()->create(['group' => null, 'id' => 10000134]);
+        $otherUser = \App\Models\User::factory()->create(['id' => 10000134]);
         $this->actingAs($otherUser)->assertTrue(Gate::inspect('viewReports', $training)->denied());
     }
 
@@ -48,10 +48,11 @@ class TrainingReportsTest extends TestCase
     public function trainee_cant_access_draft_training_report()
     {
         $training = \App\Models\Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000067, 'group' => null])->id,
+            'user_id' => User::factory()->create(['id' => 10000067])->id,
         ]);
 
-        $mentor = User::factory()->create(['id' => 10000159, 'group' => 3]);
+        $mentor = User::factory()->create(['id' => 10000159]);
+        $mentor->groups()->attach(3, ['country_id' => $training->country->id]);
 
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -72,7 +73,8 @@ class TrainingReportsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000042])->id,
         ]);
 
-        $mentor = User::factory()->create(['id' => 10000080, 'group' => 3]);
+        $mentor = User::factory()->create(['id' => 10000080]);
+        $mentor->groups()->attach(3, ['country_id' => $training->country->id]);
 
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -84,8 +86,6 @@ class TrainingReportsTest extends TestCase
             'draft' => true,
         ]);
 
-
-        $report->training->country->mentors()->attach($mentor);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
         $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
     }
@@ -112,7 +112,7 @@ class TrainingReportsTest extends TestCase
             'training_id' => $training->id,
         ]);
 
-        $this->actingAs(\App\Models\User::factory()->create(['group' => null]))
+        $this->actingAs(\App\Models\User::factory()->create())
             ->post(route('training.report.store', ['training' => $report->training->id]), $report->getAttributes())
             ->assertStatus(403);
 
@@ -128,10 +128,10 @@ class TrainingReportsTest extends TestCase
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
         ]);
-        $mentor = User::factory()->create(['id' => 10000015, 'group' => 3]);
+        $mentor = User::factory()->create(['id' => 10000015]);
+        $mentor->groups()->attach(3, ['country_id' => $training->country->id]);
         $content = $this->faker->paragraph();
 
-        $report->training->country->mentors()->attach($mentor);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
 
         $response = $this->actingAs($mentor)
@@ -174,7 +174,8 @@ class TrainingReportsTest extends TestCase
             'id' => 2,
         ]);
 
-        $mentor = User::factory()->create(['id' => 10000500, 'group' => 3]);
+        $mentor = User::factory()->create(['id' => 10000500]);
+        $mentor->groups()->attach(3, ['country_id' => $training->country->id]);
 
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -185,8 +186,6 @@ class TrainingReportsTest extends TestCase
             'position' => null,
             'draft' => false,
         ]);
-
-        $report->training->country->mentors()->attach($mentor);
 
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
 
@@ -205,7 +204,8 @@ class TrainingReportsTest extends TestCase
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
         ]);
-        $otherMentor = \App\Models\User::factory()->create(['id' => 10000100, 'group' => 3]);
+        $otherMentor = \App\Models\User::factory()->create(['id' => 10000100]);
+        $otherMentor->groups()->attach(3, ['country_id' => $training->country->id]);
 
         $this->actingAs($otherMentor)
             ->get(route('training.report.delete', ['report' => $report->id]))
@@ -223,7 +223,7 @@ class TrainingReportsTest extends TestCase
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
         ]);
-        $regularUser = \App\Models\User::factory()->create(['id' => 1000096, 'group' => null]);
+        $regularUser = \App\Models\User::factory()->create(['id' => 1000096]);
 
         $this->actingAs($regularUser)
             ->get(route('training.report.delete', ['report' => $report->id]))
@@ -239,10 +239,8 @@ class TrainingReportsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000098])->id,
         ]);
 
-        $mentor = User::factory()->create([
-            'id' => 10000220,
-            'group' => 3,
-        ]);
+        $mentor = User::factory()->create(['id' => 10000220]);
+        $mentor->groups()->attach(3, ['country_id' => $training->country->id]);
 
         $report = \App\Models\TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -253,7 +251,8 @@ class TrainingReportsTest extends TestCase
             'position' => null,
             'draft' => false,
         ]);
-        $otherModerator = \App\Models\User::factory()->create(['group' => 1, 'id' => 10000101]);
+        $otherModerator = \App\Models\User::factory()->create(['id' => 10000101]);
+        $otherModerator->groups()->attach(1, ['country_id' => $training->country->id]);
 
         $this->actingAs($otherModerator)
             ->get(route('training.report.delete', ['report' => $report->id]));

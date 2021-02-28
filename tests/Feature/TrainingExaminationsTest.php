@@ -26,11 +26,12 @@ class TrainingExaminationsTest extends TestCase
             ])->id,
             'examiner_id' => User::factory()->create([
                 'id' => 10000001,
-                'group' => 3,
             ]),
         ]);
+
+        $this->examination->examiner->groups()->attach(3, ['country_id' => $this->examination->training->country]);
+
         $this->training = $this->examination->training;
-        $this->training->country->mentors()->attach($this->examination->examiner);
         $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);
     }
 
@@ -85,7 +86,8 @@ class TrainingExaminationsTest extends TestCase
     {
 
         $data = $this->examination->getAttributes();
-        $this->training->user->update(['group' => 2]);
+        $this->training->user->groups()->detach();
+        $this->training->user->groups()->attach(3, ['country_id' => $this->training->country->id]);
 
         $this->actingAs($this->training->user)->followingRedirects()
             ->postJson(route('training.examination.store', ['training' => $this->training]), $data)
@@ -165,11 +167,13 @@ class TrainingExaminationsTest extends TestCase
             ])->id,
             'examiner_id' => User::factory()->create([
                 'id' => 10000007,
-                'group' => 3,
             ])->id,
         ]);
-        $moderator = User::factory()->create(['group' => 2, 'id' => 10000004]);
-        $examination->training->country->training_roles()->attach($moderator);
+
+        $examination->examiner->groups()->attach(3, ['country_id' => $examination->training->country->id]);
+
+        $moderator = User::factory()->create(['id' => 10000004]);
+        $moderator->groups()->attach(2, ['country_id' => $examination->training->country->id]);
 
         $this->actingAs($moderator)->followingRedirects()
             ->deleteJson(route('training.examination.delete', ['examination' => $examination]))
@@ -189,7 +193,8 @@ class TrainingExaminationsTest extends TestCase
                 'user_id' => User::factory()->create(['id' => 10000035])->id,
             ])->id,
         ]);
-        $mentor = User::factory()->create(['group' => 3, 'id' => 10000010]);
+        $mentor = User::factory()->create(['id' => 10000010]);
+        $mentor->groups()->attach(3, ['country_id' => $examination->training->country->id]);
 
         $this->actingAs($mentor)->followingRedirects()
             ->delete(route('training.examination.delete', ['examination' => $examination]))

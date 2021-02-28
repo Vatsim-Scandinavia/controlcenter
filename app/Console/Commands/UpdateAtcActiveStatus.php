@@ -45,10 +45,6 @@ class UpdateAtcActiveStatus extends Command
     public function __construct()
     {
         parent::__construct();
-
-        $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
-        $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
-        $this->hour_requirement = Setting::get('atcActivityRequirement', 10);
     }
 
     /**
@@ -60,6 +56,10 @@ class UpdateAtcActiveStatus extends Command
     {
 
         $start_time = microtime(true) * 1000;
+
+        $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
+        $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
+        $this->hour_requirement = Setting::get('atcActivityRequirement', 10);
 
         if ($this->option('dry-run') != null) {
             $this->dry_run = true;
