@@ -131,7 +131,7 @@
                                 <tr>
                                     <th>Student</th>
                                     <th>Level</th>
-                                    <th>Country</th>
+                                    <th>Area</th>
                                     <th>State</th>
                                     <th>Reports</th>
                                 </tr>
@@ -149,7 +149,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td>{{ $training->country->name }}</td>
+                                        <td>{{ $training->area->name }}</td>
                                         <td>
                                             <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                         </td>
@@ -182,7 +182,7 @@
                         <thead class="thead-light">
                         <tr>
                             <th>Level</th>
-                            <th>Country</th>
+                            <th>Area</th>
                             <th>Period</th>
                             <th>State</th>
                             <th>Reports</th>
@@ -200,7 +200,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
                                         Training not started

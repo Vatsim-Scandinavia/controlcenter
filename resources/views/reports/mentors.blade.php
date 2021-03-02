@@ -24,7 +24,7 @@
                             <tr>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Mentor ID</th>
                                 <th data-field="mentor" data-sortable="true" data-filter-control="input">Mentor</th>
-                                <th data-field="level" data-sortable="true" data-filter-control="select">FIR</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="applied" data-sortable="true">Last training</th>
                                 <th data-field="teaching" data-sortable="true" data-filter-control="input">Teaching</th>
                             </tr>
@@ -35,7 +35,7 @@
                                     <td><a href="{{ route('user.show', $mentor->id) }}">{{ $mentor->id }}</a></td>
                                     <td>{{ $mentor->name }}</td>
                                     <td>
-                                        {{ $mentor->getInlineMentoringCountries() }}
+                                        {{ $mentor->getInlineMentoringAreas() }}
                                     </td>
                                     <td>
                                         @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)

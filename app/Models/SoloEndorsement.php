@@ -17,7 +17,7 @@ class SoloEndorsement extends Model
     }
 
     public function training(){
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Area::class);
     }
 
 }

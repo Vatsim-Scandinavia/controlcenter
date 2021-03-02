@@ -24,7 +24,7 @@
                                 <th data-field="firstname" data-sortable="true" data-filter-control="input">First Name</th>
                                 <th data-field="lastname" data-sortable="true" data-filter-control="input">Last Name</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">ATC Rating</th>
-                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th>Last login</th>
                             </tr>
                         </thead>
@@ -36,7 +36,7 @@
                                         <td>{{ $user->first_name }}</td>
                                         <td>{{ $user->last_name }}</td>
                                         <td>{{ $user->rating_short }}</td>
-                                        <td>{{ $user->country }}</td>
+                                        <td>{{ $user->area }}</td>
                                         <td>{{ $user->last_login }}</td>
                                     </tr>
                                 @endif
@@ -70,7 +70,7 @@
                                 <th>Visiting Controller</th>
                                 <th data-field="division" data-sortable="true" data-filter-control="select">Division</th>
                                 <th data-field="subdivision" data-sortable="true" data-filter-control="select">Subdivision</th>
-                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th>Last login</th>
                             </tr>
                         </thead>
@@ -85,7 +85,7 @@
                                         <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
                                         <td>{{ $user->division }}</td>
                                         <td>{{ $user->subdivision }}</td>
-                                        <td>{{ $user->country }}</td>
+                                        <td>{{ $user->area }}</td>
                                         <td>{{ Carbon\Carbon::make($user->last_login)->diffForHumans(['parts' => 2]) }}</td>
                                     </tr>
                                 @endif

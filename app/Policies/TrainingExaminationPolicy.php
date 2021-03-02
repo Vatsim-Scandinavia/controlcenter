@@ -34,7 +34,7 @@ class TrainingExaminationPolicy
         if (($key = session()->get('onetimekey')) != null) {
             $link = OneTimeLink::where('key', $key)->get()->first();
 
-            return $link != null && $user->isMentorOrAbove($link->training->country);
+            return $link != null && $user->isMentorOrAbove($link->training->area);
         }
 
         return $user->isMentorOrAbove();
@@ -49,7 +49,7 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
-        return $examination->draft ? ($user->isModeratorOrAbove($examination->training->country) || $user->is($examination->examiner)) : $user->isModeratorOrAbove($examination->training->country);
+        return $examination->draft ? ($user->isModeratorOrAbove($examination->training->area) || $user->is($examination->examiner)) : $user->isModeratorOrAbove($examination->training->area);
     }
 
     /**
@@ -61,6 +61,6 @@ class TrainingExaminationPolicy
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
-        return $user->isModeratorOrAbove($trainingExamination->training->country);
+        return $user->isModeratorOrAbove($trainingExamination->training->area);
     }
 }

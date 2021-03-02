@@ -12,7 +12,7 @@ class Position extends Model
       return $this->belongsToMany(Booking::class, 'id', 'position_id');
     }
 
-    public function country(){
-      return $this->belongsTo(Country::class);
+    public function area(){
+      return $this->belongsTo(Area::class);
     }
 }

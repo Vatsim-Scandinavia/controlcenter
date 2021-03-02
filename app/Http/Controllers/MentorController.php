@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Country;
+use App\Models\Area;
 use App\Models\User;
 use App\Models\Training;
 use Illuminate\Http\Request;

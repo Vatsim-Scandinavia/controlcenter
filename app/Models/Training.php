@@ -153,13 +153,13 @@ class Training extends Model
     }
 
     /**
-     * Get the country of the training
+     * Get the area of the training
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function country()
+    public function area()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Area::class);
     }
 
     /**

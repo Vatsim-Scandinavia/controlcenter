@@ -25,7 +25,7 @@ class TrainingsTest extends TestCase
 //            'motivation' => $this->faker->realText(1500,2),
 //            'comment' => "",
 //            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1,7))->id,
-//            'training_country' => \App\Models\Country::find($this->faker->numberBetween(1,5))->id
+//            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1,5))->id
 //        ];
 //
 //        $this->assertJson($this->postJson('/training/store', $attributes)->content());
@@ -41,7 +41,7 @@ class TrainingsTest extends TestCase
             'motivation' => $this->faker->realText(1500,2),
             'comment' => "",
             'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1,7))->id,
-            'training_country' => \App\Models\Country::find($this->faker->numberBetween(1,5))->id
+            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1,5))->id
         ];
 
         $response = $this->post('/training/store', $attributes);
@@ -58,7 +58,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
 
-        $moderator->groups()->attach(2, ['country_id' => $training->country->id]);
+        $moderator->groups()->attach(2, ['area_id' => $training->area->id]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
 
@@ -79,7 +79,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $user = $training->user;
-        $user->groups()->attach(3, ['country_id' => $training->country->id]);
+        $user->groups()->attach(3, ['area_id' => $training->area->id]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
 
@@ -97,7 +97,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $moderator = \App\Models\User::factory()->create();
-        $moderator->groups()->attach(1, ['country_id' => $training->country->id]);
+        $moderator->groups()->attach(1, ['area_id' => $training->area->id]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
 
@@ -143,7 +143,7 @@ class TrainingsTest extends TestCase
 //        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
 //        $mentor = factory(\App\Models\User::class)->create(['group' => 3]);
 //
-//        $training->country->mentors()->attach($mentor);
+//        $training->area->mentors()->attach($mentor);
 //
 //        $this->actingAs($moderator)
 //            ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])
@@ -165,7 +165,7 @@ class TrainingsTest extends TestCase
 //            ]
 //        ];
 //
-//        $training->country->mentors()->attach($attributes['mentors']);
+//        $training->area->mentors()->attach($attributes['mentors']);
 //
 //        $this->actingAs($moderator)
 //                ->patchJson(route('training.update', ['training' => $training]), $attributes)
@@ -177,17 +177,17 @@ class TrainingsTest extends TestCase
 //    }
 
     /** @test */
-    public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_country()
+    public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_area()
     {
         $training = \App\Models\Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $moderator = \App\Models\User::factory()->create();
-        $moderator->groups()->attach(2, ['country_id' => $training->country->id]);
+        $moderator->groups()->attach(2, ['area_id' => $training->area->id]);
         $mentor = \App\Models\User::factory()->create();
 
-        // We hardcoded country id to 1 in the factory so anything other than 1 will work - let's pick 2 lol.
-        $mentor->groups()->attach(3, ['country_id' => 2]);
+        // We hardcoded area id to 1 in the factory so anything other than 1 will work - let's pick 2 lol.
+        $mentor->groups()->attach(3, ['area_id' => 2]);
 
         $this->actingAs($moderator)
             ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])

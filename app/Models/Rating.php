@@ -12,8 +12,8 @@ class Rating extends Model
         return $this->belongsToMany(Training::class);
     }
 
-    public function countries(){
-        return $this->belongsToMany(Country::class)->withPivot('required_vatsim_rating', 'queue_length');
+    public function areas(){
+        return $this->belongsToMany(Area::class)->withPivot('required_vatsim_rating', 'queue_length');
     }
 
     public function users(){

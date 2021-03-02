@@ -24,7 +24,7 @@
                                 <th>Visiting Controller</th>
                                 <th>Division</th>
                                 <th>Subdivision</th>
-                                <th>Country</th>
+                                <th>Area</th>
                                 <th>ATC Active</th>
                                 <th>Last login</th>
                             </tr>
@@ -39,7 +39,7 @@
                                 <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
-                                <td>{{ $user->country }}</td>
+                                <td>{{ $user->area }}</td>
                                 <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->last_login }}</td>
                             </tr>
@@ -84,9 +84,9 @@
 
                                     @foreach($groups as $group)
                                         @if($group->id == 1)
-                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('country_id', $area->id)->count() ? "checked" : "" }} disabled></td>
+                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
                                         @else
-                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('country_id', $area->id)->count() ? "checked" : "" }}></td>
+                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
                                         @endif
                                         
                                     @endforeach
@@ -125,7 +125,7 @@
                                 <tr>
                                     <th>State</th>
                                     <th>Level</th>
-                                    <th>Country</th>
+                                    <th>Area</th>
                                     <th>Type</th>
                                 </tr>
                             </thead>
@@ -149,7 +149,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ $training->country->name }}
+                                        {{ $training->area->name }}
                                     </td>
                                     <td>
                                         <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}

@@ -4,12 +4,12 @@
 @section('title-extension')
     <div class="dropdown show" style="display: inline;">
         <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ $currentCountry->name }}
+            {{ $currentArea->name }}
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            @foreach($countries as $country)
-                <a class="dropdown-item" href="{{ route('admin.templates.country', $country->id) }}">{{ $country->name }}</a>
+            @foreach($areas as $area)
+                <a class="dropdown-item" href="{{ route('admin.templates.area', $area->id) }}">{{ $area->name }}</a>
             @endforeach 
         </div>
     </div>
@@ -19,13 +19,13 @@
 
 <form action="{{ route('admin.templates.update') }}" method="POST">
     @csrf
-    <input type="hidden" name="country" value="{{ $currentCountry->id }}">
+    <input type="hidden" name="area" value="{{ $currentArea->id }}">
 
     <div class="row">
         <div class="col-xl-12 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">{{ $currentCountry->name }}'s Notifications</h6> 
+                    <h6 class="m-0 font-weight-bold text-white">{{ $currentArea->name }}'s Notifications</h6> 
                 </div>        
                 <div class="card-body">
                     <p>These editors give you the possiblity to append your FIR-specific text to the templates available, for the e-mail notifications. The notification text must be in English.</p>
@@ -38,10 +38,10 @@
                             <option value="3">Pre-Training</option>
                         </select>
 
-                        @can('modifyCountryTemplate', [App\Notification::class, $currentCountry])
-                            <button class="btn btn-success ml-2" type="submit">Save {{ $currentCountry->name }}'s notifications</button>
+                        @can('modifyAreaTemplate', [App\Notification::class, $currentArea])
+                            <button class="btn btn-success ml-2" type="submit">Save {{ $currentArea->name }}'s notifications</button>
                         @else
-                            <button class="btn btn-success ml-2" disabled>Save {{ $currentCountry->name }}'s notifications</button>
+                            <button class="btn btn-success ml-2" disabled>Save {{ $currentArea->name }}'s notifications</button>
                         @endcan
                     </div>
 

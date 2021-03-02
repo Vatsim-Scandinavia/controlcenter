@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Country extends Model
+class Area extends Model
 {
 
     public $timestamps = false;
@@ -18,7 +18,7 @@ class Country extends Model
     }
 
     public function permissions(){
-        return $this->belongsToMany(Group::class, 'permissions')->withPivot('country_id')->withTimestamps();
+        return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
     }
 
     public function mentors()
@@ -27,7 +27,7 @@ class Country extends Model
     }
 
     public function positions(){
-        return $this->hasMany(Position::class, 'country');
+        return $this->hasMany(Position::class, 'area');
     }
 }
 

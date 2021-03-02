@@ -4,7 +4,7 @@ namespace App\Notifications;
 
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
-use App\Models\Country;
+use App\Models\Area;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use Illuminate\Bus\Queueable;

@@ -88,7 +88,7 @@ class UserDelete extends Command
 
                     // Remove things from Control Center
                     $this->closeUserTrainings($user);
-                    $user->country = null;
+                    $user->area = null;
                     $user->group = null;
                     $user->remember_token = null;
                     $user->save();
@@ -98,7 +98,7 @@ class UserDelete extends Command
                     $handover->email = "void@void.void";
                     $handover->first_name = "Anonymous";
                     $handover->last_name = "Anonymous";
-                    $handover->country = null;
+                    $handover->area = null;
                     $handover->region = "XXX";
                     $handover->division = null;
                     $handover->subdivision = null;

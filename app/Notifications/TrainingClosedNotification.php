@@ -5,7 +5,7 @@ namespace App\Notifications;
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
 use App\Models\Training;
-use App\Models\Country;
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,18 +52,18 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
 
-        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.' has been *'.$this->closedBy.'*.';
+        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.' has been *'.$this->closedBy.'*.';
         if(isset($this->reason)){
             $textLines[] = '**Reason for closure:** '.$this->reason;
         }
 
-        $contactMail = Country::find($this->training->country_id)->contact;
+        $contactMail = Area::find($this->training->area_id)->contact;
 
         // Find staff who wants notification of new training request
         $bcc = User::where('setting_notify_closedreq', true)->where('group', '<=', '2')->get();
 
         foreach ($bcc as $key => $user) {
-            if (!$user->isModeratorOrAbove($this->training->country))
+            if (!$user->isModeratorOrAbove($this->training->area))
                 $bcc->pull($key);
         }
 

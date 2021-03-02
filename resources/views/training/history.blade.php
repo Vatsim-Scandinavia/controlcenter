@@ -30,7 +30,7 @@
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
-                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="applied" data-sortable="true" data-filter-control="input">Applied</th>
                                 <th data-field="closed" data-sortable="true" data-filter-control="input">Closed</th>
                             </tr>
@@ -71,7 +71,7 @@
                                         N/A
                                     @endif
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                                 <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>{{ !empty($training->closed_at->toEuropeanDate()) ? $training->closed_at->toEuropeanDate() : "-" }}</td>
                             </tr>

@@ -29,7 +29,7 @@ class TrainingExaminationsTest extends TestCase
             ]),
         ]);
 
-        $this->examination->examiner->groups()->attach(3, ['country_id' => $this->examination->training->country]);
+        $this->examination->examiner->groups()->attach(3, ['area_id' => $this->examination->training->area]);
 
         $this->training = $this->examination->training;
         $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);
@@ -87,7 +87,7 @@ class TrainingExaminationsTest extends TestCase
 
         $data = $this->examination->getAttributes();
         $this->training->user->groups()->detach();
-        $this->training->user->groups()->attach(3, ['country_id' => $this->training->country->id]);
+        $this->training->user->groups()->attach(3, ['area_id' => $this->training->area->id]);
 
         $this->actingAs($this->training->user)->followingRedirects()
             ->postJson(route('training.examination.store', ['training' => $this->training]), $data)
@@ -170,10 +170,10 @@ class TrainingExaminationsTest extends TestCase
             ])->id,
         ]);
 
-        $examination->examiner->groups()->attach(3, ['country_id' => $examination->training->country->id]);
+        $examination->examiner->groups()->attach(3, ['area_id' => $examination->training->area->id]);
 
         $moderator = User::factory()->create(['id' => 10000004]);
-        $moderator->groups()->attach(2, ['country_id' => $examination->training->country->id]);
+        $moderator->groups()->attach(2, ['area_id' => $examination->training->area->id]);
 
         $this->actingAs($moderator)->followingRedirects()
             ->deleteJson(route('training.examination.delete', ['examination' => $examination]))
@@ -194,7 +194,7 @@ class TrainingExaminationsTest extends TestCase
             ])->id,
         ]);
         $mentor = User::factory()->create(['id' => 10000010]);
-        $mentor->groups()->attach(3, ['country_id' => $examination->training->country->id]);
+        $mentor->groups()->attach(3, ['area_id' => $examination->training->area->id]);
 
         $this->actingAs($mentor)->followingRedirects()
             ->delete(route('training.examination.delete', ['examination' => $examination]))

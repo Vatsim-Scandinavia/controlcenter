@@ -69,7 +69,7 @@
                                 <th>Level</th>
                                 <th>Type</th>
                                 <th>Period</th>
-                                <th>Country</th>
+                                <th>Area</th>
                                 <th>Applied</th>
                                 <th>Closed</th>
                                 <th>Mentor</th>
@@ -109,7 +109,7 @@
                                         N/A
                                     @endif
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                                 <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
                                     @if ($training->closed_at != null)

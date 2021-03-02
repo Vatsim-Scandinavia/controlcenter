@@ -36,7 +36,7 @@ class TrainingObjectAttachmentTest extends TestCase
             ])->id,
         ]);
 
-        $this->report->author->groups()->attach(2, ['country_id' => $this->report->training->country->id]);
+        $this->report->author->groups()->attach(2, ['area_id' => $this->report->training->area->id]);
 
     }
 

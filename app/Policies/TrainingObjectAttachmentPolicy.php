@@ -42,6 +42,6 @@ class TrainingObjectAttachmentPolicy
      */
     public function delete(User $user, TrainingObjectAttachment $attachment)
     {
-        return $user->isModeratorOrAbove($attachment->object->training->country) || $user->is($attachment->file->owner);
+        return $user->isModeratorOrAbove($attachment->object->training->area) || $user->is($attachment->file->owner);
     }
 }

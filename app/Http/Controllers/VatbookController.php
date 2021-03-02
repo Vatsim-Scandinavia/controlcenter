@@ -32,7 +32,7 @@ class VatbookController extends Controller
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
         $positions = new Collection();
         if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
+        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
         if($user->isModeratorOrAbove()) $positions = Position::all();
 
         return view('vatbook.index', compact('bookings', 'user', 'positions'));
@@ -49,7 +49,7 @@ class VatbookController extends Controller
         $user = Auth::user();
         $positions = new Collection();
         if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
+        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
         if($user->isModeratorOrAbove()) $positions = Position::all();
         $this->authorize('update', $booking);
 

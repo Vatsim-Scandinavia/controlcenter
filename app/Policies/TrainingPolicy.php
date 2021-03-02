@@ -23,7 +23,7 @@ class TrainingPolicy
     public function view(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModeratorOrAbove($training->country) ||
+                $user->isModeratorOrAbove($training->area) ||
                 $user->is($training->user);
     }
 
@@ -37,7 +37,7 @@ class TrainingPolicy
     public function update(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModeratorOrAbove($training->country);
+                $user->isModeratorOrAbove($training->area);
     }
 
     /**
@@ -49,7 +49,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training)
     {
-        return $user->isModeratorOrAbove($training->country);
+        return $user->isModeratorOrAbove($training->area);
     }
 
     /**
@@ -115,27 +115,27 @@ class TrainingPolicy
     {
         return  $training->mentors->contains($user) ||
                 $user->is($training->user) ||
-                $user->isModeratorOrAbove($training->country) ||
+                $user->isModeratorOrAbove($training->area) ||
                 $user->isAdmin();
     }
 
     public function createReport(User $user, Training $training)
     {
         if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->country);
+            return $user->isMentor($link->training->area);
         }
 
-        // Check if mentor is mentoring country, not filling their own training and the training is in progress
+        // Check if mentor is mentoring area, not filling their own training and the training is in progress
         return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
     public function createExamination(User $user, Training $training)
     {
         if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->country);
+            return $user->isMentor($link->training->area);
         }
 
-        // Check if mentor is mentoring country, not filling their own training and the training is awaing an exam.
+        // Check if mentor is mentoring area, not filling their own training and the training is awaing an exam.
         return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 

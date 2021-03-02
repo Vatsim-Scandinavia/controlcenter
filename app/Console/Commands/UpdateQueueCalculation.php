@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Country;
+use App\Models\Area;
 use App\Models\Training;
 use Carbon\Carbon;
 
@@ -41,15 +41,15 @@ class UpdateQueueCalculation extends Command
     public function handle()
     {
 
-        $countries = Country::all();
-        foreach($countries as $country){
-            foreach($country->ratings as $rating){
+        $areas = Area::all();
+        foreach($areas as $area){
+            foreach($area->ratings as $rating){
                 
                 $averageSum = 0;
                 $averageNumber = 0;
 
-                // Get the queue time from each training of this specific rating in the specific country
-                foreach($rating->trainings->where('country_id', $country->id)->whereNotNull('created_at')->whereNotNull('started_at') as $training){
+                // Get the queue time from each training of this specific rating in the specific area
+                foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNotNull('started_at') as $training){
 
                     // Only include pure Vatsim ratings in calculation
                     if($training->ratings->count() == 1 && $training->ratings->first()->vatsim_rating){
@@ -68,12 +68,12 @@ class UpdateQueueCalculation extends Command
                     }                    
                 }   
 
-                // Calculate the average for this country's selected rating, then insert it to the country's rating column
+                // Calculate the average for this area's selected rating, then insert it to the area's rating column
                 if($averageNumber){
                     $average = $averageSum / $averageNumber;
                     $rating->pivot->queue_length = $average;
                     $rating->pivot->save();
-                    $this->info($country->name.' '.$rating->name.' rating calculated average to '.round($average/60/60/24, 2).' days.');
+                    $this->info($area->name.' '.$rating->name.' rating calculated average to '.round($average/60/60/24, 2).' days.');
                 } else {
                     $rating->pivot->queue_length = NULL;
                 }

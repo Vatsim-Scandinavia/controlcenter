@@ -24,7 +24,7 @@ class TrainingReportPolicy
     {
         return  $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
-                $user->isModerator($trainingReport->training->country) ||
+                $user->isModerator($trainingReport->training->area) ||
                 ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
     }
 
@@ -39,7 +39,7 @@ class TrainingReportPolicy
         if (($key = session()->get('onetimekey')) != null) {
             $link = OneTimeLink::where('key', $key)->get()->first();
 
-            return $link != null && $user->isMentor($link->training->country);
+            return $link != null && $user->isMentor($link->training->area);
         }
 
         return $user->isMentor();
@@ -56,7 +56,7 @@ class TrainingReportPolicy
     {
         return  $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
-                $user->isModerator($trainingReport->training->country);
+                $user->isModerator($trainingReport->training->area);
     }
 
     /**
@@ -68,7 +68,7 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {
-        return ($user->isAdmin() || $user->isModerator($trainingReport->training->country) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->country)))
+        return ($user->isAdmin() || $user->isModerator($trainingReport->training->area) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->area)))
             ? Response::allow()
             : Response::deny("Only moderators and the author of the training report can delete it.");
     }

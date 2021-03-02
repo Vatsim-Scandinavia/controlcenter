@@ -35,7 +35,7 @@ class TrainingFactory extends Factory
         return [
             'user_id' => User::inRandomOrder()->first()->id,
             'status' => $status,
-            'country_id' => 1,
+            'area_id' => 1,
             'motivation' => $this->faker->paragraph(15, false),
             'notes' => $this->faker->paragraph(1, false),
             'english_only_training' => false,

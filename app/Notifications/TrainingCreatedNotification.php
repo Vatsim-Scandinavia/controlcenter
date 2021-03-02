@@ -4,7 +4,7 @@ namespace App\Notifications;
 
 use App\Mail\TrainingMail;
 use App\Models\Training;
-use App\Models\Country;
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,25 +48,25 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
     {
 
         $textLines = [
-            'We hereby confirm that we have received your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.'.',
+            'We hereby confirm that we have received your training request for '.$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.'.',
             'The request is now in queue. Expected waiting time: '.\Setting::get('trainingQueue'),
             'We will periodically ask you to confirm your continued interest for your application with us, it\'s your responsibility to check your email for these requests and reply within the deadline.'
         ];
 
-        $country = Country::find($this->training->country_id);
-        if(isset($country->template_newreq)){
-            $textLines[] = $country->template_newreq;
+        $area = Area::find($this->training->area_id);
+        if(isset($area->template_newreq)){
+            $textLines[] = $area->template_newreq;
         }
 
         // Find staff who wants notification of new training request
         $bcc = User::where('setting_notify_newreq', true)->where('group', '<=', '2')->get();
 
         foreach ($bcc as $key => $user) {
-            if (!$user->isModeratorOrAbove($this->training->country))
+            if (!$user->isModeratorOrAbove($this->training->area))
                 $bcc->pull($key);
         }
 
-        $contactMail = $country->contact;
+        $contactMail = $area->contact;
         return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email, $this->training->user->name)
             ->bcc($bcc->pluck('email'));

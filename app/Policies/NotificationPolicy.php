@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use Illuminate\Notifications\Notification;
 use App\Models\User;
-use App\Models\Country;
+use App\Models\Area;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class NotificationPolicy
@@ -23,13 +23,13 @@ class NotificationPolicy
     }
 
     /**
-     * Determine if the user can modify a specific country's templates
+     * Determine if the user can modify a specific area's templates
      *
      * @param User $user
      * @return bool
      */
-    public function modifyCountryTemplate(User $user, Country $country)
+    public function modifyAreaTemplate(User $user, Area $area)
     {
-        return $user->isAdmin() || ($user->isModerator() && $country->permissions()->wherePivot('user_id', $user->id)->exists());
+        return $user->isAdmin() || ($user->isModerator() && $area->permissions()->wherePivot('user_id', $user->id)->exists());
     }
 }

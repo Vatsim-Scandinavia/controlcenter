@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Group;
-use App\Models\Country;
+use App\Models\Area;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +41,7 @@ class UserController extends Controller
         $this->authorize('view', $user);
 
         $groups = Group::all();
-        $areas = Country::all();
+        $areas = Area::all();
 
         if ($user == null)
             return abort(404);
@@ -69,12 +69,12 @@ class UserController extends Controller
         $permissions = [];
 
         // Generate a list of possible validations
-        foreach(Country::all() as $country){
+        foreach(Area::all() as $area){
             foreach(Group::all() as $group){
                 // Don't list or allow admin rank to be set through this interface
                 if($group->id == 1) { continue; }
 
-                $key = $country->name.'_'.$group->name;
+                $key = $area->name.'_'.$group->name;
                 $permissions[$key] = '';
             }
         }
@@ -90,19 +90,19 @@ class UserController extends Controller
         
             $str = explode('_', $key);
 
-            $country = Country::where('name', $str[0])->get()->first();
+            $area = Area::where('name', $str[0])->get()->first();
             $group = Group::where('name', $str[1])->get()->first();
 
             // Check if permission is not set, and set it or other way around.
-            if($user->groups()->where('country_id', $country->id)->where('group_id', $group->id)->get()->count() == 0){
-                if($value == true) $user->groups()->attach($group, ['country_id' => $country->id, 'inserted_by' => Auth::id()]);
+            if($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0){
+                if($value == true) $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
             } else {
-                if($value == false) $user->groups()->wherePivot('country_id', $country->id)->wherePivot('group_id', $group->id)->detach();
+                if($value == false) $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
             }
 
             // Check and detach trainings from mentor
-            if($user->teaches()->where('country_id', $country->id)->count() > 0 && !$user->isMentor() && $value == false){
-                $user->teaches()->detach($user->teaches->where('country_id', $country->id));
+            if($user->teaches()->where('area_id', $area->id)->count() > 0 && !$user->isMentor() && $value == false){
+                $user->teaches()->detach($user->teaches->where('area_id', $area->id));
             }
 
         }

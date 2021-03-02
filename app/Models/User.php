@@ -28,7 +28,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'id', 'country', 'group', 'last_login'
+        'id', 'group', 'last_login'
     ];
 
     /**
@@ -89,7 +89,7 @@ class User extends Authenticatable
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'permissions')->withPivot('country_id')->withTimestamps();
+        return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
     }
 
     public function bookings()
@@ -151,7 +151,7 @@ class User extends Authenticatable
     }
 
     public function getCountryAttribute(){
-        return $this->handover->country;
+        return $this->handover->area;
     }
 
     public function getVisitingControllerAttribute(){
@@ -221,16 +221,16 @@ class User extends Authenticatable
      *
      * @return string
      */
-    public function getInlineMentoringCountries(){
+    public function getInlineMentoringAreas(){
 
         $output = "";
 
         if($this->groups->count() > 1){
             foreach($this->groups as $group){
-                $output .= Country::find($group->pivot->country_id)->name . " & ";
+                $output .= Area::find($group->pivot->area_id)->name . " & ";
             }
         } else {
-            $output .= Country::find($this->groups->first()->pivot->country_id)->name;
+            $output .= Area::find($this->groups->first()->pivot->area_id)->name;
         }
 
         if(empty($output)){
@@ -242,100 +242,100 @@ class User extends Authenticatable
 
     /**
      * Return whether or not the user has active trainings.
-     * A country can be provided to check if the user has an active training in the specified country.
+     * A area can be provided to check if the user has an active training in the specified area.
      *
-     * @param Country|null $country
+     * @param Area|null $area
      * @return bool
      */
-    public function hasActiveTrainings(Country $country = null)
+    public function hasActiveTrainings(Area $area = null)
     {
-        if ($country == null)
+        if ($area == null)
             return count($this->trainings()->whereIn('status', [0, 1, 2, 3])->get()) > 0;
 
-        return count($this->trainings()->where('country_id', $country->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
+        return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
     }
 
     /**
      * Return the active training for the user
      *
      * @param int $minStatus
-     * @param Country|null $country
+     * @param Area|null $area
      * @return Training|null
      */
-    public function getActiveTraining(int $minStatus = 0, Country $country = null)
+    public function getActiveTraining(int $minStatus = 0, Area $area = null)
     {
-        if ($country == null)
+        if ($area == null)
             return $this->trainings()->where([['status', '>=', $minStatus]])->get()->first();
 
-        return $this->trainings()->where([['status', '>=', $minStatus], ['country_id', '=', $country->id]])->get()->first();
+        return $this->trainings()->where([['status', '>=', $minStatus], ['area_id', '=', $area->id]])->get()->first();
     }
 
     /**
      * Return if user is a mentor
      *
-     * @param Country|null $country
+     * @param Area|null $area
      * @return bool
      */
-    public function isMentor(Country $country = null)
+    public function isMentor(Area $area = null)
     {
 
-        if ($country == null) {
+        if ($area == null) {
             return $this->groups()->where('id',  3)->exists();
         }
 
-        return $this->groups()->where('id', 3)->wherePivot('country_id', $country->id)->exists();
+        return $this->groups()->where('id', 3)->wherePivot('area_id', $area->id)->exists();
 
     }
 
     /**
      * Return if user is a mentor or above
      *
-     * @param Country|null $country
+     * @param Area|null $area
      * @return bool
      */
-    public function isMentorOrAbove(Country $country = null)
+    public function isMentorOrAbove(Area $area = null)
     {
 
-        if ($country == null) {
+        if ($area == null) {
             return $this->groups()->where('id', '<=',  3)->exists();
         }
 
-        return $this->groups()->where('id', '<=', 3)->wherePivot('country_id', $country->id)->exists();
+        return $this->groups()->where('id', '<=', 3)->wherePivot('area_id', $area->id)->exists();
 
     }
 
     /**
      * Return if user is a moderator
      *
-     * @param Country|null $country
+     * @param Area|null $area
      * @return bool
      */
-    public function isModerator(Country $country = null)
+    public function isModerator(Area $area = null)
     {
-        if ($country == null)
+        if ($area == null)
             return $this->groups()->where('id', 2)->exists();
 
         if ($this->isAdmin())
             return $this->groups()->where('id', 2)->exists();
 
-        return $this->groups()->where('id', 2)->wherePivot('country_id', $country->id)->exists();
+        return $this->groups()->where('id', 2)->wherePivot('area_id', $area->id)->exists();
     }
 
     /**
      * Return if user is a moderator or above
      *
-     * @param Country|null $country
+     * @param Area|null $area
      * @return bool
      */
-    public function isModeratorOrAbove(Country $country = null)
+    public function isModeratorOrAbove(Area $area = null)
     {
-        if ($country == null)
+        if ($area == null)
             return $this->groups()->where('id', '<=', 2)->exists();
 
         if ($this->isAdmin())
             return $this->groups()->where('id', '<=', 2)->exists();
 
-        return $this->groups()->where('id', '<=', 2)->wherePivot('country_id', $country->id)->exists();
+        return $this->groups()->where('id', '<=', 2)->wherePivot('area_id', $area->id)->exists();
     }
 
     /**

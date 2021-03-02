@@ -5,7 +5,7 @@ namespace App\Notifications;
 use App\Mail\TrainingMail;
 use App\Models\Training;
 use App\Models\TrainingInterest;
-use App\Models\Country;
+use App\Models\Area;
 use App\Http\Controllers\TrainingController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -71,7 +71,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
             '*If no confirmation is received within deadline, your training request will be automatically closed and your slot in the queue will be lost.*'
         ];
 
-        $contactMail = Country::find($this->training->country_id)->contact;
+        $contactMail = Area::find($this->training->area_id)->contact;
         $actionUrl = route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->interest->key] );
 
         return (new TrainingMail($this->subjectPrefix.'Confirm Continued Training Interest', $this->training, $textLines, $contactMail, $actionUrl, 'Confirm Interest', 'success'))

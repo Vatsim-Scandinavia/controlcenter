@@ -27,7 +27,7 @@
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-field="lastreport" data-sortable="true" data-filter-control="input">Last Report</th>
-                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +78,7 @@
                                         No report yet
                                     @endif
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                             </tr>
                             @endforeach
 
