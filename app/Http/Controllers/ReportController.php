@@ -56,7 +56,7 @@ class ReportController extends Controller
 
         } else {
 
-            $mentors = Group::find(3)->users()->whereHas('permissions', function(Builder $query) {
+            $mentors = Group::find(3)->users()->whereHas('groups', function(Builder $query) {
                 $query->whereIn('country_id', auth()->user()->groups()->pluck('country_id'));
             })->get();
 
