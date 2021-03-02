@@ -217,7 +217,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get a inline string of ratings associated countries for mentoring.
+     * Get a inline string of ratings associated areas for mentoring.
      *
      * @return string
      */
@@ -225,16 +225,12 @@ class User extends Authenticatable
 
         $output = "";
 
-        if( is_iterable($countries = $this->groups->toArray()) ){
-            for( $i = 0; $i < sizeof($countries); $i++ ){
-                if( $i == (sizeof($countries) - 1) ){
-                    $output .= $countries[$i]["name"];
-                } else {
-                    $output .= $countries[$i]["name"] . " & ";
-                }
+        if($this->groups->count() > 1){
+            foreach($this->groups as $group){
+                $output .= Country::find($group->pivot->country_id)->name . " & ";
             }
         } else {
-            $output .= $countries["name"];
+            $output .= Country::find($this->groups->first()->pivot->country_id)->name;
         }
 
         if(empty($output)){
