@@ -23,7 +23,7 @@ class Country extends Model
 
     public function mentors()
     {
-        return $this->belongsToMany(User::class, 'permissions')->withPivot('group_id')->withTimestamps()->where('group_id', 2);
+        return $this->belongsToMany(User::class, 'permissions')->withPivot('group_id')->withTimestamps()->where('group_id', 3);
     }
 
     public function positions(){

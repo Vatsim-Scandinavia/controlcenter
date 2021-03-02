@@ -17,7 +17,7 @@ class SoloEndorsementPolicy
      */
     public function view(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove();
     }
 
     /**
@@ -28,7 +28,7 @@ class SoloEndorsementPolicy
      */
     public function create(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**
@@ -39,6 +39,6 @@ class SoloEndorsementPolicy
      */
     public function update(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 }

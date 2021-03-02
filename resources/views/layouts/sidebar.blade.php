@@ -42,7 +42,7 @@
             <span>Endorsements List</span></a>
         </li>
 
-        @if (\Auth::user()->isMentor())
+        @if (\Auth::user()->isMentorOrAbove())
 
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -65,7 +65,7 @@
         </li>
 
         @endif
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
@@ -83,7 +83,7 @@
 
         @endif
 
-        @if (\Auth::user()->isMentor())
+        @if (\Auth::user()->isMentorOrAbove())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -92,7 +92,7 @@
         Members
         </div>
 
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
         <li class="nav-item {{ Route::is('users') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users') }}">
             <i class="fas fa-fw fa-users"></i>
@@ -108,7 +108,7 @@
 
         @endif
 
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -135,7 +135,7 @@
         </li>
         @endif
 
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
 
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
@@ -150,7 +150,7 @@
                 <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
             @endif
 
-            @if (\Auth::user()->isModerator())
+            @if (\Auth::user()->isModeratorOrAbove())
                 <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
             @endif
             </div>

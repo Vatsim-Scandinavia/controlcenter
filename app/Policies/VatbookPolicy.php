@@ -28,7 +28,7 @@ class VatbookPolicy
      */
     public function create(User $user)
     {
-        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModerator();
+        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModeratorOrAbove();
     }
 
     /**
@@ -40,7 +40,7 @@ class VatbookPolicy
      */
     public function update(User $user, Vatbook $booking)
     {
-        return $booking->local_id != null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id != null;
+        return $booking->local_id != null && $booking->cid == $user->id || $user->isModeratorOrAbove() && $booking->local_id != null;
     }
 
     /**
@@ -51,7 +51,7 @@ class VatbookPolicy
      */
     public function tags(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove();
     }
 
     /**

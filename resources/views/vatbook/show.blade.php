@@ -43,7 +43,7 @@
                         </datalist>
                     </div>
 
-                    @if ($user->isMentor())
+                    @if ($user->isMentorOrAbove())
                         <div class="form-group">
                             @if ($booking->training == 1)
                             <input id="training" type="checkbox" name="tag" value=1 checked onClick="change(this)">

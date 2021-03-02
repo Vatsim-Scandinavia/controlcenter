@@ -33,7 +33,7 @@ class VatbookController extends Controller
         $positions = new Collection();
         if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
         if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        if($user->isModerator()) $positions = Position::all();
+        if($user->isModeratorOrAbove()) $positions = Position::all();
 
         return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
@@ -50,7 +50,7 @@ class VatbookController extends Controller
         $positions = new Collection();
         if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
         if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        if($user->isModerator()) $positions = Position::all();
+        if($user->isModeratorOrAbove()) $positions = Position::all();
         $this->authorize('update', $booking);
 
         return view('vatbook.show', compact('booking', 'user', 'positions'));
@@ -107,7 +107,7 @@ class VatbookController extends Controller
         ->where('deleted', false)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) $booking->training = 1;
+        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
         else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
             if($booking->position->mae == true) $booking->training = 1;
         } else $booking->training = 0;
@@ -207,7 +207,7 @@ class VatbookController extends Controller
         ->where('id', '!=', $booking->id)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModerator()) $booking->training = 1;
+        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
         else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
             if($booking->position->mae == true) $booking->training = 1;
         } else $booking->training = 0;

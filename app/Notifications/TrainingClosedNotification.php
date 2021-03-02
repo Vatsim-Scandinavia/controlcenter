@@ -63,7 +63,7 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         $bcc = User::where('setting_notify_closedreq', true)->where('group', '<=', '2')->get();
 
         foreach ($bcc as $key => $user) {
-            if (!$user->isModerator($this->training->country))
+            if (!$user->isModeratorOrAbove($this->training->country))
                 $bcc->pull($key);
         }
 

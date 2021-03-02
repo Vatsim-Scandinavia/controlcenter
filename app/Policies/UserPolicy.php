@@ -17,7 +17,7 @@ class UserPolicy
      */
     public function index(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**
@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->is($model) || $user->isModerator() || $user->isTeaching($model);
+        return $user->is($model) || $user->isModeratorOrAbove() || $user->isTeaching($model);
     }
 
     /**
@@ -42,10 +42,10 @@ class UserPolicy
     public function update(User $user, User $model)
     {
         if (!isset($model->group)) {
-            return $user->isModerator();
+            return $user->isModeratorOrAbove();
         }
 
-        return $user->isModerator() &&
+        return $user->isModeratorOrAbove() &&
                 $user->group < $model->group;
     }
 

@@ -2,7 +2,7 @@
 
 @section('title', 'Training Requests')
 @section('title-extension')
-    @if (\Auth::user()->isModerator())
+    @if (\Auth::user()->isModeratorOrAbove())
         <a href="{{ route('training.create') }}" class="btn btn-sm btn-success">Add new request</a>
     @endif
 @endsection

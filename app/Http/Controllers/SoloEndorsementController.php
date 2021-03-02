@@ -39,7 +39,7 @@ class SoloEndorsementController extends Controller
      */
     public function sup()
     {
-        if(\Auth::user() && \Auth::user()->isMentor()) return redirect(route('users.soloendorsements'));
+        if(\Auth::user() && \Auth::user()->isMentorOrAbove()) return redirect(route('users.soloendorsements'));
 
         $endorsements = SoloEndorsement::all();
         return view('user.soloendorsement.sup', compact('endorsements'));

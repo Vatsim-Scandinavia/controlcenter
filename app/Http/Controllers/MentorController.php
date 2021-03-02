@@ -24,7 +24,7 @@ class MentorController extends Controller
         $trainings = $user->mentoringTrainings();
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        if($user->isMentor()) return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
+        if($user->isMentorOrAbove()) return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
 
         abort(403);
     }

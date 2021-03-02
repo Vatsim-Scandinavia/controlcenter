@@ -19,7 +19,7 @@ class NotificationPolicy
      */
     public function viewTemplates(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**

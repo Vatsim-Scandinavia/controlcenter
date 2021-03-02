@@ -99,7 +99,12 @@ class UserController extends Controller
             } else {
                 if($value == false) $user->groups()->wherePivot('country_id', $country->id)->wherePivot('group_id', $group->id)->detach();
             }
-        
+
+            // Check and detach trainings from mentor
+            if($user->teaches()->where('country_id', $country->id)->count() > 0 && !$user->isMentor() && $value == false){
+                $user->teaches()->detach($user->teaches->where('country_id', $country->id));
+            }
+
         }
 
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");

@@ -280,7 +280,24 @@ class User extends Authenticatable
     {
 
         if ($country == null) {
-            return $this->groups()->where('id', '<=', 3)->exists();
+            return $this->groups()->where('id',  3)->exists();
+        }
+
+        return $this->groups()->where('id', 3)->wherePivot('country_id', $country->id)->exists();
+
+    }
+
+    /**
+     * Return if user is a mentor or above
+     *
+     * @param Country|null $country
+     * @return bool
+     */
+    public function isMentorOrAbove(Country $country = null)
+    {
+
+        if ($country == null) {
+            return $this->groups()->where('id', '<=',  3)->exists();
         }
 
         return $this->groups()->where('id', '<=', 3)->wherePivot('country_id', $country->id)->exists();
@@ -294,6 +311,23 @@ class User extends Authenticatable
      * @return bool
      */
     public function isModerator(Country $country = null)
+    {
+        if ($country == null)
+            return $this->groups()->where('id', 2)->exists();
+
+        if ($this->isAdmin())
+            return $this->groups()->where('id', 2)->exists();
+
+        return $this->groups()->where('id', 2)->wherePivot('country_id', $country->id)->exists();
+    }
+
+    /**
+     * Return if user is a moderator or above
+     *
+     * @param Country|null $country
+     * @return bool
+     */
+    public function isModeratorOrAbove(Country $country = null)
     {
         if ($country == null)
             return $this->groups()->where('id', '<=', 2)->exists();

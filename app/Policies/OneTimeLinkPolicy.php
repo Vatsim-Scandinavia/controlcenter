@@ -27,7 +27,7 @@ class OneTimeLinkPolicy
         if ($type === OneTimeLink::TRAINING_REPORT_TYPE)
             return $training->mentors->contains($user);
 
-        return $user->isModerator($training->country);
+        return $user->isModeratorOrAbove($training->country);
     }
 
     /**

@@ -25,7 +25,7 @@
                                 </label>
                             </div>
 
-                            @if($user->isModerator())
+                            @if($user->isModeratorOrAbove())
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>

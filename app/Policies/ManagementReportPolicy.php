@@ -27,8 +27,7 @@ class ManagementReportPolicy
      * @return bool
      */
     public function viewMentors(User $user) {
-        return $user->isAdmin() ||
-            $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**

@@ -132,7 +132,7 @@
                         @enderror
                     </div>
 
-                    @if ($user->isMentor())
+                    @if ($user->isMentorOrAbove())
                         <div class="form-group">
                             <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                             <label for="training">Training</label>

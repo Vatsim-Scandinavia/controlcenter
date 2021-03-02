@@ -23,7 +23,7 @@ class TrainingPolicy
     public function view(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModerator($training->country) ||
+                $user->isModeratorOrAbove($training->country) ||
                 $user->is($training->user);
     }
 
@@ -37,7 +37,7 @@ class TrainingPolicy
     public function update(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModerator($training->country);
+                $user->isModeratorOrAbove($training->country);
     }
 
     /**
@@ -49,7 +49,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training)
     {
-        return $user->isModerator($training->country);
+        return $user->isModeratorOrAbove($training->country);
     }
 
     /**
@@ -101,7 +101,7 @@ class TrainingPolicy
      */
     public function create(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**
@@ -115,7 +115,7 @@ class TrainingPolicy
     {
         return  $training->mentors->contains($user) ||
                 $user->is($training->user) ||
-                $user->isModerator($training->country) ||
+                $user->isModeratorOrAbove($training->country) ||
                 $user->isAdmin();
     }
 
@@ -155,11 +155,11 @@ class TrainingPolicy
     }
 
     public function viewActiveRequests(User $user) {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     public function viewHistoricRequests(User $user) {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
 }

@@ -237,7 +237,7 @@
                             @endforeach
 
                             @foreach($reports as $report)
-                                @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
+                                @if(!$report->draft || $report->draft && \Auth::user()->isMentorOrAbove())
 
                                     @php
                                         $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
@@ -423,7 +423,7 @@
                         @endif
 
                         <label for="trainingStateSelect">Select training state</label>
-                        <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
+                        <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                             @foreach($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -443,7 +443,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
-                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
+                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                             @foreach($types as $id => $data)
                                 @if($id == $training->type)
                                     <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
@@ -455,7 +455,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModerator()) disabled @endif>
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                         <label class="form-check-label" for="check1">
                             Paused
                             @if(isset($training->paused_at))
@@ -471,7 +471,7 @@
                         <textarea class="form-control" name="notes" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
                     </div>
 
-                    @if (\Auth::user()->isModerator())
+                    @if (\Auth::user()->isModeratorOrAbove())
                     <div class="form-group">
                         <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="mentors[]" id="assignMentors">
