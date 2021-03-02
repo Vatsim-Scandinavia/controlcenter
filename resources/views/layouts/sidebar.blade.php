@@ -126,10 +126,7 @@
             @endif
 
             <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
-
-            @if (\Auth::user()->isAdmin())
-                <a class="collapse-item" href="{{ route('reports.atc') }}">ATC Activity</a>
-            @endif
+            
             </div>
         </div>
         </li>
