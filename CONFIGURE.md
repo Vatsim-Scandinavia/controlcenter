@@ -2,7 +2,7 @@
 Here you find the diffrerent data tables which need to be edited to suit your subdivision. Perform the changes in the same order as this document.
 
 ##### Areas
-In `Areas` table, create one or more FIRs. This is something student select between when applying for trianing.
+In `Areas` table, create one or more areas. This is something student select between when applying for trianing.
 | id | name | contact | template_newreq | template_newmentor | template_pretraining |
 | ------- | --- | --- | --- |  --- |  --- |
 | x | Name | Contact e-mail that will be display to students | Can be set in Notification Editor, set NULL | Same as last | Same as last |
