@@ -291,6 +291,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Return if user is an examiner
+     *
+     * @param Area|null $area
+     * @return bool
+     */
+    public function isExaminer(Area $area = null)
+    {
+
+        if ($area == null) {
+            return $this->groups()->where('id',  4)->exists();
+        }
+
+        return $this->groups()->where('id', 4)->wherePivot('area_id', $area->id)->exists();
+
+    }
+
+    /**
      * Return if user is a mentor
      *
      * @param Area|null $area
