@@ -134,7 +134,7 @@ class DatabaseSeeder extends Seeder
 
             // Give all non-queued trainings a mentor
             if($training->status > 0){
-                $training->mentors()->attach(User::where('group', 3)->inRandomOrder()->first(), ['expire_at' => now()->addYears(5)]);
+                $training->mentors()->attach(User::allWithGroup(3)->inRandomOrder()->first(), ['expire_at' => now()->addYears(5)]);
                 TrainingReport::factory()->create([
                     'training_id' => $training->id,
                     'written_by_id' => $training->mentors()->inRandomOrder()->first(),
