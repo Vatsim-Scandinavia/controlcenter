@@ -83,7 +83,7 @@
 
                                     @foreach($groups as $group)
 
-                                        @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group])->allowed() && $group->id != 1)
+                                        @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed() && $group->id != 1)
                                             <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
                                         @else
                                             <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>

@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Group;
+use App\Models\Area;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -51,12 +52,13 @@ class UserPolicy
      * @param  \App\Models\Group  $group
      * @return bool
      */
-    public function updateGroup(User $user, User $model, Group $group)
+    public function updateGroup(User $user, User $model, Group $requstedGroup, Area $requestedArea)
     {
         // Allow admins to set all ranks from Moderator and below, and moderators can only set new mentors.
+        // Only Admin can set examinators.
         return
             $this->update($user, $model) &&
-            (($user->isAdmin() && $group->id >= 2) || ($user->isModerator() && $group->id == 3))
+            (($user->isAdmin() && $requstedGroup->id >= 2) || ($user->isModerator($requestedArea) && $requstedGroup->id == 3))
         ;
     }
 
