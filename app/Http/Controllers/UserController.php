@@ -93,6 +93,8 @@ class UserController extends Controller
             $area = Area::where('name', $str[0])->get()->first();
             $group = Group::where('name', $str[1])->get()->first();
 
+            $this->authorize('updateGroup', [$user, $group]);
+
             // Check if permission is not set, and set it or other way around.
             if($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0){
                 if($value == true) $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);

@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Group;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -36,17 +37,27 @@ class UserPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
      * @return bool
      */
     public function update(User $user, User $model)
     {
-        if (!isset($model->group)) {
-            return $user->isModeratorOrAbove();
-        }
+        return $user->isModeratorOrAbove();    
+    }
 
-        return $user->isModeratorOrAbove() &&
-                $user->group < $model->group;
+    /**
+     * Determine whether the user can update the model with that specific group
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Group  $group
+     * @return bool
+     */
+    public function updateGroup(User $user, User $model, Group $group)
+    {
+        // Allow admins to set all ranks from Moderator and below, and moderators can only set new mentors.
+        return
+            $this->update($user, $model) &&
+            (($user->isAdmin() && $group->id >= 2) || ($user->isModerator() && $group->id == 3))
+        ;
     }
 
 }

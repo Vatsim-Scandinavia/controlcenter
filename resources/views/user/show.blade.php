@@ -52,7 +52,6 @@
 </div>
 
 <div class="row">
-    @can('update', $user)
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -83,10 +82,11 @@
                                     <td>{{ $area->name }}</td>
 
                                     @foreach($groups as $group)
-                                        @if($group->id == 1)
-                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
-                                        @else
+
+                                        @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group])->allowed() && $group->id != 1)
                                             <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
+                                        @else
+                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
                                         @endif
                                         
                                     @endforeach
@@ -97,15 +97,16 @@
                         </tbody>
                     </table>
 
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Save access</button>
-                    </div>
+                    @if (\Illuminate\Support\Facades\Gate::inspect('update', $user)->allowed())
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save access</button>
+                        </div>
+                    @endif
 
                 </form>
             </div>
         </div>
     </div>
-    @endcan
 
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
