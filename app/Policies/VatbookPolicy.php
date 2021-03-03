@@ -51,7 +51,7 @@ class VatbookPolicy
      */
     public function tags(User $user)
     {
-        return $user->isMentorOrAbove();
+        return $user->isMentorOrAbove() || $user->rating >= 5;
     }
 
     /**
