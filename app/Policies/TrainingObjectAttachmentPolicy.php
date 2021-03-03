@@ -30,7 +30,7 @@ class TrainingObjectAttachmentPolicy
      */
     public function create(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove();
     }
 
     /**
