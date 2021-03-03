@@ -60,7 +60,7 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         $contactMail = Area::find($this->training->area_id)->contact;
 
         // Find staff who wants notification of new training request
-        $bcc = User::where('setting_notify_closedreq', true)->where('group', '<=', '2')->get();
+        $bcc = User::allWithGroup(2, '<=')->where('setting_notify_closedreq', true);
 
         foreach ($bcc as $key => $user) {
             if (!$user->isModeratorOrAbove($this->training->area))

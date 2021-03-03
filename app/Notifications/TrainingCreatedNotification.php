@@ -59,7 +59,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
         }
 
         // Find staff who wants notification of new training request
-        $bcc = User::where('setting_notify_newreq', true)->where('group', '<=', '2')->get();
+        $bcc = User::allWithGroup(2, '<=')->where('setting_notify_newreq', true);
 
         foreach ($bcc as $key => $user) {
             if (!$user->isModeratorOrAbove($this->training->area))

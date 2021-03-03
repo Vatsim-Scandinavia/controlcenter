@@ -29,7 +29,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'id', 'group', 'last_login'
+        'id', 'last_login'
     ];
 
     /**

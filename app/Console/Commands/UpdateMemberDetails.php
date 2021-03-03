@@ -43,7 +43,7 @@ class UpdateMemberDetails extends Command
      */
     public function handle()
     {
-        $mentors = User::where('group', 3)->get();
+        $mentors = User::allWithGroup('3');
 
         $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
 
