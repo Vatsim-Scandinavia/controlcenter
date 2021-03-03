@@ -88,8 +88,8 @@ class DatabaseSeeder extends Seeder
 
             User::factory()->create([
                 'id' => 10000000 + $i,
-                'group' => $group,
-            ]);
+            ])->groups()->attach(Group::find($group), ['area_id' => 1]);
+
             Handover::factory()->create([
                 'id' => 10000000 + $i,
                 'email' => $email,
