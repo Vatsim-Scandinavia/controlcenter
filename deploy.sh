@@ -19,6 +19,8 @@ php -r "file_exists('.env') || copy('.env.example', '.env');"
 
 # Install dependecies
 composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+composer dump-autoload
+
 npm install
 
 # Adjust directory permissions
