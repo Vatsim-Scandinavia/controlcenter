@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,6 +58,30 @@ class User extends Authenticatable
         return $handover;
     }
 
+    /**
+     * Relationship of all permissions to this user
+     *
+     * @return Illuminate\Database\Eloquent\Collection|Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
+    }
+
+    /**
+     * Find all users with queried group
+     *
+     * @param  int $groupId the id of the group to check for
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public static function allWithGroup($groupId, $IneqSymbol = '=')
+    {
+        return User::whereHas('groups', function($query) use($groupId, $IneqSymbol) {
+            $query->where('id', $IneqSymbol, $groupId);
+        })
+        ->get();
+    }
+
     public function soloEndorsement()
     {
         return $this->hasOne(SoloEndorsement::class);
@@ -85,11 +110,6 @@ class User extends Authenticatable
     public function ratings()
     {
         return $this->belongsToMany(Rating::class);
-    }
-
-    public function groups()
-    {
-        return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
     }
 
     public function bookings()
