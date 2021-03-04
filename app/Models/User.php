@@ -317,7 +317,7 @@ class User extends Authenticatable
     {
 
         if ($area == null) {
-            return $this->groups()->where('id',  3)->exists();
+            return $this->groups()->where('id', 3)->exists();
         }
 
         return $this->groups()->where('id', 3)->wherePivot('area_id', $area->id)->exists();
@@ -350,9 +350,6 @@ class User extends Authenticatable
     public function isModerator(Area $area = null)
     {
         if ($area == null)
-            return $this->groups()->where('id', 2)->exists();
-
-        if ($this->isAdmin())
             return $this->groups()->where('id', 2)->exists();
 
         return $this->groups()->where('id', 2)->wherePivot('area_id', $area->id)->exists();

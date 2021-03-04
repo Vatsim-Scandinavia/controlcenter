@@ -30,6 +30,6 @@ class NotificationPolicy
      */
     public function modifyAreaTemplate(User $user, Area $area)
     {
-        return $user->isAdmin() || ($user->isModerator() && $area->permissions()->wherePivot('user_id', $user->id)->exists());
+        return $user->isAdmin() || $user->isModerator($area);
     }
 }
