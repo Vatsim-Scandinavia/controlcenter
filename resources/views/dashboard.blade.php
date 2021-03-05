@@ -14,7 +14,7 @@
 
 @if($atcInactiveMessage)
     <div class="alert alert-warning" role="alert">
-        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in Scandinavia. <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff</a> to request a refresh or transfer training to be allowed to control in our airspace.
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in {{ Config::get('app.owner') }}. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact local training staff</a> to request a refresh or transfer training to be allowed to control in our airspace.
     </div>
 @endif
 
@@ -68,7 +68,7 @@
         <div class="row no-gutters align-items-center">
             <div class="col mr-2">
             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">ATC Hours (Last 12 months)</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">Coming soon</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $atcHours }}</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -131,7 +131,7 @@
                                 <tr>
                                     <th>Student</th>
                                     <th>Level</th>
-                                    <th>Country</th>
+                                    <th>Area</th>
                                     <th>State</th>
                                     <th>Reports</th>
                                 </tr>
@@ -149,7 +149,7 @@
                                                 @endif
                                             @endforeach
                                         </td>
-                                        <td>{{ $training->country->name }}</td>
+                                        <td>{{ $training->area->name }}</td>
                                         <td>
                                             <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                         </td>
@@ -182,7 +182,7 @@
                         <thead class="thead-light">
                         <tr>
                             <th>Level</th>
-                            <th>Country</th>
+                            <th>Area</th>
                             <th>Period</th>
                             <th>State</th>
                             <th>Reports</th>
@@ -200,7 +200,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
                                         Training not started
@@ -242,7 +242,7 @@
                 </div>
                 <p>Are you interested in becoming an Air Traffic Controller? Wish to receive training for a higher rating? Request training below and you will be notified when a space is available.</p>
 
-                @can('apply', \App\Training::class)
+                @can('apply', \App\Models\Training::class)
                     <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
                         Request training
                     </a>
@@ -254,24 +254,24 @@
                         @else
                             <i class="fas fa-exclamation-triangle"></i>
                         @endif
-                        {{ Gate::inspect('apply', \App\Training::class)->message() }}
+                        {{ Gate::inspect('apply', \App\Models\Training::class)->message() }}
                     </div>
 
                     @if(Setting::get('trainingEnabled'))
                         <div class="alert alert-primary" role="alert">
                             <p class="small">
                                 <b><i class="fas fa-chevron-right"></i> How do I join the division?</b>
-                                <a href="https://vatsim-scandinavia.org/about/join/" target="_blank">Read about joining here.</a>
+                                <a href="{{ Setting::get('linkJoin') }}" target="_blank">Read about joining here.</a>
 
                                 <br>
 
                                 <b><i class="fas fa-chevron-right"></i> How to apply to be a visiting controller?</b>
-                                <a href="https://vatsim-scandinavia.org/atc/visiting-controller/" target="_blank">Check this page for more information.</a>
+                                <a href="{{ Setting::get('linkVisiting') }}" target="_blank">Check this page for more information.</a>
 
                                 <br>
 
                                 <b><i class="fas fa-chevron-right"></i> My rating is inactive?</b>
-                                <a href="https://vatsim-scandinavia.org/about/staff/" target="_blank">Contact local training staff for refresh or transfer training.</a>
+                                <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact local training staff for refresh or transfer training.</a>
 
                                 <br>
 

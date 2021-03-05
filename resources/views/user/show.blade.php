@@ -24,7 +24,7 @@
                                 <th>Visiting Controller</th>
                                 <th>Division</th>
                                 <th>Subdivision</th>
-                                <th>Country</th>
+                                <th>Area</th>
                                 <th>ATC Active</th>
                                 <th>Last login</th>
                             </tr>
@@ -39,7 +39,7 @@
                                 <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
-                                <td>{{ $user->country }}</td>
+                                <td>{{ $user->area }}</td>
                                 <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->last_login }}</td>
                             </tr>
@@ -52,7 +52,6 @@
 </div>
 
 <div class="row">
-    @can('update', $user)
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -65,45 +64,49 @@
                     @method('PATCH')
                     @csrf
 
-                    <div class="form-check">
-                    @foreach($groups as $group)
-                        @if ($group->id > \Auth::user()->group)
-                            <label class="form-check-label @error('access') is-invalid @enderror">
-                                <input type="radio" class="form-check-input" name="access" value="{{ $group->id }}" {{ $user->group == $group->id ? "checked" : "" }}>{{ $group->name }}
-                                <div class="text-muted">{{ $group->description }}</div>
-                                <br>
-                            </label>
-                        @endif
-                    @endforeach
-                    <label class="form-check-label @error('access') is-invalid @enderror">
-                        <input type="radio" class="form-check-input" name="access" value="0" {{ !$user->group ? "checked" : "" }}>None
-                        <div class="text-muted">No specific access, usually a student.</div>
-                        <br>
-                    </label>
-                    @error('access')
-                        <span class="text-danger">{{ $errors->first('access') }}</span>
-                    @enderror
-                    </div>
+                    <p>Select none, one or multiple permissions for the user.</p>
 
-                    <div class="form-group">
-                        <label class="@error('countries') is-invalid @enderror" for="assignCountries">Mentoring countries: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="countries[]" id="assignCountries" size="5">
-                            @foreach($countries as $country)
-                                <option value="{{ $country->id }}" {{ ($user->training_role_countries->contains($country->id)) ? "selected" : "" }}>{{ $country->name }}</option>
+                    <table class="table table-bordered table-hover table-responsive w-100 d-block d-md-table">
+                        <thead>
+                            <tr>
+                                <th>Area</th>
+                                @foreach($groups as $group)
+                                    <th class="text-center">{{ $group->name }} <i class="fas fa-question-circle text-gray-400" title="{{ $group->description }}"></i></th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach($areas as $area)
+                                <tr>
+                                    <td>{{ $area->name }}</td>
+
+                                    @foreach($groups as $group)
+
+                                        @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed() && $group->id != 1)
+                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
+                                        @else
+                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
+                                        @endif
+                                        
+                                    @endforeach
+
+                                </tr>
                             @endforeach
-                        </select>
-                        @error('countries')
-                            <span class="text-danger">{{ $errors->first('countries') }}</span>
-                        @enderror
-                    </div>
 
-                    <button type="submit" class="btn btn-primary">Save access</button>
+                        </tbody>
+                    </table>
+
+                    @if (\Illuminate\Support\Facades\Gate::inspect('update', $user)->allowed())
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save access</button>
+                        </div>
+                    @endif
 
                 </form>
             </div>
         </div>
     </div>
-    @endcan
 
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
@@ -123,7 +126,7 @@
                                 <tr>
                                     <th>State</th>
                                     <th>Level</th>
-                                    <th>Country</th>
+                                    <th>Area</th>
                                     <th>Type</th>
                                 </tr>
                             </thead>
@@ -147,7 +150,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ $training->country->name }}
+                                        {{ $training->area->name }}
                                     </td>
                                     <td>
                                         <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}

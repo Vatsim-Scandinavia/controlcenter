@@ -2,16 +2,16 @@
 
 @section('title', 'Training')
 @section('title-extension')
-    @if(\Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
+    @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
         <div class="dropdown" style="display: inline;">
             <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Generate
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_REPORT_TYPE])
+                @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
                     <button class="dropdown-item" id="getOneTimeLinkReport">Report one-time link</a>
                 @endif
-                @can('create', [\App\OneTimeLink::class, $training, \App\OneTimeLink::TRAINING_EXAMINATION_TYPE])
+                @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE])
                     <button class="dropdown-item" id="getOneTimeLinkExam">Examination one-time link</a>
                 @endif
             </div>
@@ -69,7 +69,7 @@
                                 <th>Level</th>
                                 <th>Type</th>
                                 <th>Period</th>
-                                <th>Country</th>
+                                <th>Area</th>
                                 <th>Applied</th>
                                 <th>Closed</th>
                                 <th>Mentor</th>
@@ -109,7 +109,7 @@
                                         N/A
                                     @endif
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                                 <td>{{ $training->created_at->toEuropeanDate() }}</td>
                                 <td>
                                     @if ($training->closed_at != null)
@@ -201,9 +201,9 @@
 
                                             <small class="text-muted">
                                                 @if(isset($examination->position))
-                                                    <i class="fas fa-radar"></i> {{ \App\Position::find($examination->position_id)->callsign }}&emsp;
+                                                    <i class="fas fa-radar"></i> {{ \App\Models\Position::find($examination->position_id)->callsign }}&emsp;
                                                 @endif
-                                                <i class="fas fa-user-edit"></i> {{ isset(\App\User::find($examination->examiner_id)->name) ? \App\User::find($examination->examiner_id)->name : "Unknown" }}
+                                                <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($examination->examiner_id)->name) ? \App\Models\User::find($examination->examiner_id)->name : "Unknown" }}
 
                                             </small>
 
@@ -237,7 +237,7 @@
                             @endforeach
 
                             @foreach($reports as $report)
-                                @if(!$report->draft || $report->draft && \Auth::user()->isMentor())
+                                @if(!$report->draft || $report->draft && \Auth::user()->isMentorOrAbove())
 
                                     @php
                                         $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
@@ -262,7 +262,7 @@
                                                     @if(isset($report->position))
                                                         <i class="fas fa-radar"></i> {{ $report->position }}&emsp;
                                                     @endif
-                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\User::find($report->written_by_id)->name) ? \App\User::find($report->written_by_id)->name : "Unknown"  }}
+                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($report->written_by_id)->name) ? \App\Models\User::find($report->written_by_id)->name : "Unknown"  }}
                                                     @can('update', $report)
                                                         <a class="float-right" href="{{ route('training.report.edit', $report->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
                                                     @endcan
@@ -423,7 +423,7 @@
                         @endif
 
                         <label for="trainingStateSelect">Select training state</label>
-                        <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
+                        <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                             @foreach($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -443,7 +443,7 @@
 
                     <div class="form-group">
                         <label for="trainingStateSelect">Select training type</label>
-                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModerator()) disabled @endif>
+                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                             @foreach($types as $id => $data)
                                 @if($id == $training->type)
                                     <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
@@ -455,7 +455,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModerator()) disabled @endif>
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                         <label class="form-check-label" for="check1">
                             Paused
                             @if(isset($training->paused_at))
@@ -471,7 +471,7 @@
                         <textarea class="form-control" name="notes" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
                     </div>
 
-                    @if (\Auth::user()->isModerator())
+                    @if (\Auth::user()->isModeratorOrAbove())
                     <div class="form-group">
                         <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="mentors[]" id="assignMentors">
@@ -501,7 +501,7 @@
         $('#getOneTimeLinkReport').click(async function (event) {
             event.preventDefault();
             $(this).prop('disabled', true);
-            let route = await getOneTimeLink('{!! \App\OneTimeLink::TRAINING_REPORT_TYPE !!}');
+            let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed
@@ -513,7 +513,7 @@
         $('#getOneTimeLinkExam').click(async function (event) {
             event.preventDefault();
             $(this).prop('disabled', true);
-            let route = await getOneTimeLink('{!! \App\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
+            let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
             $(this).prop('disabled', false);
 
             // Anything below this point can be changed

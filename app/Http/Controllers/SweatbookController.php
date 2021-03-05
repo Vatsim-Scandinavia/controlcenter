@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Sweatbook;
-use App\Position;
+use App\Models\Sweatbook;
+use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Auth;
  * Controller for sweatbox bookings
  */
 class SweatbookController extends Controller
-{  
-    
+{
+
     use AuthorizesRequests;
 
     /**
@@ -28,7 +28,7 @@ class SweatbookController extends Controller
         $this->authorize('view', Sweatbook::class);
         $bookings = Sweatbook::all()->sortBy('date')->sortBy('start_at');
         $positions = Position::all();
-        
+
         return view('sweatbook.index', compact('bookings', 'user', 'positions'));
     }
 
@@ -71,9 +71,9 @@ class SweatbookController extends Controller
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking = new Sweatbook();
-        
+
         $booking->user_id = $user->id;
-        $booking->date = $date->format('Y-m-d'); 
+        $booking->date = $date->format('Y-m-d');
         $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($booking->date);
         $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($booking->date);
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
@@ -102,7 +102,7 @@ class SweatbookController extends Controller
 
         return redirect('/sweatbook')->withSuccess("Booking successfully saved.");
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -110,7 +110,7 @@ class SweatbookController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
- 
+
     public function update(Request $request)
     {
         $data = $request->validate([
@@ -127,7 +127,7 @@ class SweatbookController extends Controller
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
 
         $booking->user_id = $booking->user_id;
-        $booking->date = $date->format('Y-m-d'); 
+        $booking->date = $date->format('Y-m-d');
         $booking->start_at = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($booking->date);
         $booking->end_at = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($booking->date);
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;

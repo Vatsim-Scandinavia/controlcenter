@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
 
     // Reports
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
-    Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.country');
+    Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.area');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
     Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
 
@@ -64,7 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/settings', 'GlobalSettingController@index')->name('admin.settings');
     Route::post('/admin/settings', 'GlobalSettingController@edit')->name('admin.settings.store');
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
-    Route::get('/admin/templates/{id}', 'NotificationController@index')->name('admin.templates.country');
+    Route::get('/admin/templates/{id}', 'NotificationController@index')->name('admin.templates.area');
     Route::post('/admin/templates/update', 'NotificationController@update')->name('admin.templates.update');
 
     // Training routes

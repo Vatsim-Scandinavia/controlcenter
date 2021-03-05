@@ -6,7 +6,7 @@
     </button>
 
     <!-- Topbar Search -->
-    @if(\Auth::user()->isMentor())
+    @if(\Auth::user()->isMentorOrAbove())
         <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
             <div class="input-group">
                 <div class="search input-group input-lg">
@@ -27,7 +27,7 @@
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
-        @if(\Auth::user()->isMentor())
+        @if(\Auth::user()->isMentorOrAbove())
             <!-- Nav Item - Search Dropdown (Visible Only XS) -->
             <li class="nav-item dropdown no-arrow d-sm-none">
                 <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

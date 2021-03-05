@@ -2,11 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Handover;
-use App\Rating;
+use App\Models\Handover;
+use App\Models\Rating;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use anlutro\LaravelSettings\Facade as Setting;
 
 class UpdateAtcActiveStatus extends Command
 {
@@ -15,6 +19,9 @@ class UpdateAtcActiveStatus extends Command
     private $count_updated = 0;
     private $count_visited = 0;
     private $dry_run = false;
+    private $qualification_period; // Period to sum up by. In months.
+    private $grace_period; // Grace period in months.
+    private $hour_requirement; // Hours required to be deemed active.
 
     /**
      * The name and signature of the console command.
@@ -50,9 +57,16 @@ class UpdateAtcActiveStatus extends Command
 
         $start_time = microtime(true) * 1000;
 
+        $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
+        $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
+        $this->hour_requirement = Setting::get('atcActivityRequirement', 10);
+
         if ($this->option('dry-run') != null) {
             $this->dry_run = true;
         }
+
+        if (!$this->dry_run)
+            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
 
         $users = $this->getUsers();
 
@@ -183,11 +197,11 @@ class UpdateAtcActiveStatus extends Command
      */
     private function getUsers()
     {
-        // Rating >= 2 means S1+
+        // Rating >= 3 means S2+
         // Subdivision only SCA
         return Handover::where([
-            ['rating', '>=', 2],
-            ['subdivision', '=', 'SCA']
+            ['rating', '>=', 3],
+            ['subdivision', '=', Config::get('app.owner_short')]
         ])->get();
     }
 
@@ -201,7 +215,7 @@ class UpdateAtcActiveStatus extends Command
     {
         $query_string = $this->base_api_url . $user_id;
         $query_string .= '/atcsessions/';
-        $query_string .= '?start=' . Carbon::now()->subMonths(12)->format('Y-m-d');
+        $query_string .= '?start=' . Carbon::now()->subMonths($this->qualification_period)->format('Y-m-d');
         return $query_string;
     }
 
@@ -235,6 +249,7 @@ class UpdateAtcActiveStatus extends Command
      */
     private function setAtcActiveStatus(Handover $user, bool $is_active)
     {
+        $user->setConnection('mysql-handover');
         $user = $user->fresh();
         if ($user->atc_active == $is_active)
             return;
@@ -280,11 +295,20 @@ class UpdateAtcActiveStatus extends Command
      */
     private function userShouldBeSetAsInactive(Handover $handover, $sum)
     {
-        // TODO: Move hardcoded 10 hrs to value that can be changed
-        if (round(($sum / 60)) >= 10)
-            return false;
+        $user = $handover->setConnection('mysql')->user;
 
-        $user = $handover->user;
+        if ($user != null) {
+            $connection = DB::connection('mysql')->table('atc_activity');
+
+            $connection->where('user_id', $handover->id)->delete();
+            $id = $connection->insertGetId([
+                'user_id' => $handover->id,
+                'atc_hours' => round(($sum / 60)),
+            ]);
+        }
+
+        if (round(($sum / 60)) >= $this->hour_requirement)
+            return false;
 
         if ($user == null) {
             // User does not exist in CC. Set as inactive.
@@ -303,9 +327,13 @@ class UpdateAtcActiveStatus extends Command
         // Remove all non-S2 trainings
         $this->getGracePeriodTrainings($completed_trainings);
 
-        if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < 12) {
+        if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < $this->grace_period) {
             // User had trainings qualified for grace period and training was completed within last 12 months.
             // Do not set as inactive.
+            DB::connection('mysql')->table('atc_activity')->where('id', $id)->update([
+                'inside_grace_period' => true,
+                'valid_until' => $completed_trainings->last()->closed_at->addMonths($this->grace_period)
+            ]);
             return false;
         }
 

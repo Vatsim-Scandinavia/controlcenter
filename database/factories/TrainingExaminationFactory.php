@@ -1,21 +1,37 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\TrainingExamination;
+use App\Models\TrainingExamination;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Generator as Faker;
 
-$factory->define(TrainingExamination::class, function (Faker $faker) {
+class TrainingExaminationFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = TrainingExamination::class;
 
-    $date = $faker->dateTimeBetween($startDate = 'now', $endDate = '+ 1 years');
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        $date = $this->faker->dateTimeBetween($startDate = 'now', $endDate = '+ 1 years');
 
-    return [
-        'examination_date' => $date,
-        'position_id' => \App\Position::query()->inRandomOrder()->first()->id,
-        'result' => $faker->randomElement([
-            'PASSED', 'FAILED', 'INCOMPLETE', 'POSTPONED',
-        ]),
-        'created_at' => $date,
-        'updated_at' => $date,
-    ];
-});
+        return [
+            'examination_date' => $date,
+            'position_id' => \App\Models\Position::query()->inRandomOrder()->first()->id,
+            'result' => $this->faker->randomElement([
+                'PASSED', 'FAILED', 'INCOMPLETE', 'POSTPONED',
+            ]),
+            'created_at' => $date,
+            'updated_at' => $date,
+        ];
+    }
+}

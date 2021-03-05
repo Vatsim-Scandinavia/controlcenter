@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
-use App\Training;
-use App\TrainingObject;
-use App\TrainingReport;
-use App\TrainingObjectAttachment;
+use App\Models\File;
+use App\Models\Training;
+use App\Models\TrainingObject;
+use App\Models\TrainingReport;
+use App\Models\TrainingObjectAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use function MongoDB\BSON\toJSON;
@@ -50,7 +50,7 @@ class TrainingObjectAttachmentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\TrainingObjectAttachment $attachment
+     * @param \App\Models\TrainingObjectAttachment $attachment
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

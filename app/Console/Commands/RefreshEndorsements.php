@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Training;
-use App\TrainingExamination;
+use App\Models\Training;
+use App\Models\TrainingExamination;
 
 class RefreshEndorsements extends Command
 {

@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\OneTimeLink;
-use App\Training;
-use App\User;
+use App\Models\OneTimeLink;
+use App\Models\Training;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use anlutro\LaravelSettings\Facade as Setting;
@@ -16,47 +16,47 @@ class TrainingPolicy
     /**
      * Determine whether the user can view the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function view(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModerator($training->country) ||
+                $user->isModeratorOrAbove($training->area) ||
                 $user->is($training->user);
     }
 
     /**
      * Determine whether the user can update the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function update(User $user, Training $training)
     {
         return  $training->mentors->contains($user) ||
-                $user->isModerator($training->country);
+                $user->isModeratorOrAbove($training->area);
     }
 
     /**
      * Determine whether the user can delete the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function delete(User $user, Training $training)
     {
-        return $user->isModerator($training->country);
+        return $user->isModeratorOrAbove($training->area);
     }
 
     /**
      * Determine whether the user can close the training.
      *
-     * @param  \App\User  $user
-     * @param  \App\Training  $training
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function close(User $user, Training $training)
@@ -101,7 +101,7 @@ class TrainingPolicy
      */
     public function create(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**
@@ -115,27 +115,27 @@ class TrainingPolicy
     {
         return  $training->mentors->contains($user) ||
                 $user->is($training->user) ||
-                $user->isModerator($training->country) ||
+                $user->isModeratorOrAbove($training->area) ||
                 $user->isAdmin();
     }
 
     public function createReport(User $user, Training $training)
     {
         if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->country);
+            return $user->isMentor($link->training->area);
         }
 
-        // Check if mentor is mentoring country, not filling their own training and the training is in progress
+        // Check if mentor is mentoring area, not filling their own training and the training is in progress
         return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
     public function createExamination(User $user, Training $training)
     {
         if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->country);
+            return $user->isMentor($link->training->area);
         }
 
-        // Check if mentor is mentoring country, not filling their own training and the training is awaing an exam.
+        // Check if mentor is mentoring area, not filling their own training and the training is awaing an exam.
         return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
@@ -155,11 +155,11 @@ class TrainingPolicy
     }
 
     public function viewActiveRequests(User $user) {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     public function viewHistoricRequests(User $user) {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
+use App\Models\Area;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
 
@@ -14,22 +14,22 @@ class NotificationController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param int $filterCountry countryId to filter the index by
+     * @param int $filterArea areaId to filter the index by
      * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function index($filterCountry = 1)
+    public function index($filterArea = 1)
     {
         $this->authorize('viewTemplates', Notification::class);
 
-        $countries = Country::all();
-        $currentCountry = Country::find($filterCountry);
+        $areas = Area::all();
+        $currentArea = Area::find($filterArea);
         
-        $template_newreq = Country::find($filterCountry)->template_newreq;
-        $template_newmentor = Country::find($filterCountry)->template_newmentor;
-        $template_pretraining = Country::find($filterCountry)->template_pretraining;
+        $template_newreq = Area::find($filterArea)->template_newreq;
+        $template_newmentor = Area::find($filterArea)->template_newmentor;
+        $template_pretraining = Area::find($filterArea)->template_pretraining;
 
-        return view('admin.notificationtemplates', compact('countries', 'currentCountry', 'template_newreq', 'template_newmentor', 'template_pretraining'));
+        return view('admin.notificationtemplates', compact('areas', 'currentArea', 'template_newreq', 'template_newmentor', 'template_pretraining'));
     }
 
     /**
@@ -43,23 +43,23 @@ class NotificationController extends Controller
     {
 
         $data = request()->validate([
-            'country' => 'required|int',
+            'area' => 'required|int',
             'newrequestaddition' => 'sometimes',
             'newmentoraddition' => 'sometimes',
             'pretrainingaddition' => 'sometimes',
         ]);
 
-        $country = Country::find($data['country']);
+        $area = Area::find($data['area']);
 
-        $this->authorize('modifyCountryTemplate', [Notification::class, $country]);
+        $this->authorize('modifyAreaTemplate', [Notification::class, $area]);
 
-        $country->template_newreq = $data['newrequestaddition'];
-        $country->template_newmentor = $data['newmentoraddition'];
-        $country->template_pretraining = $data['pretrainingaddition'];
+        $area->template_newreq = $data['newrequestaddition'];
+        $area->template_newmentor = $data['newmentoraddition'];
+        $area->template_pretraining = $data['pretrainingaddition'];
         
-        $country->save();
+        $area->save();
 
-        return redirect()->intended(route('admin.templates.country', $country->id))->withSuccess($country->name."'s notifications updated.");
+        return redirect()->intended(route('admin.templates.area', $area->id))->withSuccess($area->name."'s notifications updated.");
     }
 
 }

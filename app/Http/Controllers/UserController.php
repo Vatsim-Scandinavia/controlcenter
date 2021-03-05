@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use App\Group;
-use App\Country;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\Area;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use League\CommonMark\Inline\Parser\NewlineParser;
 
 /**
  * Controller to handle user views
@@ -39,7 +41,7 @@ class UserController extends Controller
         $this->authorize('view', $user);
 
         $groups = Group::all();
-        $countries = Country::all();
+        $areas = Area::all();
 
         if ($user == null)
             return abort(404);
@@ -49,14 +51,14 @@ class UserController extends Controller
         $types = TrainingController::$types;
         $endorsements = $user->ratings;
 
-        return view('user.show', compact('user', 'groups', 'countries', 'trainings', 'statuses', 'types', 'endorsements'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -64,51 +66,48 @@ class UserController extends Controller
     {
 
         $this->authorize('update', $user);
+        $permissions = [];
 
-        $data = $request->validate([
-            'access' => 'required|integer',
-            'countries' => 'nullable|array'
-        ]);
+        // Generate a list of possible validations
+        foreach(Area::all() as $area){
+            foreach(Group::all() as $group){
+                // Don't list or allow admin rank to be set through this interface
+                if($group->id == 1) { continue; }
 
-        if (key_exists('countries', $data)) {
-
-            foreach ((array) $data['countries'] as $country) {
-                if (!$user->training_role_countries->contains($country)){
-                    $user->training_role_countries()->attach($country, ['inserted_by' => Auth::id()]);
-                }
+                $key = $area->name.'_'.$group->name;
+                $permissions[$key] = '';
             }
-
-            foreach ($user->training_role_countries as $country) {
-                if (!in_array($country->id, (array) $data['countries'])) {
-                    $user->training_role_countries()->detach($country);
-
-                    // Unassign this mentor from trainings from the specific country
-                    $user->teaches()->detach($user->teaches->where('country_id', $country->id));
-                }
-            }
-
-            unset($data['countries']);
-        } else {
-            // Detach all if no passed key, as that means the list is empty
-            $user->training_role_countries()->detach();
-
-            // Unassign this mentor from all trainings
-            $user->teaches()->detach();
         }
 
-        if($data['access'] == 0){
-            $user->group = null;
-
-            // Detach all country assosiciations if they are downgraded all the way to student.
-            $user->training_role_countries()->detach();
-
-            // Unassign this mentor from all trainings
-            $user->teaches()->detach();
-        } else {
-            $user->group = $data['access'];
+        // Valiate and allow these fields, then loop through permissions to set the final data set
+        $data = $request->validate($permissions);
+        foreach($permissions as $key => $value){
+            isset($data[$key]) ? $permissions[$key] = true : $permissions[$key] = false;
         }
 
-        $user->save();
+        // Check and update the permissions
+        foreach($permissions as $key => $value){
+        
+            $str = explode('_', $key);
+
+            $area = Area::where('name', $str[0])->get()->first();
+            $group = Group::where('name', $str[1])->get()->first();
+
+            $this->authorize('updateGroup', [$user, $group, $area]);
+
+            // Check if permission is not set, and set it or other way around.
+            if($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0){
+                if($value == true) $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
+            } else {
+                if($value == false) $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
+            }
+
+            // Check and detach trainings from mentor
+            if($user->teaches()->where('area_id', $area->id)->count() > 0 && !$user->isMentor() && $value == false){
+                $user->teaches()->detach($user->teaches->where('area_id', $area->id));
+            }
+
+        }
 
         return redirect(route('user.show', $user))->with("success", "User access settings successfully updated.");
 
@@ -129,7 +128,7 @@ class UserController extends Controller
      * Update the user's settings to storage
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function settings_update(Request $request, User $user)

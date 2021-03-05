@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
+use App\Models\Area;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
-use App\Rating;
-use App\Training;
-use App\TrainingReport;
-use App\TrainingExamination;
-use App\TrainingInterest;
-use App\User;
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\TrainingReport;
+use App\Models\TrainingExamination;
+use App\Models\TrainingInterest;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,7 +79,7 @@ class TrainingController extends Controller
 
         $this->authorize('viewActiveRequests', Training::class);
 
-        $openTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '>=', 0]])->sort(function($a, $b) {
+        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]])->sort(function($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
@@ -107,7 +107,7 @@ class TrainingController extends Controller
 
         $this->authorize('viewHistoricRequests', Training::class);
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
             if ($a->status == $b->status) {
                 return $b->created_at->timestamp - $a->created_at->timestamp;
             }
@@ -136,13 +136,13 @@ class TrainingController extends Controller
         $user = Auth::user();
         $userVatsimRating = $user->rating;
 
-        // Loop through all countries, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
+        // Loop through all areas, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
         $payload = [];
 
-        foreach(Country::with('ratings')->get() as $country){
+        foreach(Area::with('ratings')->get() as $area){
 
             $availableRatings = collect();
-            foreach($country->ratings as $rating){
+            foreach($area->ratings as $rating){
 
                 $reqVatRating = $rating->pivot->required_vatsim_rating;
 
@@ -175,8 +175,8 @@ class TrainingController extends Controller
             if($bundleAmount > 0){ $availableRatings->push($bundle); }
 
             // Inject the data into payload
-            $payload[$country->id]["name"] = $country->name;
-            $payload[$country->id]["data"] = $availableRatings;
+            $payload[$area->id]["name"] = $area->name;
+            $payload[$area->id]["data"] = $availableRatings;
         }
 
         return view('training.apply', [
@@ -196,7 +196,7 @@ class TrainingController extends Controller
         $this->authorize('create', Training::class);
 
         $students = User::all();
-        $ratings = Country::with('ratings')->get()->toArray();
+        $ratings = Area::with('ratings')->get()->toArray();
 
         return view('training.create', compact('students', 'ratings'));
     }
@@ -226,7 +226,7 @@ class TrainingController extends Controller
 
         $training = Training::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
-            'country_id' => $data['training_country'],
+            'area_id' => $data['training_area'],
             'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,
@@ -239,7 +239,7 @@ class TrainingController extends Controller
             $training->ratings()->save($ratings->first());
         }
 
-        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Country::find($training->country_id)->name);
+        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Area::find($training->area_id)->name);
 
         // Send confimration mail
         $training->user->notify(new TrainingCreatedNotification($training));
@@ -254,7 +254,7 @@ class TrainingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Training $training
+     * @param \App\Models\Training $training
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -265,7 +265,7 @@ class TrainingController extends Controller
         $examinations = TrainingExamination::where('training_id', $training->id)->get()->sortByDesc('examination_date');
         $reports = TrainingReport::where('training_id', $training->id)->get()->sortByDesc('report_date');
 
-        $trainingMentors = $training->country->mentors;
+        $trainingMentors = $training->area->mentors;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
@@ -298,7 +298,7 @@ class TrainingController extends Controller
             $notifyOfNewMentor = false;
 
             foreach ((array) $attributes['mentors'] as $mentor) {
-                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentor($training->country)) {
+                if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentorOrAbove($training->area)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
 
                     // Notify student of their new mentor
@@ -430,7 +430,7 @@ class TrainingController extends Controller
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
             'ratings' => 'sometimes|required',
-            'training_country' => 'sometimes|required',
+            'training_area' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
             'type' => 'sometimes|required|integer',
             'notes' => 'nullable',

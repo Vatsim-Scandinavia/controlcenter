@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Vote;
-use App\VoteOption;
+use App\Models\Vote;
+use App\Models\VoteOption;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -53,7 +53,7 @@ class VoteController extends Controller
             'expire_date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'expire_time' => 'required|regex:/^\d{2}:\d{2}$/',
             'require_active' => '',
-            'require_vatsca_member' => '',
+            'require_member' => '',
             'question' => 'required|string',
             'vote_options' => 'required|string'
         ]);
@@ -69,14 +69,14 @@ class VoteController extends Controller
 
         // Only ATC active can vote ticked?
         isset($data['require_active']) ? $require_active = true : $require_active = false;
-        isset($data['require_vatsca_member']) ? $require_vatsca_member = true : $require_vatsca_member = false;
+        isset($data['require_member']) ? $require_member = true : $require_member = false;
 
         // Store the new data
         $vote = new Vote();
 
         $vote->question = $data['question'];
         $vote->require_active = $require_active;
-        $vote->require_vatsca_member = $require_vatsca_member;
+        $vote->require_member = $require_member;
         $vote->closed = false;
         $vote->end_at = $expire->format('Y-m-d H:i:s');;
 
@@ -147,7 +147,7 @@ class VoteController extends Controller
      * Check and close vote if it's still active after deadline
      * If a vote is submited after deadline and it's still open, let's close it. Cron handles closing, but this is an extra check
      *
-     * @param  \App\Vote $vote
+     * @param  \App\Models\Vote $vote
      * @return void
      */
     private function isVoteValid(Vote $vote){

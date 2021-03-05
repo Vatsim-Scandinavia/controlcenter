@@ -8,9 +8,9 @@
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Countries</a>
-            @foreach($countries as $country)
-                <a class="dropdown-item" href="{{ route('reports.training.country', $country->id) }}">{{ $country->name }}</a>
+            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Areas</a>
+            @foreach($areas as $area)
+                <a class="dropdown-item" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
             @endforeach 
         </div>
     </div>

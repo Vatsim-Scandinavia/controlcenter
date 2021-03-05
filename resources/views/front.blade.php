@@ -19,12 +19,18 @@
             @endif
             
             <div class="content-title"><i class="far fa-radar"></i> {{ config('app.name') }}</div>
-            <div class="content-description">Scandinavian Training Administration</div>
+            <div class="content-description">
+                @if(Config::get('app.owner_short') == 'SCA')
+                    Scandinavian Training Administration
+                @else
+                Training Administration
+                @endif
+            </div>
             <a href="{{ route('login') }}" class="btn btn-success">Login</a>
         </div>
 
         <div class="logo">
-            <img src="images/vatsca-logo-negative.svg">
+            <img src="images/logos/vat{{ mb_strtolower(Config::get('app.owner_short')) }}.svg">
             <span class="version-front">Control Center v{{ config('app.version') }}</span>
         </div>
     </div>

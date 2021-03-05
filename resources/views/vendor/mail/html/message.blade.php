@@ -2,7 +2,7 @@
 {{-- Header --}}
 @slot('header')
 @component('mail::header', ['url' => config('app.url')])
-Vatsim Scandinavia<br><span style="font-weight: 400">Control Center</span>
+{{ Config::get('app.owner') }}<br><span style="font-weight: 400">Control Center</span>
 @endcomponent
 @endslot
 
@@ -23,7 +23,7 @@ Vatsim Scandinavia<br><span style="font-weight: 400">Control Center</span>
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-[![Logo]({{ asset('images/vatsca-logo-email.png') }})](https://vatsim-scandinavia.org/)\
+[![Logo]({{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'-email.png') }})]({{ Setting::get("linkHome") }})\
 [Change your e-mail settings here]({{ route('user.settings') }})
 @endcomponent
 @endslot

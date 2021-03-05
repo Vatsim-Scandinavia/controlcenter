@@ -27,7 +27,7 @@
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-field="lastreport" data-sortable="true" data-filter-control="input">Last Report</th>
-                                <th data-field="country" data-sortable="true" data-filter-control="select">Country</th>
+                                <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,7 +37,7 @@
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
-                                @if ($user->isModerator())                            
+                                @if ($user->isModeratorOrAbove())                            
                                     <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
                                     <td><a href="/user/{{ $training->user->id }}">{{ $training->user->name }}</a></td>
                                 @else 
@@ -72,13 +72,13 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if(\App\TrainingReport::where('training_id', $training->id)->count() > 0)
-                                        {{ Carbon\Carbon::make(\App\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
+                                    @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
+                                        {{ Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
                                     @else
                                         No report yet
                                     @endif
                                 </td>
-                                <td>{{ $training->country->name }}</td>
+                                <td>{{ $training->area->name }}</td>
                             </tr>
                             @endforeach
 

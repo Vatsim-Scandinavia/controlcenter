@@ -46,7 +46,7 @@
                                     {{ $endorsement->expires_at->toEuropeanDate() }}                                
                                 </td>
                                 <td>
-                                    @if($user->isModerator())
+                                    @if($user->isModeratorOrAbove())
                                         <a href="/users/endorsements/{{ $endorsement->id }}/delete"><i class="fas fa-times"></i> Remove</a>
                                     @else
                                         No access
@@ -62,7 +62,7 @@
             
         </div>
 
-        @if($user->isModerator())
+        @if($user->isModeratorOrAbove())
             <div class="align-items-left">
                 <a href="{{ route('users.soloendorsements.create') }}" class="btn btn-success">Add Endorsement</a>
             </div>

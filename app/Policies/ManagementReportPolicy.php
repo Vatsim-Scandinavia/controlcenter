@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\ManagementReport;
-use App\User;
+use App\Models\ManagementReport;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ManagementReportPolicy
@@ -13,7 +13,7 @@ class ManagementReportPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function accessTrainingReports(User $user) {
@@ -23,18 +23,17 @@ class ManagementReportPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function viewMentors(User $user) {
-        return $user->isAdmin() ||
-            $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function viewAtcActivity(User $user) {

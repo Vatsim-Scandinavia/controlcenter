@@ -20,19 +20,21 @@
             <span>Dashboard</span></a>
         </li>
 
-        @can('view', \App\Vatbook::class)
-        <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('vatbook') }}">
-            <i class="fas fa-fw fa-calendar"></i>
-            <span>Vatbook</span></a>
-        </li>
+        @can('view', \App\Models\Vatbook::class)
+            <li class="nav-item {{ Route::is('vatbook') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('vatbook') }}">
+                <i class="fas fa-fw fa-calendar"></i>
+                <span>Vatbook</span></a>
+            </li>
         @endcan
 
-        <li class="nav-item">
-        <a class="nav-link" href="https://moodle.vatsim-scandinavia.org" target="_blank">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Moodle</span></a>
-        </li>
+        @if(Setting::get('linkMoodle') != "")
+            <li class="nav-item">
+            <a class="nav-link" href="{{ Setting::get('linkMoodle') }}" target="_blank">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Moodle</span></a>
+            </li>
+        @endif
 
         <li class="nav-item {{ Route::is('member.endorsements') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('member.endorsements') }}">
@@ -40,7 +42,7 @@
             <span>Endorsements List</span></a>
         </li>
 
-        @if (\Auth::user()->isMentor())
+        @if (\Auth::user()->isMentorOrAbove())
 
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -63,7 +65,7 @@
         </li>
 
         @endif
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
@@ -81,7 +83,7 @@
 
         @endif
 
-        @if (\Auth::user()->isMentor())
+        @if (\Auth::user()->isMentorOrAbove())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -90,7 +92,7 @@
         Members
         </div>
 
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
         <li class="nav-item {{ Route::is('users') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('users') }}">
             <i class="fas fa-fw fa-users"></i>
@@ -106,7 +108,7 @@
 
         @endif
 
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -124,16 +126,13 @@
             @endif
 
             <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
-
-            @if (\Auth::user()->isAdmin())
-                <a class="collapse-item" href="{{ route('reports.atc') }}">ATC Activity</a>
-            @endif
+            
             </div>
         </div>
         </li>
         @endif
 
-        @if (\Auth::user()->isModerator())
+        @if (\Auth::user()->isModeratorOrAbove())
 
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
@@ -148,7 +147,7 @@
                 <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
             @endif
 
-            @if (\Auth::user()->isModerator())
+            @if (\Auth::user()->isModeratorOrAbove())
                 <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
             @endif
             </div>
@@ -172,7 +171,7 @@
         @endif
 
         <!-- Logo -->
-        <img class="logo" src="{{ asset('images/vatsca-logo-negative.svg') }}">
+        <a href="{{ Setting::get('linkHome') }}"><img class="logo" src="{{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'.svg') }}"></a>
         <span class="version-sidebar">Control Center v{{ config('app.version') }}</span>
     @else
         <!-- Divider -->

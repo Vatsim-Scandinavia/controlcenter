@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Vote;
+use App\Models\User;
+use App\Models\Vote;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -15,7 +15,7 @@ class VotePolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function index(User $user)
@@ -26,7 +26,7 @@ class VotePolicy
     /**
      * Determine whether the user can create the model.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
@@ -37,7 +37,7 @@ class VotePolicy
     /**
      * Determine whether the user can store the model.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function store(User $user)
@@ -59,8 +59,8 @@ class VotePolicy
             return Response::deny("The vote closed and concluded at ".Carbon::create($vote->end_at)->toEuropeanDateTime());
         }
 
-        if ($vote->require_vatsca_member) {
-            if($user->subdivision != 'SCA') return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to VATSIM Scandinavia subdivision to vote.");
+        if ($vote->require_member) {
+            if($user->subdivision != Config::get('app.owner_short')) return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to ".Config::get('app.owner')." subdivision to vote.");
         }
 
         if ($vote->require_active) {

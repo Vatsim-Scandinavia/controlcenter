@@ -1,28 +1,32 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
-use App\User;
-use Illuminate\Support\Str;
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| This directory should contain each of the model factory definitions for
-| your application. Factories provide a convenient way to generate new
-| model instances for testing / seeding your application's database.
-|
-*/
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(User::class, function (Faker $faker) {
-    return [
-        'last_login' => \Carbon\Carbon::now(),
-        'group' => null,
-        'setting_notify_newreport' => false,
-        'setting_notify_newreq' => false,
-        'setting_notify_closedreq' => false,
-        'setting_notify_newexamreport' => false,
-    ];
-});
+class UserFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = User::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'last_login' => \Carbon\Carbon::now(),
+            'setting_notify_newreport' => false,
+            'setting_notify_newreq' => false,
+            'setting_notify_closedreq' => false,
+            'setting_notify_newexamreport' => false,
+        ];
+    }
+}

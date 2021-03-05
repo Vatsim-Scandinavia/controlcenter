@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Sweatbook;
+use App\Models\User;
+use App\Models\SweatBook;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SweatbookPolicy
@@ -13,34 +13,34 @@ class SweatbookPolicy
     /**
      * Determine whether the user can view bookings.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function view(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove();
     }
 
     /**
      * Determine whether the user can create bookings.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove();
     }
 
     /**
      * Determine whether the user can update the booking.
      *
-     * @param  \App\User  $user
-     * @param  \App\Sweatbook  $booking
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Sweatbook  $booking
      * @return bool
      */
     public function update(User $user, Sweatbook $booking)
     {
-        return $booking->user_id == $user->id || $user->isModerator();
+        return $booking->user_id == $user->id || $user->isModeratorOrAbove();
     }
 }

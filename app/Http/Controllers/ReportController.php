@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
-use App\ManagementReport;
-use App\Rating;
-use App\Training;
-use App\User;
+use App\Models\Area;
+use App\Models\ManagementReport;
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\User;
+use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -19,24 +20,24 @@ class ReportController extends Controller
     /**
      * Show the training statistics view
      *
-     * @param int $filterCountry countryId to filter by
+     * @param int $filterArea areaId to filter by
      * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function trainings($filterCountry = false){
+    public function trainings($filterArea = false){
 
         $this->authorize('accessTrainingReports', ManagementReport::class);
         // Get stats
-        $cardStats = $this->getCardStats($filterCountry);
-        $totalRequests = $this->getDailyRequestsStats($filterCountry);
-        list($newRequests, $completedRequests) = $this->getBiAnnualRequestsStats($filterCountry);
-        $queues = $this->getQueueStats($filterCountry);
+        $cardStats = $this->getCardStats($filterArea);
+        $totalRequests = $this->getDailyRequestsStats($filterArea);
+        list($newRequests, $completedRequests) = $this->getBiAnnualRequestsStats($filterArea);
+        $queues = $this->getQueueStats($filterArea);
 
         // Send it to the view
-        ($filterCountry) ? $filterName = Country::find($filterCountry)->name :  $filterName = 'All Countries';
-        $countries = Country::all();
+        ($filterArea) ? $filterName = Area::find($filterArea)->name :  $filterName = 'All Areas';
+        $areas = Area::all();
 
-        return view('reports.trainings', compact('filterName', 'countries', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'queues'));
+        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'queues'));
     }
 
     /**
@@ -50,13 +51,16 @@ class ReportController extends Controller
         $this->authorize('viewMentors', ManagementReport::class);
 
         if (auth()->user()->isAdmin()) {
-            $mentors = User::where('group', '<=', 3)->get();
-        } else {
-            $mentors = User::where('group', '<=', 3)->whereHas('training_role_countries', function(Builder $query) {
-                $query->whereIn('country_id', auth()->user()->training_role_countries()->pluck('country_id'));
-            })->get();
-        }
 
+            $mentors = Group::find(3)->users;
+
+        } else {
+
+            $mentors = Group::find(3)->users()->whereHas('groups', function(Builder $query) {
+                $query->whereIn('area_id', auth()->user()->groups()->pluck('area_id'));
+            })->get();
+
+        }
 
         return view('reports.mentors', compact('mentors'));
     }
@@ -80,10 +84,10 @@ class ReportController extends Controller
     /**
      * Return the statistics for the cards (in queue, in training, awaiting exam, completed this year) on top of the page
      *
-     * @param int $countryFilter countryId to filter by
+     * @param int $filterArea areaId to filter by
      * @return mixed
      */
-    protected function getCardStats($countryFilter)
+    protected function getCardStats($filterArea)
     {
         $payload = [
             "waiting" => 0,
@@ -92,17 +96,17 @@ class ReportController extends Controller
             "completed" => 0,
         ];
 
-        if($countryFilter){
-            $payload["waiting"] = Country::find($countryFilter)->trainings->where('status', 0)->count();
-            $payload["training"] = Country::find($countryFilter)->trainings->whereIn('status', [1, 2])->count();
-            $payload["exam"] = Country::find($countryFilter)->trainings->where('status', 3)->count();
-            $payload["completed"] = Country::find($countryFilter)->trainings->where('status', -1)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+        if($filterArea){
+            $payload["waiting"] = Area::find($filterArea)->trainings->where('status', 0)->count();
+            $payload["training"] = Area::find($filterArea)->trainings->whereIn('status', [1, 2])->count();
+            $payload["exam"] = Area::find($filterArea)->trainings->where('status', 3)->count();
+            $payload["completed"] = Area::find($filterArea)->trainings->where('status', -1)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
         } else {
-            foreach(Country::all() as $country){
-                $payload["waiting"] = $payload["waiting"] + $country->trainings->where('status', 0)->count();
-                $payload["training"] = $payload["training"] + $country->trainings->whereIn('status', [1, 2])->count();
-                $payload["exam"] = $payload["exam"] + $country->trainings->where('status', 3)->count();
-                $payload["completed"] = $payload["completed"] + $country->trainings->where('status', -1)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+            foreach(Area::all() as $area){
+                $payload["waiting"] = $payload["waiting"] + $area->trainings->where('status', 0)->count();
+                $payload["training"] = $payload["training"] + $area->trainings->whereIn('status', [1, 2])->count();
+                $payload["exam"] = $payload["exam"] + $area->trainings->where('status', 3)->count();
+                $payload["completed"] = $payload["completed"] + $area->trainings->where('status', -1)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
             }
         }
 
@@ -112,16 +116,16 @@ class ReportController extends Controller
     /**
      * Return the statistics the total amount of requests per day
      *
-     * @param int $countryFilter countryId to filter by
+     * @param int $areaFilter areaId to filter by
      * @return mixed
      */
-    protected function getDailyRequestsStats($countryFilter)
+    protected function getDailyRequestsStats($areaFilter)
     {
         $payload = [];
-        if($countryFilter){
+        if($areaFilter){
 
             $data = Training::select([DB::raw('count(id) as `count`'), DB::raw('DATE(created_at) as day')])->groupBy('day')
-              ->where('country_id', $countryFilter)
+              ->where('area_id', $areaFilter)
               ->where('created_at', '>=', Carbon::now()->subYear(1))
               ->get();
 
@@ -148,10 +152,10 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
-     * @param int $countryFilter countryId to filter by
+     * @param int $areaFilter areaId to filter by
      * @return mixed
      */
-    protected function getBiAnnualRequestsStats($countryFilter)
+    protected function getBiAnnualRequestsStats($areaFilter)
     {
         $monthTranslator = [
             (int)Carbon::now()->format('m') => 6,
@@ -166,7 +170,7 @@ class ReportController extends Controller
         $newRequests = [];
         $completedRequests = [];
 
-        if($countryFilter){
+        if($areaFilter){
 
             foreach(Rating::all() as $rating){
                 if($rating->id >= 2){
@@ -181,7 +185,7 @@ class ReportController extends Controller
                         ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                         ->where('created_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
-                        ->where('country_id', $countryFilter)
+                        ->where('area_id', $areaFilter)
                         ->groupBy('month')
                         ->get();
 
@@ -197,7 +201,7 @@ class ReportController extends Controller
                         ->where('status', -1)
                         ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('rating_id', $rating->id)
-                        ->where('country_id', $countryFilter)
+                        ->where('area_id', $areaFilter)
                         ->groupBy('month')
                         ->get();
 
@@ -254,14 +258,14 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
-     * @param int $countryFilter countryId to filter by
+     * @param int $areaFilter areaId to filter by
      * @return mixed
      */
-    protected function getQueueStats($countryFilter)
+    protected function getQueueStats($areaFilter)
     {
         $payload = [];
-        if($countryFilter){
-            foreach(Country::find($countryFilter)->ratings as $rating){
+        if($areaFilter){
+            foreach(Area::find($areaFilter)->ratings as $rating){
                 if($rating->pivot->queue_length){
                     $payload[$rating->name] = $rating->pivot->queue_length;
                 }
@@ -269,9 +273,9 @@ class ReportController extends Controller
         } else {
 
             $divideRating = [];
-            foreach(Country::all() as $country){
-                // Loop through the ratings of this country to get queue length
-                foreach($country->ratings as $rating){
+            foreach(Area::all() as $area){
+                // Loop through the ratings of this area to get queue length
+                foreach($area->ratings as $rating){
 
                     // Only calculate if queue length is defined
                     if($rating->pivot->queue_length){
@@ -287,7 +291,7 @@ class ReportController extends Controller
 
             }
 
-            // Divide the queue length appropriately to get an average across countries
+            // Divide the queue length appropriately to get an average across areas
             foreach($payload as $queue => $value){
                 $payload[$queue] = $value / $divideRating[$queue];
             }

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use anlutro\LaravelSettings\Facade as Setting;
 
@@ -13,7 +13,7 @@ class SettingPolicy
     /**
      * Determine whether the user view global settings.
      *
-     * @param \App\User $user
+     * @param  \App\Models\User $user
      * @param Setting $setting
      * @return bool
      */
@@ -24,7 +24,7 @@ class SettingPolicy
     /**
      * Determine whether the user can update global settings.
      *
-     * @param \App\User $user
+     * @param  \App\Models\User $user
      * @param Setting $setting
      * @return bool
      */

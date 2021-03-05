@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\File;
-use App\Training;
-use App\TrainingObjectAttachment;
-use App\TrainingReport;
-use App\User;
+use App\Models\File;
+use App\Models\Training;
+use App\Models\TrainingObjectAttachment;
+use App\Models\TrainingReport;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -26,16 +26,17 @@ class TrainingObjectAttachmentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create(['id' => 10000005, 'group' => null]);
-        $this->report = factory(TrainingReport::class)->create([
-            'training_id' => factory(Training::class)->create([
+        $this->user = User::factory()->create(['id' => 10000005]);
+        $this->report = TrainingReport::factory()->create([
+            'training_id' => Training::factory()->create([
                 'user_id' => $this->user->id,
             ])->id,
-            'written_by_id' => factory(User::class)->create([
+            'written_by_id' => User::factory()->create([
                 'id' => 10000001,
-                'group' => 2,
             ])->id,
         ]);
+
+        $this->report->author->groups()->attach(2, ['area_id' => $this->report->training->area->id]);
 
     }
 
@@ -58,7 +59,7 @@ class TrainingObjectAttachmentTest extends TestCase
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $response = $this->actingAs($mentor)->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file]);
-        $id = $response->decodeResponseJson('id');
+        $id = $response->json('id');
 
         $this->assertDatabaseHas('training_object_attachments', ['id' => $id]);
         $attachments = TrainingObjectAttachment::find($id);
@@ -73,7 +74,7 @@ class TrainingObjectAttachmentTest extends TestCase
 
         $response = $this->actingAs($student)->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file]);
         $response->assertStatus(403);
-        $id = $response->decodeResponseJson('id');
+        $id = $response->json('id');
 
         $this->assertDatabaseMissing('training_object_attachments', ['id' => $id]);
         $this->assertNull(File::find($id));
@@ -87,7 +88,7 @@ class TrainingObjectAttachmentTest extends TestCase
 
         $id = $this->actingAs($mentor)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
-            ->decodeResponseJson('id')[0];
+            ->json('id')[0];
 
         $this->followingRedirects()->get(route('training.object.attachment.show', ['attachment' => $id]))
             ->assertStatus(200);
@@ -104,7 +105,7 @@ class TrainingObjectAttachmentTest extends TestCase
 
         $id = $this->actingAs($this->report->author)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report]), ['file' => $file])
-            ->decodeResponseJson('id')[0];
+            ->json('id')[0];
 
         $this->actingAs($student)->followingRedirects()
             ->get(route('training.object.attachment.show', ['attachment' => $id]))
@@ -137,7 +138,7 @@ class TrainingObjectAttachmentTest extends TestCase
 
         $id = $this->actingAs($mentor)
             ->postJson(route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $this->report, 'hidden' => true]), ['file' => $file])
-            ->decodeResponseJson('id')[0];
+            ->json('id')[0];
 
         $this->actingAs($mentor)->followingRedirects()
             ->get(route('training.object.attachment.show', ['attachment' => $id]))

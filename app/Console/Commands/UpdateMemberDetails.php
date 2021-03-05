@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Console\Command;
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Training;
+use App\Models\Training;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\TrainingClosedNotification;
@@ -43,7 +43,7 @@ class UpdateMemberDetails extends Command
      */
     public function handle()
     {
-        $mentors = User::where('group', 3)->get();
+        $mentors = User::allWithGroup('3');
 
         $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
 
@@ -57,7 +57,7 @@ class UpdateMemberDetails extends Command
 
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();
-            $mentor->training_role_countries()->detach();
+            $mentor->groups()->detach();
 
             // Remove mentor usergroup
             $mentor->group = null;

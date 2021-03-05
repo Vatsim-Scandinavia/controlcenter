@@ -27,7 +27,7 @@
                             @foreach($members as $member)
                             <tr>
                                 <td>
-                                    @if(Auth::user()->isModerator())
+                                    @if(Auth::user()->isModeratorOrAbove())
                                         <a href="{{ route('user.show', $member->id) }}">{{ $member->name }} ({{ $member->id }})</a>
                                     @else 
                                         {{ $member->name }} ({{ $member->id }})

@@ -9,12 +9,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "anlutro/l4-settings": "^0.11.2",
+        "anlutro/l4-settings": "^1.0",
+        "doctrine/dbal": "^3.0",
+        "facade/ignition": "^2.3.6",
         "fideloper/proxy": "^4.0",
         "graham-campbell/markdown": "^13.1",
+        "guzzlehttp/guzzle": "^7.0.1",
         "hisorange/browser-detect": "^4.2",
-        "laravel/framework": "^6.0",
-        "laravel/tinker": "^1.0",
+        "laravel/framework": "^8.0",
+        "laravel/tinker": "^2.0",
+        "laravel/ui": "^3.2",
         "league/commonmark": "^1.5",
         "league/oauth2-client": "^2.4",
         "wildside/userstamps": "^2.0"
@@ -22,11 +26,10 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.3",
         "beyondcode/laravel-dump-server": "^1.0",
-        "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",
-        "nunomaduro/collision": "^3.0",
-        "phpunit/phpunit": "^7.5"
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.0"
     },
     "config": {
         "optimize-autoloader": true,
@@ -40,12 +43,10 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
-        },
-        "classmap": [
-            "database/seeds",
-            "database/factories"
-        ]
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
     },
     "autoload-dev": {
         "psr-4": {

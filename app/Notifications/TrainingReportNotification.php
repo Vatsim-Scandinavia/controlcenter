@@ -4,9 +4,9 @@ namespace App\Notifications;
 
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
-use App\Country;
-use App\Training;
-use App\TrainingReport;
+use App\Models\Area;
+use App\Models\Training;
+use App\Models\TrainingReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use Illuminate\Notifications\Notification;
-use App\User;
-use App\Country;
+use App\Models\User;
+use App\Models\Area;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class NotificationPolicy
@@ -19,17 +19,17 @@ class NotificationPolicy
      */
     public function viewTemplates(User $user)
     {
-        return $user->isModerator();
+        return $user->isModeratorOrAbove();
     }
 
     /**
-     * Determine if the user can modify a specific country's templates
+     * Determine if the user can modify a specific area's templates
      *
      * @param User $user
      * @return bool
      */
-    public function modifyCountryTemplate(User $user, Country $country)
+    public function modifyAreaTemplate(User $user, Area $area)
     {
-        return $user->isAdmin() || ($user->isModerator() && $country->training_roles->contains($user));
+        return $user->isAdmin() || $user->isModerator($area);
     }
 }

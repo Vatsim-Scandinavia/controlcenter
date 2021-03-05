@@ -43,15 +43,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="my-1 mr-2" for="countrySelect">Training country</label>
-                        <select id="countrySelect" name="training_country" class="custom-select my-1 mr-sm-2 @error('training_country') is-invalid @enderror" @change="onChange($event)">
-                            <option selected disabled>Choose training country</option>
-                            @foreach($ratings as $countryId => $country)
-                                <option data-id="{{ $countryId }}" value="{{ $country['id'] }}">{{ $country['name'] }}</option>
+                        <label class="my-1 mr-2" for="areaSelect">Training area</label>
+                        <select id="areaSelect" name="training_area" class="custom-select my-1 mr-sm-2 @error('training_area') is-invalid @enderror" @change="onChange($event)">
+                            <option selected disabled>Choose training area</option>
+                            @foreach($ratings as $areaId => $area)
+                                <option data-id="{{ $areaId }}" value="{{ $area['id'] }}">{{ $area['name'] }}</option>
                             @endforeach
                         </select>
-                        @error('training_country')
-                            <span class="text-danger">{{ $errors->first('training_country') }}</span>
+                        @error('training_area')
+                            <span class="text-danger">{{ $errors->first('training_area') }}</span>
                         @enderror
                     </div>
  
@@ -79,8 +79,8 @@
 <script>
     var payload = {!! json_encode($ratings, true) !!}
 
-    const country = new Vue({
-            el: '#countrySelect',
+    const area = new Vue({
+            el: '#areaSelect',
             methods: {
                 onChange(event) {
                     rating.update(event.srcElement.options[event.srcElement.selectedIndex])

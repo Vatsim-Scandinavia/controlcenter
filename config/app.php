@@ -25,7 +25,7 @@ return [
     |
     */
 
-    'version' => "1.0.1",
+    'version' => "2.0.0",
 
     /*
     |--------------------------------------------------------------------------
@@ -39,6 +39,18 @@ return [
     */
 
     'owner' => env('APP_OWNER', 'VATSIM'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Short name of application owner
+    |--------------------------------------------------------------------------
+    |
+    | Same as above, but this is the short name of your subdivision, excluding VAT prefix.
+    | For example 'SCA', NOT 'VATSCA' as that will break some checking logic.
+    |
+    */
+
+    'owner_short' => env('APP_OWNER_SHORT', 'SCA'),
 
     /*
     |--------------------------------------------------------------------------

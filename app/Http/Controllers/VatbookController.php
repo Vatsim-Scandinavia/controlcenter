@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App;
-use App\User;
-use App\Position;
-use App\Vatbook;
+use App\Models\User;
+use App\Models\Position;
+use App\Models\Vatbook;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,7 +23,7 @@ class VatbookController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\View\View
      */
     public function index(User $user){
@@ -32,8 +32,8 @@ class VatbookController extends Controller
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
         $positions = new Collection();
         if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        if($user->isModerator()) $positions = Position::all();
+        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
+        if($user->isModeratorOrAbove()) $positions = Position::all();
 
         return view('vatbook.index', compact('bookings', 'user', 'positions'));
     }
@@ -41,7 +41,7 @@ class VatbookController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Vatbook $booking
+     * @param  \App\Models\Vatbook $booking
      * @return \Illuminate\View\View
      */
     public function show($id){
@@ -49,8 +49,8 @@ class VatbookController extends Controller
         $user = Auth::user();
         $positions = new Collection();
         if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->country->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        if($user->isModerator()) $positions = Position::all();
+        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
+        if($user->isModeratorOrAbove()) $positions = Position::all();
         $this->authorize('update', $booking);
 
         return view('vatbook.show', compact('booking', 'user', 'positions'));
@@ -107,7 +107,7 @@ class VatbookController extends Controller
         ->where('deleted', false)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) $booking->training = 1;
+        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
         else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
             if($booking->position->mae == true) $booking->training = 1;
         } else $booking->training = 0;
@@ -138,7 +138,7 @@ class VatbookController extends Controller
 
         if(App::environment('production')) {
             if($booking->event) {
-                $eventUrl = "vatsim-scandinavia.org";
+                $eventUrl = Setting::get('linkDomain');
                 $response = file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {
@@ -207,7 +207,7 @@ class VatbookController extends Controller
         ->where('id', '!=', $booking->id)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModerator()) $booking->training = 1;
+        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
         else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
             if($booking->position->mae == true) $booking->training = 1;
         } else $booking->training = 0;
@@ -238,7 +238,7 @@ class VatbookController extends Controller
 
         if(App::environment('production')) {
             if($booking->event) {
-                $eventUrl = "vatsim-scandinavia.org";
+                $eventUrl = Setting::get('linkDomain');
                 file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$booking->eu_id}&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->name}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
             }
             else {
@@ -256,7 +256,7 @@ class VatbookController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Vatbook  $booking
+     * @param  \App\Models\Vatbook  $booking
      * @return \Illuminate\Http\RedirectResponse
      */
     public function delete($id)

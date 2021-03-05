@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\User;
+use App\Models\User;
 
 /**
  * Controller for handling internal API request to search up users for search bar
@@ -22,7 +22,7 @@ class UserSearchController extends Controller
 
         $query = $request->get('query');
 
-        $data = Auth::user()->viewableModels(\App\User::class);
+        $data = Auth::user()->viewableModels(\App\Models\User::class);
         $count = 0;
         if($data->count() > 0 && strlen($query) >= 2) {
             foreach($data as $user)

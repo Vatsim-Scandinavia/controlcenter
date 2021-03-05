@@ -4,9 +4,9 @@ namespace App\Notifications;
 
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
-use App\Training;
-use App\Country;
-use App\User;
+use App\Models\Training;
+use App\Models\Area;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -49,13 +49,13 @@ class TrainingPreStatusNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
 
-        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.' has now been assigned to pre-training.';
-        $country = Country::find($this->training->country_id);
-        if(isset($country->template_pretraining)){
-            $textLines[] = $country->template_pretraining;
+        $textLines[] = 'We would like to inform you that your training request for '.$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.' has now been assigned to pre-training.';
+        $area = Area::find($this->training->area_id);
+        if(isset($area->template_pretraining)){
+            $textLines[] = $area->template_pretraining;
         }
 
-        $contactMail = Country::find($this->training->country_id)->contact;
+        $contactMail = Area::find($this->training->area_id)->contact;
 
         return (new TrainingMail('Training Assigned', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email, $this->training->user->name);

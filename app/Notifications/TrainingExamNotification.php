@@ -4,11 +4,11 @@ namespace App\Notifications;
 
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
-use App\User;
-use App\Country;
-use App\Training;
-use App\TrainingExamination;
-use App\TrainingReport;
+use App\Models\User;
+use App\Models\Area;
+use App\Models\Training;
+use App\Models\TrainingExamination;
+use App\Models\TrainingReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -54,16 +54,16 @@ class TrainingExamNotification extends Notification implements ShouldQueue
     {
 
         $textLines = [
-            "This is a confirmation of your examination result for training: ".$this->training->getInlineRatings().' in '.Country::find($this->training->country_id)->name.'.',
+            "This is a confirmation of your examination result for training: ".$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.'.',
             "Result: **".$this->report->result."**",
             "*For questions regarding your examination, contact your mentor.*",
         ];
 
         // Find staff who wants notification of new training request
-        $bcc = User::where('setting_notify_newexamreport', true)->where('group', '<=', '2')->get();
+        $bcc = User::allWithGroup(2, '<=')->where('setting_notify_newexamreport', true);
 
         foreach ($bcc as $key => $user) {
-            if (!$user->isModerator($this->training->country))
+            if (!$user->isModeratorOrAbove($this->training->area))
                 $bcc->pull($key);
         }
 

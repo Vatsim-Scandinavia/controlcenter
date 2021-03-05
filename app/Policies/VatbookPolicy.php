@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Vatbook;
+use App\Models\User;
+use App\Models\Vatbook;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class VatbookPolicy
@@ -23,48 +23,48 @@ class VatbookPolicy
     /**
      * Determine whether the user can create bookings.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
     {
-        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModerator();
+        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModeratorOrAbove();
     }
 
     /**
      * Determine whether the user can update the booking.
      *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $booking
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Vatbook  $booking
      * @return bool
      */
     public function update(User $user, Vatbook $booking)
     {
-        return $booking->local_id != null && $booking->cid == $user->id || $user->isModerator() && $booking->local_id != null;
+        return $booking->local_id != null && $booking->cid == $user->id || $user->isModeratorOrAbove() && $booking->local_id != null;
     }
 
     /**
      * Determine whether the user can add tags.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function tags(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove() || $user->rating >= 5;
     }
 
     /**
      * Determine whether the user can book this position.
      *
-     * @param  \App\User  $user
-     * @param  \App\Vatbook  $booking
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Vatbook  $booking
      * @return mixed
      */
     public function position(User $user, Vatbook $booking)
     {
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) {
-            if($user->getActiveTraining(1) && $user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating && $user->getActiveTraining()->country->id === $booking->position->country) {
+            if($user->getActiveTraining(1) && $user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating && $user->getActiveTraining()->area->id === $booking->position->area) {
                 return true;
             }
             return $this->deny('You are not authorized to book this position!');

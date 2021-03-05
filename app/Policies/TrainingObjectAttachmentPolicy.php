@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\TrainingObjectAttachment;
-use App\User;
+use App\Models\TrainingObjectAttachment;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TrainingObjectAttachmentPolicy
@@ -13,8 +13,8 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can view the training report attachment.
      *
-     * @param  \App\User  $user
-     * @param  \App\TrainingObjectAttachment  $attachment
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\TrainingObjectAttachment  $attachment
      * @return bool
      */
     public function view(User $user, TrainingObjectAttachment $attachment)
@@ -25,12 +25,12 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can create training report attachments.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
     {
-        return $user->isMentor();
+        return $user->isMentorOrAbove();
     }
 
     /**
@@ -42,6 +42,6 @@ class TrainingObjectAttachmentPolicy
      */
     public function delete(User $user, TrainingObjectAttachment $attachment)
     {
-        return $user->isModerator($attachment->object->training->country) || $user->is($attachment->file->owner);
+        return $user->isModeratorOrAbove($attachment->object->training->area) || $user->is($attachment->file->owner);
     }
 }

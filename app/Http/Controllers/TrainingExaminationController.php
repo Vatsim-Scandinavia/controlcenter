@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\OneTimeLink;
+use App\Models\OneTimeLink;
 use Carbon\Carbon;
-use App\Position;
-use App\Training;
-use App\TrainingExamination;
+use App\Models\Position;
+use App\Models\Training;
+use App\Models\TrainingExamination;
 use App\Notifications\TrainingExamNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -24,7 +24,7 @@
                             <tr>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Mentor ID</th>
                                 <th data-field="mentor" data-sortable="true" data-filter-control="input">Mentor</th>
-                                <th data-field="level" data-sortable="true" data-filter-control="select">FIR</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="applied" data-sortable="true">Last training</th>
                                 <th data-field="teaching" data-sortable="true" data-filter-control="input">Teaching</th>
                             </tr>
@@ -35,12 +35,12 @@
                                     <td><a href="{{ route('user.show', $mentor->id) }}">{{ $mentor->id }}</a></td>
                                     <td>{{ $mentor->name }}</td>
                                     <td>
-                                        {{ $mentor->getInlineMentoringCountries() }}
+                                        {{ $mentor->getInlineMentoringAreas() }}
                                     </td>
                                     <td>
-                                        @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
+                                        @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
                                             @php
-                                                $reportDate = Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
+                                                $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
                                             @endphp
                                             <span title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
@@ -61,10 +61,10 @@
                                     <td class="table-link-newline">
                                         @foreach($mentor->teaches as $training)
                                             <div><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a> / Last training: 
-                                                @if(\App\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
-                                                    @if(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->count() > 0)
+                                                @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
+                                                    @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->count() > 0)
                                                         @php
-                                                            $reportDate = Carbon\Carbon::make(\App\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date);
+                                                            $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date);
                                                         @endphp
                                                         <span title="{{ $reportDate->toEuropeanDate() }}">
                                                             @if($reportDate->isToday())

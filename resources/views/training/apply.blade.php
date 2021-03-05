@@ -14,7 +14,7 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title"><i class="fas fa-users-class"></i>&nbsp;What is ATC training?</h5>
-                <p class="card-text">Welcome to the ATC Training Department of VATSIM Scandinavia. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
+                <p class="card-text">Welcome to the ATC Training Department of {{ Config::get('app.owner') }}. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
                 <hr>
                 <h5 class="card-title"><i class="fas fa-user"></i>&nbsp;What do we expect from you?</h5>
                 <p class="card-text">First of all, we expect that you take the training seriously and for you to show up on time and prepared for your online training sessions. We also expect that you respect that everyone in the Training Department is doing this as a hobby in their spare time. You have to be able to study on your own as part of the training program is designed as a self-study. We are not getting paid to do this job, but we simply want to see our network grow and be a great community.</p>
@@ -37,16 +37,16 @@
                 <div class="card-body">
 
                     <p class="text-muted">
-                        <i class="fas fa-info-circle"></i>&nbsp;&nbsp;S2 is the lowest rating you can apply for in Scandinavia. S1 is included in this training.
+                        <i class="fas fa-info-circle"></i>&nbsp;&nbsp;S2 is the lowest rating you can apply for in {{ Config::get('app.owner') }}. S1 is included in this training.
                     </p>
 
                     <div class="row">
                         <div class="col-xl-6 col-md-6 mb-12">
-                            <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training country</label>
-                            <select id="countrySelect" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
-                                <option selected disabled>Choose training country</option>
-                                @foreach($payload as $countryId => $country)
-                                    <option value="{{ $countryId }}">{{ $country["name"] }}</option>
+                            <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training area</label>
+                            <select id="areaSelect" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
+                                <option selected disabled>Choose training area</option>
+                                @foreach($payload as $areaId => $area)
+                                    <option value="{{ $areaId }}">{{ $area["name"] }}</option>
                                 @endforeach
 
                             </select>
@@ -123,7 +123,7 @@
 
                             <div class="form-group">
                                 <label for="motivationTextarea">Letter of motivation</label>
-                                <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to Vatsim Scandinavia</p>
+                                <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to {{ Config::get('app.owner') }}</p>
                                 <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500" onchange="function removeErr() {
                                   $('#err-motivation').html('');
                                 }; removeErr();"></textarea>
@@ -163,8 +163,8 @@
 
     var payload = {!! json_encode($payload, true) !!}
 
-    const country = new Vue({
-        el: '#countrySelect',
+    const area = new Vue({
+        el: '#areaSelect',
         methods: {
             onChange(event) {
                 rating.update(event.srcElement.value);
@@ -191,17 +191,17 @@
 
     $('#continue-btn-step-1').click( function (e) {
 
-        let training_country = $('#countrySelect').val();
-        sessionStorage.setItem('training_country', training_country);
+        let training_area = $('#areaSelect').val();
+        sessionStorage.setItem('training_area', training_area);
         let training_level = $('#ratingSelect').val();
         sessionStorage.setItem('training_level', training_level);
 
-        if (training_country == null || training_level == null) {
+        if (training_area == null || training_level == null) {
             e.preventDefault();
         }
 
-        if (training_country == null)
-            $('#countrySelect').addClass('is-invalid');
+        if (training_area == null)
+            $('#areaSelect').addClass('is-invalid');
 
         if (training_level == null)
             $('#ratingSelect').addClass('is-invalid');
@@ -218,7 +218,7 @@
         var form = document.getElementById('training-form');
         var data = new FormData(form);
 
-        data.append('training_country', sessionStorage.getItem('training_country'));
+        data.append('training_area', sessionStorage.getItem('training_area'));
         data.append('training_level', sessionStorage.getItem('training_level'));
 
         $.ajax('/training/store',
@@ -228,7 +228,7 @@
                 processData: false,
                 contentType: false,
                 success: function () {
-                    sessionStorage.removeItem('training_country');
+                    sessionStorage.removeItem('training_area');
                     sessionStorage.removeItem('training_level');
 
                     sessionStorage.setItem("successMessage", "Your training request has been added to the queue!");

@@ -21,7 +21,7 @@
                                 <th>End</th>
                                 <th>Status</th>
                                 <th>Only for ATC Active</th>
-                                <th>Only for VATSCA members</th>
+                                <th>Only for VAT{{ Config::get('app.owner_short') }} members</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,7 +34,7 @@
                                     <td>{{ \Carbon\Carbon::create($vote->end_at)->toEuropeanDateTime() }}</td>
                                     <td>{{ $vote->closed ? "Closed" : "Accepting answers" }}</td>
                                     <td><i class="fas fa-{{ $vote->require_active ? "check" : "times" }}"></i></td>
-                                    <td><i class="fas fa-{{ $vote->require_vatsca_member ? "check" : "times" }}"></i></td>
+                                    <td><i class="fas fa-{{ $vote->require_member ? "check" : "times" }}"></i></td>
                                 </tr>
 
                             @endforeach
