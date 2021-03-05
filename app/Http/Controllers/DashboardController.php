@@ -61,7 +61,7 @@ class DashboardController extends Controller
         $activeVote = Vote::where('closed', 0)->first();
 
         $atcHoursDB = DB::table('atc_activity')->where('user_id', $user->id)->get()->first();
-        $atcHours = ($atcHoursDB == null) ? 'N/A' : $atcHoursDB->atc_hours . ' hours';
+        $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
 
         return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote', 'atcHours'));
     }
