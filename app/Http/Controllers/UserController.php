@@ -93,13 +93,17 @@ class UserController extends Controller
             $area = Area::where('name', $str[0])->get()->first();
             $group = Group::where('name', $str[1])->get()->first();
 
-            $this->authorize('updateGroup', [$user, $group, $area]);
-
             // Check if permission is not set, and set it or other way around.
             if($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0){
-                if($value == true) $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
+                if($value == true){
+                    $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
+                    $this->authorize('updateGroup', [$user, $group, $area]);
+                }
             } else {
-                if($value == false) $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
+                if($value == false){
+                    $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
+                    $this->authorize('updateGroup', [$user, $group, $area]);
+                }
             }
 
             // Check and detach trainings from mentor
