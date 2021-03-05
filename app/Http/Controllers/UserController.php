@@ -74,6 +74,9 @@ class UserController extends Controller
                 // Don't list or allow admin rank to be set through this interface
                 if($group->id == 1) { continue; }
 
+                // Only process ranks the user is allowed to change
+                if(!\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed()) { continue; }
+
                 $key = $area->name.'_'.$group->name;
                 $permissions[$key] = '';
             }
@@ -96,13 +99,13 @@ class UserController extends Controller
             // Check if permission is not set, and set it or other way around.
             if($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0){
                 if($value == true){
-                    $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
                     $this->authorize('updateGroup', [$user, $group, $area]);
+                    $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
                 }
             } else {
                 if($value == false){
-                    $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
                     $this->authorize('updateGroup', [$user, $group, $area]);
+                    $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
                 }
             }
 
