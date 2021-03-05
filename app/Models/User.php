@@ -245,12 +245,20 @@ class User extends Authenticatable
 
         $output = "";
 
-        if($this->groups->count() > 1){
-            foreach($this->groups as $group){
-                $output .= Area::find($group->pivot->area_id)->name . " & ";
+        $areas = [];
+        foreach($this->groups as $group){
+            $areas[$group->pivot->area_id] = Area::find($group->pivot->area_id)->name;
+        }
+
+        $countMax = sizeof($areas);
+        $counter = 0;
+        foreach($areas as $area){
+            if($counter == $countMax - 1){
+                $output .= $area;
+            } else {
+                $output .= $area . " & ";
             }
-        } else {
-            $output .= Area::find($this->groups->first()->pivot->area_id)->name;
+            $counter++;
         }
 
         if(empty($output)){
