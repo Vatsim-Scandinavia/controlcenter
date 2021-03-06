@@ -35,6 +35,17 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can view the access table.
+     *
+     * @param  \App\Models\User  $user
+     * @return bool
+     */
+    public function viewAccess(User $user)
+    {
+        return $user->isModeratorOrAbove();
+    }
+
+    /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user

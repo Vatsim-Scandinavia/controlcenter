@@ -52,61 +52,64 @@
 </div>
 
 <div class="row">
-    <div class="col-xl-4 col-md-12 mb-12">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Access
-                </h6>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('user.update', $user->id) }}" method="POST">
-                    @method('PATCH')
-                    @csrf
 
-                    <p>Select none, one or multiple permissions for the user.</p>
+    @if (\Illuminate\Support\Facades\Gate::inspect('viewAccess', $user)->allowed())
+        <div class="col-xl-4 col-md-12 mb-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        Access
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('user.update', $user->id) }}" method="POST">
+                        @method('PATCH')
+                        @csrf
 
-                    <table class="table table-bordered table-hover table-responsive w-100 d-block d-md-table">
-                        <thead>
-                            <tr>
-                                <th>Area</th>
-                                @foreach($groups as $group)
-                                    <th class="text-center">{{ $group->name }} <i class="fas fa-question-circle text-gray-400" title="{{ $group->description }}"></i></th>
-                                @endforeach
-                            </tr>
-                        </thead>
-                        <tbody>
+                        <p>Select none, one or multiple permissions for the user.</p>
 
-                            @foreach($areas as $area)
+                        <table class="table table-bordered table-hover table-responsive w-100 d-block d-md-table">
+                            <thead>
                                 <tr>
-                                    <td>{{ $area->name }}</td>
-
+                                    <th>Area</th>
                                     @foreach($groups as $group)
-
-                                        @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed() && $group->id != 1)
-                                            <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
-                                        @else
-                                            <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
-                                        @endif
-                                        
+                                        <th class="text-center">{{ $group->name }} <i class="fas fa-question-circle text-gray-400" title="{{ $group->description }}"></i></th>
                                     @endforeach
-
                                 </tr>
-                            @endforeach
+                            </thead>
+                            <tbody>
 
-                        </tbody>
-                    </table>
+                                @foreach($areas as $area)
+                                    <tr>
+                                        <td>{{ $area->name }}</td>
 
-                    @if (\Illuminate\Support\Facades\Gate::inspect('update', $user)->allowed())
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Save access</button>
-                        </div>
-                    @endif
+                                        @foreach($groups as $group)
 
-                </form>
+                                            @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed() && $group->id != 1)
+                                                <td class="text-center"><input type="checkbox" name="{{ $area->name }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
+                                            @else
+                                                <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
+                                            @endif
+                                            
+                                        @endforeach
+
+                                    </tr>
+                                @endforeach
+
+                            </tbody>
+                        </table>
+
+                        @if (\Illuminate\Support\Facades\Gate::inspect('update', $user)->allowed())
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Save access</button>
+                            </div>
+                        @endif
+
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
