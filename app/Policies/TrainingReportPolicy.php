@@ -36,13 +36,8 @@ class TrainingReportPolicy
      */
     public function create(User $user)
     {
-        if (($key = session()->get('onetimekey')) != null) {
-            $link = OneTimeLink::where('key', $key)->get()->first();
-
-            return $link != null && $user->isMentor($link->training->area);
-        }
-
-        return $user->isMentor();
+        // We use TrainingPolicy-createReport instead, so this should always return false.
+        return false;
     }
 
     /**
