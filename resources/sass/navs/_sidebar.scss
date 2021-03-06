@@ -90,7 +90,7 @@
         &::after {
             font-weight: 900;
             content: "\f104";
-            font-family: "Font Awesome 5 Pro";
+            font-family: "Font Awesome 5 Free";
             margin-right: 0.1rem;
         }
         &:hover {
@@ -104,8 +104,8 @@
         width: 0 !important;
         overflow: hidden;
         #sidebarToggle::after {
-            content: "\f105";
-            font-family: "Font Awesome 5 Pro";
+            content: "\f105 ";
+            font-family: "Font Awesome 5 Free";
             margin-left: 0.25rem;
         }
         
@@ -121,8 +121,9 @@
         letter-spacing: 0.05rem;
         z-index: 1;
 
-        .sidebar-brand-icon i {
-            font-size: 2.1rem;
+        .sidebar-brand-icon img {
+            height: 2em;
+            width: 2em;
         }
         .sidebar-brand-text {
             display: none;
@@ -219,7 +220,7 @@
                         border: 0;
                         font-weight: 900;
                         content: "\f107";
-                        font-family: "Font Awesome 5 Pro";
+                        font-family: "Font Awesome 5 Free";
                     }
                     &.collapsed::after {
                         content: "\f105";
@@ -228,8 +229,9 @@
             }
         }
         .sidebar-brand {
-            .sidebar-brand-icon i {
-                font-size: 2.1rem;
+            .sidebar-brand-icon img {
+                height: 2em;
+                width: 2em;
             }
 
             .sidebar-brand-text {
@@ -295,8 +297,9 @@
             .sidebar-brand {
                 padding-left: 34px;
 
-                .sidebar-brand-icon i {
-                    font-size: 2.1rem;
+                .sidebar-brand-icon img {
+                    height: 2em;
+                    width: 2em;
                 }
 
                 .sidebar-brand-text {

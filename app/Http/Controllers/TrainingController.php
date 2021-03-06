@@ -47,7 +47,7 @@ class TrainingController extends Controller
     public static $types = [
         1 => ["text" => "Standard", "icon" => "fas fa-circle"],
         2 => ["text" => "Refresh", "icon" => "fas fa-sync"],
-        3 => ["text" => "Transfer", "icon" => "fas fa-exchange"],
+        3 => ["text" => "Transfer", "icon" => "fas fa-exchange-alt"],
         4 => ["text" => "Fast-track", "icon" => "fas fa-fast-forward"],
         5 => ["text" => "Familiarisation", "icon" => "fas fa-compress-arrows-alt"],
     ];
