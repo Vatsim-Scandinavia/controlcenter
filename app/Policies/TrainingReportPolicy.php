@@ -14,6 +14,21 @@ class TrainingReportPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user can view any of the reports related to a training
+     *
+     * @param User $user
+     * @param Training $training
+     * @return bool
+     */
+    public function viewAny(User $user, Training $training)
+    {
+        return  $training->mentors->contains($user) ||
+                $user->is($training->user) ||
+                $user->isModeratorOrAbove($training->area) ||
+                $user->isAdmin();
+    }
+
+    /**
      * Determine whether the user can view the training report.
      *
      * @param  \App\Models\User  $user
@@ -31,7 +46,8 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can create training reports.
      *
-     * @param  \App\Models\User  $user
+     * @param \App\Models\User $user
+     * @param Training $training
      * @return bool
      */
     public function create(User $user, Training $training)
@@ -72,6 +88,12 @@ class TrainingReportPolicy
             : Response::deny("Only moderators and the author of the training report can delete it.");
     }
 
+    /**
+     * Get the one time link from a session given a training
+     *
+     * @param $training
+     * @return null
+     */
     private function getOneTimeLink($training) {
         $link = null;
 

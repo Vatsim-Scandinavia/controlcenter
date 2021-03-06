@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\OneTimeLink;
+use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -26,13 +27,18 @@ class TrainingExaminationPolicy
     /**
      * Determine whether the user can create training examinations.
      *
-     * @param  \App\Models\User  $user
+     * @param \App\Models\User $user
+     * @param Training $training
      * @return bool
      */
-    public function create(User $user)
+    public function create(User $user, Training $training)
     {
-        // We use TrainingPolicy-createExamination instead, so this should always return false.
-        return false;
+        if (($link = $this->getOneTimeLink($training)) != null) {
+            return $user->isMentor($link->training->area);
+        }
+
+        // Check if mentor is mentoring area, not filling their own training and the training is awaiting an exam.
+        return $training->mentors->contains($user) && $user->isNot($training->user);
     }
 
     /**
@@ -57,5 +63,26 @@ class TrainingExaminationPolicy
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
         return $user->isModeratorOrAbove($trainingExamination->training->area);
+    }
+
+    /**
+     * Get the one time link from a session given a training
+     *
+     * @param $training
+     * @return null
+     */
+    private function getOneTimeLink($training) {
+        $link = null;
+
+        $key = session()->get('onetimekey');
+
+        if ($key != null) {
+            $link = OneTimeLink::where([
+                ['training_id', '=', $training->id],
+                ['key', '=', $key]
+            ])->get()->first();
+        }
+
+        return $link;
     }
 }

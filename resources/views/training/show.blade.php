@@ -151,16 +151,16 @@
                         <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Create
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">  
-                            @can('createReport', $training)
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @can('create', [\App\Models\TrainingReport::class, $training])
                                 @if($training->status >= 1)
                                     <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
                                 @endif
                             @else
                                 <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
                             @endcan
-            
-                            @can('createExamination', $training)
+
+                            @can('create', [\App\Models\TrainingExamination::class, $training])
                                 @if($training->status == 3)
                                     <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}">Exam Report</a>
                                 @endif
@@ -173,7 +173,7 @@
             </div>
             <div class="card-body p-0">
 
-                @can('viewReports', $training)
+                @can('viewAny', [\App\Models\TrainingReport::class, $training])
                     <div class="accordion" id="reportAccordion">
                         @if ($reports->count() == 0 && $examinations->count() == 0)
                             <div class="card-text text-primary p-3">
@@ -228,7 +228,7 @@
                                                     </div>
                                                 @endforeach
                                             @endif
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -271,7 +271,7 @@
                                                 <div class="mt-2">
                                                     @markdown($report->content)
                                                 </div>
-                                                
+
                                                 @if(isset($report->contentimprove) && !empty($report->contentimprove))
                                                     <hr>
                                                     <p class="font-weight-bold text-primary">
@@ -290,7 +290,7 @@
                                                         </div>
                                                     @endforeach
                                                 @endif
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -319,7 +319,7 @@
             <div class="card-body p-0">
                 <div class="card bg-light mb-3">
                     <div class="card-body">
-    
+
                         @if($training->english_only_training)
                             <i class="fas fa-flag-usa"></i>&nbsp;&nbsp;Requesting training in English only<br>
                         @else
@@ -387,7 +387,7 @@
                                         @else
                                             <i class="fas fa-hourglass text-warning"></i>&nbsp;Awaiting confirmation
                                         @endif
-                                        
+
                                     </td>
                                 </tr>
                                 @endforeach
@@ -395,8 +395,8 @@
                         </table>
                     </div>
                 @endif
-                
-            </div>            
+
+            </div>
         </div>
     </div>
 
@@ -561,7 +561,7 @@
             $(".collapse.show").each(function(){
                 $(this).prev(".card-header").find(".fas").addClass("fa-chevron-down").removeClass("fa-chevron-right");
             });
-            
+
             // Toggle plus minus icon on show hide of collapse element
             $(".collapse").on('show.bs.collapse', function(){
                 $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-right").addClass("fa-chevron-down");

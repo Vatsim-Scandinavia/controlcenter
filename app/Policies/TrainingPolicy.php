@@ -4,10 +4,13 @@ namespace App\Policies;
 
 use App\Models\OneTimeLink;
 use App\Models\Training;
+use App\Models\TrainingExamination;
+use App\Models\TrainingReport;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use anlutro\LaravelSettings\Facade as Setting;
+use Illuminate\Support\Facades\Gate;
 
 class TrainingPolicy
 {
@@ -110,48 +113,37 @@ class TrainingPolicy
      * @param User $user
      * @param Training $training
      * @return bool
+     * @deprecated Since v2.0.3. Please use Training Report policy directly.
      */
     public function viewReports(User $user, Training $training)
     {
-        return  $training->mentors->contains($user) ||
-                $user->is($training->user) ||
-                $user->isModeratorOrAbove($training->area) ||
-                $user->isAdmin();
+        return $user->can('viewAny', [TrainingReport::class, $training]);
     }
 
+    /**
+     * Determines whether the user can create a training report for a given training
+     *
+     * @param User $user
+     * @param Training $training
+     * @return bool
+     * @deprecated Since v2.0.3. Please use Training Report policy directly.
+     */
     public function createReport(User $user, Training $training)
     {
-        if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isModerator($link->training->area) || $user->isMentor($link->training->area);
-        }
-
-        // Check if mentor is mentoring area, not filling their own training and the training is in progress
-        return $user->isModerator($training->area) || ($training->mentors->contains($user) && $user->isNot($training->user));
+        return $user->can('create', [TrainingReport::class, $training]);
     }
 
+    /**
+     * Determine whether the user can create a training examination for a given training
+     *
+     * @param User $user
+     * @param Training $training
+     * @return bool
+     * @deprecated Since v2.0.3. Please use Training Examination policy directly.
+     */
     public function createExamination(User $user, Training $training)
     {
-        if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->area);
-        }
-
-        // Check if mentor is mentoring area, not filling their own training and the training is awaing an exam.
-        return $training->mentors->contains($user) && $user->isNot($training->user);
-    }
-
-    private function getOneTimeLink($training) {
-        $link = null;
-
-        $key = session()->get('onetimekey');
-
-        if ($key != null) {
-            $link = OneTimeLink::where([
-                ['training_id', '=', $training->id],
-                ['key', '=', $key]
-            ])->get()->first();
-        }
-
-        return $link;
+        return $user->can('create', [TrainingExamination::class, $training]);
     }
 
     public function viewActiveRequests(User $user) {

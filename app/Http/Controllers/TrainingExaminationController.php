@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-/** 
+/**
  * Controller for training examinations
  */
 class TrainingExaminationController extends Controller
@@ -41,7 +41,7 @@ class TrainingExaminationController extends Controller
      */
     public function create(Request $request, Training $training)
     {
-        $this->authorize('createExamination', $training);
+        $this->authorize('create', [TrainingExamination::class, $training]);
         if ($training->status != 3) { return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
 
         $positions = Position::all();
@@ -59,7 +59,7 @@ class TrainingExaminationController extends Controller
      */
     public function store(Request $request, Training $training)
     {
-        $this->authorize('createExamination', $training);
+        $this->authorize('create', [TrainingExamination::class, $training]);
 
         $data = $this->validateRequest();
 
