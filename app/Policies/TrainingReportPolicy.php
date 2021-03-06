@@ -14,6 +14,21 @@ class TrainingReportPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user can view any of the reports related to a training
+     *
+     * @param User $user
+     * @param Training $training
+     * @return bool
+     */
+    public function viewAny(User $user, Training $training)
+    {
+        return  $training->mentors->contains($user) ||
+                $user->is($training->user) ||
+                $user->isModeratorOrAbove($training->area) ||
+                $user->isAdmin();
+    }
+
+    /**
      * Determine whether the user can view the training report.
      *
      * @param  \App\Models\User  $user
@@ -31,13 +46,18 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can create training reports.
      *
-     * @param  \App\Models\User  $user
+     * @param \App\Models\User $user
+     * @param Training $training
      * @return bool
      */
-    public function create(User $user)
+    public function create(User $user, Training $training)
     {
-        // We use TrainingPolicy-createReport instead, so this should always return false.
-        return false;
+        if (($link = $this->getOneTimeLink($training)) != null) {
+            return $user->isModerator($link->training->area) || $user->isMentor($link->training->area);
+        }
+
+        // Check if mentor is mentoring area, not filling their own training and the training is in progress
+        return $user->isModerator($training->area) || ($training->mentors->contains($user) && $user->isNot($training->user));
     }
 
     /**
@@ -66,5 +86,26 @@ class TrainingReportPolicy
         return ($user->isAdmin() || $user->isModerator($trainingReport->training->area) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->area)))
             ? Response::allow()
             : Response::deny("Only moderators and the author of the training report can delete it.");
+    }
+
+    /**
+     * Get the one time link from a session given a training
+     *
+     * @param $training
+     * @return null
+     */
+    private function getOneTimeLink($training) {
+        $link = null;
+
+        $key = session()->get('onetimekey');
+
+        if ($key != null) {
+            $link = OneTimeLink::where([
+                ['training_id', '=', $training->id],
+                ['key', '=', $key]
+            ])->get()->first();
+        }
+
+        return $link;
     }
 }

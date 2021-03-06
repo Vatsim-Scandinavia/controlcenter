@@ -25,7 +25,7 @@ class TrainingReportController extends Controller
      */
     public function index(Training $training)
     {
-        $this->authorize('viewReports', $training);
+        $this->authorize('viewAny', [TrainingReport::class, $training]);
 
         $reports = Auth::user()->viewableModels(TrainingReport::class, [['training_id', '=', $training->id]]);
 
@@ -41,7 +41,7 @@ class TrainingReportController extends Controller
      */
     public function create(Training $training)
     {
-        $this->authorize('createReport', $training);
+        $this->authorize('create', [TrainingReport::class, $training]);
         if ($training->status < 1) { return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.'); }
 
         $positions = Position::all();
@@ -60,7 +60,7 @@ class TrainingReportController extends Controller
      */
     public function store(Request $request, Training $training)
     {
-        $this->authorize('create', TrainingReport::class);
+        $this->authorize('create', [TrainingReport::class, $training]);
 
         $data = $this->validateRequest();
         $data['written_by_id'] = Auth::id();
@@ -168,7 +168,7 @@ class TrainingReportController extends Controller
 
     /**
      * Validates the request data
-     * 
+     *
      * @return mixed
      */
     protected function validateRequest()
