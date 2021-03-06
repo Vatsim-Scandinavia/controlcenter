@@ -53,7 +53,7 @@ class VoteController extends Controller
             'expire_date' => 'required|date_format:d/m/Y|after_or_equal:today',
             'expire_time' => 'required|regex:/^\d{2}:\d{2}$/',
             'require_active' => '',
-            'require_member' => '',
+            'require_our_member' => '',
             'question' => 'required|string',
             'vote_options' => 'required|string'
         ]);
@@ -69,14 +69,14 @@ class VoteController extends Controller
 
         // Only ATC active can vote ticked?
         isset($data['require_active']) ? $require_active = true : $require_active = false;
-        isset($data['require_member']) ? $require_member = true : $require_member = false;
+        isset($data['require_our_member']) ? $require_our_member = true : $require_our_member = false;
 
         // Store the new data
         $vote = new Vote();
 
         $vote->question = $data['question'];
         $vote->require_active = $require_active;
-        $vote->require_member = $require_member;
+        $vote->require_our_member = $require_our_member;
         $vote->closed = false;
         $vote->end_at = $expire->format('Y-m-d H:i:s');;
 
