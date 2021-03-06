@@ -60,7 +60,7 @@ class TrainingReportController extends Controller
      */
     public function store(Request $request, Training $training)
     {
-        $this->authorize('create', TrainingReport::class);
+        $this->authorize('create', [TrainingReport::class, $training]);
 
         $data = $this->validateRequest();
         $data['written_by_id'] = Auth::id();
@@ -168,7 +168,7 @@ class TrainingReportController extends Controller
 
     /**
      * Validates the request data
-     * 
+     *
      * @return mixed
      */
     protected function validateRequest()

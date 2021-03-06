@@ -34,10 +34,14 @@ class TrainingReportPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function create(User $user)
+    public function create(User $user, Training $training)
     {
-        // We use TrainingPolicy-createReport instead, so this should always return false.
-        return false;
+        if (($link = $this->getOneTimeLink($training)) != null) {
+            return $user->isModerator($link->training->area) || $user->isMentor($link->training->area);
+        }
+
+        // Check if mentor is mentoring area, not filling their own training and the training is in progress
+        return $user->isModerator($training->area) || ($training->mentors->contains($user) && $user->isNot($training->user));
     }
 
     /**
@@ -66,5 +70,20 @@ class TrainingReportPolicy
         return ($user->isAdmin() || $user->isModerator($trainingReport->training->area) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->area)))
             ? Response::allow()
             : Response::deny("Only moderators and the author of the training report can delete it.");
+    }
+
+    private function getOneTimeLink($training) {
+        $link = null;
+
+        $key = session()->get('onetimekey');
+
+        if ($key != null) {
+            $link = OneTimeLink::where([
+                ['training_id', '=', $training->id],
+                ['key', '=', $key]
+            ])->get()->first();
+        }
+
+        return $link;
     }
 }
