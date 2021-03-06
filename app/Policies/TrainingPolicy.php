@@ -122,11 +122,11 @@ class TrainingPolicy
     public function createReport(User $user, Training $training)
     {
         if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->area);
+            return $user->isModerator($link->training->area) || $user->isMentor($link->training->area);
         }
 
         // Check if mentor is mentoring area, not filling their own training and the training is in progress
-        return $training->mentors->contains($user) && $user->isNot($training->user);
+        return $user->isModerator($training->area) || ($training->mentors->contains($user) && $user->isNot($training->user));
     }
 
     public function createExamination(User $user, Training $training)

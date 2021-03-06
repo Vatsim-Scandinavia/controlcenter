@@ -18,7 +18,7 @@
                 </div>
             @endif
             
-            <div class="content-title"><i class="far fa-radar"></i> {{ config('app.name') }}</div>
+            <div class="content-title"><img src="{{ asset('images/radar.svg') }}"> {{ config('app.name') }}</div>
             <div class="content-description">
                 @if(Config::get('app.owner_short') == 'SCA')
                     Scandinavian Training Administration

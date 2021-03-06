@@ -191,7 +191,7 @@
                                     <div class="card-header p-0">
                                         <h5 class="mb-0 bg-lightorange">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                <i class="far fa-plus mr-2"></i>{{ $examination->examination_date->toEuropeanDate() }}
+                                                <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $examination->examination_date->toEuropeanDate() }}
                                             </button>
                                         </h5>
                                     </div>
@@ -201,7 +201,7 @@
 
                                             <small class="text-muted">
                                                 @if(isset($examination->position))
-                                                    <i class="fas fa-radar"></i> {{ \App\Models\Position::find($examination->position_id)->callsign }}&emsp;
+                                                    <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($examination->position_id)->callsign }}&emsp;
                                                 @endif
                                                 <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($examination->examiner_id)->name) ? \App\Models\User::find($examination->examiner_id)->name : "Unknown" }}
 
@@ -247,7 +247,7 @@
                                         <div class="card-header p-0">
                                             <h5 class="mb-0">
                                                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                    <i class="far fa-plus mr-2"></i>{{ $report->report_date->toEuropeanDate() }}
+                                                    <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $report->report_date->toEuropeanDate() }}
                                                     @if($report->draft)
                                                         <span class='badge badge-danger'>Draft</span>
                                                     @endif
@@ -260,7 +260,7 @@
 
                                                 <small class="text-muted">
                                                     @if(isset($report->position))
-                                                        <i class="fas fa-radar"></i> {{ $report->position }}&emsp;
+                                                        <i class="fas fa-map-marker-alt"></i> {{ $report->position }}&emsp;
                                                     @endif
                                                     <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($report->written_by_id)->name) ? \App\Models\User::find($report->written_by_id)->name : "Unknown"  }}
                                                     @can('update', $report)
@@ -323,11 +323,11 @@
                         @if($training->english_only_training)
                             <i class="fas fa-flag-usa"></i>&nbsp;&nbsp;Requesting training in English only<br>
                         @else
-                            <i class="fas fa-flag-alt"></i>&nbsp;&nbsp;Requesting training in local language or English<br>
+                            <i class="fas fa-flag"></i>&nbsp;&nbsp;Requesting training in local language or English<br>
                         @endif
 
                         @isset($training->experience)
-                            <i class="fas fa-books"></i>&nbsp;&nbsp;{{ $experiences[$training->experience]["text"] }}
+                            <i class="fas fa-book"></i>&nbsp;&nbsp;{{ $experiences[$training->experience]["text"] }}
                         @endisset
 
                     </div>
@@ -559,14 +559,14 @@
         $(document).ready(function(){
             // Add minus icon for collapse element which is open by default
             $(".collapse.show").each(function(){
-                $(this).prev(".card-header").find(".far").addClass("fa-minus").removeClass("fa-plus");
+                $(this).prev(".card-header").find(".fas").addClass("fa-chevron-down").removeClass("fa-chevron-right");
             });
             
             // Toggle plus minus icon on show hide of collapse element
             $(".collapse").on('show.bs.collapse', function(){
-                $(this).prev(".card-header").find(".far").removeClass("fa-plus").addClass("fa-minus");
+                $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-right").addClass("fa-chevron-down");
             }).on('hide.bs.collapse', function(){
-                $(this).prev(".card-header").find(".far").removeClass("fa-minus").addClass("fa-plus");
+                $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-down").addClass("fa-chevron-right");
             });
 
             // Closure reason input

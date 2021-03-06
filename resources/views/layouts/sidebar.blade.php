@@ -4,7 +4,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
-            <i class="far fa-radar"></i>
+            <img src="{{ asset('images/radar.svg') }}">
         </div>
 
     <div class="sidebar-brand-text mx-3">{{ config('app.name') }}</div>

@@ -31,13 +31,8 @@ class TrainingExaminationPolicy
      */
     public function create(User $user)
     {
-        if (($key = session()->get('onetimekey')) != null) {
-            $link = OneTimeLink::where('key', $key)->get()->first();
-
-            return $link != null && $user->isMentorOrAbove($link->training->area);
-        }
-
-        return $user->isMentorOrAbove();
+        // We use TrainingPolicy-createExamination instead, so this should always return false.
+        return false;
     }
 
     /**
