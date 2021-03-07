@@ -21,7 +21,7 @@ class TrainingExaminationPolicy
      */
     public function view(User $user, TrainingExamination $examination)
     {
-        return $examination->training->mentors->contains($user) || $user->is($examination->training->user);
+        return $examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->is($examination->examiner);
     }
 
     /**
@@ -34,11 +34,11 @@ class TrainingExaminationPolicy
     public function create(User $user, Training $training)
     {
         if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isMentor($link->training->area);
+            return $user->isExaminer($link->training->area) && $user->isNot($training->user);
         }
 
-        // Check if mentor is mentoring area, not filling their own training and the training is awaiting an exam.
-        return $training->mentors->contains($user) && $user->isNot($training->user);
+        // Check if mentor is examiner in the area, not filling their own training and the training is awaiting an exam.
+        return $training->area->examiners->contains($user) && $user->isNot($training->user);
     }
 
     /**

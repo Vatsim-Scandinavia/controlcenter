@@ -26,6 +26,11 @@ class Area extends Model
         return $this->belongsToMany(User::class, 'permissions')->withPivot('group_id')->withTimestamps()->where('group_id', 3);
     }
 
+    public function examiners()
+    {
+        return $this->belongsToMany(User::class, 'permissions')->withPivot('group_id')->withTimestamps()->where('group_id', 4);
+    }
+
     public function positions(){
         return $this->hasMany(Position::class, 'area');
     }
