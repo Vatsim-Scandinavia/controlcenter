@@ -39,7 +39,7 @@
                                 <td>
                                     @can('update', $booking)
                                         <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
-                                           <i class="fa fa-pencil w3-tiny" aria-hidden="true"></i></a>
+                                           <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
                                     @endcan
                                     @cannot('update', $booking)
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
