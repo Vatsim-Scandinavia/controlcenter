@@ -93,11 +93,21 @@
         </div>
 
         @if (\Auth::user()->isModeratorOrAbove())
-        <li class="nav-item {{ Route::is('users') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('users') }}">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Overview</span></a>
-        </li>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMem" aria-expanded="true" aria-controls="collapseMem">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <div id="collapseMem" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('users') }}">Member Overview</a>
+                    <a class="collapse-item" href="{{ route('users.other') }}">Other Users</a>
+                    </div>
+                </div>
+            </li>
+            
         @endif
 
         <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">

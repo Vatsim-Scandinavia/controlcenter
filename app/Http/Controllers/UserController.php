@@ -9,6 +9,7 @@ use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use League\CommonMark\Inline\Parser\NewlineParser;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller to handle user views
@@ -26,7 +27,24 @@ class UserController extends Controller
         $this->authorize('index', \Auth::user());
 
         $users = User::all();
-        return view('user.index', compact('users'));
+        $userHours = DB::table('atc_activity')->get();
+
+        return view('user.index', compact('users', 'userHours'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function indexOther()
+    {
+        $this->authorize('index', \Auth::user());
+
+        $users = User::all();
+
+        return view('user.other', compact('users'));
     }
 
     /**

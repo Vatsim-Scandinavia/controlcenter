@@ -171,7 +171,7 @@ class User extends Authenticatable
     }
 
     public function getCountryAttribute(){
-        return $this->handover->area;
+        return $this->handover->country;
     }
 
     public function getVisitingControllerAttribute(){
