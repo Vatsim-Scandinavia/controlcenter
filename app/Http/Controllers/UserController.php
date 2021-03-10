@@ -77,7 +77,7 @@ class UserController extends Controller
                 // Only process ranks the user is allowed to change
                 if(!\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed()) { continue; }
 
-                $key = $area->name.'_'.$group->name;
+                $key = $area->id.'_'.$group->name;
                 $permissions[$key] = '';
             }
         }
@@ -93,7 +93,7 @@ class UserController extends Controller
         
             $str = explode('_', $key);
 
-            $area = Area::where('name', $str[0])->get()->first();
+            $area = Area::where('id', $str[0])->get()->first();
             $group = Group::where('name', $str[1])->get()->first();
 
             // Check if permission is not set, and set it or other way around.
