@@ -60,13 +60,14 @@ class UpdateAtcActiveStatus extends Command
         $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
         $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
         $this->hour_requirement = Setting::get('atcActivityRequirement', 10);
+        $handover_prefix = strlen(getenv('DB_HANDOVER_TABLE_PREFIX')) > 0 ? getenv('DB_HANDOVER_TABLE_PREFIX') : Config::get('database.connections.mysql-handover.prefix'); //Defaults to the prefix set in the DB config.
 
         if ($this->option('dry-run') != null) {
             $this->dry_run = true;
         }
 
         if (!$this->dry_run)
-            DB::connection('mysql-handover')->update("UPDATE users SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
+            DB::connection('mysql-handover')->update("UPDATE " .$handover_prefix. " SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
 
         $users = $this->getUsers();
 
