@@ -67,7 +67,7 @@ class UpdateAtcActiveStatus extends Command
         }
 
         if (!$this->dry_run)
-            DB::connection('mysql-handover')->update("UPDATE " .$handover_prefix. " SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
+            DB::connection('mysql-handover')->update("UPDATE " .$handover_prefix. "users SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
 
         $users = $this->getUsers();
 
