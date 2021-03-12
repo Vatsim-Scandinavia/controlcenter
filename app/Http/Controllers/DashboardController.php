@@ -43,6 +43,7 @@ class DashboardController extends Controller
 
         $data = [
             'rating' => $user->ratingLong,
+            'rating_short' => $user->ratingShort,
             'division' => $user->division,
             'subdivision' => $subdivision,
             'report' => $report
