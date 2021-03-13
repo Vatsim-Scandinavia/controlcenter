@@ -19,7 +19,7 @@
     @endif
 
     @can('close', $training)
-        <a href="{{ route('training.close', $training->id) }}" class="btn btn-danger btn-sm">Close my training</a>
+        <a href="{{ route('training.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger btn-sm">Close my training</a>
     @endcan
 
 @endsection
