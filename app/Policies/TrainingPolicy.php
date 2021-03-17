@@ -11,6 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Config;
 
 class TrainingPolicy
 {
@@ -76,7 +77,7 @@ class TrainingPolicy
     public function apply(User $user)
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        $system_division = strlen(getenv('APP_OWNER')) > 0 ? getenv('APP_OWNER') : 'Division APP_OWNER Not Configured';
+        $system_division = Config::get('app.owner'); //Default param not needed as !app owner will default to VATSIM
         // Global setting if trainings are enabled
         if(!Setting::get('trainingEnabled'))
             return Response::deny("We are currently not accepting new training requests");

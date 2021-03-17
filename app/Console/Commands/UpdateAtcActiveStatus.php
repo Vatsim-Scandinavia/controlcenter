@@ -60,7 +60,7 @@ class UpdateAtcActiveStatus extends Command
         $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
         $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
         $this->hour_requirement = Setting::get('atcActivityRequirement', 10);
-        $handover_prefix = strlen(getenv('DB_HANDOVER_TABLE_PREFIX')) > 0 ? getenv('DB_HANDOVER_TABLE_PREFIX') : Config::get('database.connections.mysql-handover.prefix'); //Defaults to the prefix set in the DB config.
+        $handover_prefix = Config::get('database.connections.mysql-handover.prefix', 'cc_'); //Defaults to the prefix set in the DB config.
 
         if ($this->option('dry-run') != null) {
             $this->dry_run = true;
