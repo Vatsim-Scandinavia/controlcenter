@@ -77,7 +77,8 @@ class TrainingPolicy
     public function apply(User $user)
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        $system_division = Config::get('app.owner'); //Default param not needed as !app owner will default to VATSIM
+        $divisionName = Config::get('app.owner');
+        
         // Global setting if trainings are enabled
         if(!Setting::get('trainingEnabled'))
             return Response::deny("We are currently not accepting new training requests");
@@ -86,12 +87,12 @@ class TrainingPolicy
         if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
             $subdiv = "none";
             if(isset($user->handover->subdivision)) $subdiv = $user->handover->subdivision;
-            return Response::deny("You must join {$system_division} subdivision to apply for training. You currently belong to ".$subdiv);
+            return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to ".$subdiv);
         }
 
         // Not active users are forced to ask for a manual creation of refresh
         if(!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active){
-            return Response::deny("Your ATC rating is inactive in {$system_division}");
+            return Response::deny("Your ATC rating is inactive in {$divisionName}");
         }
 
         return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You have an active training request");
