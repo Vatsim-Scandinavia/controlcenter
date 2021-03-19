@@ -29,7 +29,7 @@ class OneTimeLinkController extends Controller
             'type' => ['required', 'string', Rule::in([OneTimeLink::TRAINING_REPORT_TYPE, OneTimeLink::TRAINING_EXAMINATION_TYPE])]
         ]);
 
-        $this->authorize('create', [$training, $data['type']]);
+        $this->authorize('create', [\App\Models\OneTimeLink::class, $training, $data['type']]);
 
         $key = sha1($training->id . now());
 
@@ -65,7 +65,7 @@ class OneTimeLinkController extends Controller
             return abort(404);
 
         // Authorize that the user can access the link
-        $this->authorize('access', $link);
+        $this->authorize('access', [\App\Models\OneTimeLink::class, $link]);
 
         // Check if the link has expired
         if ($link->expires_at < now())

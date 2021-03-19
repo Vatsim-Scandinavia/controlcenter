@@ -540,6 +540,7 @@
                 },
                 error: function (response) {
                     console.error(response);
+                    alert("An error occured while trying to generate the one-time link.");
                 }
             });
 

@@ -38,6 +38,24 @@ class OneTimeLink extends Model
     }
 
     /**
+     * Return if the one time link is for a report
+     *
+     * @return bool
+     */
+    public function reportType(){
+        return self::TRAINING_REPORT_TYPE == $this->training_object_type;
+    }
+
+    /**
+     * Return if the one time link is for a report
+     *
+     * @return bool
+     */
+    public function examinationType(){
+        return self::TRAINING_EXAMINATION_TYPE == $this->training_object_type;
+    }
+
+    /**
      * Get the redirect link
      *
      * @return string
