@@ -263,7 +263,7 @@ class TrainingController extends Controller
         $this->authorize('view', $training);
 
         $examinations = TrainingExamination::where('training_id', $training->id)->get()->sortByDesc('examination_date');
-        $reports = TrainingReport::where('training_id', $training->id)->get()->sortByDesc('report_date');
+        $reports = TrainingReport::where('training_id', $training->id)->get()->sortByDesc('report_date')->sortByDesc('id');
 
         $trainingMentors = $training->area->mentors;
         $statuses = TrainingController::$statuses;

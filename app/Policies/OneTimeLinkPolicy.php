@@ -24,10 +24,12 @@ class OneTimeLinkPolicy
      */
     public function create(User $user, Training $training, string $type)
     {
-        if ($type === OneTimeLink::TRAINING_REPORT_TYPE)
-            return $training->mentors->contains($user);
-
-        return $user->isModeratorOrAbove($training->area);
+        // Only allow examination link generation if the training is awaiting exam
+        if ($type == OneTimeLink::TRAINING_EXAMINATION_TYPE){
+            return $training->status == 3 && ($training->mentors->contains($user) || $user->isModeratorOrAbove($training->area));
+        }
+        
+        return $training->mentors->contains($user) || $user->isModeratorOrAbove($training->area);
     }
 
     /**
@@ -39,7 +41,7 @@ class OneTimeLinkPolicy
      */
     public function access(User $user, OneTimeLink $link)
     {
-        return $user->isMentor() || $user->isExaminer();
+        return ($link->reportType() && $user->isMentor()) || ($link->examinationType() && $user->isExaminer());
     }
 
 }
