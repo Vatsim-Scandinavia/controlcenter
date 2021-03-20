@@ -145,7 +145,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th>Rating</th>
-                            <th>Average waiting time</th>
+                            <th>Waiting time average low — high</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,7 +153,7 @@
                         @foreach($queues as $queue => $time)
                             <tr>
                                 <td>{{ $queue }}</td>
-                                <td>{{ \Carbon\CarbonInterval::seconds(round($time))->cascade()->forHumans(['parts' => 2]) }}</td>
+                                <td>{{ \Carbon\CarbonInterval::seconds(round($time[0]))->cascade()->forHumans(['parts' => 2]) }} — {{ \Carbon\CarbonInterval::seconds(round($time[1]))->cascade()->forHumans(['parts' => 2]) }}</td>
                             </tr>
                         @endforeach
 

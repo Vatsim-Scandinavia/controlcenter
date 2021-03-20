@@ -45,8 +45,7 @@ class UpdateQueueCalculation extends Command
         foreach($areas as $area){
             foreach($area->ratings as $rating){
                 
-                $averageSum = 0;
-                $averageNumber = 0;
+                $averageData = [];
 
                 // Get the queue time from each training of this specific rating in the specific area
                 foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNotNull('started_at') as $training){
@@ -62,18 +61,25 @@ class UpdateQueueCalculation extends Command
                             $waitingTime = $waitingTime - $training->paused_length;
 
                             // Inject this specific training's record into the average calculation
-                            $averageSum = $averageSum + $waitingTime;
-                            $averageNumber++;
+                            array_push($averageData, $waitingTime);
                         }
                     }                    
                 }   
 
-                // Calculate the average for this area's selected rating, then insert it to the area's rating column
-                if($averageNumber){
-                    $average = $averageSum / $averageNumber;
-                    $rating->pivot->queue_length = $average;
+                // Calculate the average for this area's selected rating, then insert it to the area's rating column. Only count if two or more trainings are complete to avoid logic errors.
+                if(count($averageData) >= 2){
+
+                    // Split the array into two low and high chunks
+                    $halved = array_chunk($averageData, ceil(count($averageData)/2));
+                    
+                    $firstHalfAvg = array_sum($halved[0]) / count(array_filter($halved[0]));
+                    $secondHalfAvg = array_sum($halved[1]) / count(array_filter($halved[1]));
+
+                    $rating->pivot->queue_length_low = $firstHalfAvg;
+                    $rating->pivot->queue_length_high = $secondHalfAvg;
                     $rating->pivot->save();
-                    $this->info($area->name.' '.$rating->name.' rating calculated average to '.round($average/60/60/24, 2).' days.');
+
+                    $this->info($area->name.' '.$rating->name.' rating calculated average from '.round($firstHalfAvg/60/60/24, 2).' to '.round($secondHalfAvg/60/60/24, 2).' days.');
                 } else {
                     $rating->pivot->queue_length = NULL;
                 }

@@ -18,11 +18,11 @@ In `Ratings` table, the default VATSIM ratings are present and if applicable, th
 
 ##### Ratings in areas
 In `area_rating` table, we define which ratings are available for which area for applications. If a rating is only applicable manually through a moderator there's no need to add it here.
-| area_id | rating_id | required_vatsim_rating | queue_length |
+| area_id | rating_id | required_vatsim_rating | queue_length_low | queue_lenght_high |
 | ------- | --- | --- | --- |
-| id of area | id of rating | Id of required vatsim rating to apply for the id of this rating in selected area | Filled in by automation |
-| 1 | 2 | NULL | NULL |
-| 1 | 3 | 3 | NULL |
+| id of area | id of rating | Id of required vatsim rating to apply for the id of this rating in selected area | Filled in by automation | Filled in by automation |
+| 1 | 2 | NULL | NULL | NULL |
+| 1 | 3 | 3 | NULL | NULL |
 
 ##### Positions
 In `positions` table, we define which positions are possible to book and their restrictions.
