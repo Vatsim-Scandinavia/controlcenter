@@ -24,7 +24,6 @@
                                 <th>Visiting Controller</th>
                                 <th>Division</th>
                                 <th>Subdivision</th>
-                                <th>Area</th>
                                 <th>ATC Active</th>
                                 <th>Last login</th>
                             </tr>
@@ -39,7 +38,6 @@
                                 <td><i class="fas fa-{{ $user->visiting_controller ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
-                                <td>{{ $user->area }}</td>
                                 <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
                                 <td>{{ $user->last_login }}</td>
                             </tr>
