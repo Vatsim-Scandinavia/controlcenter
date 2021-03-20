@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/training/{training}/examination/create', 'TrainingExaminationController@create')->name('training.examination.create');
     Route::post('/training/{training}/examination', 'TrainingExaminationController@store')->name('training.examination.store');
     Route::patch('/training/examination/{examination}', 'TrainingExaminationController@update')->name('training.examination.update');
-    Route::delete('/training/examination/{examination}', 'TrainingExaminationController@destroy')->name('training.examination.delete');
+    Route::get('/training/examination/{examination}/delete', 'TrainingExaminationController@destroy')->name('training.examination.delete');
 
     Route::get('/files/{file}', 'FileController@get')->name('file.get');
     Route::post('/files', 'FileController@store')->name('file.store');

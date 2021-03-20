@@ -56,7 +56,7 @@
                             <select id="ratingSelect" class="custom-select my-1 mr-sm-2" @change="onChange($event)">
                                 <option v-if="ratings.length == 0" selected disabled>None available</option>
                                 <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
-                            </select>
+                            </select> 
                         </div>
                     </div>
 

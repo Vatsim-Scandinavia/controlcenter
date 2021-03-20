@@ -19,19 +19,6 @@ class TrainingExaminationController extends Controller
 {
 
     /**
-     * Show the specified examination
-     *
-     * @param Request $request
-     * @param TrainingExamination $examination
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @return void
-     */
-    public function show(Request $request, TrainingExamination $examination)
-    {
-        $this->authorize('view', $examination);
-    }
-
-    /**
      * Show view to create an examination
      *
      * @param Request $request
@@ -132,6 +119,7 @@ class TrainingExaminationController extends Controller
         $this->authorize('delete', $examination);
 
         $examination->delete();
+        ActivityLogController::warning('Deleted training examination '.$examination->id.' which is tied was training id '.$examination->training->id);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Examination successfully deleted']);

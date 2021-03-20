@@ -204,7 +204,9 @@
                                                     <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($examination->position_id)->callsign }}&emsp;
                                                 @endif
                                                 <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($examination->examiner_id)->name) ? \App\Models\User::find($examination->examiner_id)->name : "Unknown" }}
-
+                                                @can('delete', [\App\Models\TrainingExamination::class, $examination])
+                                                    <a class="float-right" href="{{ route('training.examination.delete', $examination->id) }}" onclick="return confirm('Are you sure you want to delete this examination?')"><i class="fa fa-trash"></i> Delete</a>
+                                                @endcan
                                             </small>
 
                                             <div class="mt-2">
