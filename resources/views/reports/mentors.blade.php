@@ -65,17 +65,18 @@
                                                     @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->count() > 0)
                                                         @php
                                                             $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->where('training_id', $training->id)->latest()->get()->first()->report_date);
+                                                            $trainingIntervalExceeded = $reportDate->diffInDays() > Setting::get('trainingInterval');
                                                         @endphp
                                                         <span title="{{ $reportDate->toEuropeanDate() }}">
                                                             @if($reportDate->isToday())
-                                                                Today
+                                                                <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">Today</span>
                                                             @elseif($reportDate->isYesterday())
-                                                                Yesterday
+                                                                <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">Yesterday</span>
                                                             @elseif($reportDate->diffInDays() <= 7)
-                                                                {{ $reportDate->diffForHumans(['parts' => 1])}}
+                                                                <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
                                                             @else
-                                                                {{ $reportDate->diffForHumans(['parts' => 2])}}
-                                                            @endif                                            
+                                                                <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                                            @endif                                        
                                                         </span>
                                                     @else
                                                         N/A
