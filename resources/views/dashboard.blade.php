@@ -133,7 +133,7 @@
                                     <th>Level</th>
                                     <th>Area</th>
                                     <th>State</th>
-                                    <th>Reports</th>
+                                    <th>Last Training</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -154,7 +154,26 @@
                                             <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                         </td>
                                         <td>
-                                            <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
+                                            @if(\App\Models\TrainingReport::where('written_by_id', Auth::user()->id)->count() > 0)
+                                                @php
+                                                    $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date);
+                                                    $trainingIntervalExceeded = $reportDate->diffInDays() > Setting::get('trainingInterval');
+                                                @endphp
+                                                <span title="{{ $reportDate->toEuropeanDate() }}">
+                                                    @if($reportDate->isToday())
+                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">Today</span>
+                                                    @elseif($reportDate->isYesterday())
+                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">Yesterday</span>
+                                                    @elseif($reportDate->diffInDays() <= 7)
+                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                                    @else
+                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                                    @endif
+
+                                                </span>
+                                            @else
+                                                No registered training yet
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
