@@ -69,6 +69,15 @@
                                 <span class="text-danger">{{ $errors->first('trainingQueue') }}</span>
                             @enderror
 
+                            <div class="form-group">
+                                <label for="atcActivityQualificationPeriod">Required Training Interval</label>
+                                <input type="number" class="form-control @error('trainingInterval') is-invalid @enderror" id="trainingInterval" name="trainingInterval" required value="{{ Setting::get("trainingInterval") }}">
+                                <small class="form-text text-muted">Input number of days required, used to mark stalled trainings</small>
+                            </div>
+                            @error('trainingInterval')
+                                <span class="text-danger">{{ $errors->first('trainingInterval') }}</span>
+                            @enderror
+
                         </div>
                     </div>
                 </div>
