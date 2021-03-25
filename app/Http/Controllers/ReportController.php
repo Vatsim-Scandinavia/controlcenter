@@ -266,8 +266,11 @@ class ReportController extends Controller
         $payload = [];
         if($areaFilter){
             foreach(Area::find($areaFilter)->ratings as $rating){
-                if($rating->pivot->queue_length){
-                    $payload[$rating->name] = $rating->pivot->queue_length;
+                if($rating->pivot->queue_length_low && $rating->pivot->queue_length_high){
+                    $payload[$rating->name] = [
+                        $rating->pivot->queue_length_low,
+                        $rating->pivot->queue_length_high,
+                    ];
                 }
             }
         } else {
@@ -278,12 +281,16 @@ class ReportController extends Controller
                 foreach($area->ratings as $rating){
 
                     // Only calculate if queue length is defined
-                    if($rating->pivot->queue_length){
+                    if($rating->pivot->queue_length_low && $rating->pivot->queue_length_high){
                         if(isset($payload[$rating->name])){
-                            $payload[$rating->name] = $payload[$rating->name] + $rating->pivot->queue_length;
+                            $payload[$rating->name][0] = $payload[$rating->name][0] + $rating->pivot->queue_length_low;
+                            $payload[$rating->name][1] = $payload[$rating->name][1] + $rating->pivot->queue_length_high;
                             $divideRating[$rating->name]++;
                         } else {
-                            $payload[$rating->name] = $rating->pivot->queue_length;
+                            $payload[$rating->name] = [
+                                $rating->pivot->queue_length_low,
+                                $rating->pivot->queue_length_high,
+                            ];
                             $divideRating[$rating->name] = 1;
                         }
                     }
@@ -293,7 +300,8 @@ class ReportController extends Controller
 
             // Divide the queue length appropriately to get an average across areas
             foreach($payload as $queue => $value){
-                $payload[$queue] = $value / $divideRating[$queue];
+                $payload[$queue][0] = $value[0] / $divideRating[$queue];
+                $payload[$queue][1] = $value[1] / $divideRating[$queue];
             }
 
         }

@@ -21,7 +21,7 @@ class TrainingExaminationPolicy
      */
     public function view(User $user, TrainingExamination $examination)
     {
-        return $examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->is($examination->examiner);
+        return $user->isModeratorOrAbove() || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->is($examination->examiner));
     }
 
     /**
