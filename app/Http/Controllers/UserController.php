@@ -68,8 +68,10 @@ class UserController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $endorsements = $user->ratings;
+        $userHours = DB::table('atc_activity')->where('user_id', $user->id)->first();
+        if(isset($userHours)) $userHours = $userHours->atc_hours;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours'));
     }
 
     /**

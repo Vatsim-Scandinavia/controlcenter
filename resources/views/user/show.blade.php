@@ -25,6 +25,7 @@
                                 <th>Division</th>
                                 <th>Subdivision</th>
                                 <th>ATC Active</th>
+                                <th>ATC Hours</th>
                                 <th>Last login</th>
                             </tr>
                         </thead>
@@ -39,6 +40,7 @@
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
                                 <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
+                                <td>{{ isset($userHours) ? $userHours : 'N/A' }}</td>
                                 <td>{{ $user->last_login }}</td>
                             </tr>
                         </tbody>
