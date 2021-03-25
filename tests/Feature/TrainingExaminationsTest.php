@@ -176,7 +176,7 @@ class TrainingExaminationsTest extends TestCase
         $moderator->groups()->attach(2, ['area_id' => $examination->training->area->id]);
 
         $this->actingAs($moderator)->followingRedirects()
-            ->deleteJson(route('training.examination.delete', ['examination' => $examination]))
+            ->getJson(route('training.examination.delete', ['examination' => $examination]))
             ->assertJson(['message' => 'Examination successfully deleted'])
             ->assertStatus(200);
 
@@ -197,7 +197,7 @@ class TrainingExaminationsTest extends TestCase
         $mentor->groups()->attach(3, ['area_id' => $examination->training->area->id]);
 
         $this->actingAs($mentor)->followingRedirects()
-            ->delete(route('training.examination.delete', ['examination' => $examination]))
+            ->get(route('training.examination.delete', ['examination' => $examination]))
             ->assertStatus(403);
 
         $this->assertDatabaseHas('training_examinations', ['id' => $examination->id]);
