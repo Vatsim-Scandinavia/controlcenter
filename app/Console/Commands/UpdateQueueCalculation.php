@@ -69,6 +69,9 @@ class UpdateQueueCalculation extends Command
                 // Calculate the average for this area's selected rating, then insert it to the area's rating column. Only count if two or more trainings are complete to avoid logic errors.
                 if(count($averageData) >= 2){
 
+                    // Sort the array from low to high
+                    $averageData = sort($averageData);
+
                     // Split the array into two low and high chunks
                     $halved = array_chunk($averageData, ceil(count($averageData)/2));
                     
