@@ -70,7 +70,7 @@ class UpdateQueueCalculation extends Command
                 if(count($averageData) >= 2){
 
                     // Sort the array from low to high
-                    $averageData = sort($averageData);
+                    sort($averageData);
 
                     // Split the array into two low and high chunks
                     $halved = array_chunk($averageData, ceil(count($averageData)/2));
