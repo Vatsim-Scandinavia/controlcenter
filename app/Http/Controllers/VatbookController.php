@@ -109,9 +109,8 @@ class VatbookController extends Controller
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
-        else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
-            if($booking->position->mae == true) $booking->training = 1;
-        } else $booking->training = 0;
+        else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) $booking->training = 1;
+        else $booking->training = 0;
 
         if(isset($data['tag'])) {
             $this->authorize('tags', $booking);
