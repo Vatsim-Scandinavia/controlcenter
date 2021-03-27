@@ -60,7 +60,7 @@
                                     
                                     <td class="table-link-newline">
                                         @foreach($mentor->teaches as $training)
-                                            <div><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a> / Last training: 
+                                            <div><a href="{{ route('training.show', $training->id) }}">{{ $training->user->name }}</a> / Last training: 
                                                 @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
                                                     @php
                                                         $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date);
