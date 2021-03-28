@@ -22,8 +22,10 @@ composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-sugges
 composer dump-autoload
 
 if [ "$COMMAND" = "dev" ]; then 
+    # Install all dependecies
     npm install
 else
+    #Install without dev dependecies
     npm install --production
 fi
 
