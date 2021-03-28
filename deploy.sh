@@ -18,10 +18,14 @@ git pull
 php -r "file_exists('.env') || copy('.env.example', '.env');"
 
 # Install dependecies
-composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 composer dump-autoload
 
-npm install
+if [ "$COMMAND" = "dev" ]; then 
+    npm install
+else
+    npm install --production
+fi
 
 # Adjust directory permissions
 chmod -R 775 storage bootstrap/cache
