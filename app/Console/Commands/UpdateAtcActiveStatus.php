@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Handover;
 use App\Models\Rating;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use anlutro\LaravelSettings\Facade as Setting;
+use Illuminate\Support\Facades\Log;
 
 class UpdateAtcActiveStatus extends Command
 {
@@ -28,7 +28,7 @@ class UpdateAtcActiveStatus extends Command
      *
      * @var string
      */
-    protected $signature = 'update:atcactive {--dry-run}';
+    protected $signature = 'update:atcactive {user?*} {--dry-run}';
 
     /**
      * The console command description.
@@ -54,8 +54,9 @@ class UpdateAtcActiveStatus extends Command
      */
     public function handle()
     {
-
         $start_time = microtime(true) * 1000;
+
+        $user_ids = $this->argument('user');
 
         $this->qualification_period = Setting::get('atcActivityQualificationPeriod', 12);
         $this->grace_period = Setting::get('atcActivityGracePeriod', 12);
@@ -68,7 +69,11 @@ class UpdateAtcActiveStatus extends Command
         if (!$this->dry_run)
             DB::connection('mysql-handover')->update("UPDATE ".Config::get('database.connections.mysql-handover.prefix')."users SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
 
-        $users = $this->getUsers();
+        if (!empty($user_ids)) {
+            $users = Handover::whereIn('id', $user_ids)->get();
+        } else {
+            $users = $this->getUsers();
+        }
 
         if (sizeof($users) == 0)
             return;
@@ -122,6 +127,7 @@ class UpdateAtcActiveStatus extends Command
             $this->info('Would have updated a total of ' . $this->count_updated . ' users. A total of ' . $this->count_visited . ' users were checked.');
         } else {
             $this->info('Updated a total of ' . $this->count_updated . ' users. A total of ' . $this->count_visited . ' users were checked.');
+            Log::info('Updated atc active on a total of ' . $this->count_updated . ' users.');
         }
 
         $this->info('Command took ' . ($end_time - $start_time) / 1000 . ' seconds to process');
@@ -139,7 +145,11 @@ class UpdateAtcActiveStatus extends Command
         try {
             $response = $client->get($url);
         } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
-            // As this is going to be run on the cron, we don't want it to fail on simpler exceptions
+            Log::error('Hit exception while updating atc_active. URL was: ' . $url .
+                '. HTTP status code was: ' . $exception->getCode() .
+                "\n" .
+                $exception->getTraceAsString()
+            );
         }
 
         if (isset($response))
@@ -211,7 +221,7 @@ class UpdateAtcActiveStatus extends Command
      * @param int $user_id
      * @return string
      */
-    private function getQueryString(int $user_id): string
+    private function getQueryString(int $user_id)
     {
         $query_string = $this->base_api_url . $user_id;
         $query_string .= '/atcsessions/';
@@ -255,6 +265,9 @@ class UpdateAtcActiveStatus extends Command
             return;
 
         $this->count_updated++;
+
+        $this->info('Setting user ' . $user->id . ' to: ' . (($is_active) ? 'true' : 'false'));
+        Log::info('Setting user ' . $user->id . ' to: ' . (($is_active) ? 'true' : 'false'));
 
         if ($this->dry_run)
             return;
@@ -310,10 +323,9 @@ class UpdateAtcActiveStatus extends Command
         if (round(($sum / 60)) >= $this->hour_requirement)
             return false;
 
-        if ($user == null) {
-            // User does not exist in CC. Set as inactive.
+        // User does not exist in CC. Set as inactive.
+        if ($user == null)
             return true;
-        }
 
         $trainings = $user->trainings;
 
