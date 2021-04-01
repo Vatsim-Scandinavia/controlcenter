@@ -13,7 +13,7 @@
         "@fortawesome/fontawesome-free": "^5.15.2",
         "axios": "^0.21.1",
         "bootstrap": "4.3.1",
-        "bootstrap-table": "^1.18.2",
+        "bootstrap-table": "^1.18.3",
         "chart.js": "^2.9.4",
         "cross-env": "^5.1",
         "jquery": "^3.6.0",

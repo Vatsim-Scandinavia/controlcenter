@@ -34,9 +34,9 @@ chmod -R 775 storage bootstrap/cache
 
 # Artisan magic
 php artisan migrate
-php artisan cache:clear
-php artisan config:clear
-php artisan view:cache
+
+# Clear All Cache
+php artisan optimize:clear
 
 if [ "$COMMAND" = "dev" ]; then
 
