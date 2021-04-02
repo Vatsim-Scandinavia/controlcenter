@@ -31,7 +31,7 @@
 
         <div class="logo">
             <img src="images/logos/vat{{ mb_strtolower(Config::get('app.owner_short')) }}.svg">
-            <span class="version-front">Control Center v{{ config('app.version') }}</span>
+            <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version-front">Control Center v{{ config('app.version') }}</a>
         </div>
     </div>
 @endsection

@@ -182,7 +182,7 @@
 
         <!-- Logo -->
         <a href="{{ Setting::get('linkHome') }}"><img class="logo" src="{{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'.svg') }}"></a>
-        <span class="version-sidebar">Control Center v{{ config('app.version') }}</span>
+        <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version-sidebar">Control Center v{{ config('app.version') }}</a>
     @else
         <!-- Divider -->
         <hr class="sidebar-divider my-0">
