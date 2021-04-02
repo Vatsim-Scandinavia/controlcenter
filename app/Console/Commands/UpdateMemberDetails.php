@@ -57,10 +57,9 @@ class UpdateMemberDetails extends Command
 
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();
+            
+            // Remove mentor permission groups
             $mentor->groups()->detach();
-
-            // Remove mentor usergroup
-            $mentor->group = null;
             $mentor->save();
 
             $count++;
