@@ -3,9 +3,11 @@
  */
 
 require('./bootstrap');
-window.moment = require('moment');
-window.Vue = require('vue');
+import moment from 'moment';
+import Vue from 'vue';
 
+window.moment = moment;
+window.Vue = Vue;
 
 /**
  * Register Vue components
