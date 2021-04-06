@@ -181,10 +181,11 @@ class UpdateAtcActiveStatus extends Command
         if ($parsed_data == null)
             return;
 
-        $results->add($parsed_data['results']);
+		$results = collect(array_merge($results->toArray(), $parsed_data['results']));
 
-        if ($parsed_data['next'] != null && strcasecmp($parsed_data['next'], '') == 0)
-            $this->addNextPagesToResult($results, $next_response, $client);
+		// Note: strcasecmp returns 0 if the two strings are identical
+        if ($parsed_data['next'] != null && strcasecmp($parsed_data['next'], '') != 0)
+            $this->addNextPagesToResult($results, $parsed_data, $client);
     }
 
     /**
