@@ -3,6 +3,8 @@ Training Management System originally created by [Daniel L.](https://github.com/
 
 The project is open source and contains some restirctions. Read the [LICENSE.md](LICENSE.md) for details.
 
+**Remember to watch this repository to get notified of our patches and updates!*
+
 ## Prerequisites
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
 - [Laravel 8 Requirements](https://laravel.com/docs/8.x/deployment#server-requirements)
