@@ -63,7 +63,7 @@
                                             <div><a href="{{ route('training.show', $training->id) }}">{{ $training->user->name }}</a> / Last training: 
                                                 @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
                                                     @php
-                                                        $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date);
+                                                        $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
                                                         $trainingIntervalExceeded = $reportDate->diffInDays() > Setting::get('trainingInterval');
                                                     @endphp
                                                     <span title="{{ $reportDate->toEuropeanDate() }}">
