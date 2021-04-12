@@ -7,7 +7,7 @@
     <div class="col-xl-8 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Booked Sessions</h6> 
+                <h6 class="m-0 font-weight-bold text-white">Booked Sessions<span class="zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span></h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -155,6 +155,16 @@
             $(this).blur();
         });
         $('.flatpickr-input:visible').prop('readonly', false);
+
+        // Zulu clock
+        var currentdate = new Date(); 
+        var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
+
+        setInterval(function (){
+            var currentdate = new Date(); 
+            var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
+            $('.zulu-clock').text(datetime + 'z');
+        },1000);
     })
 </script>
 @endsection
