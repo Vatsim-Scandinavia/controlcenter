@@ -197,8 +197,9 @@ class TrainingController extends Controller
 
         $students = User::all();
         $ratings = Area::with('ratings')->get()->toArray();
+        $types = TrainingController::$types;
 
-        return view('training.create', compact('students', 'ratings'));
+        return view('training.create', compact('students', 'ratings', 'types'));
     }
 
 
@@ -230,7 +231,8 @@ class TrainingController extends Controller
             'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,
-            'english_only_training' => key_exists("englishOnly", $data) ? true : false
+            'english_only_training' => key_exists("englishOnly", $data) ? true : false,
+            'type' => $data['type']
         ]);
 
         if($ratings->count() > 1){
