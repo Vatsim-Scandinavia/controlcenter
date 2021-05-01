@@ -71,6 +71,15 @@
                             <span class="text-danger">{{ $errors->first('type') }}</span>
                         @enderror
                     </div>
+
+                    <div class="form-group">
+                        <label class="my-1 mr-2" for="englishOnly">English only training</label>
+                        <select id="englishOnly" name="englishOnly" class="custom-select my-1 mr-sm-2">
+                            <option selected disabled>English only training</option>
+                                <option selected>No</option>
+                                <option value="true">Yes</option>
+                        </select>
+                    </div>
  
                     <div class="form-group">
                         <label class="my-1 mr-2" for="ratingSelect">Training level <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
