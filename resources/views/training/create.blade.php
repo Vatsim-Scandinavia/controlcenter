@@ -60,11 +60,7 @@
                         <select id="typeSelect" name="type" class="custom-select my-1 mr-sm-2 @error('type') is-invalid @enderror" @change="onChange($event)">
                             <option selected disabled>Choose training type</option>
                             @foreach($types as $id => $data)
-                                @if($id == 1)
-                                    <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
-                                @else
-                                    <option value="{{ $id }}">{{ $data["text"] }}</option>
-                                @endif
+                                <option value="{{ $id }}">{{ $data["text"] }}</option>
                             @endforeach
                         </select>
                         @error('type')
