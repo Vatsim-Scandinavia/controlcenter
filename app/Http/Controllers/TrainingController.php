@@ -232,7 +232,7 @@ class TrainingController extends Controller
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,
             'english_only_training' => key_exists("englishOnly", $data) ? true : false,
-            'type' => $data['type']
+            'type' => isset($data['type'])
         ]);
 
         if($ratings->count() > 1){
