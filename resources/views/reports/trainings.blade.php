@@ -170,9 +170,11 @@
 
 @section('js')
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 <script>
-    // Total training amount chart
 
+    // Total training amount chart
     var ctx = document.getElementById('trainingChart').getContext('2d');
     ctx.canvas.width = 1000;
     ctx.canvas.height = 200;
@@ -181,57 +183,39 @@
 
     var color = Chart.helpers.color;
     var cfg = {
+        type: 'bar',
         data: {
             datasets: [{
                 label: 'Training Requests',
                 backgroundColor: 'rgb(200, 100, 100)',
                 borderColor: 'rgb(255, 100, 100)',
                 data: requestData,
-                type: 'bar',
-                pointRadius: 0,
-                fill: false,
-                lineTension: 0,
-                borderWidth: 2
             }]
         },
         options: {
-            animation: {
-                duration: 0
-            },
             scales: {
-                xAxes: [{
+                x: {
                     type: 'time',
-                    distribution: 'series',
-                    offset: true,
+                    time: {
+                        unit: 'month'
+                    },
                     ticks: {
                         major: {
                             enabled: true,
                             fontStyle: 'bold'
                         },
-                        source: 'data',
-                        autoSkip: true,
-                        autoSkipPadding: 75,
-                        maxRotation: 0,
-                        sampleSize: 100
                     },
-                }],
-                yAxes: [{
-                    gridLines: {
-                        drawBorder: false
-                    },
-                    scaleLabel: {
+                },
+                y: {
+                    title: {
                         display: true,
-                        labelString: 'Requests'
+                        text: 'Requests'
                     },
                     ticks: {
-                        beginAtZero: true
+                        stepSize: 1
                     }
-                }]
+                }
             },
-            tooltips: {
-                intersect: false,
-                mode: 'index',
-            }
         }
     };
 
@@ -317,22 +301,21 @@
         type: 'bar',
         data: barChartData,
         options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
             responsive: true,
             scales: {
-                xAxes: [{
+                x: {
                     stacked: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                     }
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
             }
         }
     });
@@ -416,22 +399,21 @@
         type: 'bar',
         data: barChartData,
         options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
             responsive: true,
             scales: {
-                xAxes: [{
+                x: {
                     stacked: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                     }
-                }],
-                yAxes: [{
+                },
+                y: {
                     stacked: true,
-                }]
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
             }
         }
     });

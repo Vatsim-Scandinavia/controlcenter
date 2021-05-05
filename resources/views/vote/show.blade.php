@@ -110,7 +110,7 @@
                 intersect: false
             },
             scales: {
-                yAxes: [{
+                y: [{
                     ticks: {
                         beginAtZero: true
                     }

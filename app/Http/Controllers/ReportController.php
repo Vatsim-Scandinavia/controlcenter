@@ -130,7 +130,7 @@ class ReportController extends Controller
               ->get();
 
             foreach($data as $entry) {
-                array_push($payload, ['t' => $entry->day, 'y' => $entry->count]);
+                array_push($payload, ['x' => $entry->day, 'y' => $entry->count]);
             }
 
         } else {
@@ -142,7 +142,7 @@ class ReportController extends Controller
               ->get();
 
             foreach($data as $entry) {
-                array_push($payload, ['t' => $entry->day, 'y' => $entry->count]);
+                array_push($payload, ['x' => $entry->day, 'y' => $entry->count]);
             }
         }
 
