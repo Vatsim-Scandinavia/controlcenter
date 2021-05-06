@@ -137,6 +137,21 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
+                    Passed and failed trainings last 6 months
+                </h6> 
+            </div>
+            <div class="card-body">
+                <canvas id="TrainingPassFailRate"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
                     Queue lengths <span class="badge badge-danger">Beta and inaccurate</span>
                 </h6> 
             </div>
@@ -162,7 +177,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 
@@ -407,6 +421,52 @@
                         display: true,
                         text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                     }
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+    // Pass/fail rate for requests last 6 months
+    var passFailRequestsData = {!! json_encode($passFailRequests) !!}
+
+    var barChartData = {
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
+        datasets: [{
+            label: 'Failed',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: passFailRequestsData["Failed"]
+        }, {
+            label: 'Passed',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: passFailRequestsData["Passed"]
+        }]
+
+    };
+
+    var mix = document.getElementById("TrainingPassFailRate").getContext('2d');
+    var passFailTrainings = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
                 },
                 y: {
                     stacked: true,
