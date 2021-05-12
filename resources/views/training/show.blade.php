@@ -175,71 +175,78 @@
 
                 @can('viewAny', [\App\Models\TrainingReport::class, $training])
                     <div class="accordion" id="reportAccordion">
-                        @if ($reports->count() == 0 && $examinations->count() == 0)
+                        @if ($reportsAndExams->count() == 0)
                             <div class="card-text text-primary p-3">
                                 No training reports yet.
                             </div>
                         @else
 
-                            @foreach($examinations as $examination)
+                            @foreach($reportsAndExams as $reportModel)
+                                @if(is_a($reportModel, '\App\Models\TrainingReport'))
 
-                                @php
-                                    $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
-                                @endphp
+                                    @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isMentorOrAbove())
 
-                                <div class="card">
-                                    <div class="card-header p-0">
-                                        <h5 class="mb-0 bg-lightorange">
-                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $examination->examination_date->toEuropeanDate() }}
-                                            </button>
-                                        </h5>
-                                    </div>
+                                        @php
+                                            $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
+                                        @endphp
 
-                                    <div id="{{ $uuid }}" class="collapse" data-parent="#reportAccordion">
-                                        <div class="card-body">
-
-                                            <small class="text-muted">
-                                                @if(isset($examination->position))
-                                                    <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($examination->position_id)->callsign }}&emsp;
-                                                @endif
-                                                <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($examination->examiner_id)->name) ? \App\Models\User::find($examination->examiner_id)->name : "Unknown" }}
-                                                @can('delete', [\App\Models\TrainingExamination::class, $examination])
-                                                    <a class="float-right" href="{{ route('training.examination.delete', $examination->id) }}" onclick="return confirm('Are you sure you want to delete this examination?')"><i class="fa fa-trash"></i> Delete</a>
-                                                @endcan
-                                            </small>
-
-                                            <div class="mt-2">
-                                                @if($examination->result == "PASSED")
-                                                    <span class='badge badge-success'>PASSED</span>
-                                                @elseif($examination->result == "FAILED")
-                                                    <span class='badge badge-danger'>FAILED</span>
-                                                @elseif($examination->result == "INCOMPLETE")
-                                                    <span class='badge badge-primary'>INCOMPLETE</span>
-                                                @elseif($examination->result == "POSTPONED")
-                                                    <span class='badge badge-warning'>POSTPONED</span>
-                                                @endif
+                                        <div class="card">
+                                            <div class="card-header p-0">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                                        <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $reportModel->report_date->toEuropeanDate() }}
+                                                        @if($reportModel->draft)
+                                                            <span class='badge badge-danger'>Draft</span>
+                                                        @endif
+                                                    </button>
+                                                </h5>
                                             </div>
 
-                                            @if($examination->attachments->count() > 0)
-                                                @foreach($examination->attachments as $attachment)
-                                                    <div>
-                                                        <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
-                                                            <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
-                                                        </a>
+                                            <div id="{{ $uuid }}" class="collapse" data-parent="#reportAccordion">
+                                                <div class="card-body">
+
+                                                    <small class="text-muted">
+                                                        @if(isset($reportModel->position))
+                                                            <i class="fas fa-map-marker-alt"></i> {{ $reportModel->position }}&emsp;
+                                                        @endif
+                                                        <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->written_by_id)->name) ? \App\Models\User::find($reportModel->written_by_id)->name : "Unknown"  }}
+                                                        @can('update', $reportModel)
+                                                            <a class="float-right" href="{{ route('training.report.edit', $reportModel->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
+                                                        @endcan
+                                                    </small>
+
+                                                    <div class="mt-2">
+                                                        @markdown($reportModel->content)
                                                     </div>
-                                                @endforeach
-                                            @endif
 
+                                                    @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
+                                                        <hr>
+                                                        <p class="font-weight-bold text-primary">
+                                                            <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
+                                                        </p>
+                                                        @markdown($reportModel->contentimprove)
+                                                    @endif
+
+                                                    @if($reportModel->attachments->count() > 0)
+                                                        <hr>
+                                                        @foreach($reportModel->attachments as $attachment)
+                                                            <div>
+                                                                <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                                    <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+
+                                    @endif
 
 
-                            @endforeach
+                                @else
 
-                            @foreach($reports as $report)
-                                @if(!$report->draft || $report->draft && \Auth::user()->isMentorOrAbove())
 
                                     @php
                                         $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
@@ -247,12 +254,9 @@
 
                                     <div class="card">
                                         <div class="card-header p-0">
-                                            <h5 class="mb-0">
+                                            <h5 class="mb-0 bg-lightorange">
                                                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                    <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $report->report_date->toEuropeanDate() }}
-                                                    @if($report->draft)
-                                                        <span class='badge badge-danger'>Draft</span>
-                                                    @endif
+                                                    <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $reportModel->examination_date->toEuropeanDate() }}
                                                 </button>
                                             </h5>
                                         </div>
@@ -261,30 +265,29 @@
                                             <div class="card-body">
 
                                                 <small class="text-muted">
-                                                    @if(isset($report->position))
-                                                        <i class="fas fa-map-marker-alt"></i> {{ $report->position }}&emsp;
+                                                    @if(isset($reportModel->position))
+                                                        <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($reportModel->position_id)->callsign }}&emsp;
                                                     @endif
-                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($report->written_by_id)->name) ? \App\Models\User::find($report->written_by_id)->name : "Unknown"  }}
-                                                    @can('update', $report)
-                                                        <a class="float-right" href="{{ route('training.report.edit', $report->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
+                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}
+                                                    @can('delete', [\App\Models\TrainingExamination::class, $reportModel])
+                                                        <a class="float-right" href="{{ route('training.examination.delete', $reportModel->id) }}" onclick="return confirm('Are you sure you want to delete this examination?')"><i class="fa fa-trash"></i> Delete</a>
                                                     @endcan
                                                 </small>
 
                                                 <div class="mt-2">
-                                                    @markdown($report->content)
+                                                    @if($reportModel->result == "PASSED")
+                                                        <span class='badge badge-success'>PASSED</span>
+                                                    @elseif($reportModel->result == "FAILED")
+                                                        <span class='badge badge-danger'>FAILED</span>
+                                                    @elseif($reportModel->result == "INCOMPLETE")
+                                                        <span class='badge badge-primary'>INCOMPLETE</span>
+                                                    @elseif($reportModel->result == "POSTPONED")
+                                                        <span class='badge badge-warning'>POSTPONED</span>
+                                                    @endif
                                                 </div>
 
-                                                @if(isset($report->contentimprove) && !empty($report->contentimprove))
-                                                    <hr>
-                                                    <p class="font-weight-bold text-primary">
-                                                        <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
-                                                    </p>
-                                                    @markdown($report->contentimprove)
-                                                @endif
-
-                                                @if($report->attachments->count() > 0)
-                                                    <hr>
-                                                    @foreach($report->attachments as $attachment)
+                                                @if($reportModel->attachments->count() > 0)
+                                                    @foreach($reportModel->attachments as $attachment)
                                                         <div>
                                                             <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                                                 <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
@@ -296,8 +299,9 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 @endif
+                            
+                            
                             @endforeach
                         @endif
                     </div>

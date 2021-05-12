@@ -264,8 +264,22 @@ class TrainingController extends Controller
     {
         $this->authorize('view', $training);
 
-        $examinations = TrainingExamination::where('training_id', $training->id)->get()->sortByDesc('examination_date');
-        $reports = TrainingReport::where('training_id', $training->id)->get()->sortByDesc('report_date')->sortByDesc('id');
+        $examinations = TrainingExamination::where('training_id', $training->id)->get();
+        $reports = TrainingReport::where('training_id', $training->id)->get();
+
+        $reportsAndExams = collect($reports)->merge($examinations);
+        $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
+
+            // Define the correct date to sort by model type is report or exam
+            is_a($a, '\App\Models\TrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
+            is_a($b, '\App\Models\TrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
+
+            // Sorting algorythm
+            if ($aSort == $bSort) {
+                return ($a->id > $b->id) ? -1 : 1;
+            }
+            return ($aSort > $bSort) ? -1 : 1;
+        });
 
         $trainingMentors = $training->area->mentors;
         $statuses = TrainingController::$statuses;
@@ -275,7 +289,7 @@ class TrainingController extends Controller
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();     
 
-        return view('training.show', compact('training', 'examinations', 'reports', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests', 'activeTrainingInterest'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests', 'activeTrainingInterest'));
     }
 
     /**
