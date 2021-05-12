@@ -467,6 +467,10 @@
             scales: {
                 x: {
                     stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Note: This graph only shows standard and fast-tracked CPTs'
+                    }
                 },
                 y: {
                     stacked: true,

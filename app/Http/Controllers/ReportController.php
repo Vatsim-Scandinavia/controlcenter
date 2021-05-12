@@ -216,6 +216,14 @@ class ReportController extends Controller
                     $query = DB::table('training_examinations')
                         ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
                         ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'PASSED')
                         ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('area_id', $areaFilter)
@@ -230,6 +238,14 @@ class ReportController extends Controller
                     $query = DB::table('training_examinations')
                         ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
                         ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'FAILED')
                         ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->where('area_id', $areaFilter)
@@ -285,6 +301,15 @@ class ReportController extends Controller
                     // Passed trainings
                     $query = DB::table('training_examinations')
                         ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'PASSED')
                         ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->groupBy('month')
@@ -297,6 +322,15 @@ class ReportController extends Controller
                     // Failed trainings
                     $query = DB::table('training_examinations')
                         ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'FAILED')
                         ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
                         ->groupBy('month')
