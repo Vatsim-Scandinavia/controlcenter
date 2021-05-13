@@ -136,6 +136,10 @@
             @endif
 
             <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+
+            @can('viewAccessReport', \App\Models\ManagementReport::class)
+                <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
+            @endcan
             
             </div>
         </div>
