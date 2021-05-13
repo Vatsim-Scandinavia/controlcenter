@@ -149,7 +149,7 @@
         @if (\Auth::user()->isModeratorOrAbove())
 
         <!-- Nav Item - Utilities Collapse Menu -->
-        <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
+        <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-fw fa-cogs"></i>
             <span>Administration</span>
@@ -159,6 +159,7 @@
             @if (\Auth::user()->isAdmin())
                 <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                 <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
+                <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
             @endif
 
             @if (\Auth::user()->isModeratorOrAbove())

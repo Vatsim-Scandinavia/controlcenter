@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
     Route::get('/admin/templates/{id}', 'NotificationController@index')->name('admin.templates.area');
     Route::post('/admin/templates/update', 'NotificationController@update')->name('admin.templates.update');
+    Route::get('/admin/log', 'ActivityLogController@index')->name('admin.logs');
 
     // Training routes
     Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');

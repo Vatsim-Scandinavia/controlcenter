@@ -79,4 +79,20 @@ class ActivityLogController extends Controller
     public static function danger($message){
         ActivityLogController::log("DANGER", $message);
     }
+
+    /**
+     * Display a listing of the logs to the view.
+     *
+     * @param anlutro\LaravelSettings\Facade $setting
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function index()
+    {
+        $this->authorize('index', ActivityLog::class);
+        $logs = ActivityLog::all()->sortByDesc('created_at');
+
+        return view('admin.logs', compact('logs'));
+    }
+
 }
