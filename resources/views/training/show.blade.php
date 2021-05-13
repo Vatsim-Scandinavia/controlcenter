@@ -57,6 +57,9 @@
                         @endif
                     @endforeach
                 </h6>
+                @can('edit', [\App\Models\Training::class, $training])
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-sm btn-success">Edit Request</a>       
+                @endcan
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -416,7 +419,7 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('training.update', ['training' => $training->id]) }}" method="POST">
+                <form action="{{ route('training.update.details', ['training' => $training->id]) }}" method="POST">
                     @method('PATCH')
                     @csrf
 
@@ -445,19 +448,6 @@
                     <div class="form-group" id="closedReasonInput" style="display: none">
                         <label for="trainingCloseReason">Closed reason</label>
                         <input type="text" id="trainingCloseReason" class="form-control" name="closed_reason" placeholder="{{ $training->closed_reason }}" maxlength="50">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="trainingStateSelect">Select training type</label>
-                        <select class="form-control" name="type" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
-                            @foreach($types as $id => $data)
-                                @if($id == $training->type)
-                                    <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
-                                @else
-                                    <option value="{{ $id }}">{{ $data["text"] }}</option>
-                                @endif
-                            @endforeach
-                        </select>
                     </div>
 
                     <div class="form-check">

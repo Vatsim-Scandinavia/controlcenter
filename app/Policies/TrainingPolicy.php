@@ -110,6 +110,17 @@ class TrainingPolicy
     }
 
     /**
+     * Check if the user has access to edit a training details
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function edit(User $user)
+    {
+        return $user->isModeratorOrAbove();
+    }
+
+    /**
      * Determines whether the user can access the training reports associated with the training
      *
      * @param User $user

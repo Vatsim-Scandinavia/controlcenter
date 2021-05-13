@@ -211,7 +211,7 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $this->validateRequest();
+        $data = $this->validateUpdateDetails();
 
         if (isset($data['user_id']) && User::find($data['user_id']) == null)
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
@@ -293,18 +293,78 @@ class TrainingController extends Controller
     }
 
     /**
+     * Create a new instance of the resourcebundle_count
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
+    public function edit(Training $training)
+    {
+        $this->authorize('edit', Training::class);
+
+        $ratings = Area::where('id', $training->area_id)->get()->first()->ratings;
+        $types = TrainingController::$types;
+
+        return view('training.edit', compact('training', 'ratings', 'types'));
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param Training $training
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Training $training)
+    public function updateRequest(Training $training)
+    {
+        $this->authorize('update', $training);
+        $attributes = $this->validateUpdateEdit();
+
+        // Detach all ratings connceed to training to save the new (or same) ones.
+        $training->ratings()->detach();
+
+        // Check if ratings has been provided at all
+        if(isset($attributes['ratings'])){
+            $ratings = Rating::find($attributes["ratings"]);
+        } else {
+            return redirect()->back()->withErrors('One or more ratings need to be selected to update training request.');
+        }
+
+        // Save the ratings
+        if($ratings->count() > 1){
+            $training->ratings()->saveMany($ratings);
+        } else {
+            $training->ratings()->save($ratings->first());
+        }
+
+        // Save the rest
+        $training->type = $attributes['type'];
+        $training->english_only_training = key_exists("englishOnly", $attributes) ? true : false;
+
+        $training->save();
+
+        // Log the action
+        ActivityLogController::warning('Updated training request '.$training->id.
+        '. Ratings: '.$ratings->pluck('name').
+        ', training type: '.$training->type.
+        ', english only: '.$training->english_only_training);
+
+        return redirect($training->path())->withSuccess("Training successfully updated");
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Training $training
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function updateDetails(Training $training)
     {
         $this->authorize('update', $training);
         $oldStatus = $training->fresh()->status;
 
-        $attributes = $this->validateRequest();
+        $attributes = $this->validateUpdateDetails();
         if (key_exists('status', $attributes)) {
             $training->updateStatus($attributes['status']);
         }
@@ -435,7 +495,7 @@ class TrainingController extends Controller
     /**
      * @return mixed
      */
-    protected function validateRequest()
+    protected function validateUpdateDetails()
     {
         return request()->validate([
             'experience' => 'sometimes|required|integer|min:1|max:6',
@@ -448,10 +508,21 @@ class TrainingController extends Controller
             'ratings' => 'sometimes|required',
             'training_area' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
-            'type' => 'sometimes|required|integer',
             'notes' => 'nullable',
             'mentors' => 'sometimes',
             'closed_reason' => 'sometimes|max:50',
+        ]);
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function validateUpdateEdit()
+    {
+        return request()->validate([
+            'type' => 'sometimes|required|integer',
+            'englishOnly' => 'nullable',
+            'ratings' => 'sometimes|required',
         ]);
     }
 }

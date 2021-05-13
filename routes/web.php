@@ -71,9 +71,11 @@ Route::middleware('auth')->group(function () {
     // Training routes
     Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');
     Route::get('/training/create', 'TrainingController@create')->name('training.create');
+    Route::get('/training/edit/{training}', 'TrainingController@edit')->name('training.edit');
+    Route::patch('/training/edit/{training}', 'TrainingController@updateRequest')->name('training.update.request');
     Route::post('/training/store', 'TrainingController@store')->name('training.store');
     Route::get('/training/{training}/close', 'TrainingController@close')->name('training.close');
-    Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
+    Route::patch('/training/{training}', 'TrainingController@updateDetails')->name('training.update.details');
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 
     Route::get('/training/{training}/confirm/{key}', 'TrainingController@confirmInterest')->name('training.confirm.interest');
