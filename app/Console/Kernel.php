@@ -63,6 +63,11 @@ class Kernel extends ConsoleKernel
         // Send our training interest e-mails
         $schedule->command('send:traininginterest')
             ->dailyAt('12:00');
+
+        // Expire workmail addresses
+        $schedule->command('update:workmails')
+            ->daily();
+
     }
 
     /**
