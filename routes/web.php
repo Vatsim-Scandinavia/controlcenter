@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.area');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
-    Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
+    Route::get('/reports/access', 'ReportController@access')->name('reports.access');
 
     // Admin
     Route::get('/admin/settings', 'GlobalSettingController@index')->name('admin.settings');

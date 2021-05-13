@@ -30,13 +30,13 @@ class ManagementReportPolicy
         return $user->isModeratorOrAbove();
     }
 
-    /**
+        /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function viewAtcActivity(User $user) {
-        return $user->isAdmin();
+    public function viewAccessReport(User $user) {
+        return $user->isModeratorOrAbove();
     }
 }

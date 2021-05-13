@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -17,6 +18,33 @@ use Illuminate\Support\Facades\DB;
  */
 class ReportController extends Controller
 {
+
+    /**
+     * Show the training statistics view
+     *
+     * @param int $filterArea areaId to filter by
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function access($filterArea = false){
+
+        $this->authorize('viewAccessReport', ManagementReport::class);
+
+        $availableUsers = Auth::user()->viewableModels(\App\Models\User::class);
+
+        // Cherrypick those with access roles
+        $users = collect();
+        foreach($availableUsers as $user){
+            if($user->groups()->count()){
+                $users->push($user);
+            }
+        }
+
+        $areas = Area::all();
+
+        return view('reports.access', compact('users', 'areas'));
+    }
+    
     /**
      * Show the training statistics view
      *
@@ -63,21 +91,6 @@ class ReportController extends Controller
         }
 
         return view('reports.mentors', compact('mentors'));
-    }
-
-    /**
-     * Show the atc active statistics view
-     *
-     * @return \Illuminate\View\View
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function atc(){
-
-        $this->authorize('viewAtcActivity', ManagementReport::class);
-
-        $controllers = User::all();
-
-        return view('reports.atc', compact('controllers'));
     }
 
 
