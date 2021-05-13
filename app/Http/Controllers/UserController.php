@@ -6,10 +6,12 @@ use App\Models\User;
 use App\Models\Group;
 use App\Models\Area;
 use App\Models\Permission;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use League\CommonMark\Inline\Parser\NewlineParser;
 use Illuminate\Support\Facades\DB;
+use anlutro\LaravelSettings\Facade as Setting;
 
 /**
  * Controller to handle user views
@@ -166,7 +168,8 @@ class UserController extends Controller
             'setting_notify_newreport' => '',
             'setting_notify_newreq' => '',
             'setting_notify_closedreq' => '',
-            'setting_notify_newexamreport' => ''
+            'setting_notify_newexamreport' => '',
+            'setting_workmail_address' => 'nullable|email|max:64|regex:/(.*)'.Setting::get('linkDomain').'$/i',
         ]);
 
         isset($data['setting_notify_newreport']) ? $setting_notify_newreport = true : $setting_notify_newreport = false;
@@ -178,9 +181,40 @@ class UserController extends Controller
         $user->setting_notify_newreq = $setting_notify_newreq;
         $user->setting_notify_closedreq = $setting_notify_closedreq;
         $user->setting_notify_newexamreport = $setting_notify_newexamreport;
+        
+        if(!$user->setting_workmail_address && $data['setting_workmail_address']){
+            $user->setting_workmail_address = $data['setting_workmail_address'];
+            $user->setting_workmail_expire = Carbon::now()->addDays(30);
+        } elseif($user->setting_workmail_address && !isset($data['setting_workmail_address'])){
+            $user->setting_workmail_address = null;
+            $user->setting_workmail_expire = null;
+        }
+
         $user->save();
 
         return redirect()->intended(route('user.settings'))->withSuccess("Settings successfully changed");
+    }
+
+    /**
+     * Renew 30 days on the workmail address
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function extendWorkmail()
+    {
+
+        $user = Auth::user();
+
+        if(Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7){
+            $user->setting_workmail_expire = Carbon::now()->addDays(30);
+            $user->save();
+
+            return redirect()->intended(route('user.settings'))->withSuccess("Workmail successfully extended");
+        } else {
+            return redirect()->intended(route('user.settings'))->withErrors("Workmail is not due to expire");
+        }
+
+        
     }
 
 }

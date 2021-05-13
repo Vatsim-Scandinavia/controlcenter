@@ -48,6 +48,16 @@
                                         Send notification of new examination reports
                                     </label>
                                 </div>
+                                
+                                <div class="form-group mt-4">
+                                    <label for="setting_workmail_address">Work e-mail</label>
+                                    <input type="email" class="form-control @error('setting_workmail_address') is-invalid @enderror" id="setting_workmail_address" name="setting_workmail_address" value="{{ $user->setting_workmail_address ? $user->setting_workmail_address : "" }}">
+                                    <small class="form-text text-muted">Enter a work e-mail address to send all notifications to instead. Has to be &#64;{{ Setting::get('linkDomain') }}</small>
+                                    @error('setting_workmail_address')
+                                        <span class="text-danger">{{ $errors->first('setting_workmail_address') }}</span>
+                                    @enderror
+                                </div>
+                                
                             @endif
 
                             <button class="btn btn-success mt-3" type="submit">Save</button>

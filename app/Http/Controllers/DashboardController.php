@@ -7,6 +7,7 @@ use App\Models\TrainingReport;
 use App\Models\TrainingInterest;
 use App\Models\User;
 use App\Models\Vote;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use anlutro\LaravelSettings\Facade as Setting;
@@ -58,13 +59,15 @@ class DashboardController extends Controller
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
         $atcInactiveMessage = ((in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active));
 
+        $workmailRenewal = (isset($user->setting_workmail_expire)) ? (Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7) : false;
+
         // Check if there's an active vote running to advertise
         $activeVote = Vote::where('closed', 0)->first();
 
         $atcHoursDB = DB::table('atc_activity')->where('user_id', $user->id)->get()->first();
         $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote', 'atcHours'));
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote', 'atcHours', 'workmailRenewal'));
     }
 
     /**

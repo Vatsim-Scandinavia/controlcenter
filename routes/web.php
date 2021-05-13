@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');
     Route::get('/settings', 'UserController@settings')->name('user.settings');
     Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
+    Route::get('/settings/extendworkmail', 'UserController@extendWorkmail')->name('user.settings.extendworkmail');
 
     Route::get('/user/search/action', 'UserSearchController@action')->name('user.search');
 
