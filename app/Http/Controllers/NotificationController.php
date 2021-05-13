@@ -59,6 +59,8 @@ class NotificationController extends Controller
         
         $area->save();
 
+        ActivityLogController::warning('OTHER', 'Training Notification Text Updated ― Area: '.$area->name);
+
         return redirect()->intended(route('admin.templates.area', $area->id))->withSuccess($area->name."'s notifications updated.");
     }
 

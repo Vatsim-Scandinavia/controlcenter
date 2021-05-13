@@ -154,7 +154,10 @@ class VatbookController extends Controller
         
         $booking->save();
 
-        ActivityLogController::info("Created vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
+        ActivityLogController::info('BOOKING', "Created vatbook booking ".$booking->id.
+        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect('/vatbook');
     }
@@ -248,7 +251,10 @@ class VatbookController extends Controller
         
         $booking->save();
 
-        ActivityLogController::info("Updated vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
+        ActivityLogController::info('BOOKING', "Updated vatbook booking ".$booking->id.
+        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect('/vatbook');
     }
@@ -271,7 +277,10 @@ class VatbookController extends Controller
         $booking->local_id = null;
         $booking->save();
 
-        ActivityLogController::info("Deleted vatbook booking ".$booking->id." from ".$booking->time_start." to ".$booking->time_end." at position id: ".$booking->position_id);
+        ActivityLogController::warning('BOOKING', "Deleted vatbook booking ".$booking->id.
+        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect('/vatbook');
     }

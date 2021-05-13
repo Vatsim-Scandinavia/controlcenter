@@ -241,7 +241,7 @@ class TrainingController extends Controller
             $training->ratings()->save($ratings->first());
         }
 
-        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Area::find($training->area_id)->name);
+        ActivityLogController::info('TRAINING', 'Created training request '.$training->id.' for CID '.$training->user_id.' ― Ratings: '.$ratings->pluck('name').' in '.Area::find($training->area_id)->name);
 
         // Send confimration mail
         $training->user->notify(new TrainingCreatedNotification($training));
@@ -320,6 +320,10 @@ class TrainingController extends Controller
         $this->authorize('update', $training);
         $attributes = $this->validateUpdateEdit();
 
+        // Lets remeber what it was before for showing the change in logs
+        $preChangeRatings = $training->ratings;
+        $preChangeType = $training->type;
+
         // Detach all ratings connceed to training to save the new (or same) ones.
         $training->ratings()->detach();
 
@@ -344,10 +348,12 @@ class TrainingController extends Controller
         $training->save();
 
         // Log the action
-        ActivityLogController::warning('Updated training request '.$training->id.
-        '. Ratings: '.$ratings->pluck('name').
-        ', training type: '.$training->type.
-        ', english only: '.$training->english_only_training);
+        ActivityLogController::warning('TRAINING', 'Updated training request '.$training->id.
+        ' ― Old Ratings: '.$preChangeRatings->pluck('name').
+        ' ― New Ratings: '.$ratings->pluck('name').
+        ' ― Old Training type: '.TrainingController::$types[$preChangeType]['text'].
+        ' ― New Training type: '.TrainingController::$types[$training->type]['text'].
+        ' ― English only: '. ($training->english_only_training ? 'true' : 'false'));
 
         return redirect($training->path())->withSuccess("Training successfully updated");
     }
@@ -407,10 +413,10 @@ class TrainingController extends Controller
         // Update the training
         $training->update($attributes);
 
-        ActivityLogController::warning('Updated training request '.$training->id.
-        '. Status: '.TrainingController::$statuses[$training->status]["text"].
-        ', training type: '.$training->type.
-        ', mentor: '.$training->mentors->pluck('name'));
+        ActivityLogController::warning('TRAINING', 'Updated training details '.$training->id.
+        ' ― Old Status: '.TrainingController::$statuses[$oldStatus]["text"].
+        ' ― New Status: '.TrainingController::$statuses[$training->status]["text"].
+        ' ― Mentor: '.$training->mentors->pluck('name'));
 
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if((int)$training->status != $oldStatus){
@@ -453,9 +459,9 @@ class TrainingController extends Controller
     public function close(Training $training)
     {
         $this->authorize('close', $training);
-        ActivityLogController::warning('Student closed training request '.$training->id.
-        '. Status: '.TrainingController::$statuses[$training->status]["text"].
-        ', training type: '.$training->type);
+        ActivityLogController::warning('TRAINING', 'Student closed training request '.$training->id.
+        ' ― Status: '.TrainingController::$statuses[$training->status]["text"].
+        ' ― Training type: '.TrainingController::$types[$training->type]["text"]);
         $training->mentors()->detach();
         $training->updateStatus(-3);
         $training->user->notify(new TrainingClosedNotification($training, (int)$training->status));
@@ -484,7 +490,7 @@ class TrainingController extends Controller
             $interest->expired = true;
             $interest->save();
     
-            ActivityLogController::info('Training interest confirmed.');
+            ActivityLogController::info('TRAINING', 'Training interest confirmed.');
             return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }
 

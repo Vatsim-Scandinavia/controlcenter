@@ -78,6 +78,8 @@ class GlobalSettingController extends Controller
         Setting::set('linkMoodle', $data['linkMoodle']);
         Setting::save();
 
+        ActivityLogController::danger('OTHER', 'Global Settings Updated');
+
         return redirect()->intended(route('admin.settings'))->withSuccess("Server settings successfully changed");
     }
 

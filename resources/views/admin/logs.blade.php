@@ -22,6 +22,7 @@
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-order-by="desc">Time</th>
                                 <th data-field="type" data-sortable="false" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
+                                <th data-field="category" data-sortable="false" data-filter-control="select">Category</th>
                                 <th data-field="id" data-sortable="false" data-filter-control="input" data-visible-search="true">Who</th>
                                 <th data-field="message" data-sortable="false" data-filter-control="input">What</th>
                             </tr>
@@ -31,6 +32,7 @@
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($log->created_at)->toEuropeanDateTime() }}</td>
                                 <td><span class="text-{{ strtolower($log->type) }}">{{ $log->type }}</span></td>
+                                <td>{{ $log->category }}</td>
                                 <td><a href="{{ route('user.show', $log->user_id) }}">{{ App\Models\User::find($log->user_id)->name }} ({{ $log->user_id }})</a></td>
                                 <td>{{ $log->message }}</td>
                             </tr>

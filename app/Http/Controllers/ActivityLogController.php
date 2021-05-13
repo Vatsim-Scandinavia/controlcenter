@@ -18,10 +18,11 @@ class ActivityLogController extends Controller
      * @param string $message
      * @return void
      */
-    private static function log($type, $message){
+    private static function log($type, $category, $message){
         $log = new ActivityLog();
 
         $log->type = $type;
+        $log->category = $category;
         $log->message = $message;
         
         $request = request();
@@ -46,8 +47,8 @@ class ActivityLogController extends Controller
      * @param string $message
      * @return void
      */
-    public static function debug($message){
-        ActivityLogController::log("DEBUG", $message);
+    public static function debug($category, $message){
+        ActivityLogController::log("DEBUG", $category, $message);
     }
 
     /**
@@ -56,8 +57,8 @@ class ActivityLogController extends Controller
      * @param string $message
      * @return void
      */
-    public static function info($message){
-        ActivityLogController::log("INFO", $message);
+    public static function info($category, $message){
+        ActivityLogController::log("INFO", $category, $message);
     }
 
     /**
@@ -66,8 +67,8 @@ class ActivityLogController extends Controller
      * @param string $message
      * @return void
      */
-    public static function warning($message){
-        ActivityLogController::log("WARNING", $message);
+    public static function warning($category, $message){
+        ActivityLogController::log("WARNING", $category, $message);
     }
 
     /**
@@ -76,8 +77,8 @@ class ActivityLogController extends Controller
      * @param string $message
      * @return void
      */
-    public static function danger($message){
-        ActivityLogController::log("DANGER", $message);
+    public static function danger($category, $message){
+        ActivityLogController::log("DANGER", $category, $message);
     }
 
     /**
