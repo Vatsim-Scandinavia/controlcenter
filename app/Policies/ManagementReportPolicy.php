@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\ManagementReport;
 use App\Models\User;
+use App\Models\Area;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ManagementReportPolicy
@@ -16,8 +17,14 @@ class ManagementReportPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function accessTrainingReports(User $user) {
+    public function accessTrainingReports(User $user, $filterArea) {
+
+        if($filterArea){
+            return $user->isModeratorOrAbove(Area::find($filterArea));
+        }
+
         return $user->isAdmin();
+        
     }
 
     /**

@@ -53,7 +53,7 @@ class ReportController extends Controller
      */
     public function trainings($filterArea = false){
 
-        $this->authorize('accessTrainingReports', ManagementReport::class);
+        $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
         // Get stats
         $cardStats = $this->getCardStats($filterArea);
         $totalRequests = $this->getDailyRequestsStats($filterArea);

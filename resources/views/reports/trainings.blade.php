@@ -8,9 +8,13 @@
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Areas</a>
+            @if(\Auth::user()->isAdmin())
+                <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Areas</a>
+            @endif
             @foreach($areas as $area)
-                <a class="dropdown-item" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
+                @if(\Auth::user()->isModeratorOrAbove($area))
+                    <a class="dropdown-item" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
+                @endif
             @endforeach 
         </div>
     </div>
