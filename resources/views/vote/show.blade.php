@@ -79,6 +79,7 @@
 @endsection
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
     var vote = {!! json_encode($vote->option) !!};
@@ -101,7 +102,7 @@
     };
 
     var mix = document.getElementById("voteResults").getContext('2d');
-    var completedTrainingRequests = new Chart(mix, {
+    var voteResults = new Chart(mix, {
         type: 'bar',
         data: barChartData,
         options: {
@@ -110,11 +111,12 @@
                 intersect: false
             },
             scales: {
-                y: [{
+                y: {
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        stepSize: 1,
                     }
-                }]
+                }
             },
             responsive: true,
         }
