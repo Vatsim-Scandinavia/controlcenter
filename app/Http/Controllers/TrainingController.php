@@ -274,7 +274,7 @@ class TrainingController extends Controller
             is_a($a, '\App\Models\TrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
             is_a($b, '\App\Models\TrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
 
-            // Sorting algorythm
+            // Sorting algorithm
             if ($aSort == $bSort) {
                 return ($a->id > $b->id) ? -1 : 1;
             }
