@@ -29,7 +29,7 @@ class ReportController extends Controller
 
         $this->authorize('viewAccessReport', ManagementReport::class);
 
-        $availableUsers = Auth::user()->viewableModels(\App\Models\User::class);
+        $availableUsers = User::all();
 
         // Cherrypick those with access roles
         $users = collect();
