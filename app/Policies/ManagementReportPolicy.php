@@ -30,7 +30,7 @@ class ManagementReportPolicy
         return $user->isModeratorOrAbove();
     }
 
-        /**
+    /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
