@@ -30,8 +30,8 @@
                         <tbody>
                             @foreach($users as $user)
                             <tr>
-                                <td><a href="/user/{{ $user->id }}">{{ $user->id }}</a></td>
-                                <td><a href="/user/{{ $user->id }}">{{ $user->name }}</a></td>
+                                <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
+                                <td><a href="{{ route('user.show', $user->id) }}">{{ $user->name }}</a></td>
                                 @foreach($areas as $area)
                                     <td>
                                         @foreach($user->groups as $key => $group)

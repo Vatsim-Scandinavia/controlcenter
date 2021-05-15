@@ -38,8 +38,8 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 @if ($user->isModeratorOrAbove())                            
-                                    <td><a href="/user/{{ $training->user->id }}">{{ $training->user->id }}</a></td>
-                                    <td><a href="/user/{{ $training->user->id }}">{{ $training->user->name }}</a></td>
+                                    <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></td>
+                                    <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
                                 @else 
                                     <td>{{ $training->user->id }}</td>
                                     <td>{{ $training->user->name }}</td>
