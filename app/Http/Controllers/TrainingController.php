@@ -300,7 +300,7 @@ class TrainingController extends Controller
      */
     public function edit(Training $training)
     {
-        $this->authorize('edit', Training::class);
+        $this->authorize('edit', [Training::class, $training]);
 
         $ratings = Area::where('id', $training->area_id)->get()->first()->ratings;
         $types = TrainingController::$types;

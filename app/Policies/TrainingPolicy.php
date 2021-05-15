@@ -115,9 +115,9 @@ class TrainingPolicy
      * @param User $user
      * @return bool
      */
-    public function edit(User $user)
+    public function edit(User $user, Training $training)
     {
-        return $user->isModeratorOrAbove();
+        return $user->isModeratorOrAbove($training->area);
     }
 
     /**
