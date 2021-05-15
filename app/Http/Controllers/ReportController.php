@@ -22,11 +22,10 @@ class ReportController extends Controller
     /**
      * Show the training statistics view
      *
-     * @param int $filterArea areaId to filter by
      * @return \Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function access($filterArea = false){
+    public function access(){
 
         $this->authorize('viewAccessReport', ManagementReport::class);
 
