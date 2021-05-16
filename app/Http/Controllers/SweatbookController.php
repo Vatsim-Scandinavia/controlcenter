@@ -98,7 +98,10 @@ class SweatbookController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info("Created sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
+        ActivityLogController::info('BOOKING', "Created sweatbox booking ".$booking->id.
+        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect('/sweatbook')->withSuccess("Booking successfully saved.");
     }
@@ -155,7 +158,10 @@ class SweatbookController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info("Updated sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
+        ActivityLogController::info('BOOKING', "Updated sweatbox booking ".$booking->id.
+        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect('/sweatbook')->withSuccess("Booking successfully edited.");
     }
@@ -173,7 +179,10 @@ class SweatbookController extends Controller
         $booking = Sweatbook::findOrFail($id);
         $this->authorize('update', $booking);
 
-        ActivityLogController::info("Deleted sweatbox booking ".$booking->id." from ".$booking->start_at." to ".$booking->end_at." at position id: ".$booking->position_id);
+        ActivityLogController::warning('BOOKING', "Deleted sweatbox booking ".$booking->id.
+        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― Position: ".Position::find($booking->position_id)->callsign);
 
         $booking->delete();
 

@@ -190,7 +190,7 @@ class TrainingsTest extends TestCase
         $mentor->groups()->attach(3, ['area_id' => 2]);
 
         $this->actingAs($moderator)
-            ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])
+            ->patchJson(route('training.update.details', ['training' => $training]), ['mentors' => [$mentor->id]])
             ->assertStatus(302);
 
         $this->assertNotTrue($training->mentors->contains($mentor));

@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');
     Route::get('/settings', 'UserController@settings')->name('user.settings');
     Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
+    Route::get('/settings/extendworkmail', 'UserController@extendWorkmail')->name('user.settings.extendworkmail');
 
     Route::get('/user/search/action', 'UserSearchController@action')->name('user.search');
 
@@ -59,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/trainings', 'ReportController@trainings')->name('reports.trainings');
     Route::get('/reports/training/{id}', 'ReportController@trainings')->name('reports.training.area');
     Route::get('/reports/mentors', 'ReportController@mentors')->name('reports.mentors');
-    Route::get('/reports/atc', 'ReportController@atc')->name('reports.atc');
+    Route::get('/reports/access', 'ReportController@access')->name('reports.access');
 
     // Admin
     Route::get('/admin/settings', 'GlobalSettingController@index')->name('admin.settings');
@@ -67,13 +68,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/templates', 'NotificationController@index')->name('admin.templates');
     Route::get('/admin/templates/{id}', 'NotificationController@index')->name('admin.templates.area');
     Route::post('/admin/templates/update', 'NotificationController@update')->name('admin.templates.update');
+    Route::get('/admin/log', 'ActivityLogController@index')->name('admin.logs');
 
     // Training routes
     Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');
     Route::get('/training/create', 'TrainingController@create')->name('training.create');
+    Route::get('/training/edit/{training}', 'TrainingController@edit')->name('training.edit');
+    Route::patch('/training/edit/{training}', 'TrainingController@updateRequest')->name('training.update.request');
     Route::post('/training/store', 'TrainingController@store')->name('training.store');
     Route::get('/training/{training}/close', 'TrainingController@close')->name('training.close');
-    Route::patch('/training/{training}', 'TrainingController@update')->name('training.update');
+    Route::patch('/training/{training}', 'TrainingController@updateDetails')->name('training.update.details');
     Route::get('/training/{training}', 'TrainingController@show')->name('training.show');
 
     Route::get('/training/{training}/confirm/{key}', 'TrainingController@confirmInterest')->name('training.confirm.interest');

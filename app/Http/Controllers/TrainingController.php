@@ -197,8 +197,9 @@ class TrainingController extends Controller
 
         $students = User::all();
         $ratings = Area::with('ratings')->get()->toArray();
+        $types = TrainingController::$types;
 
-        return view('training.create', compact('students', 'ratings'));
+        return view('training.create', compact('students', 'ratings', 'types'));
     }
 
 
@@ -210,7 +211,9 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $this->validateRequest();
+        
+        $data = $this->validateUpdateDetails();
+        $this->authorize('store', [Training::class, $data]);
 
         if (isset($data['user_id']) && User::find($data['user_id']) == null)
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
@@ -230,7 +233,8 @@ class TrainingController extends Controller
             'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,
-            'english_only_training' => key_exists("englishOnly", $data) ? true : false
+            'english_only_training' => key_exists("englishOnly", $data) ? true : false,
+            'type' => isset($data['type']) ? $data['type'] : 1
         ]);
 
         if($ratings->count() > 1){
@@ -239,7 +243,7 @@ class TrainingController extends Controller
             $training->ratings()->save($ratings->first());
         }
 
-        ActivityLogController::warning('Created training request '.$training->id.' for '.$training->user_id.' with rating: '.$ratings->pluck('name').' in '.Area::find($training->area_id)->name);
+        ActivityLogController::info('TRAINING', 'Created training request '.$training->id.' for CID '.$training->user_id.' ― Ratings: '.$ratings->pluck('name').' in '.Area::find($training->area_id)->name);
 
         // Send confimration mail
         $training->user->notify(new TrainingCreatedNotification($training));
@@ -262,8 +266,22 @@ class TrainingController extends Controller
     {
         $this->authorize('view', $training);
 
-        $examinations = TrainingExamination::where('training_id', $training->id)->get()->sortByDesc('examination_date');
-        $reports = TrainingReport::where('training_id', $training->id)->get()->sortByDesc('report_date')->sortByDesc('id');
+        $examinations = TrainingExamination::where('training_id', $training->id)->get();
+        $reports = TrainingReport::where('training_id', $training->id)->get();
+
+        $reportsAndExams = collect($reports)->merge($examinations);
+        $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
+
+            // Define the correct date to sort by model type is report or exam
+            is_a($a, '\App\Models\TrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
+            is_a($b, '\App\Models\TrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
+
+            // Sorting algorithm
+            if ($aSort == $bSort) {
+                return ($a->id > $b->id) ? -1 : 1;
+            }
+            return ($aSort > $bSort) ? -1 : 1;
+        });
 
         $trainingMentors = $training->area->mentors;
         $statuses = TrainingController::$statuses;
@@ -273,7 +291,23 @@ class TrainingController extends Controller
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();     
 
-        return view('training.show', compact('training', 'examinations', 'reports', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests', 'activeTrainingInterest'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests', 'activeTrainingInterest'));
+    }
+
+    /**
+     * Create a new instance of the resourcebundle_count
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
+    public function edit(Training $training)
+    {
+        $this->authorize('edit', [Training::class, $training]);
+
+        $ratings = Area::where('id', $training->area_id)->get()->first()->ratings;
+        $types = TrainingController::$types;
+
+        return view('training.edit', compact('training', 'ratings', 'types'));
     }
 
     /**
@@ -283,12 +317,62 @@ class TrainingController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Training $training)
+    public function updateRequest(Training $training)
+    {
+        $this->authorize('update', $training);
+        $attributes = $this->validateUpdateEdit();
+
+        // Lets remeber what it was before for showing the change in logs
+        $preChangeRatings = $training->ratings;
+        $preChangeType = $training->type;
+
+        // Detach all ratings connceed to training to save the new (or same) ones.
+        $training->ratings()->detach();
+
+        // Check if ratings has been provided at all
+        if(isset($attributes['ratings'])){
+            $ratings = Rating::find($attributes["ratings"]);
+        } else {
+            return redirect()->back()->withErrors('One or more ratings need to be selected to update training request.');
+        }
+
+        // Save the ratings
+        if($ratings->count() > 1){
+            $training->ratings()->saveMany($ratings);
+        } else {
+            $training->ratings()->save($ratings->first());
+        }
+
+        // Save the rest
+        $training->type = $attributes['type'];
+        $training->english_only_training = key_exists("englishOnly", $attributes) ? true : false;
+
+        $training->save();
+
+        // Log the action
+        ActivityLogController::warning('TRAINING', 'Updated training request '.$training->id.
+        ' ― Old Ratings: '.$preChangeRatings->pluck('name').
+        ' ― New Ratings: '.$ratings->pluck('name').
+        ' ― Old Training type: '.TrainingController::$types[$preChangeType]['text'].
+        ' ― New Training type: '.TrainingController::$types[$training->type]['text'].
+        ' ― English only: '. ($training->english_only_training ? 'true' : 'false'));
+
+        return redirect($training->path())->withSuccess("Training successfully updated");
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Training $training
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function updateDetails(Training $training)
     {
         $this->authorize('update', $training);
         $oldStatus = $training->fresh()->status;
 
-        $attributes = $this->validateRequest();
+        $attributes = $this->validateUpdateDetails();
         if (key_exists('status', $attributes)) {
             $training->updateStatus($attributes['status']);
         }
@@ -331,10 +415,10 @@ class TrainingController extends Controller
         // Update the training
         $training->update($attributes);
 
-        ActivityLogController::warning('Updated training request '.$training->id.
-        '. Status: '.TrainingController::$statuses[$training->status]["text"].
-        ', training type: '.$training->type.
-        ', mentor: '.$training->mentors->pluck('name'));
+        ActivityLogController::warning('TRAINING', 'Updated training details '.$training->id.
+        ' ― Old Status: '.TrainingController::$statuses[$oldStatus]["text"].
+        ' ― New Status: '.TrainingController::$statuses[$training->status]["text"].
+        ' ― Mentor: '.$training->mentors->pluck('name'));
 
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if((int)$training->status != $oldStatus){
@@ -377,9 +461,9 @@ class TrainingController extends Controller
     public function close(Training $training)
     {
         $this->authorize('close', $training);
-        ActivityLogController::warning('Student closed training request '.$training->id.
-        '. Status: '.TrainingController::$statuses[$training->status]["text"].
-        ', training type: '.$training->type);
+        ActivityLogController::warning('TRAINING', 'Student closed training request '.$training->id.
+        ' ― Status: '.TrainingController::$statuses[$training->status]["text"].
+        ' ― Training type: '.TrainingController::$types[$training->type]["text"]);
         $training->mentors()->detach();
         $training->updateStatus(-3);
         $training->user->notify(new TrainingClosedNotification($training, (int)$training->status));
@@ -408,7 +492,7 @@ class TrainingController extends Controller
             $interest->expired = true;
             $interest->save();
     
-            ActivityLogController::info('Training interest confirmed.');
+            ActivityLogController::info('TRAINING', 'Training interest confirmed.');
             return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }
 
@@ -419,7 +503,7 @@ class TrainingController extends Controller
     /**
      * @return mixed
      */
-    protected function validateRequest()
+    protected function validateUpdateDetails()
     {
         return request()->validate([
             'experience' => 'sometimes|required|integer|min:1|max:6',
@@ -432,10 +516,21 @@ class TrainingController extends Controller
             'ratings' => 'sometimes|required',
             'training_area' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
-            'type' => 'sometimes|required|integer',
             'notes' => 'nullable',
             'mentors' => 'sometimes',
             'closed_reason' => 'sometimes|max:50',
+        ]);
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function validateUpdateEdit()
+    {
+        return request()->validate([
+            'type' => 'sometimes|required|integer',
+            'englishOnly' => 'nullable',
+            'ratings' => 'sometimes|required',
         ]);
     }
 }

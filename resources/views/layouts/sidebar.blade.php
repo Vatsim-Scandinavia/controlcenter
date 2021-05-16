@@ -123,7 +123,7 @@
         <hr class="sidebar-divider">
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.atc') ? 'active' : '' }}">
+        <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-clipboard-list"></i>
             <span>Reports</span>
@@ -131,11 +131,17 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
             
-            @if (\Auth::user()->isAdmin())
+            @if(\Auth::user()->isModerator())
+                <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
+            @else
                 <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
             @endif
-
+            
             <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+
+            @can('viewAccessReport', \App\Models\ManagementReport::class)
+                <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
+            @endcan
             
             </div>
         </div>
@@ -145,7 +151,7 @@
         @if (\Auth::user()->isModeratorOrAbove())
 
         <!-- Nav Item - Utilities Collapse Menu -->
-        <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') ? 'active' : '' }}">
+        <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-fw fa-cogs"></i>
             <span>Administration</span>
@@ -155,6 +161,7 @@
             @if (\Auth::user()->isAdmin())
                 <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                 <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
+                <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
             @endif
 
             @if (\Auth::user()->isModeratorOrAbove())

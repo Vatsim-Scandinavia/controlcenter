@@ -54,9 +54,27 @@
                             <span class="text-danger">{{ $errors->first('training_area') }}</span>
                         @enderror
                     </div>
+
+                    <div class="form-group">
+                        <label class="my-1 mr-2" for="typeSelect">Training type</label>
+                        <select id="typeSelect" name="type" class="custom-select my-1 mr-sm-2 @error('type') is-invalid @enderror" @change="onChange($event)">
+                            <option selected disabled>Choose training type</option>
+                            @foreach($types as $id => $data)
+                                <option value="{{ $id }}">{{ $data["text"] }}</option>
+                            @endforeach
+                        </select>
+                        @error('type')
+                            <span class="text-danger">{{ $errors->first('type') }}</span>
+                        @enderror
+                    </div>
+                    
+                    <div class="form-group form-check">
+                        <input value="true" type="checkbox" class="form-check-input" id="englishOnly" name="englishOnly">
+                        <label class="form-check-label" for="englishOnly">English only training</label>
+                    </div>
  
                     <div class="form-group">
-                        <label class="my-1 mr-2" for="ratingSelect">Training type <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label class="my-1 mr-2" for="ratingSelect">Training level <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple id="ratingSelect" name="ratings[]" class="form-control @error('ratings') is-invalid @enderror" size="5">
                             <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                         </select>
@@ -80,13 +98,22 @@
     var payload = {!! json_encode($ratings, true) !!}
 
     const area = new Vue({
-            el: '#areaSelect',
-            methods: {
-                onChange(event) {
-                    rating.update(event.srcElement.options[event.srcElement.selectedIndex])
-                }
+        el: '#areaSelect',
+        methods: {
+            onChange(event) {
+                rating.update(event.srcElement.options[event.srcElement.selectedIndex])
             }
-        });
+        }
+    });
+
+    const type = new Vue({
+        el: '#typeSelect',
+        methods: {
+            onChange(event) {
+                type.update(event.srcElement.options[event.srcElement.selectedIndex])
+            }
+        }
+    });
 
     const rating = new Vue({
         el: '#ratingSelect',

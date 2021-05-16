@@ -115,8 +115,8 @@
                             </div>
 
                             <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" name="englishOnly" for="exampleCheck1">I'm <u>only</u> able to receive training in English</label>
+                                <input type="checkbox" class="form-check-input" id="englishOnly" name="englishOnly" value="true">
+                                <label class="form-check-label" for="englishOnly">I'm <u>only</u> able to receive training in English</label>
                             </div>
 
                             <hr>

@@ -119,7 +119,7 @@ class TrainingExaminationController extends Controller
         $this->authorize('delete', $examination);
 
         $examination->delete();
-        ActivityLogController::warning('Deleted training examination '.$examination->id.' which is tied was training id '.$examination->training->id);
+        ActivityLogController::danger('TRAINING', 'Deleted training examination '.$examination->id.' ― From Training '.$examination->training->id);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Examination successfully deleted']);

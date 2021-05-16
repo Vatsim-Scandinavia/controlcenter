@@ -130,7 +130,7 @@
             }
     
             var timer = null
-            $(document).on('keyup', '.search-input', function(){
+            $('.search .search-input').keyup(function(){
                 var query = $(this).val();
                 $('.search-spinner').addClass('search-spinner-visible');
                 

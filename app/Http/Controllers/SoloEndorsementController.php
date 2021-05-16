@@ -97,6 +97,11 @@ class SoloEndorsementController extends Controller
 
         $endorsement->save();
 
+        ActivityLogController::info('TRAINING', 'Created solo endorsement '.
+        ' ― Student: '.$endorsement->user_id.
+        ' ― Position: '.$endorsement->position.
+        ' ― Expires: '.Carbon::parse($endorsement->expires_at)->toEuropeanDate());
+
         return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement created");
     }
 
@@ -114,6 +119,11 @@ class SoloEndorsementController extends Controller
         $endorsement = SoloEndorsement::findOrFail($id);
 
         $endorsement->delete();
+
+        ActivityLogController::warning('TRAINING', 'Deleted solo endorsement '.
+        ' ― Student: '.$endorsement->user_id.
+        ' ― Position: '.$endorsement->position.
+        ' ― Expires: '.Carbon::parse($endorsement->expires_at)->toEuropeanDate());
 
         return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement deleted");
     }

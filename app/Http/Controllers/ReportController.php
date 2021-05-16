@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -17,6 +18,32 @@ use Illuminate\Support\Facades\DB;
  */
 class ReportController extends Controller
 {
+
+    /**
+     * Show the training statistics view
+     *
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function access(){
+
+        $this->authorize('viewAccessReport', ManagementReport::class);
+
+        $availableUsers = User::all();
+
+        // Cherrypick those with access roles
+        $users = collect();
+        foreach($availableUsers as $user){
+            if($user->groups()->count()){
+                $users->push($user);
+            }
+        }
+
+        $areas = Area::all();
+
+        return view('reports.access', compact('users', 'areas'));
+    }
+    
     /**
      * Show the training statistics view
      *
@@ -26,18 +53,18 @@ class ReportController extends Controller
      */
     public function trainings($filterArea = false){
 
-        $this->authorize('accessTrainingReports', ManagementReport::class);
+        $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
         // Get stats
         $cardStats = $this->getCardStats($filterArea);
         $totalRequests = $this->getDailyRequestsStats($filterArea);
-        list($newRequests, $completedRequests) = $this->getBiAnnualRequestsStats($filterArea);
+        list($newRequests, $completedRequests, $passFailRequests) = $this->getBiAnnualRequestsStats($filterArea);
         $queues = $this->getQueueStats($filterArea);
 
         // Send it to the view
         ($filterArea) ? $filterName = Area::find($filterArea)->name :  $filterName = 'All Areas';
         $areas = Area::all();
 
-        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'queues'));
+        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'passFailRequests', 'queues'));
     }
 
     /**
@@ -63,21 +90,6 @@ class ReportController extends Controller
         }
 
         return view('reports.mentors', compact('mentors'));
-    }
-
-    /**
-     * Show the atc active statistics view
-     *
-     * @return \Illuminate\View\View
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function atc(){
-
-        $this->authorize('viewAtcActivity', ManagementReport::class);
-
-        $controllers = User::all();
-
-        return view('reports.atc', compact('controllers'));
     }
 
 
@@ -130,7 +142,7 @@ class ReportController extends Controller
               ->get();
 
             foreach($data as $entry) {
-                array_push($payload, ['t' => $entry->day, 'y' => $entry->count]);
+                array_push($payload, ['x' => $entry->day, 'y' => $entry->count]);
             }
 
         } else {
@@ -142,7 +154,7 @@ class ReportController extends Controller
               ->get();
 
             foreach($data as $entry) {
-                array_push($payload, ['t' => $entry->day, 'y' => $entry->count]);
+                array_push($payload, ['x' => $entry->day, 'y' => $entry->count]);
             }
         }
 
@@ -169,6 +181,7 @@ class ReportController extends Controller
 
         $newRequests = [];
         $completedRequests = [];
+        $passFailRequests = [];
 
         if($areaFilter){
 
@@ -177,6 +190,8 @@ class ReportController extends Controller
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $passFailRequests["Passed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $passFailRequests["Failed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
                     // New requests
                     $query = DB::table('trainings')
@@ -208,6 +223,51 @@ class ReportController extends Controller
                     foreach($query as $entry) {
                         $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                     }
+
+                    // Passed trainings
+                    $query = DB::table('training_examinations')
+                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
+                        ->where('result', 'PASSED')
+                        ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('area_id', $areaFilter)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $passFailRequests["Passed"][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+
+                    // Failed trainings
+                    $query = DB::table('training_examinations')
+                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
+                        ->where('result', 'FAILED')
+                        ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('area_id', $areaFilter)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $passFailRequests["Failed"][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+                    
                 }
             }
 
@@ -218,6 +278,8 @@ class ReportController extends Controller
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $passFailRequests["Passed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $passFailRequests["Failed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
                     // New requests
                     $query = DB::table('trainings')
@@ -247,12 +309,54 @@ class ReportController extends Controller
                     foreach($query as $entry) {
                         $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                     }
+
+                    // Passed trainings
+                    $query = DB::table('training_examinations')
+                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
+                        ->where('result', 'PASSED')
+                        ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $passFailRequests["Passed"][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+
+                    // Failed trainings
+                    $query = DB::table('training_examinations')
+                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                        ->whereExists(function ($query) {
+                            $query->select(DB::raw(1))
+                                  ->from('rating_training')
+                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                  ->whereColumn('rating_training.training_id', 'trainings.id')
+                                  ->whereNotNull('ratings.vatsim_rating');
+                        })
+                        ->whereIn('trainings.type', [1, 4])
+                        ->where('result', 'FAILED')
+                        ->where('examination_date', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $passFailRequests["Failed"][$monthTranslator[$entry->month]] = $entry->count;
+                    }
                 }
             }
 
         }
 
-        return [$newRequests, $completedRequests];
+        return [$newRequests, $completedRequests, $passFailRequests];
     }
 
     /**

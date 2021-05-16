@@ -82,8 +82,14 @@ class LoginController extends Controller
         auth()->login($account, false);
 
         $authLevel = "User";
-        if(isset(\Auth::user()->group)) $authLevel = Group::find(\Auth::user()->group)->name;
-        ActivityLogController::info("Logged in with ".$authLevel." access");
+        if(\Auth::user()->groups->count() > 0){
+            $authLevel = User::find(\Auth::user()->id)->groups->sortBy('id')->first()->name;
+            ActivityLogController::warning('ACCESS', "Logged in with ".$authLevel." access");
+        } else {
+            ActivityLogController::info('ACCESS', "Logged in with ".$authLevel." access");
+        }
+
+        
 
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
     }
@@ -114,7 +120,7 @@ class LoginController extends Controller
      */
     public function logout()
     {
-        ActivityLogController::info("Logged out.");
+        ActivityLogController::info('ACCESS', "Logged out.");
         auth()->logout();
 
         return redirect(route('front'))->withSuccess('You have been successfully logged out');

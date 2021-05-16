@@ -8,9 +8,13 @@
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Areas</a>
+            @if(\Auth::user()->isAdmin())
+                <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Areas</a>
+            @endif
             @foreach($areas as $area)
-                <a class="dropdown-item" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
+                @if(\Auth::user()->isModeratorOrAbove($area))
+                    <a class="dropdown-item" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
+                @endif
             @endforeach 
         </div>
     </div>
@@ -137,6 +141,21 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
+                    Passed and failed trainings last 6 months
+                </h6> 
+            </div>
+            <div class="card-body">
+                <canvas id="TrainingPassFailRate"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
                     Queue lengths <span class="badge badge-danger">Beta and inaccurate</span>
                 </h6> 
             </div>
@@ -162,7 +181,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 
@@ -170,9 +188,11 @@
 
 @section('js')
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 <script>
-    // Total training amount chart
 
+    // Total training amount chart
     var ctx = document.getElementById('trainingChart').getContext('2d');
     ctx.canvas.width = 1000;
     ctx.canvas.height = 200;
@@ -181,57 +201,39 @@
 
     var color = Chart.helpers.color;
     var cfg = {
+        type: 'bar',
         data: {
             datasets: [{
                 label: 'Training Requests',
                 backgroundColor: 'rgb(200, 100, 100)',
                 borderColor: 'rgb(255, 100, 100)',
                 data: requestData,
-                type: 'bar',
-                pointRadius: 0,
-                fill: false,
-                lineTension: 0,
-                borderWidth: 2
             }]
         },
         options: {
-            animation: {
-                duration: 0
-            },
             scales: {
-                xAxes: [{
+                x: {
                     type: 'time',
-                    distribution: 'series',
-                    offset: true,
+                    time: {
+                        unit: 'month'
+                    },
                     ticks: {
                         major: {
                             enabled: true,
                             fontStyle: 'bold'
                         },
-                        source: 'data',
-                        autoSkip: true,
-                        autoSkipPadding: 75,
-                        maxRotation: 0,
-                        sampleSize: 100
                     },
-                }],
-                yAxes: [{
-                    gridLines: {
-                        drawBorder: false
-                    },
-                    scaleLabel: {
+                },
+                y: {
+                    title: {
                         display: true,
-                        labelString: 'Requests'
+                        text: 'Requests'
                     },
                     ticks: {
-                        beginAtZero: true
+                        stepSize: 1
                     }
-                }]
+                }
             },
-            tooltips: {
-                intersect: false,
-                mode: 'index',
-            }
         }
     };
 
@@ -317,22 +319,21 @@
         type: 'bar',
         data: barChartData,
         options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
             responsive: true,
             scales: {
-                xAxes: [{
+                x: {
                     stacked: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                     }
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
             }
         }
     });
@@ -416,22 +417,71 @@
         type: 'bar',
         data: barChartData,
         options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
             responsive: true,
             scales: {
-                xAxes: [{
+                x: {
                     stacked: true,
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                     }
-                }],
-                yAxes: [{
+                },
+                y: {
                     stacked: true,
-                }]
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+    // Pass/fail rate for requests last 6 months
+    var passFailRequestsData = {!! json_encode($passFailRequests) !!}
+
+    var barChartData = {
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
+        datasets: [{
+            label: 'Failed',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: passFailRequestsData["Failed"]
+        }, {
+            label: 'Passed',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: passFailRequestsData["Passed"]
+        }]
+
+    };
+
+    var mix = document.getElementById("TrainingPassFailRate").getContext('2d');
+    var passFailTrainings = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Note: This graph only shows standard and fast-tracked CPTs'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
             }
         }
     });

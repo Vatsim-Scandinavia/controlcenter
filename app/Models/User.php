@@ -144,6 +144,10 @@ class User extends Authenticatable
 
     public function getEmailAttribute()
     {
+        if($this->setting_workmail_address){
+            return $this->setting_workmail_address;
+        }
+
         return $this->handover->email;
     }
 
