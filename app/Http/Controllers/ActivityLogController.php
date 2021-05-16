@@ -91,7 +91,7 @@ class ActivityLogController extends Controller
     public function index()
     {
         $this->authorize('index', ActivityLog::class);
-        $logs = ActivityLog::all()->sortByDesc('created_at');
+        $logs = ActivityLog::where('category', '!=', null)->where('category', '!=', 'ACCESS')->get()->sortByDesc('created_at');
 
         return view('admin.logs', compact('logs'));
     }
