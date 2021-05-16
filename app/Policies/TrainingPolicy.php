@@ -7,6 +7,7 @@ use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Models\Area;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use anlutro\LaravelSettings\Facade as Setting;
@@ -99,7 +100,7 @@ class TrainingPolicy
     }
 
     /**
-     * Check if the user has access to create a training manually
+     * Check if the user has access to frontend of creationg a manual training request
      *
      * @param User $user
      * @return bool
@@ -107,6 +108,23 @@ class TrainingPolicy
     public function create(User $user)
     {
         return $user->isModeratorOrAbove();
+    }
+
+    /**
+     * Check if the user has access to store a training manually 
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function store(User $user, $data)
+    {
+
+        // If user_id is not set, it's the Auth:login's user that is recorded, which we allow as people can make their own trainings
+        if(!isset($data['user_id'])){
+            return true;
+        }
+
+        return $user->isModeratorOrAbove(Area::find($data['training_area']));
     }
 
     /**

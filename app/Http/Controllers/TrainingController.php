@@ -211,7 +211,9 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
+        
         $data = $this->validateUpdateDetails();
+        $this->authorize('store', [Training::class, $data]);
 
         if (isset($data['user_id']) && User::find($data['user_id']) == null)
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
