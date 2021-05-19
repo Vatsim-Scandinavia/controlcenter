@@ -100,9 +100,16 @@
         // Search bar
         $(document).ready(function(){
 
+            var currentRequest = null;
+            
             function fetch_users(query = '')
             {
-                $.ajax({
+                
+                if(currentRequest != null){
+                    currentRequest.abort();
+                }
+
+                currentRequest = $.ajax({
                     url:"{{ route('user.search') }}",
                     method:'GET',
                     data:{query:query},
