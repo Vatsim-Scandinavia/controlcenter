@@ -131,10 +131,10 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
             
-            @if(\Auth::user()->isModerator())
-                <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
-            @else
+            @if(\Auth::user()->isAdmin())
                 <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
+            @elseif(\Auth::user()->isModerator())
+                <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
             @endif
             
             <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
