@@ -31,8 +31,8 @@
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
-                                <th data-field="applied" data-sortable="true" data-filter-control="input">Applied</th>
-                                <th data-field="closed" data-sortable="true" data-filter-control="input">Closed</th>
+                                <th data-field="applied" data-sortable="true" data-filter-control="input" data-sorter="tableSortDates">Applied</th>
+                                <th data-field="closed" data-sortable="true" data-filter-control="input" data-sorter="tableSortDates">Closed</th>
                             </tr>
                         </thead>
                         <tbody>
