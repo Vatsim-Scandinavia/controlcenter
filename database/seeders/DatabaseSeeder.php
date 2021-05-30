@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Helpers\FactoryHelper;
 use App\Models\User;
+use App\Models\Group;
 use App\Models\Handover;
 use App\Models\Training;
 use App\Models\TrainingReport;
@@ -134,7 +135,10 @@ class DatabaseSeeder extends Seeder
 
             // Give all non-queued trainings a mentor
             if($training->status > 0){
-                $training->mentors()->attach(User::allWithGroup(3)->inRandomOrder()->first(), ['expire_at' => now()->addYears(5)]);
+                $training->mentors()->attach(
+                    User::whereHas('groups', function($query) { $query->where('id', 3); })->inRandomOrder()->first(),
+                    ['expire_at' => now()->addYears(5)]
+                );
                 TrainingReport::factory()->create([
                     'training_id' => $training->id,
                     'written_by_id' => $training->mentors()->inRandomOrder()->first(),

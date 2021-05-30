@@ -159,10 +159,11 @@ class TrainingController extends Controller
             // Bundle the ratings if relevant
             $bundle = [];
             $bundleAmount = 0;
+
             foreach($availableRatings as $ratingIndex => $rating){
 
-                // If the rating is an endorsement-rating, and required vatsim rating is S3 or below (to avoid bundling C1+ endorsements), bundle and remove the rating from list
-                if($rating->vatsim_rating == NULL && $rating->pivot->required_vatsim_rating <= 4){
+                // If the rating is a MAE rating, or it's a VATSIM-rating allowed to bundle with MAEs. AND if the required vatsim rating to apply for the rating is S3 or below (so we don't bundle C1+ MAEs)
+                if(($rating->vatsim_rating == NULL || $rating->pivot->allow_mae_bundling) && $rating->pivot->required_vatsim_rating <= 4){
                     $bundle['id'] = empty($bundle['id']) ? $rating->id : $bundle['id'].'+'.$rating->id;
                     $bundle['name'] = empty($bundle['name']) ? $rating->name : $bundle['name'].' + '.$rating->name;
                     $bundleAmount++;
