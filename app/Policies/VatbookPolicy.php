@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Vatbook;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Config;
 
 class VatbookPolicy
 {
@@ -44,14 +45,47 @@ class VatbookPolicy
     }
 
     /**
-     * Determine whether the user can add tags.
+     * Determine whether the user can add any tags
      *
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function tags(User $user)
+    public function bookTags(User $user)
     {
-        return $user->isMentorOrAbove() || $user->rating >= 5;
+        return $this->bookTrainingTag($user) || $this->bookEventTag($user) || $this->bookExamTag($user);
+    }
+
+    /**
+     * Determine whether the user can add training tag
+     *
+     * @param  \App\Models\User  $user
+     * @return bool
+     */
+    public function bookTrainingTag(User $user)
+    {
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->visiting_controller == true;
+    }
+
+    /**
+     * Determine whether the user can add training tag
+     *
+     * @param  \App\Models\User  $user
+     * @return bool
+     */
+    public function bookEventTag(User $user)
+    {
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->visiting_controller == true;
+    }
+
+    /**
+     * Determine whether the user can add training tag
+     *
+     * @param  \App\Models\User  $user
+     * @return bool
+     */
+    public function bookExamTag(User $user)
+    {
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 5) || $user->isModerator();
     }
 
     /**

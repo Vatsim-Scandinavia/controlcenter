@@ -132,18 +132,26 @@
                         @enderror
                     </div>
 
-                    @if ($user->isMentorOrAbove())
+                    @can('bookTags', \App\Models\Vatbook::class)
                         <div class="form-group">
-                            <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
-                            <label for="training">Training</label>
-                            &nbsp;&nbsp;&nbsp;
-                            <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                            <label for="exam">Exam</label>
-                            &nbsp;&nbsp;&nbsp;
-                            <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                            <label for="event">Event</label>
+                            @can('bookTrainingTag', \App\Models\Vatbook::class)
+                                <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
+                                <label for="training">Training</label>
+                                &nbsp;&nbsp;&nbsp;
+                            @endcan
+
+                            @can('bookExamTag', \App\Models\Vatbook::class)
+                                <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
+                                <label for="exam">Exam</label>
+                                &nbsp;&nbsp;&nbsp;
+                            @endcan
+
+                            @can('bookEventTag', \App\Models\Vatbook::class)
+                                <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
+                                <label for="event">Event</label>
+                            @endcan
                         </div>
-                    @endif
+                    @endcan
 
                     <button type="submit" class="btn btn-success">Add Booking</button>
 

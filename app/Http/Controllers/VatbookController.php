@@ -108,12 +108,18 @@ class VatbookController extends Controller
         ->where('deleted', false)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
-        else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) $booking->training = 1;
-        else $booking->training = 0;
+        $forcedTrainingTag = false;
+
+        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()){
+            $booking->training = 1;
+            $forcedTrainingTag = true;
+        } else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
+            $booking->training = 1;
+            $forcedTrainingTag = true;
+        }
 
         if(isset($data['tag'])) {
-            $this->authorize('tags', $booking);
+            $this->authorize('bookTags', $booking);
             switch ($data['tag']) {
                 case 1:
                     $booking->exam = 0;
@@ -159,7 +165,11 @@ class VatbookController extends Controller
         " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
-        return redirect('/vatbook');
+        if($forcedTrainingTag){
+            return redirect(route('vatbook'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.'); 
+        }
+
+        return redirect(route('vatbook'))->withSuccess('Booking successfully added!');
     }
 
     /**
@@ -210,13 +220,18 @@ class VatbookController extends Controller
         ->where('id', '!=', $booking->id)
         ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
 
-        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModeratorOrAbove()) $booking->training = 1;
-        else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining()){
-            if($booking->position->mae == true) $booking->training = 1;
-        } else $booking->training = 0;
+        $forcedTrainingTag = false;
+
+        if(($booking->position->rating > User::find($booking->user_id)->rating || User::find($booking->user_id)->rating < 3) && !$user->isModeratorOrAbove()){
+            $booking->training = 1;
+            $forcedTrainingTag = true;
+        } else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
+            $booking->training = 1;
+            $forcedTrainingTag = true;
+        }
 
         if(isset($data['tag'])) {
-            $this->authorize('tags', $booking);
+            $this->authorize('bookTags', $booking);
             switch ($data['tag']) {
                 case 1:
                     $booking->exam = 0;
@@ -256,7 +271,11 @@ class VatbookController extends Controller
         " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
-        return redirect('/vatbook');
+        if($forcedTrainingTag){
+            return redirect(route('vatbook'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.'); 
+        }
+
+        return redirect(route('vatbook'))->withSuccess('Booking successfully added!');
     }
 
     /**
@@ -282,6 +301,6 @@ class VatbookController extends Controller
         " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
-        return redirect('/vatbook');
+        return redirect(route('vatbook'));
     }
 }
