@@ -116,6 +116,8 @@ class VatbookController extends Controller
         } else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
             $booking->training = 1;
             $forcedTrainingTag = true;
+        } else {
+            $booking->training = 0;
         }
 
         if(isset($data['tag'])) {
@@ -228,6 +230,8 @@ class VatbookController extends Controller
         } else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
             $booking->training = 1;
             $forcedTrainingTag = true;
+        } else {
+            $booking->training = 0;
         }
 
         if(isset($data['tag'])) {
