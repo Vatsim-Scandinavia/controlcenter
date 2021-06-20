@@ -16,7 +16,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" class="datepicker form-control" type="text" name="date" required>
+                        <input id="date" class="datepicker form-control" type="text" name="date" value="{{ Carbon\Carbon::parse($booking->time_start)->format('d/m/Y') }}" required>
                     </div>
 
                     <div class="form-group">
@@ -43,30 +43,26 @@
                         </datalist>
                     </div>
 
-                    @if ($user->isMentorOrAbove())
+                    @can('bookTags', \App\Models\Vatbook::class)
                         <div class="form-group">
-                            @if ($booking->training == 1)
-                            <input id="training" type="checkbox" name="tag" value=1 checked onClick="change(this)">
-                            @else
-                                <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
-                            @endif
-                            <label for="training">Training</label>
-                            &nbsp;&nbsp;&nbsp;
-                            @if ($booking->exam == 1)
-                                <input id="exam" type="checkbox" name="tag" value=2 checked onClick="change(this)">
-                            @else
-                                <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                            @endif
-                            <label for="exam">Exam</label>
-                            &nbsp;&nbsp;&nbsp;
-                            @if ($booking->event == 1)
-                                <input id="event" type="checkbox" name="tag" value=3 checked onClick="change(this)">
-                            @else
-                                <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                            @endif
-                            <label for="event">Event</label>
+                            @can('bookTrainingTag', \App\Models\Vatbook::class)
+                                <input id="training" type="checkbox" name="tag" value=1 {{ $booking->training == 1 ? 'checked' : '' }} onClick="change(this)">
+                                <label for="training">Training</label>
+                                &nbsp;&nbsp;&nbsp;
+                            @endcan
+
+                            @can('bookExamTag', \App\Models\Vatbook::class)
+                                <input id="exam" type="checkbox" name="tag" value=2 {{ $booking->exam == 1 ? 'checked' : '' }} onClick="change(this)">
+                                <label for="exam">Exam</label>
+                                &nbsp;&nbsp;&nbsp;
+                            @endcan
+
+                            @can('bookEventTag', \App\Models\Vatbook::class)
+                                <input id="event" type="checkbox" name="tag" value=3 {{ $booking->event == 1 ? 'checked' : '' }} onClick="change(this)">
+                                <label for="event">Event</label>
+                            @endcan
                         </div>
-                    @endif
+                    @endcan
 
                     <div class="form-group">
                         <label for="user">User</label>
