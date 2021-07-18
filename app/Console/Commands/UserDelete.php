@@ -92,7 +92,7 @@ class UserDelete extends Command
                     $user->remember_token = null;
                     $user->setting_workmail_address = null;
                     $user->setting_workmail_expire = null;
-                    $user->setting_notify_newreport = false;
+                    $user->setting_notify_newreport = true;
                     $user->setting_notify_newreq = false;
                     $user->setting_notify_closedreq = false;
                     $user->setting_notify_newexamreport = false;
