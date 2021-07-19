@@ -230,7 +230,7 @@ class User extends Authenticatable
      */
     public function mentoringTrainings()
     {
-        $trainings = $this->viewableModels(Training::class, [['status', '>=', 2]])->sortBy('id');
+        $trainings = $this->viewableModels(Training::class, [['status', '>=', 1]])->sortBy('id');
 
         foreach ($trainings as $key => $training) {
             if (!$training->mentors->contains($this))
