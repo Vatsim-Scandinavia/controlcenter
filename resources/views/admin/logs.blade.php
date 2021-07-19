@@ -33,7 +33,13 @@
                                 <td>{{ \Carbon\Carbon::parse($log->created_at)->toEuropeanDateTime() }}</td>
                                 <td><span class="text-{{ strtolower($log->type) }}">{{ $log->type }}</span></td>
                                 <td>{{ $log->category }}</td>
-                                <td><a href="{{ route('user.show', $log->user_id) }}">{{ App\Models\User::find($log->user_id)->name }} ({{ $log->user_id }})</a></td>
+                                <td>
+                                    @if(isset($log->user_id))
+                                        <a href="{{ route('user.show', $log->user_id) }}">{{ App\Models\User::find($log->user_id)->name }} ({{ $log->user_id }})</a>
+                                    @else
+                                        SYSTEM
+                                    @endif
+                                </td>
                                 <td>{{ $log->message }}</td>
                             </tr>
                             @endforeach

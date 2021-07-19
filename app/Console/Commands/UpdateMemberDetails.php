@@ -3,12 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Models\Training;
+use App\Http\Controllers\ActivityLogController;
+use App\Notifications\TrainingClosedNotification;
 use Illuminate\Console\Command;
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\Training;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use App\Notifications\TrainingClosedNotification;
 
 class UpdateMemberDetails extends Command
 {
@@ -84,6 +83,9 @@ class UpdateMemberDetails extends Command
 
             // Notify student of closure
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the subdivision.'));
+
+            // Log the closure
+            ActivityLogController::warning('TRAINING', 'Closed training request '.$training->id.' due to student leaving division');
 
             $count++;
             
