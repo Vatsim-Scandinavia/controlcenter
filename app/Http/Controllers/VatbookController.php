@@ -163,8 +163,8 @@ class VatbookController extends Controller
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Created vatbook booking ".$booking->id.
-        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
-        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
         if($forcedTrainingTag){
@@ -271,8 +271,8 @@ class VatbookController extends Controller
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Updated vatbook booking ".$booking->id.
-        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
-        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
         if($forcedTrainingTag){
@@ -301,8 +301,8 @@ class VatbookController extends Controller
         $booking->save();
 
         ActivityLogController::warning('BOOKING', "Deleted vatbook booking ".$booking->id.
-        " ― from ".Carbon::parse($booking->start_at)->toEuropeanDateTime().
-        " → ".Carbon::parse($booking->end_at)->toEuropeanDateTime().
+        " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
+        " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect(route('vatbook'));
