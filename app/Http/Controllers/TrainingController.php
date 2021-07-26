@@ -517,6 +517,7 @@ class TrainingController extends Controller
             'ratings' => 'sometimes|required',
             'training_area' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
+            'type' => 'sometimes|integer',
             'notes' => 'nullable',
             'mentors' => 'sometimes',
             'closed_reason' => 'sometimes|max:50',
