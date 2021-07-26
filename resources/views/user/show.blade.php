@@ -111,133 +111,139 @@
         </div>
     @endif
 
-    <div class="col-xl-3 col-lg-6 col-md-12 mb-12">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Trainings
-                </h6>
-            </div>
-            <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
+    <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
+        <div class="col-xl-12 col-lg-12 col-md-12 p-0">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        Trainings
+                    </h6>
+                </div>
+                <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
 
-                @if($trainings->count() == 0)
-                    <p class="mb-0">No registered trainings</p>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>State</th>
-                                    <th>Level</th>
-                                    <th>Area</th>
-                                    <th>Type</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($trainings as $training)
-                                <tr>
-                                    <td>
-                                        <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
-                                    </td>
-                                    <td>
-                                        @if ( is_iterable($ratings = $training->ratings->toArray()) )
-                                            @for( $i = 0; $i < sizeof($ratings); $i++ )
-                                                @if ( $i == (sizeof($ratings) - 1) )
-                                                    {{ $ratings[$i]["name"] }}
-                                                @else
-                                                    {{ $ratings[$i]["name"] . " + " }}
-                                                @endif
-                                            @endfor
-                                        @else
-                                            {{ $ratings["name"] }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{ $training->area->name }}
-                                    </td>
-                                    <td>
-                                        <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-                
+                    @if($trainings->count() == 0)
+                        <p class="mb-0">No registered trainings</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>State</th>
+                                        <th>Level</th>
+                                        <th>Area</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($trainings as $training)
+                                    <tr>
+                                        <td>
+                                            <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                        </td>
+                                        <td>
+                                            @if ( is_iterable($ratings = $training->ratings->toArray()) )
+                                                @for( $i = 0; $i < sizeof($ratings); $i++ )
+                                                    @if ( $i == (sizeof($ratings) - 1) )
+                                                        {{ $ratings[$i]["name"] }}
+                                                    @else
+                                                        {{ $ratings[$i]["name"] . " + " }}
+                                                    @endif
+                                                @endfor
+                                            @else
+                                                {{ $ratings["name"] }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{ $training->area->name }}
+                                        </td>
+                                        <td>
+                                            <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                    
+                </div>
             </div>
         </div>
 
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Active Endorsements
-                </h6>
-            </div>
-            <div class="card-body {{ $endorsements->count() == 0 ? '' : 'p-0' }}">
-
-                @if($endorsements->count() == 0)
-                    <p class="mb-0">No registered endrosements</p>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Endorsement</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($endorsements as $endorsement)
-                                <tr>
-                                    <td>
-                                        {{ $endorsement->name }}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+        <div class="row">
+            <div class="col-xl-6 col-lg-12 col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            Active Endorsements
+                        </h6>
                     </div>
-                @endif
-
+                    <div class="card-body {{ $endorsements->count() == 0 ? '' : 'p-0' }}">
+        
+                        @if($endorsements->count() == 0)
+                            <p class="mb-0">No registered endrosements</p>
+                        @else
+                            <div class="table-responsive">
+                                <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Endorsement</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($endorsements as $endorsement)
+                                        <tr>
+                                            <td>
+                                                {{ $endorsement->name }}
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+        
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-xl-6 col-lg-12 col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            Mentoring
+                        </h6>
+                    </div>
+                    <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
+        
+                        @if($user->teaches->count() == 0)
+                            <p class="mb-0">No registered mentors</p>
+                        @else
+                            <div class="table-responsive">
+                                <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th data-sortable="true" data-filter-control="select">Teaches</th>
+                                            <th data-sortable="true" data-filter-control="input">Expires</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($user->teaches as $training)
+                                        <tr>
+                                            <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
+                                            <td>{{ Carbon\Carbon::parse($user->teaches->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+        
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-
-    <div class="col-xl-3 col-lg-6 col-md-12 mb-12">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
-                    Mentoring
-                </h6>
-            </div>
-            <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
-
-                @if($user->teaches->count() == 0)
-                    <p class="mb-0">No registered mentors</p>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th data-sortable="true" data-filter-control="select">Teaches</th>
-                                    <th data-sortable="true" data-filter-control="input">Expires</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($user->teaches as $training)
-                                <tr>
-                                    <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
-                                    <td>{{ Carbon\Carbon::parse($user->teaches->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-            </div>
-        </div>
-    </div>
-
+    
+</div>
 @endsection
