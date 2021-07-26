@@ -253,7 +253,7 @@ class TrainingController extends Controller
             return $training;
         }
 
-        return redirect()->intended(route('dashboard'))->withSuccess('Training successfully created!');
+        return redirect()->intended(route('training.show', $training->id))->withSuccess('Training successfully created!');
     }
 
     /**
