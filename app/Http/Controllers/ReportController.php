@@ -89,6 +89,8 @@ class ReportController extends Controller
 
         }
 
+        $mentors = $mentors->sortBy('name');
+
         return view('reports.mentors', compact('mentors'));
     }
 
