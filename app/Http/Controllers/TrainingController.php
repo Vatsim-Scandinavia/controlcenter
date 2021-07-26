@@ -284,7 +284,7 @@ class TrainingController extends Controller
             return ($aSort > $bSort) ? -1 : 1;
         });
 
-        $trainingMentors = $training->area->mentors;
+        $trainingMentors = $training->area->mentors->sortBy('name');
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
