@@ -122,6 +122,18 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="atcActivityContact">Inactivity Warning Contact</label>
+                                <input type="text" class="form-control @error('atcActivityContact') is-invalid @enderror" id="atcActivityContact" placeholder="e.g. Training Director" maxlength="40" name="atcActivityContact" required value="{{ Setting::get("atcActivityContact") }}">
+                                <small class="form-text text-muted">Write who the user should contact regarding refresh or transfer trainings. This text links to your <a href="#linkContact">contact list</a>.</small>
+                            </div>
+                            @error('atcActivityContact')
+                                <span class="text-danger">{{ $errors->first('atcActivityContact') }}</span>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -166,7 +178,7 @@
                             <div class="form-group">
                                 <label for="linkContact">Contact list</label>
                                 <input type="url" class="form-control @error('linkContact') is-invalid @enderror" id="linkContact" name="linkContact" required value="{{ Setting::get("linkContact") }}">
-                                <small class="form-text text-muted">Enter link to staff or contact list. Shown in FAQ and activity warning</small>
+                                <small class="form-text text-muted">Enter link to staff or contact list. Shown in FAQ and inactivity warning</small>
                             </div>
                             @error('linkContact')
                                 <span class="text-danger">{{ $errors->first('linkContact') }}</span>

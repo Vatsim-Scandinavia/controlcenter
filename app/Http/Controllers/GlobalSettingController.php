@@ -48,6 +48,7 @@ class GlobalSettingController extends Controller
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
+            'atcActivityContact' => 'max:40',
             'linkDomain' => 'required',
             'linkHome' => 'required|url',
             'linkJoin' => 'required|url',
@@ -69,6 +70,7 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
+        Setting::set('atcActivityContact', $data['atcActivityContact']);
         Setting::set('linkDomain', $data['linkDomain']);
         Setting::set('linkHome', $data['linkHome']);
         Setting::set('linkJoin', $data['linkJoin']);
