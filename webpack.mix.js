@@ -16,6 +16,7 @@ mix.js([
     'node_modules/bootstrap-table/dist/bootstrap-table.js',
     'node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.js',
     'node_modules/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js',
+    'node_modules/bootstrap-table/dist/extensions/cookie/bootstrap-table-cookie.js',
     'node_modules/moment/moment.js',
 ], 'public/js').vue()
 .sass('resources/sass/app.scss', 'public/css')
