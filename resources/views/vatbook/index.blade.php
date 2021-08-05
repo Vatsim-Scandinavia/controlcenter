@@ -19,6 +19,7 @@
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
                         data-cookie="true"
                         data-cookie-id-table="vatbook"
+                        data-cookie-expire="14d"
                         data-toggle="table"
                         data-pagination="true"
                         data-strict-search="true"
