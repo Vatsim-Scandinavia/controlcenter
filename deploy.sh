@@ -26,7 +26,7 @@ if [ "$COMMAND" = "dev" ]; then
     npm install
 else
     #Install without dev dependecies
-    npm install --production
+    npm ci --production
 fi
 
 # Adjust directory permissions
