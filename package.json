@@ -10,23 +10,23 @@
         "production": "mix --production"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.15.3",
+        "@fortawesome/fontawesome-free": "^5.15.4",
         "axios": "^0.21.1",
         "bootstrap": "4.3.1",
         "bootstrap-table": "^1.18.3",
         "cross-env": "^5.1",
         "jquery": "^3.6.0",
         "jquery.easing": "^1.4.1",
-        "laravel-mix": "^6.0.25",
+        "laravel-mix": "^6.0.27",
         "lodash": "^4.17.21",
         "moment": "^2.29.1",
         "popper.js": "^1.16.1",
-        "postcss": "^8.3.5",
+        "postcss": "^8.3.6",
         "resolve-url-loader": "^3.1.4",
-        "sass": "^1.35.2",
+        "sass": "^1.37.5",
         "sass-loader": "^8.0.2",
         "vue": "^2.6.14",
-        "vue-loader": "^15.9.7",
+        "vue-loader": "^15.9.8",
         "vue-template-compiler": "^2.6.14"
     },
     "devDependencies": {}
