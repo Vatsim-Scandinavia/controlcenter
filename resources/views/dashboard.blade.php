@@ -286,7 +286,7 @@
                         <div class="alert alert-primary" role="alert">
                             <p class="small">
                                 <b><i class="fas fa-chevron-right"></i> How do I join the division?</b>
-                                <a href="{{ Setting::get('linkJoin') }}" target="_blank">Read about joining here.</a>
+                                <a href="{{ Setting::get('linkJoin') }}" target="_blank">Read about joining here. You will be able to apply here within 24 hours after transfer.</a>
 
                                 <br>
 
