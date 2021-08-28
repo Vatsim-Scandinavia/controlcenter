@@ -20,7 +20,6 @@
                         data-page-size="25"
                         data-toggle="table"
                         data-pagination="true"
-                        data-strict-search="true"
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>

@@ -22,7 +22,6 @@
                         data-cookie-expire="14d"
                         data-toggle="table"
                         data-pagination="true"
-                        data-strict-search="true"
                         data-filter-control="true"
                         data-page-size="25"
                         data-page-list=[10,15,25,50]>

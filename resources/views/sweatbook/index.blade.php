@@ -14,7 +14,6 @@
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
                         data-toggle="table"
                         data-pagination="true"
-                        data-strict-search="true"
                         data-filter-control="true"
                         data-page-size="15"
                         data-page-list=[10,15,25,50]>

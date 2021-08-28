@@ -16,7 +16,6 @@
                         data-page-size="15"
                         data-toggle="table"
                         data-pagination="true"
-                        data-strict-search="true"
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
@@ -61,7 +60,6 @@
                         data-page-size="10"
                         data-toggle="table"
                         data-pagination="true"
-                        data-strict-search="true"
                         data-filter-control="true">
                         <thead class="thead-light">
                             <tr>
