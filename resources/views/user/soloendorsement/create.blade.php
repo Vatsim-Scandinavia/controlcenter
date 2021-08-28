@@ -82,7 +82,14 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-success">Create endorsement</button>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="requirement_check">
+                        <label class="form-check-label" for="requirement_check">
+                            {{ Setting::get('trainingSoloRequirement') }}
+                        </label>
+                    </div>
+
+                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" disabled>Create endorsement</button>
                 </form>
             </div>
         </div>
@@ -108,6 +115,14 @@
             $(this).blur();
         });
         $('.flatpickr-input:visible').prop('readonly', false);
+    
+        // Check if the requirement checkbox is checked.
+        var checker = document.getElementById('requirement_check');
+        var sendbtn = document.getElementById('submit_btn');
+        checker.onchange = function() {
+            sendbtn.disabled = !this.checked;
+        };
+
     })
 </script>
 @endsection

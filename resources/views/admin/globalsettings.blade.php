@@ -78,6 +78,15 @@
                                 <span class="text-danger">{{ $errors->first('trainingInterval') }}</span>
                             @enderror
 
+                            <div class="form-group">
+                                <label for="atcActivityQualificationPeriod">Solo Endorsement Requirement</label>
+                                <input type="text" class="form-control @error('trainingSoloRequirement') is-invalid @enderror" id="trainingSoloRequirement" maxlength="200" name="trainingSoloRequirement" required value="{{ Setting::get("trainingSoloRequirement") }}">
+                                <small class="form-text text-muted">Used to confirm solo endorsement creation.</small>
+                            </div>
+                            @error('trainingSoloRequirement')
+                                <span class="text-danger">{{ $errors->first('trainingSoloRequirement') }}</span>
+                            @enderror
+
                         </div>
                     </div>
                 </div>
