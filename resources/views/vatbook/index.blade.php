@@ -67,9 +67,11 @@
                                     {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    {{ $booking->name }}
-                                    @if ($booking->cid > 0)
-                                        ({{ $booking->cid }})
+                                    @if ($booking->user_id == null)
+                                        {{ $booking->name }}
+                                    @else
+                                        {{ \App\Models\User::find($booking->user_id)->name }}
+                                        ({{ $booking->user_id }})
                                     @endif
                                 </td>
                             </tr>
