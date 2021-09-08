@@ -182,7 +182,7 @@ class UserController extends Controller
         $user->setting_notify_closedreq = $setting_notify_closedreq;
         $user->setting_notify_newexamreport = $setting_notify_newexamreport;
         
-        if(!$user->setting_workmail_address && $data['setting_workmail_address']){
+        if(!$user->setting_workmail_address && isset($data['setting_workmail_address'])){
             $user->setting_workmail_address = $data['setting_workmail_address'];
             $user->setting_workmail_expire = Carbon::now()->addDays(30);
         } elseif($user->setting_workmail_address && !isset($data['setting_workmail_address'])){
