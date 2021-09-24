@@ -91,6 +91,26 @@
         </div>
     </div>
 
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Closed this year</div>
+                <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $cardStats["closed"] }} requests</div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-auto">
+                <i class="fas fa-ban fa-2x text-gray-300"></i>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="row">
@@ -133,6 +153,19 @@
             </div>
             <div class="card-body">
                 <canvas id="completedTrainingRequests"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-white">
+                    Closed requests last 6 months
+                </h6> 
+            </div>
+            <div class="card-body">
+                <canvas id="closedTrainingRequests"></canvas>
             </div>
         </div>
     </div>
@@ -414,6 +447,104 @@
 
     var mix = document.getElementById("completedTrainingRequests").getContext('2d');
     var completedTrainingRequests = new Chart(mix, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+    // Closed requests chart
+    var closedRequestsData = {!! json_encode($closedRequests) !!}
+
+    var barChartData = {
+        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                moment().subtract(5, "month").startOf("month").format('MMMM'),
+                moment().subtract(4, "month").startOf("month").format('MMMM'),
+                moment().subtract(3, "month").startOf("month").format('MMMM'),
+                moment().subtract(2, "month").startOf("month").format('MMMM'),
+                moment().subtract(1, "month").startOf("month").format('MMMM'),
+                moment().startOf("month").format('MMMM')],
+        datasets: [{
+            label: 'S2',
+            backgroundColor: 'rgb(200, 100, 100)',
+            data: closedRequestsData["S2"]
+        }, {
+            label: 'S3',
+            backgroundColor: 'rgb(100, 100, 200)',
+            data: closedRequestsData["S3"]
+        }, {
+            label: 'C1',
+            backgroundColor: 'rgb(100, 200, 100)',
+            data: closedRequestsData["C1"]
+        }, {
+            label: 'C3',
+            backgroundColor: 'rgb(150, 200, 100)',
+            data: closedRequestsData["C3"]
+        }, {
+            label: 'MAE ENGM TWR',
+            backgroundColor: 'rgb(25, 25, 25)',
+            data: closedRequestsData["MAE ENGM TWR"],
+            hidden: true
+        }, {
+            label: 'MAE ENGM APP',
+            backgroundColor: 'rgb(50, 50, 50)',
+            data: closedRequestsData["MAE ENGM APP"],
+            hidden: true
+        }, {
+            label: 'MAE ESSA TWR',
+            backgroundColor: 'rgb(75, 75, 75)',
+            data: closedRequestsData["MAE ESSA TWR"],
+            hidden: true
+        }, {
+            label: 'MAE ESSA APP',
+            backgroundColor: 'rgb(100, 100, 100)',
+            data: closedRequestsData["MAE ESSA APP"],
+            hidden: true
+        }, {
+            label: 'MAE EKCH TWR',
+            backgroundColor: 'rgb(125, 125, 125)',
+            data: closedRequestsData["MAE EKCH TWR"],
+            hidden: true
+        }, {
+            label: 'MAE EKCH APP',
+            backgroundColor: 'rgb(150, 150, 150)',
+            data: closedRequestsData["MAE EKCH APP"],
+            hidden: true
+        }, {
+            label: 'Oceanic BICC',
+            backgroundColor: 'rgb(150, 150, 255)',
+            data: closedRequestsData["Oceanic BICC"],
+            hidden: true
+        }, {
+            label: 'Oceanic ENOB',
+            backgroundColor: 'rgb(75, 75, 255)',
+            data: closedRequestsData["Oceanic ENOB"],
+            hidden: true
+        }]
+
+    };
+
+    var mix = document.getElementById("closedTrainingRequests").getContext('2d');
+    var closedTrainingRequests = new Chart(mix, {
         type: 'bar',
         data: barChartData,
         options: {

@@ -24,6 +24,12 @@
                                     Send notification when my mentor publishes a new training report
                                 </label>
                             </div>
+                            
+                            <div class="form-group mt-4">
+                                <label for="active_email">Your current assigned email</label>
+                                <input type="email" class="form-control" name="active_email" value="{{ $user->email }}" disabled>
+                                <small class="form-text text-muted">This is your email registred in our system. To change this follow the instruction from above.</small>
+                            </div>
 
                             @if($user->isModeratorOrAbove())
                                 <hr>
