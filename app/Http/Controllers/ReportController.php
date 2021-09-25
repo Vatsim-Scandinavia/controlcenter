@@ -57,14 +57,14 @@ class ReportController extends Controller
         // Get stats
         $cardStats = $this->getCardStats($filterArea);
         $totalRequests = $this->getDailyRequestsStats($filterArea);
-        list($newRequests, $completedRequests, $passFailRequests) = $this->getBiAnnualRequestsStats($filterArea);
+        list($newRequests, $completedRequests, $closedRequests, $passFailRequests) = $this->getBiAnnualRequestsStats($filterArea);
         $queues = $this->getQueueStats($filterArea);
 
         // Send it to the view
         ($filterArea) ? $filterName = Area::find($filterArea)->name :  $filterName = 'All Areas';
         $areas = Area::all();
 
-        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'passFailRequests', 'queues'));
+        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'queues'));
     }
 
     /**
@@ -108,6 +108,7 @@ class ReportController extends Controller
             "training" => 0,
             "exam" => 0,
             "completed" => 0,
+            "closed" => 0,
         ];
 
         if($filterArea){
@@ -115,12 +116,14 @@ class ReportController extends Controller
             $payload["training"] = Area::find($filterArea)->trainings->whereIn('status', [1, 2])->count();
             $payload["exam"] = Area::find($filterArea)->trainings->where('status', 3)->count();
             $payload["completed"] = Area::find($filterArea)->trainings->where('status', -1)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+            $payload["closed"] = Area::find($filterArea)->trainings->where('status', -2)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
         } else {
             foreach(Area::all() as $area){
                 $payload["waiting"] = $payload["waiting"] + $area->trainings->where('status', 0)->count();
                 $payload["training"] = $payload["training"] + $area->trainings->whereIn('status', [1, 2])->count();
                 $payload["exam"] = $payload["exam"] + $area->trainings->where('status', 3)->count();
                 $payload["completed"] = $payload["completed"] + $area->trainings->where('status', -1)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
+                $payload["closed"] = $payload["closed"] + $area->trainings->where('status', -2)->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('first day of january this year')))->count();
             }
         }
 
@@ -183,6 +186,7 @@ class ReportController extends Controller
 
         $newRequests = [];
         $completedRequests = [];
+        $closedRequests = [];
         $passFailRequests = [];
 
         if($areaFilter){
@@ -192,6 +196,7 @@ class ReportController extends Controller
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $passFailRequests["Passed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $passFailRequests["Failed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
@@ -224,6 +229,22 @@ class ReportController extends Controller
 
                     foreach($query as $entry) {
                         $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+
+                    // Closed requests
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                        ->where('status', -2)
+                        ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->where('area_id', $areaFilter)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                     }
 
                     // Passed trainings
@@ -280,6 +301,7 @@ class ReportController extends Controller
 
                     $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                    $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $passFailRequests["Passed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                     $passFailRequests["Failed"] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
@@ -310,6 +332,21 @@ class ReportController extends Controller
 
                     foreach($query as $entry) {
                         $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                    }
+
+                    // Closed requests
+                    $query = DB::table('trainings')
+                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
+                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                        ->where('status', -2)
+                        ->where('closed_at', '>=', date("Y-m-d H:i:s", strtotime('-6 months')))
+                        ->where('rating_id', $rating->id)
+                        ->groupBy('month')
+                        ->get();
+
+                    foreach($query as $entry) {
+                        $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                     }
 
                     // Passed trainings
@@ -358,7 +395,7 @@ class ReportController extends Controller
 
         }
 
-        return [$newRequests, $completedRequests, $passFailRequests];
+        return [$newRequests, $completedRequests, $closedRequests, $passFailRequests];
     }
 
     /**
