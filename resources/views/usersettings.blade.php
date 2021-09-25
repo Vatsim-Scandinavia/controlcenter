@@ -16,7 +16,7 @@
                         <form action="{{ route('user.settings.store') }}" method="POST">
                             @csrf
 
-                            <p>To change email or password, log into <a href="https://my.vatsim.net/" target="_blank">myVatsim</a>.</p>
+                            <p><b>To change email or password, log into <a href="https://my.vatsim.net/" target="_blank">myVatsim</a>.</b></p>
                         
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="check0" name="setting_notify_newreport" {{ $user->setting_notify_newreport ? "checked" : "" }}>
@@ -26,9 +26,9 @@
                             </div>
                             
                             <div class="form-group mt-4">
-                                <label for="active_email">Your current assigned email</label>
+                                <label for="active_email">Your registered e-mail</label>
                                 <input type="email" class="form-control" name="active_email" value="{{ $user->email }}" disabled>
-                                <small class="form-text text-muted">This is your email registred in our system. To change this follow the instruction from above.</small>
+                                <small class="form-text text-muted">We're sending notifications to this address.</small>
                             </div>
 
                             @if($user->isModeratorOrAbove())
