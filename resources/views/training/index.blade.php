@@ -42,7 +42,7 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;
                                     <a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
                                     @if($training->notes)
-                                        &nbsp;<i class="comment-tooltip far fa-comment-alt" data-toggle="tooltip" data-placement="top" title="{{ $training->notes }}"></i>
+                                        &nbsp;<i class="comment-tooltip far fa-comment-alt" data-toggle="tooltip" data-html="true" data-placement="right" title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $training->notes) }}"></i>
                                     @endif
                                     {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
