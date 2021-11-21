@@ -192,7 +192,16 @@ table[data-toggle="table"] {
     }
 }
 
+.link-tooltip{
+    text-decoration: none;
+    background-image: linear-gradient(90deg,#294661 33%,#fff 0);
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: 3px 1px;
+}
+
 .tooltip-inner {
     text-align: left;
     white-space: pre-line;
+    max-width: 100% !important;
 }

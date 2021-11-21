@@ -40,10 +40,24 @@
                             <tr>
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;
-                                    <a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
+
                                     @if($training->notes)
-                                        &nbsp;<i class="comment-tooltip far fa-comment-alt" data-toggle="tooltip" data-html="true" data-placement="right" title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $training->notes) }}"></i>
+                                        <a 
+                                            href="/training/{{ $training->id }}"
+                                            class="link-tooltip" 
+                                            data-toggle="tooltip" 
+                                            data-html="true" 
+                                            data-placement="right" 
+                                            title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $training->notes) }}"
+                                            >
+                                            {{ $statuses[$training->status]["text"] }}
+                                        </a>
+                                    @else
+                                        <a href="/training/{{ $training->id }}">
+                                            {{ $statuses[$training->status]["text"] }}
+                                        </a>
                                     @endif
+                                    
                                     {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></td>
