@@ -185,13 +185,6 @@ table[data-toggle="table"] {
     right: 16px;
 }
 
-.comment-tooltip{
-    color: $gray-400;
-    @include media-breakpoint-down(lg) {
-        display: none !important;
-    }
-}
-
 .link-tooltip{
     text-decoration: none;
     background-image: linear-gradient(90deg,#294661 33%,#fff 0);
