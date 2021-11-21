@@ -39,7 +39,12 @@
                             @foreach($openTrainings as $training)
                             <tr>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;
+                                    <a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>
+                                    @if($training->notes)
+                                        &nbsp;<i class="comment-tooltip far fa-comment-alt" data-toggle="tooltip" data-placement="top" title="{{ $training->notes }}"></i>
+                                    @endif
+                                    {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
@@ -93,7 +98,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $('div').tooltip();
-    })
+        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+    });
 </script>
 @endsection

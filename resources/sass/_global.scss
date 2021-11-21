@@ -184,3 +184,10 @@ table[data-toggle="table"] {
     position: absolute;
     right: 16px;
 }
+
+.comment-tooltip{
+    color: $gray-400;
+    @include media-breakpoint-down(lg) {
+        display: none !important;
+    }
+}
