@@ -145,7 +145,19 @@
                 timer = setTimeout(fetch_users, 200, query)
             });
 
-            $('#user-search-form-desktop').on('submit', function(e){ e.preventDefault() });
+            // When pressing enter on desktop, redirect directly to inputed userID if it's a number
+            // otherwise just prevent and let ajax do its thing.
+            $('#user-search-form-desktop').on('submit', function(e){ 
+                e.preventDefault();
+
+                var query = parseInt($('.search-input').val());
+                if(Number.isInteger(query)){
+                    location.assign("{{ route('user.show', '') }}/" + query); 
+                }
+
+            });
+
+            // When pressing enter on mobile start the search
             $('#user-search-form-mobile').on('submit', function(e){
                 $('.search-spinner').addClass('search-spinner-visible');
                 
