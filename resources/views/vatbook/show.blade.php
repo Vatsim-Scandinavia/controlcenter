@@ -93,8 +93,6 @@
         let checked = [].filter.call(checkboxes, el => el.checked);
         checked.forEach(checkbox => change(checkbox));
 
-        $('div').tooltip();
-
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_start)->format('d/m/Y') : old('date') }}"
 
         $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });

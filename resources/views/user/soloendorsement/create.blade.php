@@ -106,7 +106,6 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $('div').tooltip();
 
         var defaultDate = "{{ old('date') }}"
         $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });

@@ -83,8 +83,6 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $('div').tooltip();
-
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $booking->date)->format('d/m/Y') : old('date') }}"
         
         $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 }});

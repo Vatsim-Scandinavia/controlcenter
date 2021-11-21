@@ -91,12 +91,3 @@
 </div>
 
 @endsection
-
-@section('js')
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $('div').tooltip();
-    })
-</script>
-@endsection
