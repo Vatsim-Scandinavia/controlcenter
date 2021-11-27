@@ -144,8 +144,8 @@
                                 </thead>
                                 <tbody>
                                 @foreach($student_trainings as $training)
-                                    <tr class="link-row" data-href="{{ $training->path() }}">
-                                        <td>{{ $training->user->name }}</td>
+                                    <tr>
+                                        <td><a href="{{ $training->path() }}">{{ $training->user->name }}</a></td>
                                         <td>
                                             @foreach($training->ratings as $rating)
                                                 @if ($loop->last)
@@ -215,15 +215,17 @@
                         </thead>
                         <tbody>
                         @foreach($trainings as $training)
-                            <tr class="link-row" data-href="{{ $training->path() }}">
+                            <tr>
                                 <td>
-                                    @foreach($training->ratings as $rating)
-                                        @if ($loop->last)
-                                            {{ $rating->name }}
-                                        @else
-                                            {{ $rating->name . " + " }}
-                                        @endif
-                                    @endforeach
+                                    <a href="{{ $training->path() }}">
+                                        @foreach($training->ratings as $rating)
+                                            @if ($loop->last)
+                                                {{ $rating->name }}
+                                            @else
+                                                {{ $rating->name . " + " }}
+                                            @endif
+                                        @endforeach
+                                    </a>
                                 </td>
                                 <td>{{ $training->area->name }}</td>
                                 <td>
@@ -312,29 +314,14 @@
     </div>
 
 </div>
-<style>
-    .link-row {
-        cursor: pointer;
-    }
-</style>
 @endsection
 
 @section('js')
     <script type="text/javascript">
-
         if (sessionStorage.getItem('successMessage') != null) {
             $('#success-message').removeClass('d-none');
             document.getElementById("success-message").innerHTML = "<i class=\"fas fa-check\"></i>&nbsp;&nbsp;Training successfully created and placed in queue.";
             sessionStorage.removeItem("successMessage");
         }
-
-        $(document).ready( function () {
-
-            $(".link-row").click(function () {
-                window.location = $(this).data('href');
-            });
-
-        });
-
     </script>
 @endsection
