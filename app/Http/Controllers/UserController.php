@@ -217,4 +217,24 @@ class UserController extends Controller
         
     }
 
+    /**
+     * Toggle visiting flag in Handover
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function toggleVisiting(User $user)
+    {
+
+        $this->authorize('updateVisiting', $user);
+
+        $user->handover->visiting_controller = !$user->handover->visiting_controller;
+        $user->handover->save();
+
+        if($user->visiting_controller){
+            return redirect()->intended(route('user.show', $user))->withSuccess("User marked as visiting controller");
+        } else {
+            return redirect()->intended(route('user.show', $user))->withSuccess("User removed as visiting controller");
+        }
+    }
+
 }
