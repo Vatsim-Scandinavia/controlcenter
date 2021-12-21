@@ -220,19 +220,19 @@ class VatbookController extends Controller
         $vatbook->callsign = strtoupper($data['position']);
         $vatbook->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
 
-        if ($vatbook->time_start === $vatbook->time_end) {
+        if($vatbook->time_start === $vatbook->time_end) {
             return response()->json([
-                'error' => 'Start and end time cannot be the same'
+                'error' => 'Booking needs to have a valid duration!'
             ], 400);
         }
 
-        if ($vatbook->time_start->diffInMinutes($vatbook->time_end, false) < 0) {
+        if($vatbook->time_start->diffInMinutes($vatbook->time_end, false) < 0) {
             $vatbook->time_end->addDay();
         }
 
-        if ($vatbook->time_start->diffInMinutes(Carbon::now(), false) < 0) {
+        if($vatbook->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
-                'error' => 'Start time cannot be in the past'
+                'error' => 'You cannot create a booking in the past.'
             ], 400);
         }
 
@@ -250,7 +250,7 @@ class VatbookController extends Controller
             ->where('id', '!=', $vatbook->id)
             ->get()->isEmpty()) {
             return response()->json([
-                'error' => 'Booking overlaps with another booking'
+                'error' => 'The position is already booked for that time!'
             ], 400);
         }
 
