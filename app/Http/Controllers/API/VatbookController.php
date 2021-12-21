@@ -327,7 +327,7 @@ class VatbookController extends Controller
      */
     public function destroy(Vatbook $vatbook)
     {
-        if(App::environement('production')) {
+        if(App::environment('production')) {
             file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $vatbook->eu_id . '&Local_ID=' . $vatbook->local_id);
         }
 
