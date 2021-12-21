@@ -19,6 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => ['client']], function() {
     Route::get('/callback/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.vatbook.index');
-    Route::post('/callback/bookings/create/{cid}/{position}', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.vatbook.store');
+    Route::post('/callback/bookings/create', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.vatbook.store');
 });
 
