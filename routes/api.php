@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['middleware' => ['client']], function() {
+    Route::get('/callback/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.vatbook.index');
+    Route::post('/callback/bookings/create/{cid}/{position}', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.vatbook.store');
+});
+

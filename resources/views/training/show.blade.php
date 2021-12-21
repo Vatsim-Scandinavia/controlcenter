@@ -218,7 +218,7 @@
                                                         @endcan
                                                     </small>
 
-                                                    <div class="mt-2">
+                                                    <div class="mt-2" id="markdown-content">
                                                         @markdown($reportModel->content)
                                                     </div>
 
@@ -227,7 +227,9 @@
                                                         <p class="font-weight-bold text-primary">
                                                             <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
                                                         </p>
-                                                        @markdown($reportModel->contentimprove)
+                                                        <div id="markdown-improve">
+                                                            @markdown($reportModel->contentimprove)
+                                                        </div>
                                                     @endif
 
                                                     @if($reportModel->attachments->count() > 0)
@@ -581,6 +583,8 @@
                 }
             }
 
+            $("#markdown-content").children("p").children("a").attr('target','_blank');
+            $("#markdown-improve").children("p").children("a").attr('target','_blank');
         });
     </script>
 @endsection
