@@ -10,5 +10,3 @@ services:
         - "host.docker.internal:host-gateway"
     volumes:
       - ./:/var/www/html
-    restart: unless-stopped
-    command: sh /var/entrypoint.sh "* * * * * cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1"
