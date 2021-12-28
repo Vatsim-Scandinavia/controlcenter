@@ -48,23 +48,24 @@ class UpdateQueueCalculation extends Command
                 $averageData = [];
 
                 // Get the queue time from each training of this specific rating in the specific area
-                foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNotNull('started_at') as $training){
+                foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at') as $training){
 
                     // Only include pure Vatsim ratings in calculation
                     if($training->ratings->count() == 1 && $training->ratings->first()->vatsim_rating){
-                        if($training->status == -1){
+
+                        if($training->status == 0){
                             $trainingCreated = $training->created_at;
-                            $trainingStarted = $training->started_at;
 
                             // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
-                            $waitingTime = $trainingStarted->diffInSeconds($trainingCreated);
+                            $waitingTime = $trainingCreated->diffInSeconds(Carbon::now());
                             $waitingTime = $waitingTime - $training->paused_length;
 
                             // Inject this specific training's record into the average calculation
                             array_push($averageData, $waitingTime);
+
                         }
                     }                    
-                }   
+                }
 
                 // Calculate the average for this area's selected rating, then insert it to the area's rating column. Only count if two or more trainings are complete to avoid logic errors.
                 if(count($averageData) >= 2){
@@ -72,11 +73,12 @@ class UpdateQueueCalculation extends Command
                     // Sort the array from low to high
                     sort($averageData);
 
-                    // Split the array into two low and high chunks
+                    // Split the array into two low and high chunks, we'll then only use the second half as it's the most representative
                     $halved = array_chunk($averageData, ceil(count($averageData)/2));
-                    
-                    $firstHalfAvg = array_sum($halved[0]) / count(array_filter($halved[0]));
-                    $secondHalfAvg = array_sum($halved[1]) / count(array_filter($halved[1]));
+                    $halvedHalved = array_chunk($halved, ceil(count($halved)/2));
+
+                    $firstHalfAvg = array_sum($halvedHalved[0]) / count(array_filter($halvedHalved[0]));
+                    $secondHalfAvg = array_sum($halvedHalved[1]) / count(array_filter($halvedHalved[1]));
 
                     $rating->pivot->queue_length_low = $firstHalfAvg;
                     $rating->pivot->queue_length_high = $secondHalfAvg;
