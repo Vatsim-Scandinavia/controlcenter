@@ -5,7 +5,7 @@ services:
     container_name: control-center
     image: vatsca/apache:7.4
     ports:
-        - 8000:80
+        - 5010:80
     extra_hosts:
         - "host.docker.internal:host-gateway"
     volumes:
