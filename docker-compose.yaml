@@ -6,6 +6,7 @@ services:
     image: vatsca/apache:7.4
     ports:
         - 5010:80
+        - 5011:443
     extra_hosts:
         - "host.docker.internal:host-gateway"
     volumes:
