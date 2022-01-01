@@ -220,17 +220,17 @@ class VatbookController extends Controller
         $vatbook->callsign = strtoupper($data['position']);
         $vatbook->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
 
-        if($vatbook->time_start === $vatbook->time_end) {
+        if ($vatbook->time_start === $vatbook->time_end) {
             return response()->json([
                 'error' => 'Booking needs to have a valid duration!'
             ], 400);
         }
 
-        if($vatbook->time_start->diffInMinutes($vatbook->time_end, false) < 0) {
+        if ($vatbook->time_start->diffInMinutes($vatbook->time_end, false) < 0) {
             $vatbook->time_end->addDay();
         }
 
-        if($vatbook->time_start->diffInMinutes(Carbon::now(), false) > 0) {
+        if ($vatbook->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
                 'error' => 'You cannot create a booking in the past.'
             ], 400);
@@ -294,18 +294,18 @@ class VatbookController extends Controller
                 $eventUrl = Setting::get('linkDomain');
                 file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&E_URL={$eventUrl}&voice=1"));
             } else {
-                file_get_contents(str_replace(' ', '%20',"http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&voice=1"));
+                file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&voice=1"));
             }
         }
 
         $vatbook->save();
 
-        ActivityLogController::info('BOOKING', "Updated vatbook booking ".$vatbook->id. " via API".
-        " ― from ".Carbon::parse($vatbook->time_start)->toEuropeanDateTime().
-        " → ".Carbon::parse($vatbook->time_end)->toEuropeanDateTime().
-        " ― Position: ".Position::find($vatbook->position_id)->callsign);
+        ActivityLogController::info('BOOKING', "Updated vatbook booking " . $vatbook->id . " via API" .
+            " ― from " . Carbon::parse($vatbook->time_start)->toEuropeanDateTime() .
+            " → " . Carbon::parse($vatbook->time_end)->toEuropeanDateTime() .
+            " ― Position: " . Position::find($vatbook->position_id)->callsign);
 
-        if($forcedTrainingTag){
+        if ($forcedTrainingTag) {
             return response()->json([
                 'message' => 'Booking updated',
                 'booking' => $vatbook,
@@ -327,7 +327,7 @@ class VatbookController extends Controller
      */
     public function destroy(Vatbook $vatbook)
     {
-        if(App::environment('production')) {
+        if (App::environment('production')) {
             file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $vatbook->eu_id . '&Local_ID=' . $vatbook->local_id);
         }
 
@@ -335,10 +335,10 @@ class VatbookController extends Controller
         $vatbook->local_id = null;
         $vatbook->save();
 
-        ActivityLogController::warning('BOOKING', "Deleted vatbook booking ".$vatbook->id. " via API".
-        " ― from ".Carbon::parse($vatbook->time_start)->toEuropeanDateTime().
-        " → ".Carbon::parse($vatbook->time_end)->toEuropeanDateTime().
-        " ― Position: ".Position::find($vatbook->position_id)->callsign);
+        ActivityLogController::warning('BOOKING', "Deleted vatbook booking " . $vatbook->id . " via API" .
+            " ― from " . Carbon::parse($vatbook->time_start)->toEuropeanDateTime() .
+            " → " . Carbon::parse($vatbook->time_end)->toEuropeanDateTime() .
+            " ― Position: " . Position::find($vatbook->position_id)->callsign);
 
         return response()->json([
             'message' => 'Booking deleted',

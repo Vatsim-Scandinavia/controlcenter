@@ -23,5 +23,7 @@ Route::group(['middleware' => ['client']], function() {
     Route::post('/callback/bookings/create', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.vatbook.store');
     Route::patch('/callback/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'update'])->name('api.vatbook.update');
     Route::delete('/callback/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'destroy'])->name('api.vatbook.destroy');
+
+    Route::get('/callback/mentors', [App\Http\Controllers\API\MentorController::class, 'index'])->name('api.mentors.index');
 });
 
