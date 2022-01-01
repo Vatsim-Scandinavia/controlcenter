@@ -22,6 +22,7 @@
         "laravel/ui": "^3.2",
         "league/commonmark": "^1.5",
         "league/oauth2-client": "^2.4",
+        "sentry/sentry-laravel": "^2.10",
         "wildside/userstamps": "^2.0"
     },
     "require-dev": {
