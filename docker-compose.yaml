@@ -3,12 +3,12 @@ version: '3'
 services:
   web:
     container_name: control-center
-    image: vatsca/apache:7.4
+    image: vatsca/apache:php-7.4
     ports:
-        - 8000:80
+        - 5010:80
+        - 5011:443
     extra_hosts:
         - "host.docker.internal:host-gateway"
     volumes:
       - ./:/var/www/html
-    restart: unless-stopped
-    command: sh /var/entrypoint.sh "* * * * * cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1"
+      - ./apache:/var/www/logs
