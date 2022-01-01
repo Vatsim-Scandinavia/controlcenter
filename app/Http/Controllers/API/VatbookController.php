@@ -48,7 +48,8 @@ class VatbookController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
-            'tag' => 'nullable|integer|between:1,3'
+            'tag' => 'nullable|integer|between:1,3',
+            'source' => 'required'
         ]);
 
         $user = User::findorFail($request['cid']);
@@ -63,6 +64,7 @@ class VatbookController extends Controller
         $booking->name = $user->name;
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
+        $booking->source = strtoupper($data['source']);
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
