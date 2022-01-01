@@ -28,6 +28,14 @@ To have Control Center reflect your division correctly, you need to do some twea
 
 To deploy in development environment use `./deploy dev`, in production use `./deploy`. This will automatically put the site in maintenance mode while it's deploying and open back up when finished.
 
+## Using the API
+There's an Control Center API that you can use to
+- GET, POST, PATCH and DELETE bookings
+- GET mentors and their area
+- GET list over visiting controllers
+
+To call the API you'll need to [create a bearer token](https://laravel.com/docs/8.x/passport#retrieving-tokens) and use this to access the API URLs you find in `routes/api.php`.
+
 ## Present automation
 There's quite a few automations in Control Center that are running through the Cron-jobs. They're as follows:
 - All trainings with status In Queue or Pre-Training are given a continued interest request each month, failing to reply within two weeks closes the request automatically.
