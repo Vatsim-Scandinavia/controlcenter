@@ -25,5 +25,7 @@ Route::group(['middleware' => ['client']], function() {
     Route::delete('/callback/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'destroy'])->name('api.vatbook.destroy');
 
     Route::get('/callback/mentors', [App\Http\Controllers\API\MentorController::class, 'index'])->name('api.mentors.index');
+    
+    Route::get('/callback/visitingcontrollers', [App\Http\Controllers\API\VisitingController::class, 'index'])->name('api.visitingcontrollers.index');
 });
 
