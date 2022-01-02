@@ -22,8 +22,6 @@ class MentorController extends Controller
             }
         }
 
-        return response()->json([
-            'mentors' => $mentors,
-        ], 200);
+        return response()->json(["data"=> $mentors->values()], 200);
     }
 }

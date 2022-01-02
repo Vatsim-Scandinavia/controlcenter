@@ -24,8 +24,6 @@ class VisitingController extends Controller
             }
         }
 
-        return response()->json([
-            'visiting_controllers' => $visiting_controllers,
-        ], 200);
+        return response()->json(["data"=> $visiting_controllers->values()], 200);
     }
 }

@@ -29,9 +29,7 @@ class VatbookController extends Controller
     {
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
 
-        return response()->json([
-            'bookings' => $bookings
-        ], 200);
+        return response()->json(["data"=> $bookings->values()], 200);
     }
 
     /**
