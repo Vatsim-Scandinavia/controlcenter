@@ -51,7 +51,7 @@ class UpdateQueueCalculation extends Command
                 foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at') as $training){
 
                     // Include training with GRP ratings inside
-                    if($training->ratings->count() >= 1 && $training->ratings->where('vatsim_rating', '!=', null)->count()){
+                    if($training->ratings->count() == 1 || $training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating){
 
                         if($training->status == 0){
                             $trainingCreated = $training->created_at;
