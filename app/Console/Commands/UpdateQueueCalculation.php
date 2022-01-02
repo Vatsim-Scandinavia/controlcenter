@@ -89,6 +89,7 @@ class UpdateQueueCalculation extends Command
                 } else {
                     $rating->pivot->queue_length_low = NULL;
                     $rating->pivot->queue_length_high = NULL;
+                    $rating->pivot->save();
                 }
             }
         }
