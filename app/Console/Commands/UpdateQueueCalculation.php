@@ -80,8 +80,8 @@ class UpdateQueueCalculation extends Command
                     $firstHalfAvg = array_sum($halvedHalved[0][0]) / count(array_filter($halvedHalved[0][0]));
                     $secondHalfAvg = array_sum($halvedHalved[1][0]) / count(array_filter($halvedHalved[1][0]));
 
-                    $rating->pivot->queue_length_low = $firstHalfAvg;
-                    $rating->pivot->queue_length_high = $secondHalfAvg;
+                    $rating->pivot->queue_length_low = $secondHalfAvg;
+                    $rating->pivot->queue_length_high = $secondHalfAvg + $firstHalfAvg;
                     $rating->pivot->save();
 
                     $this->info($area->name.' '.$rating->name.' rating calculated average from '.round($firstHalfAvg/60/60/24, 2).' to '.round($secondHalfAvg/60/60/24, 2).' days.');
