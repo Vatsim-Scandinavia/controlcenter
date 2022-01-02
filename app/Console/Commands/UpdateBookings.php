@@ -53,7 +53,7 @@ class UpdateBookings extends Command
                 if(Vatbook::where('eu_id', $booking->id)->count()){
                     Vatbook::where('eu_id', $booking->id)->first()->update(['callsign' => $booking->callsign, 'position_id' => Position::all()->firstWhere('callsign', $booking->callsign)->id, 'name' => $booking->name, 'time_start' => $booking->time_start, 'time_end' => $booking->time_end, 'cid' => $booking->cid, 'user_id' => $uid]);
                 } else {
-                    Vatbook::create(['eu_id' => $booking->id], ['source' => 'VATBOOK', 'callsign' => $booking->callsign, 'position_id' => Position::all()->firstWhere('callsign', $booking->callsign)->id, 'name' => $booking->name, 'time_start' => $booking->time_start, 'time_end' => $booking->time_end, 'cid' => $booking->cid, 'user_id' => $uid]);
+                    Vatbook::create(['eu_id' => $booking->id, 'source' => 'VATBOOK', 'callsign' => $booking->callsign, 'position_id' => Position::all()->firstWhere('callsign', $booking->callsign)->id, 'name' => $booking->name, 'time_start' => $booking->time_start, 'time_end' => $booking->time_end, 'cid' => $booking->cid, 'user_id' => $uid]);
                 }
             }
 
