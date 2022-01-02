@@ -174,7 +174,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Passed and failed trainings last 6 months
+                    Passed and failed exams last 6 months
                 </h6> 
             </div>
             <div class="card-body">
@@ -228,25 +228,35 @@
     ctx.canvas.width = 1000;
     ctx.canvas.height = 200;
 
-    var requestData = {!! json_encode($totalRequests) !!}
-
+    var requestData = {!! json_encode($totalRequests) !!} 
+    
     var color = Chart.helpers.color;
     var cfg = {
-        type: 'bar',
+        type: 'line',
         data: {
             datasets: [{
                 label: 'Training Requests',
-                backgroundColor: 'rgb(200, 100, 100)',
                 borderColor: 'rgb(255, 100, 100)',
+                backgroundColor: 'rgba(255,50,50, 0.1)',
+                pointBackgroundColor: 'rgb(255,75,75)',
+                pointRadius: 1,
                 data: requestData,
+                fill: {
+                    target: 'origin',
+                }
             }]
         },
         options: {
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
             scales: {
                 x: {
                     type: 'time',
                     time: {
-                        unit: 'month'
+                        unit: 'month',
+                        tooltipFormat:'MM/DD/YYYY', 
                     },
                     ticks: {
                         major: {

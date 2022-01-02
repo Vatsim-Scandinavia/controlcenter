@@ -42,10 +42,12 @@
                                     @can('update', $booking)
                                         <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
                                            <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
-                                    @endcan
-                                    @cannot('update', $booking)
+                                    @else
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
-                                    @endcannot
+                                        @if(Auth::user()->id == $booking->cid)
+                                            <i class="fas fa-info-circle text-info" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
+                                        @endif
+                                    @endcan
                                 </td>
                                 <td>
                                     {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanTime() }}
@@ -213,5 +215,11 @@
             }
         }
     }
+</script>
+<script>
+    //Activate bootstrap tooltips
+    $(document).ready(function() {
+        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+    });
 </script>
 @endsection

@@ -17,10 +17,12 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "hisorange/browser-detect": "^4.2",
         "laravel/framework": "^8.0",
+        "laravel/passport": "^10.2",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.2",
         "league/commonmark": "^1.5",
         "league/oauth2-client": "^2.4",
+        "sentry/sentry-laravel": "^2.10",
         "wildside/userstamps": "^2.0"
     },
     "require-dev": {

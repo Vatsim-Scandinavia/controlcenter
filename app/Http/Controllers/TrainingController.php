@@ -407,7 +407,12 @@ class TrainingController extends Controller
         }
 
         // Update paused time for queue estimation
-        isset($attributes['paused_at']) ? $attributes["paused_at"] = Carbon::now() : $attributes["paused_at"] = NULL;
+        if(isset($attributes['paused_at'])){
+            !isset($training->paused_at) ? $attributes["paused_at"] = Carbon::now() : $attributes["paused_at"] = $training->paused_at;
+        } else {
+            $attributes["paused_at"] = NULL;
+        }
+
         if(!isset($attributes['paused_at']) && isset($training->paused_at)){
             $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now());
             $training->update(['paused_length' => $training->paused_length]);

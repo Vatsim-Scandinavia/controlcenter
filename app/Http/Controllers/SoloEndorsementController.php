@@ -125,6 +125,6 @@ class SoloEndorsementController extends Controller
         ' ― Position: '.$endorsement->position.
         ' ― Expires: '.Carbon::parse($endorsement->expires_at)->toEuropeanDate());
 
-        return redirect()->intended(route('users.soloendorsements'))->withSuccess($user->name . "'s endorsement deleted");
+        return redirect()->intended(route('users.soloendorsements'))->withSuccess(User::find($endorsement->user_id)->name . "'s endorsement deleted");
     }
 }

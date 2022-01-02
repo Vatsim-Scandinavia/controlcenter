@@ -16,3 +16,16 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['middleware' => ['client']], function() {
+    Route::get('/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.vatbook.index');
+    Route::get('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'show'])->name('api.vatbook.show');
+    Route::post('/bookings/create', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.vatbook.store');
+    Route::patch('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'update'])->name('api.vatbook.update');
+    Route::delete('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'destroy'])->name('api.vatbook.destroy');
+
+    Route::get('/mentors', [App\Http\Controllers\API\MentorController::class, 'index'])->name('api.mentors.index');
+    
+    Route::get('/visitingcontrollers', [App\Http\Controllers\API\VisitingController::class, 'index'])->name('api.visitingcontrollers.index');
+});
+

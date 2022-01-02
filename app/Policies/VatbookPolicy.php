@@ -41,7 +41,28 @@ class VatbookPolicy
      */
     public function update(User $user, Vatbook $booking)
     {
-        return $booking->local_id != null && $booking->cid == $user->id || $user->isModeratorOrAbove() && $booking->local_id != null;
+
+        // vRoute booking
+        if($booking->local_id == null){
+            return $this->deny('This booking must be changed in vRoute or service it was booked from');
+        }
+
+        // Discord booking
+        if($booking->source == "DISCORD"){
+            return $this->deny('This booking must be changed in Discord where it was booked');
+        }
+
+        // The user is the owner of booking
+        if($booking->cid == $user->id){
+            return true;
+        }
+
+        // The booking is not vRoute/Discord but the user is moderator or above
+        if($booking->local_id != null && $booking->source != "DISCORD" && $user->isModeratorOrAbove()){
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\Training;
 use App\Models\User;
 use App\Models\Group;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -138,7 +139,14 @@ class ReportController extends Controller
      */
     protected function getDailyRequestsStats($areaFilter)
     {
-        $payload = [];
+
+        // Create an arra with all dates last 12 months
+        $dates = array();
+        foreach (CarbonPeriod::create(Carbon::now()->subYear(1), Carbon::now()) as $date) {
+            $dates[$date->format('Y-m-d')] = ['x' => $date->format('Y-m-d'), 'y' => 0];
+        }
+
+        // Fill the array
         if($areaFilter){
 
             $data = Training::select([DB::raw('count(id) as `count`'), DB::raw('DATE(created_at) as day')])->groupBy('day')
@@ -147,7 +155,7 @@ class ReportController extends Controller
               ->get();
 
             foreach($data as $entry) {
-                array_push($payload, ['x' => $entry->day, 'y' => $entry->count]);
+                $dates[$entry->day]['y'] = $entry->count;
             }
 
         } else {
@@ -159,10 +167,17 @@ class ReportController extends Controller
               ->get();
 
             foreach($data as $entry) {
-                array_push($payload, ['x' => $entry->day, 'y' => $entry->count]);
+                $dates[$entry->day]['y'] = $entry->count;
             }
         }
 
+        // Strip the keys to match requirement of chart.js
+        $payload = array();
+        foreach($dates as $loadKey => $load){
+            array_push($payload, $load);
+        }
+
+//        dd($payload);
         return $payload;
     }
 
