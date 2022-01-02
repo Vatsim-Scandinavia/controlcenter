@@ -256,7 +256,7 @@
                     type: 'time',
                     time: {
                         unit: 'month',
-                        tooltipFormat:'MM/DD/YYYY', 
+                        tooltipFormat:'DD/MM/YYYY', 
                     },
                     ticks: {
                         major: {
