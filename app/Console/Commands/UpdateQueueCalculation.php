@@ -77,8 +77,8 @@ class UpdateQueueCalculation extends Command
                     $halved = array_chunk($averageData, ceil(count($averageData)/2));
                     $halvedHalved = array_chunk($halved, ceil(count($halved)/2));
 
-                    $firstHalfAvg = array_sum($halvedHalved[0]) / count(array_filter($halvedHalved[0]));
-                    $secondHalfAvg = array_sum($halvedHalved[1]) / count(array_filter($halvedHalved[1]));
+                    $firstHalfAvg = array_sum($halvedHalved[0][0]) / count(array_filter($halvedHalved[0][0]));
+                    $secondHalfAvg = array_sum($halvedHalved[1][0]) / count(array_filter($halvedHalved[1][0]));
 
                     $rating->pivot->queue_length_low = $firstHalfAvg;
                     $rating->pivot->queue_length_high = $secondHalfAvg;
