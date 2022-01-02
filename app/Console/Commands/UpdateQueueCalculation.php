@@ -47,11 +47,16 @@ class UpdateQueueCalculation extends Command
                 
                 $averageData = [];
 
+                // Skip endorsement traings
+                if($rating->vatsim_rating == null){
+                    continue;
+                }
+
                 // Get the queue time from each training of this specific rating in the specific area
                 foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at') as $training){
 
                     // Include training with GRP ratings inside
-                    if($training->ratings->count() == 1 || $training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating){
+                    if($training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating){
 
                         if($training->status == 0){
                             $trainingCreated = $training->created_at;
