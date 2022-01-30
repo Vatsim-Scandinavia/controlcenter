@@ -182,6 +182,7 @@ class TrainingController extends Controller
 
         return view('training.apply', [
             'payload' => $payload,
+            'motivation_required' => true
         ]);
     }
 

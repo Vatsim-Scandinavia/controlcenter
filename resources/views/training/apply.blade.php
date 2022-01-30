@@ -44,21 +44,22 @@
 
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 mb-12">
-                                    <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training area</label>
+                                    <label class="my-1 mr-2" for="areaSelect">Training area</label>
                                     <select id="areaSelect" @change="areaSelectChange($event)" class="custom-select my-1 mr-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
                                             <option value="{{ $areaId }}">{{ $area["name"] }}</option>
                                         @endforeach
-
                                     </select>
+                                    <span v-show="errArea" class="text-danger" style="display: none">Select training area</span>
                                 </div>
                                 <div class="col-xl-6 col-md-6 mb-12">
-                                    <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Training type</label>
+                                    <label class="my-1 mr-2" for="ratingSelect">Training type</label>
                                     <select id="ratingSelect" @change="ratingSelectChange($event)" class="custom-select my-1 mr-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
                                         <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                                     </select> 
+                                    <span v-show="errArea" class="text-danger" style="display: none">Select available rating</span>
                                 </div>
                             </div>
 
@@ -99,43 +100,40 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                                 <div class="form-group">
-                                    <label for="inlineFormCustomSelectPref">Experience level</label>
-                                    <select class="custom-select" name="experience" id="inlineFormCustomSelectPref" onchange="function removeErr() {
-                                        $('#err-experience').html('');
-                                    }; removeErr();">
+                                    <label for="experience">Experience level</label>
+                                    <select class="custom-select" name="experience" id="experience">
                                         <option selected disabled>Choose best fitting level...</option>
                                         @foreach(\App\Http\Controllers\TrainingController::$experiences as $id => $data)
                                             <option value="{{ $id }}">{{ $data["text"] }}</option>
                                         @endforeach
                                     </select>
-                                    <div class="danger text-danger" id="err-experience">
-
-                                    </div>
+                                    <span v-show="errExperience" class="text-danger" style="display: none">Please select a proper experience level</span>
                                 </div>
 
                                 <div class="form-group form-check">
                                     <input type="checkbox" class="form-check-input" id="englishOnly" name="englishOnly" value="true">
-                                    <label class="form-check-label" for="englishOnly">I'm <u>only</u> able to receive training in English</label>
+                                    <label class="form-check-label" for="englishOnly">I'm <u>only</u> able to receive training in English instead of local language</label>
                                 </div>
 
                                 <hr>
 
                                 <div class="form-group">
                                     <label for="motivationTextarea">Letter of motivation</label>
-                                    <p class="text-muted">Please tell us about yourself, your experience and your motivation for applying to {{ Config::get('app.owner') }}</p>
-                                    <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500" onchange="function removeErr() {
-                                    $('#err-motivation').html('');
-                                    }; removeErr();"></textarea>
-                                    <div class="danger text-danger" id="err-motivation">
-
-                                    </div>
+                                    <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ Config::get('app.owner') }}</p>
+                                    <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500"></textarea>
+                                    <span v-show="errLOM" class="text-danger" style="display: none">The letter of motivation needs at least 250 characters</span>
                                 </div>
 
                                 <hr>
 
-                                <div class="form-group">
-                                    <label for="remarkTextarea">Comments or remarks</label>
-                                    <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Comment your experience and other things you think want us to know." maxlength="500"></textarea>
+                                <div class="form-group form-check">
+                                    <input type="checkbox" class="form-check-input" id="wantRemark" v-model="remarkChecked">
+                                    <label class="form-check-label" for="wantRemark">I've an important remark about my training I would like to add</label>
+                                </div>
+
+                                <div class="form-group" v-show="remarkChecked">
+                                    <label for="remarkTextarea">Remark</label>
+                                    <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Please don't repeat information from the application" maxlength="500"></textarea>
                                 </div>
                             </div>
 
@@ -145,7 +143,7 @@
 
                         </div>
 
-                        <button type="submit" id="training-submit-btn" class="btn btn-success">Submit training request<div class="submit-spinner spinner-border spinner-border-sm" role="status">&nbsp;</div></button>
+                        <button type="submit" id="training-submit-btn" class="btn btn-success" v-on:click="submit">Submit training request<div class="submit-spinner spinner-border spinner-border-sm" role="status">&nbsp;</div></button>
                     </div>
                 </div>
             </div>
@@ -158,26 +156,77 @@
 <script>
 
     var payload = {!! json_encode($payload, true) !!}
+    var motivationRequired = {{ $motivation_required }}
 
     const application = new Vue({
         el: '#application',
         data: {
             step: 1,
             ratings: '',
+            remarkChecked: 0,
+            errArea: 0,
+            errRating: 0,
+            errExperience: 0,
+            errLOM: 0,
         },
         methods:{
-            prev() {
-                this.step--;
-            },
             next() {
-                this.step++;
+                if(this.validate(this.step)) this.step++;
             },
-            submit() {
-                alert('Submit to blah and show blah and etc.');      
+            validate(page){
+                var validated = true
+
+                if(page == 1){
+                    let trainingArea = $('#areaSelect').val();
+                    let trainingLevel = $('#ratingSelect').val();
+
+                    if (trainingArea == null){
+                        $('#areaSelect').addClass('is-invalid');
+                        this.errArea = true;
+                        validated = false;
+                    }
+
+                    if (trainingLevel == null) {
+                        $('#ratingSelect').addClass('is-invalid');
+                        this.errRating = true;
+                        validated = false;
+                    } 
+                } else if(page == 2){
+                    validated = true;
+                }
+
+                return validated
+            },
+            submit(event) {
+                event.preventDefault();
+
+                // Reset errors
+                this.errExperience = false;
+                this.errLOM = true;
+                $('#experience').removeClass('is-invalid');
+                $('#motivationTextarea').removeClass('is-invalid');
+
+                // Validate
+                let trainingExperience = $('#experience').val();
+                let trainingLOM = $('#motivationTextarea').val();
+
+                if(trainingExperience == null){
+                    $('#experience').addClass('is-invalid');
+                    this.errExperience = true;
+                }
+
+                if(trainingLOM.length < 250){
+                    $('#motivationTextarea').addClass('is-invalid');
+                    this.errLOM = true;
+                }
+    
             },
             areaSelectChange(event) {
                 this.ratingSelectUpdate(event.srcElement.value);
                 $('#areaSelect').removeClass('is-invalid');
+                $('#ratingSelect').removeClass('is-invalid');
+                this.errArea = false;
+                this.errRating = false;
             },
             ratingSelectChange(event){
                 $('#ratingSelect').removeClass('is-invalid');
@@ -190,55 +239,7 @@
     });
 
 
-    /*
-    const area = new Vue({
-        el: '#areaSelect',
-        methods: {
-            onChange(event) {
-                rating.update(event.srcElement.value);
-                $(this.$el).removeClass('is-invalid');
-            }
-        }
-
-    });
-
-    const rating = new Vue({
-        el: '#ratingSelect',
-        data: {
-            ratings: '',
-        },
-        methods: {
-            update: function(value){
-                this.ratings = payload[event.target.value].data
-            },
-            onChange(event) {
-                $(this.$el).removeClass('is-invalid');
-            }
-        }
-    });
-
-    */
-
-    /*
-    $('#continue-btn-step-1').click( function (e) {
-
-        let training_area = $('#areaSelect').val();
-        sessionStorage.setItem('training_area', training_area);
-        let training_level = $('#ratingSelect').val();
-        sessionStorage.setItem('training_level', training_level);
-
-        if (training_area == null || training_level == null) {
-            e.preventDefault();
-        }
-
-        if (training_area == null)
-            $('#areaSelect').addClass('is-invalid');
-
-        if (training_level == null)
-            $('#ratingSelect').addClass('is-invalid');
-
-    });
-
+/*
     $('#training-submit-btn').click( function (e) {
 
         e.preventDefault();
