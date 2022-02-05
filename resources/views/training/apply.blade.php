@@ -5,7 +5,7 @@
 
 <div id="application">
 
-    <form id="training-form">
+    <form id="training-form" action="{{ route('training.store') }}" method="post">
         @csrf
 
         <!-- Information about training -->
@@ -45,7 +45,7 @@
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 mb-12">
                                     <label class="my-1 mr-2" for="areaSelect">Training area</label>
-                                    <select id="areaSelect" @change="areaSelectChange($event)" class="custom-select my-1 mr-sm-2">
+                                    <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="custom-select my-1 mr-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
                                             <option value="{{ $areaId }}">{{ $area["name"] }}</option>
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="col-xl-6 col-md-6 mb-12">
                                     <label class="my-1 mr-2" for="ratingSelect">Training type</label>
-                                    <select id="ratingSelect" @change="ratingSelectChange($event)" class="custom-select my-1 mr-sm-2">
+                                    <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="custom-select my-1 mr-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
                                         <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                                     </select> 
@@ -200,22 +200,30 @@
 
                 // Reset errors
                 this.errExperience = false;
-                this.errLOM = true;
+                this.errLOM = false;
                 $('#experience').removeClass('is-invalid');
                 $('#motivationTextarea').removeClass('is-invalid');
 
                 // Validate
                 let trainingExperience = $('#experience').val();
                 let trainingLOM = $('#motivationTextarea').val();
+                var errored = false;
 
                 if(trainingExperience == null){
                     $('#experience').addClass('is-invalid');
                     this.errExperience = true;
                 }
 
-                if(trainingLOM.length < 250){
+                if(trainingLOM.length < 250 && this.motivationRequired){
                     $('#motivationTextarea').addClass('is-invalid');
                     this.errLOM = true;
+                }
+
+                // Submit form if validation is successful
+                if(!this.errExperience && !this.errLOM){
+                    $('#training-submit-btn').prop('disabled', true);
+                    $('.submit-spinner').css('display', 'inherit');
+                    $('#training-form').submit();
                 }
     
             },
@@ -235,53 +243,6 @@
         }
 
     });
-
-
-/*
-    $('#training-submit-btn').click( function (e) {
-
-        e.preventDefault();
-
-        $(this).prop('disabled', true);
-        $('.submit-spinner').css('display', 'inherit');
-
-        var form = document.getElementById('training-form');
-        var data = new FormData(form);
-
-        data.append('training_area', sessionStorage.getItem('training_area'));
-        data.append('training_level', sessionStorage.getItem('training_level'));
-
-        $.ajax('/training/store',
-            {
-                type: 'post',
-                data: data,
-                processData: false,
-                contentType: false,
-                success: function () {
-                    sessionStorage.removeItem('training_area');
-                    sessionStorage.removeItem('training_level');
-
-                    sessionStorage.setItem("successMessage", "Your training request has been added to the queue!");
-                    window.location = "/";
-
-                },
-                error: function (error) {
-                    var message = error.responseJSON.errors;
-
-                    if (message.experience)
-                        $("#err-experience").html("Please select a proper experience level");
-
-                    if (message.motivation)
-                        $("#err-motivation").html(message.motivation[0]);
-
-                    $('#training-submit-btn').prop('disabled', false);
-                    $('.submit-spinner').hide();
-
-                }
-            }
-        )
-
-    });*/
 
 </script>
 @endsection
