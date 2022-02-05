@@ -16,7 +16,8 @@
                         data-page-size="25"
                         data-toggle="table"
                         data-pagination="true"
-                        data-filter-control="true">
+                        data-filter-control="true"
+                        data-sort-reset="true">
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>

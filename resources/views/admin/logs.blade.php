@@ -16,7 +16,8 @@
                         data-page-size="100"
                         data-toggle="table"
                         data-pagination="true"
-                        data-filter-control="true">
+                        data-filter-control="true"
+                        data-sort-reset="true">
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml" data-filter-order-by="desc">Time</th>

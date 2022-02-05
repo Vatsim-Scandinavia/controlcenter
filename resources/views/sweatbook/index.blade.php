@@ -16,7 +16,8 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-page-size="15"
-                        data-page-list=[10,15,25,50]>
+                        data-page-list=[10,15,25,50]
+                        data-sort-reset="true">
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml">Date</th>

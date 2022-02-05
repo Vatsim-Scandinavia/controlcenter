@@ -24,7 +24,8 @@
                         data-page-size="100"
                         data-toggle="table"
                         data-pagination="true"
-                        data-filter-control="true">
+                        data-filter-control="true"
+                        data-sort-reset="true">
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="state" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">State</th>
