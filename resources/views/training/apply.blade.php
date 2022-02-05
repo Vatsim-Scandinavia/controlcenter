@@ -117,14 +117,12 @@
 
                                 <hr>
 
-                                <div class="form-group">
+                                <div class="form-group" v-show="motivationRequired">
                                     <label for="motivationTextarea">Letter of motivation</label>
                                     <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ Config::get('app.owner') }}</p>
                                     <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500"></textarea>
                                     <span v-show="errLOM" class="text-danger" style="display: none">The letter of motivation needs at least 250 characters</span>
                                 </div>
-
-                                <hr>
 
                                 <div class="form-group form-check">
                                     <input type="checkbox" class="form-check-input" id="wantRemark" v-model="remarkChecked">
@@ -138,7 +136,7 @@
                             </div>
 
                             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
-                                <img class="d-none d-xl-block img-fluid px-3 px-sm-4 mt-3 mb-4" src="{{asset('images/undraw_files_6b3d.svg')}}" alt="">
+                                <img class="d-none d-xl-block m-auto w-50 px-3 px-sm-4 mt-3 mb-4" src="{{asset('images/undraw_files_6b3d.svg')}}" alt="" height="100%">
                             </div>
 
                         </div>
@@ -156,7 +154,6 @@
 <script>
 
     var payload = {!! json_encode($payload, true) !!}
-    var motivationRequired = {{ $motivation_required }}
 
     const application = new Vue({
         el: '#application',
@@ -168,6 +165,7 @@
             errRating: 0,
             errExperience: 0,
             errLOM: 0,
+            motivationRequired: {{ $motivation_required }}
         },
         methods:{
             next() {

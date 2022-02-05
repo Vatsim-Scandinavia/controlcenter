@@ -182,7 +182,7 @@ class TrainingController extends Controller
 
         return view('training.apply', [
             'payload' => $payload,
-            'motivation_required' => true
+            'motivation_required' => ($userVatsimRating <= 2) ? 1 : 0
         ]);
     }
 
