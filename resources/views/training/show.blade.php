@@ -351,7 +351,7 @@
                 </p>
 
                 @if(empty($training->motivation))
-                    <p><i>Not provided</i></p>
+                    <p><i>Not provided / relevant</i></p>
                 @else
                     <p>{{ $training->motivation }}</p>
                 @endif
