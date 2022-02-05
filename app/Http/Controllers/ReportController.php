@@ -91,8 +91,9 @@ class ReportController extends Controller
         }
 
         $mentors = $mentors->sortBy('name');
+        $statuses = TrainingController::$statuses;
 
-        return view('reports.mentors', compact('mentors'));
+        return view('reports.mentors', compact('mentors', 'statuses'));
     }
 
 

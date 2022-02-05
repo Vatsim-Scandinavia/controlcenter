@@ -62,7 +62,15 @@
                                     
                                     <td class="table-link-newline">
                                         @foreach($mentor->teaches as $training)
-                                            <div><a href="{{ route('training.show', $training->id) }}">{{ $training->user->name }}</a> / Last training: 
+                                            <div>
+
+                                                <i class="{{ $statuses[$training->status]["icon"] }} text-{{  $statuses[$training->status]["color"] }}"></i>
+                                                @isset($training->paused_at)
+                                                    <i class="fas fa-pause"></i>
+                                                @endisset
+                
+                                                <a href="{{ route('training.show', $training->id) }}">{{ $training->user->name }}</a> / Last training: 
+                                                
                                                 @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
                                                     @php
                                                         $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
