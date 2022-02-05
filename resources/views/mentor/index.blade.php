@@ -72,7 +72,20 @@
                                 </td>
                                 <td>
                                     @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
-                                        {{ Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)->diffForHumans(['parts' => 2])}}
+                                        @php
+                                            $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)
+                                        @endphp
+
+                                        @if($reportDate->isToday())
+                                            Today
+                                        @elseif($reportDate->isYesterday())
+                                            Yesterday
+                                        @elseif($reportDate->diffInDays() <= 7)
+                                            {{ $reportDate->diffForHumans(['parts' => 1]) }}
+                                        @else
+                                            {{ $reportDate->diffForHumans(['parts' => 2]) }}
+                                        @endif
+
                                     @else
                                         No report yet
                                     @endif
