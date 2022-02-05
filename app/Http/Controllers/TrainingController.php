@@ -379,9 +379,8 @@ class TrainingController extends Controller
             $training->updateStatus($attributes['status']);
         }
 
+        $notifyOfNewMentor = false;
         if (key_exists('mentors', $attributes)) {
-
-            $notifyOfNewMentor = false;
 
             foreach ((array) $attributes['mentors'] as $mentor) {
                 if (!$training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentorOrAbove($training->area)) {
@@ -452,6 +451,10 @@ class TrainingController extends Controller
                 return redirect($training->path())->withSuccess("Training successfully updated. E-mail confirmation of pre-training sent to student.");
             }
             
+        }
+
+        if($notifyOfNewMentor){
+            return redirect($training->path())->withSuccess("Training successfully updated. E-mail notification of mentor assigned sent to student.");
         }
 
         return redirect($training->path())->withSuccess("Training successfully updated");
