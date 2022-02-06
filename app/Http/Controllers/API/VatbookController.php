@@ -66,7 +66,7 @@ class VatbookController extends Controller
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
-                'error' => 'Start and end time cannot be the same'
+                'message' => 'Start and end time cannot be the same'
             ], 400);
         }
 
@@ -76,7 +76,7 @@ class VatbookController extends Controller
 
         if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
-                'error' => 'Start time cannot be in the past'
+                'message' => 'Start time cannot be in the past'
             ], 400);
         }
 
@@ -92,7 +92,7 @@ class VatbookController extends Controller
             ->where('deleted', false)
             ->get()->isEmpty()) {
             return response()->json([
-                'error' => 'Booking overlaps with existing booking'
+                'message' => 'Booking overlaps with existing booking'
             ], 400);
         }
 
@@ -222,7 +222,7 @@ class VatbookController extends Controller
 
         if ($vatbook->time_start === $vatbook->time_end) {
             return response()->json([
-                'error' => 'Booking needs to have a valid duration!'
+                'message' => 'Booking needs to have a valid duration!'
             ], 400);
         }
 
@@ -232,7 +232,7 @@ class VatbookController extends Controller
 
         if ($vatbook->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
-                'error' => 'You cannot create a booking in the past.'
+                'message' => 'You cannot create a booking in the past.'
             ], 400);
         }
 
@@ -250,7 +250,7 @@ class VatbookController extends Controller
             ->where('id', '!=', $vatbook->id)
             ->get()->isEmpty()) {
             return response()->json([
-                'error' => 'The position is already booked for that time!'
+                'message' => 'The position is already booked for that time!'
             ], 400);
         }
 
