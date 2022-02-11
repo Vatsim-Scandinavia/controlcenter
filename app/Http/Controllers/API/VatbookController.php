@@ -108,27 +108,33 @@ class VatbookController extends Controller
             $booking->training = 0;
         }
 
+        $type = null;
+
         if (isset($data['tag'])) {
             switch ($data['tag']) {
                 case 1:
                     $booking->exam = 0;
                     $booking->event = 0;
                     $booking->training = 1;
+                    $type = 'training';
                     break;
                 case 2:
                     $booking->exam = 1;
                     $booking->event = 0;
                     $booking->training = 0;
+                    $type = 'exam';
                     break;
                 case 3:
                     $booking->exam = 0;
                     $booking->event = 1;
                     $booking->training = 0;
+                    $type = 'event';
                     break;
             }
         } else {
             $booking->exam = 0;
             $booking->event = 0;
+            $type = 'booking';
         }
 
         if (App::environment('production')) {
@@ -144,6 +150,30 @@ class VatbookController extends Controller
         } else {
             $booking->eu_id = 0;
         }
+
+        $ATCBooking = curl_init();
+        $headers = [
+            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+            'Content-Type: application/x-www-form-urlencoded',
+        ];
+        curl_setopt_array($ATCBooking, [
+            CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking',
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => 'callsign='.$booking->callsign.'&cid='.$booking->cid.'&type'.$type.'&start='.$booking->time_start.'&end='.$booking->time_end,
+            CURLOPT_HTTPHEADER => $headers,
+        ]);
+
+        $response = curl_exec($ATCBooking);
+        if(curl_errno($ATCBooking)) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
+            ], 400);
+        }
+        curl_close($ATCBooking);
+        $vatsim_booking = json_decode($response);
+
+        $booking->vatsim_booking = $vatsim_booking->id;
 
         $booking->save();
 
@@ -266,27 +296,33 @@ class VatbookController extends Controller
             $vatbook->training = 0;
         }
 
+        $type = null;
+
         if (isset($data['tag'])) {
             switch ($data['tag']) {
                 case 1:
                     $vatbook->exam = 0;
                     $vatbook->event = 0;
                     $vatbook->training = 1;
+                    $type = 'training';
                     break;
                 case 2:
                     $vatbook->exam = 1;
                     $vatbook->event = 0;
                     $vatbook->training = 0;
+                    $type = 'exam';
                     break;
                 case 3:
                     $vatbook->training = 0;
                     $vatbook->exam = 0;
                     $vatbook->event = 1;
+                    $type = 'event';
                     break;
             }
         } else {
             $vatbook->exam = 0;
             $vatbook->event = 0;
+            $type = 'booking';
         }
 
         if (App::environment('production')) {
@@ -297,6 +333,30 @@ class VatbookController extends Controller
                 file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&voice=1"));
             }
         }
+
+        $ATCBooking = curl_init();
+        $headers = [
+            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+            'Content-Type: application/x-www-form-urlencoded',
+        ];
+        curl_setopt_array($ATCBooking, [
+            CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $vatbook->vatsim_booking,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => 'callsign='.$vatbook->callsign.'&cid='.$vatbook->cid.'&type'.$type.'&start='.$vatbook->time_start.'&end='.$vatbook->time_end,
+            CURLOPT_HTTPHEADER => $headers
+        ]);
+
+        $response = curl_exec($ATCBooking);
+        if(curl_errno($ATCBooking)) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
+            ], 400);
+        }
+        curl_close($ATCBooking);
+        $vatsim_booking = json_decode($response);
+
+        $vatbook->vatsim_booking = $vatsim_booking->id;
 
         $vatbook->save();
 
@@ -333,6 +393,26 @@ class VatbookController extends Controller
 
         $vatbook->deleted = true;
         $vatbook->local_id = null;
+
+        $ATCBooking = curl_init();
+
+        curl_setopt_array($ATCBooking, array(
+            CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $vatbook->vatsim_booking,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_CUSTOMREQUEST => 'DELETE',
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN')
+            ]
+        ));
+
+        $response = curl_exec($ATCBooking);
+        if(curl_errno($ATCBooking)) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
+            ], 400);
+        }
+        curl_close($ATCBooking);
+
         $vatbook->save();
 
         ActivityLogController::warning('BOOKING', "Deleted vatbook booking " . $vatbook->id . " via API" .

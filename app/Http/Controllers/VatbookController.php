@@ -166,16 +166,15 @@ class VatbookController extends Controller
         }
 
         $ATCBooking = curl_init();
-        $headers = [
-            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
-            'Content-Type: application/x-www-form-urlencoded',
-        ];
         curl_setopt_array($ATCBooking, [
             CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking',
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_POST => 1,
             CURLOPT_POSTFIELDS => 'callsign='.$booking->callsign.'&cid='.$booking->cid.'&type'.$type.'&start='.$booking->time_start.'&end='.$booking->time_end,
-            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+                'Content-Type: application/x-www-form-urlencoded',
+            ],
         ]);
 
         $response = curl_exec($ATCBooking);
@@ -302,16 +301,15 @@ class VatbookController extends Controller
         }
 
         $ATCBooking = curl_init();
-        $headers = [
-            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
-            'Content-Type: application/x-www-form-urlencoded',
-        ];
         curl_setopt_array($ATCBooking, [
             CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $booking->vatsim_booking,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_CUSTOMREQUEST => 'PUT',
             CURLOPT_POSTFIELDS => 'callsign='.$booking->callsign.'&cid='.$booking->cid.'&type'.$type.'&start='.$booking->time_start.'&end='.$booking->time_end,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+                'Content-Type: application/x-www-form-urlencoded',
+            ]
         ]);
 
         $response = curl_exec($ATCBooking);
@@ -356,15 +354,13 @@ class VatbookController extends Controller
 
         $ATCBooking = curl_init();
 
-        $headers = [
-            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN')
-        ];
-
         curl_setopt_array($ATCBooking, array(
             CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $booking->vatsim_booking,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_CUSTOMREQUEST => 'DELETE',
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN')
+            ]
         ));
 
         $response = curl_exec($ATCBooking);
