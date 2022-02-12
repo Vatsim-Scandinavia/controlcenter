@@ -29,7 +29,7 @@ class VatbookController extends Controller
     {
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
 
-        return response()->json(["data"=> $bookings->values()], 200);
+        return response()->json(["data" => $bookings->values()], 200);
     }
 
     /**
@@ -151,27 +151,42 @@ class VatbookController extends Controller
             $booking->eu_id = 0;
         }
 
-        $ATCBooking = curl_init();
-        $headers = [
-            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
-            'Content-Type: application/x-www-form-urlencoded',
-        ];
-        curl_setopt_array($ATCBooking, [
-            CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking',
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => 'callsign='.$booking->callsign.'&cid='.$booking->cid.'&type'.$type.'&start='.$booking->time_start.'&end='.$booking->time_end,
-            CURLOPT_HTTPHEADER => $headers,
+        // $ATCBooking = curl_init();
+        // $headers = [
+        //     'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+        //     'Content-Type: application/x-www-form-urlencoded',
+        // ];
+        // curl_setopt_array($ATCBooking, [
+        //     CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking',
+        //     CURLOPT_RETURNTRANSFER => 1,
+        //     CURLOPT_POST => 1,
+        //     CURLOPT_POSTFIELDS => 'callsign='.$booking->callsign.'&cid='.$booking->cid.'&type'.$type.'&start='.$booking->time_start.'&end='.$booking->time_end,
+        //     CURLOPT_HTTPHEADER => $headers,
+        // ]);
+
+        // $response = curl_exec($ATCBooking);
+        // if(curl_errno($ATCBooking)) {
+        //     return response()->json([
+        //         'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
+        //     ], 400);
+        // }
+        // curl_close($ATCBooking);
+        // $vatsim_booking = json_decode($response);
+
+        // $booking->vatsim_booking = $vatsim_booking->id;
+
+        $client = new \GuzzleHttp\Client();
+
+        $url = $this->getVatsimBookingUrl('post');
+        $response = $this->makeHttpRequest($client, $url, 'post', [
+            'callsign' => $booking->callsign,
+            'cid' => $booking->cid,
+            'type' => $type,
+            'start' => $booking->time_start->format('Y-m-d H:i:s'),
+            'end' => $booking->time_end->format('Y-m-d H:i:s'),
         ]);
 
-        $response = curl_exec($ATCBooking);
-        if(curl_errno($ATCBooking)) {
-            return response()->json([
-                'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
-            ], 400);
-        }
-        curl_close($ATCBooking);
-        $vatsim_booking = json_decode($response);
+        $vatsim_booking = json_decode($response->getBody()->getContents());
 
         $booking->vatsim_booking = $vatsim_booking->id;
 
@@ -334,27 +349,41 @@ class VatbookController extends Controller
             }
         }
 
-        $ATCBooking = curl_init();
-        $headers = [
-            'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
-            'Content-Type: application/x-www-form-urlencoded',
-        ];
-        curl_setopt_array($ATCBooking, [
-            CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $vatbook->vatsim_booking,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_CUSTOMREQUEST => 'PUT',
-            CURLOPT_POSTFIELDS => 'callsign='.$vatbook->callsign.'&cid='.$vatbook->cid.'&type'.$type.'&start='.$vatbook->time_start.'&end='.$vatbook->time_end,
-            CURLOPT_HTTPHEADER => $headers
+        // $ATCBooking = curl_init();
+        // $headers = [
+        //     'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+        //     'Content-Type: application/x-www-form-urlencoded',
+        // ];
+        // curl_setopt_array($ATCBooking, [
+        //     CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $vatbook->vatsim_booking,
+        //     CURLOPT_RETURNTRANSFER => 1,
+        //     CURLOPT_CUSTOMREQUEST => 'PUT',
+        //     CURLOPT_POSTFIELDS => 'callsign='.$vatbook->callsign.'&cid='.$vatbook->cid.'&type'.$type.'&start='.$vatbook->time_start.'&end='.$vatbook->time_end,
+        //     CURLOPT_HTTPHEADER => $headers
+        // ]);
+
+        // $response = curl_exec($ATCBooking);
+        // if(curl_errno($ATCBooking)) {
+        //     return response()->json([
+        //         'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
+        //     ], 400);
+        // }
+        // curl_close($ATCBooking);
+        // $vatsim_booking = json_decode($response);
+
+        // $vatbook->vatsim_booking = $vatsim_booking->id;
+
+        $client = new \GuzzleHttp\Client();
+        $url = $this->getVatsimBookingUrl('put', $vatbook->vatsim_booking);
+        $response = $this->makeHttpRequest($client, $url, 'put', [
+            'callsign' => $vatbook->callsign,
+            'cid' => $vatbook->cid,
+            'type' => $type,
+            'start' => $vatbook->time_start->format('Y-m-d H:i:s'),
+            'end' => $vatbook->time_end->format('Y-m-d H:i:s'),
         ]);
 
-        $response = curl_exec($ATCBooking);
-        if(curl_errno($ATCBooking)) {
-            return response()->json([
-                'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
-            ], 400);
-        }
-        curl_close($ATCBooking);
-        $vatsim_booking = json_decode($response);
+        $vatsim_booking = json_decode($response->getBody()->getContents());
 
         $vatbook->vatsim_booking = $vatsim_booking->id;
 
@@ -394,24 +423,27 @@ class VatbookController extends Controller
         $vatbook->deleted = true;
         $vatbook->local_id = null;
 
-        $ATCBooking = curl_init();
+        // $ATCBooking = curl_init();
 
-        curl_setopt_array($ATCBooking, array(
-            CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $vatbook->vatsim_booking,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_CUSTOMREQUEST => 'DELETE',
-            CURLOPT_HTTPHEADER => [
-                'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN')
-            ]
-        ));
+        // curl_setopt_array($ATCBooking, array(
+        //     CURLOPT_URL => env('VATSIM_BOOKING_API') . '/booking/' . $vatbook->vatsim_booking,
+        //     CURLOPT_RETURNTRANSFER => 1,
+        //     CURLOPT_CUSTOMREQUEST => 'DELETE',
+        //     CURLOPT_HTTPHEADER => [
+        //         'Authorization: Bearer ' . env('VATSIM_BOOKING_API_TOKEN')
+        //     ]
+        // ));
 
-        $response = curl_exec($ATCBooking);
-        if(curl_errno($ATCBooking)) {
-            return response()->json([
-                'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
-            ], 400);
-        }
-        curl_close($ATCBooking);
+        // $response = curl_exec($ATCBooking);
+        // if(curl_errno($ATCBooking)) {
+        //     return response()->json([
+        //         'message' => 'VATSIM API error: ' . curl_error($ATCBooking)
+        //     ], 400);
+        // }
+        // curl_close($ATCBooking);
+        $client = new \GuzzleHttp\Client();
+        $url = $this->getVatsimBookingUrl('delete', $vatbook->vatsim_booking);
+        $response = $this->makeHttpRequest($client, $url, 'delete');
 
         $vatbook->save();
 
@@ -424,5 +456,47 @@ class VatbookController extends Controller
             'message' => 'Booking deleted',
             'booking' => $vatbook
         ], 200);
+    }
+
+    private function getVatsimBookingUrl(string $type, int $id = null)
+    {
+        if ($type == 'get' || $type == 'post') {
+            $url = env('VATSIM_BOOKING_API') . '/booking';
+        } elseif ($type == 'put' || $type == 'delete') {
+            $url = env('VATSIM_BOOKING_API') . '/booking/' . $id;
+        } else {
+            return null;
+        }
+        return $url;
+    }
+
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null)
+    {
+        try {
+            $headers = [
+                'Authorization' => 'Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+                'Accept' => 'application/json',
+            ];
+            if ($type == 'get') {
+                $response = $client->request('GET', $url, [
+                    'headers' => $headers,
+                ]);
+            } elseif ($type == 'post') {
+                $response = $client->request('POST', $url, ['headers' => $headers, 'form_params' => $data]);
+            } elseif ($type == 'put') {
+                $response = $client->request('PUT', $url, ['headers' => $headers, 'form_params' => $data]);
+            } elseif ($type == 'delete') {
+                $response = $client->request('DELETE', $url, ['headers' => $headers]);
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage()
+            ], 400);
+        }
+
+        if (isset($response))
+            return $response;
+
+        return null;
     }
 }
