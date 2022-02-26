@@ -167,13 +167,13 @@
                                                 @endphp
                                                 <span title="{{ $reportDate->toEuropeanDate() }}">
                                                     @if($reportDate->isToday())
-                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">Today</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">Today</span>
                                                     @elseif($reportDate->isYesterday())
-                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">Yesterday</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">Yesterday</span>
                                                     @elseif($reportDate->diffInDays() <= 7)
-                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
                                                     @else
-                                                        <span class="{{ $trainingIntervalExceeded ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
                                                     @endif
 
                                                 </span>
