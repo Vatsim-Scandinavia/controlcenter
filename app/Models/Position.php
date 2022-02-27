@@ -15,4 +15,8 @@ class Position extends Model
     public function area(){
       return $this->belongsTo(Area::class);
     }
+
+    public function endorsements(){
+      return $this->belongsToMany(Endorsement::class);
+    }
 }

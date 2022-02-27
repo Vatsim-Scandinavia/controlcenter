@@ -87,6 +87,11 @@ class User extends Authenticatable
         return $this->hasOne(SoloEndorsement::class);
     }
 
+    public function endorsements()
+    {
+        return $this->hasMany(Endorsement::class);
+    }
+
     public function trainings()
     {
         return $this->hasMany(Training::class);
