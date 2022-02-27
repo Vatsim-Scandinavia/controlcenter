@@ -64,7 +64,7 @@ We name branches with `topic/name-here` including fixes and features, for instan
 
 ##### Other
 * We name our views with blade suffix for clarity, like `header.blade.php`
-* For more in-depth conventions which we try to follow, check out [Laravel best practices](https://www.laravelbestpractices.com)
+* For more in-depth conventions which we try to follow, check out [Laravel best practices](https://github.com/alexeymezenin/laravel-best-practices/blob/master/README.md#contents)
 * We tab with 4 spaces for increased readability
 * The service language is UK English
 
