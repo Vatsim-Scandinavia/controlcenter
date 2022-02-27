@@ -13,9 +13,13 @@ class AlterEndorsementPivot extends Migration
      */
     public function up()
     {
-        Schema::rename('rating_user', 'endorsement_rating');
-        Schema::table('endorsement_rating', function (Blueprint $table) {
-            $table->renameColumn('rating_id', 'endorsement_id');
+        Schema::dropIfExists('rating_user');
+        Schema::create('endorsement_rating', function (Blueprint $table) {
+            $table->unsignedBigInteger('endorsement_id');
+            $table->unsignedInteger('rating_id');
+
+            $table->foreign('endorsement_id')->references('id')->on('endorsements')->onDelete('cascade');
+            $table->foreign('rating_id')->references('id')->on('ratings')->onDelete('cascade');
         });
 
         Schema::create('endorsement_position', function (Blueprint $table) {
@@ -26,6 +30,14 @@ class AlterEndorsementPivot extends Migration
             $table->foreign('endorsement_id')->references('id')->on('endorsements')->onDelete('cascade');
             $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
 
+        });
+
+        Schema::create('area_endorsement', function (Blueprint $table) {
+            $table->unsignedInteger('area_id');
+            $table->unsignedBigInteger('endorsement_id');
+            
+            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
+            $table->foreign('endorsement_id')->references('id')->on('endorsements')->onDelete('cascade');
         });
     }
 

@@ -17,6 +17,10 @@ class Endorsement extends Model
         return $this->belongsToMany(Position::class);
     }
 
+    public function areas(){
+        return $this->belongsToMany(Area::class);
+    }
+
     public function users(){
         return $this->belongsTo(User::class);
     }
