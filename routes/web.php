@@ -39,7 +39,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/trainings/history', 'TrainingController@history')->name('requests.history');
     Route::get('/users', 'UserController@index')->name('users');
     Route::get('/users/other', 'UserController@indexOther')->name('users.other');
-    Route::get('endorsements', 'DashboardController@endorsements')->name('member.endorsements');
+
+    // Endorsements
+    Route::get('/endorsements/maes', 'EndorsementController@indexMaes')->name('endorsements.maes');
+    Route::get('/endorsements/trainings', 'EndorsementController@indexTrainings')->name('endorsements.trainings');
+    Route::get('/endorsements/examiners', 'EndorsementController@indexExaminers')->name('endorsements.examiners');
+    Route::get('/endorsements/visitors', 'EndorsementController@indexVisitors')->name('endorsements.visitors');
 
     // User endorsements
     Route::get('/users/endorsements', 'SoloEndorsementController@index')->name('users.soloendorsements');
