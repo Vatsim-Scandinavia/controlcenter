@@ -22,6 +22,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
+                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="select">ATC Active</th>
                                 @foreach($endorsements as $e)
                                     <th data-field="{{ $e->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $e->name }}</th>
                                 @endforeach
@@ -32,6 +33,7 @@
                                 <td>
                                     Valdy Daddy (12345678)
                                 </td>
+                                <td>Yes</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -48,6 +50,7 @@
                                 <td>
                                     Valdy Daddy (12345678)
                                 </td>
+                                <td>Yes</td>
                                 <td></td>
                                 <td></td>
                                 <td class="text-center bg-success text-white">
@@ -64,6 +67,7 @@
                                 <td>
                                     Valdy Daddy (12345678)
                                 </td>
+                                <td>Yes</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
