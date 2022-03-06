@@ -38,9 +38,9 @@ To call the API you'll need to [create a bearer token](https://laravel.com/docs/
 
 ## Present automation
 There's quite a few automations in Control Center that are running through the Cron-jobs. They're as follows:
-- All trainings with status In Queue or Pre-Training are given a continued interest request each month, failing to reply within two weeks closes the request automatically.
-- ATC Active is flag given based on ATC activity. Refreshes daily with data from VATSIM Data API.
-- Daily member cleanup, if a member leaves the division, their training will be automatically closed. Same for mentors.
+- All trainings with status In Queue or Pre-Training are given a continued interest request each month, and a reminder after a week. Failing to reply within two weeks closes the request automatically.
+- ATC Active is flag given based on ATC activity. Refreshes daily with data from VATSIM Data API. It counts the hours from today's date and backwards according to the length of qualification period.
+- Daily member cleanup, if a member leaves the division, their training will be automatically closed. Same for mentors. Does not apply to visitors.
 - Other misc cleanups
 
 ## Contribution and conventions
