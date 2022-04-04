@@ -22,55 +22,35 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
+                                <th data-field="rating" data-sortable="true" data-filter-control="select">Examining</th>
                                 @foreach($areas as $a)
                                     <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $a->name }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>S3</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                            </tr>
+                            @foreach($endorsements as $e)
+                                <tr>
+                                    <td>
+                                        {{ $e->user->name }}
+                                    </td>
+                                    <td>
+                                        @foreach($e->ratings as $rating)
+                                            {{ $rating->name }}
+                                        @endforeach
+                                    </td>
 
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>S3</td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>C1</td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
+                                    @foreach($areas as $a)
+                                        @if($e->areas->first()->id == $a->id)
+                                            <td class="text-center bg-success text-white">
+                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
+                                    @endforeach
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

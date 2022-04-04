@@ -21,65 +21,39 @@
                         >
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="student" class="w-50" data-sortable="true" data-filter-control="select">ATC Active</th>
-                                @foreach($endorsements as $e)
-                                    <th data-field="{{ $e->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $e->name }}</th>
+                                <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
+                                <th data-field="active" data-sortable="true" data-filter-control="select">ATC Active</th>
+                                @foreach($areas as $a)
+                                    <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $a->name }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>Yes</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            @foreach($endorsements as $e)
+                                <tr>
+                                    <td>
+                                        {{ $e->user->name }}
+                                    </td>
+                                    <td class="text-center {{ $e->user->active ? 'bg-success text-white' : 'bg-danger' }}">
+                                        @if($e->user->active)
+                                            <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
+                                        @else
+                                            <i class="fas fa-times-circle"></i><span class="d-none">No</span>
+                                        @endif
+                                    </td>
 
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>Yes</td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>Yes</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                            </tr>
-
+                                    @foreach($areas as $a)
+                                        @if($e->ratings->first()->id == $a->id)
+                                            <td class="text-center bg-success text-white">
+                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
+                                    @endforeach
+                                    
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

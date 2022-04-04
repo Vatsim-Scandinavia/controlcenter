@@ -30,54 +30,44 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i> Active
-                                </td>
-                                <td>
-                                    <i class="fas fa-graduation-cap text-warning"></i>
-                                    Solo
-                                </td>
-                                <td>ENBR_W_APP</td>
-                                <td>16/02/2022</td>
-                                <td>16/03/2022</td>
-                            </tr>
 
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td class="text-center text-warning">
-                                    <i class="fas fa-exclamation-triangle"></i> Expired
-                                </td>
-                                <td>
-                                    <i class="fas fa-book-open text-info"></i>
-                                    S1
-                                </td>
-                                <td>ENBR_W_APP</td>
-                                <td>16/02/2022</td>
-                                <td>16/03/2022</td>
-                            </tr>
+                            @foreach($endorsements as $e)
+                                <tr>
+                                    <td>
+                                        {{ $e->user->name }}
+                                    </td>
 
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i> Active
-                                </td>
-                                <td>
-                                    <i class="fas fa-book-open text-info"></i>
-                                    S1
-                                </td>
-                                <td>ENBR_W_APP</td>
-                                <td>16/02/2022</td>
-                                <td>16/03/2022</td>
-                            </tr>
+                                    @if(Carbon\Carbon::now() < $e->valid_to)
+                                        <td class="text-center bg-success text-white">
+                                            <i class="fas fa-check-circle"></i> Active
+                                        </td>
+                                    @else
+                                        <td class="text-center text-warning">
+                                            <i class="fas fa-exclamation-triangle"></i> Expired
+                                        </td>
+                                    @endif
 
+                                    @if($e->type == 'SOLO')
+                                        <td>
+                                            <i class="fas fa-graduation-cap text-warning"></i>
+                                            Solo
+                                        </td>
+                                    @else
+                                        <td>
+                                            <i class="fas fa-book-open text-info"></i>
+                                            S1
+                                        </td>
+                                    @endif
+
+                                    <td>
+                                        @foreach($e->positions as $p)
+                                            <span class="badge badge-light">{{ $p->callsign }}</span>
+                                        @endforeach
+                                    </td>
+                                    <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>
+                                    <td>{{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDate() }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

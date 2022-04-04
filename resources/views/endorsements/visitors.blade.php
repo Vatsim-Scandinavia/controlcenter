@@ -29,50 +29,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>C1</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                            </tr>
+                            @foreach($endorsements as $e)
+                                <tr>
+                                    <td>
+                                        {{ $e->user->name }} ({{ $e->user->id }})
+                                    </td>
+                                    <td>{{ $e->user->ratingShort }}</td>
 
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>C1</td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                    <small class="d-block">MAE ENGM TWR</small>
-                                    <small class="d-block">MAE ENGM APP</small>
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Valdy Daddy (12345678)
-                                </td>
-                                <td>C1</td>
-                                <td class="text-center bg-success text-white">
-                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
+                                    @foreach($areas as $a)
+                                        @if($e->areas->first()->id == $a->id)
+                                            <td class="text-center bg-success text-white">
+                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                                @foreach($e->ratings as $r)
+                                                    <small class="d-block">{{ $r->name }}</small>
+                                                @endforeach
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
+                                    @endforeach
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

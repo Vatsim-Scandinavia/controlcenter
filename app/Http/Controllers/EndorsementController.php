@@ -18,11 +18,10 @@ class EndorsementController extends Controller
     public function indexMaes()
     {
 
-        $users = User::all();
-        $endorsements = Rating::whereNull('vatsim_rating')->get();
+        $endorsements = Endorsement::where('type', 'MAE')->get();
+        $areas = Rating::whereNull('vatsim_rating')->get();
 
-
-        return view('endorsements.maes', compact('users', 'endorsements'));
+        return view('endorsements.maes', compact('endorsements', 'areas'));
     }
 
     /**
@@ -33,11 +32,9 @@ class EndorsementController extends Controller
     public function indexTrainings()
     {
 
-        $users = User::all();
-        $endorsements = Rating::whereNull('vatsim_rating')->get();
+        $endorsements = Endorsement::where('type', 'S1')->orWhere('type', 'SOLO')->get();
 
-
-        return view('endorsements.trainings', compact('users', 'endorsements'));
+        return view('endorsements.trainings', compact('endorsements'));
     }
 
     /**
@@ -48,10 +45,10 @@ class EndorsementController extends Controller
     public function indexExaminers()
     {
 
-        $users = User::all();
+        $endorsements = Endorsement::where('type', 'EXAMINER')->get();
         $areas = Area::all();
 
-        return view('endorsements.examiners', compact('users', 'areas'));
+        return view('endorsements.examiners', compact('endorsements', 'areas'));
     }
 
     /**
@@ -62,10 +59,10 @@ class EndorsementController extends Controller
     public function indexVisitors()
     {
 
-        $users = User::all();
+        $endorsements = Endorsement::where('type', 'VISITING')->get();
         $areas = Area::all();
 
-        return view('endorsements.visitors', compact('users', 'areas'));
+        return view('endorsements.visitors', compact('endorsements', 'areas'));
     }
 
     /**

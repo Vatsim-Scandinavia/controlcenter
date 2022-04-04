@@ -21,7 +21,7 @@ class Endorsement extends Model
         return $this->belongsToMany(Area::class);
     }
 
-    public function users(){
+    public function user(){
         return $this->belongsTo(User::class);
     }
 
