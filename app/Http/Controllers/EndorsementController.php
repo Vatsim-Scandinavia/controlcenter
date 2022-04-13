@@ -78,8 +78,11 @@ class EndorsementController extends Controller
         $user = Auth::user();
         $students = User::with('trainings')->has('trainings')->get();
         $positions = Position::all();
+        $areas = Area::all();
+        $ratingsMASC = Rating::where('vatsim_rating', null)->get();
+        $ratingsGRP = Rating::where('vatsim_rating', '<=', 7)->get();
 
-        return view('endorsements.create', compact('students', 'positions'));
+        return view('endorsements.create', compact('students', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP'));
     }
 
     /**

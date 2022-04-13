@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="row" id="application">
-    <div class="col-xl-4 col-md-12 mb-12">
+    <div class="col-xl-5 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
@@ -18,33 +18,50 @@
                     <label>Endorsement</label>
                     <div class="form-group">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="type">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType">
                             <label class="form-check-label" for="endorsementTypeMASC">
                                 Airport/Center
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="type">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="endorsementType">
                             <label class="form-check-label" for="endorsementTypeTraining">
                                 Training/Solo
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeExaminer" value="EXAMINER" v-model="type">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeExaminer" value="EXAMINER" v-model="endorsementType">
                             <label class="form-check-label" for="endorsementTypeExaminer">
                                 Examiner
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="type">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="endorsementType">
                             <label class="form-check-label" for="endorsementTypeVisitor">
                                 Visitor
                             </label>
                         </div>
                     </div>
+
+                    <label>Type</label>
+                    <div class="form-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType">
+                            <label class="form-check-label" for="trainingTypeS1">
+                                S1
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeSolo" value="SOLO" v-model="trainingType">
+                            <label class="form-check-label" for="trainingTypeSolo">
+                                Solo
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="form-group">
 
                         <label for="student">Student</label>
@@ -88,7 +105,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="position">Position</label>
+                        <label for="position">Positions <span class="text-muted">(comma-separated)</span></label>
                         <input 
                             id="position"
                             class="form-control @error('position') is-invalid @enderror"
@@ -96,7 +113,7 @@
                             name="position"
                             list="positions"
                             value="{{ old('position') }}"
-                            required>
+                            multiple="multiple">
 
                         <datalist id="positions">
                             @foreach($positions as $position)
@@ -111,6 +128,53 @@
                         @error('position')
                             <span class="text-danger">{{ $errors->first('position') }}</span>
                         @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <select class="form-control">
+                            <option selected disabled>Select rating</option>
+                            @foreach($ratingsMASC as $rating)
+                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <select class="form-control">
+                            <option selected disabled>Select rating</option>
+                            @foreach($ratingsGRP as $rating)
+                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="examiningRatings">Examines ratings: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <select multiple class="form-control" name="mentors[]" id="examiningRatings">
+                            @foreach($ratingsGRP as $rating)
+                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="examiningRatings">Areas: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <select multiple class="form-control" name="mentors[]" id="examiningRatings">
+                            @foreach($areas as $area)
+                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="visitingEndorsements">Visting Endorsements: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <select multiple class="form-control" name="visitingEndorsements[]" id="visitingEndorsements">
+                            @foreach($ratingsMASC as $rating)
+                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="form-check">
@@ -159,7 +223,8 @@
     const application = new Vue({
         el: '#application',
         data: {
-            type: null,
+            endorsementType: null,
+            trainingType: null,
         },
         methods:{
             validate(page){
@@ -235,5 +300,48 @@
 
     });
 
+</script>
+
+<!-- Multiple select datalist from https://www.meziantou.net/html-multiple-selections-with-datalist.htm -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const separator = ',';
+        for (const input of document.getElementsByTagName("input")) {
+            if (!input.multiple) {
+                continue;
+            }
+            if (input.list instanceof HTMLDataListElement) {
+                const optionsValues = Array.from(input.list.options).map(opt => opt.value);
+                let valueCount = input.value.split(separator).length;
+                input.addEventListener("input", () => {
+                    const currentValueCount = input.value.split(separator).length;
+                    // Do not update list if the user doesn't add/remove a separator
+                    // Current value: "a, b, c"; New value: "a, b, cd" => Do not change the list
+                    // Current value: "a, b, c"; New value: "a, b, c," => Update the list
+                    // Current value: "a, b, c"; New value: "a, b" => Update the list
+                    if (valueCount !== currentValueCount) {
+                        const lsIndex = input.value.lastIndexOf(separator);
+                        const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
+                        filldatalist(input, optionsValues, str);
+                        valueCount = currentValueCount;
+                    }
+                });
+            }
+        }
+        function filldatalist(input, optionValues, optionPrefix) {
+            const list = input.list;
+            if (list && optionValues.length > 0) {
+                list.innerHTML = "";
+                const usedOptions = optionPrefix.split(separator).map(value => value.trim());
+                for (const optionsValue of optionValues) {
+                    if (usedOptions.indexOf(optionsValue) < 0) {
+                        const option = document.createElement("option");
+                        option.value = optionPrefix + optionsValue;
+                        list.append(option);
+                    }
+                }
+            }
+        }
+    });
 </script>
 @endsection
