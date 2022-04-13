@@ -37,16 +37,31 @@
                                     <td>{{ $e->user->ratingShort }}</td>
 
                                     @foreach($areas as $a)
-                                        @if($e->areas->first()->id == $a->id)
-                                            <td class="text-center bg-success text-white">
-                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                                @foreach($e->ratings as $r)
-                                                    <small class="d-block">{{ $r->name }}</small>
-                                                @endforeach
-                                            </td>
-                                        @else
+                                        @php $count = 0; @endphp
+
+                                        @foreach($e->areas as $endorsedArea)
+                                            @if($endorsedArea->id == $a->id)
+
+                                                @php $count++; @endphp
+
+                                                <td class="text-center bg-success text-white">
+                                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+
+                                                    {{-- Display the MASC endorsements connected to this area --}}
+                                                    @foreach($e->ratings as $r)
+                                                        @if($r->areas->first()->pivot->area_id == $a->id)
+                                                            <small class="d-block">{{ $r->name }}</small>
+                                                        @endif
+                                                    @endforeach
+
+                                                </td>
+                                            @endif
+                                        @endforeach
+
+                                        @if(!$count)
                                             <td></td>
                                         @endif
+
                                     @endforeach
                                 </tr>
                             @endforeach
