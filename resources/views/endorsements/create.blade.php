@@ -27,7 +27,7 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="endorsementType">
                             <label class="form-check-label" for="endorsementTypeTraining">
-                                Training/Solo
+                                Training
                             </label>
                         </div>
 
@@ -62,6 +62,10 @@
                         </div>
                     </div>
 
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training is marked completed with an passed examination.
+                    </div>
+
                     <div class="form-group">
 
                         <label for="student">Student</label>
@@ -72,7 +76,7 @@
                             name="student"
                             list="students"
                             value="{{ old('student') }}"
-                            required>
+                            v-model="student">
 
                         <datalist id="students">
                             @foreach($students as $student)
@@ -97,7 +101,7 @@
                             type="text"
                             name="expires"
                             value="{{ old('expires') }}"
-                            required>
+                            v-model="expires">
 
                         @error('expires')
                             <span class="text-danger">{{ $errors->first('expires') }}</span>
@@ -113,7 +117,8 @@
                             name="position"
                             list="positions"
                             value="{{ old('position') }}"
-                            multiple="multiple">
+                            multiple="multiple"
+                            v-model="positions">
 
                         <datalist id="positions">
                             @foreach($positions as $position)
@@ -132,7 +137,7 @@
 
                     <div class="form-group">
                         <label for="rating">Rating</label>
-                        <select class="form-control">
+                        <select class="form-control" v-model="ratingMASC">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsMASC as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
@@ -142,7 +147,7 @@
 
                     <div class="form-group">
                         <label for="rating">Rating</label>
-                        <select class="form-control">
+                        <select class="form-control" v-model="ratingGRP">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsGRP as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
@@ -152,7 +157,7 @@
 
                     <div class="form-group">
                         <label for="examiningRatings">Examines ratings: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="mentors[]" id="examiningRatings">
+                        <select multiple class="form-control" name="mentors[]" id="examiningRatings" v-model="ratingsExaminate">
                             @foreach($ratingsGRP as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
                             @endforeach
@@ -161,7 +166,7 @@
 
                     <div class="form-group">
                         <label for="examiningRatings">Areas: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="mentors[]" id="examiningRatings">
+                        <select multiple class="form-control" name="mentors[]" id="examiningRatings" v-model="areas">
                             @foreach($areas as $area)
                                 <option value="{{ $area->id }}">{{ $area->name }}</option>
                             @endforeach
@@ -170,7 +175,7 @@
 
                     <div class="form-group">
                         <label for="visitingEndorsements">Visting Endorsements: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="visitingEndorsements[]" id="visitingEndorsements">
+                        <select multiple class="form-control" name="visitingEndorsements[]" id="visitingEndorsements" v-model="visitingEndorsements">
                             @foreach($ratingsMASC as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
                             @endforeach
@@ -178,7 +183,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="requirement_check">
+                        <input class="form-check-input" type="checkbox" id="requirement_check" v-model="soloChecked">
                         <label class="form-check-label" for="requirement_check">
                             {{ Setting::get('trainingSoloRequirement') }}
                         </label>
@@ -198,7 +203,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    //Activate bootstrap tooltips
+    //Activate bootstrap tooltips and calendar
     $(document).ready(function() {
 
         var defaultDate = "{{ old('date') }}"
@@ -208,23 +213,24 @@
             $(this).blur();
         });
         $('.flatpickr-input:visible').prop('readonly', false);
-    
-        // Check if the requirement checkbox is checked.
-        var checker = document.getElementById('requirement_check');
-        var sendbtn = document.getElementById('submit_btn');
-        checker.onchange = function() {
-            sendbtn.disabled = !this.checked;
-        };
 
     })
-</script>
-<script>
 
+    // Vue
     const application = new Vue({
         el: '#application',
         data: {
             endorsementType: null,
             trainingType: null,
+            student: null,
+            expires: null,
+            positions: null,
+            ratingMASC: null,
+            ratingGRP: null,
+            ratingsExaminate: [],
+            areas: [],
+            visitingEndorsements: [],
+            soloChecked: false,
         },
         methods:{
             validate(page){
