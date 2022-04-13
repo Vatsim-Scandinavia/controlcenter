@@ -41,10 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/other', 'UserController@indexOther')->name('users.other');
 
     // Endorsements
-    Route::get('/endorsements/maes', 'EndorsementController@indexMaes')->name('endorsements.maes');
+    Route::get('/endorsements/mascs', 'EndorsementController@indexMascs')->name('endorsements.mascs');
     Route::get('/endorsements/trainings', 'EndorsementController@indexTrainings')->name('endorsements.trainings');
     Route::get('/endorsements/examiners', 'EndorsementController@indexExaminers')->name('endorsements.examiners');
     Route::get('/endorsements/visitors', 'EndorsementController@indexVisitors')->name('endorsements.visitors');
+    Route::get('/endorsements/create', 'EndorsementController@create')->name('endorsements.create');
 
     // User endorsements
     Route::get('/users/endorsements', 'SoloEndorsementController@index')->name('users.soloendorsements');

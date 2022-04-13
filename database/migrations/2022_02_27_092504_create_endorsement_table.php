@@ -16,7 +16,7 @@ class CreateEndorsementTable extends Migration
         Schema::create('endorsements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->enum('type', ['MAE', 'SOLO', 'S1', 'VISITING', 'EXAMINER']);
+            $table->enum('type', ['MASC', 'SOLO', 'S1', 'VISITING', 'EXAMINER']);
             $table->dateTime('valid_from');
             $table->dateTime('valid_to')->nullable();
             $table->boolean('expired')->default(false);

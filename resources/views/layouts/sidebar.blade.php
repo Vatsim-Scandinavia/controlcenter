@@ -111,7 +111,7 @@
             </a>
             <div id="collapseEndorsements" class="collapse" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('endorsements.maes') }}">Airports and Centers</a>
+                <a class="collapse-item" href="{{ route('endorsements.mascs') }}">Airports and Centers</a>
                 <a class="collapse-item" href="{{ route('endorsements.trainings') }}">Trainings</a>
                 <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiners</a>
                 <a class="collapse-item" href="{{ route('endorsements.visitors') }}">Visitors</a>

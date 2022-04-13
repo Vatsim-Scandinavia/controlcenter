@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rating;
 use App\Models\Area;
+use App\Models\Position;
+use Illuminate\Support\Facades\Auth;
 
 class EndorsementController extends Controller
 {
@@ -15,13 +17,13 @@ class EndorsementController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexMaes()
+    public function indexMascs()
     {
 
-        $endorsements = Endorsement::where('type', 'MAE')->get();
+        $endorsements = Endorsement::where('type', 'MASC')->get();
         $areas = Rating::whereNull('vatsim_rating')->get();
 
-        return view('endorsements.maes', compact('endorsements', 'areas'));
+        return view('endorsements.mascs', compact('endorsements', 'areas'));
     }
 
     /**
@@ -72,7 +74,12 @@ class EndorsementController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', SoloEndorsement::class);
+        $user = Auth::user();
+        $students = User::with('trainings')->has('trainings')->get();
+        $positions = Position::all();
+
+        return view('endorsements.create', compact('students', 'positions'));
     }
 
     /**
