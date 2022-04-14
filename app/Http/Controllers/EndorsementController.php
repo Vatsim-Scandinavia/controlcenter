@@ -75,14 +75,13 @@ class EndorsementController extends Controller
     public function create()
     {
         $this->authorize('create', SoloEndorsement::class);
-        $user = Auth::user();
-        $students = User::with('trainings')->has('trainings')->get();
+        $users = User::all();
         $positions = Position::all();
         $areas = Area::all();
         $ratingsMASC = Rating::where('vatsim_rating', null)->get();
         $ratingsGRP = Rating::where('vatsim_rating', '<=', 7)->get();
 
-        return view('endorsements.create', compact('students', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP'));
+        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP'));
     }
 
     /**

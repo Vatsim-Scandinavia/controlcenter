@@ -12,115 +12,120 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('SoloEndorsementController@store') !!}" method="POST">
+                <form id="endorsementForm" action="{!! action('SoloEndorsementController@store') !!}" method="POST">
                     @csrf
 
+                    {{-- User --}} 
+                    <div class="form-group">
+                        <label for="user">User</label>
+                        <input 
+                            id="user"
+                            class="form-control"
+                            type="text"
+                            name="user"
+                            list="userList"
+                            v-model="user"
+                            v-bind:class="{'is-invalid': (validationError && user == null)}">
+
+                        <datalist id="userList">
+                            @foreach($users as $user)
+                                @browser('isFirefox')
+                                    <option>{{ $user->id }}</option>
+                                @else
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endbrowser
+                            @endforeach
+                        </datalist>
+                        <span v-show="validationError && user == null" style="display: none" class="text-danger">Fill out a user for the endorsement</span>
+                    </div>
+
+                    {{-- Endorsement --}}
                     <label>Endorsement</label>
                     <div class="form-group">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeMASC">
                                 Airport/Center
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="endorsementType">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeTraining">
                                 Training
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeExaminer" value="EXAMINER" v-model="endorsementType">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeExaminer" value="EXAMINER" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeExaminer">
                                 Examiner
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="endorsementType">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeVisitor">
                                 Visitor
                             </label>
                         </div>
                     </div>
 
-                    <label>Type</label>
-                    <div class="form-group">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType">
-                            <label class="form-check-label" for="trainingTypeS1">
-                                S1
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeSolo" value="SOLO" v-model="trainingType">
-                            <label class="form-check-label" for="trainingTypeSolo">
-                                Solo
-                            </label>
-                        </div>
+                    <div style="display: none" v-show="endorsementType != null">
+                        <hr>
                     </div>
 
-                    <div class="alert alert-info" role="alert">
+                    {{-- Info for MASC --}}
+                    <div class="alert alert-info" style="display: none" role="alert" v-show="endorsementType == 'MASC'">
                         <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training is marked completed with an passed examination.
                     </div>
 
-                    <div class="form-group">
-
-                        <label for="student">Student</label>
-                        <input 
-                            id="student"
-                            class="form-control @error('student') is-invalid @enderror"
-                            type="text"
-                            name="student"
-                            list="students"
-                            value="{{ old('student') }}"
-                            v-model="student">
-
-                        <datalist id="students">
-                            @foreach($students as $student)
-                                @browser('isFirefox')
-                                    <option>{{ $student->id }}</option>
-                                @else
-                                    <option value="{{ $student->id }}">{{ $student->name }}</option>
-                                @endbrowser
-                            @endforeach
-                        </datalist>
-
-                        @error('student')
-                            <span class="text-danger">{{ $errors->first('student') }}</span>
-                        @enderror
+                    {{-- Training Type --}} 
+                    <div v-show="endorsementType == 'TRAINING'" style="display: none">
+                        <label>Type</label>
+                        <div class="form-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType" v-on:change="updateButtonText">
+                                <label class="form-check-label" for="trainingTypeS1">
+                                    S1
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeSolo" value="SOLO" v-model="trainingType" v-on:change="updateButtonText">
+                                <label class="form-check-label" for="trainingTypeSolo">
+                                    Solo
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="expires">Expires</label>
+                    {{-- Expires --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                        <label for="expire">Expires</label>
                         <input
-                            id="expires"
-                            class="datepicker form-control @error('expires') is-invalid @enderror"
+                            id="expire"
+                            class="datepicker form-control"
                             type="text"
-                            name="expires"
-                            value="{{ old('expires') }}"
-                            v-model="expires">
-
-                        @error('expires')
-                            <span class="text-danger">{{ $errors->first('expires') }}</span>
-                        @enderror
+                            name="expire"
+                            v-model="expire"
+                            v-bind:class="{'is-invalid': (validationError && expire == null)}">
+                        <span v-show="validationError && expire == null" class="text-danger">Fill out an expire date, max 30 days</span>
                     </div>
 
-                    <div class="form-group">
-                        <label for="position">Positions <span class="text-muted">(comma-separated)</span></label>
+                    {{-- Training Positions --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                        <label for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
                         <input 
-                            id="position"
-                            class="form-control @error('position') is-invalid @enderror"
+                            id="positions"
+                            class="form-control"
                             type="text"
-                            name="position"
-                            list="positions"
-                            value="{{ old('position') }}"
+                            name="positions"
+                            list="positionsList"
                             multiple="multiple"
-                            v-model="positions">
+                            v-model="positions"
+                            v-bind:class="{'is-invalid': (validationError && positions == null)}">
 
-                        <datalist id="positions">
+                        <datalist id="positionsList">
                             @foreach($positions as $position)
                                 @browser('isFirefox')
                                     <option>{{ $position->callsign }}</option>
@@ -129,52 +134,59 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
-
-                        @error('position')
-                            <span class="text-danger">{{ $errors->first('position') }}</span>
-                        @enderror
+                        <span v-show="validationError && positions == null" class="text-danger">Select at least one position</span>
+                        <p v-show="validationError && errSoloPositionCount == true" class="text-danger">Solo Endorsement can only have one position.</p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="rating">Rating</label>
-                        <select class="form-control" v-model="ratingMASC">
+                    {{-- MASC Ratings --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'MASC'">
+                        <label for="ratingMASC">Rating</label>
+                        <select class="form-control" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsMASC as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
                             @endforeach
                         </select>
+                        <span v-show="validationError && ratingMASC == null" class="text-danger">Select at least one airport or center</span>
                     </div>
 
-                    <div class="form-group">
-                        <label for="rating">Rating</label>
-                        <select class="form-control" v-model="ratingGRP">
+                    {{-- Visiting Rating --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING'">
+                        <label for="ratingGRP">Rating</label>
+                        <select class="form-control" name="ratingGRP" id="ratingGRP" v-model="ratingGRP" v-bind:class="{'is-invalid': (validationError && ratingGRP == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsGRP as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
                             @endforeach
                         </select>
+                        <span v-show="validationError && ratingGRP == null" class="text-danger">Select a visiting rating</span>
                     </div>
 
-                    <div class="form-group">
-                        <label for="examiningRatings">Examines ratings: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="mentors[]" id="examiningRatings" v-model="ratingsExaminate">
+                    {{-- Examiner Ratings --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER'">
+                        <label for="ratingsExaminate">Examines Ratings: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <select multiple class="form-control" name="ratingsExaminate[]" id="ratingsExaminate" v-model="ratingsExaminate" v-bind:class="{'is-invalid': (validationError && !ratingsExaminate.length)}">
                             @foreach($ratingsGRP as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
                             @endforeach
                         </select>
+                        <span v-show="validationError && !ratingsExaminate.length" class="text-danger">Select one or more examinating ratings</span>
                     </div>
 
-                    <div class="form-group">
-                        <label for="examiningRatings">Areas: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="mentors[]" id="examiningRatings" v-model="areas">
+                    {{-- Examiner/Visiting Areas --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
+                        <label for="areas">Areas: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <select multiple class="form-control" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
                             @foreach($areas as $area)
                                 <option value="{{ $area->id }}">{{ $area->name }}</option>
                             @endforeach
                         </select>
+                        <span v-show="validationError && !areas.length" class="text-danger">Select one or more areas</span>
                     </div>
 
-                    <div class="form-group">
-                        <label for="visitingEndorsements">Visting Endorsements: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                    {{-- Visiting Endorsement --}}
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING'">
+                        <label for="visitingEndorsements">MA/SC Endorsements: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="visitingEndorsements[]" id="visitingEndorsements" v-model="visitingEndorsements">
                             @foreach($ratingsMASC as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
@@ -182,14 +194,16 @@
                         </select>
                     </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="requirement_check" v-model="soloChecked">
-                        <label class="form-check-label" for="requirement_check">
+                    {{-- Training Checkbox --}}
+                    <div class="form-check" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType == 'SOLO'">
+                        <input class="form-check-input" type="checkbox" id="soloChecked" v-model="soloChecked">
+                        <label class="form-check-label" for="soloChecked">
                             {{ Setting::get('trainingSoloRequirement') }}
                         </label>
+                        <p v-show="validationError && soloChecked == false" class="text-danger">Confirm that the requirements are filled</p>
                     </div>
 
-                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" disabled>Create endorsement</button>
+                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" v-on:click="submit" v-show="endorsementType != null && (endorsementType != 'TRAINING' || (endorsementType == 'TRAINING' && trainingType != null))" style="display: none">Create endorsement</button>
                 </form>
             </div>
         </div>
@@ -206,13 +220,12 @@
     //Activate bootstrap tooltips and calendar
     $(document).ready(function() {
 
-        var defaultDate = "{{ old('date') }}"
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
 
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
         });
-        $('.flatpickr-input:visible').prop('readonly', false);
+        $('.flatpickr-input').prop('readonly', false);
 
     })
 
@@ -222,8 +235,8 @@
         data: {
             endorsementType: null,
             trainingType: null,
-            student: null,
-            expires: null,
+            user: null,
+            expire: null,
             positions: null,
             ratingMASC: null,
             ratingGRP: null,
@@ -231,76 +244,88 @@
             areas: [],
             visitingEndorsements: [],
             soloChecked: false,
+            validationError: false,
+            errSoloPositionCount: false,
         },
         methods:{
-            validate(page){
+            updateButtonText(){
+
+                var btn = document.getElementById("submit_btn");
+                var end = ""
+
+                if(this.endorsementType == 'MASC'){
+                    end = "MA/SC"
+                } else if(this.endorsementType == 'TRAINING'){
+                    end = "Training"
+                    if(this.trainingType == 'S1'){
+                        end = "S1"
+                    } else if(this.trainingType == 'SOLO') {
+                        end = "Solo"
+                    }
+                } else if(this.endorsementType == 'EXAMINER'){
+                    end = "Examiner"
+                } else if(this.endorsementType == 'VISITING'){
+                    end = "Visiting"
+                }
+
+                btn.innerText = "Create " + end + " Endorsement";
+
+            },
+            validate(){
+
+                /*
+                    All -> User
+
+                    Airport/Center -> Single MA/SC Rating
+                    Training -> Type + Expire + Position (Multiple if S1)
+                    Examiner -> Multiple GRP Ratings + Areas
+                    Visitor -> Areas + Single GRP Rating + Multiple MA/SC Ratings
+
+                    Specials:
+                    Positions: Only 1 for Solo.
+
+                */
+
                 var validated = true
 
-                if(page == 1){
-                    let trainingArea = $('#areaSelect').val();
-                    let trainingLevel = $('#ratingSelect').val();
+                if(this.user == null) validated = false
 
-                    if (trainingArea == null){
-                        $('#areaSelect').addClass('is-invalid');
-                        this.errArea = true;
-                        validated = false;
+                if(this.endorsementType == 'MASC'){
+
+                    if(this.ratingMASC == null) validated = false
+
+                } else if(this.endorsementType == 'TRAINING'){
+
+                    if(this.expire == null) validated = false
+                    if(this.positions == null) validated = false
+                    
+                    if(this.trainingType == 'SOLO'){
+                        if(this.soloChecked == false) validated = false
+                        if(this.positions.includes(',')) validated = false; this.errSoloPositionCount = true;
                     }
 
-                    if (trainingLevel == null) {
-                        $('#ratingSelect').addClass('is-invalid');
-                        this.errRating = true;
-                        validated = false;
-                    } 
-                } else if(page == 2){
-                    validated = true;
+                } else if(this.endorsementType == 'EXAMINER'){
+
+                    if(this.ratingsExaminate.length == 0) validated = false
+                    if(this.areas.length == 0) validated = false
+
+                } else if(this.endorsementType == 'VISITING'){
+
+                    if(this.ratingGRP == null) validated = false
+                    if(this.areas.length == 0) validated = false
+
                 }
 
                 return validated
             },
             submit(event) {
-                event.preventDefault();
+                event.preventDefault()
 
-                // Reset errors
-                this.errExperience = false;
-                this.errLOM = false;
-                $('#experience').removeClass('is-invalid');
-                $('#motivationTextarea').removeClass('is-invalid');
-
-                // Validate
-                let trainingExperience = $('#experience').val();
-                let trainingLOM = $('#motivationTextarea').val();
-                var errored = false;
-
-                if(trainingExperience == null){
-                    $('#experience').addClass('is-invalid');
-                    this.errExperience = true;
+                if(this.validate()){
+                    $('#endorsementForm').submit()
+                } else {
+                    this.validationError = true
                 }
-
-                if(trainingLOM.length < 250 && this.motivationRequired){
-                    $('#motivationTextarea').addClass('is-invalid');
-                    this.errLOM = true;
-                }
-
-                // Submit form if validation is successful
-                if(!this.errExperience && !this.errLOM){
-                    $('#training-submit-btn').prop('disabled', true);
-                    $('.submit-spinner').css('display', 'inherit');
-                    $('#training-form').submit();
-                }
-    
-            },
-            areaSelectChange(event) {
-                this.ratingSelectUpdate(event.srcElement.value);
-                $('#areaSelect').removeClass('is-invalid');
-                $('#ratingSelect').removeClass('is-invalid');
-                this.errArea = false;
-                this.errRating = false;
-            },
-            ratingSelectChange(event){
-                $('#ratingSelect').removeClass('is-invalid');
-            },
-            ratingSelectUpdate(areaId){
-                this.ratings = payload[areaId].data
             }
         }
 
