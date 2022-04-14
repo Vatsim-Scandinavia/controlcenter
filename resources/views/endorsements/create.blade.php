@@ -56,19 +56,23 @@
                             </label>
                         </div>
 
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeExaminer" value="EXAMINER" v-model="endorsementType" v-on:change="updateButtonText">
-                            <label class="form-check-label" for="endorsementTypeExaminer">
-                                Examiner
-                            </label>
-                        </div>
-
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="endorsementType" v-on:change="updateButtonText">
-                            <label class="form-check-label" for="endorsementTypeVisitor">
-                                Visitor
-                            </label>
-                        </div>
+                        @can('create', [\App\Models\Endorsement::class, 'EXAMINER'])
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeExaminer" value="EXAMINER" v-model="endorsementType" v-on:change="updateButtonText">
+                                <label class="form-check-label" for="endorsementTypeExaminer">
+                                    Examiner
+                                </label>
+                            </div>
+                        @endcan
+                        
+                        @can('create', [\App\Models\Endorsement::class, 'VISITING'])
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="endorsementType" v-on:change="updateButtonText">
+                                <label class="form-check-label" for="endorsementTypeVisitor">
+                                    Visitor
+                                </label>
+                            </div>
+                        @endcan
                     </div>
 
                     <div style="display: none" v-show="endorsementType != null">

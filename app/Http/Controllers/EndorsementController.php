@@ -74,7 +74,7 @@ class EndorsementController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', SoloEndorsement::class);
+        $this->authorize('create', Endorsement::class);
         $users = User::all();
         $positions = Position::all();
         $areas = Area::all();
