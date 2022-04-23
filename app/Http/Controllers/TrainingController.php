@@ -437,7 +437,16 @@ class TrainingController extends Controller
                 if((int)$training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()){
                     foreach($training->ratings as $rating){
                         if($rating->vatsim_rating == null){
-                            $training->user->ratings()->attach($rating->id);
+
+                            $endorsement = new \App\Models\Endorsement();
+                            $endorsement->user_id = $training->user->id;
+                            $endorsement->type = "MASC";
+                            $endorsement->valid_from = now()->format('Y-m-d H:i:s');
+                            $endorsement->valid_to = null;
+                            $endorsement->issued_by = null;
+                            $endorsement->save();
+
+                            $endorsement->ratings()->save(Rating::find($rating->id));
                         }
                     }
                 }
