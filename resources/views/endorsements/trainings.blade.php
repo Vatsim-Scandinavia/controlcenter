@@ -42,7 +42,7 @@
                                             <i class="fas fa-check-circle"></i> Active
                                         </td>
                                     @else
-                                        <td class="text-center text-warning">
+                                        <td class="text-center bg-warning text-white">
                                             <i class="fas fa-exclamation-triangle"></i> Expired
                                         </td>
                                     @endif
@@ -65,7 +65,7 @@
                                         @endforeach
                                     </td>
                                     <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>
-                                    <td>{{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDate() }}</td>
+                                    <td>{{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDateTime() }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

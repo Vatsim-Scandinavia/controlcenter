@@ -34,7 +34,7 @@
                                     <td>
                                         {{ $e->user->name }} ({{ $e->user->id }})
                                     </td>
-                                    <td>{{ $e->user->ratingShort }}</td>
+                                    <td>{{ $e->ratings->whereNotNull('vatsim_rating')->first()->name }}</td>
 
                                     @foreach($areas as $a)
                                         @php $count = 0; @endphp
@@ -48,7 +48,7 @@
                                                     <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
 
                                                     {{-- Display the MASC endorsements connected to this area --}}
-                                                    @foreach($e->ratings as $r)
+                                                    @foreach($e->ratings->whereNull('vatsim_rating') as $r)
                                                         @if($r->areas->first()->pivot->area_id == $a->id)
                                                             <small class="d-block">{{ $r->name }}</small>
                                                         @endif

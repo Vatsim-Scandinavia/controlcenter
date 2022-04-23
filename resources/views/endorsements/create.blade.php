@@ -12,7 +12,7 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form id="endorsementForm" action="{!! action('SoloEndorsementController@store') !!}" method="POST">
+                <form id="endorsementForm" action="{!! action('EndorsementController@store') !!}" method="POST">
                     @csrf
 
                     {{-- User --}} 
@@ -110,7 +110,7 @@
                             id="expire"
                             class="datepicker form-control"
                             type="text"
-                            name="expire"
+                            name="expires"
                             v-model="expire"
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
                         <span v-show="validationError && expire == null" class="text-danger">Fill out an expire date, max 30 days</span>

@@ -22,7 +22,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="active" data-sortable="true" data-filter-control="select">ATC Active</th>
+                                <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">ATC Active</th>
                                 @foreach($areas as $a)
                                     <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $a->name }}</th>
                                 @endforeach
@@ -34,7 +34,7 @@
                                     <td>
                                         {{ $e->user->name }}
                                     </td>
-                                    <td class="text-center {{ $e->user->active ? 'bg-success text-white' : 'bg-danger' }}">
+                                    <td class="text-center text-white {{ $e->user->active ? 'bg-success' : 'bg-danger' }}">
                                         @if($e->user->active)
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @else

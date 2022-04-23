@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/endorsements/examiners', 'EndorsementController@indexExaminers')->name('endorsements.examiners');
     Route::get('/endorsements/visitors', 'EndorsementController@indexVisitors')->name('endorsements.visitors');
     Route::get('/endorsements/create', 'EndorsementController@create')->name('endorsements.create');
+    Route::post('/endorsements/store', 'EndorsementController@store')->name('endorsements.store');
 
     // User endorsements
     Route::get('/users/endorsements', 'SoloEndorsementController@index')->name('users.soloendorsements');
