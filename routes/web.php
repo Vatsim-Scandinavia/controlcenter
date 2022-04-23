@@ -58,7 +58,6 @@ Route::middleware('auth')->group(function () {
     // Users
     Route::get('/user/{user}', 'UserController@show')->name('user.show');
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');
-    Route::get('/user/{user}/togglevisiting', 'UserController@toggleVisiting')->name('user.update.visiting');
     Route::get('/settings', 'UserController@settings')->name('user.settings');
     Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
     Route::get('/settings/extendworkmail', 'UserController@extendWorkmail')->name('user.settings.extendworkmail');

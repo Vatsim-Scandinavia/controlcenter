@@ -21,7 +21,6 @@
                                 <th>Last Name</th>
                                 <th>Email</th>
                                 <th>ATC Rating</th>
-                                <th>Visiting Controller</th>
                                 <th>Division</th>
                                 <th>Subdivision</th>
                                 <th>ATC Active</th>
@@ -36,20 +35,6 @@
                                 <td>{{ $user->last_name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->rating_short }}</td>
-                                <td>
-                                    @can('updateVisiting', $user)
-                                        <a class="visiting-toggle {{ $user->visiting_controller ? 'text-success' : 'text-dark' }}" href="{{ route('user.update.visiting', $user) }}">
-                                            <i class="fas fa-{{ $user->visiting_controller ? 'toggle-on' : 'toggle-off' }}"></i>
-                                            {{ $user->visiting_controller ? 'Yes' : 'No' }}
-                                        </a>
-                                    @else
-                                        <span class="{{ $user->visiting_controller ? 'text-success' : 'text-dark' }}">
-                                            <i class="fas fa-{{ $user->visiting_controller ? 'toggle-on' : 'toggle-off' }}"></i>
-                                            {{ $user->visiting_controller ? 'Yes' : 'No' }}
-                                        </span>
-                                    @endcan
-                                    
-                                </td>
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
                                 <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
