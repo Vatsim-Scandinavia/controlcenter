@@ -65,7 +65,7 @@ class EndorsementController extends Controller
         $endorsements = Endorsement::where('type', 'VISITING')->get();
         $areas = Area::all();
 
-        return view('endorsements.visitors', compact('endorsements', 'areas'));
+        return view('endorsements.visiting', compact('endorsements', 'areas'));
     }
 
     /**
@@ -247,7 +247,7 @@ class EndorsementController extends Controller
             ' ― Areas: '.implode(',', $data['areas']).
             ' ― Endorsements: '.implode(',', $data['visitingEndorsements']));
 
-            return redirect()->intended(route('endorsements.visitors'))->withSuccess($user->name . "'s visiting endorsement successfully created");
+            return redirect()->intended(route('endorsements.visiting'))->withSuccess($user->name . "'s visiting endorsement successfully created");
 
         }
 
@@ -255,39 +255,6 @@ class EndorsementController extends Controller
         abort(501);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Endorsement  $endorsement
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Endorsement $endorsement)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Endorsement  $endorsement
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Endorsement $endorsement)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Endorsement  $endorsement
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Endorsement $endorsement)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -295,9 +262,18 @@ class EndorsementController extends Controller
      * @param  \App\Models\Endorsement  $endorsement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Endorsement $endorsement)
+    public function destroy($endorsementId)
     {
-        //
+        $endorsement = Endorsement::findOrFail($endorsementId);
+        $this->authorize('delete', [Endorsement::class, $endorsement]);
+
+        $endorsement->revoked = true;
+        $endorsement->revoked_by = \Auth::user()->id;
+        $endorsement->valid_to = now();
+        $endorsement->save();
+
+        ActivityLogController::warning('OTHER', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
+        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
     }
 
     /**

@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Examiners')
+@section('title-extension')
+    @can('create', \App\Models\Endorsement::class)
+        <a href="{{ route('endorsements.create') }}" class="btn btn-sm btn-success">Add new endorsement</a>
+    @endcan
+@endsection
 @section('content')
 
 <div class="row">
