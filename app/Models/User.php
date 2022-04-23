@@ -317,11 +317,10 @@ class User extends Authenticatable
     {
 
         if ($area == null) {
-            return $this->groups()->where('id',  4)->exists();
+            return $this->endorsements->where('type', 'EXAMINER')->first()->exists();
         }
 
-        return $this->groups()->where('id', 4)->wherePivot('area_id', $area->id)->exists();
-
+        return $this->endorsements->where('type', 'EXAMINER')->first()->areas()->wherePivot('area_id', 2)->get()->first()->exists();
     }
 
     /**
