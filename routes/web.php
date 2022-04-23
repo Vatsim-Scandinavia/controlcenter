@@ -16,9 +16,6 @@
 //--------------------------------------------------------------------------
 Route::get('/', 'FrontPageController@index')->name('front');
 
-// Available without login
-Route::get('/users/endorsements/sup', 'SoloEndorsementController@sup')->name('users.soloendorsements.sup');
-
 //--------------------------------------------------------------------------
 // VATSIM Authentication
 //--------------------------------------------------------------------------
