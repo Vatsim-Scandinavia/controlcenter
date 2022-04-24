@@ -39,7 +39,11 @@
                             @foreach($endorsements as $e)
                                 <tr>
                                     <td>
-                                        {{ $e->user->name }}
+                                        @can('view', $e->user)
+                                            <a href="{{ route('user.show', $e->user->id) }}">{{ $e->user->name }} ({{ $e->user->id }})</a>
+                                        @else
+                                            {{ $e->user->name }} ({{ $e->user->id }})
+                                        @endcan
                                     </td>
 
                                     @if(Carbon\Carbon::now() < $e->valid_to)

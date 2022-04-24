@@ -37,7 +37,11 @@
                             @foreach($endorsements as $e)
                                 <tr>
                                     <td>
-                                        {{ $e->user->name }} ({{ $e->user->id }})
+                                        @can('view', $e->user)
+                                            <a href="{{ route('user.show', $e->user->id) }}">{{ $e->user->name }} ({{ $e->user->id }})</a>
+                                        @else
+                                            {{ $e->user->name }} ({{ $e->user->id }})
+                                        @endcan
                                     </td>
                                     <td>{{ $e->ratings->whereNotNull('vatsim_rating')->first()->name }}</td>
 
