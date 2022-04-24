@@ -54,7 +54,7 @@
                             <div class="form-group">
                                 <label for="trainingSubDivisions">Subdivisions accepted for training</label>
                                 <input type="text" class="form-control @error('trainingSubDivisions') is-invalid @enderror" id="trainingSubDivisions" name="trainingSubDivisions" value="{{ Setting::get("trainingSubDivisions") }}">
-                                <small class="form-text text-muted">List subdivisions seperated by comma, e.g. SCA, ITA</small>
+                                <small class="form-text text-muted">List subdivisions separated by comma, e.g. SCA, ITA</small>
                             </div>
                             @error('trainingSubDivisions')
                                 <span class="text-danger">{{ $errors->first('trainingSubDivisions') }}</span>
