@@ -12,11 +12,12 @@ class Rating extends Model
         return $this->belongsToMany(Training::class);
     }
 
+    public function endorsements(){
+        return $this->belongsToMany(Endorsement::class);
+    }
+
     public function areas(){
         return $this->belongsToMany(Area::class)->withPivot('required_vatsim_rating', 'allow_mae_bundling', 'queue_length_low', 'queue_length_high');
     }
 
-    public function users(){
-        return $this->belongsToMany(User::class);
-    }
 }

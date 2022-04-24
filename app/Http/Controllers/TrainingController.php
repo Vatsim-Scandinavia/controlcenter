@@ -147,7 +147,7 @@ class TrainingController extends Controller
                 $reqVatRating = $rating->pivot->required_vatsim_rating;
 
                 // If the rating gives vatsim-rating higher than user already holds || OR if it's endorsement-rating AND user does not hold the endorsement
-                if( $rating->vatsim_rating > $userVatsimRating || ($rating->vatsim_rating == NULL &&  $user->ratings->firstWhere('id', $rating->id) == null) ){
+                if( $rating->vatsim_rating > $userVatsimRating || ($rating->vatsim_rating == NULL && $user->hasEndorsementRating($rating) == false) ){
 
                     // If the required vatsim rating for the selection is lower or equals the level user has today, make it available
                     if($reqVatRating <= $userVatsimRating){
@@ -193,7 +193,7 @@ class TrainingController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function create(Request $request)
+    public function create(Request $request, $prefillUserId = null)
     {
         $this->authorize('create', Training::class);
 
@@ -201,7 +201,7 @@ class TrainingController extends Controller
         $ratings = Area::with('ratings')->get()->toArray();
         $types = TrainingController::$types;
 
-        return view('training.create', compact('students', 'ratings', 'types'));
+        return view('training.create', compact('students', 'ratings', 'types', 'prefillUserId'));
     }
 
 
@@ -437,7 +437,16 @@ class TrainingController extends Controller
                 if((int)$training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()){
                     foreach($training->ratings as $rating){
                         if($rating->vatsim_rating == null){
-                            $training->user->ratings()->attach($rating->id);
+
+                            $endorsement = new \App\Models\Endorsement();
+                            $endorsement->user_id = $training->user->id;
+                            $endorsement->type = "MASC";
+                            $endorsement->valid_from = now()->format('Y-m-d H:i:s');
+                            $endorsement->valid_to = null;
+                            $endorsement->issued_by = null;
+                            $endorsement->save();
+
+                            $endorsement->ratings()->save(Rating::find($rating->id));
                         }
                     }
                 }

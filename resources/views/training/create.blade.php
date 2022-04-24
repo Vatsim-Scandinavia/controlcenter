@@ -24,7 +24,7 @@
                             type="text"
                             name="user_id"
                             list="students"
-                            value="{{ old('student') }}"
+                            value="{{ isset($prefillUserId) ? $prefillUserId : old('student') }}"
                             required>
 
                         <datalist id="students">
