@@ -33,6 +33,7 @@
                                 <th data-field="name" data-sortable="true" data-filter-control="input">Name</th>
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
+                                <th data-field="atchours" data-sortable="true">ATC Hours</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="applied" data-sortable="true" data-sorter="tableSortDates" data-filter-control="input">Applied</th>
@@ -81,6 +82,9 @@
                                 </td>
                                 <td>
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
+                                </td>
+                                <td>
+                                    {{ isset($training->user->atc_hours) ? $training->user->atc_hours : "0" }}h
                                 </td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
