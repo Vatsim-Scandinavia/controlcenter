@@ -113,7 +113,7 @@ class VatbookController extends Controller
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()){
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
+        } else if($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->rating > $user->rating && $booking->position->mae) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -179,7 +179,6 @@ class VatbookController extends Controller
         $vatsim_booking = json_decode($response->getBody()->getContents());
 
         $booking->vatsim_booking = $vatsim_booking->id;
-
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Created vatbook booking ".$booking->id.
@@ -188,7 +187,7 @@ class VatbookController extends Controller
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
         if($forcedTrainingTag){
-            return redirect(route('vatbook'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.'); 
+            return redirect(route('vatbook'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.');
         }
 
         return redirect(route('vatbook'))->withSuccess('Booking successfully added!');
@@ -307,7 +306,6 @@ class VatbookController extends Controller
         $vatsim_booking = json_decode($response->getBody()->getContents());
 
         $booking->vatsim_booking = $vatsim_booking->id;
-        
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Updated vatbook booking ".$booking->id.
@@ -316,7 +314,7 @@ class VatbookController extends Controller
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
         if($forcedTrainingTag){
-            return redirect(route('vatbook'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.'); 
+            return redirect(route('vatbook'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.');
         }
 
         return redirect(route('vatbook'))->withSuccess('Booking successfully added!');

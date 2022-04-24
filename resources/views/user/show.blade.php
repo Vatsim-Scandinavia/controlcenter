@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('title', 'User Details')
+@section('title-extension')
+    @can('create', \App\Models\Training::class)
+        <a href="{{ route('training.create.id', $user->id) }}" class="btn btn-sm btn-success">Add training request</a>
+    @endcan
+    @can('create', \App\Models\Endorsement::class)
+        <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-sm btn-primary">Add endorsement</a>
+    @endcan
+@endsection
 @section('content')
 
 <div class="row">
@@ -21,7 +29,6 @@
                                 <th>Last Name</th>
                                 <th>Email</th>
                                 <th>ATC Rating</th>
-                                <th>Visiting Controller</th>
                                 <th>Division</th>
                                 <th>Subdivision</th>
                                 <th>ATC Active</th>
@@ -36,20 +43,6 @@
                                 <td>{{ $user->last_name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->rating_short }}</td>
-                                <td>
-                                    @can('updateVisiting', $user)
-                                        <a class="visiting-toggle {{ $user->visiting_controller ? 'text-success' : 'text-dark' }}" href="{{ route('user.update.visiting', $user) }}">
-                                            <i class="fas fa-{{ $user->visiting_controller ? 'toggle-on' : 'toggle-off' }}"></i>
-                                            {{ $user->visiting_controller ? 'Yes' : 'No' }}
-                                        </a>
-                                    @else
-                                        <span class="{{ $user->visiting_controller ? 'text-success' : 'text-dark' }}">
-                                            <i class="fas fa-{{ $user->visiting_controller ? 'toggle-on' : 'toggle-off' }}"></i>
-                                            {{ $user->visiting_controller ? 'Yes' : 'No' }}
-                                        </span>
-                                    @endcan
-                                    
-                                </td>
                                 <td>{{ $user->division }}</td>
                                 <td>{{ $user->subdivision }}</td>
                                 <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i></td>
@@ -184,11 +177,11 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-6 col-lg-12 col-md-12">
+            <div class="col-xl-8 col-lg-12 col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold text-white">
-                            Active Endorsements
+                            Endorsements
                         </h6>
                     </div>
                     <div class="card-body {{ $endorsements->count() == 0 ? '' : 'p-0' }}">
@@ -200,15 +193,49 @@
                                 <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
-                                            <th>Endorsement</th>
+                                            <th>Type</th>
+                                            <th>Details</th>
+                                            <th>Status</th>
+                                            @if($user->isModeratorOrAbove())
+                                                <th>Actions</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($endorsements as $endorsement)
+                                        @php
+                                            $tooltip = 'Valid from: '.$endorsement['from'].'<br>Valid to: '.$endorsement['to'].'<br>Issued by: '.$endorsement['issuedBy'].'<br>Revoked by: '.$endorsement['revokedBy'].'<br><br>Areas: '.$endorsement['areas'].'<br>Ratings: '.$endorsement['ratings'].'<br>Positions: '.$endorsement['positions'];
+                                        @endphp
                                         <tr>
                                             <td>
-                                                {{ $endorsement->name }}
+                                                {{ $endorsement['type'] }}
                                             </td>
+                                            <td>
+                                                <span class="link-tooltip" 
+                                                title="{!! $tooltip !!}" 
+                                                data-toggle="tooltip" 
+                                                data-html="true" 
+                                                data-placement="right">
+                                                    @if($endorsement['type'] == "MA/SC")
+                                                        {{ $endorsement['ratings'] }}
+                                                    @elseif($endorsement['type'] == "S1" || $endorsement['type'] == "SOLO")
+                                                        {{ $endorsement['positions'] }}
+                                                    @elseif($endorsement['type'] == "VISITING")
+                                                        {{ $endorsement['areas'] }}
+                                                    @elseif($endorsement['type'] == "EXAMINER")
+                                                        {{ $endorsement['ratings'] }}
+                                                    @endif
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {{ $endorsement['status'] }}
+                                            </td>
+                                            @if($user->isModeratorOrAbove())
+                                                <td>
+                                                    <a href="/endorsements/{{ $endorsement['id'] }}/delete"><i class="fas fa-times"></i> Revoke</a>
+                                                </td>
+                                            @endif
+                                            
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -220,7 +247,7 @@
                 </div>
             </div>
     
-            <div class="col-xl-6 col-lg-12 col-md-12">
+            <div class="col-xl-4 col-lg-12 col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold text-white">
@@ -259,4 +286,13 @@
     </div>
     
 </div>
+@endsection
+
+@section('js')
+<script>
+    //Activate bootstrap tooltips
+    $(document).ready(function() {
+        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+    });
+</script>
 @endsection

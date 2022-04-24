@@ -16,9 +16,6 @@
 //--------------------------------------------------------------------------
 Route::get('/', 'FrontPageController@index')->name('front');
 
-// Available without login
-Route::get('/users/endorsements/sup', 'SoloEndorsementController@sup')->name('users.soloendorsements.sup');
-
 //--------------------------------------------------------------------------
 // VATSIM Authentication
 //--------------------------------------------------------------------------
@@ -39,7 +36,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/trainings/history', 'TrainingController@history')->name('requests.history');
     Route::get('/users', 'UserController@index')->name('users');
     Route::get('/users/other', 'UserController@indexOther')->name('users.other');
-    Route::get('endorsements', 'DashboardController@endorsements')->name('member.endorsements');
+
+    // Endorsements
+    Route::get('/endorsements/mascs', 'EndorsementController@indexMascs')->name('endorsements.mascs');
+    Route::get('/endorsements/trainings', 'EndorsementController@indexTrainings')->name('endorsements.trainings');
+    Route::get('/endorsements/examiners', 'EndorsementController@indexExaminers')->name('endorsements.examiners');
+    Route::get('/endorsements/visiting', 'EndorsementController@indexVisitors')->name('endorsements.visiting');
+    Route::get('/endorsements/create', 'EndorsementController@create')->name('endorsements.create');
+    Route::get('/endorsements/create/{id}', 'EndorsementController@create')->name('endorsements.create.id');
+    Route::post('/endorsements/store', 'EndorsementController@store')->name('endorsements.store');
+    Route::get('/endorsements/{id}/delete', 'EndorsementController@destroy');
 
     // User endorsements
     Route::get('/users/endorsements', 'SoloEndorsementController@index')->name('users.soloendorsements');
@@ -50,7 +56,6 @@ Route::middleware('auth')->group(function () {
     // Users
     Route::get('/user/{user}', 'UserController@show')->name('user.show');
     Route::patch('/user/{user}', 'UserController@update')->name('user.update');
-    Route::get('/user/{user}/togglevisiting', 'UserController@toggleVisiting')->name('user.update.visiting');
     Route::get('/settings', 'UserController@settings')->name('user.settings');
     Route::post('/settings', 'UserController@settings_update')->name('user.settings.store');
     Route::get('/settings/extendworkmail', 'UserController@extendWorkmail')->name('user.settings.extendworkmail');
@@ -74,6 +79,7 @@ Route::middleware('auth')->group(function () {
     // Training routes
     Route::get('/training/apply', 'TrainingController@apply')->name('training.apply');
     Route::get('/training/create', 'TrainingController@create')->name('training.create');
+    Route::get('/training/create/{id}', 'TrainingController@create')->name('training.create.id');
     Route::get('/training/edit/{training}', 'TrainingController@edit')->name('training.edit');
     Route::patch('/training/edit/{training}', 'TrainingController@updateRequest')->name('training.update.request');
     Route::post('/training/store', 'TrainingController@store')->name('training.store');

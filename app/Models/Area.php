@@ -13,6 +13,10 @@ class Area extends Model
         return $this->hasMany(Training::class);
     }
 
+    public function endorsements(){
+        return $this->belongsToMany(Endorsement::class);
+    }
+
     public function ratings(){
         return $this->belongsToMany(Rating::class)->withPivot('required_vatsim_rating', 'allow_mae_bundling', 'queue_length_low', 'queue_length_high');
     }

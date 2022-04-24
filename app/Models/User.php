@@ -87,6 +87,11 @@ class User extends Authenticatable
         return $this->hasOne(SoloEndorsement::class);
     }
 
+    public function endorsements()
+    {
+        return $this->hasMany(Endorsement::class);
+    }
+
     public function trainings()
     {
         return $this->hasMany(Training::class);
@@ -303,6 +308,25 @@ class User extends Authenticatable
     }
 
     /**
+     * Return if the user has specified MASC endorsement
+     *
+     * @param Rating $rating
+     * @return boolean
+     */
+    public function hasEndorsementRating(Rating $rating)
+    {
+        foreach($this->endorsements->where('type', 'MASC') as $e){
+            foreach($e->ratings as $r){
+                if($r->id == $rating->id){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return if user is an examiner
      *
      * @param Area|null $area
@@ -312,11 +336,10 @@ class User extends Authenticatable
     {
 
         if ($area == null) {
-            return $this->groups()->where('id',  4)->exists();
+            return $this->endorsements->where('type', 'EXAMINER')->first()->exists();
         }
 
-        return $this->groups()->where('id', 4)->wherePivot('area_id', $area->id)->exists();
-
+        return $this->endorsements->where('type', 'EXAMINER')->first()->areas()->wherePivot('area_id', 2)->get()->first()->exists();
     }
 
     /**

@@ -69,9 +69,71 @@ class UserController extends Controller
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        $endorsements = $user->ratings;
         $userHours = DB::table('atc_activity')->where('user_id', $user->id)->first();
         if(isset($userHours)) $userHours = $userHours->atc_hours;
+
+        // Parse endorsements for details tooltip
+        $endorsements = collect();
+        foreach($user->endorsements as $e){
+
+            $data = [
+                "id" => $e->id,
+                "type" => "N/A",
+                "from" => "N/A",
+                "to" => "N/A",
+                "expired" => false,
+                "revoked" => false,
+                "issuedBy" => "N/A",
+                "revokedBy" => "N/A",
+                "areas" => "N/A",
+                "ratings" => "N/A",
+                "positions" => "N/A",
+                "status" => "Active",
+            ];
+
+            if($e->type == "MASC"){
+                $data['type'] = "MA/SC";
+            } else {
+                $data['type'] = $e->type;
+            }
+
+            $data['from'] = Carbon::parse($e->valid_from)->toEuropeanDate();
+            
+            if(isset($e->valid_to)){
+                $data['to'] = Carbon::parse($e->valid_to)->toEuropeanDateTime();
+            }
+            
+            if(isset($e->issued_by)){
+                $data['issuedBy'] = User::find($e->issued_by)->name;
+            } else {
+                $data['issuedBy'] = "SYSTEM";
+            }
+
+            if(isset($e->revoked_by)){
+                $data['revokedBy'] = User::find($e->revoked_by)->name;
+            } else {
+                if($e->revoked){
+                    $data['revokedBy'] = "SYSTEM";
+                } else {
+                    $data['revokedBy'] = "N/A";
+                }
+                
+            }
+
+            $data['areas'] = implode(' & ', $e->areas->pluck('name')->toArray());
+            $data['ratings'] = implode(' & ', $e->ratings->pluck('name')->toArray());
+            $data['positions'] = implode(' & ', $e->positions->pluck('callsign')->toArray());
+
+            if(empty($data['areas'])) $data['areas'] = "N/A";
+            if(empty($data['ratings'])) $data['ratings'] = "N/A";
+            if(empty($data['positions'])) $data['positions'] = "N/A";
+
+            if($e->revoked) $data['status'] = "Revoked";
+            if($e->expired) $data['status'] = "Expired";
+
+            $endorsements->push($data);
+        }
+
 
         return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours'));
     }
@@ -215,26 +277,6 @@ class UserController extends Controller
         }
 
         
-    }
-
-    /**
-     * Toggle visiting flag in Handover
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function toggleVisiting(User $user)
-    {
-
-        $this->authorize('updateVisiting', $user);
-
-        $user->handover->visiting_controller = !$user->handover->visiting_controller;
-        $user->handover->save();
-
-        if($user->visiting_controller){
-            return redirect()->intended(route('user.show', $user))->withSuccess("User marked as visiting controller");
-        } else {
-            return redirect()->intended(route('user.show', $user))->withSuccess("User removed as visiting controller");
-        }
     }
 
 }

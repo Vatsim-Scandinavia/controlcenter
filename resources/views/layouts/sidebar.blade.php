@@ -36,54 +36,47 @@
             </li>
         @endif
 
-        <li class="nav-item {{ Route::is('member.endorsements') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('member.endorsements') }}">
-            <i class="fas fa-fw fa-check-square"></i>
-            <span>Endorsements List</span></a>
-        </li>
-
         @if (\Auth::user()->isMentorOrAbove())
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-        <!-- Heading -->
-        <div class="sidebar-heading">
-        Training
-        </div>
+            <!-- Heading -->
+            <div class="sidebar-heading">
+            Training
+            </div>
 
-        <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('mentor') }}">
-            <i class="fas fa-fw fa-chalkboard-teacher"></i>
-            <span>My students</span></a>
-        </li>
+            <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('mentor') }}">
+                <i class="fas fa-fw fa-chalkboard-teacher"></i>
+                <span>My students</span></a>
+            </li>
 
-        <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('sweatbook') }}">
-            <i class="fas fa-fw fa-calendar-alt"></i>
-            <span>Sweatbox Calendar</span></a>
-        </li>
+            <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('sweatbook') }}">
+                <i class="fas fa-fw fa-calendar-alt"></i>
+                <span>Sweatbox Calendar</span></a>
+            </li>
 
         @endif
         @if (\Auth::user()->isModeratorOrAbove())
 
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
-            <i class="fas fa-fw fa-flag"></i>
-            <span>Requests</span>
-        </a>
-        <div id="collapseReq" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
-            <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
+                <i class="fas fa-fw fa-flag"></i>
+                <span>Requests</span>
+            </a>
+            <div id="collapseReq" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
+                <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
+                </div>
             </div>
-        </div>
-        </li>
+            </li>
 
         @endif
 
-        @if (\Auth::user()->isMentorOrAbove())
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -100,7 +93,7 @@
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span>
                 </a>
-                <div id="collapseMem" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapseMem" class="collapse" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="{{ route('users') }}">Member Overview</a>
                     <a class="collapse-item" href="{{ route('users.other') }}">Other Users</a>
@@ -110,66 +103,74 @@
             
         @endif
 
-        <li class="nav-item {{ Route::is('users.soloendorsements') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('users.soloendorsements') }}">
-            <i class="fas fa-fw fa-check-square"></i>
-            <span>Solo Endorsements</span></a>
-        </li>
-
-        @endif
-
-        @if (\Auth::user()->isModeratorOrAbove())
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-clipboard-list"></i>
-            <span>Reports</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-            
-            @if(\Auth::user()->isAdmin())
-                <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
-            @elseif(\Auth::user()->isModerator())
-                <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
-            @endif
-            
-            <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
-
-            @can('viewAccessReport', \App\Models\ManagementReport::class)
-                <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
-            @endcan
-            
+        <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
+                <i class="fas fa-fw fa-check-square"></i>
+                <span>Endorsements</span>
+            </a>
+            <div id="collapseEndorsements" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('endorsements.mascs') }}">Airports and Centers</a>
+                <a class="collapse-item" href="{{ route('endorsements.trainings') }}">Trainings</a>
+                <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiners</a>
+                <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
+                </div>
             </div>
-        </div>
         </li>
+
+        @if (\Auth::user()->isModeratorOrAbove())
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-clipboard-list"></i>
+                <span>Reports</span>
+            </a>
+            <div id="collapseTwo" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                
+                @if(\Auth::user()->isAdmin())
+                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
+                @elseif(\Auth::user()->isModerator())
+                    <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
+                @endif
+                
+                <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+
+                @can('viewAccessReport', \App\Models\ManagementReport::class)
+                    <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
+                @endcan
+                
+                </div>
+            </div>
+            </li>
         @endif
 
         @if (\Auth::user()->isModeratorOrAbove())
 
-        <!-- Nav Item - Utilities Collapse Menu -->
-        <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-fw fa-cogs"></i>
-            <span>Administration</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-            @if (\Auth::user()->isAdmin())
-                <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
-                <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
-                <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
-            @endif
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+                <i class="fas fa-fw fa-cogs"></i>
+                <span>Administration</span>
+            </a>
+            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                @if (\Auth::user()->isAdmin())
+                    <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
+                    <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
+                    <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
+                @endif
 
-            @if (\Auth::user()->isModeratorOrAbove())
-                <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
-            @endif
+                @if (\Auth::user()->isModeratorOrAbove())
+                    <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
+                @endif
+                </div>
             </div>
-        </div>
-        </li>
+            </li>
 
         @endif
 
@@ -190,7 +191,7 @@
         <!-- Logo -->
         <a href="{{ Setting::get('linkHome') }}"><img class="logo" src="{{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'.svg') }}"></a>
         <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version-sidebar">Control Center v{{ config('app.version') }}</a>
-    @else
+@else
         <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
@@ -199,7 +200,7 @@
             <i class="fas fa-sign-in-alt"></i>
             <span>Login</span></a>
         </li>
-    @endauth
+@endauth
 
 </ul>
 <!-- End of Sidebar -->

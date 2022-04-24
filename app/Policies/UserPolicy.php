@@ -57,17 +57,6 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can update the visiting status
-     *
-     * @param  \App\Models\User  $user
-     * @return bool
-     */
-    public function updateVisiting(User $user)
-    {
-        return $user->isAdmin();    
-    }
-
-    /**
      * Determine whether the user can update the model with that specific group
      *
      * @param  \App\Models\User  $user
