@@ -47,7 +47,7 @@ class UserSearchController extends Controller
                 }
             }
 
-            echo json_encode($output);
+            return json_encode($output);
         }
     }
 }
