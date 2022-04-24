@@ -16,7 +16,7 @@
 
         <li class="nav-item {{ Route::is('dashboard') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('dashboard') }}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <i class="fas fa-fw fa-table-columns"></i>
             <span>Dashboard</span></a>
         </li>
 
