@@ -48,9 +48,9 @@
                                         @if(Auth::user()->id == $booking->cid || $user->isModeratorOrAbove())
 
                                             @if($booking->source == "DISCORD")
-                                                <i class="fab fa-discord text-info" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
+                                                <i class="fab fa-discord text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
                                             @else
-                                                <i class="fas fa-info-circle text-info" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
+                                                <i class="fas fa-info-circle text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
                                             @endif
 
                                         @endif
