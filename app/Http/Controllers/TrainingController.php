@@ -193,7 +193,7 @@ class TrainingController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function create(Request $request)
+    public function create(Request $request, $prefillUserId = null)
     {
         $this->authorize('create', Training::class);
 
@@ -201,7 +201,7 @@ class TrainingController extends Controller
         $ratings = Area::with('ratings')->get()->toArray();
         $types = TrainingController::$types;
 
-        return view('training.create', compact('students', 'ratings', 'types'));
+        return view('training.create', compact('students', 'ratings', 'types', 'prefillUserId'));
     }
 
 

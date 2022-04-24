@@ -73,7 +73,7 @@ class EndorsementController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($prefillUserId = null)
     {
         $this->authorize('create', Endorsement::class);
         $users = User::all();
@@ -82,7 +82,7 @@ class EndorsementController extends Controller
         $ratingsMASC = Rating::where('vatsim_rating', null)->get();
         $ratingsGRP = Rating::where('vatsim_rating', '<=', 7)->get();
 
-        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP'));
+        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP', 'prefillUserId'));
     }
 
     /**

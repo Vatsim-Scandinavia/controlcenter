@@ -25,7 +25,8 @@
                             name="user"
                             list="userList"
                             v-model="user"
-                            v-bind:class="{'is-invalid': (validationError && user == null)}">
+                            v-bind:class="{'is-invalid': (validationError && user == null)}"
+                            value="{{ $prefillUserId }}">
 
                         <datalist id="userList">
                             @foreach($users as $user)
@@ -239,7 +240,7 @@
         data: {
             endorsementType: null,
             trainingType: null,
-            user: null,
+            user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
             expire: null,
             positions: null,
             ratingMASC: null,
