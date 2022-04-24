@@ -53,7 +53,11 @@ class AlterEndorsementPivot extends Migration
                         $endorsement = new \App\Models\Endorsement();
                         $endorsement->user_id = $training->user->id;
                         $endorsement->type = "MASC";
-                        $endorsement->valid_from = $training->closed_at->format('Y-m-d H:i:s');
+                        if(isset($training->closed_at)){
+                            $endorsement->valid_from = $training->closed_at->format('Y-m-d H:i:s');
+                        } else {
+                            $endorsement->valid_from = now()->format('Y-m-d H:i:s');
+                        }
                         $endorsement->valid_to = null;
                         $endorsement->issued_by = null;
                         $endorsement->save();
