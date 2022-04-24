@@ -449,6 +449,10 @@ class TrainingController extends Controller
                             $endorsement->ratings()->save(Rating::find($rating->id));
                         }
                     }
+
+                    // Set their ATC active to true, so they don't get inactivity warnings until nightly cron
+                    $training->user->handover->atc_active = true;
+                    $training->user->handover->save();
                 }
 
                 $training->user->notify(new TrainingClosedNotification($training, (int)$training->status, $training->closed_reason));
