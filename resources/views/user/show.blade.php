@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('title', 'User Details')
+@section('title-extension')
+    @can('create', \App\Models\Training::class)
+        <a href="{{ route('training.create') }}" class="btn btn-sm btn-success">Add training request</a>
+    @endcan
+    @can('create', \App\Models\Endorsement::class)
+        <a href="{{ route('endorsements.create') }}" class="btn btn-sm btn-primary">Add endorsement</a>
+    @endcan
+@endsection
 @section('content')
 
 <div class="row">
