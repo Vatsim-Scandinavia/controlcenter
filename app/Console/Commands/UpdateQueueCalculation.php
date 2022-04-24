@@ -53,7 +53,7 @@ class UpdateQueueCalculation extends Command
                 }
 
                 // Get the queue time from each training of this specific rating in the specific area
-                foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at') as $training){
+                foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNull('paused_at') as $training){
 
                     // Include training with GRP ratings inside
                     if($training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating){
