@@ -42,6 +42,12 @@
     </div>
 @endif
 
+<div id="otl-alert" class="alert alert-info" style="display: none" role="alert">
+    <b id="otl-type"></b><br>
+    <i class="fa fa-clock"></i>&nbsp;Valid for 7 days<br>
+    <i class="fa fa-link"></i>&nbsp;<a id="otl-link" href=""></a>
+</div>
+
 <div class="row">
 
     <div class="col-xl-12 col-md-12 mb-12">
@@ -502,9 +508,10 @@
             let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
             $(this).prop('disabled', false);
 
-            // Anything below this point can be changed
-            alert("Link generated, click OK and copy the link displayed in the next prompt. Valid for 7 days.");
-            alert(route);
+            document.getElementById('otl-alert').style.display = "block";
+            document.getElementById('otl-type').innerHTML = "Training Report one-time link";
+            document.getElementById('otl-link').href = route
+            document.getElementById('otl-link').innerHTML = route
         });
 
         // Generate a one time exam report link
@@ -514,9 +521,10 @@
             let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
             $(this).prop('disabled', false);
 
-            // Anything below this point can be changed
-            alert("Link generated, click OK and copy the link displayed in the next prompt. Valid for 7 days.");
-            alert(route);
+            document.getElementById('otl-alert').style.display = "block";
+            document.getElementById('otl-type').innerHTML = "Examination Report";
+            document.getElementById('otl-link').href = route
+            document.getElementById('otl-link').innerHTML = route
         });
 
         async function getOneTimeLink(type) {
