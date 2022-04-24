@@ -29,7 +29,7 @@ class VatbookController extends Controller
     {
         $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
 
-        return response()->json(["data"=> $bookings->values()], 200);
+        return response()->json(["data" => $bookings->values()], 200);
     }
 
     /**
@@ -108,27 +108,33 @@ class VatbookController extends Controller
             $booking->training = 0;
         }
 
+        $type = null;
+
         if (isset($data['tag'])) {
             switch ($data['tag']) {
                 case 1:
                     $booking->exam = 0;
                     $booking->event = 0;
                     $booking->training = 1;
+                    $type = 'training';
                     break;
                 case 2:
                     $booking->exam = 1;
                     $booking->event = 0;
                     $booking->training = 0;
+                    $type = 'exam';
                     break;
                 case 3:
                     $booking->exam = 0;
                     $booking->event = 1;
                     $booking->training = 0;
+                    $type = 'event';
                     break;
             }
         } else {
             $booking->exam = 0;
             $booking->event = 0;
+            $type = 'booking';
         }
 
         if (App::environment('production')) {
@@ -144,6 +150,21 @@ class VatbookController extends Controller
         } else {
             $booking->eu_id = 0;
         }
+
+        $client = new \GuzzleHttp\Client();
+
+        $url = $this->getVatsimBookingUrl('post');
+        $response = $this->makeHttpRequest($client, $url, 'post', [
+            'callsign' => $booking->callsign,
+            'cid' => $booking->cid,
+            'type' => $type,
+            'start' => $booking->time_start->format('Y-m-d H:i:s'),
+            'end' => $booking->time_end->format('Y-m-d H:i:s'),
+        ]);
+
+        $vatsim_booking = json_decode($response->getBody()->getContents());
+
+        $booking->vatsim_booking = $vatsim_booking->id;
 
         $booking->save();
 
@@ -266,27 +287,33 @@ class VatbookController extends Controller
             $vatbook->training = 0;
         }
 
+        $type = null;
+
         if (isset($data['tag'])) {
             switch ($data['tag']) {
                 case 1:
                     $vatbook->exam = 0;
                     $vatbook->event = 0;
                     $vatbook->training = 1;
+                    $type = 'training';
                     break;
                 case 2:
                     $vatbook->exam = 1;
                     $vatbook->event = 0;
                     $vatbook->training = 0;
+                    $type = 'exam';
                     break;
                 case 3:
                     $vatbook->training = 0;
                     $vatbook->exam = 0;
                     $vatbook->event = 1;
+                    $type = 'event';
                     break;
             }
         } else {
             $vatbook->exam = 0;
             $vatbook->event = 0;
+            $type = 'booking';
         }
 
         if (App::environment('production')) {
@@ -297,6 +324,20 @@ class VatbookController extends Controller
                 file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&voice=1"));
             }
         }
+
+        $client = new \GuzzleHttp\Client();
+        $url = $this->getVatsimBookingUrl('put', $vatbook->vatsim_booking);
+        $response = $this->makeHttpRequest($client, $url, 'put', [
+            'callsign' => $vatbook->callsign,
+            'cid' => $vatbook->cid,
+            'type' => $type,
+            'start' => $vatbook->time_start->format('Y-m-d H:i:s'),
+            'end' => $vatbook->time_end->format('Y-m-d H:i:s'),
+        ]);
+
+        $vatsim_booking = json_decode($response->getBody()->getContents());
+
+        $vatbook->vatsim_booking = $vatsim_booking->id;
 
         $vatbook->save();
 
@@ -333,6 +374,10 @@ class VatbookController extends Controller
 
         $vatbook->deleted = true;
         $vatbook->local_id = null;
+        $client = new \GuzzleHttp\Client();
+        $url = $this->getVatsimBookingUrl('delete', $vatbook->vatsim_booking);
+        $response = $this->makeHttpRequest($client, $url, 'delete');
+
         $vatbook->save();
 
         ActivityLogController::warning('BOOKING', "Deleted vatbook booking " . $vatbook->id . " via API" .
@@ -344,5 +389,47 @@ class VatbookController extends Controller
             'message' => 'Booking deleted',
             'booking' => $vatbook
         ], 200);
+    }
+
+    private function getVatsimBookingUrl(string $type, int $id = null)
+    {
+        if ($type == 'get' || $type == 'post') {
+            $url = env('VATSIM_BOOKING_API') . '/booking';
+        } elseif ($type == 'put' || $type == 'delete') {
+            $url = env('VATSIM_BOOKING_API') . '/booking/' . $id;
+        } else {
+            return null;
+        }
+        return $url;
+    }
+
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null)
+    {
+        try {
+            $headers = [
+                'Authorization' => 'Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),
+                'Accept' => 'application/json',
+            ];
+            if ($type == 'get') {
+                $response = $client->request('GET', $url, [
+                    'headers' => $headers,
+                ]);
+            } elseif ($type == 'post') {
+                $response = $client->request('POST', $url, ['headers' => $headers, 'form_params' => $data]);
+            } elseif ($type == 'put') {
+                $response = $client->request('PUT', $url, ['headers' => $headers, 'form_params' => $data]);
+            } elseif ($type == 'delete') {
+                $response = $client->request('DELETE', $url, ['headers' => $headers]);
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage()
+            ], 400);
+        }
+
+        if (isset($response))
+            return $response;
+
+        return null;
     }
 }

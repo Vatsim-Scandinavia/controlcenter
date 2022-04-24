@@ -120,6 +120,8 @@ class VatbookController extends Controller
             $booking->training = 0;
         }
 
+        $type = null;
+
         if(isset($data['tag'])) {
             $this->authorize('bookTags', $booking);
             switch ($data['tag']) {
@@ -127,21 +129,25 @@ class VatbookController extends Controller
                     $booking->exam = 0;
                     $booking->event = 0;
                     $booking->training = 1;
+                    $type = 'training';
                     break;
                 case 2:
                     $booking->training = 0;
                     $booking->exam = 1;
                     $booking->event = 0;
+                    $type = 'exam';
                     break;
                 case 3:
                     $booking->training = 0;
                     $booking->exam = 0;
                     $booking->event = 1;
+                    $type = 'event';
                     break;
             }
         } else {
             $booking->exam = 0;
             $booking->event = 0;
+            $type = 'booking';
         }
 
         if(App::environment('production')) {
@@ -159,7 +165,20 @@ class VatbookController extends Controller
             $booking->eu_id = 0;
         }
 
+        $client = new \GuzzleHttp\Client();
 
+        $url = $this->getVatsimBookingUrl('post');
+        $response = $this->makeHttpRequest($client, $url, 'post', [
+            'callsign' => $booking->callsign,
+            'cid' => $booking->cid,
+            'type' => $type,
+            'start' => $booking->time_start->format('Y-m-d H:i:s'),
+            'end' => $booking->time_end->format('Y-m-d H:i:s'),
+        ]);
+
+        $vatsim_booking = json_decode($response->getBody()->getContents());
+
+        $booking->vatsim_booking = $vatsim_booking->id;
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Created vatbook booking ".$booking->id.
@@ -234,6 +253,8 @@ class VatbookController extends Controller
             $booking->training = 0;
         }
 
+        $type = null;
+
         if(isset($data['tag'])) {
             $this->authorize('bookTags', $booking);
             switch ($data['tag']) {
@@ -241,21 +262,25 @@ class VatbookController extends Controller
                     $booking->exam = 0;
                     $booking->event = 0;
                     $booking->training = 1;
+                    $type = 'training';
                     break;
                 case 2:
                     $booking->training = 0;
                     $booking->exam = 1;
                     $booking->event = 0;
+                    $type = 'exam';
                     break;
                 case 3:
                     $booking->training = 0;
                     $booking->exam = 0;
                     $booking->event = 1;
+                    $type = 'event';
                     break;
             }
         } else {
             $booking->exam = 0;
             $booking->event = 0;
+            $type = 'booking';
         }
 
         if(App::environment('production')) {
@@ -268,6 +293,19 @@ class VatbookController extends Controller
             }
         }
 
+        $client = new \GuzzleHttp\Client();
+        $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
+        $response = $this->makeHttpRequest($client, $url, 'put', [
+            'callsign' => $booking->callsign,
+            'cid' => $booking->cid,
+            'type' => $type,
+            'start' => $booking->time_start->format('Y-m-d H:i:s'),
+            'end' => $booking->time_end->format('Y-m-d H:i:s'),
+        ]);
+
+        $vatsim_booking = json_decode($response->getBody()->getContents());
+
+        $booking->vatsim_booking = $vatsim_booking->id;
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Updated vatbook booking ".$booking->id.
@@ -298,6 +336,11 @@ class VatbookController extends Controller
         }
         $booking->deleted = true;
         $booking->local_id = null;
+
+        $client = new \GuzzleHttp\Client();
+        $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
+        $response = $this->makeHttpRequest($client, $url, 'delete');
+
         $booking->save();
 
         ActivityLogController::warning('BOOKING', "Deleted vatbook booking ".$booking->id.
@@ -306,5 +349,44 @@ class VatbookController extends Controller
         " ― Position: ".Position::find($booking->position_id)->callsign);
 
         return redirect(route('vatbook'));
+    }
+
+    private function getVatsimBookingUrl(string $type, int $id = null)
+    {
+        if($type == 'get' || $type == 'post') {
+            $url = env('VATSIM_BOOKING_API') . '/booking';
+        } elseif ($type == 'put' || $type == 'delete') {
+            $url = env('VATSIM_BOOKING_API') . '/booking/' . $id;
+        } else {
+            return null;
+        }
+        return $url;
+    }
+
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null) {
+        try {
+            $headers = [
+                'Authorization' => 'Bearer ' . env('VATSIM_BOOKING_API_TOKEN'),        
+                'Accept' => 'application/json',
+            ];
+            if ($type == 'get') {
+                $response = $client->request('GET', $url, [
+                    'headers' => $headers,
+                ]);
+            } elseif ($type == 'post') {
+                $response = $client->request('POST', $url, ['headers' => $headers, 'form_params' => $data]);
+            } elseif ($type == 'put') {
+                $response = $client->request('PUT', $url, ['headers' => $headers, 'form_params' => $data]);
+            } elseif ($type == 'delete') {
+                $response = $client->request('DELETE', $url, ['headers' => $headers]);
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return redirect(route('vatbook'))->withErrors('VATSIM API error: ' . $e->getMessage());
+        }
+
+        if(isset($response))
+            return $response;
+
+        return null;
     }
 }
