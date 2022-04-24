@@ -147,7 +147,7 @@ class TrainingController extends Controller
                 $reqVatRating = $rating->pivot->required_vatsim_rating;
 
                 // If the rating gives vatsim-rating higher than user already holds || OR if it's endorsement-rating AND user does not hold the endorsement
-                if( $rating->vatsim_rating > $userVatsimRating || ($rating->vatsim_rating == NULL &&  $user->ratings->firstWhere('id', $rating->id) == null) ){
+                if( $rating->vatsim_rating > $userVatsimRating || ($rating->vatsim_rating == NULL && $user->hasEndorsementRating($rating) == false) ){
 
                     // If the required vatsim rating for the selection is lower or equals the level user has today, make it available
                     if($reqVatRating <= $userVatsimRating){

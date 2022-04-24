@@ -308,6 +308,25 @@ class User extends Authenticatable
     }
 
     /**
+     * Return if the user has specified MASC endorsement
+     *
+     * @param Rating $rating
+     * @return boolean
+     */
+    public function hasEndorsementRating(Rating $rating)
+    {
+        foreach($this->endorsements->where('type', 'MASC') as $e){
+            foreach($e->ratings as $r){
+                if($r->id == $rating->id){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return if user is an examiner
      *
      * @param Area|null $area
