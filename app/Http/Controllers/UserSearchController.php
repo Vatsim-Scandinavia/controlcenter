@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Handover;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller for handling internal API request to search up users for search bar
@@ -22,20 +23,31 @@ class UserSearchController extends Controller
 
         $query = $request->get('query');
 
-        $data = Auth::user()->viewableModels(\App\Models\User::class);
-        $count = 0;
-        if($data->count() > 0 && strlen($query) >= 2) {
-            foreach($data as $user)
-            {
-                if($count >= 10) break;
-                if (stripos($user->name, (string)$query) !== false || $user->id == (int)$query) {
-                    array_push($output, ['id' => $user->id, 'name' => $user->name]);
+        if (strlen($query) >= 2) {
+            $data = Handover::query()
+                ->select('id')
+                ->where(DB::raw('LOWER(users.id)'), 'like', '%'.strtolower($query).'%')
+                ->orWhere(DB::raw('LOWER(CONCAT(users.first_name, " ", users.last_name))'), 'like', '%'.strtolower($query).'%')
+                ->get();
+
+            if ($data->count() <= 0)
+                return;
+
+            $authUser = Auth::user();
+
+            $count = 0;
+            foreach($data as $handover) {
+                if ($count >= 10)
+                    break;
+
+                $user = $handover->user;
+                if ($authUser->can('view', $user)) {
+                    $output[] = ['id' => $user->id, 'name' => $user->name];
                     $count++;
                 }
             }
 
-            echo json_encode($output);
+            return json_encode($output);
         }
-
     }
 }
