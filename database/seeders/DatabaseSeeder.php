@@ -10,8 +10,10 @@ use App\Models\Handover;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\TrainingExamination;
-use App\Models\SoloEndorsement;
+use App\Models\Endorsement;
 use App\Models\Rating;
+use App\Models\Position;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -147,11 +149,15 @@ class DatabaseSeeder extends Seeder
 
             // Give all exam awaiting trainings a solo endorsement
             if($training->status == 3){
-                if (!SoloEndorsement::where('user_id', $training->user_id)->exists()) {
-                    SoloEndorsement::factory()->create([
+                if (!Endorsement::where('user_id', $training->user_id)->exists()) {
+                    $soloEndorsement = Endorsement::factory()->create([
                         'user_id' => $training->user_id,
-                        'training_id' => $training->id,
+                        'type' => "SOLO",
+                        'valid_to' => Carbon::now()->addWeeks(4)
                     ]);
+
+                    // Add position for solo
+                    $soloEndorsement->positions()->save(Position::where('rating', '>', 1)->inRandomOrder()->first());
                 }
 
                 // And some a exam result
