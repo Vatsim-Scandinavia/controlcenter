@@ -68,7 +68,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
             'Periodically we are asking you to confirm the interest for your ATC controller application with us.',
             'Please confirm your continued interest for your '.$this->training->getInlineRatings().' '.$trainingType.'training.',
             '**Deadline:** '.$this->interest->deadline->toEuropeanDate(),
-            '*If no confirmation is received within deadline, your training request will be automatically closed and your slot in the queue will be lost.*'
+            '*If no confirmation is received within deadline, your training request will be automatically closed and your slot in the queue or training will be lost.*'
         ];
 
         $contactMail = Area::find($this->training->area_id)->contact;
