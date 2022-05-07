@@ -30,7 +30,7 @@ else
 fi
 
 # Adjust directory permissions
-chmod -R 775 storage bootstrap/cache
+chmod -R 777 storage bootstrap/cache
 
 # Artisan magic
 php artisan migrate
