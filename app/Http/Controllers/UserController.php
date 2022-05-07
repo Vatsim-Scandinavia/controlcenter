@@ -246,7 +246,7 @@ class UserController extends Controller
         
         if(!$user->setting_workmail_address && isset($data['setting_workmail_address'])){
             $user->setting_workmail_address = $data['setting_workmail_address'];
-            $user->setting_workmail_expire = Carbon::now()->addDays(30);
+            $user->setting_workmail_expire = Carbon::now()->addDays(60);
         } elseif($user->setting_workmail_address && !isset($data['setting_workmail_address'])){
             $user->setting_workmail_address = null;
             $user->setting_workmail_expire = null;
@@ -268,7 +268,7 @@ class UserController extends Controller
         $user = Auth::user();
 
         if(Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7){
-            $user->setting_workmail_expire = Carbon::now()->addDays(30);
+            $user->setting_workmail_expire = Carbon::now()->addDays(60);
             $user->save();
 
             return redirect()->intended(route('user.settings'))->withSuccess("Workmail successfully extended");
