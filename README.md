@@ -13,10 +13,11 @@ The project is open source and contains some restirctions. Read the [LICENSE.md]
 ## Setup and install
 Just clone this repository and you're almost ready. First, make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) in your environment.
 
-1. Run `./deploy init` to setup the required files
-2. Configure the .env file accordingly, everything from top down to and including e-mail should be configured, rest is optional.
-3. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
-4. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
+1. Upload your logo and optionally a email specific logo to `/public/images/logos/`
+2. Run `./deploy init` to setup the required files
+3. Configure the .env file accordingly, including logos and simple theming.
+4. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
+5. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
 
 ## Configuring
 To have Control Center reflect your division correctly, you need to do some tweaks.
@@ -31,8 +32,7 @@ To deploy in development environment use `./deploy dev`, in production use `./de
 ## Using the API
 There's an Control Center API that you can use to
 - GET, POST, PATCH and DELETE bookings
-- GET users assigned as mentors and their area
-- GET users assigned as admin/moderator and their area
+- GET users assigned roles and their area
 - GET users holding Major Airport / Special Center endorsements 
 - GET users holding Training endorsements 
 - GET users holding Examiner endorsements

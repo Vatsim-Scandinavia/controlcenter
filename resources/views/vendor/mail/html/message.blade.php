@@ -23,7 +23,7 @@
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-[![Logo]({{ asset('images/logos/vat'.mb_strtolower(Config::get('app.owner_short')).'-email.png') }})]({{ Setting::get("linkHome") }})\
+[![Logo]({{ asset('images/logos/'.Config::get('app.logo_mail')) }})]({{ Setting::get("linkHome") }})\
 [Change your e-mail settings here]({{ route('user.settings') }})
 @endcomponent
 @endslot

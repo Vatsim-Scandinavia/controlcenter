@@ -30,7 +30,7 @@
         </div>
 
         <div class="logo">
-            <img src="images/logos/vat{{ mb_strtolower(Config::get('app.owner_short')) }}.svg">
+            <img src="{{ asset('images/logos/'.Config::get('app.logo')) }}">
             <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version-front">Control Center v{{ config('app.version') }}</a>
         </div>
     </div>
