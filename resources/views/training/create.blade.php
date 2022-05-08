@@ -57,7 +57,7 @@
 
                     <div class="form-group">
                         <label class="my-1 mr-2" for="typeSelect">Training type</label>
-                        <select id="typeSelect" name="type" class="custom-select my-1 mr-sm-2 @error('type') is-invalid @enderror" @change="onChange($event)">
+                        <select id="typeSelect" name="type" class="custom-select my-1 mr-sm-2 @error('type') is-invalid @enderror">
                             <option selected disabled>Choose training type</option>
                             @foreach($types as $id => $data)
                                 <option value="{{ $id }}">{{ $data["text"] }}</option>
@@ -102,15 +102,6 @@
         methods: {
             onChange(event) {
                 rating.update(event.srcElement.options[event.srcElement.selectedIndex])
-            }
-        }
-    });
-
-    const type = new Vue({
-        el: '#typeSelect',
-        methods: {
-            onChange(event) {
-                type.update(event.srcElement.options[event.srcElement.selectedIndex])
             }
         }
     });
