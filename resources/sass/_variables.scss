@@ -30,8 +30,14 @@ $teal: #20c9a6 !default;
 $cyan: #43c6e7 !default;
 
 // Note: We don't have $primary here as it overrides bootstrap vars.
-$secondary: #484b4c;
-$tertiary: $darkblue;
+$primary: $envColorPrimary;
+$secondary: $envColorSecondary;
+$tertiary: $envColorTertiary;
+
+$info: $envColorInfo;
+$warning: $envColorWarning;
+$danger: $envColorDanger;
+$success: $envColorSuccess;
 
 // Custom Colors
 $brand-google: #ea4335;
@@ -56,7 +62,7 @@ $box-shadow: 0 0.15rem 1.75rem 0 rgba($gray-900, 0.15) !default;
 // $box-shadow-lg: 0 1rem 3rem rgba($black, .175) !default;
 
 // Borders Radius
-$border-radius: 0rem !default;
+$border-radius: $envBorderRadius !default;
 $border-color: darken($gray-200, 2%);
 
 // Spacing Variables

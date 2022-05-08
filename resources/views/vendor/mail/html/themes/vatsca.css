@@ -211,7 +211,7 @@ img {
 }
 
 .button {
-    border-radius: 0px;
+    border-radius: $border-radius;
     color: #fff;
     display: inline-block;
     text-decoration: none;
