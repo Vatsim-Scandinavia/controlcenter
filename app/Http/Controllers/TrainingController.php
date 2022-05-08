@@ -408,14 +408,24 @@ class TrainingController extends Controller
 
         // Update paused time for queue estimation
         if(isset($attributes['paused_at'])){
+            
             !isset($training->paused_at) ? $attributes["paused_at"] = Carbon::now() : $attributes["paused_at"] = $training->paused_at;
+
         } else {
+            // If paused is unchecked but training is paused, sum up the length and unpause.
+            if(isset($training->paused_at)){
+                $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now());
+                $training->update(['paused_length' => $training->paused_length]);
+            }
+
             $attributes["paused_at"] = NULL;
         }
 
-        if(!isset($attributes['paused_at']) && isset($training->paused_at)){
-            $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now());
-            $training->update(['paused_length' => $training->paused_length]);
+        // If training is closed, force to unpause
+        if((int)$training->status != $oldStatus){
+            if((int)$training->status < 0){
+                $attributes["paused_at"] = NULL;
+            }
         }
 
         // Update the training

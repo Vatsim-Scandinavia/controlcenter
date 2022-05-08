@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 
 class Training extends Model
 {
@@ -72,6 +73,12 @@ class Training extends Model
                 $expired = 1;
                 if($expiredInterest) $expired = 2;
                 TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => $expired]);
+
+                // If paused is unchecked but training is paused, sum up the length and unpause.
+                if(isset($this->paused_at)){
+                    $this->paused_length = $this->paused_length + Carbon::create($this->paused_at)->diffInSeconds(Carbon::now());
+                    $this->update(['paused_at' => null, 'paused_length' => $this->paused_length]);
+                }
             }
 
             $this->update(['status' => $newStatus]);
