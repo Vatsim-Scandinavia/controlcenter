@@ -55,7 +55,7 @@ class EndorsementController extends Controller
     }
 
     /**
-     * Display a listing of the users with visitor endorsements
+     * Display a listing of the users with visiting endorsements
      *
      * @return \Illuminate\Http\Response
      */

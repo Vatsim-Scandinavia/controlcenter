@@ -18,14 +18,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['client']], function() {
-    Route::get('/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.vatbook.index');
-    Route::get('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'show'])->name('api.vatbook.show');
-    Route::post('/bookings/create', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.vatbook.store');
-    Route::patch('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'update'])->name('api.vatbook.update');
-    Route::delete('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'destroy'])->name('api.vatbook.destroy');
+    Route::get('/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.booking.index');
+    Route::get('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'show'])->name('api.booking.show');
+    Route::post('/bookings/create', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.booking.store');
+    Route::patch('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'update'])->name('api.booking.update');
+    Route::delete('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'destroy'])->name('api.booking.destroy');
     
     Route::get('/roles', [App\Http\Controllers\API\RolesController::class, 'index'])->name('api.roles.index');
 
-    Route::get('/visitingcontrollers', [App\Http\Controllers\API\VisitingController::class, 'index'])->name('api.visitingcontrollers.index');
+    Route::get('/endorsements/visiting', [App\Http\Controllers\API\VisitingController::class, 'index'])->name('api.endorsement.visiting.index');
+    Route::get('/endorsements/examiner', [App\Http\Controllers\API\ExaminerController::class, 'index'])->name('api.endorsement.examiner.index');
+    Route::get('/endorsements/training/solo', [App\Http\Controllers\API\TrainingController::class, 'indexSolo'])->name('api.endorsement.training.solo.index');
+    Route::get('/endorsements/training/s1', [App\Http\Controllers\API\TrainingController::class, 'indexS1'])->name('api.endorsement.training.s1.index');
+    Route::get('/endorsements/masc', [App\Http\Controllers\API\RatingController::class, 'index'])->name('api.endorsement.rating.index');
 });
 

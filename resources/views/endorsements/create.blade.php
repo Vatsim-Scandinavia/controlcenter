@@ -70,7 +70,7 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeVisitor" value="VISITING" v-model="endorsementType" v-on:change="updateButtonText">
                                 <label class="form-check-label" for="endorsementTypeVisitor">
-                                    Visitor
+                                    Visiting
                                 </label>
                             </div>
                         @endcan

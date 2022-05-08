@@ -31,12 +31,12 @@ To deploy in development environment use `./deploy dev`, in production use `./de
 
 ## Using the API
 There's an Control Center API that you can use to
-- GET, POST, PATCH and DELETE bookings
-- GET users assigned roles and their area
-- GET users holding Major Airport / Special Center endorsements 
-- GET users holding Training endorsements 
-- GET users holding Examiner endorsements
-- GET users holding Visiting endorsements
+- GET, POST, PATCH and DELETE bookings `/api/bookings` and more
+- GET users assigned roles and their area `/api/roles`
+- GET users holding Major Airport / Special Center endorsements `/api/endorsements/masc`
+- GET users holding Training endorsements `/api/endorsements/training/solo` & `/api/endorsements/training/s1`
+- GET users holding Examiner endorsements `/api/endorsements/examiner`
+- GET users holding Visiting endorsements `/api/endorsements/visiting`
 
 To call the API you'll need to [create a bearer token](https://laravel.com/docs/9.x/passport#retrieving-tokens) and use this to access the API URLs you find in `routes/api.php`.
 
