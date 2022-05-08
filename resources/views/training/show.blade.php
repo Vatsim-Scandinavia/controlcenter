@@ -455,7 +455,7 @@
 
                     <div class="form-group" id="closedReasonInput" style="display: none">
                         <label for="trainingCloseReason">Closed reason</label>
-                        <input type="text" id="trainingCloseReason" class="form-control" name="closed_reason" placeholder="{{ $training->closed_reason }}" maxlength="50">
+                        <input type="text" id="trainingCloseReason" class="form-control" name="closed_reason" placeholder="{{ $training->closed_reason }}" maxlength="65">
                     </div>
 
                     <div class="form-check">
