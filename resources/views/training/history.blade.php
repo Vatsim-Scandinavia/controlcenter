@@ -86,11 +86,3 @@
 
 </div>
 @endsection
-
-@section('js')
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-    })
-</script>
-@endsection
