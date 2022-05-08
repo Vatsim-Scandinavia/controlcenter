@@ -47,6 +47,9 @@
                     <h6 class="m-0 font-weight-bold text-white">
                         New Examination Report
                     </h6>
+                    @if(Setting::get('trainingExamTemplate') != "")
+                        <a class="btn btn-sm btn-light" href="{{ Setting::get('trainingExamTemplate') }}"><i class="fas fa-download"></i>&nbsp;Download Exam Template</a>
+                    @endif
                 </div>
                 <div class="card-body">
                     <form action="{{ route('training.examination.store', ['training' => $training->id]) }}" method="POST" enctype="multipart/form-data">

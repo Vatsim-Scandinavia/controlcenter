@@ -42,6 +42,7 @@ class GlobalSettingController extends Controller
             'trainingEnabled' => '',
             'trainingShowEstimate' => '',
             'trainingSOP' => 'required|url',
+            'trainingExamTemplate' => '',
             'trainingSubDivisions' => 'required',
             'trainingQueue' => 'required|min:10|max:250',
             'trainingInterval' => 'required|integer|min:1',
@@ -65,6 +66,7 @@ class GlobalSettingController extends Controller
         Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingShowEstimate', $trainingShowEstimate);
         Setting::set('trainingSOP', $data['trainingSOP']);
+        Setting::set('trainingExamTemplate', $data['trainingExamTemplate']);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
         Setting::set('trainingQueue', $data['trainingQueue']);
         Setting::set('trainingInterval', $data['trainingInterval']);
