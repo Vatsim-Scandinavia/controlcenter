@@ -315,13 +315,3 @@
 
 </div>
 @endsection
-
-@section('js')
-    <script type="text/javascript">
-        if (sessionStorage.getItem('successMessage') != null) {
-            $('#success-message').removeClass('d-none');
-            document.getElementById("success-message").innerHTML = "<i class=\"fas fa-check\"></i>&nbsp;&nbsp;Training successfully created and placed in queue.";
-            sessionStorage.removeItem("successMessage");
-        }
-    </script>
-@endsection
