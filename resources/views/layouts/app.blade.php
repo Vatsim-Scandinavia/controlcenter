@@ -110,7 +110,7 @@
                     method:'GET',
                     data:{query:query},
                     dataType:'json',
-                    success:function(data)
+                    success: function(data)
                     {
                         if(data.length > 0){
 
@@ -126,6 +126,11 @@
                             $('.search-results').html("<a href='#''>No results</a>");
                         }
 
+                        $('.search-results').slideDown("fast");
+                        $('.search-spinner').removeClass('search-spinner-visible');
+                    },
+                    error: function(){
+                        $('.search-results').html("<a href='#''>No results</a>");
                         $('.search-results').slideDown("fast");
                         $('.search-spinner').removeClass('search-spinner-visible');
                     }
