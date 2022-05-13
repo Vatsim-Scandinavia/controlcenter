@@ -306,7 +306,10 @@
                     
                     if(this.trainingType == 'SOLO'){
                         if(this.soloChecked == false) validated = false
-                        if(this.positions.includes(',')) validated = false; this.errSoloPositionCount = true;
+                        if(this.positions.includes(',')) { 
+                            validated = false
+                            this.errSoloPositionCount = true 
+                        }
                     }
 
                 } else if(this.endorsementType == 'EXAMINER'){
