@@ -21,7 +21,7 @@ class EndorsementController extends Controller
     public function indexMascs()
     {
 
-        $endorsements = Endorsement::where('type', 'MASC')->get();
+        $endorsements = Endorsement::where('type', 'MASC')->where('revoked', false)->get();
         $areas = Rating::whereNull('vatsim_rating')->get();
 
         return view('endorsements.mascs', compact('endorsements', 'areas'));
