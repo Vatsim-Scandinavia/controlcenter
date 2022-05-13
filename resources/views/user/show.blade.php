@@ -196,7 +196,7 @@
                                             <th>Type</th>
                                             <th>Details</th>
                                             <th>Status</th>
-                                            @if($user->isModeratorOrAbove())
+                                            @if(\Auth::user()->isModeratorOrAbove())
                                                 <th>Actions</th>
                                             @endif
                                         </tr>
@@ -230,7 +230,7 @@
                                             <td>
                                                 {{ $endorsement['status'] }}
                                             </td>
-                                            @if($user->isModeratorOrAbove())
+                                            @if(\Auth::user()->isModeratorOrAbove())
                                                 <td>
                                                     <a href="/endorsements/{{ $endorsement['id'] }}/delete"><i class="fas fa-times"></i> Revoke</a>
                                                 </td>
