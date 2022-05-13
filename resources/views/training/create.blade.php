@@ -114,6 +114,7 @@
         methods: {
             update: function(value){
                 this.ratings = payload[value.getAttribute('data-id')].ratings
+                this.ratings.push({id: 5, name: "C3"})
             }
         }
     });
