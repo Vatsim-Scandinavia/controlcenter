@@ -257,7 +257,7 @@
                     <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
         
                         @if($user->teaches->count() == 0)
-                            <p class="mb-0">No registered mentors</p>
+                            <p class="mb-0">No registered students</p>
                         @else
                             <div class="table-responsive">
                                 <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
