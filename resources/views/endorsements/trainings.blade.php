@@ -70,7 +70,7 @@
 
                                     <td>
                                         @foreach($e->positions as $p)
-                                            <span class="badge badge-light">{{ $p->callsign }}</span>
+                                            <span class="badge badge-dark">{{ $p->callsign }}</span>
                                         @endforeach
                                     </td>
                                     <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>

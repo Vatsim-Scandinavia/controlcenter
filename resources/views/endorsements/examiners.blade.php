@@ -45,7 +45,7 @@
                                     </td>
                                     <td>
                                         @foreach($e->ratings as $rating)
-                                            <span class="badge badge-light">{{ $rating->name }}</span>
+                                            <span class="badge badge-dark">{{ $rating->name }}</span>
                                         @endforeach
                                     </td>
 
