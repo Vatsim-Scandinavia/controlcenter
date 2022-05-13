@@ -48,7 +48,7 @@ class EndorsementController extends Controller
     public function indexExaminers()
     {
 
-        $endorsements = Endorsement::where('type', 'EXAMINER')->get();
+        $endorsements = Endorsement::where('type', 'EXAMINER')->where('revoked', false)->get();
         $areas = Area::all();
 
         return view('endorsements.examiners', compact('endorsements', 'areas'));
@@ -62,7 +62,7 @@ class EndorsementController extends Controller
     public function indexVisitors()
     {
 
-        $endorsements = Endorsement::where('type', 'VISITING')->get();
+        $endorsements = Endorsement::where('type', 'VISITING')->where('revoked', false)->get();
         $areas = Area::all();
 
         return view('endorsements.visiting', compact('endorsements', 'areas'));
@@ -93,7 +93,6 @@ class EndorsementController extends Controller
      */
     public function store(Request $request)
     {
-
         // Get the type before we fully validate
         $typeValidation = $request->only(['endorsementType']);
         $endorsementType = $typeValidation["endorsementType"];
@@ -126,7 +125,7 @@ class EndorsementController extends Controller
             // Add ratings
             $endorsement->ratings()->save(Rating::find($data['ratingMASC']));
 
-            ActivityLogController::info('OTHER', 'Created Airport/Center endorsement '.
+            ActivityLogController::warning('OTHER', 'Created Airport/Center endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Rating: '.Rating::find($data['ratingMASC'])->name);
 
@@ -151,7 +150,7 @@ class EndorsementController extends Controller
             $expireDate->setTime(23, 59);
 
             // Validate that this user has other endrosement of this type from before
-            if($this->checkEndorsementExists($user, $trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
+            if($user->hasActiveEndorsement($trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
 
             // Validate that solo only has one position and set expire time
             if($trainingType == "SOLO"){
@@ -178,7 +177,7 @@ class EndorsementController extends Controller
                 }
             }
 
-            ActivityLogController::info('TRAINING', 'Created '.$trainingType.' endorsement '.
+            ActivityLogController::warning('TRAINING', 'Created '.$trainingType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Positions: '.$data['positions']);
 
@@ -199,7 +198,7 @@ class EndorsementController extends Controller
             $user = User::find($data['user']);
 
             // Check if already holding examiner endorsement
-            if($this->checkEndorsementExists($user, $endorsementType)) return back()->withInput()->withErrors($user->name.' has already an '.$endorsementType.' endorsement. Revoke it first, to create a new one.');
+            if($user->hasActiveEndorsement($endorsementType)) return back()->withInput()->withErrors($user->name.' has already an '.$endorsementType.' endorsement. Revoke it first, to create a new one.');
 
             // All clear, create endorsement
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
@@ -208,7 +207,7 @@ class EndorsementController extends Controller
             $endorsement->ratings()->saveMany(Rating::find($data['ratingsExaminate']));
             $endorsement->areas()->saveMany(Area::find($data['areas']));
 
-            ActivityLogController::info('OTHER', 'Created '.$endorsementType.' endorsement '.
+            ActivityLogController::warning('OTHER', 'Created '.$endorsementType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Ratings: '.implode(',', $data['ratingsExaminate']).
             ' ― Areas: '.implode(',', $data['areas']));
@@ -227,12 +226,12 @@ class EndorsementController extends Controller
                 'user' => 'required|numeric|exists:App\Models\User,id',
                 'ratingGRP' => 'required|integer|exists:App\Models\Rating,id',
                 'areas' => 'required',
-                'visitingEndorsements' => 'required',
+                'visitingEndorsements' => 'nullable',
             ]);
             $user = User::find($data['user']);
 
             // Check if already holding visiting endorsement
-            if($this->checkEndorsementExists($user, $endorsementType)) return back()->withInput()->withErrors($user->name.' has already an '.$endorsementType.' endorsement. Revoke it first, to create a new one.');
+            if($user->hasActiveEndorsement($endorsementType)) return back()->withInput()->withErrors($user->name.' has already an '.$endorsementType.' endorsement. Revoke it first, to create a new one.');
 
             // All clear, create endorsement
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
@@ -240,12 +239,16 @@ class EndorsementController extends Controller
             // Attach ratings and areas
             $endorsement->areas()->saveMany(Area::find($data['areas']));
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
-            $endorsement->ratings()->saveMany(Rating::find($data['visitingEndorsements']));
+            $visitingString = "none";
+            if(isset($data['visitingEndorsements'])){
+                $endorsement->ratings()->saveMany(Rating::find($data['visitingEndorsements']));
+                $visitingString = implode(',', $data['visitingEndorsements']);
+            }
             
-            ActivityLogController::info('OTHER', 'Created '.$endorsementType.' endorsement '.
+            ActivityLogController::warning('OTHER', 'Created '.$endorsementType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Areas: '.implode(',', $data['areas']).
-            ' ― Endorsements: '.implode(',', $data['visitingEndorsements']));
+            ' ― Endorsements: '.$visitingString);
 
             return redirect()->intended(route('endorsements.visiting'))->withSuccess($user->name . "'s visiting endorsement successfully created");
 
@@ -266,6 +269,10 @@ class EndorsementController extends Controller
     {
         $endorsement = Endorsement::findOrFail($endorsementId);
         $this->authorize('delete', [Endorsement::class, $endorsement]);
+
+        if($endorsement->revoked){
+            return redirect()->back()->withErrors(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement is already revoked.");
+        }
 
         $endorsement->revoked = true;
         $endorsement->revoked_by = \Auth::user()->id;
@@ -295,17 +302,5 @@ class EndorsementController extends Controller
         $endorsement->save();
 
         return $endorsement;
-    }
-
-    /**
-     * Private function to check if endorsement type exists
-     *
-     * @param  \App\Models\User  $user
-     * @param  String  $endorsementType
-     * @return boolean
-     */
-    private function checkEndorsementExists(User $user, $endorsementType)
-    {
-        return Endorsement::where('user_id', $user->id)->where('type', $endorsementType)->get()->count();
     }
 }

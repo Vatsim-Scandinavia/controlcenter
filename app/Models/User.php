@@ -327,6 +327,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Return if the user has an active endorsement of type
+     *
+     * @param String $type
+     * @return boolean
+     */
+    public function hasActiveEndorsement(String $type)
+    {
+        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->get()->count();
+    }
+
+    /**
      * Return if user is an examiner
      *
      * @param Area|null $area
