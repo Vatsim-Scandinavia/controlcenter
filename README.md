@@ -38,7 +38,7 @@ There's an Control Center API that you can use to
 - GET users holding Examiner endorsements `/api/endorsements/examiner`
 - GET users holding Visiting endorsements `/api/endorsements/visiting`
 
-To call the API you'll need to [create a bearer token](https://laravel.com/docs/9.x/passport#retrieving-tokens) and use this to access the API URLs you find in `routes/api.php`.
+To create an API key use `php artisan api:createkey`, use the returned token as authentication bearer.
 
 ## Present automations
 There's quite a few automations in Control Center that are running through the cron-jobs. They're as follows:

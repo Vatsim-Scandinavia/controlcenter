@@ -17,12 +17,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware' => ['client']], function() {
-    Route::get('/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.booking.index');
-    Route::get('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'show'])->name('api.booking.show');
+Route::group(['middleware' => ['api-token:edit']], function() {
     Route::post('/bookings/create', [App\Http\Controllers\API\VatbookController::class, 'store'])->name('api.booking.store');
     Route::patch('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'update'])->name('api.booking.update');
     Route::delete('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'destroy'])->name('api.booking.destroy');
+});
+
+Route::group(['middleware' => ['api-token']], function() {
+    Route::get('/bookings', [App\Http\Controllers\API\VatbookController::class, 'index'])->name('api.booking.index');
+    Route::get('/bookings/{vatbook}', [App\Http\Controllers\API\VatbookController::class, 'show'])->name('api.booking.show');
     
     Route::get('/roles', [App\Http\Controllers\API\RolesController::class, 'index'])->name('api.roles.index');
 
@@ -32,4 +35,3 @@ Route::group(['middleware' => ['client']], function() {
     Route::get('/endorsements/training/s1', [App\Http\Controllers\API\TrainingController::class, 'indexS1'])->name('api.endorsement.training.s1.index');
     Route::get('/endorsements/masc', [App\Http\Controllers\API\RatingController::class, 'index'])->name('api.endorsement.rating.index');
 });
-

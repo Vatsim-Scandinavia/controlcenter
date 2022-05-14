@@ -48,9 +48,6 @@ elif [ "$COMMAND" = "init" ]; then
     # Generate PHP key
     php artisan key:generate
 
-    # Generate Passport keys
-    php artisan passport:keys
-
 else
 
     # Create front-end assets

@@ -11,17 +11,16 @@
         "php": "^8.0.2",
         "anlutro/l4-settings": "^1.1.1",
         "doctrine/dbal": "^3.3.6",
-        "spatie/laravel-ignition": "^1.0",
         "graham-campbell/markdown": "^14.0",
         "guzzlehttp/guzzle": "^7.4.2",
         "hisorange/browser-detect": "^4.5",
         "laravel/framework": "^9.0",
-        "laravel/passport": "^10.2",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.2",
         "league/commonmark": "^2.2",
         "league/oauth2-client": "^2.6.1",
         "sentry/sentry-laravel": "^2.12",
+        "spatie/laravel-ignition": "^1.0",
         "wildside/userstamps": "^2.2"
     },
     "require-dev": {
