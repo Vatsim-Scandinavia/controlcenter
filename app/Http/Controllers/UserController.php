@@ -73,7 +73,19 @@ class UserController extends Controller
         $userHours = DB::table('atc_activity')->where('user_id', $user->id)->first();
         if(isset($userHours)) $userHours = $userHours->atc_hours;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours'));
+        // Check if we have some VATSIM stats available
+        $vatsimStats = [];
+        try {
+            $client = new \GuzzleHttp\Client();
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/'.$user->id.'/rating_times/');
+            if($res->getStatusCode() == 200){
+                $vatsimStats = json_decode($res->getBody(), false);
+            }
+        } catch(\GuzzleHttp\Exception\ClientException){
+            // Do nothing which returns empty
+        }
+
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours', 'vatsimStats'));
     }
 
     /**

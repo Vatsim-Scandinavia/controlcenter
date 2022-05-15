@@ -33,10 +33,26 @@
                     <dd><i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i></dd>
 
                     <dt>ATC Hours</dt>
-                    <dd class="separator pb-3">{{ isset($userHours) ? $userHours : 'N/A' }}</dd>
+                    <dd>{{ isset($userHours) ? $userHours : 'N/A' }}</dd>
+
+                    <dt class="pt-2">VATSIM Stats</dt>
+                    @foreach($vatsimStats as $key => $stat)
+                        @if($stat >= 1)
+                            @if($key == "pilot")
+                                <dd class="mb-0">Pilot: {{ round($stat) }}h</dd>
+                            @elseif($key != "id" && $key != "pilot" && $key != "atc")
+                                <dd class="mb-0">{{ strtoupper($key) }}: {{ round($stat) }}h</dd>
+                            @endif
+                        @endif
+                    @endforeach
+                    @if(count($vatsimStats) == 0)
+                        <dd>No data</dd>
+                    @endif
+
+                    <dd class="separator pb-3"></dd>
 
                     <dt class="pt-2">Last login</dt>
-                    <dd>{{ $user->last_login }}</dd>
+                    <dd>{{ Carbon\Carbon::create($user->last_login)->toEuropeanDateTime() }}</dd>
 
                 </dl>
             </div>
