@@ -52,7 +52,7 @@
                     <dd class="separator pb-3"></dd>
 
                     <dt class="pt-2">Last login</dt>
-                    <dd>{{ Carbon\Carbon::create($user->last_login)->toEuropeanDateTime() }}</dd>
+                    <dd>{{ $user->last_login->toEuropeanDateTime() }}</dd>
 
                 </dl>
             </div>
@@ -202,11 +202,11 @@
                                         </tr>
                                         <tr>
                                             <th>Issued</th>
-                                            <td>{{ Carbon\Carbon::create($endorsement->valid_from)->toEuropeanDate() }}</td>
+                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
                                         </tr>
                                         <tr class="spacing">
                                             <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? Carbon\Carbon::create($endorsement->valid_to)->toEuropeanDateTime() : 'Never' }}</td>
+                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
@@ -225,11 +225,11 @@
                                         </tr>
                                         <tr>
                                             <th>Issued</th>
-                                            <td>{{ Carbon\Carbon::create($endorsement->valid_from)->toEuropeanDate() }}</td>
+                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
                                         </tr>
                                         <tr class="spacing">
                                             <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? Carbon\Carbon::create($endorsement->valid_to)->toEuropeanDateTime() : 'Never' }}</td>
+                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
@@ -256,11 +256,11 @@
                                         </tr>
                                         <tr>
                                             <th>Issued</th>
-                                            <td>{{ Carbon\Carbon::create($endorsement->valid_from)->toEuropeanDate() }}</td>
+                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
                                         </tr>
                                         <tr class="spacing">
                                             <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? Carbon\Carbon::create($endorsement->valid_to)->toEuropeanDateTime() : 'Never' }}</td>
+                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
@@ -283,11 +283,11 @@
                                         </tr>
                                         <tr>
                                             <th>Issued</th>
-                                            <td>{{ Carbon\Carbon::create($endorsement->valid_from)->toEuropeanDate() }}</td>
+                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
                                         </tr>
                                         <tr class="spacing">
                                             <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? Carbon\Carbon::create($endorsement->valid_to)->toEuropeanDateTime() : 'Never' }}</td>
+                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>

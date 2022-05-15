@@ -9,6 +9,13 @@ class Endorsement extends Model
 {
     use HasFactory;
 
+    protected $dates = [
+        'valid_from',
+        'valid_to',
+        'created_at',
+        'updated_at',
+    ];
+
     public function ratings(){
         return $this->belongsToMany(Rating::class);
     }
