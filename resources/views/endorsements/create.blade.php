@@ -156,7 +156,7 @@
                     </div>
 
                     {{-- Visiting Rating --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING'">
+                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING' || endorsementType == 'EXAMINER'">
                         <label for="ratingGRP">Rating</label>
                         <select class="form-control" name="ratingGRP" id="ratingGRP" v-model="ratingGRP" v-bind:class="{'is-invalid': (validationError && ratingGRP == null)}">
                             <option selected disabled>Select rating</option>
@@ -164,18 +164,7 @@
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
                             @endforeach
                         </select>
-                        <span v-show="validationError && ratingGRP == null" class="text-danger">Select a visiting rating</span>
-                    </div>
-
-                    {{-- Examiner Ratings --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER'">
-                        <label for="ratingsExaminate">Examines Ratings: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="ratingsExaminate[]" id="ratingsExaminate" v-model="ratingsExaminate" v-bind:class="{'is-invalid': (validationError && !ratingsExaminate.length)}">
-                            @foreach($ratingsGRP as $rating)
-                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
-                            @endforeach
-                        </select>
-                        <span v-show="validationError && !ratingsExaminate.length" class="text-danger">Select one or more examinating ratings</span>
+                        <span v-show="validationError && ratingGRP == null" class="text-danger">Select a rating</span>
                     </div>
 
                     {{-- Examiner/Visiting Areas --}}
@@ -245,7 +234,7 @@
             positions: null,
             ratingMASC: null,
             ratingGRP: null,
-            ratingsExaminate: [],
+            ratingExaminate: null,
             areas: [],
             visitingEndorsements: [],
             soloChecked: false,
@@ -314,7 +303,7 @@
 
                 } else if(this.endorsementType == 'EXAMINER'){
 
-                    if(this.ratingsExaminate.length == 0) validated = false
+                    if(this.ratingGRP == null) validated = false
                     if(this.areas.length == 0) validated = false
 
                 } else if(this.endorsementType == 'VISITING'){

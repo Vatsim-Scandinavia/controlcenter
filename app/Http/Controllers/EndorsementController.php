@@ -211,7 +211,7 @@ class EndorsementController extends Controller
 
             $data = request()->validate([
                 'user' => 'required|numeric|exists:App\Models\User,id',
-                'ratingsExaminate' => 'required',
+                'ratingGRP' => 'required|integer|exists:App\Models\Rating,id',
                 'areas' => 'required',
             ]);
             $user = User::find($data['user']);
@@ -223,12 +223,12 @@ class EndorsementController extends Controller
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
 
             // Attach ratings and areas
-            $endorsement->ratings()->saveMany(Rating::find($data['ratingsExaminate']));
+            $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
             $endorsement->areas()->saveMany(Area::find($data['areas']));
 
             ActivityLogController::warning('OTHER', 'Created '.$endorsementType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
-            ' ― Ratings: '.implode(',', $data['ratingsExaminate']).
+            ' ― Rating: '.$data['ratingGRP'].
             ' ― Areas: '.implode(',', $data['areas']));
 
             return redirect()->intended(route('endorsements.examiners'))->withSuccess($user->name . "'s examiner endorsement successfully created");
