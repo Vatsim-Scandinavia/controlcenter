@@ -21,6 +21,34 @@ p {
     }
 }
 
+dl dd.separator{
+    border-bottom: 1px solid $primary;
+}
+
+dl.copyable{
+
+    dd button{
+        background: transparent;
+        border: none;
+        visibility: hidden;
+    }
+
+    dd:hover button{
+        
+        visibility: visible;
+        color: $gray-400;
+    
+        &:hover{
+            color: $gray-500;
+        }
+    
+        &:active{
+            color: $success;
+        }
+    }
+}
+
+
 // Main page wrapper
 #wrapper {
     display: flex;
@@ -162,6 +190,26 @@ table[data-toggle="table"] {
     }
 }
 
+table.table-card{
+
+    width: 100%;
+
+    th,td{
+        vertical-align: baseline;
+    }
+
+    th{
+        width: 10ch;
+    }
+
+    tr.spacing > td{
+        padding-bottom: 1rem;
+    }
+    tr.spacing > th{
+        padding-bottom: 1rem;
+    }
+}
+
 // Tweaks to the pagination of bootstrap-table plugin, fixes padding issues and more
 .fixed-table-pagination {
     padding-left: 15px;
@@ -201,4 +249,15 @@ table[data-toggle="table"] {
 
 .visiting-toggle:hover{
     text-decoration: none;
+}
+
+.gap-1{
+    gap: 1rem;
+}
+
+.endorsement-card{
+    width: 18rem;
+    @include media-breakpoint-down(md) {
+        width: 100%;
+    }
 }

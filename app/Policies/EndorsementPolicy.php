@@ -42,9 +42,16 @@ class EndorsementPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function delete(User $user, Endorsement $endosement)
+    public function delete(User $user, Endorsement $endorsement)
     {
-        if($endosement->type == 'VISITING' || $endosement->type == 'EXAMINER'){
+
+        // Check if the item is eligible for deletion
+        if($endorsement->revoked || $endorsement->expired){
+            return false;
+        }
+
+        // Check if user got correct permissions
+        if($endorsement->type == 'VISITING' || $endorsement->type == 'EXAMINER'){
             return $user->isAdmin();
         }
 
