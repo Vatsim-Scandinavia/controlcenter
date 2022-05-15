@@ -261,3 +261,56 @@ table.table-card{
         width: 100%;
     }
 }
+
+.timeline{
+
+    max-height: 75vh;
+    overflow-y: auto;
+
+    .sessions{
+        margin-top: 2rem;
+        border-radius: 12px;
+        position: relative;
+        width: calc(100% - 20px);
+    }
+
+    ul, li{
+        list-style: none;
+        padding: 0;
+    }
+
+    li{
+        padding-bottom: 1.5rem;
+        border-left: 1px solid $primary;
+        position: relative;
+        padding-left: 20px;
+        margin-left: 30px;
+
+        &:last-child{
+            border: 0px;
+            padding-bottom: 0;
+        }
+
+        &:before{
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: white;
+            border: 1px solid $primary;
+            border-radius: 50%;
+            position: absolute;
+            left: -8px;
+            top: 0px;
+        }
+    }
+
+    .time{
+        color: $gray-600;
+        font-size: 0.8rem;
+    }
+
+    p{
+        line-height: 1.5;
+        margin-top:0.4rem;
+    }
+}
