@@ -144,7 +144,7 @@ class EndorsementController extends Controller
             // Add ratings
             $endorsement->ratings()->save(Rating::find($data['ratingMASC']));
 
-            ActivityLogController::warning('OTHER', 'Created Airport/Center endorsement '.
+            ActivityLogController::warning('ENDORSEMENT', 'Created Airport/Center endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Rating: '.Rating::find($data['ratingMASC'])->name);
 
@@ -196,7 +196,7 @@ class EndorsementController extends Controller
                 }
             }
 
-            ActivityLogController::warning('TRAINING', 'Created '.$trainingType.' endorsement '.
+            ActivityLogController::warning('ENDORSEMENT', 'Created '.$trainingType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Positions: '.$data['positions']);
 
@@ -226,7 +226,7 @@ class EndorsementController extends Controller
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
             $endorsement->areas()->saveMany(Area::find($data['areas']));
 
-            ActivityLogController::warning('OTHER', 'Created '.$endorsementType.' endorsement '.
+            ActivityLogController::warning('ENDORSEMENT', 'Created '.$endorsementType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Rating: '.$data['ratingGRP'].
             ' ― Areas: '.implode(',', $data['areas']));
@@ -264,7 +264,7 @@ class EndorsementController extends Controller
                 $visitingString = implode(',', $data['visitingEndorsements']);
             }
             
-            ActivityLogController::warning('OTHER', 'Created '.$endorsementType.' endorsement '.
+            ActivityLogController::warning('ENDORSEMENT', 'Created '.$endorsementType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
             ' ― Areas: '.implode(',', $data['areas']).
             ' ― Endorsements: '.$visitingString);
@@ -298,7 +298,7 @@ class EndorsementController extends Controller
         $endorsement->valid_to = now();
         $endorsement->save();
 
-        ActivityLogController::warning('OTHER', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
+        ActivityLogController::warning('ENDORSEMENT', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
     }
 
