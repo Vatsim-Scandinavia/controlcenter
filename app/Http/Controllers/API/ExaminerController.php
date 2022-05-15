@@ -4,22 +4,30 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Endorsement;
+use App\Models\Area;
 
 class ExaminerController extends Controller
 {
     public function index() {
-        $data = collect();
 
-        foreach(Endorsement::where('type', 'EXAMINER')->get() as $endorsement){
-            $data->push([
-                'user_id' => $endorsement->user->id,
-                'first_name' => $endorsement->user->first_name,
-                'ratings' => $endorsement->ratings->pluck('name'),
-                'areas' => $endorsement->areas->pluck('name'),
+        $areas = collect();
+        foreach(Area::all() as $area){
+            $thisArea = collect();
+            
+            foreach($area->endorsements->where('type', 'EXAMINER') as $endorsement){
+                $thisArea->push([
+                    'user_id' => $endorsement->user->id,
+                    'first_name' => $endorsement->user->first_name,
+                    'rating' => $endorsement->ratings->first()->name,
+                ]);
+            }
+
+            $areas->push([
+                'area' => $area->name,
+                'examiners' => $thisArea
             ]);
         }
 
-        return response()->json(["data"=> $data->values()], 200);
+        return response()->json(["data"=> $areas->values()], 200);
     }
 }

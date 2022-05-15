@@ -11,11 +11,8 @@ class RolesController extends Controller
 {
     public function index() {
         $users = User::all();
-
         $mentors = collect();
-
         $moderators = collect();
-
         $admins = collect();
 
         foreach ($users as $user) {

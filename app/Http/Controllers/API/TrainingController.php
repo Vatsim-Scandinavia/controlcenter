@@ -5,13 +5,32 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Endorsement;
+use Carbon\Carbon;
 
 class TrainingController extends Controller
 {
     public function indexSolo() {
         $data = collect();
 
-        foreach(Endorsement::where('type', 'SOLO')->get() as $endorsement){
+        $endorsements = Endorsement::where('type', 'SOLO')
+        ->where(function($q) {
+            $q->orWhere(function($q2){
+                $q2->where('expired', false)
+                ->where('revoked', false);
+            })
+            ->orWhere(function($q2){
+                $q2->where(function($q3){
+                    $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+                })
+                ->where(function($q3){
+                    $q3->where('expired', true)
+                    ->orWhere('revoked', true);
+                });
+            });
+        })
+        ->get();
+
+        foreach($endorsements as $endorsement){
             $data->push([
                 'user_id' => $endorsement->user->id,
                 'type' => $endorsement->type,
@@ -29,7 +48,25 @@ class TrainingController extends Controller
     public function indexS1() {
         $data = collect();
 
-        foreach(Endorsement::where('type', 'S1')->get() as $endorsement){
+        $endorsements = Endorsement::where('type', 'S1')
+        ->where(function($q) {
+            $q->orWhere(function($q2){
+                $q2->where('expired', false)
+                ->where('revoked', false);
+            })
+            ->orWhere(function($q2){
+                $q2->where(function($q3){
+                    $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+                })
+                ->where(function($q3){
+                    $q3->where('expired', true)
+                    ->orWhere('revoked', true);
+                });
+            });
+        })
+        ->get();
+
+        foreach($endorsements as $endorsement){
             $data->push([
                 'user_id' => $endorsement->user->id,
                 'type' => $endorsement->type,
