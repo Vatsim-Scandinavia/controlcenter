@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Training;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use App\Policies\TrainingPolicy;
 
 class TrainingActivityPolicy
 {

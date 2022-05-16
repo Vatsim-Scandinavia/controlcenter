@@ -176,13 +176,6 @@
 
                         <hr>
 
-                        <!--
-                        <div class="form-group">
-                            <label for="internalTrainingComments">Internal training comments</label>
-                            <textarea class="form-control" name="notes" id="internalTrainingComments" rows="8" placeholder="Write internal training notes here">{{ $training->notes }}</textarea>
-                        </div>
-                        -->
-
                         @if (\Auth::user()->isModeratorOrAbove())
                         <div class="form-group">
                             <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
@@ -211,17 +204,19 @@
                     Timeline
                 </h6>
             </div>
-            <form action="{{ route('training.activity.comment') }}" method="POST">
-                @csrf
-                <div class="input-group">
-                    <input type="hidden" name="training_id" value="{{ $training->id }}">
-                    <input type="hidden" name="update_id" id="activity_update_id" value="">
-                    <input type="text" name="comment" id="activity_comment" class="form-control border" placeholder="Your comment ..." maxlength="255">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
+            @can('comment', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id)])
+                <form action="{{ route('training.activity.comment') }}" method="POST">
+                    @csrf
+                    <div class="input-group">
+                        <input type="hidden" name="training_id" value="{{ $training->id }}">
+                        <input type="hidden" name="update_id" id="activity_update_id" value="">
+                        <input type="text" name="comment" id="activity_comment" class="form-control border" placeholder="Your comment ..." maxlength="255">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            @endcan
             <div class="timeline">
                 <ul class="sessions">
                     @foreach($activities as $activity)
@@ -248,9 +243,11 @@
                                 @endisset
 
                                 {{ $activity->created_at->toEuropeanDateTime() }}
-                                @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
-                                    <button class="btn btn-sm float-right" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
-                                @endif
+                                @can('comment', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id)])
+                                    @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
+                                        <button class="btn btn-sm float-right" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
+                                    @endif
+                                @endcan
                             </div>
                             <p> 
 
