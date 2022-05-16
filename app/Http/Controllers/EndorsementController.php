@@ -200,6 +200,9 @@ class EndorsementController extends Controller
             ' ― User: '.$endorsement->user_id.
             ' ― Positions: '.$data['positions']);
 
+            // Log this new endorsement to the user's active training
+            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id);
+
             return redirect()->intended(route('endorsements.trainings'))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created");
             
             

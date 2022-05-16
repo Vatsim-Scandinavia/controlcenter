@@ -46,6 +46,7 @@
                         @endif
                     @endforeach
                 </h6>
+
                 @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
                     <div class="dropdown" style="display: inline;">
                         <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -63,7 +64,9 @@
                 @endif
             </div>
             <div class="card-body">
-
+                @can('edit', [\App\Models\Training::class, $training])
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon float-right"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
+                @endcan
                 <dl>
                     <dt>State</dt>
                     <dd><i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}</dd>
@@ -208,62 +211,86 @@
                     Timeline
                 </h6>
             </div>
+            <form action="{{ route('training.activity.comment') }}" method="POST">
+                @csrf
+                <div class="input-group">
+                    <input type="hidden" name="training_id" value="{{ $training->id }}">
+                    <input type="hidden" name="update_id" id="activity_update_id" value="">
+                    <input type="text" name="comment" id="activity_comment" class="form-control border" placeholder="Your comment ..." maxlength="255">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
+                    </div>
+                </div>
+            </form>
             <div class="timeline">
                 <ul class="sessions">
+                    @foreach($activities as $activity)
+                        <li>
+                            <div class="time">
+                                @if($activity->type == "STATUS" || $activity->type == "TYPE")
+                                    <i class="fas fa-right-left"></i>
+                                @elseif($activity->type == "MENTOR")
+                                    @if($activity->new_data)
+                                        <i class="fas fa-user-plus"></i>
+                                    @elseif($activity->old_data)
+                                        <i class="fas fa-user-minus"></i>
+                                    @endif
+                                @elseif($activity->type == "PAUSE")
+                                    <i class="fas fa-circle-pause"></i>
+                                @elseif($activity->type == "ENDORSEMENT")
+                                    <i class="fas fa-check-square"></i>
+                                @elseif($activity->type == "COMMENT")
+                                    <i class="fas fa-comment"></i>
+                                @endif
+                                
+                                @isset($activity->triggered_by_id)
+                                    {{ \App\Models\User::find($activity->triggered_by_id)->name }} —
+                                @endisset
+
+                                {{ $activity->created_at->toEuropeanDateTime() }}
+                                @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
+                                    <button class="btn btn-sm float-right" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
+                                @endif
+                            </div>
+                            <p> 
+
+                                @if($activity->type == "STATUS")
+                                    Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                    to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                @elseif($activity->type == "TYPE")
+                                    Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
+                                    to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                @elseif($activity->type == "MENTOR")
+                                    @if($activity->new_data)
+                                        <span class="badge badge-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                    @elseif($activity->old_data)
+                                    <span class="badge badge-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                    @endif
+                                @elseif($activity->type == "PAUSE")
+                                    @if($activity->new_data)
+                                        Training paused
+                                    @else
+                                        Training unpaused
+                                    @endif
+                                @elseif($activity->type == "ENDORSEMENT")
+                                    <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
+                                @elseif($activity->type == "COMMENT")
+                                    {{ $activity->comment }}
+
+                                    @if($activity->created_at != $activity->updated_at)
+                                        <span class="text-muted">(edited)</span>
+                                    @endif
+                                @endif
+
+                            </p>
+                        </li>
+                    @endforeach
                     <li>
-                        
                         <div class="time">
-                            <i class="fas fa-right-left"></i>&nbsp;Adrian Bjerke —
-                            24/10/2020 12:12z
+                            <i class="fas fa-flag"></i>
+                            {{ $training->created_at->toEuropeanDateTime() }}
                         </div>
                         <p> 
-                            Status changed from <span class="badge badge-light">In Queue</span> to <span class="badge badge-light">Closed by Staff</span>
-                        </p>
-                    </li>
-                    <li>
-                        <div class="time">
-                            <i class="fas fa-circle-pause"></i>&nbsp;
-                            24/10/2020 12:12z
-                            <a href="" class="float-right"><i class="fas fa-pencil"></i></a>
-                        </div>
-                        <p>
-                            Training paused
-                        </p>
-                    </li>
-                    <li>
-                        <div class="time">
-                            <i class="fas fa-comment"></i>&nbsp;Daniel Lange —
-                            24/10/2020 12:12z
-                            <a href="" class="float-right"><i class="fas fa-pencil"></i></a>
-                        </div>
-                        <p>
-                            This student is really bad, please ask them to get their shit together or we'll call the FBI and CIA to get them transferred to Gautanamo Bay vACC
-                        </p>
-                    </li>
-                    <li>
-                        <div class="time">
-                            <i class="fas fa-user-plus"></i>&nbsp;Daniel Lange —
-                            24/10/2020 12:12z
-                        </div>
-                        <p>
-                            <span class="badge badge-light">Roald Stasistrandstuen</span> assigned as mentor
-                        </p>
-                    </li>
-                    <li>
-                        <div class="time">
-                            <i class="fas fa-comment"></i>&nbsp;Daniel Lange —
-                            24/10/2020 12:12z
-                        </div>
-                        <p>
-                            Status changed from <span class="badge badge-light">In Queue</span> to <span class="badge badge-light">Closed by Staff</span>
-                        </p>
-                    </li>
-                    <li>
-                        <div class="time">
-                            <i class="fas fa-flag"></i>&nbsp;
-                            24/10/2020 12:12z
-                        </div>
-                        <p>
                             Training created
                         </p>
                     </li>
@@ -613,6 +640,12 @@
             }
 
             return key;
+        }
+
+        function updateComment(id, oldText){
+            document.getElementById('activity_update_id').value = id
+            document.getElementById('activity_comment').value = oldText
+            document.getElementById('activity_button').innerHTML = 'Update'
         }
 
     </script>

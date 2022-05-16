@@ -13,6 +13,7 @@ use App\Models\TrainingReport;
 use App\Models\TrainingExamination;
 use App\Models\TrainingInterest;
 use App\Models\User;
+use App\Http\Controllers\TrainingActivityController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -204,7 +205,7 @@ class TrainingController extends Controller
         return view('training.create', compact('students', 'ratings', 'types', 'prefillUserId'));
     }
 
-
+    
     /**
      * Store a newly created resource in storage.
      *
@@ -289,11 +290,12 @@ class TrainingController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
+        $activities = $training->activities->sortByDesc('created_at');
 
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();     
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'trainingInterests', 'activeTrainingInterest'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest'));
     }
 
     /**
@@ -359,6 +361,10 @@ class TrainingController extends Controller
         ' ― New Training type: '.TrainingController::$types[$training->type]['text'].
         ' ― English only: '. ($training->english_only_training ? 'true' : 'false'));
 
+        if($preChangeType != $training->type){
+            TrainingActivityController::create($training->id, 'TYPE', $training->type, $preChangeType, Auth::user()->id);
+        }
+
         return redirect($training->path())->withSuccess("Training successfully updated");
     }
 
@@ -377,6 +383,10 @@ class TrainingController extends Controller
         $attributes = $this->validateUpdateDetails();
         if (key_exists('status', $attributes)) {
             $training->updateStatus($attributes['status']);
+
+            if($attributes['status'] != $oldStatus){
+                TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id);
+            }
         }
 
         $notifyOfNewMentor = false;
@@ -388,12 +398,15 @@ class TrainingController extends Controller
 
                     // Notify student of their new mentor
                     $notifyOfNewMentor = true;
+
+                    TrainingActivityController::create($training->id, 'MENTOR', $mentor);
                 }
             }
 
             foreach ($training->mentors as $mentor) {
                 if (!in_array($mentor->id, (array) $attributes['mentors'])) {
                     $training->mentors()->detach($mentor);
+                    TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id);
                 }
             }
 
@@ -401,8 +414,13 @@ class TrainingController extends Controller
             if($notifyOfNewMentor) $training->user->notify(new TrainingMentorNotification($training));
 
             unset($attributes['mentors']);
-        } else if (Auth::user()->isModerator()) { // XXX This is really hack since we don't send this attribute when mentors submit
+        } else if (Auth::user()->isModeratorOrAbove()) { // XXX This is really hack since we don't send this attribute when mentors submit
             // Detach all if no passed key, as that means the list is empty
+
+            foreach($training->mentors as $mentor){
+                TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id);
+            }
+
             $training->mentors()->detach();
         }
 
@@ -410,6 +428,7 @@ class TrainingController extends Controller
         if(isset($attributes['paused_at'])){
             
             !isset($training->paused_at) ? $attributes["paused_at"] = Carbon::now() : $attributes["paused_at"] = $training->paused_at;
+            TrainingActivityController::create($training->id, 'PAUSE', 1, null, Auth::user()->id);
 
         } else {
             // If paused is unchecked but training is paused, sum up the length and unpause.
@@ -419,12 +438,14 @@ class TrainingController extends Controller
             }
 
             $attributes["paused_at"] = NULL;
+            TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
         }
 
         // If training is closed, force to unpause
         if((int)$training->status != $oldStatus){
             if((int)$training->status < 0){
                 $attributes["paused_at"] = NULL;
+                TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
             }
         }
 

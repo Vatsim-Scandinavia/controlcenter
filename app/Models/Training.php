@@ -210,6 +210,16 @@ class Training extends Model
     }
 
     /**
+     * Get training activites log of this training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function activities()
+    {
+        return $this->hasMany(TrainingActivity::class);
+    }
+
+    /**
      * Get the one time link associated with the training
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

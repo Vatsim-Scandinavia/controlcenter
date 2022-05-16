@@ -97,6 +97,11 @@ class User extends Authenticatable
         return $this->hasMany(Training::class);
     }
 
+    public function trainingActivities()
+    {
+        return $this->hasMany(TrainingActivity::class);
+    }
+
     public function teaches()
     {
         return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');

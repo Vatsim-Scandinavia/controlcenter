@@ -112,6 +112,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/training/examination/{examination}', 'TrainingExaminationController@update')->name('training.examination.update');
     Route::get('/training/examination/{examination}/delete', 'TrainingExaminationController@destroy')->name('training.examination.delete');
 
+    Route::post('/training/activity/comment', 'TrainingActivityController@storeComment')->name('training.activity.comment');
+
     Route::get('/files/{file}', 'FileController@get')->name('file.get');
     Route::post('/files', 'FileController@store')->name('file.store');
     Route::delete('/files/{file}', 'FileController@destroy')->name('file.delete');
