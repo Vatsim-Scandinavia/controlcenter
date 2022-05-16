@@ -25,6 +25,8 @@ class TrainingActivityController extends Controller
         $activity->triggered_by_id = $userId;
         $activity->comment = $comment;
         $activity->save();
+
+        return $activity;
     }
 
     /**

@@ -46,14 +46,22 @@
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;
 
-                                    @if($training->notes)
+                                    @if($training->activities->where('type', 'COMMENT')->count())
+
+                                        @php
+                                            $notes = "";
+                                            foreach($training->activities->where('type', 'COMMENT') as $a){
+                                                $notes .= $a->created_at->toEuropeanDate().': '.$a->comment.'&#013;';
+                                            }
+                                        @endphp
+
                                         <a 
                                             href="/training/{{ $training->id }}"
                                             class="link-tooltip" 
                                             data-toggle="tooltip" 
                                             data-html="true" 
                                             data-placement="right" 
-                                            title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $training->notes) }}"
+                                            title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $notes) }}"
                                             >
                                             {{ $statuses[$training->status]["text"] }}
                                         </a>

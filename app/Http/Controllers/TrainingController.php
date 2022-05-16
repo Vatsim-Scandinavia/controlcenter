@@ -233,12 +233,15 @@ class TrainingController extends Controller
         $training = Training::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
             'area_id' => $data['training_area'],
-            'notes' => isset($data['comment']) ? 'Comment from application: '.$data['comment'] : '',
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,
             'english_only_training' => key_exists("englishOnly", $data) ? true : false,
             'type' => isset($data['type']) ? $data['type'] : 1
         ]);
+
+        if(isset($data['comment'])){
+            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: '.$training->notes);
+        }
 
         if($ratings->count() > 1){
             $training->ratings()->saveMany($ratings);
@@ -571,7 +574,6 @@ class TrainingController extends Controller
             'training_area' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
             'type' => 'sometimes|integer',
-            'notes' => 'nullable',
             'mentors' => 'sometimes',
             'closed_reason' => 'sometimes|max:50',
         ]);

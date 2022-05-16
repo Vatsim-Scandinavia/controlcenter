@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Training;
+use App\Http\Controllers\TrainingActivityController;
 
 return new class extends Migration
 {
@@ -25,6 +27,18 @@ return new class extends Migration
 
             $table->foreign('training_id')->references('id')->on('trainings')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('triggered_by_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('SET NULL');
+        });
+
+        // Delete the old internal notes in favor of this one, but lets back it up first into new solution
+
+        foreach(Training::all() as $training){
+            $ta = TrainingActivityController::create($training->id, 'COMMENT', null, null, null, $training->notes);
+            // Set created time last time the training was updated, so somewhat match it.
+            $ta->save(['created_at' => $training->updated_at]);
+        }
+
+        Schema::table('trainings', function (Blueprint $table) {
+            $table->dropColumn('notes');
         });
     }
 

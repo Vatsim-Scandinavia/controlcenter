@@ -37,7 +37,6 @@ class TrainingFactory extends Factory
             'status' => $status,
             'area_id' => 1,
             'motivation' => $this->faker->paragraph(15, false),
-            'notes' => $this->faker->paragraph(1, false),
             'english_only_training' => false,
             'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 years'),
             'updated_at' => \Carbon\Carbon::now(),
