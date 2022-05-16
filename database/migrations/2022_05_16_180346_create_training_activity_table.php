@@ -32,9 +32,11 @@ return new class extends Migration
         // Delete the old internal notes in favor of this one, but lets back it up first into new solution
 
         foreach(Training::all() as $training){
-            $ta = TrainingActivityController::create($training->id, 'COMMENT', null, null, null, $training->notes);
-            // Set created time last time the training was updated, so somewhat match it.
-            $ta->save(['created_at' => $training->updated_at]);
+            if(!empty($training->notes)){
+                $ta = TrainingActivityController::create($training->id, 'COMMENT', null, null, null, $training->notes);
+                // Set created time last time the training was updated, so somewhat match it.
+                $ta->save(['created_at' => $training->updated_at]);
+            }
         }
 
         Schema::table('trainings', function (Blueprint $table) {
