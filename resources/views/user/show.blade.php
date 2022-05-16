@@ -41,7 +41,7 @@
                             @if($key == "pilot")
                                 <dd class="mb-0">Pilot: {{ round($stat) }}h</dd>
                             @elseif($key != "id" && $key != "pilot" && $key != "atc")
-                                <dd class="mb-0">{{ strtoupper($key) }}: {{ round($stat) }}h</dd>
+                                <dd class="mb-0">{{ str($key)->upper() }}: {{ round($stat) }}h</dd>
                             @endif
                         @endif
                     @endforeach
@@ -187,7 +187,7 @@
                                     <i class="fas fa-circle-check text-success" data-toggle="tooltip" data-placement="top" title="Active"></i>
                                 @endif
 
-                                {{ ($endorsement->type == "MASC") ? 'MA/SC' : ucfirst(strtolower($endorsement->type)) }} Endorsement
+                                {{ ($endorsement->type == "MASC") ? 'MA/SC' : str($endorsement->type)->lower()->ucfirst() }} Endorsement
 
                                 @can('delete', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
                                     <a href="/endorsements/{{ $endorsement['id'] }}/delete" class="text-muted float-right hover-red" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>

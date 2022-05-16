@@ -58,12 +58,12 @@ class VatbookController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->local_id = floor($user->id / (date('z') + 1));
-        $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->callsign = str($data['position'])->upper();
+        $booking->position_id = Position::all()->firstWhere('callsign', str($data['position'])->upper())->id;
         $booking->name = $user->name;
         $booking->cid = $user->id;
         $booking->user_id = $user->id;
-        $booking->source = strtoupper($data['source']);
+        $booking->source = str($data['source'])->upper();
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
@@ -239,8 +239,8 @@ class VatbookController extends Controller
         $vatbook->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $vatbook->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
-        $vatbook->callsign = strtoupper($data['position']);
-        $vatbook->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $vatbook->callsign = str($data['position'])->upper();
+        $vatbook->position_id = Position::all()->firstWhere('callsign', str($data['position'])->upper())->id;
 
         if ($vatbook->time_start === $vatbook->time_end) {
             return response()->json([
