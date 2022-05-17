@@ -15,7 +15,7 @@ Just clone this repository and you're almost ready. First, make sure you've inst
 
 1. Upload your logo and optionally a email specific logo to `/public/images/logos/`
 2. Run `./deploy init` to setup the required files
-3. Configure the .env file accordingly, including logos and simple theming.
+3. Copy and configure the .env file accordingly, including logos and simple theming.
 4. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
 5. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
 

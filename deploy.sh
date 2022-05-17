@@ -8,17 +8,39 @@
 
 COMMAND=$1
 
-# Turn maintenance mode on
-php artisan down --render="errors.maintenance"
+# Run the supported PHP versions or work backwards to the one we find. Useful in environments with more versions installed
+function run_php () {
+    if [ -f "/usr/bin/php8.1" ]; then
+        /usr/bin/php8.1 $@
+    elif [ -f "/usr/local/bin/php8.1" ]; then
+        /usr/bin/php8.0 $@
+    elif [ -f "/usr/bin/php8.0" ]; then
+        /usr/bin/php8.1 $@
+    elif [ -f "/usr/local/bin/php8.0" ]; then
+        /usr/bin/php8.0 $@
+    else
+        php $@
+    fi
+}
+
+# Print out the version for reference in console
+run_php -v
+
+# Turn maintenance mode on, unless it's the initial run
+if [ "$COMMAND" != "init" ]; then 
+    run_php artisan down --render="errors.maintenance"
+fi
 
 # Pull latest from Git
 git pull
 
-# Create  env if it doesn't work
-php -r "file_exists('.env') || copy('.env.example', '.env');"
-
 # Install dependecies
-composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+if [ "$COMMAND" = "dev" ]; then 
+    composer install
+else
+    composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+fi
+
 composer dump-autoload
 
 if [ "$COMMAND" = "dev" ]; then 
@@ -33,10 +55,10 @@ fi
 chmod -R 777 storage bootstrap/cache
 
 # Artisan magic
-php artisan migrate
+run_php artisan migrate
 
 # Clear All Cache
-php artisan optimize:clear
+run_php artisan optimize:clear
 
 if [ "$COMMAND" = "dev" ]; then
 
@@ -46,7 +68,10 @@ if [ "$COMMAND" = "dev" ]; then
 elif [ "$COMMAND" = "init" ]; then
 
     # Generate PHP key
-    php artisan key:generate
+    run_php artisan key:generate
+
+    # Create front-end assets
+    npm run dev
 
 else
 
@@ -56,6 +81,8 @@ else
 fi
 
 # Turn maintenance mode off
-php artisan up
+if [ "$COMMAND" != "init" ]; then 
+    run_php artisan up
+fi
 
  
