@@ -23,4 +23,5 @@ else
     else
         echo "Running deployment into $ENV and '$CONTAINER' container..."
         docker exec -it $CONTAINER bash .docker/deploy.sh $ENV
+    fi
 fi
