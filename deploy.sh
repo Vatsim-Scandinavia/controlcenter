@@ -36,12 +36,12 @@ git pull
 
 # Install dependecies
 if [ "$COMMAND" = "dev" ]; then 
-    composer install
+    run_php composer install
 else
-    composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+    run_php composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 fi
 
-composer dump-autoload
+run_php composer dump-autoload
 
 if [ "$COMMAND" = "dev" ]; then 
     # Install all dependecies
