@@ -2,87 +2,25 @@
 # deploy.sh
 #
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# Easy deploy script for manual deployment
+# Run deployment inside the docker container
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 #
 
-COMMAND=$1
+ENV=$1
+CONTAINER=$2
 
-# Run the supported PHP versions or work backwards to the one we find. Useful in environments with more versions installed
-function run_php () {
-    if [ -e "/usr/bin/php8.1" ]; then
-        /usr/bin/php8.1 $@
-    elif [ -e "/usr/local/bin/php8.1" ]; then
-        /usr/local/bin/php8.0 $@
-    elif [ -e "/usr/bin/php8.0" ]; then
-        /usr/bin/php8.1 $@
-    elif [ -e "/usr/local/bin/php8.0" ]; then
-        /usr/local/bin/php8.0 $@
+# Check if we have a docker file
+if [ -z "$ENV" ]
+then
+    # Don't allow not specifying environment
+    echo "Invalid argument count. Usage: ./deploy.sh <init/dev/prod> <container name, leave blank for default>"
+else
+    # Run in default container or none of them
+    if [ -z "$CONTAINER" ]
+    then
+        echo "Running deployment into $ENV and 'control-center' container..."
+        docker exec -it control-center bash .docker/deploy.sh $ENV
     else
-        php $@
-    fi
-}
-
-# Print out the version for reference in console
-run_php -v
-
-# Turn maintenance mode on, unless it's the initial run
-if [ "$COMMAND" != "init" ]; then 
-    run_php artisan down --render="errors.maintenance"
+        echo "Running deployment into $ENV and '$CONTAINER' container..."
+        docker exec -it $CONTAINER bash .docker/deploy.sh $ENV
 fi
-
-# Pull latest from Git
-git pull
-
-# Install dependecies
-if [ "$COMMAND" = "dev" ]; then 
-    run_php /usr/local/bin/composer install
-else
-    run_php /usr/local/bin/composer install -q --no-dev --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
-fi
-
-run_php /usr/local/bin/composer dump-autoload
-
-if [ "$COMMAND" = "dev" ]; then 
-    # Install all dependecies
-    npm install
-else
-    #Install without dev dependecies
-    npm ci --production
-fi
-
-# Adjust directory permissions
-chmod -R 777 storage bootstrap/cache
-
-# Artisan magic
-run_php artisan migrate
-
-# Clear All Cache
-run_php artisan optimize:clear
-
-if [ "$COMMAND" = "dev" ]; then
-
-    # Create front-end assets
-    npm run dev
-
-elif [ "$COMMAND" = "init" ]; then
-
-    # Generate PHP key
-    run_php artisan key:generate
-
-    # Create front-end assets
-    npm run dev
-
-else
-
-    # Create front-end assets
-    npm run prod
-
-fi
-
-# Turn maintenance mode off
-if [ "$COMMAND" != "init" ]; then 
-    run_php artisan up
-fi
-
- 
