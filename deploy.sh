@@ -10,14 +10,14 @@ COMMAND=$1
 
 # Run the supported PHP versions or work backwards to the one we find. Useful in environments with more versions installed
 function run_php () {
-    if [ -f "/usr/bin/php8.1" ]; then
+    if [ -e "/usr/bin/php8.1" ]; then
         /usr/bin/php8.1 $@
-    elif [ -f "/usr/local/bin/php8.1" ]; then
-        /usr/bin/php8.0 $@
-    elif [ -f "/usr/bin/php8.0" ]; then
+    elif [ -e "/usr/local/bin/php8.1" ]; then
+        /usr/local/bin/php8.0 $@
+    elif [ -e "/usr/bin/php8.0" ]; then
         /usr/bin/php8.1 $@
-    elif [ -f "/usr/local/bin/php8.0" ]; then
-        /usr/bin/php8.0 $@
+    elif [ -e "/usr/local/bin/php8.0" ]; then
+        /usr/local/bin/php8.0 $@
     else
         php $@
     fi
