@@ -99,7 +99,7 @@
                     <dd>{{ $training->area->name }}</dd>
 
                     <dt>Mentor</dt>
-                    <dd class="separator pb-3">{{ $training->getInlineMentors() }}</dd>
+                    <dd class="separator pb-3">{{ !empty($training->getInlineMentors()) ? $training->getInlineMentors() : '-' }}</dd>
 
                     <dt class="pt-2">Period</dt>
                     <dd>
@@ -602,7 +602,7 @@
             event.preventDefault();
             $(this).prop('disabled', true);
             let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
-            $(this).prop('disabled', false);
+            $(this).prop('disabled', false);document.getElementById('otl-link-copy-btn').onclick = function(){console.log(route); navigator.clipboard.writeText(route)}
 
             document.getElementById('otl-alert').style.display = "block";
             document.getElementById('otl-type').innerHTML = "Examination Report";
