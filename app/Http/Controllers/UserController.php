@@ -69,7 +69,7 @@ class UserController extends Controller
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        $endorsements = $user->endorsements;
+        $endorsements = $user->endorsements->sortByDesc('valid_to');
         $userHours = DB::table('atc_activity')->where('user_id', $user->id)->first();
         if(isset($userHours)) $userHours = $userHours->atc_hours;
 
