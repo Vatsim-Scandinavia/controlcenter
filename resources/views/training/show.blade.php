@@ -220,67 +220,69 @@
             <div class="timeline">
                 <ul class="sessions">
                     @foreach($activities as $activity)
-                        <li>
-                            <div class="time">
-                                @if($activity->type == "STATUS" || $activity->type == "TYPE")
-                                    <i class="fas fa-right-left"></i>
-                                @elseif($activity->type == "MENTOR")
-                                    @if($activity->new_data)
-                                        <i class="fas fa-user-plus"></i>
-                                    @elseif($activity->old_data)
-                                        <i class="fas fa-user-minus"></i>
+                        @can('view', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id), $activity->type])
+                            <li>
+                                <div class="time">
+                                    @if($activity->type == "STATUS" || $activity->type == "TYPE")
+                                        <i class="fas fa-right-left"></i>
+                                    @elseif($activity->type == "MENTOR")
+                                        @if($activity->new_data)
+                                            <i class="fas fa-user-plus"></i>
+                                        @elseif($activity->old_data)
+                                            <i class="fas fa-user-minus"></i>
+                                        @endif
+                                    @elseif($activity->type == "PAUSE")
+                                        <i class="fas fa-circle-pause"></i>
+                                    @elseif($activity->type == "ENDORSEMENT")
+                                        <i class="fas fa-check-square"></i>
+                                    @elseif($activity->type == "COMMENT")
+                                        <i class="fas fa-comment"></i>
                                     @endif
-                                @elseif($activity->type == "PAUSE")
-                                    <i class="fas fa-circle-pause"></i>
-                                @elseif($activity->type == "ENDORSEMENT")
-                                    <i class="fas fa-check-square"></i>
-                                @elseif($activity->type == "COMMENT")
-                                    <i class="fas fa-comment"></i>
-                                @endif
-                                
-                                @isset($activity->triggered_by_id)
-                                    {{ \App\Models\User::find($activity->triggered_by_id)->name }} —
-                                @endisset
+                                    
+                                    @isset($activity->triggered_by_id)
+                                        {{ \App\Models\User::find($activity->triggered_by_id)->name }} —
+                                    @endisset
 
-                                {{ $activity->created_at->toEuropeanDateTime() }}
-                                @can('comment', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id)])
-                                    @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
-                                        <button class="btn btn-sm float-right" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
-                                    @endif
-                                @endcan
-                            </div>
-                            <p> 
+                                    {{ $activity->created_at->toEuropeanDateTime() }}
+                                    @can('comment', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id)])
+                                        @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
+                                            <button class="btn btn-sm float-right" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
+                                        @endif
+                                    @endcan
+                                </div>
+                                <p> 
 
-                                @if($activity->type == "STATUS")
-                                    Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                    to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
-                                @elseif($activity->type == "TYPE")
-                                    Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                    to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
-                                @elseif($activity->type == "MENTOR")
-                                    @if($activity->new_data)
-                                        <span class="badge badge-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
-                                    @elseif($activity->old_data)
-                                    <span class="badge badge-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
-                                    @endif
-                                @elseif($activity->type == "PAUSE")
-                                    @if($activity->new_data)
-                                        Training paused
-                                    @else
-                                        Training unpaused
-                                    @endif
-                                @elseif($activity->type == "ENDORSEMENT")
-                                    <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
-                                @elseif($activity->type == "COMMENT")
-                                    {{ $activity->comment }}
+                                    @if($activity->type == "STATUS")
+                                        Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                    @elseif($activity->type == "TYPE")
+                                        Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                    @elseif($activity->type == "MENTOR")
+                                        @if($activity->new_data)
+                                            <span class="badge badge-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                        @elseif($activity->old_data)
+                                        <span class="badge badge-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                        @endif
+                                    @elseif($activity->type == "PAUSE")
+                                        @if($activity->new_data)
+                                            Training paused
+                                        @else
+                                            Training unpaused
+                                        @endif
+                                    @elseif($activity->type == "ENDORSEMENT")
+                                        <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
+                                    @elseif($activity->type == "COMMENT")
+                                        {{ $activity->comment }}
 
-                                    @if($activity->created_at != $activity->updated_at)
-                                        <span class="text-muted">(edited)</span>
+                                        @if($activity->created_at != $activity->updated_at)
+                                            <span class="text-muted">(edited)</span>
+                                        @endif
                                     @endif
-                                @endif
 
-                            </p>
-                        </li>
+                                </p>
+                            </li>
+                        @endcan
                     @endforeach
                     <li>
                         <div class="time">
