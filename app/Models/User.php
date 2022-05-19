@@ -352,10 +352,10 @@ class User extends Authenticatable
     {
 
         if ($area == null) {
-            return $this->endorsements->where('type', 'EXAMINER')->first()->exists();
+            return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->first()->exists();
         }
 
-        return $this->endorsements->where('type', 'EXAMINER')->first()->areas()->wherePivot('area_id', 2)->get()->first()->exists();
+        return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->first()->areas()->wherePivot('area_id', 2)->first()->exists();
     }
 
     /**

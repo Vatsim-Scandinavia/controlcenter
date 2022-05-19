@@ -21,7 +21,7 @@ class TrainingExaminationPolicy
      */
     public function view(User $user, TrainingExamination $examination)
     {
-        return $user->isModeratorOrAbove() || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->is($examination->examiner));
+        return $user->isModeratorOrAbove() || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->isExaminer());
     }
 
     /**
@@ -38,7 +38,7 @@ class TrainingExaminationPolicy
         }
 
         // Check if mentor is examiner in the area, not filling their own training and the training is awaiting an exam.
-        return $training->area->examiners->contains($user) && $user->isNot($training->user);
+        return $user->isExaminer() && $user->isNot($training->user);
     }
 
     /**
@@ -50,7 +50,7 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
-        return $examination->draft ? ($user->isModeratorOrAbove($examination->training->area) || $user->is($examination->examiner)) : $user->isModeratorOrAbove($examination->training->area);
+        return $examination->draft ? ($user->isModeratorOrAbove($examination->training->area) || $user->isExaminer()) : $user->isModeratorOrAbove($examination->training->area);
     }
 
     /**
