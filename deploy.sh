@@ -16,7 +16,7 @@ then
     echo "Missing environment argument. Usage: ./deploy.sh <init/dev/prod> <container name>"
     exit 0
 else
-    # Run in default container or none of them
+    # Don't allow not specificing container to avoid running in wrong environment
     if [ -z "$CONTAINER" ]
     then
         echo "Missing container name argument. Usage: ./deploy.sh <init/dev/prod> <container name>"
