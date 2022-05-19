@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -340,6 +341,22 @@ class User extends Authenticatable
     public function hasActiveEndorsement(String $type)
     {
         return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->get()->count();
+    }
+
+    /**
+     * Return if the user has recently finished a training
+     *
+     * @param String $type
+     * @return boolean
+     */
+    public function hasRecentlyCompletedTraining()
+    {
+        $training = $this->trainings->where('status', -1)->where('closed_at', '>', Carbon::now()->subDays(7))->first();
+
+        if($training == null) return false;
+        if($training->isMaeTraining()) return false;
+
+        return true;
     }
 
     /**

@@ -57,7 +57,8 @@ class DashboardController extends Controller
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        $atcInactiveMessage = ((in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active));
+        $atcInactiveMessage = ((in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active) && !$user->hasRecentlyCompletedTraining());
+        $completedTrainingMessage = $user->hasRecentlyCompletedTraining();
 
         $workmailRenewal = (isset($user->setting_workmail_expire)) ? (Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7) : false;
 
@@ -67,7 +68,7 @@ class DashboardController extends Controller
         $atcHoursDB = DB::table('atc_activity')->where('user_id', $user->id)->get()->first();
         $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'activeVote', 'atcHours', 'workmailRenewal'));
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal'));
     }
 
     /**

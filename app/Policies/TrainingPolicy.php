@@ -91,6 +91,11 @@ class TrainingPolicy
             return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to ".$subdiv);
         }
 
+        // Don't accept while user waits for rating upgrade or it's been less than 7 days
+        if($user->hasRecentlyCompletedTraining()){
+            return Response::deny("Please wait 7 days after completed training to request a new training.");
+        }
+
         // Not active users are forced to ask for a manual creation of refresh
         if(!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active){
             return Response::deny("Your ATC rating is inactive in {$divisionName}");
