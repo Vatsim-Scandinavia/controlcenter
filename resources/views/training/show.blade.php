@@ -29,7 +29,7 @@
 <div id="otl-alert" class="alert alert-info" style="display: none" role="alert">
     <b id="otl-type"></b><br>
     <i class="fa fa-clock"></i>&nbsp;Valid for 7 days<br>
-    <i class="fa fa-link"></i>&nbsp;<a id="otl-link" href=""></a>
+    <i class="fa fa-link"></i>&nbsp;<a id="otl-link" href=""></a>&nbsp;<button type="button" id="otl-link-copy-btn" class="btn btn-sm"><i class="fas fa-copy"></i></button>
 </div>
 
 <div class="row">
@@ -67,7 +67,7 @@
                 @can('edit', [\App\Models\Training::class, $training])
                     <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon float-right"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
                 @endcan
-                <dl>
+                <dl class="copyable">
                     <dt>State</dt>
                     <dd><i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}</dd>
 
@@ -90,10 +90,10 @@
                     </dd>
                
                     <dt class="pt-2">Vatsim ID</dt>
-                    <dd><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></dd>
+                    <dd><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a><button type="button" onclick="navigator.clipboard.writeText('{{ $training->user->id }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt>Name</dt>
-                    <dd class="separator pb-3"><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></dd>
+                    <dd class="separator pb-3"><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a><button type="button" onclick="navigator.clipboard.writeText('{{ $training->user->first_name.' '.$training->user->last_name }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt class="pt-2">Area</dt>
                     <dd>{{ $training->area->name }}</dd>
@@ -594,6 +594,7 @@
             document.getElementById('otl-type').innerHTML = "Training Report one-time link";
             document.getElementById('otl-link').href = route
             document.getElementById('otl-link').innerHTML = route
+            document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
         });
 
         // Generate a one time exam report link
@@ -607,6 +608,7 @@
             document.getElementById('otl-type').innerHTML = "Examination Report";
             document.getElementById('otl-link').href = route
             document.getElementById('otl-link').innerHTML = route
+            document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
         });
 
         async function getOneTimeLink(type) {
