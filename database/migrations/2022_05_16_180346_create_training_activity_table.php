@@ -30,7 +30,6 @@ return new class extends Migration
         });
 
         // Delete the old internal notes in favor of this one, but lets back it up first into new solution
-
         foreach(Training::all() as $training){
             if(!empty($training->notes)){
                 $ta = TrainingActivityController::create($training->id, 'COMMENT', null, null, null, $training->notes);
