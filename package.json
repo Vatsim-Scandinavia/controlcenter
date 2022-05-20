@@ -2,12 +2,12 @@
     "private": true,
     "scripts": {
         "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
+        "development": "npx mix",
+        "watch": "npx mix watch",
+        "watch-poll": "npx mix watch -- --watch-options-poll=1000",
+        "hot": "npx mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "npx mix --production"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.1.1",
