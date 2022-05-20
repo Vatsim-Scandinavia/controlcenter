@@ -28,38 +28,62 @@
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">ATC Active</th>
-                                @foreach($areas as $a)
-                                    <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $a->name }}</th>
+                                @foreach($ratings as $r)
+                                    <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $r->name }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($endorsements as $e)
+                            @foreach($users as $u)
                                 <tr>
                                     <td>
-                                        @can('view', $e->user)
-                                            <a href="{{ route('user.show', $e->user->id) }}">{{ $e->user->name }} ({{ $e->user->id }})</a>
+                                        @can('view', $u)
+                                            <a href="{{ route('user.show', $u->id) }}">{{ $u->name }} ({{ $u->id }})</a>
                                         @else
-                                            {{ $e->user->name }} ({{ $e->user->id }})
+                                            {{ $u->name }} ({{ $u->id }})
                                         @endcan
                                     </td>
-                                    <td class="text-center text-white {{ $e->user->active ? 'bg-success' : 'bg-danger' }}">
-                                        @if($e->user->active)
+                                    <td class="text-center text-white {{ $u->active ? 'bg-success' : 'bg-danger' }}">
+                                        @if($u->active)
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @else
                                             <i class="fas fa-times-circle"></i><span class="d-none">No</span>
                                         @endif
                                     </td>
 
-                                    @foreach($areas as $a)
-                                        @if($e->ratings->first()->id == $a->id)
-                                            <td class="text-center bg-success text-white">
-                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                            </td>
-                                        @else
+                                    @foreach($ratings as $r)
+                                        @php $found = false; @endphp
+                                        @foreach($u->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false) as $e)
+                                            @if($e->ratings->first()->id == $r->id)
+                                                <td class="text-center bg-success text-white">
+                                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                                </td>
+                                                @php $found = true; @endphp
+                                            @endif
+                                        @endforeach
+
+                                        @if(!$found)
                                             <td></td>
                                         @endif
                                     @endforeach
+
+{{--                                     @foreach($ratings as $r)
+                                        @foreach($u->endorsements as $e)
+                                            @if($e->type == "MASC")
+                                                @if($e->count())
+                                                    @if($e->ratings->first()->id == $r->id)
+                                                        <td class="text-center bg-success text-white">
+                                                             // 
+                                                            {{ $e->ratings->first()->id }}
+                                                            <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                                        </td>
+                                                    @endif
+                                                @else
+                                                    <td></td>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    @endforeach --}}
                                     
                                 </tr>
                             @endforeach

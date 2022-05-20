@@ -10,6 +10,7 @@ use App\Models\Area;
 use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class EndorsementController extends Controller
 {
@@ -20,11 +21,10 @@ class EndorsementController extends Controller
      */
     public function indexMascs()
     {
+        $users = User::whereHas('endorsements', function (Builder $query){ $query->where('type', 'MASC'); })->get();
+        $ratings = Rating::whereNull('vatsim_rating')->get();
 
-        $endorsements = Endorsement::where('type', 'MASC')->where('revoked', false)->get();
-        $areas = Rating::whereNull('vatsim_rating')->get();
-
-        return view('endorsements.mascs', compact('endorsements', 'areas'));
+        return view('endorsements.mascs', compact('users', 'ratings'));
     }
 
     /**
