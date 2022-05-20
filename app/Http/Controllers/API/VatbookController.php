@@ -156,7 +156,7 @@ class VatbookController extends Controller
 
         $url = $this->getVatsimBookingUrl('post');
         $response = $this->makeHttpRequest($client, $url, 'post', [
-            'callsign' => $booking->callsign,
+            'callsign' => (string)$booking->callsign,
             'cid' => $booking->cid,
             'type' => $type,
             'start' => $booking->time_start->format('Y-m-d H:i:s'),
@@ -329,7 +329,7 @@ class VatbookController extends Controller
         $client = new \GuzzleHttp\Client();
         $url = $this->getVatsimBookingUrl('put', $vatbook->vatsim_booking);
         $response = $this->makeHttpRequest($client, $url, 'put', [
-            'callsign' => $vatbook->callsign,
+            'callsign' => (string)$vatbook->callsign,
             'cid' => $vatbook->cid,
             'type' => $type,
             'start' => $vatbook->time_start->format('Y-m-d H:i:s'),
