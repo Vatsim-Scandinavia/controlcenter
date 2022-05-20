@@ -45,7 +45,7 @@
                             @endif
                         @endif
                     @endforeach
-                    @if($vatsimStats->count() == 0)
+                    @if(count((array)$vatsimStats) == 0)
                         <dd>No data</dd>
                     @endif
 
