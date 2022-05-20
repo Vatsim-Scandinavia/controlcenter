@@ -22,7 +22,7 @@ return new class extends Migration
             $table->enum('type', ['STATUS', 'TYPE', 'MENTOR', 'PAUSE', 'ENDORSEMENT', 'COMMENT']);
             $table->bigInteger('old_data')->nullable();
             $table->bigInteger('new_data')->nullable();
-            $table->string('comment')->nullable();
+            $table->text('comment')->nullable();
             $table->timestamps();
 
             $table->foreign('training_id')->references('id')->on('trainings')->onUpdate('CASCADE')->onDelete('CASCADE');

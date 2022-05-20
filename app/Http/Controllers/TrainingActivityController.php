@@ -40,7 +40,7 @@ class TrainingActivityController extends Controller
     {
         $data = request()->validate([
             'training_id' => 'required|exists:App\Models\Training,id',
-            'comment' => 'required|string',
+            'comment' => 'required|string|max:255',
             'update_id' => 'nullable'
         ]);
 
