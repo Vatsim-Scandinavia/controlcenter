@@ -14,7 +14,7 @@ The project is open source and contains some restirctions. Read the [LICENSE.md]
 Just clone this repository and you're almost ready. First, make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) in your environment.
 
 1. Upload your logo and optionally a email specific logo to `/public/images/logos/`
-2. Run `./deploy init` to setup the required files
+2. Run `./deploy init <container name>` to setup the required files, if you're not using container run the deploy.sh located in `.docker` folder instead.
 3. Copy and configure the .env file accordingly, including logos and simple theming.
 4. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
 5. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
@@ -27,7 +27,7 @@ To have Control Center reflect your division correctly, you need to do some twea
 
 ## Deployment
 
-To deploy in development environment use `./deploy dev`, in production use `./deploy`. This will automatically put the site in maintenance mode while it's deploying and open back up when finished.
+To deploy in development environment use `./deploy dev <container name>`, in production use `./deploy prod <container name>`. This will automatically put the site in maintenance mode while it's deploying and open back up when finished.
 
 ## Using the API
 There's an Control Center API that you can use to
