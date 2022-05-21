@@ -67,24 +67,6 @@
                                             <td></td>
                                         @endif
                                     @endforeach
-
-{{--                                     @foreach($ratings as $r)
-                                        @foreach($u->endorsements as $e)
-                                            @if($e->type == "MASC")
-                                                @if($e->count())
-                                                    @if($e->ratings->first()->id == $r->id)
-                                                        <td class="text-center bg-success text-white">
-                                                             // 
-                                                            {{ $e->ratings->first()->id }}
-                                                            <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                                        </td>
-                                                    @endif
-                                                @else
-                                                    <td></td>
-                                                @endif
-                                            @endif
-                                        @endforeach
-                                    @endforeach --}}
                                     
                                 </tr>
                             @endforeach
