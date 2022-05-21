@@ -47,7 +47,7 @@
                                         @if($u->active)
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @else
-                                            <i class="fas fa-times-circle"></i><span class="d-none">No</span>
+                                            <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>
                                         @endif
                                     </td>
 
