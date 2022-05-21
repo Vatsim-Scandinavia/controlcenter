@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SoloEndorsement;
 use App\Models\TrainingReport;
 use App\Models\TrainingInterest;
 use App\Models\User;

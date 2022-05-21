@@ -83,11 +83,6 @@ class User extends Authenticatable
         ->get();
     }
 
-    public function soloEndorsement()
-    {
-        return $this->hasOne(SoloEndorsement::class);
-    }
-
     public function endorsements()
     {
         return $this->hasMany(Endorsement::class);
