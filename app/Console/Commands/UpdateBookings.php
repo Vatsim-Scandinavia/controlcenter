@@ -47,7 +47,7 @@ class UpdateBookings extends Command
         foreach($raw->children() as $booking){
             if(!Position::where('callsign', $booking->callsign)->get()->isEmpty()) {
                 User::Where('id', $booking->cid)->get()->isEmpty() ? $uid = null : $uid = User::where('id', $booking->cid)->first()->id;
-                $booking->callsign = str($booking->callsign)->upper();
+                $booking->callsign = strtoupper($booking->callsign);
 
                 // If it doesn't exist lets just add the data source tag to it.
                 if(Vatbook::where('eu_id', $booking->id)->count()){
