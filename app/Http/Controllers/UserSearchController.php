@@ -26,8 +26,8 @@ class UserSearchController extends Controller
         if (strlen($query) >= 2) {
             $data = Handover::query()
                 ->select('id')
-                ->where(DB::raw('LOWER(id)'), 'like', '%'.str($query)->lower().'%')
-                ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%'.str($query)->lower().'%')
+                ->where(DB::raw('LOWER(id)'), 'like', '%'.strtolower($query).'%')
+                ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%'.strtolower($query).'%')
                 ->get();
 
             if ($data->count() <= 0)

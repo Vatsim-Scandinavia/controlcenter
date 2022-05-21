@@ -31,7 +31,7 @@
                             @foreach($logs as $log)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($log->created_at)->toEuropeanDateTime() }}</td>
-                                <td><span class="text-{{ str($log->type)->lower() }}">{{ $log->type }}</span></td>
+                                <td><span class="text-{{ strtolower($log->type) }}">{{ $log->type }}</span></td>
                                 <td>{{ $log->category }}</td>
                                 <td>
                                     @if(isset($log->user_id))
