@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class User extends Authenticatable
@@ -130,6 +131,11 @@ class User extends Authenticatable
 
     public function vote(){
         return $this->hasMany(Vote::class);
+    }
+
+    public function atchours(){
+        $atcHoursDB = DB::table('atc_activity')->where('user_id', $this->id)->get()->first();
+        return ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
     }
 
     // Get properties from Handover, the variable names here break with the convention.
