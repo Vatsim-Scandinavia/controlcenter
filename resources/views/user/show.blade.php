@@ -250,10 +250,6 @@
                                             <th>Areas</th>
                                             <td>{{ implode(', ', $endorsement->areas->pluck('name')->toArray()) }}</td>
                                         </tr>
-                                        <tr class="spacing">
-                                            <th>Extras</th>
-                                            <td>{{ implode(', ', $endorsement->ratings->pluck('name')->toArray()) }}</td>
-                                        </tr>
                                         <tr>
                                             <th>Issued</th>
                                             <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
