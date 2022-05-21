@@ -11,15 +11,17 @@ class VisitingController extends Controller
     public function index() {
         $data = collect();
 
-        foreach(Endorsement::where('type', 'VISITING')->get() as $endorsement){
+        foreach(Endorsement::where('type', 'VISITING')->where('revoked', false)->get() as $endorsement){
 
             $areas = collect();
             foreach($endorsement->areas as $area){
 
                 $maes = collect();
-                foreach($endorsement->ratings->whereNull('vatsim_rating') as $r){
-                    if($r->areas->first()->pivot->area_id == $area->id){
-                        $maes->push($r->name);
+                foreach($area->ratings->whereNull('vatsim_rating') as $r){
+                    foreach($endorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement){
+                        if($r->id == $mascEndorsement->ratings->first()->id){
+                            $maes->push($r->name);
+                        }
                     }
                 }
 

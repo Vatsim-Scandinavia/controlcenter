@@ -178,16 +178,6 @@
                         <span v-show="validationError && !areas.length" class="text-danger">Select one or more areas</span>
                     </div>
 
-                    {{-- Visiting Endorsement --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING'">
-                        <label for="visitingEndorsements">MA/SC Endorsements: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="visitingEndorsements[]" id="visitingEndorsements" v-model="visitingEndorsements">
-                            @foreach($ratingsMASC as $rating)
-                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
                     {{-- Training Checkbox --}}
                     <div class="form-check" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType == 'SOLO'">
                         <input class="form-check-input" type="checkbox" id="soloChecked" v-model="soloChecked">
@@ -236,7 +226,6 @@
             ratingGRP: null,
             ratingExaminate: null,
             areas: [],
-            visitingEndorsements: [],
             soloChecked: false,
             validationError: false,
             errSoloPositionCount: false,
@@ -272,8 +261,8 @@
 
                     Airport/Center -> Single MA/SC Rating
                     Training -> Type + Expire + Position (Multiple if S1)
-                    Examiner -> Multiple GRP Ratings + Areas
-                    Visitor -> Areas + Single GRP Rating + Multiple MA/SC Ratings
+                    Examiner -> GRP Ratings + Areas
+                    Visitor -> Areas + Single GRP Rating
 
                     Specials:
                     Positions: Only 1 for Solo.

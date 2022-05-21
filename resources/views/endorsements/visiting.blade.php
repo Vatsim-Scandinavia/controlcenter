@@ -34,21 +34,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($endorsements as $e)
+                            @foreach($endorsements as $visitingEndorsement)
                                 <tr>
                                     <td>
-                                        @can('view', $e->user)
-                                            <a href="{{ route('user.show', $e->user->id) }}">{{ $e->user->name }} ({{ $e->user->id }})</a>
+                                        @can('view', $visitingEndorsement->user)
+                                            <a href="{{ route('user.show', $visitingEndorsement->user->id) }}">{{ $visitingEndorsement->user->name }} ({{ $visitingEndorsement->user->id }})</a>
                                         @else
-                                            {{ $e->user->name }} ({{ $e->user->id }})
+                                            {{ $visitingEndorsement->user->name }} ({{ $visitingEndorsement->user->id }})
                                         @endcan
                                     </td>
-                                    <td>{{ $e->ratings->whereNotNull('vatsim_rating')->first()->name }}</td>
+                                    <td>{{ $visitingEndorsement->ratings->whereNotNull('vatsim_rating')->first()->name }}</td>
 
                                     @foreach($areas as $a)
                                         @php $count = 0; @endphp
 
-                                        @foreach($e->areas as $endorsedArea)
+                                        @foreach($visitingEndorsement->areas as $endorsedArea)
                                             @if($endorsedArea->id == $a->id)
 
                                                 @php $count++; @endphp
@@ -57,12 +57,13 @@
                                                     <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
 
                                                     {{-- Display the MASC endorsements connected to this area --}}
-                                                    @foreach($e->ratings->whereNull('vatsim_rating') as $r)
-                                                        @if($r->areas->first()->pivot->area_id == $a->id)
-                                                            <small class="d-block">{{ $r->name }}</small>
-                                                        @endif
+                                                    @foreach($endorsedArea->ratings->whereNull('vatsim_rating') as $areaRating)
+                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement)
+                                                            @if($areaRating->id == $mascEndorsement->ratings->first()->id)
+                                                                <small class="d-block">{{ $areaRating->name }}</small>
+                                                            @endif
+                                                        @endforeach
                                                     @endforeach
-
                                                 </td>
                                             @endif
                                         @endforeach

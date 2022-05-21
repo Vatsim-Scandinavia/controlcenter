@@ -248,7 +248,6 @@ class EndorsementController extends Controller
                 'user' => 'required|numeric|exists:App\Models\User,id',
                 'ratingGRP' => 'required|integer|exists:App\Models\Rating,id',
                 'areas' => 'required',
-                'visitingEndorsements' => 'nullable',
             ]);
             $user = User::find($data['user']);
 
@@ -261,16 +260,10 @@ class EndorsementController extends Controller
             // Attach ratings and areas
             $endorsement->areas()->saveMany(Area::find($data['areas']));
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
-            $visitingString = "none";
-            if(isset($data['visitingEndorsements'])){
-                $endorsement->ratings()->saveMany(Rating::find($data['visitingEndorsements']));
-                $visitingString = implode(',', $data['visitingEndorsements']);
-            }
             
             ActivityLogController::warning('ENDORSEMENT', 'Created '.$endorsementType.' endorsement '.
             ' ― User: '.$endorsement->user_id.
-            ' ― Areas: '.implode(',', $data['areas']).
-            ' ― Endorsements: '.$visitingString);
+            ' ― Areas: '.implode(',', $data['areas']));
 
             return redirect()->intended(route('endorsements.visiting'))->withSuccess($user->name . "'s visiting endorsement successfully created");
 
