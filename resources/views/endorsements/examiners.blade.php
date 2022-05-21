@@ -48,11 +48,18 @@
                                     </td>
 
                                     @foreach($areas as $a)
-                                        @if($e->areas->first()->id == $a->id)
-                                            <td class="text-center bg-success text-white">
-                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                            </td>
-                                        @else
+                                        @php $count = 0; @endphp
+
+                                        @foreach($e->areas as $endorsedArea)
+                                            @if($endorsedArea->id == $a->id)
+                                                @php $count++; @endphp
+                                                <td class="text-center bg-success text-white">
+                                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                                </td>
+                                            @endif
+                                        @endforeach
+
+                                        @if(!$count)
                                             <td></td>
                                         @endif
                                     @endforeach
