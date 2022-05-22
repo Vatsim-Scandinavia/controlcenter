@@ -5,6 +5,9 @@ The project is open source and contains some restirctions. Read the [LICENSE.md]
 
 **Remember to watch this repository to get notified of our patches and updates!*
 
+![2022-05-22 12_42_15-Dashboard _ Control Center and 11 more pages - Personal - Microsoft​ Edge](https://user-images.githubusercontent.com/2505044/169692486-50ca8cb6-54a4-41a7-a18d-13a329234d30.png)
+
+
 ## Prerequisites
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
 - [Laravel 9 Requirements](https://laravel.com/docs/9.x/deployment#server-requirements)
