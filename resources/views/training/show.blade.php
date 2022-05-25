@@ -54,10 +54,10 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
-                                <button class="dropdown-item" id="getOneTimeLinkReport">Report one-time link</button>
+                                <button class="dropdown-item" id="getOneTimeLinkReport">Create report one-time link</button>
                             @endif
                             @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE])
-                                <button class="dropdown-item" id="getOneTimeLinkExam">Examination one-time link</button>
+                                <button class="dropdown-item" id="getOneTimeLinkExam">Create examination one-time link</button>
                             @endif
                         </div>
                     </div>
