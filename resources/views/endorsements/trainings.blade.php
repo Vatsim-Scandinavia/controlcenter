@@ -29,7 +29,7 @@
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="status" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Status</th>
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
-                                <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
+                                <th data-field="position" data-sortable="true" data-filter-control="input">Position</th>
                                 <th data-field="validfrom" data-sortable="true" data-filter-control="select">Created</th>
                                 <th data-field="validto" data-sortable="true" data-filter-control="select">Expire</th>
                             </tr>
