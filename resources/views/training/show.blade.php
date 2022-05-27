@@ -221,7 +221,7 @@
                 <ul class="sessions">
                     @foreach($activities as $activity)
                         @can('view', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id), $activity->type])
-                            <li>
+                            <li data-id="{{ $activity->id }}">
                                 <div class="time">
                                     @if($activity->type == "STATUS" || $activity->type == "TYPE")
                                         <i class="fas fa-right-left"></i>
