@@ -54,6 +54,11 @@
                     <dt class="pt-2">Last login</dt>
                     <dd>{{ $user->last_login->toEuropeanDateTime() }}</dd>
 
+                    @if(\Auth::user()->isModeratorOrAbove())
+                        <dt class="pt-2">Last activity</dt>
+                        <dd>{{ isset($user->last_activity) ? $user->last_activity->toEuropeanDateTime() : 'N/A' }}</dd>
+                    @endif
+
                 </dl>
             </div>
         </div>

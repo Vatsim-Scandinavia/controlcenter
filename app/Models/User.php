@@ -22,6 +22,7 @@ class User extends Authenticatable
     public $timestamps = false;
     protected $dates = [
         'last_login',
+        'last_activity',
     ];
 
     /**

@@ -48,7 +48,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth')->n
 //--------------------------------------------------------------------------
 // Sites behind authentication
 //--------------------------------------------------------------------------
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'activity'])->group(function () {
 
     // Sidebar Navigation
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
