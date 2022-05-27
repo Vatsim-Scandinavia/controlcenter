@@ -452,7 +452,9 @@ class TrainingController extends Controller
         if((int)$training->status != $oldStatus){
             if((int)$training->status < 0){
                 $attributes["paused_at"] = NULL;
-                TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
+                if(isset($training->paused_at)){
+                    TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
+                }
             }
         }
 
