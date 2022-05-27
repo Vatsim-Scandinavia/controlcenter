@@ -33,12 +33,14 @@ class TrainingExaminationPolicy
      */
     public function create(User $user, Training $training)
     {
+        // If one-time link is used
         if (($link = $this->getOneTimeLink($training)) != null) {
             return $user->isExaminer($link->training->area) && $user->isNot($training->user);
         }
 
-        // Check if mentor is examiner in the area, not filling their own training and the training is awaiting an exam.
-        return $user->isExaminer() && $user->isNot($training->user);
+        // If otl not used or invalid, use the normal check
+        // Check if mentor is examiner in the area, not filling their own training.
+        return $user->isExaminer($training->area) && $user->isNot($training->user);
     }
 
     /**

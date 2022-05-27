@@ -374,7 +374,7 @@ class User extends Authenticatable
             return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->count();
         }
 
-        return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->first()->areas()->wherePivot('area_id', 2)->count();
+        return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->first()->areas()->wherePivot('area_id', $area->id)->count();
     }
 
     /**
