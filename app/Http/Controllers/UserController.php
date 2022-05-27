@@ -81,8 +81,10 @@ class UserController extends Controller
             if($res->getStatusCode() == 200){
                 $vatsimStats = json_decode($res->getBody(), false);
             }
-        } catch(\GuzzleHttp\Exception\ClientException){
-            // Do nothing which returns empty
+        } catch(\GuzzleHttp\Exception\RequestException $e){
+            // Do nothing
+        } catch(\GuzzleHttp\Exception\ClientException $e){
+            // Do nothing
         }
 
         return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours', 'vatsimStats'));
