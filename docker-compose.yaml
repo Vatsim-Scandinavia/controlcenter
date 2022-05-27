@@ -9,6 +9,7 @@ services:
         - 5011:443
     extra_hosts:
         - "host.docker.internal:host-gateway"
+        - "vatsca.local:host-gateway"
     volumes:
       - ./:/var/www/html
       - ./apache:/var/www/logs
