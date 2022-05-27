@@ -273,7 +273,7 @@
                                     @elseif($activity->type == "ENDORSEMENT")
                                         <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
                                     @elseif($activity->type == "COMMENT")
-                                        {{ $activity->comment }}
+                                        {!! nl2br($activity->comment) !!}
 
                                         @if($activity->created_at != $activity->updated_at)
                                             <span class="text-muted">(edited)</span>
