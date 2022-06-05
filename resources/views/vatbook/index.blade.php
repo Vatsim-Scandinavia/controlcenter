@@ -79,8 +79,12 @@
                                     @if ($booking->local_id == null)
                                         {{ $booking->name }}
                                     @else
-                                        {{ \App\Models\User::find($booking->user_id)->name }}
-                                        ({{ $booking->user_id }})
+                                        @can('view', \App\Models\User::find($booking->user_id))
+                                            <a href="{{ route('user.show', $booking->user_id) }}">{{ \App\Models\User::find($booking->user_id)->name }} ({{ $booking->user_id }})</a>
+                                        @else
+                                            {{ \App\Models\User::find($booking->user_id)->name }}
+                                            ({{ $booking->user_id }})
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>
