@@ -35,7 +35,7 @@
                     <dt>ATC Hours</dt>
                     <dd>{{ isset($userHours) ? $userHours : 'N/A' }}</dd>
 
-                    <dt class="pt-2">VATSIM Stats</dt>
+                    <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
                     @foreach($vatsimStats as $key => $stat)
                         @if($stat >= 1)
                             @if($key == "pilot")

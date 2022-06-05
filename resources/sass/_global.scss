@@ -27,13 +27,13 @@ dl dd.separator{
 
 dl.copyable{
 
-    dd button{
+    dd button, dt a{
         background: transparent;
         border: none;
         visibility: hidden;
     }
 
-    dd:hover button{
+    dd:hover button, dt:hover a{
         
         visibility: visible;
         color: $gray-400;
