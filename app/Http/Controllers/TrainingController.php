@@ -586,7 +586,7 @@ class TrainingController extends Controller
             'status' => 'sometimes|required|integer',
             'type' => 'sometimes|integer',
             'mentors' => 'sometimes',
-            'closed_reason' => 'sometimes|max:50',
+            'closed_reason' => 'sometimes|max:65',
         ]);
     }
 
