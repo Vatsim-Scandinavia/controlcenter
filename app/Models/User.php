@@ -342,7 +342,7 @@ class User extends Authenticatable
      */
     public function hasActiveEndorsement(String $type)
     {
-        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->get()->count();
+        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->get()->count();
     }
 
     /**
