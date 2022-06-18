@@ -37,45 +37,49 @@
                         <tbody>
 
                             @foreach($endorsements as $e)
-                                <tr>
-                                    <td>
-                                        @can('view', $e->user)
-                                            <a href="{{ route('user.show', $e->user->id) }}">{{ $e->user->name }} ({{ $e->user->id }})</a>
+                                @if(($e->expired || $e->revoked) && $e->type == 'S1' && $e->user->hasActiveEndorsement('S1'))
+                                    {{--  Don't show old entries if there's another active one --}}
+                                @else
+                                    <tr>
+                                        <td>
+                                            @can('view', $e->user)
+                                                <a href="{{ route('user.show', $e->user->id) }}">{{ $e->user->name }} ({{ $e->user->id }})</a>
+                                            @else
+                                                {{ $e->user->name }} ({{ $e->user->id }})
+                                            @endcan
+                                        </td>
+
+                                        @if(Carbon\Carbon::now() < $e->valid_to)
+                                            <td class="text-center bg-success text-white">
+                                                <i class="fas fa-check-circle"></i> Active
+                                            </td>
                                         @else
-                                            {{ $e->user->name }} ({{ $e->user->id }})
-                                        @endcan
-                                    </td>
+                                            <td class="text-center bg-warning text-white">
+                                                <i class="fas fa-exclamation-triangle"></i> Expired
+                                            </td>
+                                        @endif
 
-                                    @if(Carbon\Carbon::now() < $e->valid_to)
-                                        <td class="text-center bg-success text-white">
-                                            <i class="fas fa-check-circle"></i> Active
-                                        </td>
-                                    @else
-                                        <td class="text-center bg-warning text-white">
-                                            <i class="fas fa-exclamation-triangle"></i> Expired
-                                        </td>
-                                    @endif
+                                        @if($e->type == 'SOLO')
+                                            <td>
+                                                <i class="fas fa-graduation-cap text-warning"></i>
+                                                Solo
+                                            </td>
+                                        @else
+                                            <td>
+                                                <i class="fas fa-book-open text-info"></i>
+                                                S1
+                                            </td>
+                                        @endif
 
-                                    @if($e->type == 'SOLO')
                                         <td>
-                                            <i class="fas fa-graduation-cap text-warning"></i>
-                                            Solo
+                                            @foreach($e->positions as $p)
+                                                <span class="badge badge-dark">{{ $p->callsign }}</span>
+                                            @endforeach
                                         </td>
-                                    @else
-                                        <td>
-                                            <i class="fas fa-book-open text-info"></i>
-                                            S1
-                                        </td>
-                                    @endif
-
-                                    <td>
-                                        @foreach($e->positions as $p)
-                                            <span class="badge badge-dark">{{ $p->callsign }}</span>
-                                        @endforeach
-                                    </td>
-                                    <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>
-                                    <td>{{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDateTime() }}</td>
-                                </tr>
+                                        <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>
+                                        <td>{{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDateTime() }}</td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
