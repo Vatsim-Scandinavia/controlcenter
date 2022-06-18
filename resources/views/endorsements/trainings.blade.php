@@ -39,6 +39,8 @@
                             @foreach($endorsements as $e)
                                 @if(($e->expired || $e->revoked) && $e->type == 'S1' && $e->user->hasActiveEndorsement('S1'))
                                     {{--  Don't show old entries if there's another active one --}}
+                                @elseif(($e->expired || $e->revoked) && $e->type == 'SOLO' && $e->user->hasActiveEndorsement('SOLO'))
+                                    {{--  Don't show old entries if there's another active one --}}
                                 @else
                                     <tr>
                                         <td>
