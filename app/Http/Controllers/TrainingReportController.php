@@ -143,7 +143,7 @@ class TrainingReportController extends Controller
         $report->update($data);
 
         // Notify student of new training request if it's not a draft anymore
-        if($oldDraftStatus == false && $report->draft == true && $report->training->user->setting_notify_newreport){
+        if($oldDraftStatus == true && $report->draft == false && $report->training->user->setting_notify_newreport){
             $report->training->user->notify(new TrainingReportNotification($report->training, $report));
         }
 
