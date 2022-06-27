@@ -136,13 +136,19 @@
         });
         $('.flatpickr-input:visible').prop('readonly', false);
 
+        var submitClicked = false
+        $(document).on("submit", "form", function(event){
+            submitClicked = true
+        });
+
         // Confirm closing window if there are unsaved changes
         window.addEventListener('beforeunload', function (e) {
-            if(simplemde1.value() != '' || simplemde2.value() != ''){
+            if(!submitClicked && (simplemde1.value() != '' || simplemde2.value() != '')){
                 e.preventDefault();
                 e.returnValue = '';
             }
         });
+
     })
     
 </script>
