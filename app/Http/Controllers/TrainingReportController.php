@@ -147,7 +147,7 @@ class TrainingReportController extends Controller
             $report->training->user->notify(new TrainingReportNotification($report->training, $report));
         }
 
-        return redirect()->back()->withSuccess('Training report successfully updated');
+        return redirect()->intended(route('training.show', $report->training->id))->withSuccess('Training report successfully updated');
     }
 
     /**
