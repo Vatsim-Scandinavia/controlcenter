@@ -135,6 +135,15 @@
             $(this).blur();
         });
         $('.flatpickr-input:visible').prop('readonly', false);
+
+        // Confirm closing window if there are unsaved changes
+        window.addEventListener('beforeunload', function (e) {
+            if(simplemde1.value() != '' || simplemde2.value() != ''){
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
     })
+    
 </script>
 @endsection
