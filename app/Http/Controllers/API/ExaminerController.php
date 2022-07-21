@@ -24,7 +24,7 @@ class ExaminerController extends Controller
 
             $areas->push([
                 'area' => $area->name,
-                'examiners' => $thisArea
+                'examiners' => $thisArea->sortBy('first_name')
             ]);
         }
 

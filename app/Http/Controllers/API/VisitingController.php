@@ -39,6 +39,9 @@ class VisitingController extends Controller
             ]);
         }
 
+        // Sort alphabetically the table
+        $data = $data->sortBy("first_name");
+
         return response()->json(["data"=> $data->values()], 200);
     }
 }
