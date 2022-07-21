@@ -187,7 +187,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    Queue lengths <span class="badge badge-danger">Beta and inaccurate</span>
+                    Estimated queue lengths
                 </h6> 
             </div>
             <div class="card-body p-0">
