@@ -295,7 +295,7 @@ class TrainingController extends Controller
         $experiences = TrainingController::$experiences;
         $activities = $training->activities->sortByDesc('created_at');
 
-        $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get();
+        $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at', 'DESC')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();     
 
         return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest'));
