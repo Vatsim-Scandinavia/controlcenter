@@ -88,7 +88,8 @@
 
                         <div class="form-group">
                             <label for="result">Result</label>
-                            <select class="form-control" name="result" id="result">
+                            <select class="form-control" name="result" id="result" required>
+                                <option disabled selected>Choose a result</option>
                                 <option value="FAILED">Failed</option>
                                 <option value="PASSED">Passed</option>
                                 <option value="INCOMPLETE">Incomplete</option>
