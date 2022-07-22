@@ -253,8 +253,14 @@
                                 <p> 
 
                                     @if($activity->type == "STATUS")
-                                        Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
+                                            Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
                                         to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                        with reason <span class="badge badge-light">{{ $activity->comment }}</span>
+                                        @else
+                                            Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                        @endif
                                     @elseif($activity->type == "TYPE")
                                         Training type changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
                                         to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>

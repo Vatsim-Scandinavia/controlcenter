@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Controllers\TrainingController;
 use App\Notifications\TrainingInterestNotification;
 use App\Notifications\TrainingClosedNotification;
+use App\Http\Controllers\TrainingActivityController;
 use App\Models\Training;
 use App\Models\TrainingInterest;
 use Carbon\Carbon;
@@ -78,12 +79,15 @@ class SendTrainingInterestNotifications extends Command
                     // If it's 14 days passed deadline, close the training
                     $this->info("Closing training ".$training->id);
 
+                    $oldStatus = $training->status;
+
                     // Update the training
                     // Note: The training interest is set to expire through updateStatus()
                     $training->updateStatus(-4, true);
                     $training->closed_reason = 'Continued training interest was not confirmed within deadline.';
                     $training->save();
                     $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interest was not confirmed within deadline.'));
+                    TrainingActivityController::create($training->id, 'STATUS', -4, $oldStatus, null, 'Continued training interest was not confirmed within deadline.');
 
 
                 } elseif ($requestDeadline->diffInDays(now()) == 6 && $requestUpdated->diffInDays(now()) != 0 && $lastInterestRequest->expired == false && $requestConfirmed == null) {

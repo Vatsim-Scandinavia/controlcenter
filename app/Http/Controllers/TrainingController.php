@@ -388,7 +388,11 @@ class TrainingController extends Controller
             $training->updateStatus($attributes['status']);
 
             if($attributes['status'] != $oldStatus){
-                TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id);
+                if($attributes['status'] == -2 || $attributes['status'] == -4){
+                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id, $attributes['closed_reason']);
+                } else {
+                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id);
+                }
             }
         }
 
