@@ -547,12 +547,19 @@ class TrainingController extends Controller
      */
     public function confirmInterest(Training $training, string $key)
     {
+        // Only allow the training student to confirm the interest
+        if (Auth::id() != $training->user->id) {
+            return abort(403);
+        }
 
-        $interest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->orderBy('created_at')->get()->last();
+        $interest = TrainingInterest::where('training_id', $training->id)->where('key', $key)->orderBy('created_at')->get()->last();
 
         if(isset($interest)){
-            if ($interest->key != $key || Auth::id() != $training->user->id || $training->id != $interest->training_id) {
-                return abort(403);
+            
+
+            // Check if already confirmed
+            if($interest->confirmed_at){
+                return redirect($training->path())->withSuccess("You have already confirmed your interest for this training.");
             }
     
             $interest->confirmed_at = now();
@@ -564,7 +571,7 @@ class TrainingController extends Controller
             return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }
 
-        return redirect()->to($training->path())->withErrors('This training interest request link has expired. Please contact staff if this is an error.');
+        return redirect()->to($training->path())->withErrors('We could not find a training interest confirmation for this training. Please contact our technical staff if this issue persists.');
 
     }
 
