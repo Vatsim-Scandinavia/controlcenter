@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Models\Endorsement;
+use App\Notifications\EndorsementExpiredNotification;
 
 class CleanEndorsements extends Command
 {
@@ -19,7 +21,7 @@ class CleanEndorsements extends Command
      *
      * @var string
      */
-    protected $description = 'Check and clean expired solo endorsements';
+    protected $description = 'Check and clean expired training endorsements';
 
     /**
      * Create a new command instance.
@@ -38,7 +40,17 @@ class CleanEndorsements extends Command
      */
     public function handle()
     {
-        DB::table('endorsements')->whereNotNull('valid_to')->where('valid_to', '<', date('Y-m-d H:i:s'))->update(['expired' => true]);
+        $endorsements = Endorsement::whereNotNull('valid_to')->where('expired', false)->where('revoked', false)->where('valid_to', '<', date('Y-m-d H:i:s'))->get();
+        foreach($endorsements as $endorsement){
+            $endorsement->expired = true;
+            $endorsement->save();
+
+            // Only send e-mail notifications for training endorsements
+            if($endorsement->type == "SOLO" || $endorsement->type == "S1"){
+                $endorsement->user->notify(new EndorsementExpiredNotification($endorsement));
+            }
+        }
+
         $this->info('All expired endorsements have been cleaned.');
     }
 }
