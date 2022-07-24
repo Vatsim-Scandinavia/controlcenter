@@ -9,6 +9,7 @@ use App\Models\Rating;
 use App\Models\Area;
 use App\Models\Position;
 use App\Notifications\EndorsementCreatedNotification;
+use App\Notifications\EndorsementRevokedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
@@ -221,7 +222,9 @@ class EndorsementController extends Controller
             // Log this new endorsement to the user's active training
             TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id);
 
-            return redirect()->intended(route('endorsements.trainings'))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created");
+            $user->notify(new EndorsementCreatedNotification($endorsement));
+
+            return redirect()->intended(route('endorsements.trainings'))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created. E-mail confirmation sent to the student.");
             
             
 
@@ -313,7 +316,8 @@ class EndorsementController extends Controller
         $endorsement->save();
 
         ActivityLogController::warning('ENDORSEMENT', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
-        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
+        $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
+        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked. E-mail confirmation sent to the student.");
     }
 
     /**
