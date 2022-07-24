@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Rating;
 use App\Models\Area;
 use App\Models\Position;
+use App\Notifications\EndorsementCreatedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
@@ -95,7 +96,11 @@ class EndorsementController extends Controller
     public function create($prefillUserId = null)
     {
         $this->authorize('create', Endorsement::class);
-        $users = User::all();
+        if($prefillUserId){
+            $users = collect(User::where('id', $prefillUserId)->get());
+        } else {
+            $users = User::all();
+        }
         $positions = Position::all();
         $areas = Area::all();
         $ratingsMASC = Rating::where('vatsim_rating', null)->get();
