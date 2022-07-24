@@ -236,14 +236,22 @@
                 var btn = document.getElementById("submit_btn");
                 var end = ""
 
+                const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
+
                 if(this.endorsementType == 'MASC'){
                     end = "MA/SC"
                 } else if(this.endorsementType == 'TRAINING'){
                     end = "Training"
                     if(this.trainingType == 'S1'){
                         end = "S1"
+                        // While at it, let's set calendar max date as well
+                        flatpickr.config.maxDate = moment().add(3, 'M').toDate()
+                        flatpickr.jumpToDate(moment().toDate())
                     } else if(this.trainingType == 'SOLO') {
                         end = "Solo"
+                        // While at it, let's set calendar max date as well
+                        flatpickr.config.maxDate = moment().add(1, 'M').toDate()
+                        flatpickr.jumpToDate(moment().toDate())
                     }
                 } else if(this.endorsementType == 'EXAMINER'){
                     end = "Examiner"
