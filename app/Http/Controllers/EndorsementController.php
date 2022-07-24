@@ -179,6 +179,11 @@ class EndorsementController extends Controller
             // Validate that this user has other endrosement of this type from before
             if($user->hasActiveEndorsement($trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
 
+            // Validate that there's any active training the endorsement can be tied to
+            if($user->trainings->where('status', '>=', 0)->count() == 0){
+                return back()->withInput()->withErrors($user->name.' has no active training to link this endorsement to.');
+            }
+
             // Validate that solo only has one position and set expire time
             if($trainingType == "SOLO"){
 
