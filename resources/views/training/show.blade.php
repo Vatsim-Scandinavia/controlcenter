@@ -210,7 +210,7 @@
                     <div class="input-group">
                         <input type="hidden" name="training_id" value="{{ $training->id }}">
                         <input type="hidden" name="update_id" id="activity_update_id" value="">
-                        <input type="text" name="comment" id="activity_comment" class="form-control border" placeholder="Your comment ..." maxlength="255">
+                        <input type="text" name="comment" id="activity_comment" class="form-control border" placeholder="Your internal comment ..." maxlength="255">
                         <div class="input-group-append">
                             <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
                         </div>
