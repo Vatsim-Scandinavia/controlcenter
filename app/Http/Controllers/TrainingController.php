@@ -406,14 +406,14 @@ class TrainingController extends Controller
                     // Notify student of their new mentor
                     $notifyOfNewMentor = true;
 
-                    TrainingActivityController::create($training->id, 'MENTOR', $mentor);
+                    TrainingActivityController::create($training->id, 'MENTOR', $mentor, null, Auth::user()->id);
                 }
             }
 
             foreach ($training->mentors as $mentor) {
                 if (!in_array($mentor->id, (array) $attributes['mentors'])) {
                     $training->mentors()->detach($mentor);
-                    TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id);
+                    TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id, Auth::user()->id);
                 }
             }
 
@@ -425,7 +425,7 @@ class TrainingController extends Controller
             // Detach all if no passed key, as that means the list is empty
 
             foreach($training->mentors as $mentor){
-                TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id);
+                TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id, Auth::user()->id);
             }
 
             $training->mentors()->detach();
