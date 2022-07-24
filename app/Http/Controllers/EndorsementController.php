@@ -208,7 +208,7 @@ class EndorsementController extends Controller
             } else {
                 // Are more than one positions defined?
                 if(str_contains($data['positions'], ',')){
-                    $endorsement->positions()->saveMany(Position::whereIn('callsign', explode(",", $data["positions"]))->get());
+                    $endorsement->positions()->saveMany(Position::whereIn('callsign', explode(",", str_replace(' ', '', $data['positions'])))->get());
                 } else {
                     $endorsement->positions()->save(Position::where('callsign', $data['positions'])->get()->first());
                 }
