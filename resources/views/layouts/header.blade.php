@@ -19,11 +19,11 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
 <link rel="manifest" href="/images/favicon/site.webmanifest">
-<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#1a475f">
+<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
 <link rel="shortcut icon" href="/images/favicon/favicon.ico">
 <meta name="msapplication-TileColor" content="#2b5797">
 <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
-<meta name="theme-color" content="#1a475f">
+<meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex">
 
 @yield('css')

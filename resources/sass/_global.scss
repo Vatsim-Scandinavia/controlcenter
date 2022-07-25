@@ -98,6 +98,7 @@ dl.copyable{
 
             img {
                 height: 48px;
+                margin-bottom: 10px;
             }
 
             @include media-breakpoint-down(sm) {
