@@ -243,12 +243,9 @@ class User extends Authenticatable
      */
     public function mentoringTrainings()
     {
-        $trainings = $this->viewableModels(Training::class, [['status', '>=', 1]])->sortBy('id');
-
-        foreach ($trainings as $key => $training) {
-            if (!$training->mentors->contains($this))
-                $trainings->pull($key);
-        }
+        $trainings = Training::where('status', '>=', 1)->whereHas('mentors', function($query) {
+            $query->where('user_id', $this->id);
+        })->orderBy('id')->get();
 
         return $trainings;
     }
