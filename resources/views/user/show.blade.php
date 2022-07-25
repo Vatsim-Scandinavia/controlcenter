@@ -35,19 +35,9 @@
                     <dt>ATC Hours</dt>
                     <dd>{{ isset($userHours) ? $userHours : 'N/A' }}</dd>
 
-                    <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
-                    @foreach($vatsimStats as $key => $stat)
-                        @if($stat >= 1)
-                            @if($key == "pilot")
-                                <dd class="mb-0">Pilot: {{ round($stat) }}h</dd>
-                            @elseif($key != "id" && $key != "pilot" && $key != "atc")
-                                <dd class="mb-0">{{ strtoupper($key) }}: {{ round($stat) }}h</dd>
-                            @endif
-                        @endif
-                    @endforeach
-                    @if(count((array)$vatsimStats) == 0)
-                        <dd>No data</dd>
-                    @endif
+                    <div id="vatsim-data">
+                        <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
+                    </div>
 
                     <dd class="separator pb-3"></dd>
 
@@ -377,5 +367,28 @@
     $(document).ready(function() {
         $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
+
+    // Fetch VATSIM data async
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "{{route('user.vatsimhours')}}?cid={{$user->id}}");
+    xhr.send();
+
+    xhr.onload = function(){
+        let data = JSON.parse(xhr.responseText)["data"];
+        var vatsimHours = document.getElementById("vatsim-data");
+
+        if (data) {
+            for(let key in data){
+                if(key == "pilot"){
+                    vatsimHours.innerHTML += "<dd class='mb-0'>Pilot: " + Math.round(data[key]) + "h</dd>"
+                } else if(key != "id" && key != "pilot" && key != "atc" && data[key] > 0){
+                    vatsimHours.innerHTML += "<dd class='mb-0'>" + key.toUpperCase() + ": " + Math.round(data[key]) + "h</dd>"
+                }
+            }
+        } else {
+            vatsimHours.innerHTML = vatsimHours.innerHTML + "<dd>No Data</dd>"
+        }
+    };
+
 </script>
 @endsection

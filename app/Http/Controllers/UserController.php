@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Area;
-use App\Models\Permission;
+use App\Models\Handover;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,22 +73,76 @@ class UserController extends Controller
         $userHours = DB::table('atc_activity')->where('user_id', $user->id)->first();
         if(isset($userHours)) $userHours = $userHours->atc_hours;
 
-        // Check if we have some VATSIM stats available
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours'));
+    }
+
+    /**
+     * AJAX: Search for the user by name or ID
+     * @param Request $request
+     * @return array
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    function search(Request $request)
+    {
+        $output = [];
+
+        $query = $request->get('query');
+
+        if (strlen($query) >= 2) {
+            $data = Handover::query()
+                ->select('id')
+                ->where(DB::raw('LOWER(id)'), 'like', '%'.strtolower($query).'%')
+                ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%'.strtolower($query).'%')
+                ->get();
+
+            if ($data->count() <= 0)
+                return;
+
+            $authUser = Auth::user();
+
+            $count = 0;
+            foreach($data as $handover) {
+                if ($count >= 10)
+                    break;
+
+                $user = $handover->user;
+                if ($authUser->can('view', $user)) {
+                    $output[] = ['id' => $user->id, 'name' => $user->name];
+                    $count++;
+                }
+            }
+
+            return json_encode($output);
+        }
+    }
+
+    /**
+     * AJAX: Return ATC hours from VATSIM for user
+     * 
+     * @param Request $request
+     * @return array
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+    */
+    public function fetchVatsimHours(Request $request){
+        $cid = $request['cid'];
+
         $vatsimStats = [];
         try {
             $client = new \GuzzleHttp\Client();
-            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/'.$user->id.'/rating_times/');
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/'.$cid.'/rating_times/');
             if($res->getStatusCode() == 200){
                 $vatsimStats = json_decode($res->getBody(), false);
             }
         } catch(\GuzzleHttp\Exception\RequestException $e){
-            // Do nothing
+            return response()->json(["data" => null], 404);
         } catch(\GuzzleHttp\Exception\ClientException $e){
-            // Do nothing
+            return response()->json(["data" => null], 404);
         }
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours', 'vatsimStats'));
+        return response()->json(["data" => $vatsimStats], 200);
     }
+
+
 
     /**
      * Update the specified resource in storage.

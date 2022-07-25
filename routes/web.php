@@ -8,7 +8,6 @@ use App\Http\Controllers\EndorsementController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TrainingReportController;
-use App\Http\Controllers\UserSearchController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\NotificationController;
@@ -78,10 +77,12 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::get('/settings', 'settings')->name('user.settings');
         Route::post('/settings', 'settings_update')->name('user.settings.store');
         Route::get('/settings/extendworkmail', 'extendWorkmail')->name('user.settings.extendworkmail');
+
+         // Internal user search
+        Route::get('/user/search/find', 'search')->name('user.search');
+        Route::get('/user/search/vatsimhours', 'fetchVatsimHours')->name('user.vatsimhours');
     });
-
-    Route::get('/user/search/action', [UserSearchController::class, 'action'])->name('user.search');
-
+    
     // Reports
     Route::controller(ReportController::class)->group(function(){
         Route::get('/reports/trainings', 'trainings')->name('reports.trainings');
