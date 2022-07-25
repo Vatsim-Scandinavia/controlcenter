@@ -256,30 +256,11 @@ class User extends Authenticatable
      * @return string
      */
     public function getInlineMentoringAreas(){
+        $areas = Area::whereHas('permissions', function($query) {
+            $query->where('user_id', $this->id);
+        })->get();
 
-        $output = "";
-
-        $areas = [];
-        foreach($this->groups as $group){
-            $areas[$group->pivot->area_id] = Area::find($group->pivot->area_id)->name;
-        }
-
-        $countMax = sizeof($areas);
-        $counter = 0;
-        foreach($areas as $area){
-            if($counter == $countMax - 1){
-                $output .= $area;
-            } else {
-                $output .= $area . " & ";
-            }
-            $counter++;
-        }
-
-        if(empty($output)){
-            $output = "-";
-        }
-
-        return $output;
+        return $areas ? $areas->pluck('name')->implode(' & ') : ' - ';
      }
 
     /**

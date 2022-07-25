@@ -92,22 +92,7 @@ class Training extends Model
      * @return string
      */
      public function getInlineRatings(){
-
-        $output = "";
-
-        if( is_iterable($ratings = $this->ratings->toArray()) ){
-            for( $i = 0; $i < sizeof($ratings); $i++ ){
-                if( $i == (sizeof($ratings) - 1) ){
-                    $output .= $ratings[$i]["name"];
-                } else {
-                    $output .= $ratings[$i]["name"] . " + ";
-                }
-            }
-        } else {
-            $output .= $ratings["name"];
-        }
-
-        return $output;
+        return $this->ratings->pluck('name')->implode(' + ');
      }
 
     /**
@@ -116,22 +101,7 @@ class Training extends Model
      * @return string
      */
     public function getInlineMentors(){
-
-        $output = "";
-
-        if( is_iterable($mentors = $this->mentors->pluck('name')->toArray()) ){
-            for( $i = 0; $i < sizeof($mentors); $i++ ){
-                if( $i == (sizeof($mentors) - 1) ){
-                    $output .= $mentors[$i];
-                } else {
-                    $output .= $mentors[$i] . " & ";
-                }
-            }
-        } else {
-            $output .= $mentors;
-        }
-
-        return $output;
+        return $this->mentors->pluck('name')->implode(' & ');
      }
 
      /**
