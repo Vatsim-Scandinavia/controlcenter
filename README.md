@@ -17,8 +17,8 @@ The project is open source and contains some restirctions. Read the [LICENSE.md]
 Just clone this repository and you're almost ready. First, make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) in your environment.
 
 1. Upload your logo and optionally a email specific logo to `/public/images/logos/`
-2. Run `./deploy init <container name>` in root folder to setup the required files. If you're not using Docker containers run `./deploy init` directly located in `.docker` folder instead.
-3. Copy and configure the .env file accordingly, including logos and simple theming.
+2. Copy and configure the .env file accordingly, including logos, simple theming and if you use Docker; container name without qoutation marks. 
+3. Run `./deploy init` in root folder to setup the required files. If you're not using Docker containers run `./deploy init` directly located in `.docker` folder instead.
 4. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
 5. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
 
