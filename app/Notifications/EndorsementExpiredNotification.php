@@ -48,6 +48,7 @@ class EndorsementExpiredNotification extends Notification implements ShouldQueue
         $textLines = [
             'Your **'.ucwords(strtolower((string)$this->endorsement->type)).' Endorsement has expired** for following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
             '**Expired:** '.$this->endorsement->valid_to->toEuropeanDateTime(),
+            'If you need a renewal, please contact the staff member who initially issued you the endorsement.',
         ];
 
         return (new EndorsementMail('Training Endorsement Expired', $this->endorsement, $textLines))
