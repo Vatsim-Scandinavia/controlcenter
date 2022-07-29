@@ -23,4 +23,9 @@ class TrainingExamination extends TrainingObject
         return $this->hasOne(Position::class, 'id', 'position_id');
     }
 
+    public function examiner()
+    {
+        return $this->hasOne(User::class, 'id', 'examiner_id');
+    }
+
 }

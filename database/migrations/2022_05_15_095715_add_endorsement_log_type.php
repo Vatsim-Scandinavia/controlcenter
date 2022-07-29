@@ -13,7 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE activity_logs MODIFY COLUMN category ENUM('ACCESS', 'TRAINING', 'BOOKING', 'ENDORSEMENT', 'OTHER')");
+        //2022-07-25: Altered this migration to not use MODIFY as it's not supported in SQLITE for PHP TESTS. Deletes and re-creates instead.
+        Schema::table('activity_logs', function (Blueprint $table) {
+            $table->dropColumn('category');
+        });
+
+        Schema::table('activity_logs', function (Blueprint $table) {
+            $table->enum('category', ['ACCESS', 'TRAINING', 'BOOKING', 'ENDORSEMENT', 'OTHER'])->nullable()->after('type');
+        });
     }
 
     /**
