@@ -220,7 +220,7 @@ class EndorsementController extends Controller
             ' ― Positions: '.$data['positions']);
 
             // Log this new endorsement to the user's active training
-            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id);
+            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 

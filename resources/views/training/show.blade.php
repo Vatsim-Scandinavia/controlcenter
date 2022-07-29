@@ -277,7 +277,12 @@
                                             Training unpaused
                                         @endif
                                     @elseif($activity->type == "ENDORSEMENT")
-                                        <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
+                                        @empty($activity->comment)
+                                            <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
+                                        @else
+                                            <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
+                                            for positions: <span class="badge badge-light">{{ $activity->comment }}</span>
+                                        @endempty
                                     @elseif($activity->type == "COMMENT")
                                         {!! nl2br($activity->comment) !!}
 
