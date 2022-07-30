@@ -192,10 +192,6 @@ class User extends Authenticatable
         return $this->handover->country;
     }
 
-    public function getVisitingControllerAttribute(){
-        return $this->handover->visiting_controller;
-    }
-
     public function getActiveAttribute(){
         $val = $this->handover->atc_active;
 
@@ -338,6 +334,27 @@ class User extends Authenticatable
         if($training->isMaeTraining()) return false;
 
         return true;
+    }
+
+    /**
+     * Return if user is visiting
+     *
+     * @param Area|null $area
+     * @return bool
+     */
+    public function isVisiting(Area $area = null)
+    {
+
+        if ($area == null) {
+            return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->count();
+        }
+
+        // Check if the user has an active examiner endorsement for the area
+        if($this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->first()){
+            return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->first()->areas()->wherePivot('area_id', $area->id)->count();
+        }
+
+        return false;
     }
 
     /**

@@ -17,7 +17,7 @@ class Handover extends Model
     public $table = 'users';
     public $timestamps = false;
 
-    protected $fillable = ['atc_active', 'visiting_controller'];
+    protected $fillable = ['atc_active'];
 
     public function user()
     {

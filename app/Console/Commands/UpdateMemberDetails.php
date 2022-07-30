@@ -52,7 +52,7 @@ class UpdateMemberDetails extends Command
         // Start the loop
         foreach ($mentors as $mentor) {
 
-            if (in_array($mentor->subdivision, $subdivisions) || $mentor->visiting_controller == true) continue;
+            if (in_array($mentor->subdivision, $subdivisions) || $mentor->isVisiting()) continue;
 
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();

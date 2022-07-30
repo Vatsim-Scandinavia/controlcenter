@@ -84,7 +84,7 @@ class VatbookPolicy
      */
     public function bookTrainingTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->visiting_controller == true;
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->isVisiting();
     }
 
     /**
@@ -95,7 +95,7 @@ class VatbookPolicy
      */
     public function bookEventTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->visiting_controller == true;
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->isVisiting();
     }
 
     /**

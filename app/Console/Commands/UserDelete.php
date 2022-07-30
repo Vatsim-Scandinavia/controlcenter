@@ -109,7 +109,6 @@ class UserDelete extends Command
                     $handover->division = null;
                     $handover->subdivision = null;
                     $handover->atc_active = null;
-                    $handover->visiting_controller = null;
                     $handover->accepted_privacy = false;
                     $handover->remember_token = null;
                     $handover->access_token = null;
