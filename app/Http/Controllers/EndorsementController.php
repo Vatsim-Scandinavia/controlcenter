@@ -316,8 +316,11 @@ class EndorsementController extends Controller
         $endorsement->save();
 
         ActivityLogController::warning('ENDORSEMENT', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
-        $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
-        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked. E-mail confirmation sent to the student.");
+        if($endorsement->type == 'TRAINING'){
+            $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
+            return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked. E-mail confirmation sent to the student.");
+        } 
+        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
     }
 
     /**
