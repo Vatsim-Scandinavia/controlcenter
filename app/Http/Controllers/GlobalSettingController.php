@@ -40,7 +40,6 @@ class GlobalSettingController extends Controller
 
         $data = $request->validate([
             'trainingEnabled' => '',
-            'trainingShowEstimate' => '',
             'trainingSOP' => 'required|url',
             'trainingExamTemplate' => '',
             'trainingSubDivisions' => 'required',
@@ -51,6 +50,7 @@ class GlobalSettingController extends Controller
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
             'atcActivityContact' => 'max:40',
+            'atcActivityNotifyInactive' => '',
             'linkDomain' => 'required',
             'linkHome' => 'required|url',
             'linkJoin' => 'required|url',
@@ -61,10 +61,9 @@ class GlobalSettingController extends Controller
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
-        isset($data['trainingShowEstimate']) ? $trainingShowEstimate = true : $trainingShowEstimate = false;
+        isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
 
         Setting::set('trainingEnabled', $trainingEnabled);
-        Setting::set('trainingShowEstimate', $trainingShowEstimate);
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingExamTemplate', $data['trainingExamTemplate']);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
@@ -75,6 +74,7 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
         Setting::set('atcActivityContact', $data['atcActivityContact']);
+        Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
         Setting::set('linkDomain', $data['linkDomain']);
         Setting::set('linkHome', $data['linkHome']);
         Setting::set('linkJoin', $data['linkJoin']);

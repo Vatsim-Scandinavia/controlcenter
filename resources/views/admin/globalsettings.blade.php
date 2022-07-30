@@ -32,14 +32,6 @@
                                 </label>
                             </div>
 
-                            <!-- Not yet implemented
-                            <div class="form-check">
-                                <input class="form-check-input @error('trainingShowEstimate') is-invalid @enderror" type="checkbox" id="check1" name="trainingShowEstimate" {{ Setting::get('trainingShowEstimate') ? "checked" : "" }}>
-                                <label class="form-check-label" for="check1">
-                                    Display estimated waiting time for people in queue
-                                </label>
-                            </div>-->
-
                             <hr>
 
                             <div class="form-group">
@@ -151,6 +143,12 @@
                                 <span class="text-danger">{{ $errors->first('atcActivityContact') }}</span>
                             @enderror
                         </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input @error('atcActivityNotifyInactive') is-invalid @enderror" type="checkbox" id="check1" name="atcActivityNotifyInactive" {{ Setting::get('atcActivityNotifyInactive') ? "checked" : "" }}>
+                        <label class="form-check-label" for="check1">
+                            Send notification to controllers when they become inactive
+                        </label>
                     </div>
                 </div>
             </div>

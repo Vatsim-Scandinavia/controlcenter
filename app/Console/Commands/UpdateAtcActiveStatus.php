@@ -6,8 +6,9 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Handover;
 use App\Models\Rating;
 use Carbon\Carbon;
-use Illuminate\Console\Command;
+use App\Notifications\InactivityNotification;
 use Illuminate\Support\Collection;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -276,6 +277,11 @@ class UpdateAtcActiveStatus extends Command
         // We need to "manually" set the value to trigger any event subscribers...
         $user->atc_active = $is_active;
         $user->save();
+
+        // Notify if user was set to inactive
+        if($is_active == false){
+            $user->notify(new InactivityNotification($user));
+        }
     }
 
     /**

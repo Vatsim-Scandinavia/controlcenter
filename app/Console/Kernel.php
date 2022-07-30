@@ -36,6 +36,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:bookings')
             ->everyFiveMinutes();
 
+        // Monitor who's online
+        $schedule->command('check:controllers')
+            ->everyTenMinutes();
+
         // Delete old Sweatbox bookings
         $schedule->command('clean:sweatbooks')
             ->daily();
