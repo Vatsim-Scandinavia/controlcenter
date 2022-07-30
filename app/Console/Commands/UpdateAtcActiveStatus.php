@@ -279,7 +279,7 @@ class UpdateAtcActiveStatus extends Command
         $user->save();
 
         // Notify if user was set to inactive
-        if($is_active == false){
+        if($is_active == false && Setting::get('atcActivityNotifyInactive')){
             $user->notify(new InactivityNotification($user));
         }
     }

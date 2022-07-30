@@ -147,7 +147,7 @@
                     <div class="form-check">
                         <input class="form-check-input @error('atcActivityNotifyInactive') is-invalid @enderror" type="checkbox" id="check1" name="atcActivityNotifyInactive" {{ Setting::get('atcActivityNotifyInactive') ? "checked" : "" }}>
                         <label class="form-check-label" for="check1">
-                            Send notification to controllers when they become inactive
+                            Send notification to controllers when they become inactive or logon unauthorized
                         </label>
                     </div>
                 </div>

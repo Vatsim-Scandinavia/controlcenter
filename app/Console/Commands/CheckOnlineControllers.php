@@ -8,6 +8,7 @@ use App\Notifications\InactiveOnlineNotification;
 use App\Notifications\InactiveOnlineStaffNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use anlutro\LaravelSettings\Facade as Setting;
 
 class CheckOnlineControllers extends Command
 {
@@ -32,6 +33,11 @@ class CheckOnlineControllers extends Command
      */
     public function handle()
     {
+
+        // Check if the setting is turned on
+        if(!Setting::get('atcActivityNotifyInactive')){
+            return;
+        }
 
         // Fetch which country ICAOs we should look for based on positions database
         $areasRaw = DB::select(
