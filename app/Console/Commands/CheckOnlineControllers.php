@@ -8,6 +8,7 @@ use App\Notifications\InactiveOnlineNotification;
 use App\Notifications\InactiveOnlineStaffNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use anlutro\LaravelSettings\Facade as Setting;
 
 class CheckOnlineControllers extends Command
@@ -54,19 +55,23 @@ class CheckOnlineControllers extends Command
         // Fetch the latest URI to data feed
         $dataUri = json_decode(file_get_contents('https://status.vatsim.net/status.json'))->data->v3[0];
         $vatsimData = json_decode(file_get_contents($dataUri))->controllers;
-        
+
         foreach($vatsimData as $d){
             if(preg_match($areasRegex, $d->callsign)){
                 // Lets check this user
                 $user = User::find($d->cid);
                 if(isset($user)){
                     if(!$user->active && !$user->hasActiveTrainings() && !$user->isVisiting()){
-                        // Send warning to user
-                        $user->notify(new InactiveOnlineNotification($user));
+                        if(!isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))){
+                            // Send warning to user
+                            $user->notify(new InactiveOnlineNotification($user));
+                            $user->last_inactivity_warning = now();
+                            $user->save();
 
-                        // Send warning to all staff
-                        $moderators = User::allWithGroup(2, '<=');
-                        Notification::send($moderators, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+                            // Send warning to all staff
+                            $moderators = User::allWithGroup(2, '<=');
+                            Notification::send($moderators, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+                        }
                     }
                 }
             }
