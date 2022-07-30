@@ -52,7 +52,7 @@ class CheckOnlineControllers extends Command
         foreach($vatsimData as $d){
             if(preg_match($areasRegex, $d->callsign)){
                 // Lets check this user
-                $user = User::find(10000010);
+                $user = User::find($d->cid);
                 if(isset($user)){
                     if(!$user->active && !$user->hasActiveTrainings() && !$user->isVisiting()){
                         // Send warning to user
@@ -63,7 +63,6 @@ class CheckOnlineControllers extends Command
                         Notification::send($moderators, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
                     }
                 }
-                return 0;
             }
         }
         
