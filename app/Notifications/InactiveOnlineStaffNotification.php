@@ -22,8 +22,9 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
      *
      * @param Endorsement $endorsement
      */
-    public function __construct($user, $position, $logonTime)
+    public function __construct($sendTo, $user, $position, $logonTime)
     {
+        $this->sendTo = $sendTo;
         $this->user = $user;
         $this->position = $position;
         $this->logonTime = $logonTime;
@@ -55,8 +56,10 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
             'All admins and moderators in area in question has been notified.',
         ];
 
+        dd("sending to", $this->sendTo->pluck('email'));
+
         return (new WarningMail('Unauthorized network logon recorded', $this->user, $textLines))
-            ->to($this->user->email, $this->user->name);
+            ->to($this->sendTo->pluck('email'));
     }
 
     /**

@@ -67,8 +67,8 @@ class CheckOnlineControllers extends Command
                 // Lets check this user
                 $this->info("Checking user ".$d->cid);
                 $user = User::find($d->cid);
-                if(isset($user)){
-                    if(!$user->active && (!$user->hasActiveTrainings() || !$user->isVisiting())){
+                if(isset($user) && !$user->isVisiting()){
+                    if(!$user->active && !$user->hasActiveTrainings()){
                         if(!isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))){
                             // Send warning to user
                             $user->notify(new InactiveOnlineNotification($user));
@@ -91,10 +91,7 @@ class CheckOnlineControllers extends Command
                                 }
                             }
 
-                            // Send to all staff as well
-                            foreach($sendToStaff as $s){
-                                $s->notify(new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
-                            }
+                            $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d->callsign, $d->logon_time));
 
                         } else {
                             $this->info($user->name.' is inactive. Supressing notification due to one already been sent recently.');
