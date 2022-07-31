@@ -72,7 +72,7 @@ class CheckOnlineControllers extends Command
                         if(!isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))){
                             // Send warning to user
                             $user->notify(new InactiveOnlineNotification($user));
-                            $this->info($user->name.' is inactive');
+                            $this->info($user->name.' is inactive. Sending notification.');
                             $user->last_inactivity_warning = now();
                             $user->save();
 
@@ -91,7 +91,9 @@ class CheckOnlineControllers extends Command
                                 }
                             }
                             
-                            //Notification::send($sendToStaff, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+                            Notification::send($sendToStaff, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+                        } else {
+                            $this->info($user->name.' is inactive. Supressing notification due to one already been sent recently.');
                         }
                     }
                 }
