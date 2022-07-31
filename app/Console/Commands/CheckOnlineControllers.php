@@ -90,8 +90,12 @@ class CheckOnlineControllers extends Command
                                     }
                                 }
                             }
-                            
-                            Notification::send($sendToStaff, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+
+                            // Send to all staff as well
+                            foreach($sendToStaff as $s){
+                                $s->notify(new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+                            }
+
                         } else {
                             $this->info($user->name.' is inactive. Supressing notification due to one already been sent recently.');
                         }
