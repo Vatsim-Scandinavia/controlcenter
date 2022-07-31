@@ -265,14 +265,22 @@ class User extends Authenticatable
      * A area can be provided to check if the user has an active training in the specified area.
      *
      * @param Area|null $area
+     * @param bool $includeWaiting
      * @return bool
      */
-    public function hasActiveTrainings(Area $area = null)
+    public function hasActiveTrainings(bool $includeWaiting, Area $area = null)
     {
-        if ($area == null)
+        if($includeWaiting){
+            if ($area == null)
             return count($this->trainings()->whereIn('status', [0, 1, 2, 3])->get()) > 0;
 
-        return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
+            return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
+        } else {
+            if ($area == null)
+            return count($this->trainings()->whereIn('status', [1, 2, 3])->get()) > 0;
+
+            return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [1, 2, 3])->get()) > 0;
+        }
     }
 
     /**

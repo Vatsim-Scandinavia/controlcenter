@@ -281,8 +281,8 @@
                     </a>
                 @else
 
-                    <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings() && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} btn-block disabled not-allowed" role="button" aria-disabled="true">
-                        @if(\Auth::user()->hasActiveTrainings() && Setting::get('trainingEnabled'))
+                    <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} btn-block disabled not-allowed" role="button" aria-disabled="true">
+                        @if(\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled'))
                             <i class="fas fa-check"></i>
                         @else
                             <i class="fas fa-exclamation-triangle"></i>

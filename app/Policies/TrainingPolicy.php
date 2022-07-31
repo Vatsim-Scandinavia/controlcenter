@@ -97,11 +97,11 @@ class TrainingPolicy
         }
 
         // Not active users are forced to ask for a manual creation of refresh
-        if(!$user->hasActiveTrainings() && $user->rating > 2 && !$user->active){
+        if(!$user->hasActiveTrainings(true) && $user->rating > 2 && !$user->active){
             return Response::deny("Your ATC rating is inactive in {$divisionName}");
         }
 
-        return !$user->hasActiveTrainings() ? Response::allow() : Response::deny("You have an active training request");
+        return !$user->hasActiveTrainings(true) ? Response::allow() : Response::deny("You have an active training request");
     }
 
     /**
