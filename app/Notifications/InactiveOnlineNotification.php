@@ -47,7 +47,7 @@ class InactiveOnlineNotification extends Notification implements ShouldQueue
     {
         $textLines = [
             'Please disconnect from the network. Your ATC status is **inactive**. Your unauthorized login has been reported to the local staff.',
-            'To control online again in our division, you will need to apply for a refresh training with your ['.Setting::get('atcActivityContact').']('.Setting::get('linkContact').'),'
+            'To control online again in our division, you will need to apply for a refresh training with ['.Setting::get('atcActivityContact').']('.Setting::get('linkContact').'),'
         ];
 
         return (new WarningMail('Unauthorized network logon', $this->user, $textLines))
