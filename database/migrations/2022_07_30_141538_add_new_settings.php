@@ -27,4 +27,4 @@ return new class extends Migration
     {
         DB::raw('DELETE FROM '.Config::get('settings.table').' WHERE key = `atcActivityNotifyInactive`');
     }
-}
+};
