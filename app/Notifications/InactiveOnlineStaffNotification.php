@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Mail\WarningMail;
+use App\Mail\StaffNoticeMail;
 use App\Models\Endorsement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,7 +56,7 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
             'All admins and moderators in area in question has been notified.',
         ];
 
-        return (new WarningMail('Unauthorized network logon recorded', $this->user, $textLines))
+        return (new StaffNoticeMail('Unauthorized network logon recorded', $this->user, $textLines))
             ->to($this->sendTo->pluck('email'));
     }
 
