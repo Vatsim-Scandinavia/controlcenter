@@ -37,6 +37,8 @@ class CheckOnlineControllers extends Command
     public function handle()
     {
 
+        $this->info("Starting online controller check...");
+
         // Check if the setting is turned on
         if(!Setting::get('atcActivityNotifyInactive')){
             return;
@@ -53,6 +55,8 @@ class CheckOnlineControllers extends Command
         }
 
         $areasRegex = "/(^".$areas->implode('|^').")\w+/";
+
+        $this-info("Collecting online controllers...");
 
         // Fetch the latest URI to data feed
         $dataUri = json_decode(file_get_contents('https://status.vatsim.net/status.json'))->data->v3[0];
