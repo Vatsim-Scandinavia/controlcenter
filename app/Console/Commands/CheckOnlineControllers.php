@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Models\Area;
+use App\Models\Position;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\InactiveOnlineNotification;
 use App\Notifications\InactiveOnlineStaffNotification;
@@ -68,9 +70,16 @@ class CheckOnlineControllers extends Command
                             $user->last_inactivity_warning = now();
                             $user->save();
 
-                            // Send warning to all staff
-                            $moderators = User::allWithGroup(2, '<=');
-                            Notification::send($moderators, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
+                            // Send warning to all admins, and moderators in selected area
+                            $position = Position::where('callsign', $d->callsign)->get()->first();
+                            $sendToStaff = User::allWithGroup(1);
+                            $moderators = User::allWithGroup(2);
+                            foreach($moderators as $m){
+                                if(!$m->isModerator(Area::find($position->area->id))){
+                                    $sendToStaff->push($m);
+                                }
+                            }
+                            Notification::send($sendToStaff, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
                         }
                     }
                 }
