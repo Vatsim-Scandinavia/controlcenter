@@ -63,8 +63,10 @@ class CheckOnlineControllers extends Command
         $vatsimData = json_decode(file_get_contents($dataUri))->controllers;
 
         foreach($vatsimData as $d){
+            $this->info("Foreach");
             if(preg_match($areasRegex, $d->callsign)){
                 // Lets check this user
+                $this->info("checking user ".$d->cid);
                 $user = User::find($d->cid);
                 if(isset($user)){
                     if(!$user->active && !$user->hasActiveTrainings() && !$user->isVisiting()){
