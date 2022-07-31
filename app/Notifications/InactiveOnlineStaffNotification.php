@@ -49,7 +49,7 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
     public function toMail($notifiable)
     {
         $textLines = [
-            $this->user->name.' has been warned for logging on the network with an **inactive** ATC status.',
+            $this->user->name.' ('.$this->user->id.') has been warned for logging on the network with an **inactive** ATC status.',
             'Position: '.$this->position,
             'Logon time: '.Carbon::parse($this->logonTime)->toEuropeanDateTime(),
         ];
