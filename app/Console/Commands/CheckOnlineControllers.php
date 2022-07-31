@@ -79,12 +79,16 @@ class CheckOnlineControllers extends Command
                             // Send warning to all admins, and moderators in selected area
                             $position = Position::where('callsign', $d->callsign)->get()->first();
                             $sendToStaff = User::allWithGroup(1);
-                            $moderators = User::allWithGroup(2);
-                            foreach($moderators as $m){
-                                if(!$m->isModerator(Area::find($position->area->id))){
-                                    $sendToStaff->push($m);
+
+                            if($position){
+                                $moderators = User::allWithGroup(2);
+                                foreach($moderators as $m){
+                                    if(!$m->isModerator(Area::find($position->area))){
+                                        $sendToStaff->push($m);
+                                    }
                                 }
                             }
+                            
                             $this->info('sending to staff: '.$sendToStaff->implode('name', ', '));
                             //Notification::send($sendToStaff, new InactiveOnlineStaffNotification($user, $d->callsign, $d->logon_time));
                         }
