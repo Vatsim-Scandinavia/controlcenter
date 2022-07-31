@@ -56,7 +56,7 @@ class CheckOnlineControllers extends Command
 
         $areasRegex = "/(^".$areas->implode('|^').")\w+/";
 
-        $this-info("Collecting online controllers...");
+        $this->info("Collecting online controllers...");
 
         // Fetch the latest URI to data feed
         $dataUri = json_decode(file_get_contents('https://status.vatsim.net/status.json'))->data->v3[0];
