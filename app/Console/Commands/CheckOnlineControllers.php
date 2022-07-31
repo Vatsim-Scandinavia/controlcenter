@@ -63,13 +63,12 @@ class CheckOnlineControllers extends Command
         $vatsimData = json_decode(file_get_contents($dataUri))->controllers;
 
         foreach($vatsimData as $d){
-            $this->info("Foreach");
             if(preg_match($areasRegex, $d->callsign)){
                 // Lets check this user
-                $this->info("checking user ".$d->cid);
+                $this->info("Checking user ".$d->cid);
                 $user = User::find($d->cid);
                 if(isset($user)){
-                    if(!$user->active && !$user->hasActiveTrainings() && !$user->isVisiting()){
+                    if(!$user->active && (!$user->hasActiveTrainings() || !$user->isVisiting())){
                         if(!isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))){
                             // Send warning to user
                             //$user->notify(new InactiveOnlineNotification($user));
