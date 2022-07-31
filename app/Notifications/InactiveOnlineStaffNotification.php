@@ -15,7 +15,7 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
 {
     use Queueable;
 
-    private $user, $position, $logonTime;
+    private $sendTo, $user, $position, $logonTime;
 
     /**
      * Create a new notification instance.
