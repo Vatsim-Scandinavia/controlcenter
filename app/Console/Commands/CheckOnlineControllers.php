@@ -83,7 +83,7 @@ class CheckOnlineControllers extends Command
                             if($position){
                                 $moderators = User::allWithGroup(2);
                                 foreach($moderators as $m){
-                                    if($moderators->where('id', $m->id)->count()) continue;
+                                    if($sendToStaff->where('id', $m->id)->count()) continue;
 
                                     if($m->isModerator(Area::find($position->area))){
                                         $sendToStaff->push($m);
