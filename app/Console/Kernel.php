@@ -37,8 +37,8 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes();
 
         // Monitor who's online
-        //$schedule->command('check:controllers')
-        //    ->everyTenMinutes();
+        $schedule->command('check:controllers')
+            ->everyTenMinutes();
 
         // Delete old Sweatbox bookings
         $schedule->command('clean:sweatbooks')
