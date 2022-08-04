@@ -54,7 +54,7 @@ class CheckOnlineControllers extends Command
             $areas->push($a->prefix);
         }
 
-        $areasRegex = "/(^".$areas->implode('|^').")\w+/";
+        $areasRegex = "/(^".$areas->implode('|^').")\w+(?<!OBS)$/";
 
         $this->info("Collecting online controllers...");
 
