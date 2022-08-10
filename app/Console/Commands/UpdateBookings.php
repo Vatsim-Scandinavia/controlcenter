@@ -7,6 +7,7 @@ use App\Models\Position;
 use App\Models\Vatbook;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Http;
 
 class UpdateBookings extends Command
 {
@@ -41,7 +42,7 @@ class UpdateBookings extends Command
      */
     public function handle()
     {
-        $feed = file_get_contents("http://vatbook.euroutepro.com/xml2.php");
+        $feed = Http::get("http://vatbook.euroutepro.com/xml2.php");
         $raw = simplexml_load_string($feed)->atcs;
 
         foreach($raw->children() as $booking){
