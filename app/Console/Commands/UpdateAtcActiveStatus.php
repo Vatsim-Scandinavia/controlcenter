@@ -280,7 +280,8 @@ class UpdateAtcActiveStatus extends Command
 
         // Notify if user was set to inactive
         if($is_active == false && Setting::get('atcActivityNotifyInactive')){
-            $user->notify(new InactivityNotification($user));
+            // Change to user model from CC instead of Handover and notify
+            $user->user->notify(new InactivityNotification($user));
         }
     }
 
