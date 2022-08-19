@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use App\Models\Area;
 use App\Models\Position;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\InactiveOnlineNotification;
 use App\Notifications\InactiveOnlineStaffNotification;
@@ -12,6 +13,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use anlutro\LaravelSettings\Facade as Setting;
+use Illuminate\Support\Facades\Http;
 
 class CheckOnlineControllers extends Command
 {
@@ -39,7 +41,7 @@ class CheckOnlineControllers extends Command
 
         $this->info("Starting online controller check...");
 
-        // Check if the setting is turned on
+        //Check if the setting is turned on
         if(!Setting::get('atcActivityNotifyInactive')){
             return;
         }
@@ -59,8 +61,22 @@ class CheckOnlineControllers extends Command
         $this->info("Collecting online controllers...");
 
         // Fetch the latest URI to data feed
-        $dataUri = json_decode(file_get_contents('https://status.vatsim.net/status.json'))->data->v3[0];
-        $vatsimData = json_decode(file_get_contents($dataUri))->controllers;
+        $statusResponse = Http::get('https://status.vatsim.net/status.json');
+        if (!$statusResponse->successful()) {
+            Log::error('VATSIM status download failed.');
+            $this->error('VATSIM status download failed.');
+            return 0;
+        }
+        $dataUri = $statusResponse->json('data.v3')[0];
+
+        // Get VATSIM controller data
+        $vatsimResponse = Http::get($dataUri);
+        if (!$vatsimResponse->successful()) {
+            Log::error('VATSIM data download failed.');
+            $this->error('VATSIM data download failed.');
+            return 0;
+        }
+        $vatsimData = $vatsimResponse->json('controllers');
 
         foreach($vatsimData as $d){
             if(preg_match($areasRegex, $d->callsign)){
@@ -100,7 +116,7 @@ class CheckOnlineControllers extends Command
                 }
             }
         }
-        
+
         return 0;
     }
 }
