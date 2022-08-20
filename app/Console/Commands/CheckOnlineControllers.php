@@ -63,7 +63,8 @@ class CheckOnlineControllers extends Command
         // Fetch the latest URI to data feed
         $statusResponse = Http::get('https://status.vatsim.net/status.json');
         if (!$statusResponse->successful()) {
-            $this->info('VATSIM status download failed.');
+            Log::error('VATSIM status download failed.');
+            $this->error('VATSIM status download failed.');
             return 0;
         }
         $dataUri = $statusResponse->json('data.v3')[0];
@@ -71,7 +72,8 @@ class CheckOnlineControllers extends Command
         // Get VATSIM controller data
         $vatsimResponse = Http::get($dataUri);
         if (!$vatsimResponse->successful()) {
-            $this->info('VATSIM data download failed.');
+            Log::error('VATSIM data download failed.');
+            $this->error('VATSIM data download failed.');
             return 0;
         }
         $vatsimData = $vatsimResponse->json('controllers');
