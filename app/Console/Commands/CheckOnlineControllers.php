@@ -44,9 +44,9 @@ class CheckOnlineControllers extends Command
             return;
         }
 
-        // Fetch which country ICAOs we should look for based on positions database
+        // Fetch which first four characters from ICAOs should look for based on positions database
         $areasRaw = DB::select(
-            DB::raw('SELECT DISTINCT LEFT(callsign, 2) as prefix FROM positions;')
+            DB::raw('SELECT DISTINCT LEFT(callsign, 4) as prefix FROM positions;')
         );
 
         $areas = collect();
