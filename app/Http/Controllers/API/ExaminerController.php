@@ -14,7 +14,7 @@ class ExaminerController extends Controller
         foreach(Area::all() as $area){
             $thisArea = collect();
             
-            foreach($area->endorsements->where('type', 'EXAMINER') as $endorsement){
+            foreach($area->endorsements->where('type', 'EXAMINER')->where('revoked', false) as $endorsement){
                 $thisArea->push([
                     'user_id' => $endorsement->user->id,
                     'first_name' => $endorsement->user->first_name,
