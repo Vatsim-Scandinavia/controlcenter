@@ -23,6 +23,7 @@ else
         exit 0
     else
         echo "Running deployment into $ENV and '$CONTAINER' container..."
-        docker exec -it $CONTAINER bash .docker/deploy.sh $ENV
+        # docker run -v ./:/var/www/html -p 8080:80 -p 8443:433 -it $CONTAINER bash .docker/deploy.sh $ENV
+        docker run -v ./:/var/www/html -p 8080:80 -p 8443:433 -it $CONTAINER bash -c "cd /var/www/html && ./.docker/deploy.sh $ENV"
     fi
 fi
