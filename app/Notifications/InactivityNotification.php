@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Mail\WarningMail;
 use App\Models\Endorsement;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,14 +15,14 @@ class InactivityNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private $user;
+    private User $user;
 
     /**
      * Create a new notification instance.
      *
      * @param Endorsement $endorsement
      */
-    public function __construct($user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }

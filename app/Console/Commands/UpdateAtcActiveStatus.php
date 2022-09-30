@@ -259,29 +259,29 @@ class UpdateAtcActiveStatus extends Command
      * @param Handover $user
      * @param bool $is_active
      */
-    private function setAtcActiveStatus(Handover $user, bool $is_active)
+    private function setAtcActiveStatus(Handover $handoverUser, bool $is_active)
     {
-        $user->setConnection('mysql-handover');
-        $user = $user->fresh();
-        if ($user->atc_active == $is_active)
+        $handoverUser->setConnection('mysql-handover');
+        $handoverUser = $handoverUser->fresh();
+        if ($handoverUser->atc_active == $is_active)
             return;
 
         $this->count_updated++;
 
-        $this->info('Setting user ' . $user->id . ' to: ' . (($is_active) ? 'true' : 'false'));
-        Log::info('Setting user ' . $user->id . ' to: ' . (($is_active) ? 'true' : 'false'));
+        $this->info('Setting user ' . $handoverUser->id . ' to: ' . (($is_active) ? 'true' : 'false'));
+        Log::info('Setting user ' . $handoverUser->id . ' to: ' . (($is_active) ? 'true' : 'false'));
 
         if ($this->dry_run)
             return;
 
         // We need to "manually" set the value to trigger any event subscribers...
-        $user->atc_active = $is_active;
-        $user->save();
+        $handoverUser->atc_active = $is_active;
+        $handoverUser->save();
 
         // Notify if user was set to inactive
         if($is_active == false && Setting::get('atcActivityNotifyInactive')){
-            // Change to user model from CC instead of Handover and notify
-            $user->user->notify(new InactivityNotification($user));
+            // Change to CC user model instead of Handover and notify
+            $handoverUser->user->notify(new InactivityNotification($handoverUser->user));
         }
     }
 
