@@ -292,7 +292,7 @@
                     
                     if(this.trainingType == 'SOLO'){
                         if(this.soloChecked == false) validated = false
-                        if(this.positions.includes(',')) { 
+                        if(this.positions && this.positions.includes(',')) { 
                             validated = false
                             this.errSoloPositionCount = true 
                         }
