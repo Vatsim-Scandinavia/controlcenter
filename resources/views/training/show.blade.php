@@ -281,7 +281,10 @@
                                             <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
                                         @else
                                             <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
-                                            for positions: <span class="badge badge-light">{{ $activity->comment }}</span>
+                                            for positions: 
+                                            @foreach(explode(',', $activity->comment) as $p)
+                                                <span class="badge badge-light">{{ $p }}</span>
+                                            @endforeach
                                         @endempty
                                     @elseif($activity->type == "COMMENT")
                                         {!! nl2br($activity->comment) !!}
