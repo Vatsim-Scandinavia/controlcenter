@@ -560,10 +560,13 @@ class TrainingController extends Controller
 
         if(isset($interest)){
             
-
             // Check if already confirmed
             if($interest->confirmed_at){
                 return redirect($training->path())->withSuccess("You have already confirmed your interest for this training.");
+            }
+
+            if($interest->expired){
+                return redirect($training->path())->withErrors("This training interest link has expired. Please contact staff.");
             }
     
             $interest->confirmed_at = now();
