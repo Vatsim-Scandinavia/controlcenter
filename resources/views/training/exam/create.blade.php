@@ -48,7 +48,7 @@
                         New Examination Report
                     </h6>
                     @if(Setting::get('trainingExamTemplate') != "")
-                        <a class="btn btn-sm btn-light" href="{{ Setting::get('trainingExamTemplate') }}"><i class="fas fa-download"></i>&nbsp;Download Exam Template</a>
+                        <a class="btn btn-sm btn-light" href="{{ Setting::get('trainingExamTemplate') }}" target="_blank"><i class="fas fa-download"></i>&nbsp;Download Exam Template</a>
                     @endif
                 </div>
                 <div class="card-body">
