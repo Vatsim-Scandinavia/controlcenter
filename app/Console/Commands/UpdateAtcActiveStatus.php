@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Handover;
 use App\Models\Rating;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Notifications\InactivityNotification;
 use Illuminate\Support\Collection;
@@ -109,7 +110,6 @@ class UpdateAtcActiveStatus extends Command
             $this->addNextPagesToResult($sessions, $parsed_data, $client);
 
             $sum = $sessions->sum('minutes_on_callsign');
-
             $this->count_visited++;
 
             if ($this->userShouldBeSetAsInactive($user, $sum)) {
@@ -280,8 +280,11 @@ class UpdateAtcActiveStatus extends Command
 
         // Notify if user was set to inactive
         if($is_active == false && Setting::get('atcActivityNotifyInactive')){
-            // Change to CC user model instead of Handover and notify
-            $handoverUser->user->notify(new InactivityNotification($handoverUser->user));
+            /*  We're searching the App\Models\User by inserting Handover CID
+                This is because $handoverUser->user returns Handover data, but in a CC User model
+                probably tricked by the setConnection above. */
+            $ccUser = User::find($handoverUser->id);
+            $ccUser->notify(new InactivityNotification($ccUser));
         }
     }
 
