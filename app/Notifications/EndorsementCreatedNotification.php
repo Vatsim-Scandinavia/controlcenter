@@ -45,9 +45,11 @@ class EndorsementCreatedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
 
+        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : "Forver";
+
         $textLines = [
             'A new **'.ucwords(strtolower((string)$this->endorsement->type)).' Endorsement** has been issued for your training, at following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
-            '**Valid to:** '.$this->endorsement->valid_to->toEuropeanDateTime(),
+            '**Valid to:** '.$validTo,
         ];
 
         return (new EndorsementMail('Training Endorsement Issued', $this->endorsement, $textLines))

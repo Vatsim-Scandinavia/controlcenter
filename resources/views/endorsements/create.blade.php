@@ -113,8 +113,16 @@
                             type="text"
                             name="expires"
                             v-model="expire"
+                            :disabled="expireInf"
+                            :placeholder="expireInf && 'Never expires'" 
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
-                        <span v-show="validationError && expire == null" class="text-danger">Fill out an expire date, max 30 days</span>
+                        <span v-show="validationError && expire == null" class="text-danger">Fill out a valid expire date</span>
+                        <div class="form-check">
+                        <input class="form-check-input" type="checkbox" v-model="expireInf" name="expireInf" id="expireinf" value="true">
+                            <label class="form-check-label" for="expireinf">
+                                Infinte duration
+                            </label>
+                        </div>
                     </div>
 
                     {{-- Training Positions --}}
@@ -221,6 +229,7 @@
             trainingType: null,
             user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
             expire: null,
+            expireInf: null,
             positions: null,
             ratingMASC: null,
             ratingGRP: null,
@@ -287,7 +296,7 @@
 
                 } else if(this.endorsementType == 'TRAINING'){
 
-                    if(this.expire == null) validated = false
+                    if(this.expire == null && this.expireInf != true) validated = false
                     if(this.positions == null) validated = false
                     
                     if(this.trainingType == 'SOLO'){
