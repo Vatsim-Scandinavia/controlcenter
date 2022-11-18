@@ -484,10 +484,13 @@ class TrainingController extends Controller
 
                             // Revoke the old endorsement if active
                             $oldEndorsement = $training->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false)->first();
-                            if($oldEndorsement){
-                                $oldEndorsement->revoked = true;
-                                $oldEndorsement->valid_to = now();
-                                $oldEndorsement->save();
+                            foreach($oldEndorsement->ratings as $oe){
+                                if($oe->id == $rating->id){
+                                    $oldEndorsement->revoked = true;
+                                    $oldEndorsement->valid_to = now();
+                                    $oldEndorsement->save();
+                                    break;
+                                }
                             }
 
                             // Grant new endorsement
