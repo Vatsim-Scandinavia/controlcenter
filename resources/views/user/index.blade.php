@@ -29,7 +29,7 @@
                                 <th data-field="firstname" data-sortable="true" data-filter-control="input">First Name</th>
                                 <th data-field="lastname" data-sortable="true" data-filter-control="input">Last Name</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">ATC Rating</th>
-                                <th data-field="atcactive" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">ATC Active</th>
+                                <th data-field="atcactive" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 <th>ATC Hours</th>
                                 <th>Last login</th>
                             </tr>

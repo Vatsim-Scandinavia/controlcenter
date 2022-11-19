@@ -28,10 +28,10 @@
                         data-sort-reset="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-order-by="desc">Date</th>
+                                <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false" data-filter-order-by="desc">Date</th>
                                 <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
                                 <th data-field="end" data-sortable="true" data-filter-control="select">End (Zulu)</th>
-                                <th data-field="position" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripBadge">Position</th>
+                                <th data-field="position" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripBadge" data-filter-strict-search="false">Position</th>
                                 <th data-field="fir" data-sortable="true" data-filter-control="select">FIR</th>
                                 <th data-field="user" data-sortable="true" data-filter-control="select">User</th>
                             </tr>

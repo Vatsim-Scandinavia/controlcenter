@@ -29,7 +29,7 @@
                                 <th data-field="student" class="w-25" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
                                 @foreach($areas as $a)
-                                    <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="input" data-filter-data-collector="tableFilterStripHtml">{{ $a->name }}</th>
+                                    <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="input" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $a->name }}</th>
                                 @endforeach
                             </tr>
                         </thead>
