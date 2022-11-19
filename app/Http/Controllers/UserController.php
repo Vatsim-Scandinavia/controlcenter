@@ -28,7 +28,7 @@ class UserController extends Controller
     {
         $this->authorize('index', \Auth::user());
 
-        $users = User::all();
+        $users = User::with('endorsements')->get();
         $userHours = DB::table('atc_activity')->get();
 
         return view('user.index', compact('users', 'userHours'));
@@ -44,7 +44,7 @@ class UserController extends Controller
     {
         $this->authorize('index', \Auth::user());
 
-        $users = User::all();
+        $users = User::with('endorsements')->get();
 
         return view('user.other', compact('users'));
     }

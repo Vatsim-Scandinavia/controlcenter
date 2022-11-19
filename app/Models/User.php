@@ -205,7 +205,7 @@ class User extends Authenticatable
      * @throws PolicyMethodMissingException
      * @throws PolicyMissingException
      */
-    public function viewableModels($class, array $options = [])
+    public function viewableModels($class, array $options = [], array $with = [])
     {
 
         if (policy($class) == null) {
@@ -216,7 +216,7 @@ class User extends Authenticatable
             throw new PolicyMethodMissingException('The view method does not exist on the policy.');
         }
 
-        $models = $class::where($options)->get();
+        $models = $class::where($options)->with($with)->get();
 
         foreach ($models as $key => $model) {
             if ($this->cannot('view', $model)) {
