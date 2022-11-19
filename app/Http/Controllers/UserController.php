@@ -93,6 +93,7 @@ class UserController extends Controller
                 ->select('id')
                 ->where(DB::raw('LOWER(id)'), 'like', '%'.strtolower($query).'%')
                 ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%'.strtolower($query).'%')
+                ->orderByDesc('last_login')
                 ->get();
 
             if ($data->count() <= 0)
