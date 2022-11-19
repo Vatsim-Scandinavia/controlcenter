@@ -138,6 +138,8 @@
                     <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
                 @endif
                 
+                <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
+
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
 
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
