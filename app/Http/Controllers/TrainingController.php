@@ -197,7 +197,13 @@ class TrainingController extends Controller
 
         if($res->getStatusCode() == 200){
             $vatsimStats = json_decode($res->getBody(), true);
-            $vatsimStats = $vatsimStats[strtolower($user->rating_short)];
+
+            if(isset($vatsimStats[strtolower($user->rating_short)])){
+                $vatsimStats = $vatsimStats[strtolower($user->rating_short)];
+            } else {
+                $vatsimStats = 0;
+            }
+
         } else {
             return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
         }
