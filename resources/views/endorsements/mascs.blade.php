@@ -59,7 +59,7 @@
                                                     <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
                                                 </td>
                                                 @php $found = true; @endphp
-                                                @continue
+                                                @break
                                             @endif
                                         @endforeach
 

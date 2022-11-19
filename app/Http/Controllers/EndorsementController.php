@@ -23,7 +23,9 @@ class EndorsementController extends Controller
      */
     public function indexMascs()
     {
-        $users = User::whereHas('endorsements', function (Builder $query){ $query->where('type', 'MASC'); })->get();
+        $users = User::whereHas('endorsements', function (Builder $query){
+            $query->where('type', 'MASC')->where('revoked', false)->where('expired', false); 
+        })->with('endorsements')->get();
         $ratings = Rating::whereNull('vatsim_rating')->get();
 
         return view('endorsements.mascs', compact('users', 'ratings'));
@@ -135,7 +137,7 @@ class EndorsementController extends Controller
             $user = User::find($data['user']);
 
             // Check if endoresement for this user already exists
-            $existingEndorsements = Endorsement::where('user_id', $user->id)->where('type', 'MASC')->get();
+            $existingEndorsements = Endorsement::where('user_id', $user->id)->where('type', 'MASC')->where('revoked', false)->where('expired', false)->get();
             foreach($existingEndorsements as $e){
                 foreach($e->ratings as $r){
                     if($r->id == $data['ratingMASC']){
