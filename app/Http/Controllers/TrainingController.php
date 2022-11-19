@@ -109,13 +109,7 @@ class TrainingController extends Controller
 
         $this->authorize('viewHistoricRequests', Training::class);
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]])->sort(function($a, $b) {
-            if ($a->status == $b->status) {
-                return $b->created_at->timestamp - $a->created_at->timestamp;
-            }
-        
-            return $b->status - $a->status;
-        });
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]])->sortByDesc('closed_at');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
