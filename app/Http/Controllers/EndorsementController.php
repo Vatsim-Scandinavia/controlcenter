@@ -340,6 +340,36 @@ class EndorsementController extends Controller
     }
 
     /**
+     * Shorten the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function shorten($endorsementId, $date)
+    {
+
+        $endorsement = Endorsement::findOrFail($endorsementId);
+        $this->authorize('shorten', [Endorsement::class, $endorsement]);
+
+        $date = Carbon::parse($date);
+
+        if($date->gt($endorsement->valid_to)){
+            return redirect()->back()->withErrors('You can not shorten an endorsement to a future date.');
+        }
+
+        if($endorsement->type == "S1"){
+            $date->setHour(23)->setMinute(59);
+        } else {
+            $date->setHour(12)->setMinute(00);
+        }
+
+        $endorsement->valid_to = $date;
+        $endorsement->save();
+
+        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement shortened to ".Carbon::parse($date)->toEuropeanDateTime());
+    }
+
+    /**
      * Private function to create an endorsement object
      *
      * @param  String  $endorsementType

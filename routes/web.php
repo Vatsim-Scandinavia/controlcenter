@@ -67,7 +67,8 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::get('/endorsements/create', 'create')->name('endorsements.create');
         Route::get('/endorsements/create/{id}', 'create')->name('endorsements.create.id');
         Route::post('/endorsements/store', 'store')->name('endorsements.store');
-        Route::get('/endorsements/{id}/delete', 'destroy');
+        Route::get('/endorsements/{id}/delete', 'destroy')->name('endorsements.delete');
+        Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
     });
 
     // Users
