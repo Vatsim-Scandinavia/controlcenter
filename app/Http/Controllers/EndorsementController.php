@@ -9,6 +9,7 @@ use App\Models\Rating;
 use App\Models\Area;
 use App\Models\Position;
 use App\Notifications\EndorsementCreatedNotification;
+use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -366,7 +367,10 @@ class EndorsementController extends Controller
         $endorsement->valid_to = $date;
         $endorsement->save();
 
-        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement shortened to ".Carbon::parse($date)->toEuropeanDateTime());
+        ActivityLogController::warning('ENDORSEMENT', 'Shortened '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement to date '.$date);
+        $endorsement->user->notify(new EndorsementModifiedNotification($endorsement));
+
+        return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement shortened to ".Carbon::parse($date)->toEuropeanDateTime().". E-mail sent to student.");
     }
 
     /**
