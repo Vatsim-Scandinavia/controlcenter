@@ -126,11 +126,6 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class);
     }
 
-    public function vatbooks()
-    {
-        return $this->hasMany(Vatbook::class);
-    }
-
     public function vote(){
         return $this->hasMany(Vote::class);
     }

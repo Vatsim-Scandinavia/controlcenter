@@ -17,7 +17,7 @@ use App\Http\Controllers\TrainingExaminationController;
 use App\Http\Controllers\TrainingActivityController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\SweatbookController;
-use App\Http\Controllers\VatbookController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\VoteController;
 
@@ -164,15 +164,15 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::post('/sweatbook/update', 'update');
     });
 
-    // Vatbook routes
-    Route::controller(VatbookController::class)->group(function(){
-        Route::get('/vatbook', 'index')->name('vatbook');
-        Route::get('/vatbook/bulk', 'bulk')->name('vatbook.bulk');
-        Route::post('/vatbook/bulk', 'storeBulk')->name('vatbook.bulk.store');
-        Route::get('/vatbook/{id}/delete', 'delete')->name('vatbook.delete');
-        Route::get('/vatbook/{id}', 'show');
-        Route::post('/vatbook/store', 'store');
-        Route::post('/vatbook/update', 'update');
+    // Booking routes
+    Route::controller(BookingController::class)->group(function(){
+        Route::get('/booking', 'index')->name('booking');
+        Route::get('/booking/bulk', 'bulk')->name('booking.bulk');
+        Route::post('/booking/bulk', 'storeBulk')->name('booking.bulk.store');
+        Route::get('/booking/{id}/delete', 'delete')->name('booking.delete');
+        Route::get('/booking/{id}', 'show');
+        Route::post('/booking/store', 'store');
+        Route::post('/booking/update', 'update');
     });
 
     // Mentor Routes

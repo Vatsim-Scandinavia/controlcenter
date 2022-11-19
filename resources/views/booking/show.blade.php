@@ -12,7 +12,7 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('VatbookController@update') !!}" method="POST">
+                <form action="{!! action('BookingController@update') !!}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>
@@ -43,21 +43,21 @@
                         </datalist>
                     </div>
 
-                    @can('bookTags', \App\Models\Vatbook::class)
+                    @can('bookTags', \App\Models\Booking::class)
                         <div class="form-group">
-                            @can('bookTrainingTag', \App\Models\Vatbook::class)
+                            @can('bookTrainingTag', \App\Models\Booking::class)
                                 <input id="training" type="checkbox" name="tag" value=1 {{ $booking->training == 1 ? 'checked' : '' }} onClick="change(this)">
                                 <label for="training">Training</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
-                            @can('bookExamTag', \App\Models\Vatbook::class)
+                            @can('bookExamTag', \App\Models\Booking::class)
                                 <input id="exam" type="checkbox" name="tag" value=2 {{ $booking->exam == 1 ? 'checked' : '' }} onClick="change(this)">
                                 <label for="exam">Exam</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
-                            @can('bookEventTag', \App\Models\Vatbook::class)
+                            @can('bookEventTag', \App\Models\Booking::class)
                                 <input id="event" type="checkbox" name="tag" value=3 {{ $booking->event == 1 ? 'checked' : '' }} onClick="change(this)">
                                 <label for="event">Event</label>
                             @endcan
@@ -72,7 +72,7 @@
                     <input type="hidden" name="id" value="{{{ $booking->id }}}"> 
 
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <a href="{{ route('vatbook.delete', $booking->id) }}" onclick="return confirm('Are you sure you want to delete this booking?')" class="btn btn-danger">Delete</a>
+                    <a href="{{ route('booking.delete', $booking->id) }}" onclick="return confirm('Are you sure you want to delete this booking?')" class="btn btn-danger">Delete</a>
                 </form>
             </div>
         </div>

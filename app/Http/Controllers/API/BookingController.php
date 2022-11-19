@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Vatbook;
+use App\Models\Booking;
 use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Http\Controllers\ActivityLogController;
 
-class VatbookController extends Controller
+class BookingController extends Controller
 {
     /*public function __construct()
     {
@@ -28,7 +28,7 @@ class VatbookController extends Controller
      */
     public function index()
     {
-        $bookings = Vatbook::where('deleted', false)->get()->sortBy('time_start');
+        $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
 
         return response()->json(["data" => $bookings->values()], 200);
     }
@@ -52,16 +52,14 @@ class VatbookController extends Controller
         ]);
 
         $user = User::findorFail($request['cid']);
-        $booking = new Vatbook();
+        $booking = new Booking();
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
-        $booking->local_id = floor($user->id / (date('z') + 1));
         $booking->callsign = strtoupper($data['position']);
         $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
         $booking->name = $user->name;
-        $booking->cid = $user->id;
         $booking->user_id = $user->id;
         $booking->source = strtoupper($data['source']);
 
@@ -81,7 +79,7 @@ class VatbookController extends Controller
             ], 400);
         }
 
-        if (!Vatbook::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+        if (!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
@@ -139,37 +137,25 @@ class VatbookController extends Controller
         }
 
         if (App::environment('production')) {
-            if ($booking->event) {
-                $eventUrl = Setting::get('linkDomain');
-                $response = file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->cid}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&E_URL={$eventUrl}&voice=1"));
-            } else {
-                $response = file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/insert.asp?Local_URL=noredir&Local_ID={$booking->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$booking->cid}&Position={$booking->callsign}&sTime={$booking->time_start->format('Hi')}&eTime={$booking->time_end->format('Hi')}&cid={$booking->cid}&T={$booking->training}&E={$booking->event}&voice=1"));
-            }
+            $client = new \GuzzleHttp\Client();
 
-            preg_match_all('/EU_ID=(\d+)/', $response, $matches);
-            $booking->eu_id = $matches[1][0];
-        } else {
-            $booking->eu_id = 0;
+            $url = $this->getVatsimBookingUrl('post');
+            $response = $this->makeHttpRequest($client, $url, 'post', [
+                'callsign' => (string)$booking->callsign,
+                'cid' => $booking->user_id,
+                'type' => $type,
+                'start' => $booking->time_start->format('Y-m-d H:i:s'),
+                'end' => $booking->time_end->format('Y-m-d H:i:s'),
+            ]);
+
+            $vatsim_booking = json_decode($response->getBody()->getContents());
+
+            $booking->vatsim_booking = $vatsim_booking->id;
         }
-
-        $client = new \GuzzleHttp\Client();
-
-        $url = $this->getVatsimBookingUrl('post');
-        $response = $this->makeHttpRequest($client, $url, 'post', [
-            'callsign' => (string)$booking->callsign,
-            'cid' => $booking->cid,
-            'type' => $type,
-            'start' => $booking->time_start->format('Y-m-d H:i:s'),
-            'end' => $booking->time_end->format('Y-m-d H:i:s'),
-        ]);
-
-        $vatsim_booking = json_decode($response->getBody()->getContents());
-
-        $booking->vatsim_booking = $vatsim_booking->id;
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', "Created vatbook booking" . $booking->id . " via API" .
+        ActivityLogController::info('BOOKING', "Created booking booking" . $booking->id . " via API" .
             " ― from " . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             " → " . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             " ― Position: " . Position::find($booking->position_id)->callsign);
@@ -191,12 +177,12 @@ class VatbookController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Vatbook  $vatbook
+     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
-    public function show(Vatbook $vatbook)
+    public function show(booking $booking)
     {
-        $user = User::findorFail($vatbook->cid);
+        $user = User::findorFail($booking->user_id);
         $positions = new Collection();
         if ($user->rating >= 3) {
             $positions = Position::where('rating', '<=', $user->rating)->get();
@@ -211,7 +197,7 @@ class VatbookController extends Controller
         }
 
         return response()->json([
-            'booking' => $vatbook
+            'booking' => $booking
         ], 200);
     }
 
@@ -219,10 +205,10 @@ class VatbookController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Vatbook  $vatbook
+     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Vatbook $vatbook)
+    public function update(Request $request, booking $booking)
     {
         $data = $request->validate([
             'cid' => 'required|integer',
@@ -236,40 +222,40 @@ class VatbookController extends Controller
         $user = User::findorFail($data['cid']);
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
-        $vatbook->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
-        $vatbook->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
+        $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
+        $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
-        $vatbook->callsign = strtoupper($data['position']);
-        $vatbook->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->callsign = strtoupper($data['position']);
+        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
 
-        if ($vatbook->time_start === $vatbook->time_end) {
+        if ($booking->time_start === $booking->time_end) {
             return response()->json([
                 'message' => 'Booking needs to have a valid duration!'
             ], 400);
         }
 
-        if ($vatbook->time_start->diffInMinutes($vatbook->time_end, false) < 0) {
-            $vatbook->time_end->addDay();
+        if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
+            $booking->time_end->addDay();
         }
 
-        if ($vatbook->time_start->diffInMinutes(Carbon::now(), false) > 0) {
+        if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
                 'message' => 'You cannot create a booking in the past.'
             ], 400);
         }
 
-        if (!Vatbook::whereBetween('time_start', [$vatbook->time_start, $vatbook->time_end])
-            ->where('time_end', '!=', $vatbook->time_start)
-            ->where('time_start', '!=', $vatbook->time_end)
-            ->where('position_id', $vatbook->position_id)
+        if (!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+            ->where('time_end', '!=', $booking->time_start)
+            ->where('time_start', '!=', $booking->time_end)
+            ->where('position_id', $booking->position_id)
             ->where('deleted', false)
-            ->where('id', '!=', $vatbook->id)
-            ->orWhereBetween('time_end', [$vatbook->time_start, $vatbook->time_end])
-            ->where('time_end', '!=', $vatbook->time_start)
-            ->where('time_start', '!=', $vatbook->time_end)
-            ->where('position_id', $vatbook->position_id)
+            ->where('id', '!=', $booking->id)
+            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
+            ->where('time_end', '!=', $booking->time_start)
+            ->where('time_start', '!=', $booking->time_end)
+            ->where('position_id', $booking->position_id)
             ->where('deleted', false)
-            ->where('id', '!=', $vatbook->id)
+            ->where('id', '!=', $booking->id)
             ->get()->isEmpty()) {
             return response()->json([
                 'message' => 'The position is already booked for that time!'
@@ -278,14 +264,14 @@ class VatbookController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($vatbook->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) {
-            $vatbook->training = 1;
+        if (($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) {
+            $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if ($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $vatbook->position->mae == true) {
-            $vatbook->training = 1;
+        } else if ($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
+            $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
-            $vatbook->training = 0;
+            $booking->training = 0;
         }
 
         $type = null;
@@ -293,102 +279,90 @@ class VatbookController extends Controller
         if (isset($data['tag'])) {
             switch ($data['tag']) {
                 case 1:
-                    $vatbook->exam = 0;
-                    $vatbook->event = 0;
-                    $vatbook->training = 1;
+                    $booking->exam = 0;
+                    $booking->event = 0;
+                    $booking->training = 1;
                     $type = 'training';
                     break;
                 case 2:
-                    $vatbook->exam = 1;
-                    $vatbook->event = 0;
-                    $vatbook->training = 0;
+                    $booking->exam = 1;
+                    $booking->event = 0;
+                    $booking->training = 0;
                     $type = 'exam';
                     break;
                 case 3:
-                    $vatbook->training = 0;
-                    $vatbook->exam = 0;
-                    $vatbook->event = 1;
+                    $booking->training = 0;
+                    $booking->exam = 0;
+                    $booking->event = 1;
                     $type = 'event';
                     break;
             }
         } else {
-            $vatbook->exam = 0;
-            $vatbook->event = 0;
+            $booking->exam = 0;
+            $booking->event = 0;
             $type = 'booking';
         }
 
         if (App::environment('production')) {
-            if ($vatbook->event) {
-                $eventUrl = Setting::get('linkDomain');
-                file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&E_URL={$eventUrl}&voice=1"));
-            } else {
-                file_get_contents(str_replace(' ', '%20', "http://vatbook.euroutepro.com/atc/update.asp?Local_URL=noredir&EU_ID={$vatbook->eu_id}&Local_ID={$vatbook->local_id}&b_day={$date->format('d')}&b_month={$date->format('m')}&b_year={$date->format('Y')}&Controller={$vatbook->cid}&Position={$vatbook->callsign}&sTime={$vatbook->time_start->format('Hi')}&eTime={$vatbook->time_end->format('Hi')}&cid={$vatbook->cid}&T={$vatbook->training}&E={$vatbook->event}&voice=1"));
-            }
+            $client = new \GuzzleHttp\Client();
+            $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
+            $response = $this->makeHttpRequest($client, $url, 'put', [
+                'callsign' => (string)$booking->callsign,
+                'cid' => $booking->user_id,
+                'type' => $type,
+                'start' => $booking->time_start->format('Y-m-d H:i:s'),
+                'end' => $booking->time_end->format('Y-m-d H:i:s'),
+            ]);
+
+            $vatsim_booking = json_decode($response->getBody()->getContents());
+
+            $booking->vatsim_booking = $vatsim_booking->id;
         }
 
-        $client = new \GuzzleHttp\Client();
-        $url = $this->getVatsimBookingUrl('put', $vatbook->vatsim_booking);
-        $response = $this->makeHttpRequest($client, $url, 'put', [
-            'callsign' => (string)$vatbook->callsign,
-            'cid' => $vatbook->cid,
-            'type' => $type,
-            'start' => $vatbook->time_start->format('Y-m-d H:i:s'),
-            'end' => $vatbook->time_end->format('Y-m-d H:i:s'),
-        ]);
+        $booking->save();
 
-        $vatsim_booking = json_decode($response->getBody()->getContents());
-
-        $vatbook->vatsim_booking = $vatsim_booking->id;
-
-        $vatbook->save();
-
-        ActivityLogController::info('BOOKING', "Updated vatbook booking " . $vatbook->id . " via API" .
-            " ― from " . Carbon::parse($vatbook->time_start)->toEuropeanDateTime() .
-            " → " . Carbon::parse($vatbook->time_end)->toEuropeanDateTime() .
-            " ― Position: " . Position::find($vatbook->position_id)->callsign);
+        ActivityLogController::info('BOOKING', "Updated booking booking " . $booking->id . " via API" .
+            " ― from " . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+            " → " . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+            " ― Position: " . Position::find($booking->position_id)->callsign);
 
         if ($forcedTrainingTag) {
             return response()->json([
                 'message' => 'Booking updated',
-                'booking' => $vatbook,
+                'booking' => $booking,
                 'tag' => 'Training'
             ], 200);
         }
 
         return response()->json([
             'message' => 'Booking updated',
-            'booking' => $vatbook
+            'booking' => $booking
         ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Vatbook  $vatbook
+     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Vatbook $vatbook)
+    public function destroy(booking $booking)
     {
-        if (App::environment('production')) {
-            file_get_contents('http://vatbook.euroutepro.com/atc/delete.asp?Local_URL=noredir&EU_ID=' . $vatbook->eu_id . '&Local_ID=' . $vatbook->local_id);
-        }
-
-        $vatbook->deleted = true;
-        $vatbook->local_id = null;
+        $booking->deleted = true;
         $client = new \GuzzleHttp\Client();
-        $url = $this->getVatsimBookingUrl('delete', $vatbook->vatsim_booking);
+        $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
         $response = $this->makeHttpRequest($client, $url, 'delete');
 
-        $vatbook->save();
+        $booking->save();
 
-        ActivityLogController::warning('BOOKING', "Deleted vatbook booking " . $vatbook->id . " via API" .
-            " ― from " . Carbon::parse($vatbook->time_start)->toEuropeanDateTime() .
-            " → " . Carbon::parse($vatbook->time_end)->toEuropeanDateTime() .
-            " ― Position: " . Position::find($vatbook->position_id)->callsign);
+        ActivityLogController::warning('BOOKING', "Deleted booking booking " . $booking->id . " via API" .
+            " ― from " . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+            " → " . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+            " ― Position: " . Position::find($booking->position_id)->callsign);
 
         return response()->json([
             'message' => 'Booking deleted',
-            'booking' => $vatbook
+            'booking' => $booking
         ], 200);
     }
 

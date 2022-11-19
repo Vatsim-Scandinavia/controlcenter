@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:queuecalculation')
             ->daily();
 
-        // Update Vatbook bookings, also deletes old bookings
+        // Update bookings, also deletes old bookings
         $schedule->command('update:bookings')
             ->everyFiveMinutes();
 

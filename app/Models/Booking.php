@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Vatbook extends Model
+class Booking extends Model
 {
   /**
    * The attributes that are mass assignable.
    *
    * @var array
    */
-  protected $fillable = ['eu_id', 'local_id', 'callsign', 'position_id', 'name', 'time_start', 'time_end', 'cid', 'user_id', 'training', 'event', 'exam'];
+  protected $fillable = ['callsign', 'position_id', 'name', 'time_start', 'time_end', 'cid', 'user_id', 'training', 'event', 'exam'];
 
   public function position(){
     return $this->hasOne(Position::class, 'id', 'position_id');

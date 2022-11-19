@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Vatbook')
+@section('title', 'Booking')
 @section('content')
 
 <div class="row">
-    @can('create', \App\Models\Vatbook::class)
+    @can('create', \App\Models\Booking::class)
         <div class="col-xl-8 col-lg-12 col-md-12 mb-12">
     @endcan
-    @cannot('create', \App\Models\Vatbook::class)
+    @cannot('create', \App\Models\Booking::class)
         <div class="col-lg-12 col-md-12 mb-12">
     @endcannot
         <div class="card shadow mb-4">
@@ -18,7 +18,7 @@
                 <div class="table-responsive">
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
                         data-cookie="true"
-                        data-cookie-id-table="vatbook"
+                        data-cookie-id-table="booking"
                         data-cookie-expire="14d"
                         data-toggle="table"
                         data-pagination="true"
@@ -41,16 +41,16 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/vatbook/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
+                                        <a href="/booking/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
                                            <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
                                     @else
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
-                                        @if(Auth::user()->id == $booking->cid || $user->isModeratorOrAbove())
+                                        @if(Auth::user()->id == $booking->user_id || $user->isModeratorOrAbove())
 
                                             @if($booking->source == "DISCORD")
-                                                <i class="fab fa-discord text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
+                                                <i class="fab fa-discord text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
                                             @else
-                                                <i class="fas fa-info-circle text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Vatbook::class)->message() }}"></i>
+                                                <i class="fas fa-info-circle text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
                                             @endif
 
                                         @endif
@@ -76,16 +76,12 @@
                                     {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    @if ($booking->local_id == null)
-                                        {{ $booking->name }}
+                                    @can('view', \App\Models\User::find($booking->user_id))
+                                        <a href="{{ route('user.show', $booking->user_id) }}">{{ \App\Models\User::find($booking->user_id)->name }} ({{ $booking->user_id }})</a>
                                     @else
-                                        @can('view', \App\Models\User::find($booking->user_id))
-                                            <a href="{{ route('user.show', $booking->user_id) }}">{{ \App\Models\User::find($booking->user_id)->name }} ({{ $booking->user_id }})</a>
-                                        @else
-                                            {{ \App\Models\User::find($booking->user_id)->name }}
-                                            ({{ $booking->user_id }})
-                                        @endcan
-                                    @endif
+                                        {{ \App\Models\User::find($booking->user_id)->name }}
+                                        ({{ $booking->user_id }})
+                                    @endcan
                                 </td>
                             </tr>
                             @endforeach
@@ -96,7 +92,7 @@
             
         </div>
     </div>
-    @can('create', \App\Models\Vatbook::class)
+    @can('create', \App\Models\Booking::class)
     <div class="col-xl-4 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -105,7 +101,7 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('VatbookController@store') !!}" method="POST">
+                <form action="{!! action('BookingController@store') !!}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>
@@ -149,21 +145,21 @@
                         @enderror
                     </div>
 
-                    @can('bookTags', \App\Models\Vatbook::class)
+                    @can('bookTags', \App\Models\Booking::class)
                         <div class="form-group">
-                            @can('bookTrainingTag', \App\Models\Vatbook::class)
+                            @can('bookTrainingTag', \App\Models\Booking::class)
                                 <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                                 <label for="training">Training</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
-                            @can('bookExamTag', \App\Models\Vatbook::class)
+                            @can('bookExamTag', \App\Models\Booking::class)
                                 <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
                                 <label for="exam">Exam</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
-                            @can('bookEventTag', \App\Models\Vatbook::class)
+                            @can('bookEventTag', \App\Models\Booking::class)
                                 <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
                                 <label for="event">Event</label>
                             @endcan
