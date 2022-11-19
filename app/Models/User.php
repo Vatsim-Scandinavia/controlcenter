@@ -306,7 +306,7 @@ class User extends Authenticatable
      */
     public function hasEndorsementRating(Rating $rating)
     {
-        foreach($this->endorsements->where('type', 'MASC') as $e){
+        foreach($this->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $e){
             foreach($e->ratings as $r){
                 if($r->id == $rating->id){
                     return true;

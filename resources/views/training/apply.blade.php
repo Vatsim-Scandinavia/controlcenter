@@ -34,14 +34,9 @@
             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                 <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Training choices</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Training options</h6>
                         </div>
                         <div class="card-body">
-
-                            <p class="text-muted">
-                                <i class="fas fa-info-circle"></i>&nbsp;&nbsp;S2 is the lowest rating you can apply for in {{ Config::get('app.owner') }}. S1 is included in this training.
-                            </p>
-
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 mb-12">
                                     <label class="my-1 mr-2" for="areaSelect">Training area</label>
@@ -57,11 +52,12 @@
                                     <label class="my-1 mr-2" for="ratingSelect">Training type</label>
                                     <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="custom-select my-1 mr-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
-                                        <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
+                                        <option v-for="rating in ratings" :value="rating.id" :data-hour-requirement="rating.hour_requirement">@{{ rating.name }}</option>
                                     </select> 
                                     <span v-show="errArea" class="text-danger" style="display: none">Select available rating</span>
                                 </div>
                             </div>
+                            <div v-show="errHours" id="errHours" class="text-danger" style="display: none">You need to fulfill the hour requirement before applying for this option.</div>
 
                             <a class="btn btn-success mt-2" href="#" v-on:click="next">Continue</a>
                         </div>
@@ -154,6 +150,7 @@
 <script>
 
     var payload = {!! json_encode($payload, true) !!}
+    var atcHours = {!! json_encode($atc_hours, true) !!}
 
     const application = new Vue({
         el: '#application',
@@ -163,9 +160,10 @@
             remarkChecked: 0,
             errArea: 0,
             errRating: 0,
+            errHours: 0,
             errExperience: 0,
             errLOM: 0,
-            motivationRequired: {{ $motivation_required }}
+            motivationRequired: {{ $motivation_required }},
         },
         methods:{
             next() {
@@ -177,6 +175,7 @@
                 if(page == 1){
                     let trainingArea = $('#areaSelect').val();
                     let trainingLevel = $('#ratingSelect').val();
+                    let requiredHours = $('#ratingSelect').find(':selected').attr('data-hour-requirement');
 
                     if (trainingArea == null){
                         $('#areaSelect').addClass('is-invalid');
@@ -188,7 +187,15 @@
                         $('#ratingSelect').addClass('is-invalid');
                         this.errRating = true;
                         validated = false;
-                    } 
+                    }
+
+                    if (requiredHours !== undefined && atcHours < requiredHours){
+                        $('#ratingSelect').addClass('is-invalid');
+                        $('#errHours').html("To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours.");
+                        this.errHours = true;
+                        validated = false;
+                    }
+
                 } else if(page == 2){
                     validated = true;
                 }
@@ -233,9 +240,11 @@
                 $('#ratingSelect').removeClass('is-invalid');
                 this.errArea = false;
                 this.errRating = false;
+                this.errHours = false;
             },
             ratingSelectChange(event){
                 $('#ratingSelect').removeClass('is-invalid');
+                this.errHours = false;
             },
             ratingSelectUpdate(areaId){
                 this.ratings = payload[areaId].data

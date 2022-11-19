@@ -166,21 +166,29 @@ class EndorsementController extends Controller
             $data = request()->validate([
                 'user' => 'required|numeric|exists:App\Models\User,id',
                 'trainingType' => ['required', 'regex:/(SOLO|S1)/i'],
-                'expires' => 'required|date_format:d/m/Y',
+                'expires' => 'sometimes|date_format:d/m/Y',
+                'expireInf' => 'sometimes',
                 'positions' => "required",
             ]);
             $user = User::find($data['user']);
             $trainingType = $data['trainingType'];
-            $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
-            $expireDate->setTime(23, 59);
+            $expireInfinite = isset($data['expireInf']) ? true : false;
 
             // Let's validate the expire date
-            $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
-            if($trainingType == 'SOLO' && ($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonth()))){
-                return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
-            } elseif($trainingType == 'S1' && ($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonths(3)))){
-                return back()->withInput()->withErrors(['expires' => 'S1 endorsements must expire within the next 3 months']);
+            if(!$expireInfinite){
+                $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
+                $expireDate->setTime(23, 59);
+
+                $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
+                if($trainingType == 'SOLO' && ($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonth()))){
+                    return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
+                } elseif($trainingType == 'S1' && ($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonths(3)))){
+                    return back()->withInput()->withErrors(['expires' => 'S1 endorsements must expire within the next 3 months']);
+                }
+            } else {
+                $expireDate = null;
             }
+            
 
             // Validate that this user has other endrosement of this type from before
             if($user->hasActiveEndorsement($trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
@@ -193,7 +201,9 @@ class EndorsementController extends Controller
             // Validate that solo only has one position and set expire time
             if($trainingType == "SOLO"){
 
-                $expireDate->setTime(12, 0);
+                if($expireDate != null){
+                    $expireDate->setTime(12, 0);
+                }
 
                 if(str_contains($data['positions'], ',')){
                     return back()->withInput()->withErrors(['positions' => 'Solo endorsement can only have one assigned position']);
@@ -201,7 +211,11 @@ class EndorsementController extends Controller
             }
             
             // All clear, create endorsement
-            $endorsement = $this->createEndorsementModel($trainingType, $user, $expireDate->format('Y-m-d H:i:s'));
+            if($expireDate != null){
+                $endorsement = $this->createEndorsementModel($trainingType, $user, $expireDate->format('Y-m-d H:i:s'));
+            } else {
+                $endorsement = $this->createEndorsementModel($trainingType, $user, $expireDate);
+            }
 
             // Add positions
             if($trainingType == "SOLO"){

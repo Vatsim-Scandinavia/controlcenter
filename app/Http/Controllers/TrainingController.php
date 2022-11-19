@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use App\Models\Area;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingClosedNotification;
@@ -152,6 +153,7 @@ class TrainingController extends Controller
 
                     // If the required vatsim rating for the selection is lower or equals the level user has today, make it available
                     if($reqVatRating <= $userVatsimRating){
+                        $rating->hour_requirement = $rating->pivot->hour_requirement;
                         $availableRatings->push($rating);
                     }
                 }
@@ -164,11 +166,14 @@ class TrainingController extends Controller
             foreach($availableRatings as $ratingIndex => $rating){
 
                 // If the rating is a MAE rating, or it's a VATSIM-rating allowed to bundle with MAEs. AND if the required vatsim rating to apply for the rating is S3 or below (so we don't bundle C1+ MAEs)
-                if(($rating->vatsim_rating == NULL || $rating->pivot->allow_mae_bundling) && $rating->pivot->required_vatsim_rating <= 4){
+                if(($rating->vatsim_rating == NULL || $rating->pivot->allow_bundling) && $rating->pivot->required_vatsim_rating <= 4){
                     $bundle['id'] = empty($bundle['id']) ? $rating->id : $bundle['id'].'+'.$rating->id;
                     $bundle['name'] = empty($bundle['name']) ? $rating->name : $bundle['name'].' + '.$rating->name;
-                    $bundleAmount++;
+                    if(!isset($bundle['hour_requirement']) || $rating->hour_requirement > $bundle['hour_requirement']){
+                        $bundle['hour_requirement'] = $rating->hour_requirement;
+                    }
 
+                    $bundleAmount++;
                     $availableRatings->pull($ratingIndex);
                 }
             }
@@ -181,8 +186,32 @@ class TrainingController extends Controller
             $payload[$area->id]["data"] = $availableRatings;
         }
 
+        // Fetch user's ATC hours
+        $vatsimStats = [];
+        $client = new \GuzzleHttp\Client();
+        if(App::environment('production')) {
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/'.$user->id.'/rating_times/');
+        } else {
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+        }
+
+        if($res->getStatusCode() == 200){
+            $vatsimStats = json_decode($res->getBody(), true);
+
+            if(isset($vatsimStats[strtolower($user->rating_short)])){
+                $vatsimStats = $vatsimStats[strtolower($user->rating_short)];
+            } else {
+                $vatsimStats = 0;
+            }
+
+        } else {
+            return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+        }
+
+        // Return
         return view('training.apply', [
             'payload' => $payload,
+            'atc_hours' => $vatsimStats,
             'motivation_required' => ($userVatsimRating <= 2) ? 1 : 0
         ]);
     }
@@ -221,9 +250,35 @@ class TrainingController extends Controller
         if (isset($data['user_id']) && User::find($data['user_id']) == null)
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
 
-        // Training_level comes from the application ratings comes from the manual creation, we need to seperate those.
+        // Training_level comes from the application, ratings comes from the manual creation, we need to seperate those.
         if(isset($data['training_level'])){
             $ratings = Rating::find(explode("+", $data["training_level"]));
+
+            // Check if user fulfill rating hour requirement
+            $vatsimStats = [];
+            $client = new \GuzzleHttp\Client();
+            if(App::environment('production')) {
+                $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/'.\Auth::id().'/rating_times/');
+            } else {
+                $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+            }
+
+            if($res->getStatusCode() == 200){
+                $vatsimStats = json_decode($res->getBody(), true);
+                $vatsimHours = $vatsimStats[strtolower(\Auth::user()->rating_short)];
+            } else {
+                return redirect()->back()->withErrors('We were unable to submit the application for you due to missing data from VATSIM. Please try again later.');
+            }
+
+            // Loop through the ratings and check if we're missing some hours
+            foreach($ratings as $rating){
+                foreach($rating->areas as $area){
+                    if($vatsimHours < $area->pivot->hour_requirement){
+                        return redirect()->back()->withErrors('You have insufficient hours on current rating to submit this application.');
+                    }
+                }
+            }
+
         } elseif(isset($data['ratings'])){
             $ratings = Rating::find($data["ratings"]);
         } else {
@@ -484,10 +539,13 @@ class TrainingController extends Controller
 
                             // Revoke the old endorsement if active
                             $oldEndorsement = $training->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false)->first();
-                            if($oldEndorsement){
-                                $oldEndorsement->revoked = true;
-                                $oldEndorsement->valid_to = now();
-                                $oldEndorsement->save();
+                            foreach($oldEndorsement->ratings as $oe){
+                                if($oe->id == $rating->id){
+                                    $oldEndorsement->revoked = true;
+                                    $oldEndorsement->valid_to = now();
+                                    $oldEndorsement->save();
+                                    break;
+                                }
                             }
 
                             // Grant new endorsement
