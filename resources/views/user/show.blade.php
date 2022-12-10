@@ -79,6 +79,8 @@
                                             <th>Level</th>
                                             <th>Area</th>
                                             <th>Type</th>
+                                            <th>Applied</th>
+                                            <th>Ended</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -105,6 +107,16 @@
                                             </td>
                                             <td>
                                                 <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
+                                            </td>
+                                            <td>
+                                                {{ $training->created_at->toEuropeanDate() }}
+                                            </td>
+                                            <td>
+                                                @if ($training->closed_at != null)
+                                                    {{ $training->closed_at->toEuropeanDate() }}
+                                                @else
+                                                    N/A
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
