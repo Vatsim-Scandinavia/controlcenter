@@ -147,6 +147,18 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
+                        <div class="dropdown float-right">
+                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Template
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @foreach($areas as $a)
+                                    @if($a->template_s1_positions)
+                                        <a class="dropdown-item" v-on:click="positions = '{{ $a->template_s1_positions }}'">{{ $a->name }}</a>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
                         <span v-show="validationError && positions == null" class="text-danger">Select at least one position</span>
                         <p v-show="validationError && errSoloPositionCount == true" class="text-danger">Solo Endorsement can only have one position.</p>
                     </div>
