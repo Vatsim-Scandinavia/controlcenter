@@ -97,10 +97,13 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating > $user->rating || $user->rating < 3) {
+        if($booking->position->rating == 2 && $user->rating == $booking->position->rating && !$user->hasActiveEndorsement("S1", true)){
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if ($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
+        } else if(($booking->position->rating > $user->rating) && !$user->isModeratorOrAbove()){
+            $booking->training = 1;
+            $forcedTrainingTag = true;
+        } else if($booking->position->mae && $user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -264,10 +267,13 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModeratorOrAbove()) {
+        if($booking->position->rating == 2 && $user->rating == $booking->position->rating && !$user->hasActiveEndorsement("S1", true)){
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if ($user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->mae == true) {
+        } else if(($booking->position->rating > $user->rating) && !$user->isModeratorOrAbove()){
+            $booking->training = 1;
+            $forcedTrainingTag = true;
+        } else if($booking->position->mae && $user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
