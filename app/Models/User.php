@@ -319,7 +319,7 @@ class User extends Authenticatable
      * @param boolean $onlyInfinteEndorsements
      * @return boolean
      */
-    public function hasActiveEndorsement(String $type, $onlyInfinteEndorsements = true)
+    public function hasActiveEndorsement(String $type, $onlyInfinteEndorsements = false)
     {
         if($onlyInfinteEndorsements){
             return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', NULL)->get()->count();
