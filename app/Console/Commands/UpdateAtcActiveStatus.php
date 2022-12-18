@@ -83,6 +83,10 @@ class UpdateAtcActiveStatus extends Command
         $client = new \GuzzleHttp\Client();
 
         foreach ($users as $user) {
+			if (!shouldCheckUser($user) {
+				$this->info("Skipping {$user->id}");
+				continue;
+			}
 
             $this->info("Checking {$user->id}");
 
@@ -129,6 +133,17 @@ class UpdateAtcActiveStatus extends Command
 
         $this->info('Command took ' . ($end_time - $start_time) / 1000 . ' seconds to process');
     }
+
+	private function shouldCheckUser(User $user)
+	{
+		if ($user == null)
+			return false;
+
+		if ($user->ratings()->where('vatsim_ratings', '>', 2)->get()->count() > 0)
+			return true; // User has S2 or higher ratings
+
+		return $user->hasActiveEndorsement('S1', true);
+	}
 
     /**
      * Make HTTP GET request
@@ -290,21 +305,6 @@ class UpdateAtcActiveStatus extends Command
         }
     }
 
-	private function hasS1EndorsementTraining(User $user)
-	{
-		if ($user == null)
-			return false;
-
-		$s1Id = Rating::where('vatsim_rating', 2)->get()->first()->id;
-		foreach ($user->trainings->whereIn('status', [2, 3])->get() as $training)
-		{
-			if (!$training->ratings->contains($s1Id))
-				return false; // user has a training that is not S1
-		}
-
-		return $user->endorsements()->where('valid_to', null)->get()->count() > 0; // TODO: Double check this where! Maybe we should be getting blank untils in a different way?
-	}
-
     /**
      * Determine if the user should be set as inactive or not.
      * This method will take in to account any recently
@@ -355,9 +355,6 @@ class UpdateAtcActiveStatus extends Command
 			setGracePeriod($id, $this->grace_period);
             return false;
         }
-
-		if (hasS1EndorsementTraining($user))
-			return false;
 
         return true;
     }
