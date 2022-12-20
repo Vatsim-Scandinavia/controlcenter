@@ -142,7 +142,6 @@ class EndorsementController extends Controller
             foreach($existingEndorsements as $e){
                 foreach($e->ratings as $r){
                     if($r->id == $data['ratingMASC']){
-                        dd($r->id, $data['ratingMASC'], $existingEndorsements);
                         return back()->withInput()->withErrors(['ratingMASC' => $user->name.' already has an endorsement for '.$r->name]);
                     }
                 }
