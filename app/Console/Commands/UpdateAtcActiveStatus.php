@@ -83,7 +83,7 @@ class UpdateAtcActiveStatus extends Command
         $client = new \GuzzleHttp\Client();
 
         foreach ($users as $user) {
-			if (!shouldCheckUser($user) {
+			if (!shouldCheckUser($user)) {
 				$this->info("Skipping {$user->id}");
 				continue;
 			}
