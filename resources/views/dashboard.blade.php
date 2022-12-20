@@ -122,19 +122,15 @@
     <div class="col-xl-8 col-lg-7 ">
 
     @if(\Auth::user()->isMentor())
-        @php
-            $student_trainings = \Auth::user()->mentoringTrainings();
-        @endphp
-
             <div class="card shadow mb-4 d-none d-xl-block d-lg-block d-md-block">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-white">My Students</h6>
                 </div>
                 <!-- Card Body -->
-                <div class="card-body {{ sizeof($student_trainings) == 0 ? '' : 'p-0' }}">
+                <div class="card-body {{ sizeof($studentTrainings) == 0 ? '' : 'p-0' }}">
 
-                    @if (sizeof($student_trainings) == 0)
+                    @if (sizeof($studentTrainings) == 0)
                         <p class="mb-0">You have no students.</p>
                     @else
                         <div class="table-responsive">
@@ -149,7 +145,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($student_trainings as $training)
+                                @foreach($studentTrainings as $training)
                                     <tr>
                                         <td><a href="{{ $training->path() }}">{{ $training->user->name }}</a></td>
                                         <td>
@@ -173,13 +169,13 @@
                                                 @endphp
                                                 <span title="{{ $reportDate->toEuropeanDate() }}">
                                                     @if($reportDate->isToday())
-                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">Today</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
                                                     @elseif($reportDate->isYesterday())
-                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">Yesterday</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
                                                     @elseif($reportDate->diffInDays() <= 7)
-                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
                                                     @else
-                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
                                                     @endif
 
                                                 </span>

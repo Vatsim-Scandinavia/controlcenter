@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vatbook Bulk')
+@section('title', 'Booking Bulk')
 @section('content')
 
 <div class="row">
@@ -12,7 +12,7 @@
                 </h6> 
             </div>
             <div class="card-body">
-                <form action="{!! action('VatbookController@storeBulk') !!}" method="POST">
+                <form action="{!! action('BookingController@storeBulk') !!}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="date">Date</label>
@@ -61,7 +61,7 @@
                         </datalist>
                     </div>
 
-                    @can('bookTags', \App\Models\Vatbook::class)
+                    @can('bookTags', \App\Models\Booking::class)
                         <div class="form-group">
                             <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
                             <label for="exam">Exam</label>

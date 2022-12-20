@@ -126,11 +126,6 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class);
     }
 
-    public function vatbooks()
-    {
-        return $this->hasMany(Vatbook::class);
-    }
-
     public function vote(){
         return $this->hasMany(Vote::class);
     }
@@ -210,7 +205,7 @@ class User extends Authenticatable
      * @throws PolicyMethodMissingException
      * @throws PolicyMissingException
      */
-    public function viewableModels($class, array $options = [])
+    public function viewableModels($class, array $options = [], array $with = [])
     {
 
         if (policy($class) == null) {
@@ -221,7 +216,7 @@ class User extends Authenticatable
             throw new PolicyMethodMissingException('The view method does not exist on the policy.');
         }
 
-        $models = $class::where($options)->get();
+        $models = $class::where($options)->with($with)->get();
 
         foreach ($models as $key => $model) {
             if ($this->cannot('view', $model)) {
@@ -306,7 +301,7 @@ class User extends Authenticatable
      */
     public function hasEndorsementRating(Rating $rating)
     {
-        foreach($this->endorsements->where('type', 'MASC') as $e){
+        foreach($this->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $e){
             foreach($e->ratings as $r){
                 if($r->id == $rating->id){
                     return true;
@@ -321,11 +316,16 @@ class User extends Authenticatable
      * Return if the user has an active endorsement of type
      *
      * @param String $type
+     * @param boolean $onlyInfinteEndorsements
      * @return boolean
      */
-    public function hasActiveEndorsement(String $type)
+    public function hasActiveEndorsement(String $type, $onlyInfinteEndorsements = false)
     {
-        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->get()->count();
+        if($onlyInfinteEndorsements){
+            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', NULL)->get()->count();
+        } else {
+            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->get()->count();
+        }
     }
 
     /**

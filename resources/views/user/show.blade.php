@@ -79,6 +79,8 @@
                                             <th>Level</th>
                                             <th>Area</th>
                                             <th>Type</th>
+                                            <th>Applied</th>
+                                            <th>Ended</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -105,6 +107,16 @@
                                             </td>
                                             <td>
                                                 <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
+                                            </td>
+                                            <td>
+                                                {{ $training->created_at->toEuropeanDate() }}
+                                            </td>
+                                            <td>
+                                                @if ($training->closed_at != null)
+                                                    {{ $training->closed_at->toEuropeanDate() }}
+                                                @else
+                                                    N/A
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
@@ -185,8 +197,19 @@
                                 {{ ($endorsement->type == "MASC") ? 'MA/SC' : ucfirst(strtolower($endorsement->type)) }} Endorsement
 
                                 @can('delete', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
-                                    <a href="/endorsements/{{ $endorsement['id'] }}/delete" class="text-muted float-right hover-red" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ route('endorsements.delete', $endorsement['id']) }}" class="text-muted float-right hover-red" data-toggle="tooltip" data-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
                                 @endcan
+
+                                @if(($endorsement->type == "S1" || $endorsement->type == "SOLO") && isset($endorsement->valid_to))
+                                    @can('shorten', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
+                                        <span class="flatpickr">
+                                            <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
+                                            <a class="input-button text-muted float-right hover-red text-decoration-none" data-toggle="tooltip" data-placement="top" title="Shorten expire date" data-toggle>
+                                                <i class="fas fa-calendar-minus"></i>&nbsp;
+                                            </a>
+                                        </span>
+                                    @endcan
+                                @endif
                             </div>
                             <div class="card-body">
                                 <table class="table-card">
@@ -362,10 +385,20 @@
 @endsection
 
 @section('js')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
         $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $(".flatpickr").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
+            onChange: function(selectedDates, dateStr, instance) {
+                if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
+                    window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
+                }
+            },
+            onReady: function(dateObj, dateStr, instance){ instance.config.maxDate = instance.input.dataset.date }
+        });
     });
 
     // Fetch VATSIM data async

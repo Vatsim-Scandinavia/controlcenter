@@ -3,11 +3,11 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Vatbook;
+use App\Models\Booking;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Config;
 
-class VatbookPolicy
+class BookingPolicy
 {
     use HandlesAuthorization;
 
@@ -36,16 +36,11 @@ class VatbookPolicy
      * Determine whether the user can update the booking.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Vatbook  $booking
+     * @param  \App\Models\Booking  $booking
      * @return bool
      */
-    public function update(User $user, Vatbook $booking)
+    public function update(User $user, Booking $booking)
     {
-
-        // vRoute booking
-        if($booking->local_id == null){
-            return $this->deny('This booking must be changed in vRoute or service it was booked from');
-        }
 
         // Discord booking
         if($booking->source == "DISCORD"){
@@ -53,12 +48,12 @@ class VatbookPolicy
         }
 
         // The user is the owner of booking
-        if($booking->cid == $user->id){
+        if($booking->user_id == $user->id){
             return true;
         }
 
-        // The booking is not vRoute/Discord but the user is moderator or above
-        if($booking->local_id != null && $booking->source != "DISCORD" && $user->isModeratorOrAbove()){
+        // The booking is not Discord but the user is moderator or above
+        if($booking->source != "DISCORD" && $user->isModeratorOrAbove()){
             return true;
         }
 
@@ -113,10 +108,10 @@ class VatbookPolicy
      * Determine whether the user can book this position.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Vatbook  $booking
+     * @param  \App\Models\Booking  $booking
      * @return mixed
      */
-    public function position(User $user, Vatbook $booking)
+    public function position(User $user, Booking $booking)
     {
         if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) {
             if($user->getActiveTraining(1) &&

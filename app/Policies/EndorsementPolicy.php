@@ -57,4 +57,15 @@ class EndorsementPolicy
 
         return $user->isModeratorOrAbove();
     }
+
+    /**
+     * Determine whether the user can shorten endoersement date.
+     *
+     * @param  \App\Models\User  $user
+     * @return bool
+     */
+    public function shorten(User $user, Endorsement $endorsement)
+    {
+        return $this->delete($user, $endorsement);
+    }
 }

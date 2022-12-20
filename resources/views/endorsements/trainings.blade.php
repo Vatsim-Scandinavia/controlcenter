@@ -27,11 +27,11 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="status" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Status</th>
-                                <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">Type</th>
+                                <th data-field="status" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Status</th>
+                                <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Type</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="input">Position</th>
                                 <th data-field="validfrom" data-sortable="true" data-filter-control="select">Created</th>
-                                <th data-field="validto" data-sortable="true" data-filter-control="select">Expire</th>
+                                <th data-field="validto" data-sortable="true" data-filter-control="select">Expires</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,7 +51,7 @@
                                             @endcan
                                         </td>
 
-                                        @if(Carbon\Carbon::now() < $e->valid_to)
+                                        @if($e->valid_to == null || Carbon\Carbon::now() < $e->valid_to)
                                             <td class="text-center bg-success text-white">
                                                 <i class="fas fa-check-circle"></i> Active
                                             </td>
@@ -79,7 +79,13 @@
                                             @endforeach
                                         </td>
                                         <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>
-                                        <td>{{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDateTime() }}</td>
+                                        <td>
+                                            @isset($e->valid_to)
+                                                {{ Carbon\Carbon::parse($e->valid_to)->toEuropeanDateTime() }}
+                                            @else
+                                                Never
+                                            @endisset
+                                        </td>
                                     </tr>
                                 @endif
                             @endforeach

@@ -113,8 +113,16 @@
                             type="text"
                             name="expires"
                             v-model="expire"
+                            :disabled="expireInf"
+                            :placeholder="expireInf && 'Never expires'" 
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
-                        <span v-show="validationError && expire == null" class="text-danger">Fill out an expire date, max 30 days</span>
+                        <span v-show="validationError && expire == null" class="text-danger">Fill out a valid expire date</span>
+                        <div class="form-check">
+                        <input class="form-check-input" type="checkbox" v-model="expireInf" name="expireInf" id="expireinf" value="true">
+                            <label class="form-check-label" for="expireinf">
+                                Infinte duration
+                            </label>
+                        </div>
                     </div>
 
                     {{-- Training Positions --}}
@@ -139,6 +147,18 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
+                        <div class="dropdown float-right">
+                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Template
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @foreach($areas as $a)
+                                    @if($a->template_s1_positions)
+                                        <a class="dropdown-item" v-on:click="positions = '{{ $a->template_s1_positions }}'">{{ $a->name }}</a>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
                         <span v-show="validationError && positions == null" class="text-danger">Select at least one position</span>
                         <p v-show="validationError && errSoloPositionCount == true" class="text-danger">Solo Endorsement can only have one position.</p>
                     </div>
@@ -221,6 +241,7 @@
             trainingType: null,
             user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
             expire: null,
+            expireInf: null,
             positions: null,
             ratingMASC: null,
             ratingGRP: null,
@@ -287,7 +308,7 @@
 
                 } else if(this.endorsementType == 'TRAINING'){
 
-                    if(this.expire == null) validated = false
+                    if(this.expire == null && this.expireInf != true) validated = false
                     if(this.positions == null) validated = false
                     
                     if(this.trainingType == 'SOLO'){

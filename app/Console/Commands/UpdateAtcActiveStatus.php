@@ -83,6 +83,10 @@ class UpdateAtcActiveStatus extends Command
         $client = new \GuzzleHttp\Client();
 
         foreach ($users as $user) {
+			if (!shouldCheckUser($user)) {
+				$this->info("Skipping {$user->id}");
+				continue;
+			}
 
             $this->info("Checking {$user->id}");
 
@@ -115,11 +119,7 @@ class UpdateAtcActiveStatus extends Command
             if ($this->userShouldBeSetAsInactive($user, $sum)) {
                 // User should be set as inactive
                 $this->setAsInactive($user);
-                continue;
             }
-
-            $this->setAsActive($user);
-
         }
 
         $end_time = microtime(true) * 1000;
@@ -133,6 +133,17 @@ class UpdateAtcActiveStatus extends Command
 
         $this->info('Command took ' . ($end_time - $start_time) / 1000 . ' seconds to process');
     }
+
+	private function shouldCheckUser(User $user)
+	{
+		if ($user == null)
+			return false;
+
+		if ($user->ratings()->where('vatsim_ratings', '>', 2)->get()->count() > 0)
+			return true; // User has S2 or higher ratings
+
+		return $user->hasActiveEndorsement('S1', true);
+	}
 
     /**
      * Make HTTP GET request
@@ -244,16 +255,6 @@ class UpdateAtcActiveStatus extends Command
     }
 
     /**
-     * Set specified user as active
-     *
-     * @param Handover $user
-     */
-    private function setAsActive(Handover $user)
-    {
-        $this->setAtcActiveStatus($user, true);
-    }
-
-    /**
      * Set user atc_active status according to param
      *
      * @param Handover $user
@@ -296,13 +297,11 @@ class UpdateAtcActiveStatus extends Command
      */
     private function getGracePeriodTrainings(Collection &$trainings)
     {
+        $s2Id = Rating::where('vatsim_rating', 3)->get()->first()->id;
         foreach ($trainings as $key => $training) {
-            $s2Id = Rating::where('vatsim_rating', 3)->get()->first()->id;
-            if ($training->ratings->contains($s2Id) || in_array($training->type, [2, 3, 4])) {
-				// Training is an S2 training or refresh, fast-track or familiarisation.
-				continue;
-            }
-            $trainings->pull($key);
+			// Training is not an S2 training or refresh, fast-track or familiarisation.
+            if (!($training->ratings->contains($s2Id) || in_array($training->type, [2, 3, 4])))
+            	$trainings->pull($key);
         }
     }
 
@@ -353,14 +352,18 @@ class UpdateAtcActiveStatus extends Command
         if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < $this->grace_period) {
             // User had trainings qualified for grace period and training was completed within last 12 months.
             // Do not set as inactive.
-            DB::connection('mysql')->table('atc_activity')->where('id', $id)->update([
-                'inside_grace_period' => true,
-                'valid_until' => $completed_trainings->last()->closed_at->addMonths($this->grace_period)
-            ]);
+			setGracePeriod($id, $this->grace_period);
             return false;
         }
 
         return true;
     }
 
+	private function setGracePeriod(int $id, int $grace_period)
+	{
+		DB::connection('mysql')->table('atc_activity')->where('id', $id)->update([
+			'inside_grace_period' => true,
+			'valid_until' => $completed_trainings->last()->closed_at->addMonths($grace_period)
+		]);
+	}
 }

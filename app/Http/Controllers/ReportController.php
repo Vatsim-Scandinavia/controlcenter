@@ -6,6 +6,7 @@ use App\Models\Area;
 use App\Models\ManagementReport;
 use App\Models\Rating;
 use App\Models\Training;
+use App\Models\TrainingActivity;
 use App\Models\User;
 use App\Models\Group;
 use Carbon\Carbon;
@@ -66,6 +67,22 @@ class ReportController extends Controller
         $areas = Area::all();
 
         return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'queues'));
+    }
+
+    /**
+     * Show the training activities statistics view
+     *
+     * @param int $filterArea areaId to filter by
+     * @return \Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function activities($filterArea = false){
+
+        $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
+        $activities = TrainingActivity::orderByDesc('created_at')->limit(100)->get();
+        $statuses = TrainingController::$statuses;
+
+        return view('reports.activities', compact('activities', 'statuses'));
     }
 
     /**

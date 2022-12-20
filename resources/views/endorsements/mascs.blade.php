@@ -27,9 +27,9 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">ATC Active</th>
+                                <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 @foreach($ratings as $r)
-                                    <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml">{{ $r->name }}</th>
+                                    <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $r->name }}</th>
                                 @endforeach
                             </tr>
                         </thead>
@@ -59,7 +59,7 @@
                                                     <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
                                                 </td>
                                                 @php $found = true; @endphp
-                                                @continue
+                                                @break
                                             @endif
                                         @endforeach
 

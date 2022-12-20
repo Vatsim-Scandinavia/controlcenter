@@ -277,15 +277,35 @@
                                             Training unpaused
                                         @endif
                                     @elseif($activity->type == "ENDORSEMENT")
-                                        @empty($activity->comment)
-                                            <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
-                                        @else
-                                            <span class="badge badge-light">{{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement</span> granted, valid to <span class="badge badge-light">{{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}</span>
-                                            for positions: 
-                                            @foreach(explode(',', $activity->comment) as $p)
-                                                <span class="badge badge-light">{{ $p }}</span>
-                                            @endforeach
-                                        @endempty
+                                        @if(\App\Models\Endorsement::find($activity->new_data) !== null)
+                                            @empty($activity->comment)
+                                                <span class="badge badge-light">
+                                                    {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
+                                                </span> granted, valid to 
+                                                <span class="badge badge-light">
+                                                    @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
+                                                        {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
+                                                    @else
+                                                        Forever
+                                                    @endisset
+                                                </span>
+                                            @else
+                                                <span class="badge badge-light">
+                                                    {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
+                                                </span> granted, valid to 
+                                                <span class="badge badge-light">
+                                                    @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
+                                                        {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
+                                                    @else
+                                                        Forever
+                                                    @endisset
+                                                </span>
+                                                for positions: 
+                                                @foreach(explode(',', $activity->comment) as $p)
+                                                    <span class="badge badge-light">{{ $p }}</span>
+                                                @endforeach
+                                            @endempty
+                                        @endif
                                     @elseif($activity->type == "COMMENT")
                                         {!! nl2br($activity->comment) !!}
 

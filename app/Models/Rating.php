@@ -17,7 +17,7 @@ class Rating extends Model
     }
 
     public function areas(){
-        return $this->belongsToMany(Area::class)->withPivot('required_vatsim_rating', 'allow_mae_bundling', 'queue_length_low', 'queue_length_high');
+        return $this->belongsToMany(Area::class)->withPivot('required_vatsim_rating', 'allow_bundling', 'hour_requirement', 'queue_length_low', 'queue_length_high');
     }
 
 }

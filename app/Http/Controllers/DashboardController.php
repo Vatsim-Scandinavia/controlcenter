@@ -67,7 +67,9 @@ class DashboardController extends Controller
         $atcHoursDB = DB::table('atc_activity')->where('user_id', $user->id)->get()->first();
         $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal'));
+        $studentTrainings = \Auth::user()->mentoringTrainings();
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings'));
     }
 
     /**

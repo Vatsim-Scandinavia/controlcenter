@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class EndorsementCreatedNotification extends Notification implements ShouldQueue
+class EndorsementModifiedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -48,11 +48,11 @@ class EndorsementCreatedNotification extends Notification implements ShouldQueue
         $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : "Forver";
 
         $textLines = [
-            'A new **'.ucwords(strtolower((string)$this->endorsement->type)).' Endorsement** has been issued for your training, at following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
-            '**Valid to:** '.$validTo,
+            'Your **'.ucwords(strtolower((string)$this->endorsement->type)).' Endorsement** has been modified at following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
+            '**New expire date:** '.$validTo,
         ];
 
-        return (new EndorsementMail('Training Endorsement Issued', $this->endorsement, $textLines))
+        return (new EndorsementMail('Training Endorsement Modified', $this->endorsement, $textLines))
             ->to($this->endorsement->user->email, $this->endorsement->user->name);
     }
 

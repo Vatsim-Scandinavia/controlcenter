@@ -20,11 +20,11 @@
             <span>Dashboard</span></a>
         </li>
 
-        @can('view', \App\Models\Vatbook::class)
-            <li class="nav-item {{ Route::is('vatbook*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('vatbook') }}">
+        @can('view', \App\Models\Booking::class)
+            <li class="nav-item {{ Route::is('booking*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('booking') }}">
                 <i class="fas fa-fw fa-calendar"></i>
-                <span>Vatbook</span></a>
+                <span>Booking</span></a>
             </li>
         @endcan
 
@@ -138,6 +138,8 @@
                     <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
                 @endif
                 
+                <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
+
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
 
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
