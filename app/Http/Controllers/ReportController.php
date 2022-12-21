@@ -79,7 +79,7 @@ class ReportController extends Controller
     public function activities($filterArea = false){
 
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
-        $activities = TrainingActivity::orderByDesc('created_at')->limit(100)->get();
+        $activities = TrainingActivity::orderByDesc('created_at')->limit(1000)->get();
         $statuses = TrainingController::$statuses;
 
         return view('reports.activities', compact('activities', 'statuses'));
