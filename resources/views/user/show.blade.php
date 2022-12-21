@@ -204,7 +204,7 @@
                                     @can('shorten', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
                                         <span class="flatpickr">
                                             <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
-                                            <a class="input-button text-muted float-right hover-red text-decoration-none" data-toggle="tooltip" data-placement="top" title="Shorten expire date" data-toggle>
+                                            <a role="button" class="input-button text-muted float-right hover-red text-decoration-none" data-toggle="tooltip" data-placement="top" title="Shorten expire date" data-toggle>
                                                 <i class="fas fa-calendar-minus"></i>&nbsp;
                                             </a>
                                         </span>
