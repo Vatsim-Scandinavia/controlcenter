@@ -259,7 +259,13 @@ class TrainingController extends Controller
 
             if($res->getStatusCode() == 200){
                 $vatsimStats = json_decode($res->getBody(), true);
-                $vatsimHours = $vatsimStats[strtolower(\Auth::user()->rating_short)];
+
+                if(isset($vatsimStats[strtolower(\Auth::user()->rating_short)])){
+                    $vatsimHours = $vatsimStats[strtolower(\Auth::user()->rating_short)];
+                } else {
+                    $vatsimHours = 0;
+                }
+
             } else {
                 return redirect()->back()->withErrors('We were unable to submit the application for you due to missing data from VATSIM. Please try again later.');
             }
