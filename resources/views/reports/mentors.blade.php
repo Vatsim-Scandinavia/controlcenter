@@ -17,7 +17,7 @@
                     <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0"
                         data-cookie="true"
                         data-cookie-id-table="mentors"
-                        data-cookie-expire="14d"
+                        data-cookie-expire="90d"
                         data-page-size="25"
                         data-toggle="table"
                         data-pagination="true"

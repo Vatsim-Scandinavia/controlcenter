@@ -20,7 +20,7 @@
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
                         data-cookie="true"
                         data-cookie-id-table="trainings"
-                        data-cookie-expire="14d"
+                        data-cookie-expire="90d"
                         data-page-size="100"
                         data-toggle="table"
                         data-pagination="true"
