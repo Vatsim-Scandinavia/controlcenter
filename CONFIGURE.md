@@ -18,11 +18,11 @@ In `Ratings` table, the default VATSIM ratings are present and if applicable, th
 
 ##### Ratings in areas
 In `area_rating` table, we define which ratings are available for which area for applications. If a rating is only applicable manually through a moderator there's no need to add it here.
-| area_id | rating_id | required_vatsim_rating | allow_bundling | queue_length_low | queue_lenght_high |
-| ------- | --- | --- | --- | --- | --- |
-| id of area | id of rating | Id of required vatsim rating to apply for the id of this rating in selected area | NULL or 1 (true) if this vatsim rating can be bundled with a GRP VATSIM rating | Filled in by automation | Filled in by automation |
-| 1 | 2 | NULL | NULL | NULL | NULL |
-| 1 | 3 | 3 | NULL | NULL | NULL |
+| area_id | rating_id | required_vatsim_rating | allow_bundling | hour_requirement | queue_length_low | queue_lenght_high |
+| ------- | --- | --- | --- | --- | --- | --- |
+| id of area | id of rating | Id of required vatsim rating to apply for the id of this rating in selected area | NULL or 1 (true) if this vatsim rating can be bundled with a GRP VATSIM rating | NULL or number of hours required to apply for this rating | Filled in by automation | Filled in by automation |
+| 1 | 2 | NULL | NULL | NULL | NULL | NULL |
+| 1 | 3 | 3 | NULL | 50 | NULL | NULL |
 
 ##### Positions
 In `positions` table, we define which positions are possible to book and their restrictions.
