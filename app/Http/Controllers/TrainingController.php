@@ -270,9 +270,10 @@ class TrainingController extends Controller
                 return redirect()->back()->withErrors('We were unable to submit the application for you due to missing data from VATSIM. Please try again later.');
             }
 
-            // Loop through the ratings and check if we're missing some hours
+            // Loop through the ratings applied for
             foreach($ratings as $rating){
-                foreach($rating->areas as $area){
+                // Get the area specific requirements
+                foreach($rating->areas->where('id', $data['training_area']) as $area){
                     if($vatsimHours < $area->pivot->hour_requirement){
                         return redirect()->back()->withErrors('You have insufficient hours on current rating to submit this application.');
                     }
