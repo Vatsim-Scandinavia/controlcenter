@@ -46,7 +46,6 @@
                                 <th data-field="id" data-sortable="false" data-filter-control="input">Training</th>
                                 <th data-field="who" data-sortable="false" data-filter-control="input">Who</th>
                                 <th data-field="mentor" data-sortable="false" data-filter-control="input">Activity</th>
-                                <th data-field="area" data-sortable="false" data-filter-control="select">Area</th>
                                 <th data-field="level" data-sortable="false">When</th>
                             </tr>
                         </thead>
@@ -144,9 +143,6 @@
                                             @endif
                                         @endif
 
-                                    </td>
-                                    <td>
-                                        {{ $activity->training->area->name }}
                                     </td>
                                     <td>
                                         <span data-toggle="tooltip" data-placement="top" title="{{ $activity->created_at->toEuropeanDateTime() }}">
