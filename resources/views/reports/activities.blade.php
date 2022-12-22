@@ -1,6 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Training Activities Report')
+@section('title', 'Training Activities')
+@section('title-extension')
+    <div class="dropdown show" style="display: inline;">
+        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Filter: {{ $filterName }}
+        </a>
+    
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            @if(\Auth::user()->isAdmin())
+                <a class="dropdown-item" href="{{ route('reports.activities') }}">All Areas</a>
+            @endif
+            @foreach($areas as $area)
+                @if(\Auth::user()->isModeratorOrAbove($area))
+                    <a class="dropdown-item" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
+                @endif
+            @endforeach 
+        </div>
+    </div>
+@endsection
 @section('content')
 
 <div class="row">

@@ -138,7 +138,11 @@
                     <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
                 @endif
                 
-                <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
+                @if(\Auth::user()->isAdmin())
+                    <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
+                @elseif(\Auth::user()->isModerator())
+                    <a class="collapse-item" href="{{ route('reports.activities.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Activities</a>
+                @endif
 
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
 

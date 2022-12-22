@@ -89,6 +89,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::get('/reports/trainings', 'trainings')->name('reports.trainings');
         Route::get('/reports/training/{id}', 'trainings')->name('reports.training.area');
         Route::get('/reports/activities', 'activities')->name('reports.activities');
+        Route::get('/reports/activities/{id}', 'activities')->name('reports.activities.area');
         Route::get('/reports/mentors', 'mentors')->name('reports.mentors');
         Route::get('/reports/access', 'access')->name('reports.access');
     });

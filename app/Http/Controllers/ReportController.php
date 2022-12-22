@@ -79,10 +79,21 @@ class ReportController extends Controller
     public function activities($filterArea = false){
 
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
-        $activities = TrainingActivity::orderByDesc('created_at')->limit(200)->get();
+
+        if($filterArea){
+            $activities = TrainingActivity::orderByDesc('created_at')->whereHas('training', function(Builder $q) use ($filterArea){
+                $q->where('area_id', $filterArea);
+            })->limit(100)->get();
+        } else {
+            $activities = TrainingActivity::orderByDesc('created_at')->limit(100)->get();
+        }
+       
         $statuses = TrainingController::$statuses;
 
-        return view('reports.activities', compact('activities', 'statuses'));
+        ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
+        $areas = Area::all();
+
+        return view('reports.activities', compact('activities', 'statuses', 'filterName', 'areas'));
     }
 
     /**
