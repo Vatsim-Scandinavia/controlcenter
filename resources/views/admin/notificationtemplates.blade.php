@@ -4,7 +4,7 @@
 @section('title-extension')
     <div class="dropdown show" style="display: inline;">
         <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ $currentArea->name }}
+            Filter: {{ $currentArea->name }}
         </a>
     
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
