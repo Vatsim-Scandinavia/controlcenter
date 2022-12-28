@@ -69,7 +69,8 @@ class UpdateAtcActiveStatus extends Command
         }
 
         if (!$this->dry_run)
-            DB::connection('mysql-handover')->update("UPDATE ".Config::get('database.connections.mysql-handover.prefix')."users SET atc_active = false WHERE subdivision <> '".Config::get('app.owner_short')."' OR rating < 3");
+            // Set all non VATSCA users or OBS users as inactive.
+            DB::connection('mysql-handover')->update("UPDATE ".Config::get('database.connections.mysql-handover.prefix')."users SET atc_active = false WHERE subdivision != '".Config::get('app.owner_short')."' OR subdivision IS NULL OR rating = 1");
 
         if (!empty($user_ids)) {
             $users = Handover::whereIn('id', $user_ids)->get();
@@ -83,7 +84,7 @@ class UpdateAtcActiveStatus extends Command
         $client = new \GuzzleHttp\Client();
 
         foreach ($users as $user) {
-			if (!shouldCheckUser($user)) {
+			if (!$this->shouldCheckUser($user)) {
 				$this->info("Skipping {$user->id}");
 				continue;
 			}
@@ -91,7 +92,11 @@ class UpdateAtcActiveStatus extends Command
             $this->info("Checking {$user->id}");
 
             $url = $this->getQueryString($user->id);
-            $response = $this->makeHttpGetRequest($client, $url);
+            //$response = $this->makeHttpGetRequest($client, url);
+            
+            //DEBUG: 1) User with 100+ hours, 2) User with 0 hours
+            //$response = $this->makeHttpGetRequest($client, "https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-28");
+            $response = $this->makeHttpGetRequest($client, "https://api.vatsim.net/api/ratings/812050/atcsessions/?start=2021-12-28");
 
             if ($response == null || $response->getStatusCode() >= 300)
                 continue;
@@ -119,7 +124,10 @@ class UpdateAtcActiveStatus extends Command
             if ($this->userShouldBeSetAsInactive($user, $sum)) {
                 // User should be set as inactive
                 $this->setAsInactive($user);
+                continue;
             }
+
+            $this->setAsActive($user);
         }
 
         $end_time = microtime(true) * 1000;
@@ -134,15 +142,16 @@ class UpdateAtcActiveStatus extends Command
         $this->info('Command took ' . ($end_time - $start_time) / 1000 . ' seconds to process');
     }
 
-	private function shouldCheckUser(User $user)
+	private function shouldCheckUser(Handover $handoverUser)
 	{
-		if ($user == null)
+		if ($handoverUser == null)
 			return false;
 
-		if ($user->ratings()->where('vatsim_ratings', '>', 2)->get()->count() > 0)
-			return true; // User has S2 or higher ratings
+        // User is S1 or above
+        if ($handoverUser->rating >= 2)
+            return true;
 
-		return $user->hasActiveEndorsement('S1', true);
+		return false;
 	}
 
     /**
@@ -220,10 +229,10 @@ class UpdateAtcActiveStatus extends Command
      */
     private function getUsers()
     {
-        // Rating >= 3 means S2+
+        // Rating >= 2 means S1+
         // Subdivision only SCA
         return Handover::where([
-            ['rating', '>=', 3],
+            ['rating', '>=', 2],
             ['subdivision', '=', Config::get('app.owner_short')]
         ])->get();
     }
@@ -252,6 +261,16 @@ class UpdateAtcActiveStatus extends Command
     private function setAsInactive(Handover $user)
     {
         $this->setAtcActiveStatus($user, false);
+    }
+
+    /**
+     * Set specified user as active
+     *
+     * @param Handover $user
+     */
+    private function setAsActive(Handover $user)
+    {
+        $this->setAtcActiveStatus($user, true);
     }
 
     /**
@@ -343,6 +362,11 @@ class UpdateAtcActiveStatus extends Command
         if (count($trainings) <= 0)
             return true;
 
+        // User is S1 but without endorsement
+        $ccUser = User::find($user->id);
+        if ($user->rating == 2 && !$ccUser->hasActiveEndorsement('S1', true))
+            return true;
+                
         // Get completed trainings
         $completed_trainings = $trainings->where('status', -1)->sortBy('closed_at');
 
@@ -352,7 +376,7 @@ class UpdateAtcActiveStatus extends Command
         if ($completed_trainings->last() != null && $completed_trainings->last()->closed_at->diffInMonths(now()) < $this->grace_period) {
             // User had trainings qualified for grace period and training was completed within last 12 months.
             // Do not set as inactive.
-			setGracePeriod($id, $this->grace_period);
+			$this->setGracePeriod($id, $this->grace_period);
             return false;
         }
 
