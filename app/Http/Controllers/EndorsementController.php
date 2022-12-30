@@ -196,8 +196,10 @@ class EndorsementController extends Controller
             // Validate that this user has other endrosement of this type from before
             if($user->hasActiveEndorsement($trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
 
-            // Validate that there's any active training the endorsement can be tied to
-            if($user->trainings->where('status', '>=', 0)->count() == 0){
+            // if its not a infinite endorsement, make sure it's tried an actual training
+            $linkedToTraining = false;
+            if(!$expireInfinite && $user->trainings->where('status', '>=', 0)->count() == 0){
+                $linkedToTraining = true;
                 return back()->withInput()->withErrors($user->name.' has no active training to link this endorsement to.');
             }
 
@@ -237,7 +239,9 @@ class EndorsementController extends Controller
             ' ― Positions: '.$data['positions']);
 
             // Log this new endorsement to the user's active training
-            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            if($linkedToTraining){
+                TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            }
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
