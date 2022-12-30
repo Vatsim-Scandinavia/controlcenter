@@ -15,6 +15,7 @@ use App\Models\TrainingExamination;
 use App\Models\TrainingInterest;
 use App\Models\User;
 use App\Http\Controllers\TrainingActivityController;
+use App\Models\AtcActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -558,6 +559,27 @@ class TrainingController extends Controller
                             $endorsement->save();
 
                             $endorsement->ratings()->save(Rating::find($rating->id));
+                        }
+                    }
+                }
+
+                // If training is completed with a passed exam result, let's set the user to active
+                if((int)$training->status == -1){
+                    // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
+                    if($training->type <= 4){
+                        $handover = $training->user->handover;
+                        $handover->atc_active = true;
+                        $handover->save();
+
+                        try{
+                            $activity = AtcActivity::findOrFail($training->user->id);
+                            $activity->start_of_grace_period = now();
+                        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                            AtcActivity::create([
+                                'user_id' => $training->user->id,
+                                'hours' => 0,
+                                'start_of_grace_period' => now()
+                            ]);
                         }
                     }
                 }

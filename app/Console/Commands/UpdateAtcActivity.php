@@ -53,8 +53,11 @@ class UpdateAtcActivity extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * Check if the member has too few online hours to be considered active.
+     * @param User member
+     */
     private static function hasTooFewHours(User $member) {
-        error_log("has too few hours?");
         return $member->atcActivity->hours < Setting::get('atcActivityRequirement', 10);
     }
 
@@ -63,7 +66,6 @@ class UpdateAtcActivity extends Command
      * @param User member
      */
     private static function notInGracePeriod(User $member) {
-        error_log("in grace period?");
         $graceLengthMonths = Setting::get('atcActivityGracePeriod', 12);
         return $member->atcActivity->start_of_grace_period == null || now()->subMonths($graceLengthMonths)->gt($member->atcActivity->start_of_grace_period);
     }
@@ -83,7 +85,6 @@ class UpdateAtcActivity extends Command
      * @param User member
      */
     private static function notInS1Training(User $member) {
-        error_log("in S1 training?");
         if(VatsimRating::from($member->rating) != VatsimRating::S1){
             return true;
         }
