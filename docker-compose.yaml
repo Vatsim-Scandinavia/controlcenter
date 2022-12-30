@@ -3,13 +3,24 @@ version: '3'
 services:
   web:
     container_name: control-center
-    image: vatsca/apache:php-8.1
+    image: docker.io/misterio92/ci-php-node:6.0
     ports:
-        - 5010:80
-        - 5011:443
+      - 5010:80
+      - 5011:443
     extra_hosts:
-        - "host.docker.internal:host-gateway"
-        - "vatsca.local:host-gateway"
+      - "host.docker.internal:host-gateway"
+      - "vatsca.local:host-gateway"
     volumes:
       - ./:/var/www/html
       - ./apache:/var/www/logs
+
+  db:
+    container_name: database
+    image: docker.io/library/mysql:8.0.30
+    ports:
+      - 3306:3306
+    extra_hosts:
+      - database.local:host-gateway
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
