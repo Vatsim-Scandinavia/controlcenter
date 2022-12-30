@@ -30,7 +30,7 @@ class UserController extends Controller
         $this->authorize('index', \Auth::user());
 
         $users = User::with('endorsements')->get();
-        $userHours = DB::table('atc_activity')->get();
+        $userHours = AtcActivity::all();
 
         return view('user.index', compact('users', 'userHours'));
     }

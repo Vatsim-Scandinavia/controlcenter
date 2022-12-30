@@ -43,7 +43,7 @@
                                         <td>{{ $user->last_name }}</td>
                                         <td>{{ $user->rating_short }}</td>
                                         <td><i class="fas fa-{{ $user->active ? 'check' : 'times' }}"></i> {{ $user->active ? 'Yes' : 'No' }}</td>
-                                        <td>{{ isset($userHours->where('user_id', $user->id)->first()->atc_hours) ? round($userHours->where('user_id', $user->id)->first()->atc_hours) : 'N/A' }}</td>
+                                        <td>{{ isset($userHours->where('user_id', $user->id)->first()->hours) ? round($userHours->where('user_id', $user->id)->first()->hours) : 'N/A' }}</td>
                                         <td>{{ $user->last_login }}</td>
                                     </tr>
                                 @endif
