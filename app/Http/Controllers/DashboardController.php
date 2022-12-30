@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\AtcActivity;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -64,8 +65,8 @@ class DashboardController extends Controller
         // Check if there's an active vote running to advertise
         $activeVote = Vote::where('closed', 0)->first();
 
-        $atcHoursDB = DB::table('atc_activity')->where('user_id', $user->id)->get()->first();
-        $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
+        $atcHoursDB = AtcActivity::find($user->id);
+        $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->hours;
 
         $studentTrainings = \Auth::user()->mentoringTrainings();
 
