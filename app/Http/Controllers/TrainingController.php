@@ -539,13 +539,15 @@ class TrainingController extends Controller
                         if($rating->vatsim_rating == null){
 
                             // Revoke the old endorsement if active
-                            $oldEndorsement = $training->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false)->first();
-                            foreach($oldEndorsement->ratings as $oe){
-                                if($oe->id == $rating->id){
-                                    $oldEndorsement->revoked = true;
-                                    $oldEndorsement->valid_to = now();
-                                    $oldEndorsement->save();
-                                    break;
+                            $oldEndorsement = $training->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false);
+                            foreach($oldEndorsement as $oe){
+                                foreach($oe->ratings as $oer){
+                                    if($oer->id == $rating->id){
+                                        $oe->revoked = true;
+                                        $oe->valid_to = now();
+                                        $oe->save();
+                                        break;
+                                    }
                                 }
                             }
 
