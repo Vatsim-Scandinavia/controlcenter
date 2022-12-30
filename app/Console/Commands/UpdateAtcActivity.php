@@ -8,6 +8,7 @@ use App\Models\Handover;
 use App\Models\Endorsement;
 use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Support\Facades\Config;
+use App\Notifications\InactivityNotification;
 use VatsimRating;
 
 class UpdateAtcActivity extends Command
@@ -49,6 +50,10 @@ class UpdateAtcActivity extends Command
         $this->info('Making '.$usersToSetAsInactive->count().' users inactive');
         Handover::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
         Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
+
+        foreach($usersToSetAsInactive as $userToSetAsInactive){
+            $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
+        }
 
         return Command::SUCCESS;
     }
