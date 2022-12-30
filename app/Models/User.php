@@ -130,9 +130,14 @@ class User extends Authenticatable
         return $this->hasMany(Vote::class);
     }
 
+    public function atcActivity(){
+        return $this->hasOne(AtcActivity::class);
+    }
+
+    // TODO: decide if we should nuke me from orbit
     public function atchours(){
-        $atcHoursDB = DB::table('atc_activity')->where('user_id', $this->id)->get()->first();
-        return ($atcHoursDB == null) ? null : $atcHoursDB->atc_hours;
+        $atcHoursDB = AtcActivity::where('user_id', $this->id)->get()->first();
+        return ($atcHoursDB == null) ? null : $atcHoursDB->hours;
     }
 
     // Get properties from Handover, the variable names here break with the convention.

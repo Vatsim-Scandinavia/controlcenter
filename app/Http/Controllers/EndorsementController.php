@@ -322,9 +322,16 @@ class EndorsementController extends Controller
     {
         $endorsement = Endorsement::findOrFail($endorsementId);
         $this->authorize('delete', [Endorsement::class, $endorsement]);
+        $user = User::find($endorsement->user_id);
 
         if($endorsement->revoked){
-            return redirect()->back()->withErrors(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement is already revoked.");
+            return redirect()->back()->withErrors($user->name . "'s ".$endorsement->type." endorsement is already revoked.");
+        }
+
+        // Disable the ATC activity mark for users who have an S1 rating, which is defined by 
+        // having an indefinite endorsemnet of type "S1"
+        if (\VatsimRating::from($user->rating) == \VatsimRating::S1 && $endorsement->type == 'S1' && $endorsement->valid_to == NULL) {
+            $this->disableAtc($user);
         }
 
         $endorsement->revoked = true;
@@ -332,12 +339,21 @@ class EndorsementController extends Controller
         $endorsement->valid_to = now();
         $endorsement->save();
 
-        ActivityLogController::warning('ENDORSEMENT', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
+        ActivityLogController::warning('ENDORSEMENT', 'Deleted '. $user->name . '\'s ' . $endorsement->type.' endorsement');
         if($endorsement->type == 'S1' || $endorsement->type == 'SOLO'){
             $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
             return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked. E-mail confirmation sent to the student.");
         } 
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
+    }
+
+    /**
+     * @param User user
+     */
+    public static function disableAtc($user) {
+        $handover = $user->handover;
+        $handover->atc_active = false;
+        $handover->save();
     }
 
     /**

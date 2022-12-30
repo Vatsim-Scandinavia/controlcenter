@@ -60,10 +60,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:members')
             ->dailyAt('05:00');
 
-        // Automaticaly clean memebers and trainings no longer eligble
-        // DISABLED until it has been fixed for new S1 ratings
-        /*$schedule->command('update:atcactive')
-            ->dailyAt('06:00');*/
+        // Update ATC hours and active status
+        $schedule->command('update:atc:status')
+            ->dailyAt('06:00');
 
         // Send our training interest e-mails
         $schedule->command('send:traininginterest')

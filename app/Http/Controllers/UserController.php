@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use League\CommonMark\Inline\Parser\NewlineParser;
 use Illuminate\Support\Facades\DB;
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\AtcActivity;
 
 /**
  * Controller to handle user views
@@ -70,8 +71,8 @@ class UserController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $endorsements = $user->endorsements->sortByDesc('valid_to');
-        $userHours = DB::table('atc_activity')->where('user_id', $user->id)->first();
-        if(isset($userHours)) $userHours = $userHours->atc_hours;
+        $userHours = AtcActivity::where('user_id', $user->id)->get()->first();
+        if(isset($userHours)) $userHours = $userHours->hours;
 
         return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours'));
     }
