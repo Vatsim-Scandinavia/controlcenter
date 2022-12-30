@@ -157,7 +157,7 @@ class EndorsementController extends Controller
             ' ― User: '.$endorsement->user_id.
             ' ― Rating: '.Rating::find($data['ratingMASC'])->name);
 
-            return redirect()->intended(route('endorsements.mascs'))->withSuccess($user->name . "'s endorsement created");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s endorsement created");
 
 
 
@@ -241,7 +241,7 @@ class EndorsementController extends Controller
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
-            return redirect()->intended(route('endorsements.trainings'))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created. E-mail confirmation sent to the student.");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created. E-mail confirmation sent to the student.");
             
             
 
@@ -272,7 +272,7 @@ class EndorsementController extends Controller
             ' ― Rating: '.$data['ratingGRP'].
             ' ― Areas: '.implode(',', $data['areas']));
 
-            return redirect()->intended(route('endorsements.examiners'))->withSuccess($user->name . "'s examiner endorsement successfully created");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s examiner endorsement successfully created");
         
 
 
@@ -303,7 +303,7 @@ class EndorsementController extends Controller
             ' ― User: '.$endorsement->user_id.
             ' ― Areas: '.implode(',', $data['areas']));
 
-            return redirect()->intended(route('endorsements.visiting'))->withSuccess($user->name . "'s visiting endorsement successfully created");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s visiting endorsement successfully created");
 
         }
 
