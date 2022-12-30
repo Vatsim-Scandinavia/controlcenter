@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App;
 use App\Models\Handover;
 use App\Models\AtcActivity;
 use Carbon\Carbon;
@@ -79,10 +80,11 @@ class UpdateAtcHours extends Command
         foreach ($members as $member) {
 
             $client = new \GuzzleHttp\Client();
-            // TODO: remove static URL
-            //$url = $this->getQueryString($member->id);
-            //$url = "https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-30";
-            $url = "https://api.vatsim.net/api/ratings/812050/atcsessions/?start=2021-12-30";
+            if(App::environment('production')) {
+                $url = $this->getQueryString($member->id);
+            } else {
+                $url = "https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-30";
+            }
             $response = $this->makeHttpGetRequest($client, $url);
 
             $this->info("Checking " . $member->id);
