@@ -92,7 +92,7 @@
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
-                                    {{ $training->user->atchours() ? $training->user->atchours() : "0" }}h
+                                    {{ $training->user->atchours() ? round($training->user->atchours()) : "0" }}h
                                 </td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)

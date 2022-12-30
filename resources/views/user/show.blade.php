@@ -33,7 +33,7 @@
                     <dd><i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i></dd>
 
                     <dt>ATC Hours</dt>
-                    <dd>{{ isset($userHours) ? $userHours : 'N/A' }}</dd>
+                    <dd>{{ isset($userHours) ? round($userHours) : 'N/A' }}</dd>
 
                     <div id="vatsim-data">
                         <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
