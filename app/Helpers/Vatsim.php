@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
  * Constants for VATSIM ratings.
  */
 enum VatsimRating: int {
+    case OBS = 1;
     case S1 = 2;
     case S2 = 3;
     case S3 = 4;
