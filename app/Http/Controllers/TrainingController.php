@@ -576,6 +576,7 @@ class TrainingController extends Controller
                         try{
                             $activity = AtcActivity::findOrFail($training->user->id);
                             $activity->start_of_grace_period = now();
+                            $activity->save();
                         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                             AtcActivity::create([
                                 'user_id' => $training->user->id,
