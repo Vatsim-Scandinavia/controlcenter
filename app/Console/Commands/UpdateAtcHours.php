@@ -8,7 +8,6 @@ use App\Models\AtcActivity;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use VatsimRating;

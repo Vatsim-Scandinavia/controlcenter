@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\Handover;
 use App\Models\Endorsement;
 use anlutro\LaravelSettings\Facade as Setting;
-use Illuminate\Support\Facades\Config;
 use App\Notifications\InactivityNotification;
 use VatsimRating;
 
