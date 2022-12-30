@@ -30,7 +30,10 @@
                     <dd class="separator pb-3">{{ $user->subdivision }} / {{ $user->division }}</dd>
 
                     <dt class="pt-2">ATC Active</dt>
-                    <dd><i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i></dd>
+                    <dd>
+                        <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i>
+                        {!! ($isGraced) ? '<i class="fas fa-person-praying" data-toggle="tooltip" data-placement="right" title="This controller is in grace period after recently completing a training"></i>' : '' !!}
+                    </dd>
 
                     <dt>ATC Hours</dt>
                     <dd>{{ isset($userHours) ? round($userHours) : 'N/A' }}</dd>

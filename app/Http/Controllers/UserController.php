@@ -71,10 +71,13 @@ class UserController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $endorsements = $user->endorsements->sortByDesc('valid_to');
-        $userHours = AtcActivity::where('user_id', $user->id)->get()->first();
+
+        $atcActivityModel = AtcActivity::where('user_id', $user->id)->get()->first();
+        $isGraced = $atcActivityModel->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod', 12))->gt(now());
+        $userHours = $atcActivityModel;
         if(isset($userHours)) $userHours = $userHours->hours;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours', 'isGraced'));
     }
 
     /**
