@@ -75,7 +75,7 @@ class UpdateAtcHours extends Command
         $this->info("Fetching seen ATC positions...");
         $divisionCallsignPrefixes = collect(DB::select(
             DB::raw('SELECT DISTINCT LEFT(callsign, 4) as prefix FROM positions;')
-        ));
+        ))->pluck('prefix');
 
         $this->info("Updating member ATC hours...");
 
@@ -88,8 +88,6 @@ class UpdateAtcHours extends Command
                 $url = "https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-30";
             }
             $response = $this->makeHttpGetRequest($client, $url);
-
-            $this->info("Checking " . $member->id);
 
             if ($response == null) {
                 Log::error('updateMemberATCHours: Failed to fetch GuzzleHttp Response, url: ' . $url);
@@ -122,16 +120,8 @@ class UpdateAtcHours extends Command
     {
         $this->info("Updating ATC hours for member: " . $member->id);
 
-        $isDivisionCallsign = function ($session) use ($divisionCallsignPrefixes) {
-            try {
-                isDivisionCallsign($session->callsign, $divisionCallsignPrefixes);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                return false;
-            }
-            return true;
-        };
         $hoursActiveInDivision = $sessions
-            ->filter($isDivisionCallsign)
+            ->filter(fn($session) => isDivisionCallsign($session->callsign, $divisionCallsignPrefixes))
             ->map(function ($session) {
                 return floatval($session->minutes_on_callsign);
             })

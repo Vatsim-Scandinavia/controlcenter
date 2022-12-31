@@ -32,8 +32,7 @@ function isDivisionCallsign(string $callsign, Collection $divisionCallsignPrefix
     }
     
     // PREFIX
-    
-    if ($divisionCallsignPrefixes->value(substr($callsign, 4))) {
+    if ($divisionCallsignPrefixes->contains(substr($callsign, 0, 4))) {
         return true;
     }
 
