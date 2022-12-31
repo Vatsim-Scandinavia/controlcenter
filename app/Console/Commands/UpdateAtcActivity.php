@@ -17,7 +17,7 @@ class UpdateAtcActivity extends Command
      *
      * @var string
      */
-    protected $signature = 'update:atc:activity {user?*}';
+    protected $signature = 'update:atc:activity {user?*} {--dry-run}';
 
     /**
      * The console command description.
@@ -34,22 +34,35 @@ class UpdateAtcActivity extends Command
     public function handle()
     {
 
+        // Arguments and options
         $this->info('Starting activity checks ...');
-
         $optionalUserIdFilter = $this->argument('user');
+
+        $dryRun = false;
+        if($this->option('dry-run') != null) $dryRun = true;
+
+        // Fetch users
         $handoverMembers = Handover::getActiveAtcMembers($optionalUserIdFilter);
         $activeUsers = User::whereIn('id', $handoverMembers->pluck('id'))->has('atcActivity')->with('atcActivity')->get();
 
+        // Filter users
         $usersToSetAsInactive = $activeUsers
             ->filter(fn($m) => $this::hasTooFewHours($m)) 
             ->filter(fn($m) => $this::notInGracePeriod($m))
             ->filter(fn($m) => $this::notInS1Training($m));
 
+        if($dryRun){
+            $this->info('[DRY RUN] We would have made '.$usersToSetAsInactive->count().' users inactive');
+            $this->info('[DRY RUN] Specifically: '.$usersToSetAsInactive->pluck('id'));
+            return Command::SUCCESS;
+        }
 
+        // Execute updates on relevant users
         $this->info('Making '.$usersToSetAsInactive->count().' users inactive');
         Handover::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
         Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 
+        // Send inactivity notification to the users
         foreach($usersToSetAsInactive as $userToSetAsInactive){
             $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
         }
