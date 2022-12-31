@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rating;
 use App\Models\Area;
+use App\Models\AtcActivity;
 use App\Models\Position;
 use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
@@ -157,7 +158,7 @@ class EndorsementController extends Controller
             ' ― User: '.$endorsement->user_id.
             ' ― Rating: '.Rating::find($data['ratingMASC'])->name);
 
-            return redirect()->intended(route('endorsements.mascs'))->withSuccess($user->name . "'s endorsement created");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s endorsement created");
 
 
 
@@ -196,8 +197,10 @@ class EndorsementController extends Controller
             // Validate that this user has other endrosement of this type from before
             if($user->hasActiveEndorsement($trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
 
-            // Validate that there's any active training the endorsement can be tied to
-            if($user->trainings->where('status', '>=', 0)->count() == 0){
+            // if its not a infinite endorsement, make sure it's tried an actual training
+            $linkedToTraining = false;
+            if(!$expireInfinite && $user->trainings->where('status', '>=', 0)->count() == 0){
+                $linkedToTraining = true;
                 return back()->withInput()->withErrors($user->name.' has no active training to link this endorsement to.');
             }
 
@@ -237,11 +240,13 @@ class EndorsementController extends Controller
             ' ― Positions: '.$data['positions']);
 
             // Log this new endorsement to the user's active training
-            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            if($linkedToTraining){
+                TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            }
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
-            return redirect()->intended(route('endorsements.trainings'))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created. E-mail confirmation sent to the student.");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s ".$trainingType." endorsement successfully created. E-mail confirmation sent to the student.");
             
             
 
@@ -272,7 +277,7 @@ class EndorsementController extends Controller
             ' ― Rating: '.$data['ratingGRP'].
             ' ― Areas: '.implode(',', $data['areas']));
 
-            return redirect()->intended(route('endorsements.examiners'))->withSuccess($user->name . "'s examiner endorsement successfully created");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s examiner endorsement successfully created");
         
 
 
@@ -303,7 +308,7 @@ class EndorsementController extends Controller
             ' ― User: '.$endorsement->user_id.
             ' ― Areas: '.implode(',', $data['areas']));
 
-            return redirect()->intended(route('endorsements.visiting'))->withSuccess($user->name . "'s visiting endorsement successfully created");
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s visiting endorsement successfully created");
 
         }
 
@@ -322,9 +327,17 @@ class EndorsementController extends Controller
     {
         $endorsement = Endorsement::findOrFail($endorsementId);
         $this->authorize('delete', [Endorsement::class, $endorsement]);
+        $user = User::find($endorsement->user_id);
 
         if($endorsement->revoked){
-            return redirect()->back()->withErrors(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement is already revoked.");
+            return redirect()->back()->withErrors($user->name . "'s ".$endorsement->type." endorsement is already revoked.");
+        }
+
+        // Disable the ATC activity mark for users who have an S1 rating, which is defined by 
+        // having an indefinite endorsemnet of type "S1"
+        if (\VatsimRating::from($user->rating) == \VatsimRating::S1 && $endorsement->type == 'S1' && $endorsement->valid_to == NULL) {
+            AtcActivity::where('user_id', $user->id)->update(['start_of_grace_period' => null]);
+            $this->disableAtc($user);
         }
 
         $endorsement->revoked = true;
@@ -332,12 +345,21 @@ class EndorsementController extends Controller
         $endorsement->valid_to = now();
         $endorsement->save();
 
-        ActivityLogController::warning('ENDORSEMENT', 'Deleted '.User::find($endorsement->user_id)->name.'\'s '.$endorsement->type.' endorsement');
+        ActivityLogController::warning('ENDORSEMENT', 'Deleted '. $user->name . '\'s ' . $endorsement->type.' endorsement');
         if($endorsement->type == 'S1' || $endorsement->type == 'SOLO'){
             $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
             return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked. E-mail confirmation sent to the student.");
         } 
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
+    }
+
+    /**
+     * @param User user
+     */
+    public static function disableAtc($user) {
+        $handover = $user->handover;
+        $handover->atc_active = false;
+        $handover->save();
     }
 
     /**

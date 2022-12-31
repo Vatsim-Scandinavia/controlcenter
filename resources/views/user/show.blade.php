@@ -30,10 +30,13 @@
                     <dd class="separator pb-3">{{ $user->subdivision }} / {{ $user->division }}</dd>
 
                     <dt class="pt-2">ATC Active</dt>
-                    <dd><i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i></dd>
+                    <dd>
+                        <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i>
+                        {!! ($isGraced) ? '<i class="fas fa-person-praying" data-toggle="tooltip" data-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
+                    </dd>
 
                     <dt>ATC Hours</dt>
-                    <dd>{{ isset($userHours) ? $userHours : 'N/A' }}</dd>
+                    <dd>{{ isset($userHours) ? round($userHours) : 'N/A' }}</dd>
 
                     <div id="vatsim-data">
                         <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
