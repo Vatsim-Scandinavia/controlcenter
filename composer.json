@@ -47,7 +47,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/VATSIM.php"
+            "app/Helpers/Vatsim.php"
         ]
     },
     "autoload-dev": {
