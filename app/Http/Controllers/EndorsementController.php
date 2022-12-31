@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rating;
 use App\Models\Area;
+use App\Models\AtcActivity;
 use App\Models\Position;
 use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
@@ -335,6 +336,7 @@ class EndorsementController extends Controller
         // Disable the ATC activity mark for users who have an S1 rating, which is defined by 
         // having an indefinite endorsemnet of type "S1"
         if (\VatsimRating::from($user->rating) == \VatsimRating::S1 && $endorsement->type == 'S1' && $endorsement->valid_to == NULL) {
+            AtcActivity::where('user_id', $user->id)->update(['start_of_grace_period' => null]);
             $this->disableAtc($user);
         }
 
