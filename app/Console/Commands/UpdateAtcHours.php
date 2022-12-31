@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Models\Handover;
+use App\Models\User;
 use App\Models\AtcActivity;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -56,7 +57,8 @@ class UpdateAtcHours extends Command
 
         // Fetch members
         $optionalUserIdFilter = $this->argument('user');
-        $members = Handover::getRatedMembers($optionalUserIdFilter);
+        $handoverMembers = Handover::getRatedMembers($optionalUserIdFilter);
+        $members = User::whereIn('id', $handoverMembers->pluck('id'))->get();
 
         // Update member hours
         $this->updateMemberATCHours($members);
@@ -65,7 +67,7 @@ class UpdateAtcHours extends Command
     /**
      * Update ATC active hours in database
      *
-     * @param Collection<Handover> $members
+     * @param Collection<User> $members
      * @return null
      */
     private function updateMemberATCHours(Collection $members)
@@ -111,12 +113,12 @@ class UpdateAtcHours extends Command
     /**
      * Check if active members should keep their active status
      *
-     * @param Handover $member
+     * @param User $member
      * @param Collection $sessions
      * @param Collection<string> $divisionCallsignPrefixes
      * @return null
      */
-    private function updateHoursForMember(Handover $member, Collection $sessions, Collection $divisionCallsignPrefixes)
+    private function updateHoursForMember(User $member, Collection $sessions, Collection $divisionCallsignPrefixes)
     {
         $this->info("Updating ATC hours for member: " . $member->id);
 
@@ -148,18 +150,6 @@ class UpdateAtcHours extends Command
             ]);
         }
     }
-
-    /**
-     * Check if active members should keep their active status
-     *
-     * @param 
-     * @return null
-     */
-    private function checkActiveMembers()
-    {
-
-    }
-
 
     /**
      * Make HTTP GET request
