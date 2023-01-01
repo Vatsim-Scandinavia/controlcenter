@@ -128,7 +128,7 @@ class BookingController extends Controller
         } else if(($booking->position->rating > $user->rating) && !$user->isModeratorOrAbove()){
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if($booking->position->mae && $user->getActiveTraining() && $user->getActiveTraining()->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } else if($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
