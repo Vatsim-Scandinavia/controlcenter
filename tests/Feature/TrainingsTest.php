@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Training;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TrainingsTest extends TestCase
 {
@@ -52,9 +53,9 @@ class TrainingsTest extends TestCase
     public function moderator_can_update_training_request()
     {
 
-        $moderator = \App\Models\User::factory()->create();
+        $moderator = User::factory()->create();
 
-        $training = \App\Models\Training::factory()->create([
+        $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
 
@@ -75,7 +76,7 @@ class TrainingsTest extends TestCase
     public function a_regular_user_cant_update_a_training()
     {
 
-        $training = \App\Models\Training::factory()->create([
+        $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $user = $training->user;
@@ -93,10 +94,10 @@ class TrainingsTest extends TestCase
 //    /** @test */
     public function moderator_can_update_the_trainings_status()
     {
-        $training = \App\Models\Training::factory()->create([
+        $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $moderator = \App\Models\User::factory()->create();
+        $moderator = User::factory()->create();
         $moderator->groups()->attach(1, ['area_id' => $training->area->id]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
@@ -179,12 +180,12 @@ class TrainingsTest extends TestCase
     /** @test */
     public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_area()
     {
-        $training = \App\Models\Training::factory()->create([
+        $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $moderator = \App\Models\User::factory()->create();
+        $moderator = User::factory()->create();
         $moderator->groups()->attach(2, ['area_id' => $training->area->id]);
-        $mentor = \App\Models\User::factory()->create();
+        $mentor = User::factory()->create();
 
         // We hardcoded area id to 1 in the factory so anything other than 1 will work - let's pick 2 lol.
         $mentor->groups()->attach(3, ['area_id' => 2]);
