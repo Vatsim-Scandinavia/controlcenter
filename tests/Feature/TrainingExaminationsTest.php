@@ -29,7 +29,7 @@ class TrainingExaminationsTest extends TestCase
             ]),
         ]);
 
-        $this->examination->examiner->groups()->attach(3, ['area_id' => $this->examination->training->area]);
+        $this->examination->examiner->groups()->attach(3, ['area_id' => $this->examination->training->area->id]);
 
         $this->training = $this->examination->training;
         $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);

@@ -26,7 +26,7 @@ class TrainingReportFactory extends Factory
         $date = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
 
         return [
-            'report_date' => $date,
+            'report_date' => $date->format("Y-M-d"),
             'content' => $this->faker->paragraph(),
             'contentimprove' => $this->faker->paragraph(),
             'position' => Position::inRandomOrder()->first()->callsign,

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\TrainingReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +21,7 @@ class TrainingReportsTest extends TestCase
         ]);
         $mentor = \App\Models\User::factory()->create(['id' => 10000400]);
         $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addCentury()]);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
         $this->actingAs($mentor)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
     }
@@ -229,7 +230,7 @@ class TrainingReportsTest extends TestCase
             ->get(route('training.report.delete', ['report' => $report->id]))
             ->assertStatus(403);
 
-        $this->assertDatabaseHas('training_reports', $report->getAttributes());
+        $this->assertDatabaseHas(TrainingReport::class, $report->getAttributes());
     }
 
     /** @test */
