@@ -2,10 +2,13 @@
 
 namespace Tests\Unit;
 
-use App\Exceptions\PolicyMissingException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Handover;
+use App\Models\Training;
+use App\Exceptions\PolicyMissingException;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UserUnitTest extends TestCase
 {
@@ -17,8 +20,8 @@ class UserUnitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = \App\Models\User::factory()->create(['id' => 10000000]);
-        $this->user->handover = \App\Models\Handover::factory()->make(['id' => 10000000]);
+        $this->user = User::factory()->create(['id' => 10000000]);
+        $this->user->handover = Handover::factory()->make(['id' => 10000000]);
     }
 
     /** @test */
@@ -56,7 +59,7 @@ class UserUnitTest extends TestCase
     /** @test */
     public function user_can_have_trainings_they_can_access()
     {
-        $training = \App\Models\Training::factory()->create(['user_id' => $this->user->id]);
+        $training = Training::factory()->create(['user_id' => $this->user->id]);
 
         $this->user->can('view', $training)
             ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))
@@ -67,8 +70,8 @@ class UserUnitTest extends TestCase
     /** @test */
     public function trainings_can_exist_with_out_user_being_able_to_see_them()
     {
-        $otherUser = \App\Models\User::factory()->create(['id' => ($this->user->id + 1)]);
-        $training = \App\Models\Training::factory()->create(['user_id' => $otherUser->id]);
+        $otherUser = User::factory()->create(['id' => ($this->user->id + 1)]);
+        $training = Training::factory()->create(['user_id' => $otherUser->id]);
 
         $this->user->can('view', $training)
             ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))

@@ -20,7 +20,7 @@ class DeleteOldPermissionSystem extends Migration
                         ? config('database.connections.' . $connection . '.prefix')
                         : '';
 
-			if (env('DB_CONNECTION') != 'sqlite') {
+            if (Schema::getConnection()->getDriverName() != 'sqlite') {
                 $table->dropForeign($prefix . 'users_country_foreign');
             	$table->dropForeign($prefix . 'users_group_foreign');
 			}

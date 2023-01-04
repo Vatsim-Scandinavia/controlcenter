@@ -50,5 +50,8 @@ There's quite a few automations in Control Center that are running through the c
 - Daily member cleanup, if a member leaves the division, their training will be automatically closed. Same for mentors. Does not apply to visitors.
 - Other misc cleanups
 
-## Contribution, conventions and intro to Laravel
-Read the [CONTRIBUTE.md](CONTRIBUTE.md) for details.
+## Contributing, conventions and intro to Laravel
+
+Do you want to help us with improving Control Center? Curious about whether we use testing? Stylistic choices?
+
+[Read the `CONTRIBUTE.md`](CONTRIBUTE.md) for details.

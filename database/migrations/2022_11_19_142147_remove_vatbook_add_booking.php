@@ -15,9 +15,7 @@ return new class extends Migration
     {
         Schema::rename('vatbooks', 'bookings');
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn('eu_id');
-            $table->dropColumn('local_id');
-            $table->dropColumn('cid');
+            $table->dropColumn(['eu_id', 'local_id', 'cid']);
         });
     }
 

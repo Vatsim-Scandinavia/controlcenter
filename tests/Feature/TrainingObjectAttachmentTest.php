@@ -2,16 +2,16 @@
 
 namespace Tests\Feature;
 
+use Tests\TestCase;
 use App\Models\File;
-use App\Models\Training;
-use App\Models\TrainingObjectAttachment;
-use App\Models\TrainingReport;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Training;
+use App\Models\TrainingReport;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
+use App\Models\TrainingObjectAttachment;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TrainingObjectAttachmentTest extends TestCase
 {

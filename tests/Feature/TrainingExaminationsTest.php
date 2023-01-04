@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use Carbon\Carbon;
+use Tests\TestCase;
+use App\Models\User;
 use App\Models\Training;
 use App\Models\TrainingExamination;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TrainingExaminationsTest extends TestCase
 {
@@ -29,7 +29,7 @@ class TrainingExaminationsTest extends TestCase
             ]),
         ]);
 
-        $this->examination->examiner->groups()->attach(3, ['area_id' => $this->examination->training->area]);
+        $this->examination->examiner->groups()->attach(3, ['area_id' => $this->examination->training->area->id]);
 
         $this->training = $this->examination->training;
         $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);
