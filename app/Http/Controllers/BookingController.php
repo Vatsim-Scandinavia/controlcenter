@@ -179,7 +179,7 @@ class BookingController extends Controller
                     'end' => $booking->time_end->format('Y-m-d H:i:s'),
                 ]);
             } catch(VatsimAPIException $e){
-                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue proceeds.');
+                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
             }
             
             $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -303,7 +303,7 @@ class BookingController extends Controller
                         'end' => $booking->time_end->format('Y-m-d H:i:s'),
                     ]);
                 } catch(VatsimAPIException $e){
-                    return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue proceeds.');
+                    return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
                 }
 
                 $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -429,7 +429,7 @@ class BookingController extends Controller
                     'end' => $booking->time_end->format('Y-m-d H:i:s'),
                 ]);
             } catch(VatsimAPIException $e){
-                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue proceeds.');
+                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
             }
             
             $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -471,7 +471,7 @@ class BookingController extends Controller
             try{
                 $response = $this->makeHttpRequest($client, $url, 'delete');
             } catch(VatsimAPIException $e){
-                return redirect(route('booking'))->withErrors('Booking deletion failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue proceeds.');
+                return redirect(route('booking'))->withErrors('Booking deletion failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
             }
             
         }
