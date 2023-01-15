@@ -66,8 +66,8 @@ class CheckOnlineControllers extends Command
         foreach($vatsimData as $d){
             if(preg_match($areasRegex, $d->callsign)){
                 // Lets check this user
-                $this->info("Checking user ".$d->cid);
-                $user = User::find($d->cid);
+                $this->info("Checking user ".$d['cid']);
+                $user = User::find($d['cid']);
                 if(isset($user) && !$user->isVisiting()){
                     if(!$user->active && !$user->hasActiveTrainings(false) && !$user->hasRecentlyCompletedTraining()){
                         if(!isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))){
@@ -78,7 +78,7 @@ class CheckOnlineControllers extends Command
                             $user->save();
 
                             // Send warning to all admins, and moderators in selected area
-                            $position = Position::where('callsign', $d->callsign)->get()->first();
+                            $position = Position::where('callsign', $d['callsign'])->get()->first();
                             $sendToStaff = User::allWithGroup(1);
 
                             if($position){
