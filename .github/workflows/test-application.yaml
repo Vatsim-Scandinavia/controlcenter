@@ -29,10 +29,4 @@ jobs:
         touch database/testing.sqlite
 
     - name: Execute unit and feature tests via PHPUnit
-      run: ./vendor/bin/phpunit --log-junit=report.junit.xml
-
-    - uses: dorny/test-reporter@v1
-      with:
-        name: Laravel/PHPUnit Tests
-        path: '*.junit.xml'
-        reporter: java-junit
+      run: ./vendor/bin/phpunit --color=always --testdox
