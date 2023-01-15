@@ -64,7 +64,7 @@ class CheckOnlineControllers extends Command
         $vatsimData = Http::get($dataUri)['controllers'];
 
         foreach($vatsimData as $d){
-            if(preg_match($areasRegex, $d->callsign)){
+            if(preg_match($areasRegex, $d['callsign'])){
                 // Lets check this user
                 $this->info("Checking user ".$d['cid']);
                 $user = User::find($d['cid']);
@@ -92,7 +92,7 @@ class CheckOnlineControllers extends Command
                                 }
                             }
 
-                            $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d->callsign, $d->logon_time));
+                            $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d['callsign'], $d['logon_time']));
 
                         } else {
                             $this->info($user->name.' is inactive. Supressing notification due to one already been sent recently.');
