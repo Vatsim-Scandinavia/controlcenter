@@ -34,5 +34,5 @@ jobs:
     - uses: dorny/test-reporter@v1
       with:
         name: Laravel/PHPUnit Tests
-        path: '*.xml'
+        path: '*.junit.xml'
         reporter: java-junit
