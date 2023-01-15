@@ -177,6 +177,7 @@ class EndorsementController extends Controller
             $user = User::find($data['user']);
             $trainingType = $data['trainingType'];
             $expireInfinite = isset($data['expireInf']) ? true : false;
+            $linkedToTraining = true;
 
             // Let's validate the expire date
             if(!$expireInfinite){
@@ -191,16 +192,15 @@ class EndorsementController extends Controller
                 }
             } else {
                 $expireDate = null;
+                $linkedToTraining = false;
             }
             
 
             // Validate that this user has other endrosement of this type from before
             if($user->hasActiveEndorsement($trainingType)) return back()->withInput()->withErrors($user->name.' has already an active '.$trainingType.' training endorsement. Revoke it first, to create a new one.');
 
-            // if its not a infinite endorsement, make sure it's tried an actual training
-            $linkedToTraining = false;
+            // If it's not a infinite endorsement, it has to be tied to an existing training
             if(!$expireInfinite && $user->trainings->where('status', '>=', 0)->count() == 0){
-                $linkedToTraining = true;
                 return back()->withInput()->withErrors($user->name.' has no active training to link this endorsement to.');
             }
 

@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Exceptions\VatsimAPIException;
 
 /**
  * Controller for handling bookings.
@@ -167,16 +168,20 @@ class BookingController extends Controller
 
         if(App::environment('production')) {
             $client = new \GuzzleHttp\Client();
-
             $url = $this->getVatsimBookingUrl('post');
-            $response = $this->makeHttpRequest($client, $url, 'post', [
-                'callsign' => (string)$booking->callsign,
-                'cid' => $booking->user_id,
-                'type' => $type,
-                'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                'end' => $booking->time_end->format('Y-m-d H:i:s'),
-            ]);
 
+            try{
+                $response = $this->makeHttpRequest($client, $url, 'post', [
+                    'callsign' => (string)$booking->callsign,
+                    'cid' => $booking->user_id,
+                    'type' => $type,
+                    'start' => $booking->time_start->format('Y-m-d H:i:s'),
+                    'end' => $booking->time_end->format('Y-m-d H:i:s'),
+                ]);
+            } catch(VatsimAPIException $e){
+                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+            }
+            
             $vatsim_booking = json_decode($response->getBody()->getContents());
 
             $booking->vatsim_booking = $vatsim_booking->id;
@@ -287,15 +292,19 @@ class BookingController extends Controller
 
             if(App::environment('production')) {
                 $client = new \GuzzleHttp\Client();
-
                 $url = $this->getVatsimBookingUrl('post');
-                $response = $this->makeHttpRequest($client, $url, 'post', [
-                    'callsign' => (string)$booking->callsign,
-                    'cid' => $booking->user_id,
-                    'type' => $type,
-                    'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                    'end' => $booking->time_end->format('Y-m-d H:i:s'),
-                ]);
+
+                try{
+                    $response = $this->makeHttpRequest($client, $url, 'post', [
+                        'callsign' => (string)$booking->callsign,
+                        'cid' => $booking->user_id,
+                        'type' => $type,
+                        'start' => $booking->time_start->format('Y-m-d H:i:s'),
+                        'end' => $booking->time_end->format('Y-m-d H:i:s'),
+                    ]);
+                } catch(VatsimAPIException $e){
+                    return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+                }
 
                 $vatsim_booking = json_decode($response->getBody()->getContents());
 
@@ -410,14 +419,19 @@ class BookingController extends Controller
         if(App::environment('production')) {
             $client = new \GuzzleHttp\Client();
             $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
-            $response = $this->makeHttpRequest($client, $url, 'put', [
-                'callsign' => (string)$booking->callsign,
-                'cid' => $booking->user_id,
-                'type' => $type,
-                'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                'end' => $booking->time_end->format('Y-m-d H:i:s'),
-            ]);
 
+            try{
+                $response = $this->makeHttpRequest($client, $url, 'put', [
+                    'callsign' => (string)$booking->callsign,
+                    'cid' => $booking->user_id,
+                    'type' => $type,
+                    'start' => $booking->time_start->format('Y-m-d H:i:s'),
+                    'end' => $booking->time_end->format('Y-m-d H:i:s'),
+                ]);
+            } catch(VatsimAPIException $e){
+                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+            }
+            
             $vatsim_booking = json_decode($response->getBody()->getContents());
 
             $booking->vatsim_booking = $vatsim_booking->id;
@@ -453,7 +467,13 @@ class BookingController extends Controller
         if(App::environment('production')) {
             $client = new \GuzzleHttp\Client();
             $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
-            $response = $this->makeHttpRequest($client, $url, 'delete');
+
+            try{
+                $response = $this->makeHttpRequest($client, $url, 'delete');
+            } catch(VatsimAPIException $e){
+                return redirect(route('booking'))->withErrors('Booking deletion failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+            }
+            
         }
 
         $booking->save();
