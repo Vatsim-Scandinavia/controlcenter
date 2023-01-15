@@ -37,3 +37,9 @@ jobs:
       with:
         name: test-results
         path: report.junit.xml
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: test-results
+        name: Laravel/PHPUnit Tests
+        path: '*.xml'
+        reporter: jest-junit
