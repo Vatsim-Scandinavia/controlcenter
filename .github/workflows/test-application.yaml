@@ -31,15 +31,8 @@ jobs:
     - name: Execute unit and feature tests via PHPUnit
       run: ./vendor/bin/phpunit --log-junit=report.junit.xml
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v2
-      if: success() || failure()
-      with:
-        name: test-results
-        path: report.junit.xml
     - uses: dorny/test-reporter@v1
       with:
-        artifact: test-results
         name: Laravel/PHPUnit Tests
         path: '*.xml'
-        reporter: jest-junit
+        reporter: java-junit
