@@ -10,6 +10,7 @@ use App\Notifications\InactiveOnlineNotification;
 use App\Notifications\InactiveOnlineStaffNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use anlutro\LaravelSettings\Facade as Setting;
 
@@ -59,8 +60,8 @@ class CheckOnlineControllers extends Command
         $this->info("Collecting online controllers...");
 
         // Fetch the latest URI to data feed
-        $dataUri = json_decode(file_get_contents('https://status.vatsim.net/status.json'))->data->v3[0];
-        $vatsimData = json_decode(file_get_contents($dataUri))->controllers;
+        $dataUri = Http::get('https://status.vatsim.net/status.json')['data']['v3'][0];
+        $vatsimData = Http::get($dataUri)['controllers'];
 
         foreach($vatsimData as $d){
             if(preg_match($areasRegex, $d->callsign)){
