@@ -63,9 +63,13 @@ class GlobalSettingController extends Controller
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
 
+        // The setting dependecy removes keys that are empty, so this is a workaround...
+        isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
+        isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
+
         Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingSOP', $data['trainingSOP']);
-        Setting::set('trainingExamTemplate', $data['trainingExamTemplate']);
+        Setting::set('trainingExamTemplate', $trainingExamTemplate);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
         Setting::set('trainingQueue', $data['trainingQueue']);
         Setting::set('trainingInterval', $data['trainingInterval']);
@@ -81,7 +85,7 @@ class GlobalSettingController extends Controller
         Setting::set('linkContact', $data['linkContact']);
         Setting::set('linkVisiting', $data['linkVisiting']);
         Setting::set('linkDiscord', $data['linkDiscord']);
-        Setting::set('linkMoodle', $data['linkMoodle']);
+        Setting::set('linkMoodle', $linkMoodle);
         Setting::save();
 
         ActivityLogController::danger('OTHER', 'Global Settings Updated');

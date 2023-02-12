@@ -45,7 +45,7 @@
 
                             <div class="form-group">
                                 <label for="exmUrl">Exam Template URL</label>
-                                <input type="url" class="form-control @error('trainingExamTemplate') is-invalid @enderror" id="exmUrl" name="trainingExamTemplate" value="{{ Setting::get("trainingExamTemplate") }}">
+                                <input type="url" class="form-control @error('trainingExamTemplate') is-invalid @enderror" id="exmUrl" name="trainingExamTemplate" value="{{ (Setting::get("trainingExamTemplate") != false) ? Setting::get("trainingExamTemplate") : '' }}">
                                 <small class="form-text text-muted">Link to examination template for examiners. Leave blank to disable.</small>
                             </div>
                             @error('trainingExamTemplate')
@@ -223,7 +223,7 @@
 
                             <div class="form-group">
                                 <label for="linkMoodle">Moodle</label>
-                                <input type="url" class="form-control @error('linkMoodle') is-invalid @enderror" id="linkMoodle" name="linkMoodle" value="{{ Setting::get("linkMoodle") }}">
+                                <input type="url" class="form-control @error('linkMoodle') is-invalid @enderror" id="linkMoodle" name="linkMoodle" value="{{ (Setting::get("linkMoodle") != false) ? Setting::get("linkMoodle") : '' }}">
                                 <small class="form-text text-muted">Enter full link to Moodle or leave blank to disable</small>
                             </div>
                             @error('linkMoodle')
