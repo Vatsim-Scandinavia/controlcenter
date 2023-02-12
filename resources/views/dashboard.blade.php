@@ -149,6 +149,7 @@
                                     <tr>
                                         <td><a href="{{ $training->path() }}">{{ $training->user->name }}</a></td>
                                         <td>
+                                            <i class="{{ $types[$training->type]["icon"] }} text-primary"></i>
                                             @foreach($training->ratings as $rating)
                                                 @if ($loop->last)
                                                     {{ $rating->name }}
