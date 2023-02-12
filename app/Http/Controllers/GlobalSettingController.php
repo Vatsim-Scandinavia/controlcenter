@@ -58,9 +58,11 @@ class GlobalSettingController extends Controller
             'linkVisiting' => 'required|url',
             'linkDiscord' => 'required|url',
             'linkMoodle' => '',
+            'telemetryEnabled' => '',
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
+        isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
 
         // The setting dependecy removes keys that are empty, so this is a workaround...
@@ -86,6 +88,7 @@ class GlobalSettingController extends Controller
         Setting::set('linkVisiting', $data['linkVisiting']);
         Setting::set('linkDiscord', $data['linkDiscord']);
         Setting::set('linkMoodle', $linkMoodle);
+        Setting::set('telemetryEnabled', $telemetryEnabled);
         Setting::save();
 
         ActivityLogController::danger('OTHER', 'Global Settings Updated');

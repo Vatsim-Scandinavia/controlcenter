@@ -235,6 +235,27 @@
                 </div>
             </div>
 
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">Telemetry</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 mb-12">
+
+                            <div class="form-check">
+                                <input class="form-check-input @error('telemetryEnabled') is-invalid @enderror" type="checkbox" id="checkTele" name="telemetryEnabled" {{ Setting::get('telemetryEnabled') ? "checked" : "" }}>
+                                <label class="form-check-label" for="checkTele">
+                                    Enable telemetry
+                                </label>
+                                <small class="form-text text-muted">This is used to prioritise development based on stats and who is using Control Center. Telemetry only sends the url, version and division name.</small>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div>
                 <button class="btn btn-success mt-3" type="submit">Save</button>
             </div>

@@ -5,6 +5,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
@@ -71,6 +72,12 @@ class Kernel extends ConsoleKernel
         // Expire workmail addresses
         $schedule->command('update:workmails')
             ->daily();
+
+        // Send telemetry data
+        if(Setting::get('telemetryEnabled')){
+            $schedule->command('send:telemetry')
+                ->daily();
+        }
 
     }
 
