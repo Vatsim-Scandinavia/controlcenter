@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Helpers\VatsimRating;
 use App\Models\User;
 use App\Models\Position;
 use App\Models\Booking;
@@ -34,9 +35,15 @@ class BookingController extends Controller
         $this->authorize('view', Booking::class);
         $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
         $positions = new Collection();
-        if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        if($user->isModeratorOrAbove()) $positions = Position::all();
+        if($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement("S1", true)) {
+            $positions = Position::where('rating', '<=', $user->rating)->get();
+        }
+        if($user->getActiveTraining(1)) {
+            $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
+        }
+        if($user->isModeratorOrAbove()) {
+            $positions = Position::all();
+        }
 
         return view('booking.index', compact('bookings', 'user', 'positions'));
     }
@@ -181,7 +188,7 @@ class BookingController extends Controller
             } catch(VatsimAPIException $e){
                 return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
             }
-            
+
             $vatsim_booking = json_decode($response->getBody()->getContents());
 
             $booking->vatsim_booking = $vatsim_booking->id;
@@ -238,7 +245,7 @@ class BookingController extends Controller
             } else {
                 return redirect(route('booking'))->withErrors('The position '.$position.' does not exist. The bulk booking stopped here, but previous positions in the list have been booked.')->withInput();
             }
-            
+
             $booking->name = $user->name;
             $booking->user_id = $user->id;
 
@@ -431,12 +438,12 @@ class BookingController extends Controller
             } catch(VatsimAPIException $e){
                 return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
             }
-            
+
             $vatsim_booking = json_decode($response->getBody()->getContents());
 
             $booking->vatsim_booking = $vatsim_booking->id;
         }
-        
+
         $booking->save();
 
         ActivityLogController::info('BOOKING', "Updated booking booking ".$booking->id.
@@ -473,7 +480,7 @@ class BookingController extends Controller
             } catch(VatsimAPIException $e){
                 return redirect(route('booking'))->withErrors('Booking deletion failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
             }
-            
+
         }
 
         $booking->save();
@@ -501,7 +508,7 @@ class BookingController extends Controller
     private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null) {
         try {
             $headers = [
-                'Authorization' => 'Bearer ' . Config::get('vatsim.booking_api_token'),        
+                'Authorization' => 'Bearer ' . Config::get('vatsim.booking_api_token'),
                 'Accept' => 'application/json',
             ];
 

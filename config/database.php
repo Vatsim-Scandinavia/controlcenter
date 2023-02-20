@@ -19,6 +19,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default Database Connection Name
+    |--------------------------------------------------------------------------
+    |
+    | Specify the connection mode used for the too-coupled connections to
+    | the Handover database.
+    |
+    */
+    'handover' => env('DB_HANDOVER_CONNECTION', 'mysql-handover'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
     |
@@ -46,6 +57,14 @@ return [
         'sqlite-testing' => [
             'driver' => 'sqlite',
             'database' => database_path('testing.sqlite'),
+            'foreign_key_constraints' => true,
+        ],
+
+        'sqlite-handover' => [
+            'driver' => 'sqlite',
+            'url' => env('DATABASE_URL'),
+            'database' => env('DB_HANDOVER_DATABASE', '../handover/database/database.sqlite'),
+            'prefix' => '',
             'foreign_key_constraints' => true,
         ],
 

@@ -2,9 +2,11 @@
 
 namespace App\Policies;
 
+use App\Helpers\VatsimRating;
 use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Config;
 
 class BookingPolicy
@@ -29,7 +31,9 @@ class BookingPolicy
      */
     public function create(User $user)
     {
-        return $user->rating >= 3 || $user->getActiveTraining(1) != null || $user->isModeratorOrAbove();
+        return ($user->active && $user->rating >= VatsimRating::S1->value
+            || $user->getActiveTraining(1) != null
+            || $user->isModeratorOrAbove());
     }
 
     /**
@@ -39,25 +43,25 @@ class BookingPolicy
      * @param  \App\Models\Booking  $booking
      * @return bool
      */
-    public function update(User $user, Booking $booking)
+    public function update(User $user, Booking $booking): Response
     {
 
         // Discord booking
-        if($booking->source == "DISCORD"){
-            return $this->deny('This booking must be changed in Discord where it was booked');
+        if ($booking->source == "DISCORD") {
+            return Response::deny('This booking must be changed in Discord where it was booked');
         }
 
         // The user is the owner of booking
-        if($booking->user_id == $user->id){
-            return true;
+        if ($booking->user_id == $user->id) {
+            return Response::allow();
         }
 
         // The booking is not Discord but the user is moderator or above
-        if($booking->source != "DISCORD" && $user->isModeratorOrAbove()){
-            return true;
+        if ($booking->source != "DISCORD" && $user->isModeratorOrAbove()) {
+            return Response::allow();
         }
 
-        return false;
+        return Response::deny();
     }
 
     /**
@@ -113,10 +117,13 @@ class BookingPolicy
      */
     public function position(User $user, Booking $booking)
     {
-        if(($booking->position->rating > $user->rating || $user->rating < 3) && !$user->isModerator()) {
-            if($user->getActiveTraining(1) &&
+        // TODO: Make it easier to read the order of checks
+        if (($booking->position->rating > $user->rating || $user->rating < VatsimRating::S1->value) && !$user->isModerator()) {
+            if (
+                $user->getActiveTraining(1) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating || $user->getActiveTraining()->isMaeTraining()) &&
-                $user->getActiveTraining()->area->id === $booking->position->area) {
+                $user->getActiveTraining()->area->id === $booking->position->area
+            ) {
                 return true;
             }
             return $this->deny('You are not authorized to book this position!');
