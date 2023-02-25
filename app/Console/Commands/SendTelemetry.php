@@ -30,22 +30,26 @@ class SendTelemetry extends Command
     public function handle()
     {
 
+        $uuid = \Ramsey\Uuid\Uuid::uuid5('151323ad-e7d1-4ed0-9c49-18a5cde076d8', Config::get('app.key').Config::get('app.url'));
+
         try{
-            $req = Http::post('https://telemetry.vatsca.org/v1', [
-                'payload' => json_encode([
-                    'url' => Config::get('app.url'),
-                    'owner' => Config::get('app.owner'),
-                    'version' => Config::get('app.version')
-                ])
+
+            $req = Http::post('http://vatsca.local:6060/v1/', [
+                'service' => 'cc',
+                'uuid' => $uuid,
+                'url' => Config::get('app.url'),
+                'owner' => Config::get('app.owner'),
+                'version' => Config::get('app.version'),
+                'env' => Config::get('app.env'),
             ]);
 
             if($req->clientError()){
-                $this->warn('Telemetry request replied with client error');
+                $this->warn('Telemetry request replied with client error: '.$req->body());
                 return;
             }
 
             if($req->serverError()){
-                $this->warn('Telemetry request replied with server error');
+                $this->warn('Telemetry request replied with server error '.$req->body());
                 return;
             }
 
