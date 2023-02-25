@@ -24,7 +24,10 @@ class CarbonServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Carbon::macro('toEuropeanDate', function () {
+        Carbon::macro('toEuropeanDate', function ($includeDayName = null) {
+            if($includeDayName){
+                return $this->format('D. d/m/Y');
+            }
             return $this->format('d/m/Y');
         });
         

@@ -34,11 +34,11 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
+                                        <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate(true) }}
                                         &nbsp;&nbsp;<i class="fa fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
                                     @endcan
                                     @cannot('update', $booking)
-                                        {{ Carbon\Carbon::create($booking->date)->toEuropeanDate() }}
+                                        {{ Carbon\Carbon::create($booking->date)->toEuropeanDate(true) }}
                                     @endcannot
                                 </td>
                                 <td>

@@ -41,10 +41,10 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/booking/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}   
+                                        <a href="/booking/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}   
                                            <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
                                     @else
-                                        {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate() }}
+                                        {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
                                         @if(Auth::user()->id == $booking->user_id || $user->isModeratorOrAbove())
 
                                             @if($booking->source == "DISCORD")
