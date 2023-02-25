@@ -31,10 +31,12 @@ class SendTelemetry extends Command
     {
 
         try{
-            $req = Http::post('https://telemetry.vatsca.org', [
-                'url' => Config::get('app.url'),
-                'owner' => Config::get('app.owner'),
-                'version' => Config::get('app.version')
+            $req = Http::post('https://telemetry.vatsca.org/v1', [
+                'payload' => json_encode([
+                    'url' => Config::get('app.url'),
+                    'owner' => Config::get('app.owner'),
+                    'version' => Config::get('app.version')
+                ])
             ]);
 
             if($req->clientError()){
