@@ -147,8 +147,19 @@
                     <div class="form-check">
                         <input class="form-check-input @error('atcActivityNotifyInactive') is-invalid @enderror" type="checkbox" id="check1" name="atcActivityNotifyInactive" {{ Setting::get('atcActivityNotifyInactive') ? "checked" : "" }}>
                         <label class="form-check-label" for="check1">
-                            Send notification to controllers when they become inactive or logon unauthorized
+                            Send inactive login notification
                         </label>
+                        <small class="form-text text-muted">Sends an e-mail to users with copy to admins, when logged in as inactive controller on the network.</small>
+                    </div>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input @error('atcActivityAllowReactivation') is-invalid @enderror" type="checkbox" id="check2" name="atcActivityAllowReactivation" {{ Setting::get('atcActivityAllowReactivation') ? "checked" : "" }}>
+                        <label class="form-check-label" for="check2">
+                            Allow automatic re-activation of inactive controllers
+                        </label>
+                        <small class="form-text text-muted">
+                            Disabled: Only a training marked as completed will reactivate a controller as ATC Active<br>
+                            Enabled: Same as above and if controller passes activity requirement they will automatically be set as ATC Active. 
+                        </small>
                     </div>
                 </div>
             </div>
@@ -257,7 +268,7 @@
             </div>
 
             <div>
-                <button class="btn btn-success mt-3" type="submit">Save</button>
+                <button class="btn btn-success mt-3 mb-3" type="submit">Save</button>
             </div>
 
         </form>

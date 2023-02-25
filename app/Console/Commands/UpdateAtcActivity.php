@@ -63,8 +63,10 @@ class UpdateAtcActivity extends Command
         Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 
         // Send inactivity notification to the users
-        foreach($usersToSetAsInactive as $userToSetAsInactive){
-            $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
+        if(!Setting::get('atcActivityAllowReactivation')){
+            foreach($usersToSetAsInactive as $userToSetAsInactive){
+                $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
+            }
         }
 
         return Command::SUCCESS;

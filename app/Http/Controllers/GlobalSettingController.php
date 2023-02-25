@@ -51,6 +51,7 @@ class GlobalSettingController extends Controller
             'atcActivityRequirement' => 'required|integer|min:0',
             'atcActivityContact' => 'max:40',
             'atcActivityNotifyInactive' => '',
+            'atcActivityAllowReactivation' => '',
             'linkDomain' => 'required',
             'linkHome' => 'required|url',
             'linkJoin' => 'required|url',
@@ -64,6 +65,7 @@ class GlobalSettingController extends Controller
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
         isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
+        isset($data['atcActivityAllowReactivation']) ? $atcActivityAllowReactivation = true : $atcActivityAllowReactivation = false;
 
         // The setting dependecy removes keys that are empty, so this is a workaround...
         isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
@@ -81,6 +83,7 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
         Setting::set('atcActivityContact', $data['atcActivityContact']);
         Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
+        Setting::set('atcActivityAllowReactivation', $atcActivityAllowReactivation);
         Setting::set('linkDomain', $data['linkDomain']);
         Setting::set('linkHome', $data['linkHome']);
         Setting::set('linkJoin', $data['linkJoin']);
