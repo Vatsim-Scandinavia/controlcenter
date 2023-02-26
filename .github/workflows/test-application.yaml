@@ -29,7 +29,7 @@ jobs:
         path: handover
 
     - name: Setup Control Center
-      uses: ./controlcenter/.github/workflows/setup-project.yaml
+      uses: ./controlcenter/.github/workflows/setup-project
       with:
         path: controlcenter
         setup-node: true
