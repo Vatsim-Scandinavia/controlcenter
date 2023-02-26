@@ -17,12 +17,6 @@ jobs:
       run:
         working-directory: ./${{ inputs.repository }}
     steps:
-    - name: Checkout ${{ inputs.repository }}
-      uses: actions/checkout@v3
-      with:
-        repository: vatsim-scandinavia/${{ inputs.repository }}
-        path: ${{ inputs.repository }}
-
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
@@ -58,6 +52,3 @@ jobs:
       run: |
         mkdir -p database
         touch database/testing.sqlite
-
-    - name: Execute unit and feature tests via PHPUnit
-      run: ./vendor/bin/phpunit --color=always --testdox

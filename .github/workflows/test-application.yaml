@@ -8,15 +8,27 @@ jobs:
   test-app:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Handover
-      uses: ./.github/workflows/setup-project.yaml
+    - name: Checkout Control Center
+      uses: actions/checkout@v3
       with:
-        repository: handover
+        repository: vatsim-scandinavia/controlcenter
+        path: controlcenter
+
+    - name: Checkout Handover
+      uses: actions/checkout@v3
+      with:
+        repository: vatsim-scandinavia/handover
+        path: handover
+
+    - name: Setup Handover
+      uses: ./controlcenter/.github/workflows/setup-project.yaml
+      with:
+        path: handover
 
     - name: Setup Control Center
-      uses: ./.github/workflows/setup-project.yaml
+      uses: ./controlcenter/.github/workflows/setup-project.yaml
       with:
-        repository: controlcenter
+        path: controlcenter
         setup-node: true
 
     - name: Execute unit and feature tests via PHPUnit
