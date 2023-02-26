@@ -10,24 +10,26 @@ jobs:
     steps:
     - name: Checkout Control Center
       uses: actions/checkout@v3
+      with:
+        path: controlcenter
 
     - name: Checkout Handover
       uses: actions/checkout@v3
       with:
         repository: vatsim-scandinavia/handover
-        path: ../handover
+        path: handover
 
     - run: ls -la
     - run: ls -la ..
     - run: ls -la ./controlcenter
 
     - name: Setup Handover
-      uses: ./../.github/workflows/setup-project.yaml
+      uses: ./controlcenter/.github/workflows/setup-project.yaml
       with:
         path: handover
 
     - name: Setup Control Center
-      uses: ./.github/workflows/setup-project.yaml
+      uses: ./controlcenter/.github/workflows/setup-project.yaml
       with:
         path: controlcenter
         setup-node: true
