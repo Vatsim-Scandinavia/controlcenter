@@ -21,12 +21,12 @@ jobs:
         path: handover
 
     - name: Setup Handover
-      uses: ./controlcenter/.github/workflows/setup-project.yaml
+      uses: ./.github/workflows/setup-project.yaml
       with:
         path: handover
 
     - name: Setup Control Center
-      uses: ./controlcenter/.github/workflows/setup-project.yaml
+      uses: ./.github/workflows/setup-project.yaml
       with:
         path: controlcenter
         setup-node: true
