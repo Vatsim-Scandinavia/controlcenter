@@ -24,7 +24,7 @@ jobs:
     - run: ls -la ./controlcenter
 
     - name: Setup Handover
-      uses: ./controlcenter/.github/workflows/setup-project.yaml
+      uses: ./controlcenter/.github/workflows/setup-project
       with:
         path: handover
 
