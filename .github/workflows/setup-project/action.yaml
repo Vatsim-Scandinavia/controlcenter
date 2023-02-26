@@ -24,7 +24,7 @@ runs:
     uses: actions/cache@v3
     with:
       path: ${{ inputs.path }}/vendor
-      key: composer-v1-${{ inputs.path }}-${{ hashFiles(inputs.path + 'composer.lock')}}
+      key: composer-v1-${{ inputs.path }}-${{ hashFiles(format('{0}/composer.lock', inputs.path))}}
 
   - name: Install composer dependencies
     run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
