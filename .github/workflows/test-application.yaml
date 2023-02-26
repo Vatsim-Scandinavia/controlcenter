@@ -19,10 +19,6 @@ jobs:
         repository: vatsim-scandinavia/handover
         path: handover
 
-    - run: ls -la
-    - run: ls -la ..
-    - run: ls -la ./controlcenter
-
     - name: Setup Handover
       uses: ./controlcenter/.github/workflows/setup-project
       with:
