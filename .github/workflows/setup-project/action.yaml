@@ -3,7 +3,7 @@ name: Setup project
 on:
   workflow_call:
     inputs:
-      repository:
+      path:
         required: true
         type: string
       setup-node:
