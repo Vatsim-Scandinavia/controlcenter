@@ -10,9 +10,6 @@ jobs:
     steps:
     - name: Checkout Control Center
       uses: actions/checkout@v3
-      with:
-        repository: vatsim-scandinavia/controlcenter
-        path: controlcenter
 
     - name: Checkout Handover
       uses: actions/checkout@v3
