@@ -13,15 +13,14 @@ on:
 jobs:
   setup-project:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./${{ inputs.repository }}
     steps:
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      working-directory: ./${{ inputs.repository }}
 
     - name: Validate composer
       run: composer validate
+      working-directory: ./${{ inputs.repository }}
 
     - name: Cache composer
       uses: actions/cache@v3
@@ -31,6 +30,7 @@ jobs:
 
     - name: Install composer dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+      working-directory: ./${{ inputs.repository }}
 
     - name: Setup node
       if: inputs.setup-node
@@ -41,14 +41,18 @@ jobs:
     - name: Install node dependencies
       if: inputs.setup-node
       run: npm ci
+      working-directory: ./${{ inputs.repository }}
 
     - name: Generate key
       run: php artisan key:generate
+      working-directory: ./${{ inputs.repository }}
 
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
+      working-directory: ./${{ inputs.repository }}
 
     - name: Create Database
       run: |
         mkdir -p database
         touch database/testing.sqlite
+      working-directory: ./${{ inputs.repository }}
