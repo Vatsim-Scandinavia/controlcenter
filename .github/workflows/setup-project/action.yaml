@@ -32,13 +32,13 @@ runs:
     working-directory: ./${{ inputs.path }}
 
   - name: Setup node
-    if: inputs.setup-node
+    if: inputs.setup-node == 'true'
     uses: actions/setup-node@v3
     with:
       cache: 'npm'
 
   - name: Install node dependencies
-    if: inputs.setup-node
+    if: inputs.setup-node == 'true'
     run: npm ci
     shell: bash
     working-directory: ./${{ inputs.path }}
