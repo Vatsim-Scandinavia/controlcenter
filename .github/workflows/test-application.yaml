@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Handover
-      uses: .github/workflows/setup-project.yaml
+      uses: ./.github/workflows/setup-project.yaml
       with:
         repository: handover
 
     - name: Setup Control Center
-      uses: .github/workflows/setup-project.yaml
+      uses: ./.github/workflows/setup-project.yaml
       with:
         repository: controlcenter
         setup-node: true
