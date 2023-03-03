@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\VatsimRating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Config;
@@ -66,12 +67,12 @@ class Handover extends Model
         // Return S1+ users who are VATSCA members
         if (!empty($userIds)) {
             return Handover::whereIn('id', $userIds)
-                ->where('rating', '>=', \VatsimRating::S1)
+                ->where('rating', '>=', VatsimRating::S1)
                 ->where('subdivision', Config::get('app.owner_short'))
                 ->get();
         } else {
             return Handover::where([
-                ['rating', '>=', \VatsimRating::S1],
+                ['rating', '>=', VatsimRating::S1],
                 ['subdivision', '=', Config::get('app.owner_short')]
             ])->get();
         }
