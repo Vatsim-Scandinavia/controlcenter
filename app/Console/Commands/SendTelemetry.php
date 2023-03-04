@@ -34,7 +34,7 @@ class SendTelemetry extends Command
 
         try{
 
-            $req = Http::post('http://vatsca.local:6060/v1/', [
+            $req = Http::post('https://telemetry.vatsca.org/v1/', [
                 'service' => 'cc',
                 'uuid' => $uuid,
                 'url' => Config::get('app.url'),
