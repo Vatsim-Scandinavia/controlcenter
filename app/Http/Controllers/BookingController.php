@@ -25,6 +25,27 @@ class BookingController extends Controller
     use AuthorizesRequests;
 
     /**
+     * Get the bookable positions for a user.
+     * @param \App\Models\User $user
+     * @return \Illuminate\Support\Collection<Position> Bookable positions
+     */
+    private function getBookablePositions(User $user) {
+        if ($user->isModeratorOrAbove()) {
+            return Position::all();
+        }
+        $positions = new Collection();
+        if ($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement("S1", true)) {
+            $positions = Position::where('rating', '<=', $user->rating)->get();
+        }
+        if ($user->getActiveTraining(1)) {
+            $positions = $positions->merge(
+                $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)
+            );
+        }
+        return $positions;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @param  \App\Models\User  $user
@@ -34,16 +55,7 @@ class BookingController extends Controller
         $user = Auth::user();
         $this->authorize('view', Booking::class);
         $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
-        $positions = new Collection();
-        if($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement("S1", true)) {
-            $positions = Position::where('rating', '<=', $user->rating)->get();
-        }
-        if($user->getActiveTraining(1)) {
-            $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        }
-        if($user->isModeratorOrAbove()) {
-            $positions = Position::all();
-        }
+        $positions = $this->getBookablePositions($user);
 
         return view('booking.index', compact('bookings', 'user', 'positions'));
     }
@@ -70,10 +82,7 @@ class BookingController extends Controller
     public function show($id){
         $booking = Booking::findOrFail($id);
         $user = Auth::user();
-        $positions = new Collection();
-        if($user->rating >= 3) $positions = Position::where('rating', '<=', $user->rating)->get();
-        if($user->getActiveTraining(1)) $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating));
-        if($user->isModeratorOrAbove()) $positions = Position::all();
+        $positions = $this->getBookablePositions($user);
         $this->authorize('update', $booking);
 
         return view('booking.show', compact('booking', 'user', 'positions'));
