@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
+use App\Helpers\VatsimRating;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -165,7 +166,12 @@ class User extends Authenticatable
         return $this->handover->email;
     }
 
-    public function getRatingAttribute()
+    /**
+     * The VATSIM rating value of a given user.
+     *
+     * @todo Return @{VatsimRating} instead of integer?
+     */
+    public function getRatingAttribute(): int
     {
         return $this->handover->rating;
     }
@@ -327,9 +333,9 @@ class User extends Authenticatable
     public function hasActiveEndorsement(String $type, $onlyInfinteEndorsements = false)
     {
         if($onlyInfinteEndorsements){
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', NULL)->get()->count();
+            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', NULL)->exists();
         } else {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->get()->count();
+            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
         }
     }
 

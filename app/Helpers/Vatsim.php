@@ -1,21 +1,8 @@
 <?php
 
-use Illuminate\Support\Collection;
+namespace App\Helpers\Vatsim;
 
-/**
- * Constants for VATSIM ratings.
- */
-enum VatsimRating: int {
-    case OBS = 1;
-    case S1 = 2;
-    case S2 = 3;
-    case S3 = 4;
-    case C1 = 5;
-    case C3 = 7;
-    case I1 = 8;
-    case I3 = 10;
-    case SUPERVISOR = 11;
-}
+use Illuminate\Support\Collection;
 
 /**
 * Checks if a position belongs to the division.
@@ -30,7 +17,7 @@ function isDivisionCallsign(string $callsign, Collection $divisionCallsignPrefix
     if (!array_key_exists($suffix, $validAtcSuffixes)) {
         return false;
     }
-    
+
     // PREFIX
     if ($divisionCallsignPrefixes->contains(substr($callsign, 0, 4))) {
         return true;

@@ -21,6 +21,10 @@ p {
     }
 }
 
+#markdown-content ul li a {
+    text-decoration: underline;
+}
+
 dl dd.separator{
     border-bottom: 1px solid $primary;
 }

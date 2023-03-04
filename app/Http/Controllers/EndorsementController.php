@@ -9,6 +9,7 @@ use App\Models\Rating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Position;
+use App\Helpers\VatsimRating;
 use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
@@ -333,9 +334,9 @@ class EndorsementController extends Controller
             return redirect()->back()->withErrors($user->name . "'s ".$endorsement->type." endorsement is already revoked.");
         }
 
-        // Disable the ATC activity mark for users who have an S1 rating, which is defined by 
+        // Disable the ATC activity mark for users who have an S1 rating, which is defined by
         // having an indefinite endorsemnet of type "S1"
-        if (\VatsimRating::from($user->rating) == \VatsimRating::S1 && $endorsement->type == 'S1' && $endorsement->valid_to == NULL) {
+        if (VatsimRating::from($user->rating) == VatsimRating::S1 && $endorsement->type == 'S1' && $endorsement->valid_to == NULL) {
             AtcActivity::where('user_id', $user->id)->update(['start_of_grace_period' => null]);
             $this->disableAtc($user);
         }
@@ -349,7 +350,7 @@ class EndorsementController extends Controller
         if($endorsement->type == 'S1' || $endorsement->type == 'SOLO'){
             $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
             return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked. E-mail confirmation sent to the student.");
-        } 
+        }
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s ".$endorsement->type." endorsement revoked.");
     }
 

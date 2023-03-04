@@ -25,12 +25,20 @@ jobs:
       uses: ./controlcenter/.github/workflows/setup-project
       with:
         path: handover
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: database/database.sqlite
 
     - name: Setup Control Center
       uses: ./controlcenter/.github/workflows/setup-project
       with:
         path: controlcenter
         setup-node: true
+        seed-database: true
+      env:
+        DB_CONNECTION: sqlite-testing
+        DB_HANDOVER_CONNECTION: sqlite-handover
+        DB_HANDOVER_DATABASE: ../handover/database/database.sqlite
 
     - name: Execute unit and feature tests via PHPUnit
       run: ./vendor/bin/phpunit --color=always --testdox

@@ -51,6 +51,7 @@ class GlobalSettingController extends Controller
             'atcActivityRequirement' => 'required|integer|min:0',
             'atcActivityContact' => 'max:40',
             'atcActivityNotifyInactive' => '',
+            'atcActivityAllowReactivation' => '',
             'linkDomain' => 'required',
             'linkHome' => 'required|url',
             'linkJoin' => 'required|url',
@@ -58,14 +59,21 @@ class GlobalSettingController extends Controller
             'linkVisiting' => 'required|url',
             'linkDiscord' => 'required|url',
             'linkMoodle' => '',
+            'telemetryEnabled' => '',
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
+        isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
+        isset($data['atcActivityAllowReactivation']) ? $atcActivityAllowReactivation = true : $atcActivityAllowReactivation = false;
+
+        // The setting dependecy removes keys that are empty, so this is a workaround...
+        isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
+        isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
 
         Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingSOP', $data['trainingSOP']);
-        Setting::set('trainingExamTemplate', $data['trainingExamTemplate']);
+        Setting::set('trainingExamTemplate', $trainingExamTemplate);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
         Setting::set('trainingQueue', $data['trainingQueue']);
         Setting::set('trainingInterval', $data['trainingInterval']);
@@ -75,13 +83,15 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
         Setting::set('atcActivityContact', $data['atcActivityContact']);
         Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
+        Setting::set('atcActivityAllowReactivation', $atcActivityAllowReactivation);
         Setting::set('linkDomain', $data['linkDomain']);
         Setting::set('linkHome', $data['linkHome']);
         Setting::set('linkJoin', $data['linkJoin']);
         Setting::set('linkContact', $data['linkContact']);
         Setting::set('linkVisiting', $data['linkVisiting']);
         Setting::set('linkDiscord', $data['linkDiscord']);
-        Setting::set('linkMoodle', $data['linkMoodle']);
+        Setting::set('linkMoodle', $linkMoodle);
+        Setting::set('telemetryEnabled', $telemetryEnabled);
         Setting::save();
 
         ActivityLogController::danger('OTHER', 'Global Settings Updated');
