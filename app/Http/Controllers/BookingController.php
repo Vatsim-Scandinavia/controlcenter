@@ -69,7 +69,7 @@ class BookingController extends Controller
         $user = Auth::user();
         $this->authorize('create', Booking::class);
 
-        $positions = Position::all();
+        $positions = $this->getBookablePositions($user);
         return view('booking.bulk', compact('user', 'positions'));
     }
 
