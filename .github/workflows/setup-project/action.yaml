@@ -67,7 +67,7 @@ runs:
     shell: bash
     working-directory: ./${{ inputs.path }}
 
-  - name: Create database and run migrations
+  - name: Seed the database
     if: inputs.seed-database == 'true'
     run: php artisan db:seed
     shell: bash
