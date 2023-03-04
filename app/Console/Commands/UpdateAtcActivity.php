@@ -8,7 +8,7 @@ use App\Models\Handover;
 use App\Models\Endorsement;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Notifications\InactivityNotification;
-use VatsimRating;
+use App\Helpers\VatsimRating;
 
 class UpdateAtcActivity extends Command
 {
@@ -47,7 +47,7 @@ class UpdateAtcActivity extends Command
 
         // Filter users
         $usersToSetAsInactive = $activeUsers
-            ->filter(fn($m) => $this::hasTooFewHours($m)) 
+            ->filter(fn($m) => $this::hasTooFewHours($m))
             ->filter(fn($m) => $this::notInGracePeriod($m))
             ->filter(fn($m) => $this::notInS1Training($m));
 
@@ -95,7 +95,7 @@ class UpdateAtcActivity extends Command
      * - Isn't S1, returns true.
      * - Is S1, under permanent endorsement, returns true.
      * - Is S1, is under active training, returns false.
-     * 
+     *
      * We need to exclude the active endorsement check from non-S1 ATC in order
      * to not exclude them all from the inactivity check. This is "currently"
      * redundant because the set of active ATC members does not include any

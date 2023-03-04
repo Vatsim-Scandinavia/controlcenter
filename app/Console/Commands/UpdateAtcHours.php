@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use VatsimRating;
 
 class UpdateAtcHours extends Command
 {
