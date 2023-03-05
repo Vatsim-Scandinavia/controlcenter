@@ -7,6 +7,7 @@ use App;
 use App\Models\Handover;
 use App\Models\User;
 use App\Models\AtcActivity;
+use App\Helpers\Vatsim;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
@@ -120,7 +121,7 @@ class UpdateAtcHours extends Command
         $this->info("Updating ATC hours for member: " . $member->id);
 
         $hoursActiveInDivision = $sessions
-            ->filter(fn($session) => isDivisionCallsign($session->callsign, $divisionCallsignPrefixes))
+            ->filter(fn($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes))
             ->map(function ($session) {
                 return floatval($session->minutes_on_callsign);
             })
