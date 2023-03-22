@@ -2,20 +2,21 @@
 
 namespace Tests\Feature;
 
-use Carbon\Carbon;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Training;
 use App\Models\TrainingExamination;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class TrainingExaminationsTest extends TestCase
 {
-
     use WithFaker, RefreshDatabase;
 
-    private $examination, $training;
+    private $examination;
+
+    private $training;
 
     protected function setUp(): void
     {
@@ -67,7 +68,6 @@ class TrainingExaminationsTest extends TestCase
     /** @test */
     public function student_cant_store_examination()
     {
-
         $data = $this->examination->getAttributes();
         $this->actingAs($this->training->user)->followingRedirects()
             ->postJson(route('training.examination.store', ['training' => $this->training]), $data)
@@ -76,15 +76,13 @@ class TrainingExaminationsTest extends TestCase
         $this->assertDatabaseMissing('training_examinations', [
             'training_id' => $data['training_id'],
             'examiner_id' => $data['examiner_id'],
-            'position_id' => $data['position_id']
+            'position_id' => $data['position_id'],
         ]);
-
     }
 
     /** @test */
     public function student_cant_store_examination_even_though_they_are_an_examiner()
     {
-
         $data = $this->examination->getAttributes();
         $this->training->user->groups()->detach();
         $this->training->user->groups()->attach(3, ['area_id' => $this->training->area->id]);
@@ -96,9 +94,8 @@ class TrainingExaminationsTest extends TestCase
         $this->assertDatabaseMissing('training_examinations', [
             'training_id' => $data['training_id'],
             'examiner_id' => $data['examiner_id'],
-            'position_id' => $data['position_id']
+            'position_id' => $data['position_id'],
         ]);
-
     }
 
 //    /** @test */
@@ -160,7 +157,6 @@ class TrainingExaminationsTest extends TestCase
     /** @test */
     public function moderator_can_delete_training_examination()
     {
-
         $examination = TrainingExamination::factory()->create([
             'training_id' => Training::factory()->create([
                 'user_id' => User::factory()->create(['id' => 10000009])->id,
@@ -181,13 +177,11 @@ class TrainingExaminationsTest extends TestCase
             ->assertStatus(200);
 
         $this->assertDatabaseMissing('training_examinations', ['id' => $examination->id]);
-
     }
 
     /** @test */
     public function mentor_cant_delete_training_examination()
     {
-
         $examination = TrainingExamination::factory()->create([
             'training_id' => Training::factory()->create([
                 'user_id' => User::factory()->create(['id' => 10000035])->id,
@@ -201,8 +195,5 @@ class TrainingExaminationsTest extends TestCase
             ->assertStatus(403);
 
         $this->assertDatabaseHas('training_examinations', ['id' => $examination->id]);
-
     }
-
-
 }

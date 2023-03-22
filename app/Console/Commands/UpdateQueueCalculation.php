@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Area;
 use App\Models\Training;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class UpdateQueueCalculation extends Command
 {
@@ -40,25 +40,21 @@ class UpdateQueueCalculation extends Command
      */
     public function handle()
     {
-
         $areas = Area::all();
-        foreach($areas as $area){
-            foreach($area->ratings as $rating){
-                
+        foreach ($areas as $area) {
+            foreach ($area->ratings as $rating) {
                 $averageData = [];
 
                 // Skip endorsement traings
-                if($rating->vatsim_rating == null){
+                if ($rating->vatsim_rating == null) {
                     continue;
                 }
 
                 // Get the queue time from each training of this specific rating in the specific area
-                foreach($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNull('paused_at') as $training){
-
+                foreach ($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNull('paused_at') as $training) {
                     // Include training with GRP ratings inside
-                    if($training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating){
-
-                        if($training->status == 0){
+                    if ($training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating) {
+                        if ($training->status == 0) {
                             $trainingCreated = $training->created_at;
 
                             // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
@@ -67,21 +63,19 @@ class UpdateQueueCalculation extends Command
 
                             // Inject this specific training's record into the average calculation
                             array_push($averageData, $waitingTime);
-
                         }
-                    }                    
+                    }
                 }
 
                 // Calculate the average for this area's selected rating, then insert it to the area's rating column. Only count if two or more trainings are complete to avoid logic errors.
-                if(count($averageData) >= 4){
-
+                if (count($averageData) >= 4) {
                     // Sort the array from low to high
                     sort($averageData);
 
                     // Split the array into two low and high chunks, we'll then only use the second half as it's the most representative
-                    $halved = array_chunk($averageData, ceil(count($averageData)/2));
+                    $halved = array_chunk($averageData, ceil(count($averageData) / 2));
 
-                    $halvedHalved = array_chunk($halved[1], ceil(count($halved[1])/2));
+                    $halvedHalved = array_chunk($halved[1], ceil(count($halved[1]) / 2));
 
                     $firstHalfAvg = array_sum($halvedHalved[0]) / count(array_filter($halvedHalved[0]));
                     $secondHalfAvg = array_sum($halvedHalved[1]) / count(array_filter($halvedHalved[1]));
@@ -90,15 +84,15 @@ class UpdateQueueCalculation extends Command
                     $rating->pivot->queue_length_high = $secondHalfAvg;
                     $rating->pivot->save();
 
-                    $this->info($area->name.' '.$rating->name.' rating calculated average from '.round($firstHalfAvg/60/60/24, 2).' to '.round($secondHalfAvg/60/60/24, 2).' days.');
+                    $this->info($area->name . ' ' . $rating->name . ' rating calculated average from ' . round($firstHalfAvg / 60 / 60 / 24, 2) . ' to ' . round($secondHalfAvg / 60 / 60 / 24, 2) . ' days.');
                 } else {
-                    $rating->pivot->queue_length_low = NULL;
-                    $rating->pivot->queue_length_high = NULL;
+                    $rating->pivot->queue_length_low = null;
+                    $rating->pivot->queue_length_high = null;
                     $rating->pivot->save();
                 }
             }
         }
 
-        $this->info("Queue length calculations complete.");
+        $this->info('Queue length calculations complete.');
     }
 }

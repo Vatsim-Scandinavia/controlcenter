@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\File;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
 
 class FilePolicy
 {
@@ -14,8 +13,6 @@ class FilePolicy
     /**
      * Determine whether the user can view the file.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\File  $file
      * @return bool
      */
     public function view(User $user, File $file)
@@ -28,7 +25,6 @@ class FilePolicy
     /**
      * Determine whether the user can create files.
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
@@ -39,8 +35,6 @@ class FilePolicy
     /**
      * Determine whether the user can update the file.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\File  $file
      * @return bool
      */
     public function update(User $user, File $file)
@@ -51,8 +45,6 @@ class FilePolicy
     /**
      * Determine whether the user can delete the file.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\File  $file
      * @return bool
      */
     public function delete(User $user, File $file)

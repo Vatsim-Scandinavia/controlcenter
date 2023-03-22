@@ -15,7 +15,6 @@ class VotePolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function index(User $user)
@@ -26,7 +25,6 @@ class VotePolicy
     /**
      * Determine whether the user can create the model.
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
@@ -37,7 +35,6 @@ class VotePolicy
     /**
      * Determine whether the user can store the model.
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function store(User $user)
@@ -48,26 +45,26 @@ class VotePolicy
     /**
      * Determine whether the user can vote
      *
-     * @param User $user
-     * @param Vote $vote
      * @return Illuminate\Auth\Access\Response
      */
     public function vote(User $user, Vote $vote)
     {
-
         if ($vote->closed) {
-            return Response::deny("The vote closed and concluded at ".Carbon::create($vote->end_at)->toEuropeanDateTime());
+            return Response::deny('The vote closed and concluded at ' . Carbon::create($vote->end_at)->toEuropeanDateTime());
         }
 
         if ($vote->require_our_member) {
-            if($user->subdivision != Config::get('app.owner_short')) return Response::deny("Sorry, you do not qualify to participate in this vote. You must belong to ".Config::get('app.owner')." subdivision to vote.");
+            if ($user->subdivision != Config::get('app.owner_short')) {
+                return Response::deny('Sorry, you do not qualify to participate in this vote. You must belong to ' . Config::get('app.owner') . ' subdivision to vote.');
+            }
         }
 
         if ($vote->require_active) {
-            if(!$user->active) return Response::deny("Sorry, you do not qualify to participate in this vote. You must hold an active ATC rank to vote.");
+            if (! $user->active) {
+                return Response::deny('Sorry, you do not qualify to participate in this vote. You must hold an active ATC rank to vote.');
+            }
         }
 
         return Response::allow();
-
     }
 }

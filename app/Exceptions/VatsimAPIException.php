@@ -9,13 +9,13 @@ class VatsimAPIException extends Exception
 {
     /**
      * MissingHandoverObjectException constructor.
-     * @param string $user
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
+     *
+     * @param  string  $user
+     * @param  string  $message
+     * @param  int  $code
      */
-    public function __construct($message = "", $code = 500, Throwable $previous = null)
+    public function __construct($message = '', $code = 500, Throwable $previous = null)
     {
-        parent::__construct( $message, $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }

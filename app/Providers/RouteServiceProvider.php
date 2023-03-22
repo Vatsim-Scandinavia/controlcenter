@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,6 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         parent::boot();
 
         Route::pattern('trainingObjectType', 'report|examination');

@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Booking;
 use App\Models\Position;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Collection;
-use anlutro\LaravelSettings\Facade as Setting;
-use App\Http\Controllers\ActivityLogController;
 
 class BookingController extends Controller
 {
@@ -30,13 +29,12 @@ class BookingController extends Controller
     {
         $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
 
-        return response()->json(["data" => $bookings->values()], 200);
+        return response()->json(['data' => $bookings->values()], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -48,7 +46,7 @@ class BookingController extends Controller
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
             'tag' => 'nullable|integer|between:1,3',
-            'source' => 'required'
+            'source' => 'required',
         ]);
 
         $user = User::findorFail($request['cid']);
@@ -65,7 +63,7 @@ class BookingController extends Controller
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
-                'message' => 'Start and end time cannot be the same'
+                'message' => 'Start and end time cannot be the same',
             ], 400);
         }
 
@@ -75,11 +73,11 @@ class BookingController extends Controller
 
         if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
-                'message' => 'Start time cannot be in the past'
+                'message' => 'Start time cannot be in the past',
             ], 400);
         }
 
-        if (!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+        if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
@@ -91,19 +89,19 @@ class BookingController extends Controller
             ->where('deleted', false)
             ->get()->isEmpty()) {
             return response()->json([
-                'message' => 'Booking overlaps with existing booking'
+                'message' => 'Booking overlaps with existing booking',
             ], 400);
         }
 
         $forcedTrainingTag = false;
 
-        if($booking->position->rating == 2 && $user->rating == $booking->position->rating && !$user->hasActiveEndorsement("S1", true)){
+        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if(($booking->position->rating > $user->rating) && !$user->isModeratorOrAbove()){
+        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -144,7 +142,7 @@ class BookingController extends Controller
 
             $url = $this->getVatsimBookingUrl('post');
             $response = $this->makeHttpRequest($client, $url, 'post', [
-                'callsign' => (string)$booking->callsign,
+                'callsign' => (string) $booking->callsign,
                 'cid' => $booking->user_id,
                 'type' => $type,
                 'start' => $booking->time_start->format('Y-m-d H:i:s'),
@@ -158,29 +156,28 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', "Created booking booking" . $booking->id . " via API" .
-            " ― from " . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
-            " → " . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
-            " ― Position: " . Position::find($booking->position_id)->callsign);
+        ActivityLogController::info('BOOKING', 'Created booking booking' . $booking->id . ' via API' .
+            ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+            ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+            ' ― Position: ' . Position::find($booking->position_id)->callsign);
 
         if ($forcedTrainingTag) {
             return response()->json([
                 'success' => 'Booking created',
                 'booking' => $booking,
-                'tag' => 'Training'
+                'tag' => 'Training',
             ], 200);
         }
 
         return response()->json([
             'success' => 'Booking created',
-            'booking' => $booking
+            'booking' => $booking,
         ], 200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
     public function show(booking $booking)
@@ -200,15 +197,13 @@ class BookingController extends Controller
         }
 
         return response()->json([
-            'booking' => $booking
+            'booking' => $booking,
         ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, booking $booking)
@@ -219,7 +214,7 @@ class BookingController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
-            'tag' => 'nullable|integer|between:1,3'
+            'tag' => 'nullable|integer|between:1,3',
         ]);
 
         $user = User::findorFail($data['cid']);
@@ -233,7 +228,7 @@ class BookingController extends Controller
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
-                'message' => 'Booking needs to have a valid duration!'
+                'message' => 'Booking needs to have a valid duration!',
             ], 400);
         }
 
@@ -243,11 +238,11 @@ class BookingController extends Controller
 
         if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
             return response()->json([
-                'message' => 'You cannot create a booking in the past.'
+                'message' => 'You cannot create a booking in the past.',
             ], 400);
         }
 
-        if (!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+        if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
@@ -261,19 +256,19 @@ class BookingController extends Controller
             ->where('id', '!=', $booking->id)
             ->get()->isEmpty()) {
             return response()->json([
-                'message' => 'The position is already booked for that time!'
+                'message' => 'The position is already booked for that time!',
             ], 400);
         }
 
         $forcedTrainingTag = false;
 
-        if($booking->position->rating == 2 && $user->rating == $booking->position->rating && !$user->hasActiveEndorsement("S1", true)){
+        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if(($booking->position->rating > $user->rating) && !$user->isModeratorOrAbove()){
+        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -313,7 +308,7 @@ class BookingController extends Controller
             $client = new \GuzzleHttp\Client();
             $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
             $response = $this->makeHttpRequest($client, $url, 'put', [
-                'callsign' => (string)$booking->callsign,
+                'callsign' => (string) $booking->callsign,
                 'cid' => $booking->user_id,
                 'type' => $type,
                 'start' => $booking->time_start->format('Y-m-d H:i:s'),
@@ -327,29 +322,28 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', "Updated booking booking " . $booking->id . " via API" .
-            " ― from " . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
-            " → " . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
-            " ― Position: " . Position::find($booking->position_id)->callsign);
+        ActivityLogController::info('BOOKING', 'Updated booking booking ' . $booking->id . ' via API' .
+            ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+            ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+            ' ― Position: ' . Position::find($booking->position_id)->callsign);
 
         if ($forcedTrainingTag) {
             return response()->json([
                 'message' => 'Booking updated',
                 'booking' => $booking,
-                'tag' => 'Training'
+                'tag' => 'Training',
             ], 200);
         }
 
         return response()->json([
             'message' => 'Booking updated',
-            'booking' => $booking
+            'booking' => $booking,
         ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
     public function destroy(booking $booking)
@@ -361,14 +355,14 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::warning('BOOKING', "Deleted booking booking " . $booking->id . " via API" .
-            " ― from " . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
-            " → " . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
-            " ― Position: " . Position::find($booking->position_id)->callsign);
+        ActivityLogController::warning('BOOKING', 'Deleted booking booking ' . $booking->id . ' via API' .
+            ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+            ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+            ' ― Position: ' . Position::find($booking->position_id)->callsign);
 
         return response()->json([
             'message' => 'Booking deleted',
-            'booking' => $booking
+            'booking' => $booking,
         ], 200);
     }
 
@@ -381,6 +375,7 @@ class BookingController extends Controller
         } else {
             return null;
         }
+
         return $url;
     }
 
@@ -404,12 +399,13 @@ class BookingController extends Controller
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             return response()->json([
-                'message' => 'VATSIM API error: ' . $e->getMessage()
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
             ], 400);
         }
 
-        if (isset($response))
+        if (isset($response)) {
             return $response;
+        }
 
         return null;
     }

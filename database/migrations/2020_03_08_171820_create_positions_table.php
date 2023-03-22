@@ -61,7 +61,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'EKSP_APP', 'name' => 'Skrydstrup Approach', 'fir' => 'EKDK', 'rating' => 4],
             ['callsign' => 'EKYT_TWR', 'name' => 'Aalborg Tower', 'fir' => 'EKDK', 'rating' => 3],
             ['callsign' => 'EKYT_APP', 'name' => 'Aalborg Approach', 'fir' => 'EKDK', 'rating' => 4],
-            ['callsign' => 'EKYT_F_APP', 'name' => 'Aalborg Arrival', 'fir' => 'EKDK', 'rating' => 4]
+            ['callsign' => 'EKYT_F_APP', 'name' => 'Aalborg Arrival', 'fir' => 'EKDK', 'rating' => 4],
         ]);
 
         // Finland
@@ -136,7 +136,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'EFTU_TWR', 'name' => 'Turku Tower', 'fir' => 'EFIN', 'rating' => 3],
             ['callsign' => 'EFUT_TWR', 'name' => 'Utti Tower', 'fir' => 'EFIN', 'rating' => 3],
             ['callsign' => 'EFVA_APP', 'name' => 'Vaasa Radar', 'fir' => 'EFIN', 'rating' => 4],
-            ['callsign' => 'EFVA_TWR', 'name' => 'Vaasa Tower', 'fir' => 'EFIN', 'rating' => 3]
+            ['callsign' => 'EFVA_TWR', 'name' => 'Vaasa Tower', 'fir' => 'EFIN', 'rating' => 3],
         ]);
 
         // Iceland
@@ -187,7 +187,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'BGTL_APP', 'name' => 'Thule Approach', 'fir' => 'BGGL', 'rating' => 4],
             ['callsign' => 'BGTL_TWR', 'name' => 'Thule Tower', 'fir' => 'BGGL', 'rating' => 3],
             ['callsign' => 'BGTL_GND', 'name' => 'Thule Ground', 'fir' => 'BGGL', 'rating' => 2],
-            ['callsign' => 'BGCO_TWR', 'name' => 'Constable Pynt Tower', 'fir' => 'BGGL', 'rating' => 3]
+            ['callsign' => 'BGCO_TWR', 'name' => 'Constable Pynt Tower', 'fir' => 'BGGL', 'rating' => 3],
         ]);
 
         // Norway
@@ -308,7 +308,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'ENAS_I_TWR', 'name' => 'Ny Ålesund Information', 'fir' => 'ENOB', 'rating' => 3],
             ['callsign' => 'ENOB_CTR', 'name' => 'Bodø Oceanic Control', 'fir' => 'ENOB', 'rating' => 5],
             ['callsign' => 'ENSA_I_TWR', 'name' => 'Svea Information', 'fir' => 'ENOB', 'rating' => 3],
-            ['callsign' => 'ENSB_I_TWR', 'name' => 'Longyear Information', 'fir' => 'ENOB', 'rating' => 3]
+            ['callsign' => 'ENSB_I_TWR', 'name' => 'Longyear Information', 'fir' => 'ENOB', 'rating' => 3],
         ]);
 
         // Sweden
@@ -441,7 +441,7 @@ class CreatePositionsTable extends Migration
             ['callsign' => 'ESTL_APP', 'name' => 'Ljungbyhed Control', 'fir' => 'ESAA', 'rating' => 4],
             ['callsign' => 'ESTL_TWR', 'name' => 'Ljungbyhed Tower', 'fir' => 'ESAA', 'rating' => 3],
             ['callsign' => 'ESUP_I_TWR', 'name' => 'Pajala Information', 'fir' => 'ESAA', 'rating' => 3],
-            ['callsign' => 'ESUT_I_TWR', 'name' => 'Hemavan Information', 'fir' => 'ESAA', 'rating' => 3]
+            ['callsign' => 'ESUT_I_TWR', 'name' => 'Hemavan Information', 'fir' => 'ESAA', 'rating' => 3],
         ]);
     }
 

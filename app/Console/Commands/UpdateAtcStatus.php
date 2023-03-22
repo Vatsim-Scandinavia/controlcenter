@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class UpdateAtcStatus extends Command
 {
@@ -33,7 +33,7 @@ class UpdateAtcStatus extends Command
         Artisan::call('update:atc:activity');
 
         // Enable reactivation based on ATC hours
-        if(Setting::get('atcActivityAllowReactivation')){
+        if (Setting::get('atcActivityAllowReactivation')) {
             Artisan::call('update:atc:reactivate');
         }
 

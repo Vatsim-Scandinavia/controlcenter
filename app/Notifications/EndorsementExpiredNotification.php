@@ -6,7 +6,6 @@ use App\Mail\EndorsementMail;
 use App\Models\Endorsement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class EndorsementExpiredNotification extends Notification implements ShouldQueue
@@ -17,8 +16,6 @@ class EndorsementExpiredNotification extends Notification implements ShouldQueue
 
     /**
      * Create a new notification instance.
-     *
-     * @param Endorsement $endorsement
      */
     public function __construct(Endorsement $endorsement)
     {
@@ -44,10 +41,9 @@ class EndorsementExpiredNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
         $textLines = [
-            'Your **'.ucwords(strtolower((string)$this->endorsement->type)).' Endorsement has expired** for following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
-            '**Expired:** '.$this->endorsement->valid_to->toEuropeanDateTime(),
+            'Your **' . ucwords(strtolower((string) $this->endorsement->type)) . ' Endorsement has expired** for following positions: *' . $this->endorsement->positions->pluck('callsign')->implode(', ') . '*',
+            '**Expired:** ' . $this->endorsement->valid_to->toEuropeanDateTime(),
             'If you need a renewal, please contact the staff member who initially issued you the endorsement.',
         ];
 
@@ -64,7 +60,7 @@ class EndorsementExpiredNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'endorsement_id' => $this->endorsement->id
+            'endorsement_id' => $this->endorsement->id,
         ];
     }
 }

@@ -14,8 +14,9 @@ class NotificationController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param int $filterArea areaId to filter the index by
+     * @param  int  $filterArea areaId to filter the index by
      * @return \Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index($filterArea = 1)
@@ -24,7 +25,7 @@ class NotificationController extends Controller
 
         $areas = Area::all();
         $currentArea = Area::find($filterArea);
-        
+
         $template_newreq = Area::find($filterArea)->template_newreq;
         $template_newmentor = Area::find($filterArea)->template_newmentor;
         $template_pretraining = Area::find($filterArea)->template_pretraining;
@@ -35,13 +36,12 @@ class NotificationController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request)
     {
-
         $data = request()->validate([
             'area' => 'required|int',
             'newrequestaddition' => 'sometimes',
@@ -56,12 +56,11 @@ class NotificationController extends Controller
         $area->template_newreq = $data['newrequestaddition'];
         $area->template_newmentor = $data['newmentoraddition'];
         $area->template_pretraining = $data['pretrainingaddition'];
-        
+
         $area->save();
 
-        ActivityLogController::warning('OTHER', 'Training Notification Text Updated ― Area: '.$area->name);
+        ActivityLogController::warning('OTHER', 'Training Notification Text Updated ― Area: ' . $area->name);
 
-        return redirect()->intended(route('admin.templates.area', $area->id))->withSuccess($area->name."'s notifications updated.");
+        return redirect()->intended(route('admin.templates.area', $area->id))->withSuccess($area->name . "'s notifications updated.");
     }
-
 }

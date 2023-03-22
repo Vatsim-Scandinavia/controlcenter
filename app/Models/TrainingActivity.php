@@ -10,8 +10,9 @@ class TrainingActivity extends Model
     use HasFactory;
 
     public $table = 'training_activity';
+
     public $fillable = [
-        'triggered_by_id', 'type', 'old_data', 'new_data', 'comment'
+        'triggered_by_id', 'type', 'old_data', 'new_data', 'comment',
     ];
 
     public function training()

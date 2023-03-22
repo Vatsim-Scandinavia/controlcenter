@@ -4,8 +4,8 @@ namespace App\Helpers;
 
 class FactoryHelper
 {
-    public static function subdivision(string $division) {
-        
+    public static function subdivision(string $division)
+    {
         $subdivisions = [
             ['code' => 'ACCVAN', 'fullname' => 'Vanilla vACC', 'parentdivision' => 'SAF'],
             ['code' => 'ADRIA', 'fullname' => 'Adria', 'parentdivision' => 'EUD'],
@@ -90,7 +90,8 @@ class FactoryHelper
         return $subdivision['code'];
     }
 
-    public static function division(string $region) {
+    public static function division(string $region)
+    {
         $divisions = [
             ['id' => 'BRZ', 'name' => 'Brazil (VATBRZ)', 'parentregion' => 'AMAS', 'subdivisionallowed' => 0],
             ['id' => 'CAM', 'name' => 'Central America', 'parentregion' => 'AMAS', 'subdivisionallowed' => 0],
@@ -120,7 +121,8 @@ class FactoryHelper
         return [$division['id'], $division['subdivisionallowed']];
     }
 
-    public static function region() {
+    public static function region()
+    {
         $regions = [
             ['id' => 'AMAS', 'name' => 'Americas', 'director' => '1013441'],
             ['id' => 'APAC', 'name' => 'Asia Pacific', 'director' => '901134'],
@@ -132,7 +134,8 @@ class FactoryHelper
         return $region['id'];
     }
 
-    public static function longRating(int $rating) {
+    public static function longRating(int $rating)
+    {
         switch ($rating) {
             case 0: return 'Suspended';
             case 1: return 'Pilot/Observer';
@@ -151,7 +154,8 @@ class FactoryHelper
         }
     }
 
-    public static function shortRating(int $rating) {
+    public static function shortRating(int $rating)
+    {
         switch ($rating) {
             case 0: return 'SUS';
             case 1: return 'OBS';

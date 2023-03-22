@@ -39,20 +39,18 @@ class UpdateWorkmails extends Command
      */
     public function handle()
     {
-        
         // Check for expired workmails
-        DB::table('users')->where('setting_workmail_expire', '<=', date('Y-m-d H:i:s'))->update(['setting_workmail_address' => NULL, 'setting_workmail_expire' => NULL]);
+        DB::table('users')->where('setting_workmail_expire', '<=', date('Y-m-d H:i:s'))->update(['setting_workmail_address' => null, 'setting_workmail_expire' => null]);
 
         // Check for users that no longer hold a moderator or admin rank
-        foreach(User::whereNotNull('setting_workmail_address')->get() as $user){
-            if($user->groups()->count() == 0 || (!$user->isModerator() && !$user->isAdmin())){
-                $user->setting_workmail_address = NULL;
-                $user->setting_workmail_expire = NULL;
+        foreach (User::whereNotNull('setting_workmail_address')->get() as $user) {
+            if ($user->groups()->count() == 0 || (! $user->isModerator() && ! $user->isAdmin())) {
+                $user->setting_workmail_address = null;
+                $user->setting_workmail_expire = null;
                 $user->save();
             }
         }
 
         $this->info('All expired workmails workmails have been cleaned.');
-
     }
 }

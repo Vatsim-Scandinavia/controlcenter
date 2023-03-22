@@ -2,15 +2,12 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class FrontpageTest extends TestCase
 {
-
     /** @test **/
     public function user_can_load_front_page()
     {
@@ -21,13 +18,11 @@ class FrontpageTest extends TestCase
     /** @test **/
     public function user_gets_redirect_if_logged_in()
     {
-
         $user = User::factory()->make();
         Auth::login($user);
 
         $response = $this->get('/');
         $response->assertRedirect('/dashboard');
-
     }
 
     /** @test */
@@ -35,8 +30,5 @@ class FrontpageTest extends TestCase
     {
         $response = $this->get('/logout');
         $response->assertRedirect('/login');
-
     }
-
-
 }

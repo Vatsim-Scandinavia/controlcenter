@@ -10,8 +10,10 @@ class ApiKey extends Model
     use HasFactory;
 
     public $table = 'api_keys';
+
     public $timestamps = false;
+
     public $fillable = [
-        'id', 'name', 'last_used_at', 'read_only'
+        'id', 'name', 'last_used_at', 'read_only',
     ];
 }

@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::table('settings', function (Blueprint $table) {
             DB::table(Config::get('settings.table'))->insert([
-                ['key' => "telemetryEnabled", 'value' => 1],
+                ['key' => 'telemetryEnabled', 'value' => 1],
             ]);
         });
     }

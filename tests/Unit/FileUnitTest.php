@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\File;
 use App\Http\Controllers\FileController;
+use App\Models\File;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -12,7 +12,6 @@ use Tests\TestCase;
 
 class FileUnitTest extends TestCase
 {
-
     use WithFaker, RefreshDatabase;
 
     private $controller;
@@ -47,7 +46,7 @@ class FileUnitTest extends TestCase
     public function file_can_be_saved_with_fixed_filename()
     {
         $file = UploadedFile::fake()->image('image_test');
-        $filename = 'test_image_filename' . "." . $file->extension();
+        $filename = 'test_image_filename.' . $file->extension();
         $id = FileController::saveFile($file, $filename);
 
         $modelFile = File::find($id);
@@ -56,6 +55,4 @@ class FileUnitTest extends TestCase
         $this->assertDatabaseHas('files', ['id' => $id, 'path' => $filename]);
         $this->assertFileExists(Storage::path('public/files/' . $filename));
     }
-
-
 }

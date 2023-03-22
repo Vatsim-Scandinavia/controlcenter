@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
-use App\Models\Handover;
-use App\Models\Endorsement;
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Notifications\InactivityNotification;
 use App\Helpers\VatsimRating;
+use App\Models\Endorsement;
+use App\Models\Handover;
+use App\Models\User;
+use App\Notifications\InactivityNotification;
+use Illuminate\Console\Command;
 
 class UpdateAtcActivity extends Command
 {
@@ -33,13 +33,14 @@ class UpdateAtcActivity extends Command
      */
     public function handle()
     {
-
         // Arguments and options
         $this->info('Starting activity checks ...');
         $optionalUserIdFilter = $this->argument('user');
 
         $dryRun = false;
-        if($this->option('dry-run') != null) $dryRun = true;
+        if ($this->option('dry-run') != null) {
+            $dryRun = true;
+        }
 
         // Fetch users
         $handoverMembers = Handover::getActiveAtcMembers($optionalUserIdFilter);
@@ -47,24 +48,25 @@ class UpdateAtcActivity extends Command
 
         // Filter users
         $usersToSetAsInactive = $activeUsers
-            ->filter(fn($m) => $this::hasTooFewHours($m))
-            ->filter(fn($m) => $this::notInGracePeriod($m))
-            ->filter(fn($m) => $this::notInS1Training($m));
+            ->filter(fn ($m) => $this::hasTooFewHours($m))
+            ->filter(fn ($m) => $this::notInGracePeriod($m))
+            ->filter(fn ($m) => $this::notInS1Training($m));
 
-        if($dryRun){
-            $this->info('[DRY RUN] We would have made '.$usersToSetAsInactive->count().' users inactive');
-            $this->info('[DRY RUN] Specifically: '.$usersToSetAsInactive->pluck('id'));
+        if ($dryRun) {
+            $this->info('[DRY RUN] We would have made ' . $usersToSetAsInactive->count() . ' users inactive');
+            $this->info('[DRY RUN] Specifically: ' . $usersToSetAsInactive->pluck('id'));
+
             return Command::SUCCESS;
         }
 
         // Execute updates on relevant users
-        $this->info('Making '.$usersToSetAsInactive->count().' users inactive');
+        $this->info('Making ' . $usersToSetAsInactive->count() . ' users inactive');
         Handover::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
         Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 
         // Send inactivity notification to the users
-        if(!Setting::get('atcActivityAllowReactivation')){
-            foreach($usersToSetAsInactive as $userToSetAsInactive){
+        if (! Setting::get('atcActivityAllowReactivation')) {
+            foreach ($usersToSetAsInactive as $userToSetAsInactive) {
                 $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
             }
         }
@@ -74,18 +76,23 @@ class UpdateAtcActivity extends Command
 
     /**
      * Check if the member has too few online hours to be considered active.
+     *
      * @param User member
      */
-    private static function hasTooFewHours(User $member) {
+    private static function hasTooFewHours(User $member)
+    {
         return $member->atcActivity->hours < Setting::get('atcActivityRequirement', 10);
     }
 
     /**
      * Check if the member is outside of their grace period.
+     *
      * @param User member
      */
-    private static function notInGracePeriod(User $member) {
+    private static function notInGracePeriod(User $member)
+    {
         $graceLengthMonths = Setting::get('atcActivityGracePeriod', 12);
+
         return $member->atcActivity->start_of_grace_period == null || now()->subMonths($graceLengthMonths)->gt($member->atcActivity->start_of_grace_period);
     }
 
@@ -103,12 +110,12 @@ class UpdateAtcActivity extends Command
      *
      * @param User member
      */
-    private static function notInS1Training(User $member) {
-        if(VatsimRating::from($member->rating) != VatsimRating::S1){
+    private static function notInS1Training(User $member)
+    {
+        if (VatsimRating::from($member->rating) != VatsimRating::S1) {
             return true;
         }
 
         return $member->hasActiveEndorsement('S1', true);
     }
-
 }

@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Training;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
@@ -39,10 +39,10 @@ class TrainingsTest extends TestCase
         $attributes = [
             'experience' => $this->faker->numberBetween(1, 5),
             'englishOnly' => (int) $this->faker->boolean,
-            'motivation' => $this->faker->realText(1500,2),
-            'comment' => "",
-            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1,7))->id,
-            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1,5))->id
+            'motivation' => $this->faker->realText(1500, 2),
+            'comment' => '',
+            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1, 7))->id,
+            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1, 5))->id,
         ];
 
         $response = $this->post('/training/store', $attributes);
@@ -52,7 +52,6 @@ class TrainingsTest extends TestCase
     /** @test */
     public function moderator_can_update_training_request()
     {
-
         $moderator = User::factory()->create();
 
         $training = Training::factory()->create([
@@ -69,13 +68,11 @@ class TrainingsTest extends TestCase
             ->assertSessionHas('success', 'Training successfully updated');
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => $attributes['status']]);
-
     }
 
     /** @test */
     public function a_regular_user_cant_update_a_training()
     {
-
         $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
@@ -87,9 +84,7 @@ class TrainingsTest extends TestCase
         $this->actingAs($user)
             ->patch($training->path(), $attributes = ['status' => 0])
             ->assertStatus(403);
-
     }
-
 
 //    /** @test */
     public function moderator_can_update_the_trainings_status()
@@ -114,7 +109,7 @@ class TrainingsTest extends TestCase
             'id' => $training->id,
             'status' => 3,
             'started_at' => $training->fresh()->started_at->format('Y-m-d H:i:s'),
-            'closed_at' => $training->fresh()->closed_at->format('Y-m-d H:i:s')
+            'closed_at' => $training->fresh()->closed_at->format('Y-m-d H:i:s'),
         ]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
@@ -123,7 +118,7 @@ class TrainingsTest extends TestCase
             'id' => $training->id,
             'status' => 0,
             'started_at' => null,
-            'closed_at' => null
+            'closed_at' => null,
         ]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => -1]);
@@ -132,9 +127,8 @@ class TrainingsTest extends TestCase
             'id' => $training->id,
             'status' => -1,
             'started_at' => null,
-            'closed_at' => null
+            'closed_at' => null,
         ]);
-
     }
 
 //    /** @test */
@@ -196,5 +190,4 @@ class TrainingsTest extends TestCase
 
         $this->assertNotTrue($training->mentors->contains($mentor));
     }
-
 }

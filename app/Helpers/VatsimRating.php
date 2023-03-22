@@ -5,7 +5,8 @@ namespace App\Helpers;
 /**
  * Constants for VATSIM ratings.
  */
-enum VatsimRating: int {
+enum VatsimRating: int
+{
     case INAC = -1;
     case SUS = 0;
     case OBS = 1;
@@ -19,5 +20,3 @@ enum VatsimRating: int {
     case SUP = 11;
     case ADM = 12;
 }
-
-?>

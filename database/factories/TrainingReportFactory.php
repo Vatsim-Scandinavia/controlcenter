@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\TrainingReport;
 use App\Models\Position;
+use App\Models\TrainingReport;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TrainingReportFactory extends Factory
@@ -22,11 +22,10 @@ class TrainingReportFactory extends Factory
      */
     public function definition()
     {
-
         $date = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
 
         return [
-            'report_date' => $date->format("Y-M-d"),
+            'report_date' => $date->format('Y-M-d'),
             'content' => $this->faker->paragraph(),
             'contentimprove' => $this->faker->paragraph(),
             'position' => Position::inRandomOrder()->first()->callsign,

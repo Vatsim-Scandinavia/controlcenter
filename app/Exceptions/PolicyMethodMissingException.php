@@ -6,12 +6,11 @@ use Exception;
 
 class PolicyMethodMissingException extends Exception
 {
-
     /**
      * PolicyMethodMissingException constructor.
-     * @param null $message
-     * @param null $code
-     * @param Exception|null $previous
+     *
+     * @param  null  $message
+     * @param  null  $code
      */
     public function __construct($message = null, $code = null, Exception $previous = null)
     {
@@ -19,5 +18,4 @@ class PolicyMethodMissingException extends Exception
 
         $this->code = $code ?: 0;
     }
-
 }

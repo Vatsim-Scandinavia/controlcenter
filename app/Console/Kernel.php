@@ -2,11 +2,9 @@
 
 namespace App\Console;
 
-
+use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use anlutro\LaravelSettings\Facade as Setting;
-use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -23,12 +21,10 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-
         // Update training queue calculations
         $schedule->command('update:queuecalculation')
             ->daily();
@@ -74,11 +70,10 @@ class Kernel extends ConsoleKernel
             ->daily();
 
         // Send telemetry data
-        if(Setting::get('telemetryEnabled')){
+        if (Setting::get('telemetryEnabled')) {
             $schedule->command('send:telemetry')
                 ->daily();
         }
-
     }
 
     /**
@@ -88,7 +83,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

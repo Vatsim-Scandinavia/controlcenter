@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Helpers\VatsimRating;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 /**
  * This model is special, as it's using the table non-prefixed mysql connection and garthers data provided by Handover.
@@ -15,10 +15,10 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
  */
 class Handover extends Model
 {
-
     use HasFactory;
 
     public $table = 'users';
+
     public $timestamps = false;
 
     protected $fillable = ['atc_active'];
@@ -28,7 +28,7 @@ class Handover extends Model
      * The custom connection is a prerequisite for the current coupling between
      * Control Center and Handover.
      */
-    public function __construct(array $attributes = array())
+    public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->setConnection(config('database.handover'));
@@ -42,13 +42,12 @@ class Handover extends Model
     /**
      * Fetch members that are active as ATC.
      *
-     * @param array $userIds
      * @return EloquentCollection<Handover>
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
         // Return S1+ users who are VATSCA members
-        if (!empty($userIds)) {
+        if (! empty($userIds)) {
             return Handover::whereIn('id', $userIds)
                 ->where('atc_active', true)
                 ->get();
@@ -59,13 +58,13 @@ class Handover extends Model
 
     /**
      * Fetch members with a rating that are in our subdivision
-     * @param array $userIds
+     *
      * @return EloquentCollection<Handover>
      */
     public static function getRatedMembers(array $userIds = [])
     {
         // Return S1+ users who are VATSCA members
-        if (!empty($userIds)) {
+        if (! empty($userIds)) {
             return Handover::whereIn('id', $userIds)
                 ->where('rating', '>=', VatsimRating::S1)
                 ->where('subdivision', Config::get('app.owner_short'))
@@ -73,9 +72,8 @@ class Handover extends Model
         } else {
             return Handover::where([
                 ['rating', '>=', VatsimRating::S1],
-                ['subdivision', '=', Config::get('app.owner_short')]
+                ['subdivision', '=', Config::get('app.owner_short')],
             ])->get();
         }
     }
-
 }

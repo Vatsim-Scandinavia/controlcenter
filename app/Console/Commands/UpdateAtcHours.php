@@ -4,20 +4,20 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
+use App\Helpers\Vatsim;
+use App\Models\AtcActivity;
 use App\Models\Handover;
 use App\Models\User;
-use App\Models\AtcActivity;
-use App\Helpers\Vatsim;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UpdateAtcHours extends Command
 {
-
     private $base_api_url = 'https://api.vatsim.net/api/ratings/';
+
     private $qualificationPeriod; // Period to sum up by. In months.
 
     /**
@@ -53,7 +53,7 @@ class UpdateAtcHours extends Command
     {
         // Fetch settings
         $this->qualificationPeriod = Setting::get('atcActivityQualificationPeriod', 12);
-        $this->info("Starting ATC update...");
+        $this->info('Starting ATC update...');
 
         // Fetch members
         $optionalUserIdFilter = $this->argument('user');
@@ -67,40 +67,42 @@ class UpdateAtcHours extends Command
     /**
      * Update ATC active hours in database
      *
-     * @param Collection<User> $members
+     * @param  Collection<User>  $members
      * @return null
      */
     private function updateMemberATCHours(Collection $members)
     {
-        $this->info("Fetching seen ATC positions...");
+        $this->info('Fetching seen ATC positions...');
         $divisionCallsignPrefixes = collect(DB::select(
             DB::raw('SELECT DISTINCT LEFT(callsign, 4) as prefix FROM positions;')
         ))->pluck('prefix');
 
-        $this->info("Updating member ATC hours...");
+        $this->info('Updating member ATC hours...');
 
         foreach ($members as $member) {
-
             $client = new \GuzzleHttp\Client();
-            if(App::environment('production')) {
+            if (App::environment('production')) {
                 $url = $this->getQueryString($member->id);
             } else {
-                $url = "https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-30";
+                $url = 'https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-30';
             }
             $response = $this->makeHttpGetRequest($client, $url);
 
             if ($response == null) {
                 Log::error('updateMemberATCHours: Failed to fetch GuzzleHttp Response, url: ' . $url);
+
                 continue;
             } elseif ($response->getStatusCode() >= 300) {
                 Log::warning('updateMemberATCHours: User ' . $member->id . ' fetch failed with code ' . $response->getStatusCode());
+
                 continue;
             }
 
             try {
                 $parsedData = json_decode($response->getBody()->getContents(), false, JSON_THROW_ON_ERROR);
             } catch (\Exception $e) {
-                Log::error("updateMemberATCHours: Failed to parse JSON for member: " . $member->id . ": " . $e);
+                Log::error('updateMemberATCHours: Failed to parse JSON for member: ' . $member->id . ': ' . $e);
+
                 continue;
             }
 
@@ -111,17 +113,15 @@ class UpdateAtcHours extends Command
     /**
      * Check if active members should keep their active status
      *
-     * @param User $member
-     * @param Collection $sessions
-     * @param Collection<string> $divisionCallsignPrefixes
+     * @param  Collection<string>  $divisionCallsignPrefixes
      * @return null
      */
     private function updateHoursForMember(User $member, Collection $sessions, Collection $divisionCallsignPrefixes)
     {
-        $this->info("Updating ATC hours for member: " . $member->id);
+        $this->info('Updating ATC hours for member: ' . $member->id);
 
         $hoursActiveInDivision = $sessions
-            ->filter(fn($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes))
+            ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes))
             ->map(function ($session) {
                 return floatval($session->minutes_on_callsign);
             })
@@ -136,7 +136,7 @@ class UpdateAtcHours extends Command
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             AtcActivity::create([
                 'user_id' => $member->id,
-                'hours' => $hoursActiveInDivision
+                'hours' => $hoursActiveInDivision,
             ]);
         }
     }
@@ -144,8 +144,6 @@ class UpdateAtcHours extends Command
     /**
      * Make HTTP GET request
      *
-     * @param \GuzzleHttp\Client $client
-     * @param string $url
      * @return \Psr\Http\Message\ResponseInterface|null
      */
     private function makeHttpGetRequest(\GuzzleHttp\Client $client, string $url)
@@ -161,17 +159,16 @@ class UpdateAtcHours extends Command
             );
         }
 
-        if (isset($response))
+        if (isset($response)) {
             return $response;
+        }
 
         return null;
     }
 
-
     /**
      * Get the query string for the http call
      *
-     * @param int $user_id
      * @return string
      */
     private function getQueryString(int $user_id)
@@ -179,8 +176,7 @@ class UpdateAtcHours extends Command
         $query_string = $this->base_api_url . $user_id;
         $query_string .= '/atcsessions/';
         $query_string .= '?start=' . Carbon::now()->subMonths($this->qualificationPeriod)->format('Y-m-d');
+
         return $query_string;
     }
-
-
 }

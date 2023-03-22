@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Training;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -12,25 +11,35 @@ class TrainingMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $training, $mailSubject, $textLines, $contactMail, $actionUrl, $actionText, $actionColor;
+    private $training;
+
+    private $mailSubject;
+
+    private $textLines;
+
+    private $contactMail;
+
+    private $actionUrl;
+
+    private $actionText;
+
+    private $actionColor;
 
     /**
      * Create a new message instance.
      *
-     * @param string $mailSubject
-     * @param Training $training
-     * @param array $textLines an array of markdown lines to add
-     * @param string $contactMail optional contact e-mail to put in footer
-     * @param string $actionUrl optinal action button url
-     * @param string $actionText optional action button text
-     * @param string $actionColor optional bootstrap button color override
+     * @param  array  $textLines an array of markdown lines to add
+     * @param  string  $contactMail optional contact e-mail to put in footer
+     * @param  string  $actionUrl optinal action button url
+     * @param  string  $actionText optional action button text
+     * @param  string  $actionColor optional bootstrap button color override
      * @return void
      */
     public function __construct(string $mailSubject, Training $training, array $textLines, string $contactMail = null, string $actionUrl = null, string $actionText = null, string $actionColor = 'primary')
     {
         $this->mailSubject = $mailSubject;
         $this->training = $training;
-        
+
         $this->textLines = $textLines;
         $this->contactMail = $contactMail;
 

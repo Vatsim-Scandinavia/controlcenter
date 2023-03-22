@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class TrainingObjectAttachment extends Model
 {
-
     protected $guarded = [];
 
     protected $casts = [
-        'hidden' => 'boolean'
+        'hidden' => 'boolean',
     ];
 
     public function object()
@@ -22,5 +21,4 @@ class TrainingObjectAttachment extends Model
     {
         return $this->hasOne(File::class, 'id', 'file_id');
     }
-
 }

@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 
 class SendTelemetry extends Command
 {
@@ -29,11 +29,9 @@ class SendTelemetry extends Command
      */
     public function handle()
     {
+        $uuid = \Ramsey\Uuid\Uuid::uuid5('151323ad-e7d1-4ed0-9c49-18a5cde076d8', Config::get('app.key') . Config::get('app.url'));
 
-        $uuid = \Ramsey\Uuid\Uuid::uuid5('151323ad-e7d1-4ed0-9c49-18a5cde076d8', Config::get('app.key').Config::get('app.url'));
-
-        try{
-
+        try {
             $req = Http::post('https://telemetry.vatsca.org/v1/', [
                 'service' => 'cc',
                 'uuid' => $uuid,
@@ -43,21 +41,21 @@ class SendTelemetry extends Command
                 'env' => Config::get('app.env'),
             ]);
 
-            if($req->clientError()){
-                $this->warn('Telemetry request replied with client error: '.$req->body());
+            if ($req->clientError()) {
+                $this->warn('Telemetry request replied with client error: ' . $req->body());
+
                 return;
             }
 
-            if($req->serverError()){
-                $this->warn('Telemetry request replied with server error '.$req->body());
+            if ($req->serverError()) {
+                $this->warn('Telemetry request replied with server error ' . $req->body());
+
                 return;
             }
 
             $this->info('Telemetry successfully sent.');
-
         } catch(\Exception $e) {
-            $this->warn('Telemetry service unavailable: '.$e->getMessage());
+            $this->warn('Telemetry service unavailable: ' . $e->getMessage());
         }
-        
     }
 }

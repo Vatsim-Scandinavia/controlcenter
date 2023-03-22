@@ -43,3 +43,6 @@ jobs:
     - name: Execute unit and feature tests via PHPUnit
       run: ./vendor/bin/phpunit --color=always --testdox
       working-directory: ./controlcenter
+
+    - name: Check for incorrect formatting
+      run: ./vendor/bin/pint --test

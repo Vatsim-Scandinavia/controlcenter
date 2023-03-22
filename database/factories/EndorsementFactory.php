@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Carbon\Carbon;
 use App\Models\Endorsement;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EndorsementFactory extends Factory
@@ -25,8 +25,8 @@ class EndorsementFactory extends Factory
     {
         return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'type' => "MASC",
-            'valid_from' => Carbon::now()
+            'type' => 'MASC',
+            'valid_from' => Carbon::now(),
         ];
     }
 }

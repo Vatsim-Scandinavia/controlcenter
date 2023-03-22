@@ -6,7 +6,6 @@ use App\Mail\EndorsementMail;
 use App\Models\Endorsement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class EndorsementModifiedNotification extends Notification implements ShouldQueue
@@ -17,8 +16,6 @@ class EndorsementModifiedNotification extends Notification implements ShouldQueu
 
     /**
      * Create a new notification instance.
-     *
-     * @param Endorsement $endorsement
      */
     public function __construct(Endorsement $endorsement)
     {
@@ -44,12 +41,11 @@ class EndorsementModifiedNotification extends Notification implements ShouldQueu
      */
     public function toMail($notifiable)
     {
-
-        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : "Forver";
+        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : 'Forver';
 
         $textLines = [
-            'Your **'.ucwords(strtolower((string)$this->endorsement->type)).' Endorsement** has been modified at following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
-            '**New expire date:** '.$validTo,
+            'Your **' . ucwords(strtolower((string) $this->endorsement->type)) . ' Endorsement** has been modified at following positions: *' . $this->endorsement->positions->pluck('callsign')->implode(', ') . '*',
+            '**New expire date:** ' . $validTo,
         ];
 
         return (new EndorsementMail('Training Endorsement Modified', $this->endorsement, $textLines))
@@ -65,7 +61,7 @@ class EndorsementModifiedNotification extends Notification implements ShouldQueu
     public function toArray($notifiable)
     {
         return [
-            'endorsement_id' => $this->endorsement->id
+            'endorsement_id' => $this->endorsement->id,
         ];
     }
 }

@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class File extends Model
 {
-
     protected $guarded = [];
 
     protected $keyType = 'string';
+
     protected $primaryKey = 'id';
 
     /**
@@ -42,5 +42,4 @@ class File extends Model
     {
         return 'public/files/' . $this->path;
     }
-
 }

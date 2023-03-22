@@ -2,27 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\File;
-use App\Models\Training;
 use App\Models\TrainingObject;
-use App\Models\TrainingReport;
 use App\Models\TrainingObjectAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use function MongoDB\BSON\toJSON;
 
 /**
  * Controller for object handling the attachments for trainings
  */
 class TrainingObjectAttachmentController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param TrainingObject $trainingObject
      * @return false|string
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request, TrainingObject $trainingObject)
@@ -31,7 +25,7 @@ class TrainingObjectAttachmentController extends Controller
 
         $data = $request->validate([
             'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
-            'hidden' => 'nullable'
+            'hidden' => 'nullable',
         ]);
 
         $attachment_ids = self::saveAttachments($request, $trainingObject);
@@ -39,19 +33,18 @@ class TrainingObjectAttachmentController extends Controller
         if ($request->expectsJson()) {
             return json_encode([
                 'id' => $attachment_ids,
-                'message' => 'File(s) successfully uploaded'
+                'message' => 'File(s) successfully uploaded',
             ]);
         }
 
         return redirect()->back()->withSuccess('Attachment successfully addded');
-
     }
 
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\TrainingObjectAttachment $attachment
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(TrainingObjectAttachment $attachment)
@@ -64,9 +57,8 @@ class TrainingObjectAttachmentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Request $request
-     * @param TrainingObjectAttachment $attachment
      * @return false|string
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Request $request, TrainingObjectAttachment $attachment)
@@ -84,21 +76,17 @@ class TrainingObjectAttachmentController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param TrainingObject $object
      * @return array
      */
     public static function saveAttachments(Request $request, TrainingObject $object)
     {
-
         foreach ($request->files as $file) {
-
-            if (!is_iterable($file)) {
+            if (! is_iterable($file)) {
                 $file_id = FileController::saveFile($file);
 
                 $object->attachments()->create([
                     'file_id' => $file_id,
-                    'hidden' => false // We hardcode this to false for now
+                    'hidden' => false, // We hardcode this to false for now
                 ]);
             } else {
                 foreach ($file as $file2) {
@@ -106,7 +94,7 @@ class TrainingObjectAttachmentController extends Controller
 
                     $object->attachments()->create([
                         'file_id' => $file_id,
-                        'hidden' => false // We hardcode this to false for now
+                        'hidden' => false, // We hardcode this to false for now
                     ]);
                 }
             }

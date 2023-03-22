@@ -4,22 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use Illuminate\Http\Request;
-use \Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * This controls the uploaded file management 
+ * This controls the uploaded file management
  */
 class FileController extends Controller
 {
-
     /**
      * Get the file
      *
-     * @param Request $request
-     * @param File $file
      * @return mixed
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function get(Request $request, File $file)
@@ -27,7 +25,7 @@ class FileController extends Controller
         $this->authorize('view', $file);
 
         if (Storage::exists($file->full_path)) {
-            return response()->file(Storage::path($file->full_path), ['Content-Disposition' => 'inline; filename="'.$file->name.'"', 'Content-Type' => Storage::mimeType($file->name)]);
+            return response()->file(Storage::path($file->full_path), ['Content-Disposition' => 'inline; filename="' . $file->name . '"', 'Content-Type' => Storage::mimeType($file->name)]);
         } else {
             return abort(404);
         }
@@ -36,8 +34,8 @@ class FileController extends Controller
     /**
      * Store the file
      *
-     * @param Request $request
      * @return false|\Illuminate\Http\RedirectResponse|string
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
@@ -51,7 +49,7 @@ class FileController extends Controller
         if ($request->expectsJson()) {
             return json_encode([
                 'file_id' => $id,
-                'message' => 'File successfully uploaded'
+                'message' => 'File successfully uploaded',
             ]);
         }
 
@@ -61,9 +59,8 @@ class FileController extends Controller
     /**
      * Delete the provided file
      *
-     * @param Request $request
-     * @param File $file
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Request $request, File $file)
@@ -75,26 +72,25 @@ class FileController extends Controller
         }
 
         return redirect()->back()->with('error', 'An error occurred during the deletion of the file');
-
     }
 
     /**
      * Validate the request data and filetypes
+     *
      * @return mixed
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     private function validateRequest()
     {
         return request()->validate([
-            'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg'
+            'file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
         ]);
     }
 
     /**
      * Save the provided file using the naming scheme.
      *
-     * @param UploadedFile $file
-     * @param string|null $filename
      * @return string
      */
     public static function saveFile(UploadedFile $file, string $filename = null)
@@ -103,12 +99,12 @@ class FileController extends Controller
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
 
         if ($filename == null) {
-            $filename = now()->format('Ymd_His') . "_" . $id;
+            $filename = now()->format('Ymd_His') . '_' . $id;
         }
 
-        if (!preg_match('/\.([a-zA-Z]*)/', $filename) && $extension != null) {
+        if (! preg_match('/\.([a-zA-Z]*)/', $filename) && $extension != null) {
             // Filename doesn't have anything that resembles and extension
-            $filename = $filename . "." . $extension;
+            $filename = $filename . '.' . $extension;
         }
 
         Storage::putFileAs('public/files/', $file, $filename);
@@ -117,10 +113,9 @@ class FileController extends Controller
             'id' => $id,
             'name' => $file->getClientOriginalName(),
             'uploaded_by' => Auth::id(),
-            'path' => $filename
+            'path' => $filename,
         ]);
 
         return $id;
     }
-
 }
