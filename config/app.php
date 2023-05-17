@@ -171,14 +171,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Hotjar ID
+    | Tracking script
     |--------------------------------------------------------------------------
     |
-    | Add the key of the Hotjar tracking code to track this website.
+    | Adding a config where we use the provided tracking script to the header
     |
     */
 
-    'hotjar' => env('APP_HOTJAR_ID'),
+    'tracking_script' => env('APP_TRACKING_SCRIPT'),
 
     /*
     |--------------------------------------------------------------------------
