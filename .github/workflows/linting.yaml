@@ -5,7 +5,8 @@ on:
   push:
 
 jobs:
-  linting:
+  lint-formatting:
+    name: Lint formatting
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Control Center

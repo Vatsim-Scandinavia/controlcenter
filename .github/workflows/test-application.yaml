@@ -2,11 +2,10 @@ name: Run Tests
 
 on:
   push:
-    branches:
-      - '*'
 
 jobs:
   test-app:
+    name: Control Center Test Suite
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Control Center
@@ -20,6 +19,12 @@ jobs:
         repository: vatsim-scandinavia/handover
         path: handover
 
+    - name: Setup dependencies for Handover
+      uses: ./controlcenter/.github/actions/setup-dependencies
+      with:
+        path: handover
+        setup-node: false
+
     - name: Setup Handover
       uses: ./controlcenter/.github/workflows/setup-project
       with:
@@ -27,6 +32,12 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
+
+    - name: Setup dependencies for Control Center
+      uses: ./controlcenter/.github/actions/setup-dependencies
+      with:
+        path: controlcenter
+        setup-node: true
 
     - name: Setup Control Center
       uses: ./controlcenter/.github/workflows/setup-project

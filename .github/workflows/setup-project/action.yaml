@@ -23,12 +23,6 @@ runs:
     shell: bash
     working-directory: ./${{ inputs.path }}
 
-  - name: Setup dependencies
-    uses: .github/actions/setup-dependencies
-    with:
-      path: ${{ inputs.path }}
-      setup-node: ${{ inputs.setup-node }}
-
   - name: Generate key
     run: php artisan key:generate
     shell: bash
