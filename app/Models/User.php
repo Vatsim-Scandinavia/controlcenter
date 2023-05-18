@@ -146,13 +146,16 @@ class User extends Authenticatable
         return $this->first_name . " " . $this->last_name;
     }
 
-    public function getEmailAttribute()
+    /**
+     * @todo: Convert to to new v9.x+ mutators https://laravel.com/docs/9.x/eloquent-mutators
+     */
+    public function getEmailAttribute($value)
     {
         if($this->setting_workmail_address){
             return $this->setting_workmail_address;
         }
 
-        return $this->email;
+        return $value;
     }
 
     public function getActiveAttribute(){
