@@ -24,6 +24,7 @@ class OAuthController extends GenericProvider
             'urlAuthorize'            => config('oauth.base').'/oauth/authorize',
             'urlAccessToken'          => config('oauth.base').'/oauth/token',
             'urlResourceOwnerDetails' => config('oauth.base').'/api/user',
+            'scopes'                  => config('scopes'),
         ]);
     }
 
@@ -43,5 +44,30 @@ class OAuthController extends GenericProvider
         } catch (IdentityProviderException $e) {
             return null;
         }
+    }
+
+    // Thanks to Moodle for this snippet
+    // https://github.com/moodle/moodle/blob/48ad73619f870e4fd87240bd3c74202a300da6b2/lib/classes/oauth2/client.php#L255
+    public static function getOAuthProperty($property, $data)
+    {
+        $getfunc = function ($obj, $prop) use (&$getfunc) {
+            $proplist = explode('-', $prop, 2);
+            if (empty($proplist[0]) || empty($obj->{$proplist[0]})) {
+                return false;
+            }
+            $obj = $obj->{$proplist[0]};
+
+            if (count($proplist) > 1) {
+                return $getfunc($obj, $proplist[1]);
+            }
+            return $obj;
+        };
+
+        $resolved = $getfunc($data, $property);
+        if (!empty($resolved)) {
+            return $resolved;
+        }
+
+        return false;
     }
 }

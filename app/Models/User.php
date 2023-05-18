@@ -34,7 +34,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'id', 'last_login'
+        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'last_login', 'access_token', 'refresh_token', 'token_expires'
     ];
 
     /**
