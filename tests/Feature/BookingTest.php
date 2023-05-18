@@ -56,7 +56,7 @@ class BookingTest extends TestCase
     public function test_active_ratings_can_create_bookings(VatsimRating $rating, callable $setup): void
     {
         $controller = User::factory()->create(['id' => fake()->numberBetween(100)]);
-        Handover::factory()->create([
+        User::factory()->create([
             'id' => $controller->id,
             'atc_active' => true,
             'rating' => $rating->value

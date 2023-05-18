@@ -21,7 +21,6 @@ class UserUnitTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create(['id' => 10000000]);
-        $this->user = Handover::factory()->make(['id' => 10000000]);
     }
 
     /** @test */
