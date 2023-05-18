@@ -1,0 +1,42 @@
+name: Setup dependencies
+
+inputs:
+  path:
+    description: Path to the checked out project
+    required: true
+  setup-node:
+    description: Whether to setup Node or not
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+  - name: Validate composer
+    run: composer validate
+    shell: bash
+    working-directory: ./${{ inputs.path }}
+
+  - name: Cache composer
+    uses: actions/cache@v3
+    with:
+      path: ${{ inputs.path }}/vendor
+      key: composer-v1-${{ inputs.path }}-${{ hashFiles(format('{0}/composer.lock', inputs.path))}}
+
+  - name: Install composer dependencies
+    run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+    shell: bash
+    working-directory: ./${{ inputs.path }}
+
+  - name: Setup node
+    if: inputs.setup-node == 'true'
+    uses: actions/setup-node@v3
+    with:
+      cache: 'npm'
+      cache-dependency-path: ${{ inputs.path }}
+
+  - name: Install node dependencies
+    if: inputs.setup-node == 'true'
+    run: npm ci
+    shell: bash
+    working-directory: ./${{ inputs.path }}
+
