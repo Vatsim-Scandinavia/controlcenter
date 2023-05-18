@@ -1,10 +1,9 @@
 name: Run Tests
 
 on:
-  pull_request:
+  push:
     branches:
-      - master
-      - 'version/**'
+      - '*'
 
 jobs:
   test-app:
