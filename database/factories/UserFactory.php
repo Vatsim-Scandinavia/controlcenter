@@ -47,13 +47,14 @@ class UserFactory extends Factory
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'email' => $this->faker->email,
+            
             'rating' => $rating,
             'rating_short' => FactoryHelper::shortRating($rating),
             'rating_long' => FactoryHelper::longRating($rating),
+
             'region' => $region,
             'division' => $divisionId,
             'subdivision' => $subdivision,
-            'accepted_privacy' => false,
 
             'last_login' => \Carbon\Carbon::now(),
             'setting_notify_newreport' => false,
