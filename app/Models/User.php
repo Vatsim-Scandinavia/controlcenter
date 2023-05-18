@@ -141,17 +141,6 @@ class User extends Authenticatable
         return ($atcHoursDB == null) ? null : $atcHoursDB->hours;
     }
 
-    // Get properties from Handover, the variable names here break with the convention.
-    public function getLastNameAttribute()
-    {
-        return $this->last_name;
-    }
-
-    public function getFirstNameAttribute()
-    {
-        return $this->first_name;
-    }
-
     public function getNameAttribute()
     {
         return $this->first_name . " " . $this->last_name;
@@ -164,38 +153,6 @@ class User extends Authenticatable
         }
 
         return $this->email;
-    }
-
-    /**
-     * The VATSIM rating value of a given user.
-     *
-     * @todo Return @{VatsimRating} instead of integer?
-     */
-    public function getRatingAttribute(): int
-    {
-        return $this->rating;
-    }
-
-    public function getRatingShortAttribute()
-    {
-        return $this->rating_short;
-    }
-
-    public function getRatingLongAttribute()
-    {
-        return $this->rating_long;
-    }
-
-    public function getDivisionAttribute(){
-        return $this->division;
-    }
-
-    public function getSubdivisionAttribute(){
-        return $this->subdivision;
-    }
-
-    public function getCountryAttribute(){
-        return $this->country;
     }
 
     public function getActiveAttribute(){
