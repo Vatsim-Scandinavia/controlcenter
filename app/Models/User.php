@@ -144,12 +144,12 @@ class User extends Authenticatable
     // Get properties from Handover, the variable names here break with the convention.
     public function getLastNameAttribute()
     {
-        return $this->handover->last_name;
+        return $this->last_name;
     }
 
     public function getFirstNameAttribute()
     {
-        return $this->handover->first_name;
+        return $this->first_name;
     }
 
     public function getNameAttribute()
@@ -163,7 +163,7 @@ class User extends Authenticatable
             return $this->setting_workmail_address;
         }
 
-        return $this->handover->email;
+        return $this->email;
     }
 
     /**
@@ -173,33 +173,33 @@ class User extends Authenticatable
      */
     public function getRatingAttribute(): int
     {
-        return $this->handover->rating;
+        return $this->rating;
     }
 
     public function getRatingShortAttribute()
     {
-        return $this->handover->rating_short;
+        return $this->rating_short;
     }
 
     public function getRatingLongAttribute()
     {
-        return $this->handover->rating_long;
+        return $this->rating_long;
     }
 
     public function getDivisionAttribute(){
-        return $this->handover->division;
+        return $this->division;
     }
 
     public function getSubdivisionAttribute(){
-        return $this->handover->subdivision;
+        return $this->subdivision;
     }
 
     public function getCountryAttribute(){
-        return $this->handover->country;
+        return $this->country;
     }
 
     public function getActiveAttribute(){
-        $val = $this->handover->atc_active;
+        $val = $this->atc_active;
 
         if ($val == null)
             return false;

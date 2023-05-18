@@ -14,24 +14,51 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('email', 64)->after('id');
 
-            $table->string('first_name')->after('email');
-            $table->string('last_name')->after('first_name');
+            if (Schema::getConnection()->getDriverName() != 'sqlite') {
 
-            $table->tinyInteger('rating')->after('last_name');
-            $table->string('rating_short', 3)->after('rating');
-            $table->string('rating_long', 24)->after('rating_short');
+                $table->string('email', 64)->after('id');
 
-            $table->string('region', 8)->after('rating_long');
-            $table->string('division', 20)->nullable()->after('region');
-            $table->string('subdivision', 20)->nullable()->after('division');
+                $table->string('first_name')->after('email');
+                $table->string('last_name')->after('first_name');
 
-            $table->tinyInteger('atc_active')->nullable()->after('subdivision');
+                $table->tinyInteger('rating')->after('last_name');
+                $table->string('rating_short', 3)->after('rating');
+                $table->string('rating_long', 24)->after('rating_short');
 
-            $table->text('access_token')->nullable()->after('remember_token');
-            $table->text('refresh_token')->nullable()->after('access_token');
-            $table->unsignedBigInteger('token_expires')->nullable()->after('refresh_token');
+                $table->string('region', 8)->after('rating_long');
+                $table->string('division', 20)->nullable()->after('region');
+                $table->string('subdivision', 20)->nullable()->after('division');
+
+                $table->tinyInteger('atc_active')->nullable()->after('subdivision');
+
+                $table->text('access_token')->nullable()->after('remember_token');
+                $table->text('refresh_token')->nullable()->after('access_token');
+                $table->unsignedBigInteger('token_expires')->nullable()->after('refresh_token');
+
+            } else {
+                
+                $table->string('email', 64)->nullable()->after('id');
+
+                $table->string('first_name')->nullable()->after('email');
+                $table->string('last_name')->nullable()->after('first_name');
+
+                $table->tinyInteger('rating')->nullable()->after('last_name');
+                $table->string('rating_short', 3)->nullable()->after('rating');
+                $table->string('rating_long', 24)->nullable()->after('rating_short');
+
+                $table->string('region', 8)->nullable()->after('rating_long');
+                $table->string('division', 20)->nullable()->after('region');
+                $table->string('subdivision', 20)->nullable()->after('division');
+
+                $table->tinyInteger('atc_active')->nullable()->after('subdivision');
+
+                $table->text('access_token')->nullable()->after('remember_token');
+                $table->text('refresh_token')->nullable()->after('access_token');
+                $table->unsignedBigInteger('token_expires')->nullable()->after('refresh_token');
+
+            }
+
         });
     }
 
