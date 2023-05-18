@@ -53,7 +53,7 @@ class OAuthController extends GenericProvider
         $getfunc = function ($obj, $prop) use (&$getfunc) {
             $proplist = explode('-', $prop, 2);
             if (empty($proplist[0]) || empty($obj->{$proplist[0]})) {
-                return false;
+                return null;
             }
             $obj = $obj->{$proplist[0]};
 
@@ -68,6 +68,6 @@ class OAuthController extends GenericProvider
             return $resolved;
         }
 
-        return false;
+        return null;
     }
 }
