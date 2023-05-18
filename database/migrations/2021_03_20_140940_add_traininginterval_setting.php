@@ -14,7 +14,7 @@ class AddTrainingintervalSetting extends Migration
     public function up()
     {
         DB::table(Config::get('settings.table'))->insert([
-            ['key' => "trainingInterval", 'value' => 14],
+            ['key' => 'trainingInterval', 'value' => 14],
         ]);
     }
 

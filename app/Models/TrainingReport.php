@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TrainingReport extends TrainingObject
 {
-
     use HasFactory;
 
     protected $guarded = [];
+
     protected $dates = ['report_date'];
+
     protected $casts = [
-        'draft' => 'boolean'
+        'draft' => 'boolean',
     ];
 
     public function path()
@@ -21,7 +21,8 @@ class TrainingReport extends TrainingObject
         return route('training.report.edit', ['report' => $this->id]);
     }
 
-    public function author(){
+    public function author()
+    {
         return $this->belongsTo(User::class, 'written_by_id');
     }
 }

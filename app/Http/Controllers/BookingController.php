@@ -3,38 +3,37 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Exceptions\VatsimAPIException;
 use App\Helpers\VatsimRating;
-use App\Models\User;
-use App\Models\Position;
 use App\Models\Booking;
+use App\Models\Position;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use anlutro\LaravelSettings\Facade as Setting;
-use App\Exceptions\VatsimAPIException;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Controller for handling bookings.
  */
 class BookingController extends Controller
 {
-
     use AuthorizesRequests;
 
     /**
      * Get the bookable positions for a user.
-     * @param \App\Models\User $user
+     *
      * @return \Illuminate\Support\Collection<Position> Bookable positions
      */
-    private function getBookablePositions(User $user) {
+    private function getBookablePositions(User $user)
+    {
         if ($user->isModeratorOrAbove()) {
             return Position::all();
         }
         $positions = new Collection();
-        if ($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement("S1", true)) {
+        if ($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement('S1', true)) {
             $positions = Position::where('rating', '<=', $user->rating)->get();
         }
         if ($user->getActiveTraining(1)) {
@@ -42,16 +41,17 @@ class BookingController extends Controller
                 $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)
             );
         }
+
         return $positions;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Models\User  $user
      * @return \Illuminate\View\View
      */
-    public function index(User $user){
+    public function index(User $user)
+    {
         $user = Auth::user();
         $this->authorize('view', Booking::class);
         $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
@@ -65,21 +65,24 @@ class BookingController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function bulk(){
+    public function bulk()
+    {
         $user = Auth::user();
         $this->authorize('create', Booking::class);
 
         $positions = $this->getBookablePositions($user);
+
         return view('booking.bulk', compact('user', 'positions'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Booking $booking
+     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\View\View
      */
-    public function show($id){
+    public function show($id)
+    {
         $booking = Booking::findOrFail($id);
         $user = Auth::user();
         $positions = $this->getBookablePositions($user);
@@ -91,8 +94,8 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
@@ -104,7 +107,7 @@ class BookingController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
-            'tag' => 'nullable|integer|between:1,3'
+            'tag' => 'nullable|integer|between:1,3',
         ]);
 
         $user = Auth::user();
@@ -121,11 +124,17 @@ class BookingController extends Controller
 
         $this->authorize('position', $booking);
 
-        if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
-        if($booking->time_start->diffInMinutes($booking->time_end, false) < 0) $booking->time_end->addDay();
-        if($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
+        if ($booking->time_start === $booking->time_end) {
+            return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+        }
+        if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
+            $booking->time_end->addDay();
+        }
+        if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
+            return back()->withErrors('You cannot create a booking in the past.')->withInput();
+        }
 
-        if(!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+        if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
         ->where('time_end', '!=', $booking->time_start)
         ->where('time_start', '!=', $booking->time_end)
         ->where('position_id', $booking->position_id)
@@ -135,17 +144,19 @@ class BookingController extends Controller
         ->where('time_start', '!=', $booking->time_end)
         ->where('position_id', $booking->position_id)
         ->where('deleted', false)
-        ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
+        ->get()->isEmpty()) {
+            return back()->withErrors('The position is already booked for that time!')->withInput();
+        }
 
         $forcedTrainingTag = false;
 
-        if($booking->position->rating == 2 && $user->rating == $booking->position->rating && !$user->hasActiveEndorsement("S1", true)){
+        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if(($booking->position->rating > $user->rating) && !$user->isModeratorOrAbove()){
+        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -154,7 +165,7 @@ class BookingController extends Controller
 
         $type = null;
 
-        if(isset($data['tag'])) {
+        if (isset($data['tag'])) {
             $this->authorize('bookTags', $booking);
             switch ($data['tag']) {
                 case 1:
@@ -182,20 +193,20 @@ class BookingController extends Controller
             $type = 'booking';
         }
 
-        if(App::environment('production')) {
+        if (App::environment('production')) {
             $client = new \GuzzleHttp\Client();
             $url = $this->getVatsimBookingUrl('post');
 
-            try{
+            try {
                 $response = $this->makeHttpRequest($client, $url, 'post', [
-                    'callsign' => (string)$booking->callsign,
+                    'callsign' => (string) $booking->callsign,
                     'cid' => $booking->user_id,
                     'type' => $type,
                     'start' => $booking->time_start->format('Y-m-d H:i:s'),
                     'end' => $booking->time_end->format('Y-m-d H:i:s'),
                 ]);
-            } catch(VatsimAPIException $e){
-                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+            } catch(VatsimAPIException $e) {
+                return redirect(route('booking'))->withErrors('Booking failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
             }
 
             $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -205,12 +216,12 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', "Created booking booking ".$booking->id.
-        " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
-        " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
-        " ― Position: ".Position::find($booking->position_id)->callsign);
+        ActivityLogController::info('BOOKING', 'Created booking booking ' . $booking->id .
+        ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+        ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+        ' ― Position: ' . Position::find($booking->position_id)->callsign);
 
-        if($forcedTrainingTag){
+        if ($forcedTrainingTag) {
             return redirect(route('booking'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.');
         }
 
@@ -220,8 +231,8 @@ class BookingController extends Controller
     /**
      * Store a newly created resource as a bulk
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function storeBulk(Request $request)
@@ -233,13 +244,13 @@ class BookingController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'positions' => 'required',
-            'tag' => 'nullable|integer|between:1,3'
+            'tag' => 'nullable|integer|between:1,3',
         ]);
 
         $user = Auth::user();
 
         $positions = explode(',', $data['positions']);
-        foreach($positions as $position){
+        foreach ($positions as $position) {
             $booking = new Booking();
 
             $date = Carbon::createFromFormat('d/m/Y', $data['date']);
@@ -249,10 +260,10 @@ class BookingController extends Controller
             $booking->callsign = strtoupper($position);
 
             $positionModel = Position::all()->firstWhere('callsign', strtoupper($position));
-            if(isset($positionModel)){
+            if (isset($positionModel)) {
                 $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($position))->id;
             } else {
-                return redirect(route('booking'))->withErrors('The position '.$position.' does not exist. The bulk booking stopped here, but previous positions in the list have been booked.')->withInput();
+                return redirect(route('booking'))->withErrors('The position ' . $position . ' does not exist. The bulk booking stopped here, but previous positions in the list have been booked.')->withInput();
             }
 
             $booking->name = $user->name;
@@ -260,11 +271,17 @@ class BookingController extends Controller
 
             $this->authorize('position', $booking);
 
-            if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
-            if($booking->time_start->diffInMinutes($booking->time_end, false) < 0) $booking->time_end->addDay();
-            if($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
+            if ($booking->time_start === $booking->time_end) {
+                return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+            }
+            if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
+                $booking->time_end->addDay();
+            }
+            if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
+                return back()->withErrors('You cannot create a booking in the past.')->withInput();
+            }
 
-            if(!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+            if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
             ->where('time_end', '!=', $booking->time_start)
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
@@ -274,11 +291,13 @@ class BookingController extends Controller
             ->where('time_start', '!=', $booking->time_end)
             ->where('position_id', $booking->position_id)
             ->where('deleted', false)
-            ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
+            ->get()->isEmpty()) {
+                return back()->withErrors('The position is already booked for that time!')->withInput();
+            }
 
             $type = null;
 
-            if(isset($data['tag'])) {
+            if (isset($data['tag'])) {
                 $this->authorize('bookTags', $booking);
                 switch ($data['tag']) {
                     case 1:
@@ -306,20 +325,20 @@ class BookingController extends Controller
                 $type = 'booking';
             }
 
-            if(App::environment('production')) {
+            if (App::environment('production')) {
                 $client = new \GuzzleHttp\Client();
                 $url = $this->getVatsimBookingUrl('post');
 
-                try{
+                try {
                     $response = $this->makeHttpRequest($client, $url, 'post', [
-                        'callsign' => (string)$booking->callsign,
+                        'callsign' => (string) $booking->callsign,
                         'cid' => $booking->user_id,
                         'type' => $type,
                         'start' => $booking->time_start->format('Y-m-d H:i:s'),
                         'end' => $booking->time_end->format('Y-m-d H:i:s'),
                     ]);
-                } catch(VatsimAPIException $e){
-                    return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+                } catch(VatsimAPIException $e) {
+                    return redirect(route('booking'))->withErrors('Booking failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
                 }
 
                 $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -329,10 +348,10 @@ class BookingController extends Controller
 
             $booking->save();
 
-            ActivityLogController::info('BOOKING', "Created booking BULK booking ".$booking->id.
-            " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
-            " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
-            " ― Position: ".Position::find($booking->position_id)->callsign);
+            ActivityLogController::info('BOOKING', 'Created booking BULK booking ' . $booking->id .
+            ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+            ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+            ' ― Position: ' . Position::find($booking->position_id)->callsign);
         }
 
         return redirect(route('booking'))->withSuccess('Bulk bookings successfully added!');
@@ -341,10 +360,8 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-
     public function update(Request $request)
     {
         $data = $request->validate([
@@ -352,7 +369,7 @@ class BookingController extends Controller
             'start_at' => 'required|date_format:H:i',
             'end_at' => 'required|date_format:H:i',
             'position' => 'required|exists:positions,callsign',
-            'tag' => 'nullable|integer|between:1,3'
+            'tag' => 'nullable|integer|between:1,3',
         ]);
 
         $user = Auth::user();
@@ -368,11 +385,17 @@ class BookingController extends Controller
 
         $this->authorize('position', $booking);
 
-        if($booking->time_start === $booking->time_end) return back()->withErrors('Booking needs to have a valid duration!')->withInput();
-        if($booking->time_start->diffInMinutes($booking->time_end, false) < 0) $booking->time_end->addDay();
-        if($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) return back()->withErrors('You cannot create a booking in the past.')->withInput();
+        if ($booking->time_start === $booking->time_end) {
+            return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+        }
+        if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
+            $booking->time_end->addDay();
+        }
+        if ($booking->time_start->diffInMinutes(Carbon::now(), false) > 0) {
+            return back()->withErrors('You cannot create a booking in the past.')->withInput();
+        }
 
-        if(!Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
+        if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
         ->where('time_end', '!=', $booking->time_start)
         ->where('time_start', '!=', $booking->time_end)
         ->where('position_id', $booking->position_id)
@@ -384,18 +407,20 @@ class BookingController extends Controller
         ->where('position_id', $booking->position_id)
         ->where('deleted', false)
         ->where('id', '!=', $booking->id)
-        ->get()->isEmpty()) return back()->withErrors('The position is already booked for that time!')->withInput();
+        ->get()->isEmpty()) {
+            return back()->withErrors('The position is already booked for that time!')->withInput();
+        }
 
         $forcedTrainingTag = false;
         $bookingUser = User::find($booking->user_id);
 
-        if($booking->position->rating == 2 && $bookingUser->rating == $booking->position->rating && !$bookingUser->hasActiveEndorsement("S1", true)){
+        if ($booking->position->rating == 2 && $bookingUser->rating == $booking->position->rating && ! $bookingUser->hasActiveEndorsement('S1', true)) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if(($booking->position->rating > $bookingUser->rating) && !$bookingUser->isModeratorOrAbove()){
+        } elseif (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } else if($booking->position->mae && $bookingUser->getActiveTraining(1) && $bookingUser->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
+        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(1) && $bookingUser->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -404,7 +429,7 @@ class BookingController extends Controller
 
         $type = null;
 
-        if(isset($data['tag'])) {
+        if (isset($data['tag'])) {
             $this->authorize('bookTags', $booking);
             switch ($data['tag']) {
                 case 1:
@@ -432,20 +457,20 @@ class BookingController extends Controller
             $type = 'booking';
         }
 
-        if(App::environment('production')) {
+        if (App::environment('production')) {
             $client = new \GuzzleHttp\Client();
             $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
 
-            try{
+            try {
                 $response = $this->makeHttpRequest($client, $url, 'put', [
-                    'callsign' => (string)$booking->callsign,
+                    'callsign' => (string) $booking->callsign,
                     'cid' => $booking->user_id,
                     'type' => $type,
                     'start' => $booking->time_start->format('Y-m-d H:i:s'),
                     'end' => $booking->time_end->format('Y-m-d H:i:s'),
                 ]);
-            } catch(VatsimAPIException $e){
-                return redirect(route('booking'))->withErrors('Booking failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+            } catch(VatsimAPIException $e) {
+                return redirect(route('booking'))->withErrors('Booking failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
             }
 
             $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -455,12 +480,12 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', "Updated booking booking ".$booking->id.
-        " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
-        " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
-        " ― Position: ".Position::find($booking->position_id)->callsign);
+        ActivityLogController::info('BOOKING', 'Updated booking booking ' . $booking->id .
+        ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+        ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+        ' ― Position: ' . Position::find($booking->position_id)->callsign);
 
-        if($forcedTrainingTag){
+        if ($forcedTrainingTag) {
             return redirect(route('booking'))->withSuccess('Booking successfully added, but training tag was forced due to booking a restricted position.');
         }
 
@@ -480,41 +505,42 @@ class BookingController extends Controller
 
         $booking->deleted = true;
 
-        if(App::environment('production')) {
+        if (App::environment('production')) {
             $client = new \GuzzleHttp\Client();
             $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
 
-            try{
+            try {
                 $response = $this->makeHttpRequest($client, $url, 'delete');
-            } catch(VatsimAPIException $e){
-                return redirect(route('booking'))->withErrors('Booking deletion failed with error '.$e->code.': '.$e->message.'. Please contact staff if this issue persists.');
+            } catch(VatsimAPIException $e) {
+                return redirect(route('booking'))->withErrors('Booking deletion failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
             }
-
         }
 
         $booking->save();
 
-        ActivityLogController::warning('BOOKING', "Deleted booking booking ".$booking->id.
-        " ― from ".Carbon::parse($booking->time_start)->toEuropeanDateTime().
-        " → ".Carbon::parse($booking->time_end)->toEuropeanDateTime().
-        " ― Position: ".Position::find($booking->position_id)->callsign);
+        ActivityLogController::warning('BOOKING', 'Deleted booking booking ' . $booking->id .
+        ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
+        ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
+        ' ― Position: ' . Position::find($booking->position_id)->callsign);
 
         return redirect(route('booking'));
     }
 
     private function getVatsimBookingUrl(string $type, int $id = null)
     {
-        if($type == 'get' || $type == 'post') {
+        if ($type == 'get' || $type == 'post') {
             $url = Config::get('vatsim.booking_api_url') . '/booking';
         } elseif ($type == 'put' || $type == 'delete') {
             $url = Config::get('vatsim.booking_api_url') . '/booking/' . $id;
         } else {
             return null;
         }
+
         return $url;
     }
 
-    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null) {
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null)
+    {
         try {
             $headers = [
                 'Authorization' => 'Bearer ' . Config::get('vatsim.booking_api_token'),
@@ -534,7 +560,6 @@ class BookingController extends Controller
             }
 
             return null;
-
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             throw new App\Exceptions\VatsimAPIException($e);
         }

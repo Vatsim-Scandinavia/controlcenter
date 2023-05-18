@@ -1,21 +1,23 @@
 <?php
 
 namespace App\Helpers;
+
 use Illuminate\Support\Collection;
 
-class Vatsim{
-
+class Vatsim
+{
     /**
-    * Checks if a position belongs to the division.
-    * @param string callsign
-    * @param Collection<string> divisionCallsignPrefixes
-    */
+     * Checks if a position belongs to the division.
+     *
+     * @param string callsign
+     * @param Collection<string> divisionCallsignPrefixes
+     */
     public static function isDivisionCallsign(string $callsign, Collection $divisionCallsignPrefixes)
     {
-        $validAtcSuffixes = ["DEL" => true, "GND" => true, "TWR" => true, "APP" => true, "DEP" => true, "CTR" => true, "FSS" => true];
+        $validAtcSuffixes = ['DEL' => true, 'GND' => true, 'TWR' => true, 'APP' => true, 'DEP' => true, 'CTR' => true, 'FSS' => true];
         // Filter away invalid ATC suffixes
         $suffix = substr($callsign, -3);
-        if (!array_key_exists($suffix, $validAtcSuffixes)) {
+        if (! array_key_exists($suffix, $validAtcSuffixes)) {
             return false;
         }
 
@@ -26,8 +28,4 @@ class Vatsim{
 
         return false;
     }
-
 }
-
-
-?>

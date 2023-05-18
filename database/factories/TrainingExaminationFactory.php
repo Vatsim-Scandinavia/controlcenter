@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\TrainingExamination;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
 
 class TrainingExaminationFactory extends Factory
 {

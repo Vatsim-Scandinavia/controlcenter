@@ -8,16 +8,18 @@ class Rating extends Model
 {
     public $timestamps = false;
 
-    public function trainings(){
+    public function trainings()
+    {
         return $this->belongsToMany(Training::class);
     }
 
-    public function endorsements(){
+    public function endorsements()
+    {
         return $this->belongsToMany(Endorsement::class);
     }
 
-    public function areas(){
+    public function areas()
+    {
         return $this->belongsToMany(Area::class)->withPivot('required_vatsim_rating', 'allow_bundling', 'hour_requirement', 'queue_length_low', 'queue_length_high');
     }
-
 }

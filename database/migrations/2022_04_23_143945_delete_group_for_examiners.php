@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class DeleteGroupForExaminers extends Migration
 {
@@ -13,7 +11,7 @@ class DeleteGroupForExaminers extends Migration
      */
     public function up()
     {
-        DB::table('groups')->where('id', 4)->delete(); 
+        DB::table('groups')->where('id', 4)->delete();
     }
 
     /**

@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Handover;
-use Faker\Generator as Faker;
 use App\Helpers\FactoryHelper;
+use App\Models\Handover;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class HandoverFactory extends Factory

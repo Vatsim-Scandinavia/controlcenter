@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
@@ -20,10 +20,10 @@ class CreateUsersTable extends Migration
             $table->timestamp('last_login');
             $table->rememberToken();
 
-            $table->boolean("setting_notify_newreport")->default(true);
-            $table->boolean("setting_notify_newreq")->default(true);
-            $table->boolean("setting_notify_closedreq")->default(true);
-            $table->boolean("setting_notify_newexamreport")->default(true);
+            $table->boolean('setting_notify_newreport')->default(true);
+            $table->boolean('setting_notify_newreq')->default(true);
+            $table->boolean('setting_notify_closedreq')->default(true);
+            $table->boolean('setting_notify_newexamreport')->default(true);
 
             $table->foreign('country')->references('id')->on('countries');
             $table->foreign('group')->references('id')->on('groups');

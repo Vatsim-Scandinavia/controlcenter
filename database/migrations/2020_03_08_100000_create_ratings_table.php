@@ -13,16 +13,14 @@ class CreateRatingsTable extends Migration
      */
     public function up()
     {
-
         /**
          * Short explanation of the ratings data
-         * 
+         *
          * vatsim_rating is the number that Handover/Connect gives us to distingush ratings
          * required_vatsim_rating is used to set restrictions to which endorsements needs which vatsim_rating
          * country is used to restrict a specific rating to a country
          * available makes the rating possible to apply for, for instance we disable S1, but the possibility will be there if future calls for it.
          */
-
         Schema::create('ratings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 50);

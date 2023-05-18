@@ -2,30 +2,29 @@
 
 namespace App\Notifications;
 
-use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
-use App\Models\User;
 use App\Models\Area;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class TrainingExamNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private $training, $report;
+    private $training;
+
+    private $report;
 
     /**
      * Create a new notification instance.
      *
-     * @param Training $training
-     * @param TrainingReport $report referenced in the notification
-     * @param string $key
+     * @param  TrainingReport  $report referenced in the notification
+     * @param  string  $key
      */
     public function __construct(Training $training, TrainingExamination $report)
     {
@@ -52,22 +51,22 @@ class TrainingExamNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
         $textLines = [
-            "This is a confirmation of your examination result for training: ".$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.'.',
-            "Result: **".$this->report->result."**",
-            "*For questions regarding your examination, contact your mentor.*",
+            'This is a confirmation of your examination result for training: ' . $this->training->getInlineRatings() . ' in ' . Area::find($this->training->area_id)->name . '.',
+            'Result: **' . $this->report->result . '**',
+            '*For questions regarding your examination, contact your mentor.*',
         ];
 
         // Find staff who wants notification of new training request
         $bcc = User::allWithGroup(2, '<=')->where('setting_notify_newexamreport', true);
 
         foreach ($bcc as $key => $user) {
-            if (!$user->isModeratorOrAbove($this->training->area))
+            if (! $user->isModeratorOrAbove($this->training->area)) {
                 $bcc->pull($key);
+            }
         }
 
-        return (new TrainingMail('Training Examination Result', $this->training, $textLines, null, route('training.show', $this->training->id), "Read Report"))
+        return (new TrainingMail('Training Examination Result', $this->training, $textLines, null, route('training.show', $this->training->id), 'Read Report'))
             ->to($this->training->user->email, $this->training->user->name)
             ->bcc($bcc->pluck('email'));
     }
@@ -82,7 +81,7 @@ class TrainingExamNotification extends Notification implements ShouldQueue
     {
         return [
             'training_id' => $this->training->id,
-            'training_examination_report' => $this->report->id
+            'training_examination_report' => $this->report->id,
         ];
     }
 }

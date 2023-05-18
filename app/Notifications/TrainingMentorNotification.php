@@ -2,15 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Http\Controllers\TrainingController;
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\TrainingMail;
-use App\Models\Training;
 use App\Models\Area;
+use App\Models\Training;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class TrainingMentorNotification extends Notification implements ShouldQueue
 {
@@ -21,8 +19,7 @@ class TrainingMentorNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param Training $training
-     * @param string $key
+     * @param  string  $key
      */
     public function __construct(Training $training)
     {
@@ -48,19 +45,19 @@ class TrainingMentorNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
         $textLines = [
-            "It's your turn! You've been assigned a mentor for you training: ".$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.'.',
-            "Your mentor is: **".$this->training->getInlineMentors()."**. You can contact them through the message system at forums or search them up on [Discord](".Setting::get('linkDiscord').").",
-            "If you do not contact your mentor within 7 days, your training request will be closed and you lose the place in the queue.",
+            "It's your turn! You've been assigned a mentor for you training: " . $this->training->getInlineRatings() . ' in ' . Area::find($this->training->area_id)->name . '.',
+            'Your mentor is: **' . $this->training->getInlineMentors() . '**. You can contact them through the message system at forums or search them up on [Discord](' . Setting::get('linkDiscord') . ').',
+            'If you do not contact your mentor within 7 days, your training request will be closed and you lose the place in the queue.',
         ];
 
         $area = Area::find($this->training->area_id);
-        if(isset($area->template_newmentor)){
+        if (isset($area->template_newmentor)) {
             $textLines[] = $area->template_newmentor;
         }
 
         $contactMail = $area->contact;
+
         return (new TrainingMail('Training Mentor Assigned', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email, $this->training->user->name);
     }

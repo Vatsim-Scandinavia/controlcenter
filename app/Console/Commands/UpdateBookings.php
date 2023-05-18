@@ -3,10 +3,7 @@
 namespace App\Console\Commands;
 
 use DB;
-use App\Models\Position;
-use App\Models\Booking;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Auth\User;
 
 class UpdateBookings extends Command
 {

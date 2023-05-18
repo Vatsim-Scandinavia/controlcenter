@@ -23,7 +23,6 @@ class CreatePermissionsTable extends Migration
             $table->unsignedBigInteger('inserted_by')->nullable();
             $table->timestamps();
         });
-        
     }
 
     /**

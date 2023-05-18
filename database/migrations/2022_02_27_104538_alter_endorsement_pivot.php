@@ -23,37 +23,32 @@ class AlterEndorsementPivot extends Migration
         });
 
         Schema::create('endorsement_position', function (Blueprint $table) {
-
             $table->unsignedBigInteger('endorsement_id');
             $table->unsignedBigInteger('position_id');
 
             $table->foreign('endorsement_id')->references('id')->on('endorsements')->onDelete('cascade');
             $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
-
         });
 
         Schema::create('area_endorsement', function (Blueprint $table) {
             $table->unsignedInteger('area_id');
             $table->unsignedBigInteger('endorsement_id');
-            
+
             $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
             $table->foreign('endorsement_id')->references('id')->on('endorsements')->onDelete('cascade');
         });
 
         // Re-create the MAE endorsements from pre-upgrade
         $trainings = \App\Models\Training::where('status', -1)->get();
-        
-        foreach($trainings as $training){
 
-            if(\App\Models\TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()){
-
-                foreach($training->ratings as $rating){
-                    if($rating->vatsim_rating == null){
-
+        foreach ($trainings as $training) {
+            if (\App\Models\TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()) {
+                foreach ($training->ratings as $rating) {
+                    if ($rating->vatsim_rating == null) {
                         $endorsement = new \App\Models\Endorsement();
                         $endorsement->user_id = $training->user->id;
-                        $endorsement->type = "MASC";
-                        if(isset($training->closed_at)){
+                        $endorsement->type = 'MASC';
+                        if (isset($training->closed_at)) {
                             $endorsement->valid_from = $training->closed_at->format('Y-m-d H:i:s');
                         } else {
                             $endorsement->valid_from = now()->format('Y-m-d H:i:s');
@@ -63,11 +58,9 @@ class AlterEndorsementPivot extends Migration
                         $endorsement->save();
 
                         $endorsement->ratings()->save(\App\Models\Rating::find($rating->id));
-                        
                     }
                 }
             }
-
         }
     }
 

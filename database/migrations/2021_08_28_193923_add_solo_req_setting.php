@@ -14,7 +14,7 @@ class AddSoloReqSetting extends Migration
     public function up()
     {
         DB::table(Config::get('settings.table'))->insert([
-            ['key' => "trainingSoloRequirement", 'value' => "The student has passed the requirements to gain a solo endorsement."],
+            ['key' => 'trainingSoloRequirement', 'value' => 'The student has passed the requirements to gain a solo endorsement.'],
         ]);
     }
 

@@ -12,7 +12,6 @@ use Tests\TestCase;
 
 class FilesTest extends TestCase
 {
-
     use WithFaker, RefreshDatabase;
 
     /**
@@ -124,5 +123,4 @@ class FilesTest extends TestCase
 
         $this->actingAs($otherUser)->delete(route('file.delete', ['file' => $file_id]))->assertStatus(403)->assertSessionMissing('message');
     }
-
 }

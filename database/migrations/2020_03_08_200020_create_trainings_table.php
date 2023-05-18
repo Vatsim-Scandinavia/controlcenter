@@ -17,7 +17,7 @@ class CreateTrainingsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->tinyInteger('type')->default(1)->comment('1=Standard, 2=Refresh, 3=Transfer, 4=Fast Track, 5=Familiarisation');
-            $table->tinyInteger('status')->default(0)->comment("-4: Closed by system, -3: Closed on student’s request, -2: Closed on TA request, -1: Completed, 0: In queue, 1: Pre-training, 2: Active training, 3: Awaiting exam");
+            $table->tinyInteger('status')->default(0)->comment('-4: Closed by system, -3: Closed on student’s request, -2: Closed on TA request, -1: Completed, 0: In queue, 1: Pre-training, 2: Active training, 3: Awaiting exam');
             $table->unsignedInteger('country_id');
             $table->text('notes')->nullable();
             $table->text('motivation');

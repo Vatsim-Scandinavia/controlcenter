@@ -2,17 +2,16 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use App\Models\User;
+use App\Exceptions\PolicyMissingException;
 use App\Models\Handover;
 use App\Models\Training;
-use App\Exceptions\PolicyMissingException;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class UserUnitTest extends TestCase
 {
-
     use WithFaker, RefreshDatabase;
 
     private $user;
@@ -47,7 +46,7 @@ class UserUnitTest extends TestCase
     {
         $firstName = $this->faker->firstName;
         $lastName = $this->faker->lastName;
-        $name = $firstName . " " . $lastName;
+        $name = $firstName . ' ' . $lastName;
 
         $handover = $this->user->handover;
         $handover->first_name = $firstName;
@@ -64,7 +63,6 @@ class UserUnitTest extends TestCase
         $this->user->can('view', $training)
             ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))
             : $this->assertFalse($this->user->viewableModels('\App\Models\Training')->contains($training));
-
     }
 
     /** @test */
@@ -85,6 +83,4 @@ class UserUnitTest extends TestCase
 
         $this->user->viewableModels('\App\Test');
     }
-
-
 }

@@ -3,35 +3,32 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Endorsement;
 use App\Models\User;
 
 class RatingController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $data = collect();
-        
-        foreach(User::has('endorsements')->get() as $user){
-            
+
+        foreach (User::has('endorsements')->get() as $user) {
             $publishUser = false;
             $ratings = collect();
 
-            foreach($user->endorsements->where('type', 'MASC') as $endorsement){
-                $ratings->push($endorsement->ratings->pluck('name')->implode(""));
+            foreach ($user->endorsements->where('type', 'MASC') as $endorsement) {
+                $ratings->push($endorsement->ratings->pluck('name')->implode(''));
                 $publishUser = true;
             }
 
-            if($publishUser){
+            if ($publishUser) {
                 $data->push([
                     'user_id' => $user->id,
                     'user_atc_active' => boolval($user->handover->atc_active),
                     'ratings' => $ratings,
                 ]);
             }
-
         }
 
-        return response()->json(["data"=> $data->values()], 200);
+        return response()->json(['data' => $data->values()], 200);
     }
 }

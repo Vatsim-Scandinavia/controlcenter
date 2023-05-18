@@ -23,8 +23,6 @@ class CreateSoloEndorsementsTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
-
-            
         });
     }
 

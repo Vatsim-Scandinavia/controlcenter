@@ -2,10 +2,7 @@
 
 namespace Database\Factories;
 
-use Carbon\Carbon;
 use App\Models\Area;
-use App\Models\User;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AreaFactory extends Factory
@@ -26,7 +23,7 @@ class AreaFactory extends Factory
     {
         return [
             'name' => $this->faker->country(),
-            'contact' => $this->faker->email()
+            'contact' => $this->faker->email(),
         ];
     }
 }

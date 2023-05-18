@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use Illuminate\Notifications\Notification;
-use App\Models\User;
 use App\Models\Area;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Notifications\Notification;
 
 class NotificationPolicy
 {
@@ -14,7 +14,6 @@ class NotificationPolicy
     /**
      * Determine if the user can modify notification templates
      *
-     * @param User $user
      * @return bool
      */
     public function viewTemplates(User $user)
@@ -25,7 +24,6 @@ class NotificationPolicy
     /**
      * Determine if the user can modify a specific area's templates
      *
-     * @param User $user
      * @return bool
      */
     public function modifyAreaTemplate(User $user, Area $area)

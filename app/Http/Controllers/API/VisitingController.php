@@ -3,23 +3,21 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Endorsement;
 
 class VisitingController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $data = collect();
 
-        foreach(Endorsement::where('type', 'VISITING')->where('revoked', false)->get() as $endorsement){
-
+        foreach (Endorsement::where('type', 'VISITING')->where('revoked', false)->get() as $endorsement) {
             $areas = collect();
-            foreach($endorsement->areas as $area){
-
+            foreach ($endorsement->areas as $area) {
                 $maes = collect();
-                foreach($area->ratings->whereNull('vatsim_rating') as $r){
-                    foreach($endorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement){
-                        if($r->id == $mascEndorsement->ratings->first()->id){
+                foreach ($area->ratings->whereNull('vatsim_rating') as $r) {
+                    foreach ($endorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement) {
+                        if ($r->id == $mascEndorsement->ratings->first()->id) {
                             $maes->push($r->name);
                         }
                     }
@@ -40,8 +38,8 @@ class VisitingController extends Controller
         }
 
         // Sort alphabetically the table
-        $data = $data->sortBy("first_name");
+        $data = $data->sortBy('first_name');
 
-        return response()->json(["data"=> $data->values()], 200);
+        return response()->json(['data' => $data->values()], 200);
     }
 }

@@ -2,16 +2,14 @@
 
 namespace App\Policies;
 
-use App\Models\OneTimeLink;
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\Area;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
-use App\Models\Area;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
-use anlutro\LaravelSettings\Facade as Setting;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Config;
 
 class TrainingPolicy
@@ -21,8 +19,6 @@ class TrainingPolicy
     /**
      * Determine whether the user can view the training.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function view(User $user, Training $training)
@@ -35,8 +31,6 @@ class TrainingPolicy
     /**
      * Determine whether the user can update the training.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function update(User $user, Training $training)
@@ -48,8 +42,6 @@ class TrainingPolicy
     /**
      * Determine whether the user can delete the training.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function delete(User $user, Training $training)
@@ -60,8 +52,6 @@ class TrainingPolicy
     /**
      * Determine whether the user can close the training.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Training  $training
      * @return bool
      */
     public function close(User $user, Training $training)
@@ -72,42 +62,44 @@ class TrainingPolicy
     /**
      * Check whether the given user is allowed to apply for training
      *
-     * @param User $user
      * @return Illuminate\Auth\Access\Response
      */
     public function apply(User $user)
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
         $divisionName = Config::get('app.owner');
-        
+
         // Global setting if trainings are enabled
-        if(!Setting::get('trainingEnabled'))
-            return Response::deny("We are currently not accepting new training requests");
+        if (! Setting::get('trainingEnabled')) {
+            return Response::deny('We are currently not accepting new training requests');
+        }
 
         // Only users within our subdivision should be allowed to apply
-        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
-            $subdiv = "none";
-            if(isset($user->handover->subdivision)) $subdiv = $user->handover->subdivision;
-            return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to ".$subdiv);
+        if (! in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
+            $subdiv = 'none';
+            if (isset($user->handover->subdivision)) {
+                $subdiv = $user->handover->subdivision;
+            }
+
+            return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to " . $subdiv);
         }
 
         // Don't accept while user waits for rating upgrade or it's been less than 7 days
-        if($user->hasRecentlyCompletedTraining()){
-            return Response::deny("Please wait 7 days after completed training to request a new training.");
+        if ($user->hasRecentlyCompletedTraining()) {
+            return Response::deny('Please wait 7 days after completed training to request a new training.');
         }
 
         // Not active users are forced to ask for a manual creation of refresh
-        if(!$user->hasActiveTrainings(true) && $user->rating > 1 && !$user->active){
+        if (! $user->hasActiveTrainings(true) && $user->rating > 1 && ! $user->active) {
             return Response::deny("Your ATC rating is inactive in {$divisionName}");
         }
 
-        return !$user->hasActiveTrainings(true) ? Response::allow() : Response::deny("You have an active training request");
+        return ! $user->hasActiveTrainings(true) ? Response::allow() : Response::deny('You have an active training request');
     }
 
     /**
      * Check if the user has access to frontend of creationg a manual training request
      *
-     * @param User $user
      * @return bool
      */
     public function create(User $user)
@@ -116,16 +108,14 @@ class TrainingPolicy
     }
 
     /**
-     * Check if the user has access to store a training manually 
+     * Check if the user has access to store a training manually
      *
-     * @param User $user
      * @return bool
      */
     public function store(User $user, $data)
     {
-
         // If user_id is not set, it's the Auth:login's user that is recorded, which we allow as people can make their own trainings
-        if(!isset($data['user_id'])){
+        if (! isset($data['user_id'])) {
             return true;
         }
 
@@ -135,7 +125,6 @@ class TrainingPolicy
     /**
      * Check if the user has access to edit a training details
      *
-     * @param User $user
      * @return bool
      */
     public function edit(User $user, Training $training)
@@ -146,9 +135,8 @@ class TrainingPolicy
     /**
      * Determines whether the user can access the training reports associated with the training
      *
-     * @param User $user
-     * @param Training $training
      * @return bool
+     *
      * @deprecated Since v2.0.3. Please use Training Report policy directly.
      */
     public function viewReports(User $user, Training $training)
@@ -159,9 +147,8 @@ class TrainingPolicy
     /**
      * Determines whether the user can create a training report for a given training
      *
-     * @param User $user
-     * @param Training $training
      * @return bool
+     *
      * @deprecated Since v2.0.3. Please use Training Report policy directly.
      */
     public function createReport(User $user, Training $training)
@@ -172,9 +159,8 @@ class TrainingPolicy
     /**
      * Determine whether the user can create a training examination for a given training
      *
-     * @param User $user
-     * @param Training $training
      * @return bool
+     *
      * @deprecated Since v2.0.3. Please use Training Examination policy directly.
      */
     public function createExamination(User $user, Training $training)
@@ -182,12 +168,13 @@ class TrainingPolicy
         return $user->can('create', [TrainingExamination::class, $training]);
     }
 
-    public function viewActiveRequests(User $user) {
+    public function viewActiveRequests(User $user)
+    {
         return $user->isModeratorOrAbove();
     }
 
-    public function viewHistoricRequests(User $user) {
+    public function viewHistoricRequests(User $user)
+    {
         return $user->isModeratorOrAbove();
     }
-
 }

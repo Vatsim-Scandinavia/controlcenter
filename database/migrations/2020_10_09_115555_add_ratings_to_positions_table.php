@@ -14,12 +14,11 @@ class AddRatingsToPositionsTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('positions', 'rating'))
-        {
+        if (! Schema::hasColumn('positions', 'rating')) {
             Schema::table('positions', function (Blueprint $table) {
                 $table->unsignedInteger('rating');
             });
-    
+
             // Denmark
             DB::table('positions')->where('callsign', 'EKAH_APP')->update(['rating' => 4]);
             DB::table('positions')->where('callsign', 'EKAH_TWR')->update(['rating' => 3]);
@@ -446,4 +445,3 @@ class AddRatingsToPositionsTable extends Migration
         });
     }
 }
-

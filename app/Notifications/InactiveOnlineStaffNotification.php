@@ -4,23 +4,27 @@ namespace App\Notifications;
 
 use App\Mail\StaffNoticeMail;
 use App\Models\Endorsement;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use anlutro\LaravelSettings\Facade as Setting;
-use Carbon\Carbon;
 
 class InactiveOnlineStaffNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private $sendTo, $user, $position, $logonTime;
+    private $sendTo;
+
+    private $user;
+
+    private $position;
+
+    private $logonTime;
 
     /**
      * Create a new notification instance.
      *
-     * @param Endorsement $endorsement
+     * @param  Endorsement  $endorsement
      */
     public function __construct($sendTo, $user, $position, $logonTime)
     {
@@ -50,9 +54,9 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
     public function toMail($notifiable)
     {
         $textLines = [
-            $this->user->name.' ('.$this->user->id.') has been warned for logging on the network with an **inactive** ATC status.',
-            'Position: '.$this->position,
-            'Logon time: '.Carbon::parse($this->logonTime)->toEuropeanDateTime(),
+            $this->user->name . ' (' . $this->user->id . ') has been warned for logging on the network with an **inactive** ATC status.',
+            'Position: ' . $this->position,
+            'Logon time: ' . Carbon::parse($this->logonTime)->toEuropeanDateTime(),
             'All admins and moderators in area in question has been notified.',
         ];
 
