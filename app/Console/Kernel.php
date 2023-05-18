@@ -57,8 +57,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('clean:logs')
             ->daily();
 
+        // Daily fetch updated member data from OAuth provider
+        $schedule->command('update:member:data')
+            ->daily();
+
         // Automaticaly clean memebers and trainings no longer eligble
-        $schedule->command('update:members')
+        $schedule->command('update:member:details')
             ->dailyAt('05:00');
 
         // Update ATC hours and active status
