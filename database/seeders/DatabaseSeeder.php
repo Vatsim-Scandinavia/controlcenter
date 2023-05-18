@@ -99,7 +99,7 @@ class DatabaseSeeder extends Seeder
                 'region' => "EMEA",
                 'division' => "EUD",
                 'subdivision' => "SCA",
-                ])->groups()->attach(Group::find($group), ['area_id' => 1]);
+            ])->groups()->attach(Group::find($group), ['area_id' => 1]);
         }
 
         // Create random Scandinavian users
