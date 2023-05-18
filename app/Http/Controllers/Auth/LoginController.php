@@ -98,8 +98,7 @@ class LoginController extends Controller
             !$data['rating'] ||
             !$data['rating_short'] ||
             !$data['rating_long'] ||
-            !$data['region'] ||
-            !$data['division']
+            !$data['region']
         ) {
             return redirect()->route('front')->withError("Missing data from sign-in request. You need to grant all permissions.");
         }
