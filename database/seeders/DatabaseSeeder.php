@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Helpers\FactoryHelper;
 use App\Models\User;
 use App\Models\Group;
-use App\Models\Handover;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\TrainingExamination;
@@ -91,10 +90,6 @@ class DatabaseSeeder extends Seeder
 
             User::factory()->create([
                 'id' => 10000000 + $i,
-            ])->groups()->attach(Group::find($group), ['area_id' => 1]);
-
-            Handover::factory()->create([
-                'id' => 10000000 + $i,
                 'email' => $email,
                 'first_name' => $name_first,
                 'last_name' => $name_last,
@@ -104,15 +99,12 @@ class DatabaseSeeder extends Seeder
                 'region' => "EMEA",
                 'division' => "EUD",
                 'subdivision' => "SCA",
-            ]);
+                ])->groups()->attach(Group::find($group), ['area_id' => 1]);
         }
 
         // Create random Scandinavian users
         for ($i = 12; $i <= 125; $i++) {
             User::factory()->create([
-                'id' => 10000000 + $i,
-            ]);
-            Handover::factory()->create([
                 'id' => 10000000 + $i,
                 'region' => "EMEA",
                 'division' => "EUD",
@@ -123,9 +115,6 @@ class DatabaseSeeder extends Seeder
         // Create random users
         for ($i = 126; $i <= 250; $i++) {
             User::factory()->create([
-                'id' => 10000000 + $i,
-            ]);
-            Handover::factory()->create([
                 'id' => 10000000 + $i,
             ]);
         }
