@@ -1,9 +1,8 @@
+---
 name: Linting
 
 on:
   push:
-    branches:
-      - '*'
 
 jobs:
   linting:
@@ -15,7 +14,7 @@ jobs:
         path: .
 
     - name: Setup dependenices
-      uses: .github/actions/setup-dependencies
+      uses: ./.github/actions/setup-dependencies
       with:
         path: .
 
