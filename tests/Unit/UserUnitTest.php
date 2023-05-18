@@ -21,14 +21,14 @@ class UserUnitTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create(['id' => 10000000]);
-        $this->user->handover = Handover::factory()->make(['id' => 10000000]);
+        $this->user = Handover::factory()->make(['id' => 10000000]);
     }
 
     /** @test */
     public function user_can_have_a_first_name()
     {
         $name = $this->faker->firstName;
-        $this->user->handover->first_name = $name;
+        $this->user->first_name = $name;
 
         $this->assertEquals($name, $this->user->first_name);
     }
@@ -37,7 +37,7 @@ class UserUnitTest extends TestCase
     public function user_can_have_a_last_name()
     {
         $name = $this->faker->lastName;
-        $this->user->handover->last_name = $name;
+        $this->user->last_name = $name;
 
         $this->assertEquals($name, $this->user->last_name);
     }
@@ -49,7 +49,7 @@ class UserUnitTest extends TestCase
         $lastName = $this->faker->lastName;
         $name = $firstName . " " . $lastName;
 
-        $handover = $this->user->handover;
+        $handover = $this->user;
         $handover->first_name = $firstName;
         $handover->last_name = $lastName;
 
