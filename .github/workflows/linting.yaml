@@ -1,0 +1,23 @@
+---
+name: Linting
+
+on:
+  push:
+
+jobs:
+  lint-formatting:
+    name: Lint formatting
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Control Center
+      uses: actions/checkout@v3
+      with:
+        path: .
+
+    - name: Setup dependenices
+      uses: ./.github/actions/setup-dependencies
+      with:
+        path: .
+
+    - name: Check for incorrect formatting
+      run: ./vendor/bin/pint --test
