@@ -2,13 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
-use App\Models\Endorsement;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\VatsimRating;
 use App\Models\Endorsement;
-use App\Models\Handover;
 use App\Models\User;
 use App\Notifications\InactivityNotification;
 use Illuminate\Console\Command;

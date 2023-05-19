@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;

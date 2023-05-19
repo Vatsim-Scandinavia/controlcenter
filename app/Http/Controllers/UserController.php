@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
 use Carbon\Carbon;
+use App\Models\AtcActivity;
+use App\Models\Group;
+use App\Models\Handover;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -113,7 +117,7 @@ class UserController extends Controller
 
             $count = 0;
             foreach($data as $user) {
-                if ($count >= 10)
+                if ($count >= 10) {
                     break;
                 }
 

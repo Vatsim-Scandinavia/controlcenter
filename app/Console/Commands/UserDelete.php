@@ -2,10 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use App\Notifications\TrainingClosedNotification;
-use App\Models\User;
 use App\Models\Training;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;

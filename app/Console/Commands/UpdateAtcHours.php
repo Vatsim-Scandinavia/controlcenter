@@ -6,6 +6,8 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Helpers\Vatsim;
+use App\Models\AtcActivity;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
