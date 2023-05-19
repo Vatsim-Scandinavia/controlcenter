@@ -9,16 +9,12 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     /**
-    * Configures the default list of transactioned connections to include
-    * the mandatory, tightly coupled Handover connection.
-    *
-    * @todo Remove along with tightly coupled Handover database connection.
+    * Configures the default list of transactioned connections
     **/
     protected function connectionsToTransact()
     {
         return [
-            config('database.default'),
-            config('database.handover')
+            config('database.default')
         ];
     }
 }

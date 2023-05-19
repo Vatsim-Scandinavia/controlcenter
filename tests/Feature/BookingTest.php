@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\Endorsement;
-use App\Models\Handover;
 use App\Models\Position;
 use App\Models\User;
 use Carbon\Carbon;

@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Handover;
 use App\Models\Training;
 use App\Exceptions\PolicyMissingException;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -48,9 +47,9 @@ class UserUnitTest extends TestCase
         $lastName = $this->faker->lastName;
         $name = $firstName . " " . $lastName;
 
-        $handover = $this->user;
-        $handover->first_name = $firstName;
-        $handover->last_name = $lastName;
+        $user = $this->user;
+        $user->first_name = $firstName;
+        $user->last_name = $lastName;
 
         $this->assertEquals($name, $this->user->name);
     }
