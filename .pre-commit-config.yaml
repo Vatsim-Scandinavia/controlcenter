@@ -1,0 +1,26 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-added-large-files
+  - repo: local
+    hooks:
+    - id: composer
+      name: Ensure Composer is valid
+      description: Runs Composer to validate configuration
+      language: script
+      entry: /bin/sh
+      args: [-c, "composer validate"]
+      files: composer.*
+    - id: pint
+      name: Check formatting (PHP)
+      description: Runs Laravel Pint to automatically fix formatting issues.
+      language: script
+      entry: /bin/sh
+      args: [-c, "([ -f ./vendor/bin/pint ] || composer install) && ./vendor/bin/pint -v"]
+      types: [php]
