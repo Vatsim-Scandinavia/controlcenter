@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
@@ -46,23 +45,6 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token'
     ];
-
-    /**
-     * Link to handover data
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     * @throws MissingHandoverObjectException
-     */
-    public function handover()
-    {
-        $handover = $this->hasOne(Handover::class, 'id');
-
-        if ($handover->first() == null) {
-            throw new MissingHandoverObjectException($this->id);
-        }
-
-        return $handover;
-    }
 
     /**
      * Relationship of all permissions to this user
@@ -172,7 +154,7 @@ class User extends Authenticatable
      * Fetch members that are active as ATC.
      *
      * @param array $userIds
-     * @return EloquentCollection<Handover>
+     * @return EloquentCollection<User>
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
@@ -189,7 +171,7 @@ class User extends Authenticatable
     /**
      * Fetch members with a rating that are in our subdivision
      * @param array $userIds
-     * @return EloquentCollection<Handover>
+     * @return EloquentCollection<User>
      */
     public static function getRatedMembers(array $userIds = [])
     {

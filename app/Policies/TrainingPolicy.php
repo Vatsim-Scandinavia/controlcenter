@@ -85,9 +85,9 @@ class TrainingPolicy
             return Response::deny("We are currently not accepting new training requests");
 
         // Only users within our subdivision should be allowed to apply
-        if (!in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
+        if (!in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
             $subdiv = "none";
-            if(isset($user->handover->subdivision)) $subdiv = $user->handover->subdivision;
+            if(isset($user->subdivision)) $subdiv = $user->subdivision;
             return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to ".$subdiv);
         }
 
