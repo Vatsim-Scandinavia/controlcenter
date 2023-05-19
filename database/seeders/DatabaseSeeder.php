@@ -4,16 +4,11 @@ namespace Database\Seeders;
 
 use App\Helpers\FactoryHelper;
 use App\Models\Endorsement;
-use App\Models\Endorsement;
 use App\Models\Group;
 use App\Models\Position;
 use App\Models\Rating;
-use App\Models\Rating;
-use App\Models\Training;
 use App\Models\Training;
 use App\Models\TrainingExamination;
-use App\Models\TrainingExamination;
-use App\Models\TrainingReport;
 use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
