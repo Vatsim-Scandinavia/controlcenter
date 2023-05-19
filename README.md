@@ -7,6 +7,12 @@ The project is open source and contains some restirctions. Read the [LICENSE.md]
 
 ![2022-05-22 12_42_15-Dashboard _ Control Center and 11 more pages - Personal - Microsoft​ Edge](https://user-images.githubusercontent.com/2505044/169692486-50ca8cb6-54a4-41a7-a18d-13a329234d30.png)
 
+## Migrating from 3.x to 4.0 (TODO)
+- If you use Handover as data source, do not erase the database config from your .env
+- Run the migration, this will copy over the required data fields from Handover so CC can run on it's own
+- You may now remove the `DB_HANDOVER_*` environment settings as it'll no longer be used.
+
+Note: Data pull won't work because missing access tokens etcetcetc....
 
 ## Prerequisites
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.

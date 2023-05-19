@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Area;
-use App\Models\Handover;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -97,7 +96,7 @@ class UserController extends Controller
         $query = $request->get('query');
 
         if (strlen($query) >= 2) {
-            $data = Handover::query()
+            $data = User::query()
                 ->select('id')
                 ->where(DB::raw('LOWER(id)'), 'like', '%'.strtolower($query).'%')
                 ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%'.strtolower($query).'%')
@@ -110,11 +109,10 @@ class UserController extends Controller
             $authUser = Auth::user();
 
             $count = 0;
-            foreach($data as $handover) {
+            foreach($data as $user) {
                 if ($count >= 10)
                     break;
 
-                $user = $handover->user;
                 if ($authUser->can('view', $user)) {
                     $output[] = ['id' => $user->id, 'name' => $user->name];
                     $count++;

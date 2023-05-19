@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -34,7 +34,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'id', 'last_login'
+        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'last_login', 'access_token', 'refresh_token', 'token_expires'
     ];
 
     /**
@@ -45,23 +45,6 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token'
     ];
-
-    /**
-     * Link to handover data
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     * @throws MissingHandoverObjectException
-     */
-    public function handover()
-    {
-        $handover = $this->hasOne(Handover::class, 'id');
-
-        if ($handover->first() == null) {
-            throw new MissingHandoverObjectException($this->id);
-        }
-
-        return $handover;
-    }
 
     /**
      * Relationship of all permissions to this user
@@ -141,70 +124,69 @@ class User extends Authenticatable
         return ($atcHoursDB == null) ? null : $atcHoursDB->hours;
     }
 
-    // Get properties from Handover, the variable names here break with the convention.
-    public function getLastNameAttribute()
-    {
-        return $this->handover->last_name;
-    }
-
-    public function getFirstNameAttribute()
-    {
-        return $this->handover->first_name;
-    }
-
     public function getNameAttribute()
     {
         return $this->first_name . " " . $this->last_name;
     }
 
-    public function getEmailAttribute()
+    /**
+     * @todo: Convert to to new v9.x+ mutators https://laravel.com/docs/9.x/eloquent-mutators
+     */
+    public function getEmailAttribute($value)
     {
         if($this->setting_workmail_address){
             return $this->setting_workmail_address;
         }
 
-        return $this->handover->email;
-    }
-
-    /**
-     * The VATSIM rating value of a given user.
-     *
-     * @todo Return @{VatsimRating} instead of integer?
-     */
-    public function getRatingAttribute(): int
-    {
-        return $this->handover->rating;
-    }
-
-    public function getRatingShortAttribute()
-    {
-        return $this->handover->rating_short;
-    }
-
-    public function getRatingLongAttribute()
-    {
-        return $this->handover->rating_long;
-    }
-
-    public function getDivisionAttribute(){
-        return $this->handover->division;
-    }
-
-    public function getSubdivisionAttribute(){
-        return $this->handover->subdivision;
-    }
-
-    public function getCountryAttribute(){
-        return $this->handover->country;
+        return $value;
     }
 
     public function getActiveAttribute(){
-        $val = $this->handover->atc_active;
+        $val = $this->atc_active;
 
         if ($val == null)
             return false;
 
         return $val;
+    }
+
+    /**
+     * Fetch members that are active as ATC.
+     *
+     * @param array $userIds
+     * @return EloquentCollection<User>
+     */
+    public static function getActiveAtcMembers(array $userIds = [])
+    {
+        // Return S1+ users who are VATSCA members
+        if (!empty($userIds)) {
+            return User::whereIn('id', $userIds)
+                ->where('atc_active', true)
+                ->get();
+        } else {
+            return User::where('atc_active', true)->get();
+        }
+    }
+
+    /**
+     * Fetch members with a rating that are in our subdivision
+     * @param array $userIds
+     * @return EloquentCollection<User>
+     */
+    public static function getRatedMembers(array $userIds = [])
+    {
+        // Return S1+ users who are VATSCA members
+        if (!empty($userIds)) {
+            return User::whereIn('id', $userIds)
+                ->where('rating', '>=', VatsimRating::S1)
+                ->where('subdivision', Config::get('app.owner_short'))
+                ->get();
+        } else {
+            return User::where([
+                ['rating', '>=', VatsimRating::S1],
+                ['subdivision', '=', Config::get('app.owner_short')]
+            ])->get();
+        }
     }
 
     /**

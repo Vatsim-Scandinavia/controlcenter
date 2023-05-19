@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\Training;
-use App\Models\Handover;
 use App\Models\AtcActivity;
 
 
@@ -50,10 +48,9 @@ return new class extends Migration
                 ]);
             }
 
-            // Set user as active in Handover
-            $handoverUser = Handover::find($training->user_id);
-            $handoverUser->atc_active = true;
-            $handoverUser->save();
+            // Set user as active
+            $training->user->atc_active = true;
+            $training->user->save();
         }
 
         Schema::drop('atc_activity');

@@ -91,7 +91,7 @@ return [
         'mysql-handover' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HANDOVER_HOST', '127.0.0.1'),
+            'host' => env('DB_HANDOVER_HOST'),
             'port' => env('DB_HANDOVER_PORT', '3306'),
             'database' => env('DB_HANDOVER_DATABASE', 'forge'),
             'username' => env('DB_HANDOVER_USERNAME', 'forge'),
