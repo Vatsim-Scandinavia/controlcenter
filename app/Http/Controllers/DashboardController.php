@@ -43,8 +43,8 @@ class DashboardController extends Controller
         if(empty($subdivision)) $subdivision = "No subdivision";
 
         $data = [
-            'rating' => $user->ratingLong,
-            'rating_short' => $user->ratingShort,
+            'rating' => $user->rating_long,
+            'rating_short' => $user->rating_short,
             'division' => $user->division,
             'subdivision' => $subdivision,
             'report' => $report
