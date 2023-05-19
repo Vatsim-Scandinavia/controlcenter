@@ -322,7 +322,7 @@ class TrainingController extends Controller
 
             // Sorting algorithm
             if ($aSort == $bSort) {
-                return ($a->id > $b->id) ? -1 : 1;
+                return (is_a($a, '\App\Models\TrainingExamination')) ? -1 : 1;
             }
 
             return ($aSort > $bSort) ? -1 : 1;

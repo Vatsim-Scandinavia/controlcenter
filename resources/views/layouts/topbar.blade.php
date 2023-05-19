@@ -66,6 +66,10 @@
                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                 My details
             </a>
+            <a class="dropdown-item" href="{{ route('user.reports', Auth::user()->id) }}">
+                <i class="fas fa-file fa-sm fa-fw mr-2 text-gray-400"></i>
+                My reports
+            </a>
             <a class="dropdown-item" href="{{ route('user.settings') }}">
                 <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                 Settings

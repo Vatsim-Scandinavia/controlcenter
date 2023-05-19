@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\TrainingReport;
+use App\Models\TrainingExamination;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
@@ -272,6 +274,35 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->intended(route('user.settings'))->withSuccess('Settings successfully changed');
+    }
+
+    /**
+     * Display a listing of user's settings
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function reports(Request $request, User $user)
+    {
+        $this->authorize('viewReports', $user);
+
+        $examinations = TrainingExamination::where('examiner_id', $user->id)->get();
+        $reports = TrainingReport::where('written_by_id', $user->id)->get();
+
+        $reportsAndExams = collect($reports)->merge($examinations);
+        $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
+            // Define the correct date to sort by model type is report or exam
+            is_a($a, '\App\Models\TrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
+            is_a($b, '\App\Models\TrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
+
+            // Sorting algorithm
+            if ($aSort == $bSort) {
+                return (is_a($a, '\App\Models\TrainingExamination')) ? -1 : 1;
+            }
+
+            return ($aSort > $bSort) ? -1 : 1;
+        });
+
+        return view('user.reports', compact('user', 'reportsAndExams'));
     }
 
     /**
