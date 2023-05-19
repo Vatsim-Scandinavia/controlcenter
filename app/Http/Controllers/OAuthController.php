@@ -46,6 +46,25 @@ class OAuthController extends GenericProvider
         }
     }
 
+    public static function mapOAuthProperties($response){
+
+        $data = [
+            'id' => OAuthController::getOAuthProperty(config('oauth.mapping_cid'), $response),
+            'email' => OAuthController::getOAuthProperty(config('oauth.mapping_mail'), $response),
+            'first_name' => OAuthController::getOAuthProperty(config('oauth.mapping_first_name'), $response),
+            'last_name' => OAuthController::getOAuthProperty(config('oauth.mapping_last_name'), $response),
+            'rating' => OAuthController::getOAuthProperty(config('oauth.mapping_rating'), $response),
+            'rating_short' => OAuthController::getOAuthProperty(config('oauth.mapping_rating_short'), $response),
+            'rating_long' => OAuthController::getOAuthProperty(config('oauth.mapping_rating_long'), $response),
+            'region' => OAuthController::getOAuthProperty(config('oauth.mapping_region'), $response),
+            'division' => OAuthController::getOAuthProperty(config('oauth.mapping_division'), $response),
+            'subdivision' => OAuthController::getOAuthProperty(config('oauth.mapping_subdivision'), $response),
+        ];
+
+        return $data;
+
+    }
+
     // Thanks to Moodle for this snippet
     // https://github.com/moodle/moodle/blob/48ad73619f870e4fd87240bd3c74202a300da6b2/lib/classes/oauth2/client.php#L255
     public static function getOAuthProperty($property, $data)

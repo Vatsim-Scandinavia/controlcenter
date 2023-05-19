@@ -73,23 +73,10 @@ class LoginController extends Controller
         } catch (IdentityProviderException $e) {
             return redirect()->route('front')->withError("Authentication error: ".$e->getMessage());
         }
-        $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
-
         
-        $data = [
-            'id' => OAuthController::getOAuthProperty(config('oauth.mapping_cid'), $resourceOwner),
-            'email' => OAuthController::getOAuthProperty(config('oauth.mapping_mail'), $resourceOwner),
-            'first_name' => OAuthController::getOAuthProperty(config('oauth.mapping_first_name'), $resourceOwner),
-            'last_name' => OAuthController::getOAuthProperty(config('oauth.mapping_last_name'), $resourceOwner),
-            'rating' => OAuthController::getOAuthProperty(config('oauth.mapping_rating'), $resourceOwner),
-            'rating_short' => OAuthController::getOAuthProperty(config('oauth.mapping_rating_short'), $resourceOwner),
-            'rating_long' => OAuthController::getOAuthProperty(config('oauth.mapping_rating_long'), $resourceOwner),
-            'region' => OAuthController::getOAuthProperty(config('oauth.mapping_region'), $resourceOwner),
-            'division' => OAuthController::getOAuthProperty(config('oauth.mapping_division'), $resourceOwner),
-            'subdivision' => OAuthController::getOAuthProperty(config('oauth.mapping_subdivision'), $resourceOwner),
-        ];
+        $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
+        $data = OAuthController::mapOAuthProperties($resourceOwner);
 
-        //TODO: Check which values can be null from VATSIM
         if (
             !$data['id'] ||
             !$data['email'] ||
