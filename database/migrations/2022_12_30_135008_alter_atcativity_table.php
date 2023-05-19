@@ -1,7 +1,6 @@
 <?php
 
 use anlutro\LaravelSettings\Facade as Setting;
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\AtcActivity;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
