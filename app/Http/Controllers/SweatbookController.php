@@ -90,18 +90,18 @@ class SweatbookController extends Controller
         }
 
         if (! Sweatbook::whereBetween('start_at', [$booking->start_at, $booking->end_at])
-        ->where('date', $booking->date)
-        ->where('end_at', '!=', $booking->start_at)
-        ->where('start_at', '!=', $booking->end_at)
-        ->where('position_id', $booking->position_id)
-        ->where('id', '!=', $booking->id)
-        ->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])
-        ->where('date', $booking->date)
-        ->where('end_at', '!=', $booking->start_at)
-        ->where('start_at', '!=', $booking->end_at)
-        ->where('position_id', $booking->position_id)
-        ->where('id', '!=', $booking->id)
-        ->get()->isEmpty()) {
+            ->where('date', $booking->date)
+            ->where('end_at', '!=', $booking->start_at)
+            ->where('start_at', '!=', $booking->end_at)
+            ->where('position_id', $booking->position_id)
+            ->where('id', '!=', $booking->id)
+            ->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])
+            ->where('date', $booking->date)
+            ->where('end_at', '!=', $booking->start_at)
+            ->where('start_at', '!=', $booking->end_at)
+            ->where('position_id', $booking->position_id)
+            ->where('id', '!=', $booking->id)
+            ->get()->isEmpty()) {
             return back()->withErrors('The position is already booked for that time!')->withInput();
         }
 
@@ -155,18 +155,18 @@ class SweatbookController extends Controller
         $fullEndDate = Carbon::create($booking->date)->setTime($booking->end_at->format('H'), $booking->end_at->format('i'));
 
         if (! Sweatbook::whereBetween('start_at', [$fullStartDate, $fullEndDate])
-        ->where('date', $booking->date)
-        ->where('end_at', '!=', $booking->start_at)
-        ->where('start_at', '!=', $booking->end_at)
-        ->where('position_id', $booking->position_id)
-        ->where('id', '!=', $booking->id)
-        ->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])
-        ->where('date', $booking->date)
-        ->where('end_at', '!=', $booking->start_at)
-        ->where('start_at', '!=', $booking->end_at)
-        ->where('position_id', $booking->position_id)
-        ->where('id', '!=', $booking->id)
-        ->get()->isEmpty()) {
+            ->where('date', $booking->date)
+            ->where('end_at', '!=', $booking->start_at)
+            ->where('start_at', '!=', $booking->end_at)
+            ->where('position_id', $booking->position_id)
+            ->where('id', '!=', $booking->id)
+            ->orWhereBetween('end_at', [$booking->start_at, $booking->end_at])
+            ->where('date', $booking->date)
+            ->where('end_at', '!=', $booking->start_at)
+            ->where('start_at', '!=', $booking->end_at)
+            ->where('position_id', $booking->position_id)
+            ->where('id', '!=', $booking->id)
+            ->get()->isEmpty()) {
             return back()->withErrors('The position is already booked for that time!')->withInput();
         }
 

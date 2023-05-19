@@ -2,8 +2,6 @@
 
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,18 +12,18 @@ return new class extends Migration
      */
     public function up()
     {
-        
+
         // Lets copy data from Handover to Contol Center to make it work on it's own
 
         // Only do this if Handover is configured
-        if(config('database.connections.mysql-handover.host') && config('database.connections.mysql-handover.host') != ""){
+        if (config('database.connections.mysql-handover.host') && config('database.connections.mysql-handover.host') != '') {
             $handoverDb = DB::connection('mysql-handover');
 
             $users = User::all();
-            foreach($users as $user){
+            foreach ($users as $user) {
 
                 $handoverData = $handoverDb->select('select * from users where id = ?', [$user->id]);
-                if(!empty($handoverData)){
+                if (! empty($handoverData)) {
                     $handoverData = $handoverData[0];
 
                     $user->email = $handoverData->email;

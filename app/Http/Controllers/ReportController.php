@@ -174,9 +174,9 @@ class ReportController extends Controller
         // Fill the array
         if ($areaFilter) {
             $data = Training::select([DB::raw('count(id) as `count`'), DB::raw('DATE(created_at) as day')])->groupBy('day')
-              ->where('area_id', $areaFilter)
-              ->where('created_at', '>=', Carbon::now()->subYear(1))
-              ->get();
+                ->where('area_id', $areaFilter)
+                ->where('created_at', '>=', Carbon::now()->subYear(1))
+                ->get();
 
             foreach ($data as $entry) {
                 $dates[$entry->day]['y'] = $entry->count;
@@ -186,8 +186,8 @@ class ReportController extends Controller
                 DB::raw('count(id) as `count`'),
                 DB::raw('DATE(created_at) as day'),
             ])->groupBy('day')
-              ->where('created_at', '>=', Carbon::now()->subYear(1))
-              ->get();
+                ->where('created_at', '>=', Carbon::now()->subYear(1))
+                ->get();
 
             foreach ($data as $entry) {
                 $dates[$entry->day]['y'] = $entry->count;
@@ -200,7 +200,7 @@ class ReportController extends Controller
             array_push($payload, $load);
         }
 
-//        dd($payload);
+        //        dd($payload);
         return $payload;
     }
 
@@ -289,10 +289,10 @@ class ReportController extends Controller
                         ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
                         ->whereExists(function ($query) {
                             $query->select(DB::raw(1))
-                                  ->from('rating_training')
-                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                  ->whereColumn('rating_training.training_id', 'trainings.id')
-                                  ->whereNotNull('ratings.vatsim_rating');
+                                ->from('rating_training')
+                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                ->whereColumn('rating_training.training_id', 'trainings.id')
+                                ->whereNotNull('ratings.vatsim_rating');
                         })
                         ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'PASSED')
@@ -311,10 +311,10 @@ class ReportController extends Controller
                         ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
                         ->whereExists(function ($query) {
                             $query->select(DB::raw(1))
-                                  ->from('rating_training')
-                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                  ->whereColumn('rating_training.training_id', 'trainings.id')
-                                  ->whereNotNull('ratings.vatsim_rating');
+                                ->from('rating_training')
+                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                ->whereColumn('rating_training.training_id', 'trainings.id')
+                                ->whereNotNull('ratings.vatsim_rating');
                         })
                         ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'FAILED')
@@ -387,10 +387,10 @@ class ReportController extends Controller
                         ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
                         ->whereExists(function ($query) {
                             $query->select(DB::raw(1))
-                                  ->from('rating_training')
-                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                  ->whereColumn('rating_training.training_id', 'trainings.id')
-                                  ->whereNotNull('ratings.vatsim_rating');
+                                ->from('rating_training')
+                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                ->whereColumn('rating_training.training_id', 'trainings.id')
+                                ->whereNotNull('ratings.vatsim_rating');
                         })
                         ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'PASSED')
@@ -408,10 +408,10 @@ class ReportController extends Controller
                         ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
                         ->whereExists(function ($query) {
                             $query->select(DB::raw(1))
-                                  ->from('rating_training')
-                                  ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                  ->whereColumn('rating_training.training_id', 'trainings.id')
-                                  ->whereNotNull('ratings.vatsim_rating');
+                                ->from('rating_training')
+                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                                ->whereColumn('rating_training.training_id', 'trainings.id')
+                                ->whereNotNull('ratings.vatsim_rating');
                         })
                         ->whereIn('trainings.type', [1, 4])
                         ->where('result', 'FAILED')

@@ -37,8 +37,10 @@ class UpdateAtcActivity extends Command
         $optionalUserIdFilter = $this->argument('user');
 
         $dryRun = false;
-        if($this->option('dry-run') != null) $dryRun = true;
-        
+        if ($this->option('dry-run') != null) {
+            $dryRun = true;
+        }
+
         $activeMembers = User::getActiveAtcMembers($optionalUserIdFilter);
         $activeUsers = User::whereIn('id', $activeMembers->pluck('id'))->has('atcActivity')->with('atcActivity')->get();
 
@@ -56,7 +58,7 @@ class UpdateAtcActivity extends Command
         }
 
         // Execute updates on relevant users
-        $this->info('Making '.$usersToSetAsInactive->count().' users inactive');
+        $this->info('Making ' . $usersToSetAsInactive->count() . ' users inactive');
         User::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
         Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 

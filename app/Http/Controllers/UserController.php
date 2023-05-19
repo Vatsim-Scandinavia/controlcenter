@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
-use Carbon\Carbon;
 use App\Models\AtcActivity;
 use App\Models\Group;
-use App\Models\Handover;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -116,7 +115,7 @@ class UserController extends Controller
             $authUser = Auth::user();
 
             $count = 0;
-            foreach($data as $user) {
+            foreach ($data as $user) {
                 if ($count >= 10) {
                     break;
                 }
@@ -149,9 +148,9 @@ class UserController extends Controller
             if ($res->getStatusCode() == 200) {
                 $vatsimStats = json_decode($res->getBody(), false);
             }
-        } catch(\GuzzleHttp\Exception\RequestException $e) {
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
             return response()->json(['data' => null], 404);
-        } catch(\GuzzleHttp\Exception\ClientException $e) {
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
             return response()->json(['data' => null], 404);
         }
 

@@ -17,7 +17,7 @@ class FilePolicy
      */
     public function view(User $user, File $file)
     {
-        return  $user->isModeratorOrAbove() ||
+        return $user->isModeratorOrAbove() ||
                 $user->is($file->owner) ||
                 ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
     }

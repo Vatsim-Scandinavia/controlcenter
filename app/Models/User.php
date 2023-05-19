@@ -7,10 +7,9 @@ use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Config;
 
 class User extends Authenticatable
 {
@@ -32,7 +31,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'last_login', 'access_token', 'refresh_token', 'token_expires'
+        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'last_login', 'access_token', 'refresh_token', 'token_expires',
     ];
 
     /**
@@ -65,7 +64,7 @@ class User extends Authenticatable
         return User::whereHas('groups', function ($query) use ($groupId, $IneqSymbol) {
             $query->where('id', $IneqSymbol, $groupId);
         })
-        ->get();
+            ->get();
     }
 
     public function endorsements()
@@ -144,7 +143,8 @@ class User extends Authenticatable
         return $value;
     }
 
-    public function getActiveAttribute(){
+    public function getActiveAttribute()
+    {
         $val = $this->atc_active;
 
         if ($val == null) {
@@ -157,13 +157,12 @@ class User extends Authenticatable
     /**
      * Fetch members that are active as ATC.
      *
-     * @param array $userIds
      * @return EloquentCollection<User>
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
         // Return S1+ users who are VATSCA members
-        if (!empty($userIds)) {
+        if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
                 ->where('atc_active', true)
                 ->get();
@@ -174,13 +173,13 @@ class User extends Authenticatable
 
     /**
      * Fetch members with a rating that are in our subdivision
-     * @param array $userIds
+     *
      * @return EloquentCollection<User>
      */
     public static function getRatedMembers(array $userIds = [])
     {
         // Return S1+ users who are VATSCA members
-        if (!empty($userIds)) {
+        if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
                 ->where('rating', '>=', VatsimRating::S1)
                 ->where('subdivision', Config::get('app.owner_short'))
@@ -188,7 +187,7 @@ class User extends Authenticatable
         } else {
             return User::where([
                 ['rating', '>=', VatsimRating::S1],
-                ['subdivision', '=', Config::get('app.owner_short')]
+                ['subdivision', '=', Config::get('app.owner_short')],
             ])->get();
         }
     }

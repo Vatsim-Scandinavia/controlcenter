@@ -23,7 +23,7 @@ class TrainingPolicy
      */
     public function view(User $user, Training $training)
     {
-        return  $training->mentors->contains($user) ||
+        return $training->mentors->contains($user) ||
                 $user->isModeratorOrAbove($training->area) ||
                 $user->is($training->user);
     }
@@ -35,7 +35,7 @@ class TrainingPolicy
      */
     public function update(User $user, Training $training)
     {
-        return  $training->mentors->contains($user) ||
+        return $training->mentors->contains($user) ||
                 $user->isModeratorOrAbove($training->area);
     }
 
@@ -75,10 +75,13 @@ class TrainingPolicy
         }
 
         // Only users within our subdivision should be allowed to apply
-        if (!in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null){
-            $subdiv = "none";
-            if(isset($user->subdivision)) $subdiv = $user->subdivision;
-            return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to ".$subdiv);
+        if (! in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
+            $subdiv = 'none';
+            if (isset($user->subdivision)) {
+                $subdiv = $user->subdivision;
+            }
+
+            return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to " . $subdiv);
         }
 
         // Don't accept while user waits for rating upgrade or it's been less than 7 days

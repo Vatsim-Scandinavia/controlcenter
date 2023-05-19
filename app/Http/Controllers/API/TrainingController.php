@@ -13,22 +13,22 @@ class TrainingController extends Controller
         $data = collect();
 
         $endorsements = Endorsement::where('type', 'SOLO')
-        ->where(function ($q) {
-            $q->orWhere(function ($q2) {
-                $q2->where('expired', false)
-                ->where('revoked', false);
-            })
-            ->orWhere(function ($q2) {
-                $q2->where(function ($q3) {
-                    $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+            ->where(function ($q) {
+                $q->orWhere(function ($q2) {
+                    $q2->where('expired', false)
+                        ->where('revoked', false);
                 })
-                ->where(function ($q3) {
-                    $q3->where('expired', true)
-                    ->orWhere('revoked', true);
-                });
-            });
-        })
-        ->get();
+                    ->orWhere(function ($q2) {
+                        $q2->where(function ($q3) {
+                            $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+                        })
+                            ->where(function ($q3) {
+                                $q3->where('expired', true)
+                                    ->orWhere('revoked', true);
+                            });
+                    });
+            })
+            ->get();
 
         foreach ($endorsements as $endorsement) {
             $data->push([
@@ -50,22 +50,22 @@ class TrainingController extends Controller
         $data = collect();
 
         $endorsements = Endorsement::where('type', 'S1')
-        ->where(function ($q) {
-            $q->orWhere(function ($q2) {
-                $q2->where('expired', false)
-                ->where('revoked', false);
-            })
-            ->orWhere(function ($q2) {
-                $q2->where(function ($q3) {
-                    $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+            ->where(function ($q) {
+                $q->orWhere(function ($q2) {
+                    $q2->where('expired', false)
+                        ->where('revoked', false);
                 })
-                ->where(function ($q3) {
-                    $q3->where('expired', true)
-                    ->orWhere('revoked', true);
-                });
-            });
-        })
-        ->get();
+                    ->orWhere(function ($q2) {
+                        $q2->where(function ($q3) {
+                            $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+                        })
+                            ->where(function ($q3) {
+                                $q3->where('expired', true)
+                                    ->orWhere('revoked', true);
+                            });
+                    });
+            })
+            ->get();
 
         foreach ($endorsements as $endorsement) {
             $data->push([

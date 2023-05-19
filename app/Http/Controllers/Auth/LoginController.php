@@ -41,8 +41,8 @@ class LoginController extends Controller
     {
         if (! $request->has('code') || ! $request->has('state')) {
             $authorizationUrl = $this->provider->getAuthorizationUrl([
-                'required_scopes' => join(' ', config('oauth.scopes')),
-                'scope' => join(' ', config('oauth.scopes')),
+                'required_scopes' => implode(' ', config('oauth.scopes')),
+                'scope' => implode(' ', config('oauth.scopes')),
             ]);
             $request->session()->put('oauthstate', $this->provider->getState());
 
@@ -69,21 +69,21 @@ class LoginController extends Controller
         } catch (IdentityProviderException $e) {
             return redirect()->route('front')->withError('Authentication error: ' . $e->getMessage());
         }
-        
+
         $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
         $data = OAuthController::mapOAuthProperties($resourceOwner);
 
         if (
-            !$data['id'] ||
-            !$data['email'] ||
-            !$data['first_name'] ||
-            !$data['last_name'] ||
-            !$data['rating'] ||
-            !$data['rating_short'] ||
-            !$data['rating_long'] ||
-            !$data['region']
+            ! $data['id'] ||
+            ! $data['email'] ||
+            ! $data['first_name'] ||
+            ! $data['last_name'] ||
+            ! $data['rating'] ||
+            ! $data['rating_short'] ||
+            ! $data['rating_long'] ||
+            ! $data['region']
         ) {
-            return redirect()->route('front')->withError("Missing data from sign-in request. You need to grant all permissions.");
+            return redirect()->route('front')->withError('Missing data from sign-in request. You need to grant all permissions.');
         }
 
         $account = $this->completeLogin($data, $accessToken);
@@ -104,16 +104,15 @@ class LoginController extends Controller
 
     /**
      * Complete the login by creating or updating the existing account and last login timestamp
-     * 
-     * @param array $data
-     * @param mixed $token
+     *
+     * @param  mixed  $token
      * @return \App\Models\User User's account data
      */
-    protected function completeLogin(Array $data, $token)
+    protected function completeLogin(array $data, $token)
     {
         $account = User::updateOrCreate(
             [
-                'id' => $data['id']
+                'id' => $data['id'],
             ],
             [
                 'email' => $data['email'],
@@ -128,7 +127,7 @@ class LoginController extends Controller
                 'access_token' => $token->getToken(),
                 'refresh_token' => $token->getRefreshToken(),
                 'token_expires' => $token->getExpires(),
-                'last_login' => \Carbon\Carbon::now()
+                'last_login' => \Carbon\Carbon::now(),
             ]
         );
 
