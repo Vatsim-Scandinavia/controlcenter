@@ -32,6 +32,7 @@ php artisan migrate --database sqlite-testing
 
 You should now be able to run the tests locally. To the next section.
 
+
 #### Running the tests
 
 Once you've got your setup locally, running the tests is a brief affair.
@@ -39,6 +40,14 @@ Once you've got your setup locally, running the tests is a brief affair.
 ```shell
 php artisan test
 ```
+
+#### Quicker feedback during development
+
+> **Note**
+> This isn't required, but recommended to get an improved feedback loop while developing.
+
+[Install the `pre-commit` project](https://pre-commit.com/#install) locally and you'll be able to take advantage of our pre-commit hooks.
+They help you keep formatting consistent and avoid mistakes that'll be caught by the continous integration tests.
 
 ### Models/SQL
 * MySQL tables are named in plural e.g `training_reports`, not `training_report`
