@@ -549,9 +549,8 @@ class TrainingController extends Controller
                 if ((int) $training->status == -1) {
                     // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
                     if ($training->type <= 4) {
-                        $handover = $training->user->handover;
-                        $handover->atc_active = true;
-                        $handover->save();
+                        $training->user->atc_active = true;
+                        $training->user->save();
 
                         try {
                             $activity = AtcActivity::findOrFail($training->user->id);
@@ -600,8 +599,11 @@ class TrainingController extends Controller
         ActivityLogController::warning('TRAINING', 'Student closed training request ' . $training->id .
         ' ― Status: ' . TrainingController::$statuses[$training->status]['text'] .
         ' ― Training type: ' . TrainingController::$types[$training->type]['text']);
+        TrainingActivityController::create($training->id, 'STATUS', -3, $training->status, $training->user->id);
+
         $training->mentors()->detach();
         $training->updateStatus(-3);
+
         $training->user->notify(new TrainingClosedNotification($training, (int) $training->status));
 
         return redirect($training->path())->withSuccess('Training successfully closed.');

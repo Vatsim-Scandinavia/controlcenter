@@ -54,7 +54,7 @@ class SendTelemetry extends Command
             }
 
             $this->info('Telemetry successfully sent.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->warn('Telemetry service unavailable: ' . $e->getMessage());
         }
     }

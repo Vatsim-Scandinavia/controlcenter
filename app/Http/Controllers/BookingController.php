@@ -135,16 +135,16 @@ class BookingController extends Controller
         }
 
         if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-        ->where('time_end', '!=', $booking->time_start)
-        ->where('time_start', '!=', $booking->time_end)
-        ->where('position_id', $booking->position_id)
-        ->where('deleted', false)
-        ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-        ->where('time_end', '!=', $booking->time_start)
-        ->where('time_start', '!=', $booking->time_end)
-        ->where('position_id', $booking->position_id)
-        ->where('deleted', false)
-        ->get()->isEmpty()) {
+            ->where('time_end', '!=', $booking->time_start)
+            ->where('time_start', '!=', $booking->time_end)
+            ->where('position_id', $booking->position_id)
+            ->where('deleted', false)
+            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
+            ->where('time_end', '!=', $booking->time_start)
+            ->where('time_start', '!=', $booking->time_end)
+            ->where('position_id', $booking->position_id)
+            ->where('deleted', false)
+            ->get()->isEmpty()) {
             return back()->withErrors('The position is already booked for that time!')->withInput();
         }
 
@@ -205,8 +205,8 @@ class BookingController extends Controller
                     'start' => $booking->time_start->format('Y-m-d H:i:s'),
                     'end' => $booking->time_end->format('Y-m-d H:i:s'),
                 ]);
-            } catch(VatsimAPIException $e) {
-                return redirect(route('booking'))->withErrors('Booking failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
+            } catch (VatsimAPIException $e) {
+                return redirect(route('booking'))->withErrors('Booking failed with error: ' . $e->message . '. Please contact staff if this issue persists.');
             }
 
             $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -282,16 +282,16 @@ class BookingController extends Controller
             }
 
             if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
-            ->where('position_id', $booking->position_id)
-            ->where('deleted', false)
-            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
-            ->where('position_id', $booking->position_id)
-            ->where('deleted', false)
-            ->get()->isEmpty()) {
+                ->where('time_end', '!=', $booking->time_start)
+                ->where('time_start', '!=', $booking->time_end)
+                ->where('position_id', $booking->position_id)
+                ->where('deleted', false)
+                ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
+                ->where('time_end', '!=', $booking->time_start)
+                ->where('time_start', '!=', $booking->time_end)
+                ->where('position_id', $booking->position_id)
+                ->where('deleted', false)
+                ->get()->isEmpty()) {
                 return back()->withErrors('The position is already booked for that time!')->withInput();
             }
 
@@ -337,8 +337,8 @@ class BookingController extends Controller
                         'start' => $booking->time_start->format('Y-m-d H:i:s'),
                         'end' => $booking->time_end->format('Y-m-d H:i:s'),
                     ]);
-                } catch(VatsimAPIException $e) {
-                    return redirect(route('booking'))->withErrors('Booking failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
+                } catch (VatsimAPIException $e) {
+                    return redirect(route('booking'))->withErrors('Booking failed with error: ' . $e->message . '. Please contact staff if this issue persists.');
                 }
 
                 $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -396,18 +396,18 @@ class BookingController extends Controller
         }
 
         if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-        ->where('time_end', '!=', $booking->time_start)
-        ->where('time_start', '!=', $booking->time_end)
-        ->where('position_id', $booking->position_id)
-        ->where('deleted', false)
-        ->where('id', '!=', $booking->id)
-        ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-        ->where('time_end', '!=', $booking->time_start)
-        ->where('time_start', '!=', $booking->time_end)
-        ->where('position_id', $booking->position_id)
-        ->where('deleted', false)
-        ->where('id', '!=', $booking->id)
-        ->get()->isEmpty()) {
+            ->where('time_end', '!=', $booking->time_start)
+            ->where('time_start', '!=', $booking->time_end)
+            ->where('position_id', $booking->position_id)
+            ->where('deleted', false)
+            ->where('id', '!=', $booking->id)
+            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
+            ->where('time_end', '!=', $booking->time_start)
+            ->where('time_start', '!=', $booking->time_end)
+            ->where('position_id', $booking->position_id)
+            ->where('deleted', false)
+            ->where('id', '!=', $booking->id)
+            ->get()->isEmpty()) {
             return back()->withErrors('The position is already booked for that time!')->withInput();
         }
 
@@ -469,8 +469,8 @@ class BookingController extends Controller
                     'start' => $booking->time_start->format('Y-m-d H:i:s'),
                     'end' => $booking->time_end->format('Y-m-d H:i:s'),
                 ]);
-            } catch(VatsimAPIException $e) {
-                return redirect(route('booking'))->withErrors('Booking failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
+            } catch (VatsimAPIException $e) {
+                return redirect(route('booking'))->withErrors('Booking failed with error: ' . $e->message . '. Please contact staff if this issue persists.');
             }
 
             $vatsim_booking = json_decode($response->getBody()->getContents());
@@ -511,8 +511,8 @@ class BookingController extends Controller
 
             try {
                 $response = $this->makeHttpRequest($client, $url, 'delete');
-            } catch(VatsimAPIException $e) {
-                return redirect(route('booking'))->withErrors('Booking deletion failed with error ' . $e->code . ': ' . $e->message . '. Please contact staff if this issue persists.');
+            } catch (VatsimAPIException $e) {
+                return redirect(route('booking'))->withErrors('Booking deletion failed with error: ' . $e->message . '. Please contact staff if this issue persists.');
             }
         }
 

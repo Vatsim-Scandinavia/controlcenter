@@ -37,7 +37,7 @@
         <div class="card shadow mb-2">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    <i class="fas fa-flag"></i>&nbsp;{{ $training->user->firstName }}'s training for
+                    <i class="fas fa-flag"></i>&nbsp;{{ $training->user->first_name }}'s training for
                     @foreach($training->ratings as $rating)
                         @if ($loop->last)
                             {{ $rating->name }}
@@ -90,7 +90,15 @@
                     </dd>
                
                     <dt class="pt-2">Vatsim ID</dt>
-                    <dd><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a><button type="button" onclick="navigator.clipboard.writeText('{{ $training->user->id }}')"><i class="fas fa-copy"></i></button></dd>
+                    <dd>
+                        <a href="{{ route('user.show', $training->user->id) }}">
+                            {{ $training->user->id }}
+                        </a>
+                        <button type="button" onclick="navigator.clipboard.writeText('{{ $training->user->id }}')"><i class="fas fa-copy"></i></button>
+                        @if($training->user->division == 'EUD')
+                            <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $training->user->id }}" target="_blank" title="ATSimTest Profile" class="link-btn"><i class="fas fa-a"></i></button>
+                        @endif
+                    </dd>
 
                     <dt>Name</dt>
                     <dd class="separator pb-3"><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a><button type="button" onclick="navigator.clipboard.writeText('{{ $training->user->first_name.' '.$training->user->last_name }}')"><i class="fas fa-copy"></i></button></dd>

@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Handover;
 use App\Models\Training;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
@@ -38,8 +37,9 @@ class UserDelete extends Command
     /**
      * Close trainings of user to remove them from queue if applicable
      */
-    public function closeUserTrainings($user)
+    private function closeUserTrainings($user)
     {
+
         $trainings = Training::where('user_id', $user->id)->where('status', '>=', 0)->get();
         foreach ($trainings as $training) {
             // Training should be closed
@@ -69,7 +69,7 @@ class UserDelete extends Command
         if ($user = User::find($cid)) {
             $userInfo = $user->name . ' (' . $cid . ')';
 
-            $this->comment($userInfo . ' found in records of Control Center and Handover!');
+            $this->comment($userInfo . ' found in records of Control Center!');
 
             $choices = [
                 'PSEUDONYMISE -> Used for GDPR deletion requests from user directly to us',
@@ -84,34 +84,28 @@ class UserDelete extends Command
                     // Remove things from Control Center
                     $this->closeUserTrainings($user);
                     $user->groups()->detach();
+
+                    $user->email = 'void@void.void';
+                    $user->first_name = 'Anonymous';
+                    $user->last_name = 'Anonymous';
+                    $user->region = 'XXX';
+                    $user->division = null;
+                    $user->subdivision = null;
+                    $user->atc_active = null;
+                    $user->access_token = null;
+                    $user->refresh_token = null;
+                    $user->token_expires = null;
                     $user->remember_token = null;
                     $user->setting_workmail_address = null;
                     $user->setting_workmail_expire = null;
-                    $user->setting_notify_newreport = true;
+                    $user->setting_notify_newreport = false;
                     $user->setting_notify_newreq = false;
                     $user->setting_notify_closedreq = false;
                     $user->setting_notify_newexamreport = false;
 
                     $user->save();
 
-                    // Psuedonymise in Handover
-                    $handover = Handover::find($cid);
-                    $handover->email = 'void@void.void';
-                    $handover->first_name = 'Anonymous';
-                    $handover->last_name = 'Anonymous';
-                    $handover->country = null;
-                    $handover->region = 'XXX';
-                    $handover->division = null;
-                    $handover->subdivision = null;
-                    $handover->atc_active = null;
-                    $handover->accepted_privacy = false;
-                    $handover->remember_token = null;
-                    $handover->access_token = null;
-                    $handover->refresh_token = null;
-                    $handover->token_expires = null;
-                    $handover->save();
-
-                    $this->comment($userInfo . ' has been pseudoymised in Control Center and Handover. This will be reverted IF they log into Handover again.');
+                    $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into CC again.');
                 }
             // PERMANENTLY DELETE
             } elseif ($choice == $choices[1]) {
@@ -123,10 +117,7 @@ class UserDelete extends Command
                     // Remove things from Control Center
                     $user->delete();
 
-                    // Delete from Handover
-                    $handover = Handover::find($cid)->delete();
-
-                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center and Handover!');
+                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
                 }
             }
         } else {

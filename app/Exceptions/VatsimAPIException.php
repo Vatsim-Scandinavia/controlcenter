@@ -8,7 +8,7 @@ use Throwable;
 class VatsimAPIException extends Exception
 {
     /**
-     * MissingHandoverObjectException constructor.
+     * Missing VATSIMAPIException constructor.
      *
      * @param  string  $user
      * @param  string  $message

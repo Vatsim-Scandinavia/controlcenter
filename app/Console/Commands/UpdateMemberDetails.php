@@ -16,7 +16,7 @@ class UpdateMemberDetails extends Command
      *
      * @var string
      */
-    protected $signature = 'update:members';
+    protected $signature = 'update:member:details';
 
     /**
      * The console command description.

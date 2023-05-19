@@ -43,24 +43,24 @@ class EndorsementController extends Controller
     {
         $endorsements = Endorsement::where(function ($q) {
             $q->where('type', 'S1')
-            ->orWhere('type', 'SOLO');
+                ->orWhere('type', 'SOLO');
         })
-        ->where(function ($q) {
-            $q->orWhere(function ($q2) {
-                $q2->where('expired', false)
-                ->where('revoked', false);
-            })
-            ->orWhere(function ($q2) {
-                $q2->where(function ($q3) {
-                    $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+            ->where(function ($q) {
+                $q->orWhere(function ($q2) {
+                    $q2->where('expired', false)
+                        ->where('revoked', false);
                 })
-                ->where(function ($q3) {
-                    $q3->where('expired', true)
-                    ->orWhere('revoked', true);
-                });
-            });
-        })
-        ->get();
+                    ->orWhere(function ($q2) {
+                        $q2->where(function ($q3) {
+                            $q3->where('valid_to', '>=', Carbon::now()->subDays(14));
+                        })
+                            ->where(function ($q3) {
+                                $q3->where('expired', true)
+                                    ->orWhere('revoked', true);
+                            });
+                    });
+            })
+            ->get();
 
         return view('endorsements.trainings', compact('endorsements'));
     }
@@ -343,9 +343,8 @@ class EndorsementController extends Controller
      */
     public static function disableAtc($user)
     {
-        $handover = $user->handover;
-        $handover->atc_active = false;
-        $handover->save();
+        $user->atc_active = false;
+        $user->save();
     }
 
     /**

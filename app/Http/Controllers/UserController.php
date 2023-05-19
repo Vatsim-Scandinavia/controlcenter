@@ -6,7 +6,6 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
-use App\Models\Handover;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -102,7 +101,7 @@ class UserController extends Controller
         $query = $request->get('query');
 
         if (strlen($query) >= 2) {
-            $data = Handover::query()
+            $data = User::query()
                 ->select('id')
                 ->where(DB::raw('LOWER(id)'), 'like', '%' . strtolower($query) . '%')
                 ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%' . strtolower($query) . '%')
@@ -116,12 +115,11 @@ class UserController extends Controller
             $authUser = Auth::user();
 
             $count = 0;
-            foreach ($data as $handover) {
+            foreach ($data as $user) {
                 if ($count >= 10) {
                     break;
                 }
 
-                $user = $handover->user;
                 if ($authUser->can('view', $user)) {
                     $output[] = ['id' => $user->id, 'name' => $user->name];
                     $count++;
@@ -150,9 +148,9 @@ class UserController extends Controller
             if ($res->getStatusCode() == 200) {
                 $vatsimStats = json_decode($res->getBody(), false);
             }
-        } catch(\GuzzleHttp\Exception\RequestException $e) {
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
             return response()->json(['data' => null], 404);
-        } catch(\GuzzleHttp\Exception\ClientException $e) {
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
             return response()->json(['data' => null], 404);
         }
 

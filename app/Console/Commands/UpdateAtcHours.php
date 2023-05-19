@@ -6,7 +6,6 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Helpers\Vatsim;
 use App\Models\AtcActivity;
-use App\Models\Handover;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -57,8 +56,8 @@ class UpdateAtcHours extends Command
 
         // Fetch members
         $optionalUserIdFilter = $this->argument('user');
-        $handoverMembers = Handover::getRatedMembers($optionalUserIdFilter);
-        $members = User::whereIn('id', $handoverMembers->pluck('id'))->get();
+        $ratedMembers = User::getRatedMembers($optionalUserIdFilter);
+        $members = User::whereIn('id', $ratedMembers->pluck('id'))->get();
 
         // Update member hours
         $this->updateMemberATCHours($members);

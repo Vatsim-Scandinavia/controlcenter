@@ -9,7 +9,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    {{ $report->training->user->firstName }}'s training {{ $report->report_date->toEuropeanDate() }}
+                    {{ $report->training->user->first_name }}'s training {{ $report->report_date->toEuropeanDate() }}
                     @if($report->draft)
                         <span class='badge badge-danger'>Draft</span>
                     @endif
@@ -187,7 +187,7 @@
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
-                link: ["[","text](link)"],
+                link: ["[","](link)"],
             }
         });
         var simplemde2 = new SimpleMDE({ 
@@ -195,7 +195,7 @@
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
-                link: ["[","text](link)"],
+                link: ["[","](link)"],
             }
         });
 

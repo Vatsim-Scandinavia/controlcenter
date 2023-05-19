@@ -195,7 +195,7 @@
         status: false, 
         toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
         insertTexts: {
-            link: ["[","text](link)"],
+            link: ["[","](link)"],
         },
     });
 
@@ -204,7 +204,7 @@
         status: false, 
         toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
         insertTexts: {
-            link: ["[","text](link)"],
+            link: ["[","](link)"],
         },
     });
 
@@ -213,7 +213,7 @@
         status: false, 
         toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
         insertTexts: {
-            link: ["[","text](link)"],
+            link: ["[","](link)"],
         },
     });
 

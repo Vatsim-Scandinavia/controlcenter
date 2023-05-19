@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\Endorsement;
-use App\Models\Handover;
 use App\Models\Position;
 use App\Models\User;
 use Carbon\Carbon;
@@ -57,9 +56,8 @@ class BookingTest extends TestCase
      */
     public function test_active_ratings_can_create_bookings(VatsimRating $rating, callable $setup): void
     {
-        $controller = User::factory()->create(['id' => fake()->numberBetween(100)]);
-        Handover::factory()->create([
-            'id' => $controller->id,
+        $controller = User::factory()->create([
+            'id' => fake()->numberBetween(100),
             'atc_active' => true,
             'rating' => $rating->value,
         ]);

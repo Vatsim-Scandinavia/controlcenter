@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Helpers\FactoryHelper;
 use App\Models\Endorsement;
 use App\Models\Group;
-use App\Models\Handover;
 use App\Models\Position;
 use App\Models\Rating;
 use App\Models\Training;
@@ -33,7 +32,7 @@ class DatabaseSeeder extends Seeder
             $rating_id = 1;
             $group = null;
 
-            switch($i) {
+            switch ($i) {
                 case 1:
                     $name_last = 'One';
                     break;
@@ -89,10 +88,6 @@ class DatabaseSeeder extends Seeder
 
             User::factory()->create([
                 'id' => 10000000 + $i,
-            ])->groups()->attach(Group::find($group), ['area_id' => 1]);
-
-            Handover::factory()->create([
-                'id' => 10000000 + $i,
                 'email' => $email,
                 'first_name' => $name_first,
                 'last_name' => $name_last,
@@ -102,15 +97,12 @@ class DatabaseSeeder extends Seeder
                 'region' => 'EMEA',
                 'division' => 'EUD',
                 'subdivision' => 'SCA',
-            ]);
+            ])->groups()->attach(Group::find($group), ['area_id' => 1]);
         }
 
         // Create random Scandinavian users
         for ($i = 12; $i <= 125; $i++) {
             User::factory()->create([
-                'id' => 10000000 + $i,
-            ]);
-            Handover::factory()->create([
                 'id' => 10000000 + $i,
                 'region' => 'EMEA',
                 'division' => 'EUD',
@@ -121,9 +113,6 @@ class DatabaseSeeder extends Seeder
         // Create random users
         for ($i = 126; $i <= 250; $i++) {
             User::factory()->create([
-                'id' => 10000000 + $i,
-            ]);
-            Handover::factory()->create([
                 'id' => 10000000 + $i,
             ]);
         }
