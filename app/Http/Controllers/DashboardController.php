@@ -43,8 +43,8 @@ class DashboardController extends Controller
         }
 
         $data = [
-            'rating' => $user->ratingLong,
-            'rating_short' => $user->ratingShort,
+            'rating' => $user->rating_long,
+            'rating_short' => $user->rating_short,
             'division' => $user->division,
             'subdivision' => $subdivision,
             'report' => $report,
@@ -58,7 +58,7 @@ class DashboardController extends Controller
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        $atcInactiveMessage = ((in_array($user->handover->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (! $user->hasActiveTrainings(true) && $user->rating > 1 && ! $user->active) && ! $user->hasRecentlyCompletedTraining());
+        $atcInactiveMessage = ((in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (!$user->hasActiveTrainings(true) && $user->rating > 1 && !$user->active) && !$user->hasRecentlyCompletedTraining());
         $completedTrainingMessage = $user->hasRecentlyCompletedTraining();
 
         $workmailRenewal = (isset($user->setting_workmail_expire)) ? (Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7) : false;

@@ -40,7 +40,10 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         if (! $request->has('code') || ! $request->has('state')) {
-            $authorizationUrl = $this->provider->getAuthorizationUrl(); // Generates state
+            $authorizationUrl = $this->provider->getAuthorizationUrl([
+                'required_scopes' => join(' ', config('oauth.scopes')),
+                'scope' => join(' ', config('oauth.scopes')),
+            ]);
             $request->session()->put('oauthstate', $this->provider->getState());
 
             return redirect()->away($authorizationUrl);
@@ -66,13 +69,24 @@ class LoginController extends Controller
         } catch (IdentityProviderException $e) {
             return redirect()->route('front')->withError('Authentication error: ' . $e->getMessage());
         }
+        
         $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
+        $data = OAuthController::mapOAuthProperties($resourceOwner);
 
-        if (! isset($resourceOwner->data->id)) {
-            return redirect()->route('front')->withError('You did not grant all data which is required to use this service.');
+        if (
+            !$data['id'] ||
+            !$data['email'] ||
+            !$data['first_name'] ||
+            !$data['last_name'] ||
+            !$data['rating'] ||
+            !$data['rating_short'] ||
+            !$data['rating_long'] ||
+            !$data['region']
+        ) {
+            return redirect()->route('front')->withError("Missing data from sign-in request. You need to grant all permissions.");
         }
 
-        $account = $this->completeLogin($resourceOwner, $accessToken);
+        $account = $this->completeLogin($data, $accessToken);
 
         // Login the user and don't remember the session forever
         auth()->login($account, false);
@@ -90,16 +104,32 @@ class LoginController extends Controller
 
     /**
      * Complete the login by creating or updating the existing account and last login timestamp
-     *
-     * @param  mixed  $resourceOwner
-     * @param  mixed  $token
+     * 
+     * @param array $data
+     * @param mixed $token
      * @return \App\Models\User User's account data
      */
-    protected function completeLogin($resourceOwner, $token)
+    protected function completeLogin(Array $data, $token)
     {
         $account = User::updateOrCreate(
-            ['id' => $resourceOwner->data->id],
-            ['last_login' => \Carbon\Carbon::now()]
+            [
+                'id' => $data['id']
+            ],
+            [
+                'email' => $data['email'],
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'rating' => $data['rating'],
+                'rating_short' => $data['rating_short'],
+                'rating_long' => $data['rating_long'],
+                'region' => $data['region'],
+                'division' => $data['division'],
+                'subdivision' => $data['subdivision'],
+                'access_token' => $token->getToken(),
+                'refresh_token' => $token->getRefreshToken(),
+                'token_expires' => $token->getExpires(),
+                'last_login' => \Carbon\Carbon::now()
+            ]
         );
 
         $account->save();

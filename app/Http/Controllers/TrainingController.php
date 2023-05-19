@@ -548,10 +548,9 @@ class TrainingController extends Controller
                 // If training is completed with a passed exam result, let's set the user to active
                 if ((int) $training->status == -1) {
                     // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
-                    if ($training->type <= 4) {
-                        $handover = $training->user->handover;
-                        $handover->atc_active = true;
-                        $handover->save();
+                    if($training->type <= 4){
+                        $training->user->atc_active = true;
+                        $training->user->save();
 
                         try {
                             $activity = AtcActivity::findOrFail($training->user->id);

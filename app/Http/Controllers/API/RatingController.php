@@ -23,7 +23,7 @@ class RatingController extends Controller
             if ($publishUser) {
                 $data->push([
                     'user_id' => $user->id,
-                    'user_atc_active' => boolval($user->handover->atc_active),
+                    'user_atc_active' => boolval($user->atc_active),
                     'ratings' => $ratings,
                 ]);
             }

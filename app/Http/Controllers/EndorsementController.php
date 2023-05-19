@@ -341,11 +341,9 @@ class EndorsementController extends Controller
     /**
      * @param User user
      */
-    public static function disableAtc($user)
-    {
-        $handover = $user->handover;
-        $handover->atc_active = false;
-        $handover->save();
+    public static function disableAtc($user) {
+        $user->atc_active = false;
+        $user->save();
     }
 
     /**
