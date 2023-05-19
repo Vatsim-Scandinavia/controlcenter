@@ -2,14 +2,13 @@
 
 namespace App\Notifications;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\WarningMail;
 use App\Models\Endorsement;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class InactivityNotification extends Notification implements ShouldQueue
 {
@@ -20,7 +19,7 @@ class InactivityNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param Endorsement $endorsement
+     * @param  Endorsement  $endorsement
      */
     public function __construct(User $user)
     {
@@ -46,14 +45,13 @@ class InactivityNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
         $textLines = [
             'Your ATC Status has been set as **inactive**. You are no longer allowed to log on the network in our division.',
-            'According to local rules, you are required to have at least '.Setting::get('atcActivityRequirement').' online hours during the last '.Setting::get('atcActivityQualificationPeriod').' months. You did not fulfill this requirement, and therefore you are now set as inactive.',
-            'To control online again, you will need to apply for a refresh training with ['.Setting::get('atcActivityContact').']('.Setting::get('linkContact').'),'
+            'According to local rules, you are required to have at least ' . Setting::get('atcActivityRequirement') . ' online hours during the last ' . Setting::get('atcActivityQualificationPeriod') . ' months. You did not fulfill this requirement, and therefore you are now set as inactive.',
+            'To control online again, you will need to apply for a refresh training with [' . Setting::get('atcActivityContact') . '](' . Setting::get('linkContact') . '),',
         ];
 
-        return (new WarningMail("You are now inactive", $this->user, $textLines))
+        return (new WarningMail('You are now inactive', $this->user, $textLines))
             ->to($this->user->email, $this->user->name);
     }
 

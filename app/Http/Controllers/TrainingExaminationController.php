@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\OneTimeLink;
-use Carbon\Carbon;
 use App\Models\Position;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Notifications\TrainingExamNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -17,19 +17,19 @@ use Illuminate\Validation\Rule;
  */
 class TrainingExaminationController extends Controller
 {
-
     /**
      * Show view to create an examination
      *
-     * @param Request $request
-     * @param Training $training
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
-        if ($training->status != 3) { return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.'); }
+        if ($training->status != 3) {
+            return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.');
+        }
 
         $positions = Position::all();
 
@@ -39,9 +39,8 @@ class TrainingExaminationController extends Controller
     /**
      * Store the examination in the database
      *
-     * @param Request $request
-     * @param Training $training
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request, Training $training)
@@ -61,7 +60,7 @@ class TrainingExaminationController extends Controller
             'examination_date' => $date->format('Y-m-d'),
         ]);
 
-        if (key_exists('result', $data)) {
+        if (array_key_exists('result', $data)) {
             $examination->update(['result' => $data['result']]);
         }
 
@@ -80,18 +79,16 @@ class TrainingExaminationController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => 'Examination successfully added',
-                'id' => $examination->id
+                'id' => $examination->id,
             ]);
         }
 
         return redirect(route('training.show', $training->id))->withSuccess('Examination successfully added');
-
     }
 
     /**
-     * @param Request $request
-     * @param TrainingExamination $examination
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, TrainingExamination $examination)
@@ -105,13 +102,11 @@ class TrainingExaminationController extends Controller
         }
 
         return redirect()->back()->withSuccess('Examination successfully updated');
-
     }
 
     /**
-     * @param Request $request
-     * @param TrainingExamination $examination
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Request $request, TrainingExamination $examination)
@@ -119,14 +114,13 @@ class TrainingExaminationController extends Controller
         $this->authorize('delete', $examination);
 
         $examination->delete();
-        ActivityLogController::danger('TRAINING', 'Deleted training examination '.$examination->id.' ― From Training '.$examination->training->id);
+        ActivityLogController::danger('TRAINING', 'Deleted training examination ' . $examination->id . ' ― From Training ' . $examination->training->id);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Examination successfully deleted']);
         }
 
         return redirect()->back()->withSuccess('Examination successfully deleted');
-
     }
 
     private function validateRequest()
@@ -135,8 +129,7 @@ class TrainingExaminationController extends Controller
             'position' => 'required|exists:positions,callsign',
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
-            'files.*' => 'sometimes|file|mimes:pdf'
+            'files.*' => 'sometimes|file|mimes:pdf',
         ]);
     }
-
 }

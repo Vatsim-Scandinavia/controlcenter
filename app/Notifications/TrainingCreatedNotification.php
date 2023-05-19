@@ -3,24 +3,23 @@
 namespace App\Notifications;
 
 use App\Mail\TrainingMail;
-use App\Models\Training;
 use App\Models\Area;
+use App\Models\Training;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class TrainingCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private $training, $contactMail;
+    private $training;
+
+    private $contactMail;
 
     /**
      * Create a new notification instance.
-     *
-     * @param Training $training
      */
     public function __construct(Training $training)
     {
@@ -46,15 +45,14 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
         $textLines = [
-            'We hereby confirm that we have received your training request for '.$this->training->getInlineRatings().' in '.Area::find($this->training->area_id)->name.'.',
-            'The request is now in queue. Expected waiting time: '.\Setting::get('trainingQueue'),
-            'We will periodically ask you to confirm your continued interest for your application with us, it\'s your responsibility to check your email for these requests and reply within the deadline.'
+            'We hereby confirm that we have received your training request for ' . $this->training->getInlineRatings() . ' in ' . Area::find($this->training->area_id)->name . '.',
+            'The request is now in queue. Expected waiting time: ' . \Setting::get('trainingQueue'),
+            'We will periodically ask you to confirm your continued interest for your application with us, it\'s your responsibility to check your email for these requests and reply within the deadline.',
         ];
 
         $area = Area::find($this->training->area_id);
-        if(isset($area->template_newreq)){
+        if (isset($area->template_newreq)) {
             $textLines[] = $area->template_newreq;
         }
 
@@ -62,11 +60,13 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
         $bcc = User::allWithGroup(2, '<=')->where('setting_notify_newreq', true);
 
         foreach ($bcc as $key => $user) {
-            if (!$user->isModeratorOrAbove($this->training->area))
+            if (! $user->isModeratorOrAbove($this->training->area)) {
                 $bcc->pull($key);
+            }
         }
 
         $contactMail = $area->contact;
+
         return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
             ->to($this->training->user->email, $this->training->user->name)
             ->bcc($bcc->pluck('email'));
@@ -81,7 +81,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'training_id' => $this->training->id
+            'training_id' => $this->training->id,
         ];
     }
 }

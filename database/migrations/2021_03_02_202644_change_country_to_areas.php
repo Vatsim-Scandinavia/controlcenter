@@ -13,7 +13,6 @@ class ChangeCountryToAreas extends Migration
      */
     public function up()
     {
-
         Schema::rename('countries', 'areas');
         Schema::rename('country_rating', 'area_rating');
 
@@ -32,7 +31,6 @@ class ChangeCountryToAreas extends Migration
         Schema::table('trainings', function (Blueprint $table) {
             $table->renameColumn('country_id', 'area_id');
         });
-
     }
 
     /**

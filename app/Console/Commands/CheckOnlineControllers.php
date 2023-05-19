@@ -2,17 +2,16 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
 use App\Models\Position;
-use Illuminate\Support\Facades\Notification;
+use App\Models\User;
 use App\Notifications\InactiveOnlineNotification;
 use App\Notifications\InactiveOnlineStaffNotification;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class CheckOnlineControllers extends Command
 {
@@ -37,11 +36,10 @@ class CheckOnlineControllers extends Command
      */
     public function handle()
     {
-
-        $this->info("Starting online controller check...");
+        $this->info('Starting online controller check...');
 
         // Check if the setting is turned on
-        if(!Setting::get('atcActivityNotifyInactive')){
+        if (! Setting::get('atcActivityNotifyInactive')) {
             return;
         }
 
@@ -51,29 +49,29 @@ class CheckOnlineControllers extends Command
         );
 
         $areas = collect();
-        foreach($areasRaw as $a){
+        foreach ($areasRaw as $a) {
             $areas->push($a->prefix);
         }
 
-        $areasRegex = "/(^".$areas->implode('|^').")\w+(?<!OBS)$/";
+        $areasRegex = '/(^' . $areas->implode('|^') . ")\w+(?<!OBS)$/";
 
-        $this->info("Collecting online controllers...");
+        $this->info('Collecting online controllers...');
 
         // Fetch the latest URI to data feed
         $dataUri = Http::get('https://status.vatsim.net/status.json')['data']['v3'][0];
         $vatsimData = Http::get($dataUri)['controllers'];
 
-        foreach($vatsimData as $d){
-            if(preg_match($areasRegex, $d['callsign'])){
+        foreach ($vatsimData as $d) {
+            if (preg_match($areasRegex, $d['callsign'])) {
                 // Lets check this user
-                $this->info("Checking user ".$d['cid']);
+                $this->info('Checking user ' . $d['cid']);
                 $user = User::find($d['cid']);
-                if(isset($user) && !$user->isVisiting()){
-                    if(!$user->active && !$user->hasActiveTrainings(false) && !$user->hasRecentlyCompletedTraining()){
-                        if(!isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))){
+                if (isset($user) && ! $user->isVisiting()) {
+                    if (! $user->active && ! $user->hasActiveTrainings(false) && ! $user->hasRecentlyCompletedTraining()) {
+                        if (! isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))) {
                             // Send warning to user
                             $user->notify(new InactiveOnlineNotification($user));
-                            $this->info($user->name.' is inactive. Sending notification.');
+                            $this->info($user->name . ' is inactive. Sending notification.');
                             $user->last_inactivity_warning = now();
                             $user->save();
 
@@ -81,27 +79,28 @@ class CheckOnlineControllers extends Command
                             $position = Position::where('callsign', $d['callsign'])->get()->first();
                             $sendToStaff = User::allWithGroup(1);
 
-                            if($position){
+                            if ($position) {
                                 $moderators = User::allWithGroup(2);
-                                foreach($moderators as $m){
-                                    if($sendToStaff->where('id', $m->id)->count()) continue;
+                                foreach ($moderators as $m) {
+                                    if ($sendToStaff->where('id', $m->id)->count()) {
+                                        continue;
+                                    }
 
-                                    if($m->isModerator(Area::find($position->area))){
+                                    if ($m->isModerator(Area::find($position->area))) {
                                         $sendToStaff->push($m);
                                     }
                                 }
                             }
 
                             $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d['callsign'], $d['logon_time']));
-
                         } else {
-                            $this->info($user->name.' is inactive. Supressing notification due to one already been sent recently.');
+                            $this->info($user->name . ' is inactive. Supressing notification due to one already been sent recently.');
                         }
                     }
                 }
             }
         }
-        
+
         return 0;
     }
 }

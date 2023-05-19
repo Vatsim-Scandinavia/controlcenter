@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use App\Models\Endorsement;
 use App\Notifications\EndorsementExpiredNotification;
+use Illuminate\Console\Command;
 
 class CleanEndorsements extends Command
 {
@@ -41,12 +40,12 @@ class CleanEndorsements extends Command
     public function handle()
     {
         $endorsements = Endorsement::whereNotNull('valid_to')->where('expired', false)->where('revoked', false)->where('valid_to', '<', date('Y-m-d H:i:s'))->get();
-        foreach($endorsements as $endorsement){
+        foreach ($endorsements as $endorsement) {
             $endorsement->expired = true;
             $endorsement->save();
 
             // Only send e-mail notifications for training endorsements
-            if($endorsement->type == "SOLO" || $endorsement->type == "S1"){
+            if ($endorsement->type == 'SOLO' || $endorsement->type == 'S1') {
                 $endorsement->user->notify(new EndorsementExpiredNotification($endorsement));
             }
         }

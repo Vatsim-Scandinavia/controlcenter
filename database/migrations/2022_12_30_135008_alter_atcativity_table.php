@@ -1,5 +1,8 @@
 <?php
 
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\AtcActivity;
+use App\Models\Handover;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +18,7 @@ return new class extends Migration
      * @return void
      */
     public function up()
-    { 
-
-        
-
+    {
         Schema::create('atc_activities', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->primary();
             $table->double('hours')->default(0);
@@ -35,8 +35,8 @@ return new class extends Migration
             ->where('status', -1)
             ->orderBy('closed_at', 'asc')->get();
 
-        foreach($trainings as $training){
-            try{
+        foreach ($trainings as $training) {
+            try {
                 $activity = AtcActivity::findOrFail($training->user_id);
                 $activity->start_of_grace_period = $training->closed_at;
                 $activity->save();
@@ -44,7 +44,7 @@ return new class extends Migration
                 AtcActivity::create([
                     'user_id' => $training->user_id,
                     'hours' => 0,
-                    'start_of_grace_period' => $training->closed_at
+                    'start_of_grace_period' => $training->closed_at,
                 ]);
             }
 

@@ -10,12 +10,11 @@ class TrainingInterest extends Model
 
     protected $dates = [
         'deadline',
-        'confirmed_at'
+        'confirmed_at',
     ];
 
     public function training()
     {
         return $this->belongsTo(Training::class);
     }
-
 }

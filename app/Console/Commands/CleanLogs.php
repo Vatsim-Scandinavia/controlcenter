@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\ActivityLog;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class CleanLogs extends Command
 {
@@ -40,16 +40,15 @@ class CleanLogs extends Command
      */
     public function handle()
     {
-
         $entries = ActivityLog::where('created_at', '<', Carbon::now()->subWeeks(2))->get();
-        foreach($entries as $entry){
-            $entry->ip_address = NULL;
-            $entry->user_agent = NULL;
+        foreach ($entries as $entry) {
+            $entry->ip_address = null;
+            $entry->user_agent = null;
             $entry->save();
         }
 
         DB::table('activity_logs')->where('created_at', '<', Carbon::now()->subMonths(3)->format('Y-m-d H:i:s'))->delete();
-        
+
         $this->info('All logs older than two weeks has been purged for IP and user agent details. Logs older than three months have been deleted.');
     }
 }

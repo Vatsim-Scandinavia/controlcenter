@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ApiKey;
 use Illuminate\Console\Command;
 use Ramsey\Uuid\Uuid;
-use App\Models\ApiKey;
 
 class CreateApiKey extends Command
 {
@@ -29,16 +29,15 @@ class CreateApiKey extends Command
      */
     public function handle()
     {
-
         // Gather details from input
         $choices = [
-            "NO, read only",
-            "YES, allow editing data",
+            'NO, read only',
+            'YES, allow editing data',
         ];
         $choice = $this->choice('Should the API key have edit rights?', $choices);
         $readonly = $choice == $choices[0];
 
-        $name = $this->ask("What should we name the API Key?");
+        $name = $this->ask('What should we name the API Key?');
 
         // Generate key
         $secret = Uuid::uuid4();
@@ -48,7 +47,6 @@ class CreateApiKey extends Command
             'read_only' => $readonly,
         ]);
 
-        $this->comment("API key `".$name."` has been created with following token: `".$secret."`");
-        
+        $this->comment('API key `' . $name . '` has been created with following token: `' . $secret . '`');
     }
 }

@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Training;
 use App\Models\User;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TrainingFactory extends Factory
@@ -23,12 +22,11 @@ class TrainingFactory extends Factory
      */
     public function definition()
     {
-
         $status = $this->faker->numberBetween(0, 3);
         $started_at = null;
         $closed_at = null;
 
-        if($status > 1) {
+        if ($status > 1) {
             $started_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
         }
 
@@ -43,7 +41,7 @@ class TrainingFactory extends Factory
             'type' => $this->faker->numberBetween(1, 5),
             'experience' => $this->faker->numberBetween(1, 5),
             'started_at' => $started_at,
-            'closed_at' => $closed_at
+            'closed_at' => $closed_at,
         ];
     }
 }

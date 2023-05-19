@@ -19,7 +19,7 @@ class CreateActivityLogs extends Migration
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->longText('message');
-            
+
             $table->string('ip_address')->nullable();
             $table->string('user_agent')->nullable();
             $table->timestamp('created_at')->nullable();

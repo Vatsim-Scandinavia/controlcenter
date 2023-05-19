@@ -2,22 +2,23 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\File;
-use App\Models\User;
 use App\Models\Training;
+use App\Models\TrainingObjectAttachment;
 use App\Models\TrainingReport;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use App\Models\TrainingObjectAttachment;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class TrainingObjectAttachmentTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
     private $report;
+
     private $user;
 
     /**
@@ -37,7 +38,6 @@ class TrainingObjectAttachmentTest extends TestCase
         ]);
 
         $this->report->author->groups()->attach(2, ['area_id' => $this->report->training->area->id]);
-
     }
 
     /**
@@ -110,7 +110,6 @@ class TrainingObjectAttachmentTest extends TestCase
         $this->actingAs($student)->followingRedirects()
             ->get(route('training.object.attachment.show', ['attachment' => $id]))
             ->assertStatus(200);
-
     }
 
 // TODO: Re-enable this test once hidden / not hidden has been fully implemented
@@ -144,6 +143,4 @@ class TrainingObjectAttachmentTest extends TestCase
             ->get(route('training.object.attachment.show', ['attachment' => $id]))
             ->assertStatus(200);
     }
-
-
 }

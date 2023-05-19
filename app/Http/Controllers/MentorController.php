@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
-use App\Models\User;
-use App\Models\Training;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -13,20 +9,21 @@ use Illuminate\Support\Facades\Auth;
  */
 class MentorController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\View\View
      */
-    public function index(){
+    public function index()
+    {
         $user = Auth::user();
         $trainings = $user->mentoringTrainings();
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        if($user->isMentorOrAbove()) return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
+        if ($user->isMentorOrAbove()) {
+            return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
+        }
 
         abort(403);
     }
-
 }

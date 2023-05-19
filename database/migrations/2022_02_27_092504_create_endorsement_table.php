@@ -28,7 +28,6 @@ class CreateEndorsementTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('issued_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('revoked_by')->references('id')->on('users')->onDelete('set null');
-
         });
     }
 

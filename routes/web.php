@@ -1,24 +1,24 @@
 <?php
 
-use App\Http\Controllers\FrontPageController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\EndorsementController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\FrontPageController;
+use App\Http\Controllers\GlobalSettingController;
+use App\Http\Controllers\MentorController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\TrainingReportController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\GlobalSettingController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\ActivityLogController;
-use App\Http\Controllers\TrainingObjectAttachmentController;
-use App\Http\Controllers\TrainingExaminationController;
-use App\Http\Controllers\TrainingActivityController;
-use App\Http\Controllers\FileController;
 use App\Http\Controllers\SweatbookController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\MentorController;
+use App\Http\Controllers\TrainingActivityController;
+use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\TrainingExaminationController;
+use App\Http\Controllers\TrainingObjectAttachmentController;
+use App\Http\Controllers\TrainingReportController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
 
 /*
@@ -48,7 +48,6 @@ Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth')->n
 // Sites behind authentication
 //--------------------------------------------------------------------------
 Route::middleware(['auth', 'activity'])->group(function () {
-
     // Sidebar Navigation
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/content', [DashboardController::class, 'content'])->name('content');
@@ -59,7 +58,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
     Route::get('/users/other', [UserController::class, 'indexOther'])->name('users.other');
 
     // Endorsements
-    Route::controller(EndorsementController::class)->group(function(){
+    Route::controller(EndorsementController::class)->group(function () {
         Route::get('/endorsements/mascs', 'indexMascs')->name('endorsements.mascs');
         Route::get('/endorsements/trainings', 'indexTrainings')->name('endorsements.trainings');
         Route::get('/endorsements/examiners', 'indexExaminers')->name('endorsements.examiners');
@@ -72,20 +71,20 @@ Route::middleware(['auth', 'activity'])->group(function () {
     });
 
     // Users
-    Route::controller(UserController::class)->group(function(){
+    Route::controller(UserController::class)->group(function () {
         Route::get('/user/{user}', 'show')->name('user.show');
         Route::patch('/user/{user}', 'update')->name('user.update');
         Route::get('/settings', 'settings')->name('user.settings');
         Route::post('/settings', 'settings_update')->name('user.settings.store');
         Route::get('/settings/extendworkmail', 'extendWorkmail')->name('user.settings.extendworkmail');
 
-         // Internal user search
+        // Internal user search
         Route::get('/user/search/find', 'search')->name('user.search');
         Route::get('/user/search/vatsimhours', 'fetchVatsimHours')->name('user.vatsimhours');
     });
-    
+
     // Reports
-    Route::controller(ReportController::class)->group(function(){
+    Route::controller(ReportController::class)->group(function () {
         Route::get('/reports/trainings', 'trainings')->name('reports.trainings');
         Route::get('/reports/training/{id}', 'trainings')->name('reports.training.area');
         Route::get('/reports/activities', 'activities')->name('reports.activities');
@@ -103,7 +102,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
 
     // Training routes
-    Route::controller(TrainingController::class)->group(function(){
+    Route::controller(TrainingController::class)->group(function () {
         Route::get('/training/apply', 'apply')->name('training.apply');
         Route::get('/training/create', 'create')->name('training.create');
         Route::get('/training/create/{id}', 'create')->name('training.create.id');
@@ -118,7 +117,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
     });
 
     // Training report routes
-    Route::controller(TrainingReportController::class)->group(function(){
+    Route::controller(TrainingReportController::class)->group(function () {
         Route::get('/training/report/{report}', 'edit')->name('training.report.edit');
         Route::get('/training/{training}/report/create', 'create')->name('training.report.create');
         Route::post('/training/{training}/report', 'store')->name('training.report.store');
@@ -127,20 +126,20 @@ Route::middleware(['auth', 'activity'])->group(function () {
     });
 
     // Training object routes
-    Route::controller(OneTimeLinkController::class)->group(function(){
+    Route::controller(OneTimeLinkController::class)->group(function () {
         Route::get('/training/onetime/{key}', 'redirect')->name('training.onetimelink.redirect');
         Route::post('/training/{training}/onetime', 'store')->name('training.onetimelink.store');
     });
 
     // Training object attachment routes
-    Route::controller(TrainingObjectAttachmentController::class)->group(function(){
+    Route::controller(TrainingObjectAttachmentController::class)->group(function () {
         Route::get('/training/attachment/{attachment}', 'show')->name('training.object.attachment.show');
         Route::post('/training/{trainingObjectType}/{trainingObject}/attachment', 'store')->name('training.object.attachment.store');
         Route::delete('/training/attachment/{attachment}', 'destroy')->name('training.object.attachment.delete');
     });
 
     // Training examination routes
-    Route::controller(TrainingExaminationController::class)->group(function(){
+    Route::controller(TrainingExaminationController::class)->group(function () {
         Route::get('/training/examination/{examination}', 'show')->name('training.examination.show');
         Route::get('/training/{training}/examination/create', 'create')->name('training.examination.create');
         Route::post('/training/{training}/examination', 'store')->name('training.examination.store');
@@ -150,14 +149,14 @@ Route::middleware(['auth', 'activity'])->group(function () {
 
     Route::post('/training/activity/comment', [TrainingActivityController::class, 'storeComment'])->name('training.activity.comment');
 
-    Route::controller(FileController::class)->group(function(){
+    Route::controller(FileController::class)->group(function () {
         Route::get('/files/{file}', 'get')->name('file.get');
         Route::post('/files', 'store')->name('file.store');
         Route::delete('/files/{file}', 'destroy')->name('file.delete');
     });
 
     // Sweatbook routes
-    Route::controller(SweatbookController::class)->group(function(){
+    Route::controller(SweatbookController::class)->group(function () {
         Route::get('/sweatbook', 'index')->name('sweatbook');
         Route::get('/sweatbook/{id}/delete', 'delete')->name('sweatbook.delete');
         Route::get('/sweatbook/{id}', 'show');
@@ -166,7 +165,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
     });
 
     // Booking routes
-    Route::controller(BookingController::class)->group(function(){
+    Route::controller(BookingController::class)->group(function () {
         Route::get('/booking', 'index')->name('booking');
         Route::get('/booking/bulk', 'bulk')->name('booking.bulk');
         Route::post('/booking/bulk', 'storeBulk')->name('booking.bulk.store');
@@ -180,7 +179,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
     Route::get('/mentor', [MentorController::class, 'index'])->name('mentor');
 
     // Vote routes
-    Route::controller(VoteController::class)->group(function(){
+    Route::controller(VoteController::class)->group(function () {
         Route::get('/votes', 'index')->name('vote.overview');
         Route::get('/vote/create', 'create')->name('vote.create');
         Route::post('/vote/store', 'store')->name('vote.store');

@@ -16,8 +16,6 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can view any of the reports related to a training
      *
-     * @param User $user
-     * @param Training $training
      * @return bool
      */
     public function viewAny(User $user, Training $training)
@@ -31,8 +29,6 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can view the training report.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingReport  $trainingReport
      * @return bool
      */
     public function view(User $user, TrainingReport $trainingReport)
@@ -46,8 +42,6 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can create training reports.
      *
-     * @param \App\Models\User $user
-     * @param Training $training
      * @return bool
      */
     public function create(User $user, Training $training)
@@ -63,8 +57,6 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can update the training report.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingReport  $trainingReport
      * @return bool
      */
     public function update(User $user, TrainingReport $trainingReport)
@@ -77,24 +69,22 @@ class TrainingReportPolicy
     /**
      * Determine whether the user can delete the training report.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingReport  $trainingReport
      * @return Illuminate\Auth\Access\Response
      */
     public function delete(User $user, TrainingReport $trainingReport)
     {
         return ($user->isAdmin() || $user->isModerator($trainingReport->training->area) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->area)))
             ? Response::allow()
-            : Response::deny("Only moderators and the author of the training report can delete it.");
+            : Response::deny('Only moderators and the author of the training report can delete it.');
     }
 
     /**
      * Get the one time link from a session given a training
      *
-     * @param $training
      * @return null
      */
-    private function getOneTimeLink($training) {
+    private function getOneTimeLink($training)
+    {
         $link = null;
 
         $key = session()->get('onetimekey');
@@ -102,7 +92,7 @@ class TrainingReportPolicy
         if ($key != null) {
             $link = OneTimeLink::where([
                 ['training_id', '=', $training->id],
-                ['key', '=', $key]
+                ['key', '=', $key],
             ])->get()->first();
         }
 

@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Training;
 use App\Models\TrainingActivity;
+use Illuminate\Http\Request;
 
 class TrainingActivityController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public static function create(int $trainingId, string $type, int $new_data = null, int $old_data = null, int $userId = null, string $comment = null)
@@ -32,8 +33,8 @@ class TrainingActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function storeComment(Request $request)
@@ -41,15 +42,15 @@ class TrainingActivityController extends Controller
         $data = request()->validate([
             'training_id' => 'required|exists:App\Models\Training,id',
             'comment' => 'required|string|max:512',
-            'update_id' => 'nullable'
+            'update_id' => 'nullable',
         ]);
 
         $this->authorize('comment', [TrainingActivity::class, Training::find($data['training_id'])]);
 
         // Check if it's a comment update
-        if(isset($data['update_id'])){
+        if (isset($data['update_id'])) {
             $activity = TrainingActivity::find($data['update_id']);
-            if($activity == null){
+            if ($activity == null) {
                 return back()->withInput()->withErrors('Could not find comment to update.');
             }
 
@@ -62,7 +63,7 @@ class TrainingActivityController extends Controller
         $activity = new TrainingActivity();
         $activity->training_id = $data['training_id'];
         $activity->triggered_by_id = \Auth::user()->id;
-        $activity->type = "COMMENT";
+        $activity->type = 'COMMENT';
         $activity->comment = $data['comment'];
         $activity->save();
 

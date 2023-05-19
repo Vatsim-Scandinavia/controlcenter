@@ -13,7 +13,6 @@ class DeleteOldPermissionSystem extends Migration
      */
     public function up()
     {
-
         Schema::table('users', function (Blueprint $table) {
             $connection = ($this->connection == null) ? \Illuminate\Support\Facades\DB::getDefaultConnection() : $this->connection;
             $prefix = config('database.connections.' . $connection . '.prefix_indexes')
@@ -22,8 +21,8 @@ class DeleteOldPermissionSystem extends Migration
 
             if (Schema::getConnection()->getDriverName() != 'sqlite') {
                 $table->dropForeign($prefix . 'users_country_foreign');
-            	$table->dropForeign($prefix . 'users_group_foreign');
-			}
+                $table->dropForeign($prefix . 'users_group_foreign');
+            }
 
             $table->dropColumn(['country', 'group']);
         });

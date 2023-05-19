@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\AtcActivity;
+use Illuminate\Console\Command;
 
 class UpdateAtcReactivate extends Command
 {
@@ -30,9 +29,9 @@ class UpdateAtcReactivate extends Command
      */
     public function handle()
     {
-        
-        if(!Setting::get('atcActivityAllowReactivation')){
+        if (! Setting::get('atcActivityAllowReactivation')) {
             $this->error('This command is only available when reactivation setting is enabled');
+
             return Command::FAILURE;
         }
 
@@ -47,7 +46,8 @@ class UpdateAtcReactivate extends Command
             }
         }
 
-        $this->info('Successfully reactivated '.$count.' users!');
+        $this->info('Successfully reactivated ' . $count . ' users!');
+
         return Command::SUCCESS;
     }
 }

@@ -16,20 +16,23 @@ class Endorsement extends Model
         'updated_at',
     ];
 
-    public function ratings(){
+    public function ratings()
+    {
         return $this->belongsToMany(Rating::class);
     }
 
-    public function positions(){
+    public function positions()
+    {
         return $this->belongsToMany(Position::class);
     }
 
-    public function areas(){
+    public function areas()
+    {
         return $this->belongsToMany(Area::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
-
 }

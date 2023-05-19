@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\GlobalSetting;
-use Illuminate\Http\Request;
 use anlutro\LaravelSettings\Facade as Setting;
+use Illuminate\Http\Request;
 
 /**
  * This controller controls the global, app-specific and toggleble settings, such as if trainings are enabled.
@@ -14,8 +13,9 @@ class GlobalSettingController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param anlutro\LaravelSettings\Facade $setting
+     * @param  anlutro\LaravelSettings\Facade  $setting
      * @return \Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Setting $setting)
@@ -28,14 +28,13 @@ class GlobalSettingController extends Controller
     /**
      * Edit the requested resource
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param anlutro\LaravelSettings\Facade $setting
+     * @param  anlutro\LaravelSettings\Facade  $setting
      * @return \Illuminate\Http\Response
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(Request $request, Setting $setting)
     {
-
         $this->authorize('edit', $setting);
 
         $data = $request->validate([
@@ -96,7 +95,6 @@ class GlobalSettingController extends Controller
 
         ActivityLogController::danger('OTHER', 'Global Settings Updated');
 
-        return redirect()->intended(route('admin.settings'))->withSuccess("Server settings successfully changed");
+        return redirect()->intended(route('admin.settings'))->withSuccess('Server settings successfully changed');
     }
-
 }

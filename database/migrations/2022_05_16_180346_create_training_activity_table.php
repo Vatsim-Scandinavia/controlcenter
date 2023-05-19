@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\TrainingActivityController;
+use App\Models\Training;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Training;
-use App\Http\Controllers\TrainingActivityController;
 
 return new class extends Migration
 {
@@ -30,8 +30,8 @@ return new class extends Migration
         });
 
         // Delete the old internal notes in favor of this one, but lets back it up first into new solution
-        foreach(Training::all() as $training){
-            if(!empty($training->notes)){
+        foreach (Training::all() as $training) {
+            if (! empty($training->notes)) {
                 $ta = TrainingActivityController::create($training->id, 'COMMENT', null, null, null, $training->notes);
                 // Set created time last time the training was updated, so somewhat match it.
                 $ta->save(['created_at' => $training->updated_at]);

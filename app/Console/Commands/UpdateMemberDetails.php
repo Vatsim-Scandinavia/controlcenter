@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
-use App\Models\Training;
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Http\Controllers\ActivityLogController;
+use App\Models\Training;
+use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
 use Illuminate\Console\Command;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class UpdateMemberDetails extends Command
 {
@@ -46,17 +46,18 @@ class UpdateMemberDetails extends Command
 
         $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
 
-        $this->info("Detaching mentors who no longer are in subdivision...");
+        $this->info('Detaching mentors who no longer are in subdivision...');
         $count = 0;
 
         // Start the loop
         foreach ($mentors as $mentor) {
-
-            if (in_array($mentor->subdivision, $subdivisions) || $mentor->isVisiting()) continue;
+            if (in_array($mentor->subdivision, $subdivisions) || $mentor->isVisiting()) {
+                continue;
+            }
 
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();
-            
+
             // Remove mentor permission groups
             $mentor->groups()->detach();
             $mentor->save();
@@ -64,17 +65,18 @@ class UpdateMemberDetails extends Command
             $count++;
         }
 
-        $this->info($count." users affected.");
+        $this->info($count . ' users affected.');
 
         // Get active trainings
         $trainings = Training::where('status', '>=', 0)->where('type', '!=', 5)->get();
 
-        $this->info("Closing trainings for those who left subdivision...");
+        $this->info('Closing trainings for those who left subdivision...');
         $count = 0;
 
         foreach ($trainings as $training) {
-
-            if (in_array($training->user->subdivision, $subdivisions)) continue;
+            if (in_array($training->user->subdivision, $subdivisions)) {
+                continue;
+            }
 
             // Close the training
             $training->updateStatus(-4);
@@ -85,14 +87,13 @@ class UpdateMemberDetails extends Command
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the subdivision.'));
 
             // Log the closure
-            ActivityLogController::warning('TRAINING', 'Closed training request '.$training->id.' due to student leaving division');
+            ActivityLogController::warning('TRAINING', 'Closed training request ' . $training->id . ' due to student leaving division');
 
             $count++;
-            
         }
 
-        $this->info($count." trainings affected.");
+        $this->info($count . ' trainings affected.');
 
-        $this->info("Done");
+        $this->info('Done');
     }
 }

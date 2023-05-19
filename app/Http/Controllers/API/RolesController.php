@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Area;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class RolesController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $users = User::all();
         $mentors = collect();
         $moderators = collect();
@@ -17,52 +17,51 @@ class RolesController extends Controller
 
         foreach ($users as $user) {
             if ($user->isMentor()) {
-
                 // Get their areas
                 $areas = [];
-                foreach($user->groups as $group){
-                    if($group->pivot->group_id == 3){
+                foreach ($user->groups as $group) {
+                    if ($group->pivot->group_id == 3) {
                         array_push($areas, Area::find($group->pivot->area_id)->name);
                     }
                 }
 
                 $mentors->push([
                     'id' => $user->id,
-                    'fir' => $areas
+                    'fir' => $areas,
                 ]);
             }
-            if($user->isModerator()) {
+            if ($user->isModerator()) {
                 $areas = [];
-                foreach($user->groups as $group){
-                    if($group->pivot->group_id == 2){
+                foreach ($user->groups as $group) {
+                    if ($group->pivot->group_id == 2) {
                         array_push($areas, Area::find($group->pivot->area_id)->name);
                     }
                 }
 
                 $moderators->push([
                     'id' => $user->id,
-                    'fir' => $areas
+                    'fir' => $areas,
                 ]);
             }
-            if($user->isAdmin()) {
+            if ($user->isAdmin()) {
                 $areas = [];
-                foreach($user->groups as $group){
-                    if($group->pivot->group_id == 1){
+                foreach ($user->groups as $group) {
+                    if ($group->pivot->group_id == 1) {
                         array_push($areas, Area::find($group->pivot->area_id)->name);
                     }
                 }
 
                 $admins->push([
                     'id' => $user->id,
-                    'fir' => $areas
+                    'fir' => $areas,
                 ]);
             }
         }
 
-        return response()->json(["data"=> [
-            "mentors" => $mentors->values(),
-            "moderators" => $moderators->values(),
-            "admins" => $admins->values()
+        return response()->json(['data' => [
+            'mentors' => $mentors->values(),
+            'moderators' => $moderators->values(),
+            'admins' => $admins->values(),
         ]], 200);
     }
 }

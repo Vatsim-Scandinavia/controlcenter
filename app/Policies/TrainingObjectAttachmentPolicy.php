@@ -13,8 +13,6 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can view the training report attachment.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingObjectAttachment  $attachment
      * @return bool
      */
     public function view(User $user, TrainingObjectAttachment $attachment)
@@ -25,7 +23,6 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can create training report attachments.
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
@@ -36,8 +33,6 @@ class TrainingObjectAttachmentPolicy
     /**
      * Determine whether the user can destroy training object attachments.
      *
-     * @param User $user
-     * @param TrainingObjectAttachment $attachment
      * @return bool
      */
     public function delete(User $user, TrainingObjectAttachment $attachment)

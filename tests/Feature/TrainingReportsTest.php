@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Training;
 use App\Models\TrainingReport;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
 
 class TrainingReportsTest extends TestCase
 {
@@ -141,7 +141,6 @@ class TrainingReportsTest extends TestCase
             ->assertRedirect();
 
         $this->assertDatabaseHas('training_reports', ['content' => $content]);
-
     }
 
     /** @test */
@@ -261,6 +260,4 @@ class TrainingReportsTest extends TestCase
 
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
-
-
 }

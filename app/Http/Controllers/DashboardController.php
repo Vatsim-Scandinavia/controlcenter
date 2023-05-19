@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TrainingReport;
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\AtcActivity;
 use App\Models\TrainingInterest;
+use App\Models\TrainingReport;
 use App\Models\User;
 use App\Models\Vote;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\AtcActivity;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Controller for the dashboard
@@ -40,14 +38,16 @@ class DashboardController extends Controller
         $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
 
         $subdivision = $user->subdivision;
-        if(empty($subdivision)) $subdivision = "No subdivision";
+        if (empty($subdivision)) {
+            $subdivision = 'No subdivision';
+        }
 
         $data = [
             'rating' => $user->rating_long,
             'rating_short' => $user->rating_short,
             'division' => $user->division,
             'subdivision' => $subdivision,
-            'report' => $report
+            'report' => $report,
         ];
 
         $trainings = $user->trainings;
@@ -79,7 +79,8 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function apply(){
+    public function apply()
+    {
         return view('trainingapply');
     }
 
@@ -88,8 +89,8 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function endorsements(){
-
+    public function endorsements()
+    {
         $members = User::has('ratings')->get()->sortBy('name');
 
         return view('endorsements', compact('members'));

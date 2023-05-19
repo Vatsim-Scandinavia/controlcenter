@@ -16,12 +16,14 @@ class VoteController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
         $this->authorize('index', Vote::class);
         $votes = Vote::all();
+
         return view('vote.index', compact('votes'));
     }
 
@@ -29,24 +31,25 @@ class VoteController extends Controller
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
         $this->authorize('create', Vote::class);
+
         return view('vote.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
-
         $this->authorize('store', Vote::class);
 
         $data = request()->validate([
@@ -55,7 +58,7 @@ class VoteController extends Controller
             'require_active' => '',
             'require_our_member' => '',
             'question' => 'required|string',
-            'vote_options' => 'required|string'
+            'vote_options' => 'required|string',
         ]);
 
         // Concat expire date and time
@@ -65,7 +68,9 @@ class VoteController extends Controller
 
         // Split vote options
         $options = preg_split('/\r\n|\r|\n/', $data['vote_options']);
-        if(count($options) < 2) return back()->withInput()->withErrors(['vote_options' => 'There must be at least two voting options separated by a new line.']);
+        if (count($options) < 2) {
+            return back()->withInput()->withErrors(['vote_options' => 'There must be at least two voting options separated by a new line.']);
+        }
 
         // Only ATC active can vote ticked?
         isset($data['require_active']) ? $require_active = true : $require_active = false;
@@ -78,11 +83,11 @@ class VoteController extends Controller
         $vote->require_active = $require_active;
         $vote->require_our_member = $require_our_member;
         $vote->closed = false;
-        $vote->end_at = $expire->format('Y-m-d H:i:s');;
+        $vote->end_at = $expire->format('Y-m-d H:i:s');
 
         $vote->save();
 
-        foreach($options as $option){
+        foreach ($options as $option) {
             $vote_option = new VoteOption();
             $vote_option->vote_id = $vote->id;
             $vote_option->option = $option;
@@ -90,7 +95,7 @@ class VoteController extends Controller
             $vote_option->save();
         }
 
-        ActivityLogController::danger('OTHER', "Created vote ".$vote->id." ― Question: ".$vote->question);
+        ActivityLogController::danger('OTHER', 'Created vote ' . $vote->id . ' ― Question: ' . $vote->question);
 
         return redirect()->intended(route('vote.overview'))->withSuccess('Vote succesfully created.');
     }
@@ -112,7 +117,6 @@ class VoteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id voteId
      * @return \Illuminate\Http\Response
      */
@@ -120,15 +124,17 @@ class VoteController extends Controller
     {
         $vote = Vote::findOrFail($id);
 
-        if(!$this->isVoteValid($vote)){
+        if (! $this->isVoteValid($vote)) {
             return back()->withInput()->withErrors('You vote could not be registered. The vote deadline has passed.');
         }
 
-        $availableOptions = "";
-        foreach($vote->option as $option) $availableOptions .= $option->id.',';
+        $availableOptions = '';
+        foreach ($vote->option as $option) {
+            $availableOptions .= $option->id . ',';
+        }
 
         $data = request()->validate([
-            'vote' => 'required|in:'.$availableOptions,
+            'vote' => 'required|in:' . $availableOptions,
         ]);
 
         $votedOption = $vote->option->where('id', $data['vote'])->first();
@@ -138,7 +144,7 @@ class VoteController extends Controller
         $user = \Auth::user();
         $vote->user()->attach($user);
 
-        ActivityLogController::info('OTHER', "Voted in vote poll ".$vote->id);
+        ActivityLogController::info('OTHER', 'Voted in vote poll ' . $vote->id);
 
         return redirect()->intended(route('vote.show', $vote->id))->withSuccess('Your vote is succesfully registered.');
     }
@@ -147,13 +153,14 @@ class VoteController extends Controller
      * Check and close vote if it's still active after deadline
      * If a vote is submited after deadline and it's still open, let's close it. Cron handles closing, but this is an extra check
      *
-     * @param  \App\Models\Vote $vote
      * @return void
      */
-    private function isVoteValid(Vote $vote){
-        if ($vote->closed == false && Carbon::create($vote->end_at)->isPast()){
+    private function isVoteValid(Vote $vote)
+    {
+        if ($vote->closed == false && Carbon::create($vote->end_at)->isPast()) {
             $vote->closed = true;
             $vote->save();
+
             return false;
         }
 

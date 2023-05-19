@@ -6,7 +6,6 @@ use App\Mail\EndorsementMail;
 use App\Models\Endorsement;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class EndorsementRevokedNotification extends Notification implements ShouldQueue
@@ -17,8 +16,6 @@ class EndorsementRevokedNotification extends Notification implements ShouldQueue
 
     /**
      * Create a new notification instance.
-     *
-     * @param Endorsement $endorsement
      */
     public function __construct(Endorsement $endorsement)
     {
@@ -44,9 +41,8 @@ class EndorsementRevokedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
         $textLines = [
-            'Your **'.ucfirst(strtolower((string)$this->endorsement->type)).' Endorsement** has been **revoked by staff** for following positions: *'.$this->endorsement->positions->pluck('callsign')->implode(', ').'*',
+            'Your **' . ucfirst(strtolower((string) $this->endorsement->type)) . ' Endorsement** has been **revoked by staff** for following positions: *' . $this->endorsement->positions->pluck('callsign')->implode(', ') . '*',
         ];
 
         return (new EndorsementMail('Training Endorsement Revoked', $this->endorsement, $textLines))
@@ -62,7 +58,7 @@ class EndorsementRevokedNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'endorsement_id' => $this->endorsement->id
+            'endorsement_id' => $this->endorsement->id,
         ];
     }
 }

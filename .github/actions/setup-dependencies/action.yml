@@ -1,4 +1,4 @@
-name: Setup project
+name: Setup dependencies
 
 inputs:
   path:
@@ -7,22 +7,10 @@ inputs:
   setup-node:
     description: Whether to setup Node or not
     default: 'false'
-  seed-database:
-    description: Whether to seed the database or not
-    default: 'false'
+
 runs:
   using: composite
   steps:
-  - name: Copy .env.example if available
-    run: "[[ ! -f .env ]] && [[ -f .env.example ]] && /bin/cp -f .env.example .env"
-    shell: bash
-    working-directory: ./${{ inputs.path }}
-
-  - name: Copy .env.ci if available
-    run: "[[ -f .env.ci ]] && /bin/cp -f .env.ci .env || echo No .env.ci detected"
-    shell: bash
-    working-directory: ./${{ inputs.path }}
-
   - name: Validate composer
     run: composer validate
     shell: bash
@@ -52,23 +40,3 @@ runs:
     shell: bash
     working-directory: ./${{ inputs.path }}
 
-  - name: Generate key
-    run: php artisan key:generate
-    shell: bash
-    working-directory: ./${{ inputs.path }}
-
-  - name: Directory Permissions
-    run: chmod -R 777 storage bootstrap/cache
-    shell: bash
-    working-directory: ./${{ inputs.path }}
-
-  - name: Create database and run migrations
-    run: php artisan migrate --force
-    shell: bash
-    working-directory: ./${{ inputs.path }}
-
-  - name: Seed the database
-    if: inputs.seed-database == 'true'
-    run: php artisan db:seed
-    shell: bash
-    working-directory: ./${{ inputs.path }}

@@ -6,15 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class OneTimeLink extends Model
 {
-
     const TRAINING_REPORT_TYPE = 'report';
+
     const TRAINING_EXAMINATION_TYPE = 'examination';
 
     protected $guarded = [];
 
     public $timestamps = false;
+
     protected $dates = [
-        'expires_at'
+        'expires_at',
     ];
 
     /**
@@ -42,7 +43,8 @@ class OneTimeLink extends Model
      *
      * @return bool
      */
-    public function reportType(){
+    public function reportType()
+    {
         return self::TRAINING_REPORT_TYPE == $this->training_object_type;
     }
 
@@ -51,7 +53,8 @@ class OneTimeLink extends Model
      *
      * @return bool
      */
-    public function examinationType(){
+    public function examinationType()
+    {
         return self::TRAINING_EXAMINATION_TYPE == $this->training_object_type;
     }
 
@@ -70,9 +73,8 @@ class OneTimeLink extends Model
                 return route('training.examination.create', ['training' => $this->training]);
                 break;
             default:
-                return "";
+                return '';
                 break;
         }
     }
-
 }

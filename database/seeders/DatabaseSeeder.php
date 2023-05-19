@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Helpers\FactoryHelper;
-use App\Models\User;
+use App\Models\Endorsement;
 use App\Models\Group;
 use App\Models\Training;
 use App\Models\TrainingReport;
@@ -12,7 +11,13 @@ use App\Models\TrainingExamination;
 use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\Position;
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\TrainingExamination;
+use App\Models\TrainingReport;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,68 +28,66 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         // Create the default dev accounts corresponding to VATSIM Connect
         for ($i = 1; $i <= 11; $i++) {
-
-            $name_first = "Web";
-            $name_last = "X";
-            $email = "auth.dev".$i."@vatsim.net";
+            $name_first = 'Web';
+            $name_last = 'X';
+            $email = 'auth.dev' . $i . '@vatsim.net';
 
             $rating_id = 1;
             $group = null;
 
-            switch($i){
+            switch($i) {
                 case 1:
-                    $name_last = "One";                 
+                    $name_last = 'One';
                     break;
                 case 2:
-                    $name_last = "Two";
+                    $name_last = 'Two';
                     $rating_id = 2;
                     break;
                 case 3:
-                    $name_last = "Three";
+                    $name_last = 'Three';
                     $rating_id = 3;
                     break;
                 case 4:
-                    $name_last = "Four";
+                    $name_last = 'Four';
                     $rating_id = 4;
                     break;
                 case 5:
-                    $name_last = "Five";
+                    $name_last = 'Five';
                     $rating_id = 5;
                     break;
                 case 6:
-                    $name_last = "Six";
+                    $name_last = 'Six';
                     $rating_id = 7;
                     break;
                 case 7:
-                    $name_last = "Seven";
+                    $name_last = 'Seven';
                     $rating_id = 8;
                     $group = 3;
                     break;
                 case 8:
-                    $name_last = "Eight";
+                    $name_last = 'Eight';
                     $rating_id = 10;
                     $group = 3;
                     break;
                 case 9:
-                    $name_last = "Nine";
+                    $name_last = 'Nine';
                     $rating_id = 11;
                     $group = 2;
                     break;
                 case 10:
-                    $name_first = "Team";
-                    $name_last = "Web";
+                    $name_first = 'Team';
+                    $name_last = 'Web';
                     $rating_id = 12;
-                    $email = "noreply@vatsim.net";
+                    $email = 'noreply@vatsim.net';
                     $group = 1;
                     break;
                 case 11:
-                    $name_first = "Suspended";
-                    $name_last = "User";
+                    $name_first = 'Suspended';
+                    $name_last = 'User';
                     $rating_id = 0;
-                    $email = "suspended@vatsim.net";
+                    $email = 'suspended@vatsim.net';
                     break;
             }
 
@@ -125,9 +128,11 @@ class DatabaseSeeder extends Seeder
             $training->ratings()->attach(Rating::where('vatsim_rating', '>', 1)->inRandomOrder()->first());
 
             // Give all non-queued trainings a mentor
-            if($training->status > 0){
+            if ($training->status > 0) {
                 $training->mentors()->attach(
-                    User::whereHas('groups', function($query) { $query->where('id', 3); })->inRandomOrder()->first(),
+                    User::whereHas('groups', function ($query) {
+                        $query->where('id', 3);
+                    })->inRandomOrder()->first(),
                     ['expire_at' => now()->addYears(5)]
                 );
                 TrainingReport::factory()->create([
@@ -137,12 +142,12 @@ class DatabaseSeeder extends Seeder
             }
 
             // Give all exam awaiting trainings a solo endorsement
-            if($training->status == 3){
-                if (!Endorsement::where('user_id', $training->user_id)->exists()) {
+            if ($training->status == 3) {
+                if (! Endorsement::where('user_id', $training->user_id)->exists()) {
                     $soloEndorsement = Endorsement::factory()->create([
                         'user_id' => $training->user_id,
-                        'type' => "SOLO",
-                        'valid_to' => Carbon::now()->addWeeks(4)
+                        'type' => 'SOLO',
+                        'valid_to' => Carbon::now()->addWeeks(4),
                     ]);
 
                     // Add position for solo
@@ -157,7 +162,6 @@ class DatabaseSeeder extends Seeder
                     ]);
                 }
             }
-            
         }
     }
 }

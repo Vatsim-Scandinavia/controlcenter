@@ -8,15 +8,18 @@ class Position extends Model
 {
     public $timestamps = false;
 
-    public function bookings(){
-      return $this->belongsToMany(Booking::class, 'id', 'position_id');
+    public function bookings()
+    {
+        return $this->belongsToMany(Booking::class, 'id', 'position_id');
     }
 
-    public function area(){
-      return $this->belongsTo(Area::class);
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
     }
 
-    public function endorsements(){
-      return $this->belongsToMany(Endorsement::class);
+    public function endorsements()
+    {
+        return $this->belongsToMany(Endorsement::class);
     }
 }

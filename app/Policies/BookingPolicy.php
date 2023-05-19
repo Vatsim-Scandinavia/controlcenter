@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Helpers\VatsimRating;
-use App\Models\User;
 use App\Models\Booking;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Config;
@@ -26,31 +26,26 @@ class BookingPolicy
     /**
      * Determine whether the user can create bookings.
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function create(User $user)
     {
-        return (
+        return
             $user->active && $user->rating >= VatsimRating::S2->value
-            || $user->active && $user->rating >= VatsimRating::S1->value && $user->hasActiveEndorsement("S1", true)
+            || $user->active && $user->rating >= VatsimRating::S1->value && $user->hasActiveEndorsement('S1', true)
             || $user->getActiveTraining(1) != null
-            || $user->isModeratorOrAbove()
-        );
+            || $user->isModeratorOrAbove();
     }
 
     /**
      * Determine whether the user can update the booking.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Booking  $booking
      * @return bool
      */
     public function update(User $user, Booking $booking): Response
     {
-
         // Discord booking
-        if ($booking->source == "DISCORD") {
+        if ($booking->source == 'DISCORD') {
             return Response::deny('This booking must be changed in Discord where it was booked');
         }
 
@@ -60,7 +55,7 @@ class BookingPolicy
         }
 
         // The booking is not Discord but the user is moderator or above
-        if ($booking->source != "DISCORD" && $user->isModeratorOrAbove()) {
+        if ($booking->source != 'DISCORD' && $user->isModeratorOrAbove()) {
             return Response::allow();
         }
 
@@ -70,7 +65,6 @@ class BookingPolicy
     /**
      * Determine whether the user can add any tags
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function bookTags(User $user)
@@ -81,7 +75,6 @@ class BookingPolicy
     /**
      * Determine whether the user can add training tag
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function bookTrainingTag(User $user)
@@ -92,7 +85,6 @@ class BookingPolicy
     /**
      * Determine whether the user can add training tag
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function bookEventTag(User $user)
@@ -103,7 +95,6 @@ class BookingPolicy
     /**
      * Determine whether the user can add training tag
      *
-     * @param  \App\Models\User  $user
      * @return bool
      */
     public function bookExamTag(User $user)
@@ -114,14 +105,12 @@ class BookingPolicy
     /**
      * Determine whether the user can book this position.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Booking  $booking
      * @return mixed
      */
     public function position(User $user, Booking $booking)
     {
         // TODO: Make it easier to read the order of checks
-        if (($booking->position->rating > $user->rating || $user->rating < VatsimRating::S1->value) && !$user->isModerator()) {
+        if (($booking->position->rating > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->isModerator()) {
             if (
                 $user->getActiveTraining(1) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating || $user->getActiveTraining()->isMaeTraining()) &&
@@ -129,8 +118,10 @@ class BookingPolicy
             ) {
                 return true;
             }
+
             return $this->deny('You are not authorized to book this position!');
         }
+
         return true;
     }
 }

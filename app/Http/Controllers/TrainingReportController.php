@@ -19,8 +19,8 @@ class TrainingReportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Training $training
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index(Training $training)
@@ -35,14 +35,16 @@ class TrainingReportController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param Training $training
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Training $training)
     {
         $this->authorize('create', [TrainingReport::class, $training]);
-        if ($training->status < 1) { return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.'); }
+        if ($training->status < 1) {
+            return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.');
+        }
 
         $positions = Position::all();
 
@@ -52,9 +54,8 @@ class TrainingReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Training $training
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
@@ -66,8 +67,9 @@ class TrainingReportController extends Controller
         $data['written_by_id'] = Auth::id();
         $data['training_id'] = $training->id;
 
-        if (isset($data['report_date']))
+        if (isset($data['report_date'])) {
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
+        }
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
@@ -78,7 +80,7 @@ class TrainingReportController extends Controller
         TrainingObjectAttachmentController::saveAttachments($request, $report);
 
         // Notify student of new training request if it's not a draft
-        if($report->draft != true && $training->user->setting_notify_newreport){
+        if ($report->draft != true && $training->user->setting_notify_newreport) {
             $training->user->notify(new TrainingReportNotification($training, $report));
         }
 
@@ -96,7 +98,6 @@ class TrainingReportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\TrainingReport  $trainingReport
      * @return \Illuminate\Http\Response
      */
     public function show(TrainingReport $trainingReport)
@@ -107,8 +108,8 @@ class TrainingReportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param TrainingReport $report
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(TrainingReport $report)
@@ -123,9 +124,8 @@ class TrainingReportController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\TrainingReport $report
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, TrainingReport $report)
@@ -135,15 +135,16 @@ class TrainingReportController extends Controller
 
         $data = $this->validateRequest();
 
-        if (isset($data['report_date']))
+        if (isset($data['report_date'])) {
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
+        }
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
         $report->update($data);
 
         // Notify student of new training request if it's not a draft anymore
-        if($oldDraftStatus == true && $report->draft == false && $report->training->user->setting_notify_newreport){
+        if ($oldDraftStatus == true && $report->draft == false && $report->training->user->setting_notify_newreport) {
             $report->training->user->notify(new TrainingReportNotification($report->training, $report));
         }
 
@@ -153,8 +154,8 @@ class TrainingReportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\TrainingReport $report
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(TrainingReport $report)
@@ -180,7 +181,7 @@ class TrainingReportController extends Controller
             'position' => 'nullable',
             'draft' => 'sometimes',
             'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
-            'contentimprove' => 'sometimes|nullable|string'
+            'contentimprove' => 'sometimes|nullable|string',
         ]);
     }
 }

@@ -15,8 +15,6 @@ class TrainingExaminationPolicy
     /**
      * Determine whether the user can view the training examination.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingExamination  $examination
      * @return bool
      */
     public function view(User $user, TrainingExamination $examination)
@@ -27,8 +25,6 @@ class TrainingExaminationPolicy
     /**
      * Determine whether the user can create training examinations.
      *
-     * @param \App\Models\User $user
-     * @param Training $training
      * @return bool
      */
     public function create(User $user, Training $training)
@@ -46,8 +42,6 @@ class TrainingExaminationPolicy
     /**
      * Determine whether the user can update the training examination.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingExamination  $examination
      * @return bool
      */
     public function update(User $user, TrainingExamination $examination)
@@ -58,8 +52,6 @@ class TrainingExaminationPolicy
     /**
      * Determine whether the user can delete the training examination.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\TrainingExamination  $trainingExamination
      * @return bool
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
@@ -70,10 +62,10 @@ class TrainingExaminationPolicy
     /**
      * Get the one time link from a session given a training
      *
-     * @param $training
      * @return null
      */
-    private function getOneTimeLink($training) {
+    private function getOneTimeLink($training)
+    {
         $link = null;
 
         $key = session()->get('onetimekey');
@@ -81,7 +73,7 @@ class TrainingExaminationPolicy
         if ($key != null) {
             $link = OneTimeLink::where([
                 ['training_id', '=', $training->id],
-                ['key', '=', $key]
+                ['key', '=', $key],
             ])->get()->first();
         }
 

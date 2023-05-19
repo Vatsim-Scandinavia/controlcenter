@@ -20,7 +20,7 @@ class CreateRatingTrainingTable extends Migration
             $table->unsignedBigInteger('training_id');
 
             $table->foreign('rating_id')->references('id')->on('ratings');
-            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade'); 
+            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
         });
     }
 
