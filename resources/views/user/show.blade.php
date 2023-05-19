@@ -144,6 +144,7 @@
                         <h6 class="m-0 font-weight-bold text-white">
                             Mentoring
                         </h6>
+                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light" data-toggle="tooltip">See reports</a>
                     </div>
                     <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
         
