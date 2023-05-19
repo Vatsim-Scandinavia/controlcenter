@@ -27,7 +27,7 @@ class CreateTrainingRoleCountryTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('inserted_by')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('SET NULL');
             // TODO figure out why this foreign key doesn't work
-//            $table->foreign('country_id')->references('id')->on('countries')->onUpdate('CASCADE')->onDelete('CASCADE');
+            //            $table->foreign('country_id')->references('id')->on('countries')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 

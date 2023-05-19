@@ -37,7 +37,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('token_expires')->nullable()->after('refresh_token');
 
             } else {
-                
+
                 $table->string('email', 64)->nullable()->after('id');
 
                 $table->string('first_name')->nullable()->after('email');
@@ -84,7 +84,7 @@ return new class extends Migration
             $table->dropColumn('subdivision');
 
             $table->dropColumn('atc_active');
-            
+
             $table->dropColumn('access_token');
             $table->dropColumn('refresh_token');
             $table->dropColumn('token_expires');

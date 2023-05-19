@@ -5,11 +5,6 @@ namespace Database\Seeders;
 use App\Helpers\FactoryHelper;
 use App\Models\Endorsement;
 use App\Models\Group;
-use App\Models\Training;
-use App\Models\TrainingReport;
-use App\Models\TrainingExamination;
-use App\Models\Endorsement;
-use App\Models\Rating;
 use App\Models\Position;
 use App\Models\Rating;
 use App\Models\Training;
@@ -37,7 +32,7 @@ class DatabaseSeeder extends Seeder
             $rating_id = 1;
             $group = null;
 
-            switch($i) {
+            switch ($i) {
                 case 1:
                     $name_last = 'One';
                     break;
@@ -99,9 +94,9 @@ class DatabaseSeeder extends Seeder
                 'rating' => $rating_id,
                 'rating_short' => FactoryHelper::shortRating($rating_id),
                 'rating_long' => FactoryHelper::longRating($rating_id),
-                'region' => "EMEA",
-                'division' => "EUD",
-                'subdivision' => "SCA",
+                'region' => 'EMEA',
+                'division' => 'EUD',
+                'subdivision' => 'SCA',
             ])->groups()->attach(Group::find($group), ['area_id' => 1]);
         }
 
@@ -109,9 +104,9 @@ class DatabaseSeeder extends Seeder
         for ($i = 12; $i <= 125; $i++) {
             User::factory()->create([
                 'id' => 10000000 + $i,
-                'region' => "EMEA",
-                'division' => "EUD",
-                'subdivision' => "SCA",
+                'region' => 'EMEA',
+                'division' => 'EUD',
+                'subdivision' => 'SCA',
             ]);
         }
 

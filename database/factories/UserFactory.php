@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use Faker\Generator as Faker;
 use App\Helpers\FactoryHelper;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
@@ -47,7 +46,7 @@ class UserFactory extends Factory
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'email' => $this->faker->email,
-            
+
             'rating' => $rating,
             'rating_short' => FactoryHelper::shortRating($rating),
             'rating_long' => FactoryHelper::longRating($rating),

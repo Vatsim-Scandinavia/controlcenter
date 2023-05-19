@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Log;
 
 class OAuthHelper
 {
-
     protected $client;
+
     protected $baseUrl;
 
     public function __construct()
@@ -18,7 +18,8 @@ class OAuthHelper
         $this->baseUrl = config('oauth.base');
     }
 
-    protected function client() {
+    protected function client()
+    {
         return new Client([
             'base_uri' => $this->baseUrl,
             'headers' => [
@@ -27,7 +28,8 @@ class OAuthHelper
         ]);
     }
 
-    public function fetchUser(User $user) {
+    public function fetchUser(User $user)
+    {
 
         try {
             $response = $this->client->get($this->baseUrl . '/api/user', [
@@ -35,17 +37,18 @@ class OAuthHelper
                     'Authorization' => 'Bearer ' . $user->access_token,
                 ],
             ]);
-            
+
             return json_decode($response->getBody());
-        } catch(\League\OAuth2\Server\Exception\OAuthServerException $exception){
+        } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
             return false;
-        } catch(\Exception $exception) {
-            Log::critical($exception->getMessage());;
+        } catch (\Exception $exception) {
+            Log::critical($exception->getMessage());
         }
 
     }
 
-    public function refreshToken(User $user) {
+    public function refreshToken(User $user)
+    {
         try {
             $response = $this->client->post($this->baseUrl . '/oauth/token', [
                 'form_params' => [
@@ -53,8 +56,8 @@ class OAuthHelper
                     'refresh_token' => $user->refresh_token,
                     'client_id' => env('VATSIM_OAUTH_CLIENT'),
                     'client_secret' => env('VATSIM_OAUTH_SECRET'),
-                    'scope' => join(' ', config('oauth.scopes')),
-                ]
+                    'scope' => implode(' ', config('oauth.scopes')),
+                ],
             ]);
 
             if ($response->getStatusCode() != 200) {
@@ -62,10 +65,10 @@ class OAuthHelper
             }
 
             return json_decode($response->getBody());
-        } catch(\League\OAuth2\Server\Exception\OAuthServerException $exception){
+        } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
             return false;
-        } catch(\Exception $exception) {
-            Log::critical($exception->getMessage());;
+        } catch (\Exception $exception) {
+            Log::critical($exception->getMessage());
         }
 
     }

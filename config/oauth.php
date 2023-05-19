@@ -28,7 +28,7 @@ return [
      */
     'mapping_cid' => env('OAUTH_MAPPING_CID', 'data-cid'),
     'mapping_mail' => env('OAUTH_MAPPING_EMAIL', 'data-personal-email'),
-     
+
     'mapping_first_name' => env('OAUTH_MAPPING_FIRSTNAME', 'data-personal-name_first'),
     'mapping_last_name' => env('OAUTH_MAPPING_LASTNAME', 'data-personal-name_last'),
 

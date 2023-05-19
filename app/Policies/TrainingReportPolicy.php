@@ -20,7 +20,7 @@ class TrainingReportPolicy
      */
     public function viewAny(User $user, Training $training)
     {
-        return  $training->mentors->contains($user) ||
+        return $training->mentors->contains($user) ||
                 $user->is($training->user) ||
                 $user->isModeratorOrAbove($training->area) ||
                 $user->isAdmin();
@@ -33,7 +33,7 @@ class TrainingReportPolicy
      */
     public function view(User $user, TrainingReport $trainingReport)
     {
-        return  $trainingReport->training->mentors->contains($user) ||
+        return $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
                 $user->isModerator($trainingReport->training->area) ||
                 ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
@@ -61,7 +61,7 @@ class TrainingReportPolicy
      */
     public function update(User $user, TrainingReport $trainingReport)
     {
-        return  $trainingReport->training->mentors->contains($user) ||
+        return $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
                 $user->isModerator($trainingReport->training->area);
     }

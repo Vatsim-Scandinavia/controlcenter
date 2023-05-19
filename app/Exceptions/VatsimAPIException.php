@@ -9,10 +9,10 @@ class VatsimAPIException extends Exception
 {
     /**
      * Missing VATSIMAPIException constructor.
-     * @param string $user
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
+     *
+     * @param  string  $user
+     * @param  string  $message
+     * @param  int  $code
      */
     public function __construct($message = '', $code = 500, Throwable $previous = null)
     {

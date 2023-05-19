@@ -18,13 +18,13 @@ class OAuthController extends GenericProvider
     public function __construct()
     {
         parent::__construct([
-            'clientId'                => config('oauth.id'),    // The client ID assigned to you by the provider
-            'clientSecret'            => config('oauth.secret'),   // The client password assigned to you by the provider
-            'redirectUri'             => route('login'),
-            'urlAuthorize'            => config('oauth.base').'/oauth/authorize',
-            'urlAccessToken'          => config('oauth.base').'/oauth/token',
-            'urlResourceOwnerDetails' => config('oauth.base').'/api/user',
-            'scopes'                  => config('scopes'),
+            'clientId' => config('oauth.id'),    // The client ID assigned to you by the provider
+            'clientSecret' => config('oauth.secret'),   // The client password assigned to you by the provider
+            'redirectUri' => route('login'),
+            'urlAuthorize' => config('oauth.base') . '/oauth/authorize',
+            'urlAccessToken' => config('oauth.base') . '/oauth/token',
+            'urlResourceOwnerDetails' => config('oauth.base') . '/api/user',
+            'scopes' => config('scopes'),
         ]);
     }
 
@@ -47,7 +47,8 @@ class OAuthController extends GenericProvider
         }
     }
 
-    public static function mapOAuthProperties($response){
+    public static function mapOAuthProperties($response)
+    {
 
         $data = [
             'id' => OAuthController::getOAuthProperty(config('oauth.mapping_cid'), $response),
@@ -80,11 +81,12 @@ class OAuthController extends GenericProvider
             if (count($proplist) > 1) {
                 return $getfunc($obj, $proplist[1]);
             }
+
             return $obj;
         };
 
         $resolved = $getfunc($data, $property);
-        if (!empty($resolved)) {
+        if (! empty($resolved)) {
             return $resolved;
         }
 

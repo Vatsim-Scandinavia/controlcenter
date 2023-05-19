@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
+use App\Helpers\Vatsim;
+use App\Models\AtcActivity;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

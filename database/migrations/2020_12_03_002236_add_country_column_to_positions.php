@@ -16,9 +16,9 @@ class AddCountryColumnToPositions extends Migration
         Schema::table('positions', function (Blueprint $table) {
             $table->unsignedInteger('country')->nullable()->after('fir');
             $table->foreign('country')
-            ->references('id')
-            ->on('countries')
-            ->onDelete('cascade');
+                ->references('id')
+                ->on('countries')
+                ->onDelete('cascade');
         });
 
         DB::table('positions')->where('fir', 'EKDK')->update(['country' => 1]);

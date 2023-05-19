@@ -3,17 +3,16 @@
 namespace App\Console\Commands;
 
 use App\Helpers\OAuthHelper;
-use App\Models\User;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Console\Command;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OAuthController;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class UpdateMemberData extends Command
 {
-
     protected $oauthHelper;
+
     protected $controller;
 
     /**
@@ -58,7 +57,7 @@ class UpdateMemberData extends Command
 
                 $refresh = $this->oauthHelper->refreshToken($user);
 
-                if (!$refresh) {
+                if (! $refresh) {
 
                     $user->access_token = null;
                     $user->refresh_token = null;
@@ -75,7 +74,6 @@ class UpdateMemberData extends Command
                 $user->save();
 
             }
-            
 
             $response = $this->oauthHelper->fetchUser($user);
 
@@ -91,7 +89,7 @@ class UpdateMemberData extends Command
                 $user->division = OAuthController::getOAuthProperty(config('oauth.mapping_division'), $response);
                 $user->subdivision = OAuthController::getOAuthProperty(config('oauth.mapping_subdivision'), $response);
                 $user->save();
-                
+
             }
         }
 

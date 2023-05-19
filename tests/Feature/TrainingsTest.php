@@ -12,26 +12,26 @@ class TrainingsTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-//    /** @test */
-//    public function user_can_create_a_training_request()
-//    {
-//        $this->withoutExceptionHandling();
-//
-//        $user = factory(\App\Models\User::class)->create();
-//        \Auth::login($user);
-//
-//        $attributes = [
-//            'experience' => $this->faker->numberBetween(1, 5),
-//            'englishOnly' => (int) $this->faker->boolean,
-//            'motivation' => $this->faker->realText(1500,2),
-//            'comment' => "",
-//            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1,7))->id,
-//            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1,5))->id
-//        ];
-//
-//        $this->assertJson($this->postJson('/training/store', $attributes)->content());
-//        $this->assertDatabaseHas('trainings', ['motivation' => $attributes['motivation']]);
-//    }
+    //    /** @test */
+    //    public function user_can_create_a_training_request()
+    //    {
+    //        $this->withoutExceptionHandling();
+    //
+    //        $user = factory(\App\Models\User::class)->create();
+    //        \Auth::login($user);
+    //
+    //        $attributes = [
+    //            'experience' => $this->faker->numberBetween(1, 5),
+    //            'englishOnly' => (int) $this->faker->boolean,
+    //            'motivation' => $this->faker->realText(1500,2),
+    //            'comment' => "",
+    //            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1,7))->id,
+    //            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1,5))->id
+    //        ];
+    //
+    //        $this->assertJson($this->postJson('/training/store', $attributes)->content());
+    //        $this->assertDatabaseHas('trainings', ['motivation' => $attributes['motivation']]);
+    //    }
 
     /** @test */
     public function guest_cant_create_training_request()

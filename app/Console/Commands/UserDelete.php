@@ -2,10 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use App\Notifications\TrainingClosedNotification;
-use App\Models\User;
 use App\Models\Training;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
@@ -41,8 +37,9 @@ class UserDelete extends Command
     /**
      * Close trainings of user to remove them from queue if applicable
      */
-    private function closeUserTrainings($user){
-        
+    private function closeUserTrainings($user)
+    {
+
         $trainings = Training::where('user_id', $user->id)->where('status', '>=', 0)->get();
         foreach ($trainings as $training) {
             // Training should be closed
@@ -69,10 +66,10 @@ class UserDelete extends Command
     {
         $cid = $this->ask("What is the user's CID?");
 
-        if($user = User::find($cid)){
-            $userInfo = $user->name." (".$cid.")";
-            
-            $this->comment($userInfo." found in records of Control Center!");
+        if ($user = User::find($cid)) {
+            $userInfo = $user->name . ' (' . $cid . ')';
+
+            $this->comment($userInfo . ' found in records of Control Center!');
 
             $choices = [
                 'PSEUDONYMISE -> Used for GDPR deletion requests from user directly to us',
@@ -88,10 +85,10 @@ class UserDelete extends Command
                     $this->closeUserTrainings($user);
                     $user->groups()->detach();
 
-                    $user->email = "void@void.void";
-                    $user->first_name = "Anonymous";
-                    $user->last_name = "Anonymous";
-                    $user->region = "XXX";
+                    $user->email = 'void@void.void';
+                    $user->first_name = 'Anonymous';
+                    $user->last_name = 'Anonymous';
+                    $user->region = 'XXX';
                     $user->division = null;
                     $user->subdivision = null;
                     $user->atc_active = null;
@@ -108,7 +105,7 @@ class UserDelete extends Command
 
                     $user->save();
 
-                    $this->comment($userInfo." has been pseudoymised in Control Center. This will be reverted IF they log into CC again.");
+                    $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into CC again.');
                 }
             // PERMANENTLY DELETE
             } elseif ($choice == $choices[1]) {
@@ -120,7 +117,7 @@ class UserDelete extends Command
                     // Remove things from Control Center
                     $user->delete();
 
-                    $this->comment("All data related to ".$userInfo." has been permanently deleted from Control Center!");
+                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
                 }
             }
         } else {
