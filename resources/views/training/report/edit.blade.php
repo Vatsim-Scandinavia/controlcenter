@@ -187,7 +187,7 @@
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
-                link: ["[","text](link)"],
+                link: ["[","](link)"],
             }
         });
         var simplemde2 = new SimpleMDE({ 
@@ -195,7 +195,7 @@
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
-                link: ["[","text](link)"],
+                link: ["[","](link)"],
             }
         });
 

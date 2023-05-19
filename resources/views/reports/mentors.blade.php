@@ -75,7 +75,7 @@
                                                 @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
                                                     @php
                                                         $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
-                                                        $trainingIntervalExceeded = $reportDate->diffInDays() > Setting::get('trainingInterval');
+                                                        $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                                     @endphp
                                                     <span data-toggle="tooltip" data-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                         @if($reportDate->isToday())
