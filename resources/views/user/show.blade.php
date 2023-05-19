@@ -15,7 +15,13 @@
 
                 <dl class="copyable">
                     <dt>VATSIM ID</dt>
-                    <dd>{{ $user->id }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button></dd>
+                    <dd>
+                        {{ $user->id }}
+                        <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
+                        @if($user->division == 'EUD')
+                            <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $user->id }}" target="_blank" title="ATSimTest Profile" class="link-btn"><i class="fas fa-a"></i></button>
+                        @endif
+                    </dd>
 
                     <dt>Name</dt>
                     <dd>{{ $user->first_name.' '.$user->last_name }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->first_name.' '.$user->last_name }}')"><i class="fas fa-copy"></i></button></dd>
