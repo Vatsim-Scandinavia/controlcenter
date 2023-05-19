@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\TrainingReport;
-use App\Models\TrainingExamination;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
+use App\Models\TrainingExamination;
+use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
