@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\User;
-use App\Models\Handover;
 use App\Models\Endorsement;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Notifications\InactivityNotification;
@@ -40,10 +39,9 @@ class UpdateAtcActivity extends Command
 
         $dryRun = false;
         if($this->option('dry-run') != null) $dryRun = true;
-
-        // Fetch users
-        $handoverMembers = Handover::getActiveAtcMembers($optionalUserIdFilter);
-        $activeUsers = User::whereIn('id', $handoverMembers->pluck('id'))->has('atcActivity')->with('atcActivity')->get();
+        
+        $activeMembers = User::getActiveAtcMembers($optionalUserIdFilter);
+        $activeUsers = User::whereIn('id', $activeMembers->pluck('id'))->has('atcActivity')->with('atcActivity')->get();
 
         // Filter users
         $usersToSetAsInactive = $activeUsers
@@ -59,7 +57,7 @@ class UpdateAtcActivity extends Command
 
         // Execute updates on relevant users
         $this->info('Making '.$usersToSetAsInactive->count().' users inactive');
-        Handover::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
+        User::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
         Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 
         // Send inactivity notification to the users

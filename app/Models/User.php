@@ -6,6 +6,7 @@ use App\Exceptions\MissingHandoverObjectException;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -165,6 +166,45 @@ class User extends Authenticatable
             return false;
 
         return $val;
+    }
+
+    /**
+     * Fetch members that are active as ATC.
+     *
+     * @param array $userIds
+     * @return EloquentCollection<Handover>
+     */
+    public static function getActiveAtcMembers(array $userIds = [])
+    {
+        // Return S1+ users who are VATSCA members
+        if (!empty($userIds)) {
+            return User::whereIn('id', $userIds)
+                ->where('atc_active', true)
+                ->get();
+        } else {
+            return User::where('atc_active', true)->get();
+        }
+    }
+
+    /**
+     * Fetch members with a rating that are in our subdivision
+     * @param array $userIds
+     * @return EloquentCollection<Handover>
+     */
+    public static function getRatedMembers(array $userIds = [])
+    {
+        // Return S1+ users who are VATSCA members
+        if (!empty($userIds)) {
+            return User::whereIn('id', $userIds)
+                ->where('rating', '>=', VatsimRating::S1)
+                ->where('subdivision', Config::get('app.owner_short'))
+                ->get();
+        } else {
+            return User::where([
+                ['rating', '>=', VatsimRating::S1],
+                ['subdivision', '=', Config::get('app.owner_short')]
+            ])->get();
+        }
     }
 
     /**
