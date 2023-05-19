@@ -8,7 +8,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-white">
-                    New Training Report for {{ $training->user->firstName }}'s training for
+                    New Training Report for {{ $training->user->first_name }}'s training for
                     @foreach($training->ratings as $rating)
                         @if ($loop->last)
                             {{ $rating->name }}
