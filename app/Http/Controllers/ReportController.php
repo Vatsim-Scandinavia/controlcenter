@@ -229,201 +229,204 @@ class ReportController extends Controller
 
         if ($areaFilter) {
             foreach (Rating::all() as $rating) {
-                if ($rating->id >= 2) {
-                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
-                    // New requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                        ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->where('area_id', $areaFilter)
-                        ->groupBy('month')
-                        ->get();
+                // New requests
+                $query = DB::table('trainings')
+                    ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
+                    ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                    ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                    ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('rating_id', $rating->id)
+                    ->where('area_id', $areaFilter)
+                    ->groupBy('month')
+                    ->get();
 
-                    foreach ($query as $entry) {
-                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
+                foreach ($query as $entry) {
+                    $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                }
 
-                    // Completed requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                        ->where('status', -1)
-                        ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->where('area_id', $areaFilter)
-                        ->groupBy('month')
-                        ->get();
+                // Completed requests
+                $query = DB::table('trainings')
+                    ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
+                    ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                    ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                    ->where('status', -1)
+                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('rating_id', $rating->id)
+                    ->where('area_id', $areaFilter)
+                    ->groupBy('month')
+                    ->get();
 
-                    foreach ($query as $entry) {
-                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
+                foreach ($query as $entry) {
+                    $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                }
 
-                    // Closed requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                        ->where('status', -2)
-                        ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->where('area_id', $areaFilter)
-                        ->groupBy('month')
-                        ->get();
+                // Closed requests
+                $query = DB::table('trainings')
+                    ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
+                    ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                    ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                    ->where('status', -2)
+                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('rating_id', $rating->id)
+                    ->where('area_id', $areaFilter)
+                    ->groupBy('month')
+                    ->get();
 
-                    foreach ($query as $entry) {
-                        $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-
-                    // Passed trainings
-                    $query = DB::table('training_examinations')
-                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
-                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-                        ->whereExists(function ($query) {
-                            $query->select(DB::raw(1))
-                                ->from('rating_training')
-                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                ->whereColumn('rating_training.training_id', 'trainings.id')
-                                ->whereNotNull('ratings.vatsim_rating');
-                        })
-                        ->whereIn('trainings.type', [1, 4])
-                        ->where('result', 'PASSED')
-                        ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('area_id', $areaFilter)
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach ($query as $entry) {
-                        $passFailRequests['Passed'][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-
-                    // Failed trainings
-                    $query = DB::table('training_examinations')
-                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
-                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-                        ->whereExists(function ($query) {
-                            $query->select(DB::raw(1))
-                                ->from('rating_training')
-                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                ->whereColumn('rating_training.training_id', 'trainings.id')
-                                ->whereNotNull('ratings.vatsim_rating');
-                        })
-                        ->whereIn('trainings.type', [1, 4])
-                        ->where('result', 'FAILED')
-                        ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('area_id', $areaFilter)
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach ($query as $entry) {
-                        $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
-                    }
+                foreach ($query as $entry) {
+                    $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                 }
             }
+
+            // Passed trainings except S1
+            $query = DB::table('training_examinations')
+                ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('rating_training')
+                        ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                        ->whereColumn('rating_training.training_id', 'trainings.id')
+                        ->where('ratings.vatsim_rating', '>=', 3)
+                        ->whereNotNull('ratings.vatsim_rating');
+                })
+                ->whereIn('trainings.type', [1, 4])
+                ->where('result', 'PASSED')
+                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->where('area_id', $areaFilter)
+                ->where('rating_training.rating_id', '>=', 3)
+                ->groupBy('month')
+                ->get();
+
+            foreach ($query as $entry) {
+                $passFailRequests['Passed'][$monthTranslator[$entry->month]] = $entry->count;
+            }
+
+            // Failed trainings
+            $query = DB::table('training_examinations')
+                ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('rating_training')
+                        ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                        ->whereColumn('rating_training.training_id', 'trainings.id')
+                        ->where('ratings.vatsim_rating', '>=', 3)
+                        ->whereNotNull('ratings.vatsim_rating');
+                })
+                ->whereIn('trainings.type', [1, 4])
+                ->where('result', 'FAILED')
+                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->where('area_id', $areaFilter)
+                ->groupBy('month')
+                ->get();
+
+            foreach ($query as $entry) {
+                $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
+            }
+
         } else {
             foreach (Rating::all() as $rating) {
-                if ($rating->id >= 2) {
-                    $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-                    $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
-                    // New requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                        ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->groupBy('month')
-                        ->get();
+                // New requests
+                $query = DB::table('trainings')
+                    ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.created_at) as month'))
+                    ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                    ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                    ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('rating_id', $rating->id)
+                    ->groupBy('month')
+                    ->get();
 
-                    foreach ($query as $entry) {
-                        $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
+                foreach ($query as $entry) {
+                    $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                }
 
-                    // Completed requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                        ->where('status', -1)
-                        ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->groupBy('month')
-                        ->get();
+                // Completed requests
+                $query = DB::table('trainings')
+                    ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
+                    ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                    ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                    ->where('status', -1)
+                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('rating_id', $rating->id)
+                    ->groupBy('month')
+                    ->get();
 
-                    foreach ($query as $entry) {
-                        $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
+                foreach ($query as $entry) {
+                    $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                }
 
-                    // Closed requests
-                    $query = DB::table('trainings')
-                        ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
-                        ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                        ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                        ->where('status', -2)
-                        ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->where('rating_id', $rating->id)
-                        ->groupBy('month')
-                        ->get();
+                // Closed requests
+                $query = DB::table('trainings')
+                    ->select(DB::raw('count(trainings.id) as `count`'), DB::raw('MONTH(trainings.closed_at) as month'))
+                    ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
+                    ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+                    ->where('status', -2)
+                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('rating_id', $rating->id)
+                    ->groupBy('month')
+                    ->get();
 
-                    foreach ($query as $entry) {
-                        $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-
-                    // Passed trainings
-                    $query = DB::table('training_examinations')
-                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
-                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-                        ->whereExists(function ($query) {
-                            $query->select(DB::raw(1))
-                                ->from('rating_training')
-                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                ->whereColumn('rating_training.training_id', 'trainings.id')
-                                ->whereNotNull('ratings.vatsim_rating');
-                        })
-                        ->whereIn('trainings.type', [1, 4])
-                        ->where('result', 'PASSED')
-                        ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach ($query as $entry) {
-                        $passFailRequests['Passed'][$monthTranslator[$entry->month]] = $entry->count;
-                    }
-
-                    // Failed trainings
-                    $query = DB::table('training_examinations')
-                        ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
-                        ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-                        ->whereExists(function ($query) {
-                            $query->select(DB::raw(1))
-                                ->from('rating_training')
-                                ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                                ->whereColumn('rating_training.training_id', 'trainings.id')
-                                ->whereNotNull('ratings.vatsim_rating');
-                        })
-                        ->whereIn('trainings.type', [1, 4])
-                        ->where('result', 'FAILED')
-                        ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
-                        ->groupBy('month')
-                        ->get();
-
-                    foreach ($query as $entry) {
-                        $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
-                    }
+                foreach ($query as $entry) {
+                    $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
                 }
             }
+
+            // Passed trainings
+            $query = DB::table('training_examinations')
+                ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('rating_training')
+                        ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                        ->whereColumn('rating_training.training_id', 'trainings.id')
+                        ->where('ratings.vatsim_rating', '>=', 3)
+                        ->whereNotNull('ratings.vatsim_rating');
+                })
+                ->whereIn('trainings.type', [1, 4])
+                ->where('result', 'PASSED')
+                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->groupBy('month')
+                ->get();
+
+            foreach ($query as $entry) {
+                $passFailRequests['Passed'][$monthTranslator[$entry->month]] = $entry->count;
+            }
+
+            // Failed trainings
+            $query = DB::table('training_examinations')
+                ->select(DB::raw('count(training_examinations.id) as `count`'), DB::raw('MONTH(training_examinations.examination_date) as month'))
+                ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('rating_training')
+                        ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                        ->whereColumn('rating_training.training_id', 'trainings.id')
+                        ->where('ratings.vatsim_rating', '>=', 3)
+                        ->whereNotNull('ratings.vatsim_rating');
+                })
+                ->whereIn('trainings.type', [1, 4])
+                ->where('result', 'FAILED')
+                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->groupBy('month')
+                ->get();
+
+            foreach ($query as $entry) {
+                $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
+            }
+
         }
 
         return [$newRequests, $completedRequests, $closedRequests, $passFailRequests];

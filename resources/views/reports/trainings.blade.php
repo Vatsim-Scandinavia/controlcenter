@@ -298,6 +298,10 @@
                 moment().subtract(1, "month").startOf("month").format('MMMM'),
                 moment().startOf("month").format('MMMM')],
         datasets: [{
+            label: 'S1',
+            backgroundColor: 'rgb(250, 150, 150)',
+            data: newRequestsData["S1"]
+        }, {
             label: 'S2',
             backgroundColor: 'rgb(200, 100, 100)',
             data: newRequestsData["S2"]
@@ -396,6 +400,10 @@
                 moment().subtract(1, "month").startOf("month").format('MMMM'),
                 moment().startOf("month").format('MMMM')],
         datasets: [{
+            label: 'S1',
+            backgroundColor: 'rgb(250, 150, 150)',
+            data: completedRequestsData["S1"]
+        }, {
             label: 'S2',
             backgroundColor: 'rgb(200, 100, 100)',
             data: completedRequestsData["S2"]
@@ -494,6 +502,10 @@
                 moment().subtract(1, "month").startOf("month").format('MMMM'),
                 moment().startOf("month").format('MMMM')],
         datasets: [{
+            label: 'S1',
+            backgroundColor: 'rgb(250, 150, 150)',
+            data: closedRequestsData["S1"]
+        }, {
             label: 'S2',
             backgroundColor: 'rgb(200, 100, 100)',
             data: closedRequestsData["S2"]
@@ -614,7 +626,7 @@
                     stacked: true,
                     title: {
                         display: true,
-                        text: 'Note: This graph only shows standard and fast-tracked CPTs'
+                        text: 'Note: This graph only shows standard and fast-tracked CPTs excluding S1'
                     }
                 },
                 y: {
