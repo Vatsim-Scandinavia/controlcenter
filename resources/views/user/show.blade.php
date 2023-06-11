@@ -38,7 +38,7 @@
                     <dt class="pt-2">ATC Active</dt>
                     <dd>
                         <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i>
-                        {!! ($isGraced) ? '<i class="fas fa-person-praying" data-toggle="tooltip" data-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
+                        {!! ($isGraced) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
                     </dd>
 
                     <dt>ATC Hours</dt>
@@ -72,7 +72,7 @@
                             Trainings
                         </h6>
                         @can('create', \App\Models\Training::class)
-                            <a href="{{ route('training.create.id', $user->id) }}" class="btn btn-icon btn-light" data-toggle="tooltip" data-placement="left" title="Add new training"><i class="fas fa-plus"></i></a>
+                            <a href="{{ route('training.create.id', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip" data-bs-placement="left" title="Add new training"><i class="fas fa-plus"></i></a>
                         @endcan
                     </div>
                     <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
@@ -144,7 +144,7 @@
                         <h6 class="m-0 fw-bold text-white">
                             Mentoring
                         </h6>
-                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light" data-toggle="tooltip">See reports</a>
+                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip">See reports</a>
                     </div>
                     <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
         
@@ -183,7 +183,7 @@
                         Endorsements
                     </h6>
                     @can('create', \App\Models\Endorsement::class)
-                        <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-icon btn-light" data-toggle="tooltip" data-placement="left" title="Add new endorsement"><i class="fas fa-plus"></i></a>
+                        <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip" data-bs-placement="left" title="Add new endorsement"><i class="fas fa-plus"></i></a>
                     @endcan
                 </div>
                 <div class="card-body d-flex flex-wrap gap-1">
@@ -197,24 +197,24 @@
                             <div class="card-header fw-bold">
 
                                 @if($endorsement->revoked)
-                                    <i class="fas fa-circle-xmark text-danger" data-toggle="tooltip" data-placement="top" title="Revoked"></i>
+                                    <i class="fas fa-circle-xmark text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoked"></i>
                                 @elseif($endorsement->expired)
-                                    <i class="fas fa-circle-minus text-danger" data-toggle="tooltip" data-placement="top" title="Expired"></i>
+                                    <i class="fas fa-circle-minus text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Expired"></i>
                                 @else
-                                    <i class="fas fa-circle-check text-success" data-toggle="tooltip" data-placement="top" title="Active"></i>
+                                    <i class="fas fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Active"></i>
                                 @endif
 
                                 {{ ($endorsement->type == "MASC") ? 'MA/SC' : ucfirst(strtolower($endorsement->type)) }} Endorsement
 
                                 @can('delete', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
-                                    <a href="{{ route('endorsements.delete', $endorsement['id']) }}" class="text-muted float-end hover-red" data-toggle="tooltip" data-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ route('endorsements.delete', $endorsement['id']) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
                                 @endcan
 
                                 @if(($endorsement->type == "S1" || $endorsement->type == "SOLO") && isset($endorsement->valid_to))
                                     @can('shorten', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
                                         <span class="flatpickr">
                                             <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
-                                            <a role="button" class="input-button text-muted float-end hover-red text-decoration-none" data-toggle="tooltip" data-placement="top" title="Shorten expire date" data-toggle>
+                                            <a role="button" class="input-button text-muted float-end hover-red text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="top" title="Shorten expire date" data-toggle>
                                                 <i class="fas fa-calendar-minus"></i>&nbsp;
                                             </a>
                                         </span>

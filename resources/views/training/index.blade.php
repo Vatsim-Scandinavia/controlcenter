@@ -58,9 +58,9 @@
                                         <a 
                                             href="/training/{{ $training->id }}"
                                             class="link-tooltip" 
-                                            data-toggle="tooltip" 
-                                            data-html="true" 
-                                            data-placement="right" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-html="true" 
+                                            data-bs-placement="right" 
                                             title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $notes) }}"
                                             >
                                             {{ $statuses[$training->status]["text"] }}

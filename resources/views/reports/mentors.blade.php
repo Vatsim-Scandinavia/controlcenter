@@ -45,7 +45,7 @@
                                             @php
                                                 $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
                                             @endphp
-                                            <span data-toggle="tooltip" data-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
+                                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
                                                     Today
                                                 @elseif($reportDate->isYesterday())
@@ -77,7 +77,7 @@
                                                         $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
                                                         $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                                     @endphp
-                                                    <span data-toggle="tooltip" data-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                         @if($reportDate->isToday())
                                                             <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
                                                         @elseif($reportDate->isYesterday())

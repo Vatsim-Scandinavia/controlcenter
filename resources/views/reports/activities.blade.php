@@ -145,7 +145,7 @@
 
                                     </td>
                                     <td>
-                                        <span data-toggle="tooltip" data-placement="top" title="{{ $activity->created_at->toEuropeanDateTime() }}">
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $activity->created_at->toEuropeanDateTime() }}">
                                             {{ $activity->created_at->diffForHumans() }}
                                         </span>
                                     </td>
