@@ -25,25 +25,31 @@
         <div class="col-xl-12 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">{{ $currentArea->name }}'s Notifications</h6> 
+                    <h6 class="m-0 fw-bold text-white">{{ $currentArea->name }}'s Notifications</h6> 
                 </div>        
                 <div class="card-body">
                     <p>These editors give you the possiblity to append your FIR-specific text to the templates available, for the e-mail notifications. The notification text must be in English.</p>
 
-                    <div class="form-inline">
-                        <select class="form-control" onchange="selectedNotification(this.value)" style="width: 200px" id="notification">
-                            <option selected disabled>Choose Notification</option>
-                            <option value="1">New Request</option>
-                            <option value="2">New Mentor</option>
-                            <option value="3">Pre-Training</option>
-                        </select>
+                    <div class="row row-cols-auto g-1">
+                        <div class="col">
+                            <select class="form-select" onchange="selectedNotification(this.value)" style="width: 200px" id="notification">
+                                <option selected disabled>Choose Notification</option>
+                                <option value="1">New Request</option>
+                                <option value="2">New Mentor</option>
+                                <option value="3">Pre-Training</option>
+                            </select>
+                        </div>
 
-                        @can('modifyAreaTemplate', [App\Notification::class, $currentArea])
-                            <button class="btn btn-success ml-2" type="submit">Save {{ $currentArea->name }}'s notifications</button>
-                        @else
-                            <button class="btn btn-success ml-2" disabled>Save {{ $currentArea->name }}'s notifications</button>
-                        @endcan
-                    </div>
+                        <div class="col">
+                            @can('modifyAreaTemplate', [App\Notification::class, $currentArea])
+                                <button class="btn btn-success ms-2" type="submit">Save {{ $currentArea->name }}'s notifications</button>
+                            @else
+                                <button class="btn btn-success ms-2" disabled>Save {{ $currentArea->name }}'s notifications</button>
+                            @endcan
+                        </div>
+                    </form>
+
+                    text-fuck-left;
 
                 </div>
             </div>
@@ -55,7 +61,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">New Request Notification</h6> 
+                    <h6 class="m-0 fw-bold text-white">New Request Notification</h6> 
                 </div>        
                 <div class="card-body">
                     <div class="form-group">
@@ -72,7 +78,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Preview</h6> 
+                    <h6 class="m-0 fw-bold text-white">Preview</h6> 
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>
@@ -93,7 +99,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">New Mentor Notification</h6> 
+                    <h6 class="m-0 fw-bold text-white">New Mentor Notification</h6> 
                 </div>        
                 <div class="card-body">
                     <div class="form-group">
@@ -109,7 +115,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Preview</h6> 
+                    <h6 class="m-0 fw-bold text-white">Preview</h6> 
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>
@@ -130,7 +136,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Pre-Training Notification</h6> 
+                    <h6 class="m-0 fw-bold text-white">Pre-Training Notification</h6> 
                 </div>        
                 <div class="card-body">
                     <div class="form-group">
@@ -146,7 +152,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Preview</h6> 
+                    <h6 class="m-0 fw-bold text-white">Preview</h6> 
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>

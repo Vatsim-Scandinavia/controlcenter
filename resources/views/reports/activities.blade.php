@@ -26,7 +26,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Training Activities
                 </h6>
             </div>
@@ -41,7 +41,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="id" data-sortable="false" data-filter-control="input">Training</th>
                                 <th data-field="who" data-sortable="false" data-filter-control="input">Who</th>
@@ -83,21 +83,21 @@
 
                                         @if($activity->type == "STATUS")
                                             @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
-                                                Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                            to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
-                                            with reason <span class="badge badge-light">{{ $activity->comment }}</span>
+                                                Status changed from <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                            to <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            with reason <span class="badge bg-light">{{ $activity->comment }}</span>
                                             @else
-                                                Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                            to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                                Status changed from <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                            to <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                             @endif
                                         @elseif($activity->type == "TYPE")
-                                            Training type changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                            to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                            Training type changed from <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
+                                            to <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
                                         @elseif($activity->type == "MENTOR")
                                             @if($activity->new_data)
-                                                <span class="badge badge-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                                <span class="badge bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
                                             @elseif($activity->old_data)
-                                            <span class="badge badge-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                            <span class="badge bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
                                             @endif
                                         @elseif($activity->type == "PAUSE")
                                             @if($activity->new_data)
@@ -108,10 +108,10 @@
                                         @elseif($activity->type == "ENDORSEMENT")
                                             @if(\App\Models\Endorsement::find($activity->new_data) !== null)
                                                 @empty($activity->comment)
-                                                    <span class="badge badge-light">
+                                                    <span class="badge bg-light">
                                                         {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
                                                     </span> granted, valid to 
-                                                    <span class="badge badge-light">
+                                                    <span class="badge bg-light">
                                                         @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                             {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
                                                         @else
@@ -119,10 +119,10 @@
                                                         @endisset
                                                     </span>
                                                 @else
-                                                    <span class="badge badge-light">
+                                                    <span class="badge bg-light">
                                                         {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
                                                     </span> granted, valid to 
-                                                    <span class="badge badge-light">
+                                                    <span class="badge bg-light">
                                                         @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                             {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
                                                         @else
@@ -131,7 +131,7 @@
                                                     </span>
                                                     for positions: 
                                                     @foreach(explode(',', $activity->comment) as $p)
-                                                        <span class="badge badge-light">{{ $p }}</span>
+                                                        <span class="badge bg-light">{{ $p }}</span>
                                                     @endforeach
                                                 @endempty
                                             @endif

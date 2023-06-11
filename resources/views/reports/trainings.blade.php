@@ -26,10 +26,10 @@
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-secondary shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">In queue</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardStats["waiting"] }} requests</div>
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="text-xs fw-bold text-uppercase text-gray-600 mb-1">In queue</div>
+            <div class="h5 mb-0 fw-bold text-gray-800">{{ $cardStats["waiting"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-hourglass fa-2x text-gray-300"></i>
@@ -42,10 +42,10 @@
     <div class="col-xl-2 col-md-6 mb-4">
     <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">In training</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardStats["training"] }} requests</div>
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="text-xs fw-bold text-warning text-uppercase mb-1">In training</div>
+            <div class="h5 mb-0 fw-bold text-gray-800">{{ $cardStats["training"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-book-open fa-2x text-gray-300"></i>
@@ -58,10 +58,10 @@
     <div class="col-xl-2 col-md-6 mb-4">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Awaiting exam</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $cardStats["exam"] }} requests</div>
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="text-xs fw-bold text-info text-uppercase mb-1">Awaiting exam</div>
+            <div class="h5 mb-0 fw-bold text-gray-800">{{ $cardStats["exam"] }} requests</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
@@ -74,12 +74,12 @@
     <div class="col-xl-2 col-md-6 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
-            <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed this year</div>
-                <div class="row no-gutters align-items-center">
+            <div class="row g-0 align-items-center">
+                <div class="col me-2">
+                <div class="text-xs fw-bold text-success text-uppercase mb-1">Completed this year</div>
+                <div class="row g-0 align-items-center">
                     <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $cardStats["completed"] }} requests</div>
+                        <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $cardStats["completed"] }} requests</div>
                     </div>
                 </div>
                 </div>
@@ -94,12 +94,12 @@
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-danger shadow h-100 py-2">
             <div class="card-body">
-            <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Closed this year</div>
-                <div class="row no-gutters align-items-center">
+            <div class="row g-0 align-items-center">
+                <div class="col me-2">
+                <div class="text-xs fw-bold text-danger text-uppercase mb-1">Closed this year</div>
+                <div class="row g-0 align-items-center">
                     <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $cardStats["closed"] }} requests</div>
+                        <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $cardStats["closed"] }} requests</div>
                     </div>
                 </div>
                 </div>
@@ -117,7 +117,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Training requests last 12 months
                 </h6> 
             </div>
@@ -134,7 +134,7 @@
     <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     New requests last 6 months
                 </h6> 
             </div>
@@ -147,7 +147,7 @@
     <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Completed requests last 6 months
                 </h6> 
             </div>
@@ -160,7 +160,7 @@
     <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Closed requests last 6 months
                 </h6> 
             </div>
@@ -173,7 +173,7 @@
     <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Passed and failed exams last 6 months
                 </h6> 
             </div>
@@ -186,13 +186,13 @@
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Estimated queue lengths
                 </h6> 
             </div>
             <div class="card-body p-0">
                 <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                    <thead class="thead-light">
+                    <thead class="table-light">
                         <tr>
                             <th>Rating</th>
                             <th>Waiting time average low — high</th>

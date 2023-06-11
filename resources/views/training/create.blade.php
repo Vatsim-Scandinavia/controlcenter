@@ -8,7 +8,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Create 
                 </h6> 
             </div>
@@ -43,8 +43,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="my-1 mr-2" for="areaSelect">Training area</label>
-                        <select id="areaSelect" name="training_area" class="custom-select my-1 mr-sm-2 @error('training_area') is-invalid @enderror" @change="onChange($event)">
+                        <label class="my-1 me-2" for="areaSelect">Training area</label>
+                        <select id="areaSelect" name="training_area" class="custom-select my-1 me-sm-2 @error('training_area') is-invalid @enderror" @change="onChange($event)">
                             <option selected disabled>Choose training area</option>
                             @foreach($ratings as $areaId => $area)
                                 <option data-id="{{ $areaId }}" value="{{ $area['id'] }}">{{ $area['name'] }}</option>
@@ -56,8 +56,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="my-1 mr-2" for="typeSelect">Training type</label>
-                        <select id="typeSelect" name="type" class="custom-select my-1 mr-sm-2 @error('type') is-invalid @enderror">
+                        <label class="my-1 me-2" for="typeSelect">Training type</label>
+                        <select id="typeSelect" name="type" class="custom-select my-1 me-sm-2 @error('type') is-invalid @enderror">
                             <option selected disabled>Choose training type</option>
                             @foreach($types as $id => $data)
                                 <option value="{{ $id }}">{{ $data["text"] }}</option>
@@ -74,7 +74,7 @@
                     </div>
  
                     <div class="form-group">
-                        <label class="my-1 mr-2" for="ratingSelect">Training level <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label class="my-1 me-2" for="ratingSelect">Training level <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple id="ratingSelect" name="ratings[]" class="form-control @error('ratings') is-invalid @enderror" size="5">
                             <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                         </select>

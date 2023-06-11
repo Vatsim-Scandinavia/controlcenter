@@ -36,7 +36,7 @@
     <div class="col-xl-3 col-md-12 col-sm-12 mb-12">
         <div class="card shadow mb-2">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     <i class="fas fa-flag"></i>&nbsp;{{ $training->user->first_name }}'s training for
                     @foreach($training->ratings as $rating)
                         @if ($loop->last)
@@ -65,7 +65,7 @@
             </div>
             <div class="card-body">
                 @can('edit', [\App\Models\Training::class, $training])
-                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon float-right"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon float-end"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
                 @endcan
                 <dl class="copyable">
                     <dt>State</dt>
@@ -177,7 +177,7 @@
                             <label class="form-check-label" for="check1">
                                 Paused
                                 @if(isset($training->paused_at))
-                                    <span class='badge badge-danger'>{{ \Carbon\Carbon::create($training->paused_at)->diffForHumans(['parts' => 2]) }}</span>
+                                    <span class='badge bg-danger'>{{ \Carbon\Carbon::create($training->paused_at)->diffForHumans(['parts' => 2]) }}</span>
                                 @endif
                             </label>
                         </div>
@@ -186,7 +186,7 @@
 
                         @if (\Auth::user()->isModeratorOrAbove())
                         <div class="form-group">
-                            <label for="assignMentors">Assigned mentors: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                            <label for="assignMentors">Assigned mentors: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                             <select multiple class="form-control" name="mentors[]" id="assignMentors">
                                 @foreach($trainingMentors as $mentor)
                                     <option value="{{ $mentor->id }}" {{ ($training->mentors->contains($mentor->id)) ? "selected" : "" }}>{{ $mentor->name }}</option>
@@ -208,7 +208,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Timeline
                 </h6>
             </div>
@@ -219,9 +219,7 @@
                         <input type="hidden" name="training_id" value="{{ $training->id }}">
                         <input type="hidden" name="update_id" id="activity_update_id" value="">
                         <input type="text" name="comment" id="activity_comment" class="form-control border" placeholder="Your internal comment ..." maxlength="512">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
-                        </div>
+                        <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
                     </div>
                 </form>
             @endcan
@@ -254,7 +252,7 @@
                                     {{ $activity->created_at->toEuropeanDateTime() }}
                                     @can('comment', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id)])
                                         @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
-                                            <button class="btn btn-sm float-right" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
+                                            <button class="btn btn-sm float-end" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
                                         @endif
                                     @endcan
                                 </div>
@@ -262,21 +260,21 @@
 
                                     @if($activity->type == "STATUS")
                                         @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
-                                            Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
-                                        with reason <span class="badge badge-light">{{ $activity->comment }}</span>
+                                            Status changed from <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                        with reason <span class="badge bg-light">{{ $activity->comment }}</span>
                                         @else
-                                            Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            Status changed from <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                         @endif
                                     @elseif($activity->type == "TYPE")
-                                        Training type changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                        Training type changed from <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
                                     @elseif($activity->type == "MENTOR")
                                         @if($activity->new_data)
-                                            <span class="badge badge-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                            <span class="badge bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
                                         @elseif($activity->old_data)
-                                        <span class="badge badge-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                        <span class="badge bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
                                         @endif
                                     @elseif($activity->type == "PAUSE")
                                         @if($activity->new_data)
@@ -287,10 +285,10 @@
                                     @elseif($activity->type == "ENDORSEMENT")
                                         @if(\App\Models\Endorsement::find($activity->new_data) !== null)
                                             @empty($activity->comment)
-                                                <span class="badge badge-light">
+                                                <span class="badge bg-light">
                                                     {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
                                                 </span> granted, valid to 
-                                                <span class="badge badge-light">
+                                                <span class="badge bg-light">
                                                     @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                         {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
                                                     @else
@@ -298,10 +296,10 @@
                                                     @endisset
                                                 </span>
                                             @else
-                                                <span class="badge badge-light">
+                                                <span class="badge bg-light">
                                                     {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
                                                 </span> granted, valid to 
-                                                <span class="badge badge-light">
+                                                <span class="badge bg-light">
                                                     @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                         {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
                                                     @else
@@ -310,7 +308,7 @@
                                                 </span>
                                                 for positions: 
                                                 @foreach(explode(',', $activity->comment) as $p)
-                                                    <span class="badge badge-light">{{ $p }}</span>
+                                                    <span class="badge bg-light">{{ $p }}</span>
                                                 @endforeach
                                             @endempty
                                         @endif
@@ -341,7 +339,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Application
                 </h6>
             </div>
@@ -364,7 +362,7 @@
             </div>
 
             <div class="p-4">
-                <p class="font-weight-bold text-primary">
+                <p class="fw-bold text-primary">
                     <i class="fas fa-envelope-open-text"></i>&nbsp;Letter of motivation
                 </p>
 
@@ -384,9 +382,9 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
 
                 @if($training->status >= 1 && $training->status <= 3)
-                    <h6 class="m-0 font-weight-bold text-white">
+                    <h6 class="m-0 fw-bold text-white">
                 @else
-                    <h6 class="m-0 mt-1 mb-2 font-weight-bold text-white">
+                    <h6 class="m-0 mt-1 mb-2 fw-bold text-white">
                 @endif
                     Training Reports
                 </h6>
@@ -439,9 +437,9 @@
                                             <div class="card-header p-0">
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                        <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $reportModel->report_date->toEuropeanDate() }}
+                                                        <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $reportModel->report_date->toEuropeanDate() }}
                                                         @if($reportModel->draft)
-                                                            <span class='badge badge-danger'>Draft</span>
+                                                            <span class='badge bg-danger'>Draft</span>
                                                         @endif
                                                     </button>
                                                 </h5>
@@ -456,7 +454,7 @@
                                                         @endif
                                                         <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->written_by_id)->name) ? \App\Models\User::find($reportModel->written_by_id)->name : "Unknown"  }}
                                                         @can('update', $reportModel)
-                                                            <a class="float-right" href="{{ route('training.report.edit', $reportModel->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
+                                                            <a class="float-end" href="{{ route('training.report.edit', $reportModel->id) }}"><i class="fa fa-pen-square"></i> Edit</a>
                                                         @endcan
                                                     </small>
 
@@ -466,7 +464,7 @@
 
                                                     @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
                                                         <hr>
-                                                        <p class="font-weight-bold text-primary">
+                                                        <p class="fw-bold text-primary">
                                                             <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
                                                         </p>
                                                         <div id="markdown-improve">
@@ -503,7 +501,7 @@
                                         <div class="card-header p-0">
                                             <h5 class="mb-0 bg-lightorange">
                                                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                    <i class="fas fa-fw fa-chevron-right mr-2"></i>{{ $reportModel->examination_date->toEuropeanDate() }}
+                                                    <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $reportModel->examination_date->toEuropeanDate() }}
                                                 </button>
                                             </h5>
                                         </div>
@@ -517,19 +515,19 @@
                                                     @endif
                                                     <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}
                                                     @can('delete', [\App\Models\TrainingExamination::class, $reportModel])
-                                                        <a class="float-right" href="{{ route('training.examination.delete', $reportModel->id) }}" onclick="return confirm('Are you sure you want to delete this examination?')"><i class="fa fa-trash"></i> Delete</a>
+                                                        <a class="float-end" href="{{ route('training.examination.delete', $reportModel->id) }}" onclick="return confirm('Are you sure you want to delete this examination?')"><i class="fa fa-trash"></i> Delete</a>
                                                     @endcan
                                                 </small>
 
                                                 <div class="mt-2">
                                                     @if($reportModel->result == "PASSED")
-                                                        <span class='badge badge-success'>PASSED</span>
+                                                        <span class='badge bg-success'>PASSED</span>
                                                     @elseif($reportModel->result == "FAILED")
-                                                        <span class='badge badge-danger'>FAILED</span>
+                                                        <span class='badge bg-danger'>FAILED</span>
                                                     @elseif($reportModel->result == "INCOMPLETE")
-                                                        <span class='badge badge-primary'>INCOMPLETE</span>
+                                                        <span class='badge bg-primary'>INCOMPLETE</span>
                                                     @elseif($reportModel->result == "POSTPONED")
-                                                        <span class='badge badge-warning'>POSTPONED</span>
+                                                        <span class='badge bg-warning'>POSTPONED</span>
                                                     @endif
                                                 </div>
 
@@ -563,7 +561,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Training Interest Confirmations
                 </h6>
             </div>
@@ -574,7 +572,7 @@
                 @else
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="thead-light">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Interest sent</th>
                                     <th>Confirmation Deadline</th>

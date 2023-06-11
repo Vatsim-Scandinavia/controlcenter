@@ -8,7 +8,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Mentor Report
                 </h6>
             </div>
@@ -23,7 +23,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Mentor ID</th>
                                 <th data-field="mentor" data-sortable="true" data-filter-control="input">Mentor</th>

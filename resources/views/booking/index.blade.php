@@ -12,7 +12,7 @@
     @endcannot
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Booked Sessions<span class="zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span></h6> 
+                <h6 class="m-0 fw-bold text-white">Booked Sessions<span class="zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span></h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -26,7 +26,7 @@
                         data-page-size="25"
                         data-page-list=[10,15,25,50]
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false" data-filter-order-by="desc">Date</th>
                                 <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
@@ -65,11 +65,11 @@
                                 <td>
                                     {{ $booking->position->callsign }} ({{ $booking->position->name }})
                                     @if($booking->training)
-                                        <span class="badge badge-primary">Training</span>
+                                        <span class="badge bg-primary">Training</span>
                                     @elseif($booking->event)
-                                        <span class="badge badge-success">Event</span>
+                                        <span class="badge bg-success">Event</span>
                                     @elseif($booking->exam)
-                                        <span class="badge badge-danger">Exam</span>
+                                        <span class="badge bg-danger">Exam</span>
                                     @endif
                                 </td>
                                 <td>
@@ -96,7 +96,7 @@
     <div class="col-xl-4 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Create Booking 
                 </h6> 
             </div>

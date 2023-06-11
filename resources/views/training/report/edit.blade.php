@@ -8,10 +8,10 @@
     <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     {{ $report->training->user->first_name }}'s training {{ $report->report_date->toEuropeanDate() }}
                     @if($report->draft)
-                        <span class='badge badge-danger'>Draft</span>
+                        <span class='badge bg-danger'>Draft</span>
                     @endif
                 </h6>
             </div>
@@ -92,7 +92,7 @@
     <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Manage attachments
                 </h6>
             </div>

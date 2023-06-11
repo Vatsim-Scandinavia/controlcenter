@@ -19,7 +19,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Training</h6>
+                    <h6 class="m-0 fw-bold text-white">Training</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -95,7 +95,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">ATC Activity</h6>
+                    <h6 class="m-0 fw-bold text-white">ATC Activity</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -166,7 +166,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Links</h6>
+                    <h6 class="m-0 fw-bold text-white">Links</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -248,7 +248,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Telemetry</h6>
+                    <h6 class="m-0 fw-bold text-white">Telemetry</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">

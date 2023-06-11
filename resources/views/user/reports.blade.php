@@ -9,7 +9,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">{{ $user->first_name }}'s Reports</h6> 
+                <h6 class="m-0 fw-bold text-white">{{ $user->first_name }}'s Reports</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="accordion" id="reportAccordion">
@@ -32,7 +32,7 @@
                                         <div class="card-header p-0">
                                             <h5 class="mb-0">
                                                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                    <i class="fas fa-fw fa-chevron-right mr-2"></i>
+                                                    <i class="fas fa-fw fa-chevron-right me-2"></i>
                                                     {{ $reportModel->report_date->toEuropeanDate() }}
                                                     | {{ isset(\App\Models\User::find($reportModel->training->user->id)->first_name) ? \App\Models\User::find($reportModel->training->user->id)->first_name : "Unknown"  }}'s
                                                     @foreach($reportModel->training->ratings as $rating)
@@ -44,7 +44,7 @@
                                                     @endforeach
                                                     Training
                                                     @if($reportModel->draft)
-                                                        <span class='badge badge-danger'>Draft</span>
+                                                        <span class='badge bg-danger'>Draft</span>
                                                     @endif
                                                 </button>
                                             </h5>
@@ -59,7 +59,7 @@
                                                     @endif
                                                     <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->written_by_id)->name) ? \App\Models\User::find($reportModel->written_by_id)->name : "Unknown"  }}
                                                     @can('view', [\App\Models\Training::class, $reportModel->training])
-                                                        <a class="float-right" href="{{ route('training.show', $reportModel->training->id) }}"><i class="fa fa-eye"></i> View training</a>
+                                                        <a class="float-end" href="{{ route('training.show', $reportModel->training->id) }}"><i class="fa fa-eye"></i> View training</a>
                                                     @endcan
                                                 </small>
 
@@ -69,7 +69,7 @@
 
                                                 @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
                                                     <hr>
-                                                    <p class="font-weight-bold text-primary">
+                                                    <p class="fw-bold text-primary">
                                                         <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
                                                     </p>
                                                     <div id="markdown-improve">
@@ -106,7 +106,7 @@
                                     <div class="card-header p-0">
                                         <h5 class="mb-0 bg-lightorange">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
-                                                <i class="fas fa-fw fa-chevron-right mr-2"></i>
+                                                <i class="fas fa-fw fa-chevron-right me-2"></i>
                                                 {{ $reportModel->examination_date->toEuropeanDate() }}
                                                 | {{ isset(\App\Models\User::find($reportModel->training->user->id)->first_name) ? \App\Models\User::find($reportModel->training->user->id)->first_name : "Unknown"  }}'s
                                                 @foreach($reportModel->training->ratings as $rating)
@@ -130,19 +130,19 @@
                                                 @endif
                                                 <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}
                                                 @can('view', [\App\Models\Training::class, $reportModel->training])
-                                                    <a class="float-right" href="{{ route('training.show', $reportModel->training->id) }}"><i class="fa fa-eye"></i> View training</a>
+                                                    <a class="float-end" href="{{ route('training.show', $reportModel->training->id) }}"><i class="fa fa-eye"></i> View training</a>
                                                 @endcan
                                             </small>
 
                                             <div class="mt-2">
                                                 @if($reportModel->result == "PASSED")
-                                                    <span class='badge badge-success'>PASSED</span>
+                                                    <span class='badge bg-success'>PASSED</span>
                                                 @elseif($reportModel->result == "FAILED")
-                                                    <span class='badge badge-danger'>FAILED</span>
+                                                    <span class='badge bg-danger'>FAILED</span>
                                                 @elseif($reportModel->result == "INCOMPLETE")
-                                                    <span class='badge badge-primary'>INCOMPLETE</span>
+                                                    <span class='badge bg-primary'>INCOMPLETE</span>
                                                 @elseif($reportModel->result == "POSTPONED")
-                                                    <span class='badge badge-warning'>POSTPONED</span>
+                                                    <span class='badge bg-warning'>POSTPONED</span>
                                                 @endif
                                             </div>
 

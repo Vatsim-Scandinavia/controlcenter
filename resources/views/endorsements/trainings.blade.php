@@ -13,7 +13,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Training Endorsements</h6> 
+                <h6 class="m-0 fw-bold text-white">Training Endorsements</h6> 
             </div>        
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -24,7 +24,7 @@
                         data-filter-control="true"
                         data-sort-reset="true"
                         >
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="status" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Status</th>
@@ -75,7 +75,7 @@
 
                                         <td>
                                             @foreach($e->positions as $p)
-                                                <span class="badge badge-dark">{{ $p->callsign }}</span>
+                                                <span class="badge bg-dark">{{ $p->callsign }}</span>
                                             @endforeach
                                         </td>
                                         <td>{{ Carbon\Carbon::parse($e->valid_from)->toEuropeanDate() }}</td>

@@ -8,7 +8,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Logs</h6>
+                <h6 class="m-0 fw-bold text-white">Logs</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -18,7 +18,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false" data-filter-order-by="desc">Time</th>
                                 <th data-field="type" data-sortable="false" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Type</th>

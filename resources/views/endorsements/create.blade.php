@@ -7,7 +7,7 @@
     <div class="col-xl-5 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Create 
                 </h6> 
             </div>
@@ -147,7 +147,7 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
-                        <div class="dropdown float-right">
+                        <div class="dropdown float-end">
                             <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Template
                             </button>
@@ -189,7 +189,7 @@
 
                     {{-- Examiner/Visiting Areas --}}
                     <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
-                        <label for="areas">Areas: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label for="areas">Areas: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
                             @foreach($areas as $area)
                                 <option value="{{ $area->id }}">{{ $area->name }}</option>
