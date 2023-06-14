@@ -445,7 +445,7 @@
                                                 </h5>
                                             </div>
 
-                                            <div id="{{ $uuid }}" class="collapse" data-parent="#reportAccordion">
+                                            <div id="{{ $uuid }}" class="collapse" data-bs-parent="#reportAccordion">
                                                 <div class="card-body">
 
                                                     <small class="text-muted">
@@ -506,7 +506,7 @@
                                             </h5>
                                         </div>
 
-                                        <div id="{{ $uuid }}" class="collapse" data-parent="#reportAccordion">
+                                        <div id="{{ $uuid }}" class="collapse" data-bs-parent="#reportAccordion">
                                             <div class="card-body">
 
                                                 <small class="text-muted">
