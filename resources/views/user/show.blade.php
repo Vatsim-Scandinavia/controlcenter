@@ -214,7 +214,7 @@
                                     @can('shorten', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
                                         <span class="flatpickr">
                                             <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
-                                            <a role="button" class="input-button text-muted float-end hover-red text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="top" title="Shorten expire date" data-toggle>
+                                            <a role="button" class="input-button text-muted float-end hover-red text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="top" title="Shorten expire date" data-bs-toggle>
                                                 <i class="fas fa-calendar-minus"></i>&nbsp;
                                             </a>
                                         </span>
@@ -400,7 +400,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
         $(".flatpickr").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
             onChange: function(selectedDates, dateStr, instance) {
                 if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){

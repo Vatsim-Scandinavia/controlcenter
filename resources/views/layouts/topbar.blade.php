@@ -1,10 +1,5 @@
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-    <!-- Sidebar Toggle (Topbar) -->
-    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle me-3">
-        <i class="fa fa-bars"></i>
-    </button>
-
     <!-- Topbar Search -->
     @if(\Auth::user()->isMentorOrAbove())
         <form class="d-none d-sm-inline-block ms-md-3 my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
@@ -30,7 +25,7 @@
         @if(\Auth::user()->isMentorOrAbove())
             <!-- Nav Item - Search Dropdown (Visible Only XS) -->
             <li class="nav-item dropdown no-arrow d-sm-none">
-                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-search fa-fw"></i>
                 </a>
                 <!-- Dropdown - Messages -->
@@ -56,7 +51,7 @@
 
         <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
-        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="me-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
             <i class="fas fa-user"></i>
         </a>

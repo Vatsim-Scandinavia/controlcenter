@@ -1,16 +1,6 @@
 // Topbar
 .topbar {
     height: $topbar-base-height;
-    #sidebarToggleTop {
-        height: 2.5rem;
-        width: 2.5rem;
-        &:hover {
-            background-color: $gray-200;
-        }
-        &:active {
-            background-color: $gray-300;
-        }
-    }
     .navbar-search {
         width: 25rem;
         input {

@@ -49,7 +49,7 @@
 
                 @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
                     <div class="dropdown" style="display: inline;">
-                        <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-link"></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -391,7 +391,7 @@
 
                 @if($training->status >= 1 && $training->status <= 3)
                     <div class="dropdown" style="display: inline;">
-                        <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-plus"></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -436,7 +436,7 @@
                                         <div class="card">
                                             <div class="card-header p-0">
                                                 <h5 class="mb-0">
-                                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
                                                         <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $reportModel->report_date->toEuropeanDate() }}
                                                         @if($reportModel->draft)
                                                             <span class='badge bg-danger'>Draft</span>
@@ -500,7 +500,7 @@
                                     <div class="card">
                                         <div class="card-header p-0">
                                             <h5 class="mb-0 bg-lightorange">
-                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                                <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
                                                     <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $reportModel->examination_date->toEuropeanDate() }}
                                                 </button>
                                             </h5>

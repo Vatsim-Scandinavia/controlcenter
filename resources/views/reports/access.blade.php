@@ -14,7 +14,7 @@
                 <div class="table-responsive">
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
                         data-page-size="100"
-                        data-toggle="table"
+                        data-bs-toggle="table"
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">

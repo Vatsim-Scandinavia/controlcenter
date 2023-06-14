@@ -31,7 +31,7 @@
                                     <div class="card">
                                         <div class="card-header p-0">
                                             <h5 class="mb-0">
-                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                                <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
                                                     <i class="fas fa-fw fa-chevron-right me-2"></i>
                                                     {{ $reportModel->report_date->toEuropeanDate() }}
                                                     | {{ isset(\App\Models\User::find($reportModel->training->user->id)->first_name) ? \App\Models\User::find($reportModel->training->user->id)->first_name : "Unknown"  }}'s
@@ -105,7 +105,7 @@
                                 <div class="card">
                                     <div class="card-header p-0">
                                         <h5 class="mb-0 bg-lightorange">
-                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ $uuid }}" aria-expanded="true">
+                                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
                                                 <i class="fas fa-fw fa-chevron-right me-2"></i>
                                                 {{ $reportModel->examination_date->toEuropeanDate() }}
                                                 | {{ isset(\App\Models\User::find($reportModel->training->user->id)->first_name) ? \App\Models\User::find($reportModel->training->user->id)->first_name : "Unknown"  }}'s

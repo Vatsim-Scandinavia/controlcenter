@@ -81,34 +81,9 @@
         }
     }
 
-    #sidebarToggle {
-        width: 2.5rem;
-        height: 2.5rem;
-        text-align: center;
-        margin-bottom: 1rem;
-        cursor: pointer;
-        &::after {
-            font-weight: 900;
-            content: "\f104";
-            font-family: "Font Awesome 6 Free";
-            margin-right: 0.1rem;
-        }
-        &:hover {
-            text-decoration: none;
-        }
-        &:focus {
-            outline: none;
-        }
-    }
     &.toggled {
         width: 0 !important;
-        overflow: hidden;
-        #sidebarToggle::after {
-            content: "\f105 ";
-            font-family: "Font Awesome 6 Free";
-            margin-left: 0.25rem;
-        }
-        
+        overflow: hidden;        
     }
     .sidebar-brand {
         height: $topbar-base-height;
@@ -211,7 +186,7 @@
                     display: inline;
                 }
                 // Accordion Arrow Icon
-                &[data-toggle="collapse"] {
+                &[data-bs-toggle="collapse"] {
                     &::after {
                         width: 1rem;
                         text-align: center;
@@ -288,7 +263,7 @@
                     i {
                         margin-right: 0;
                     }
-                    &[data-toggle="collapse"]::after {
+                    &[data-bs-toggle="collapse"]::after {
                         display: none;
                     }
                 }
@@ -345,7 +320,7 @@
                 }
             }
             // Accordion
-            &[data-toggle="collapse"]::after {
+            &[data-bs-toggle="collapse"]::after {
                 color: $gray-500;
             }
         }
@@ -358,16 +333,7 @@
             }
         }
     }
-    // Color the sidebar toggler
-    #sidebarToggle {
-        background-color: $gray-200;
-        &::after {
-            color: $gray-500;
-        }
-        &:hover {
-            background-color: $gray-300;
-        }
-    }
+
 }
 
 // Sidebar Dark
@@ -396,7 +362,7 @@
                 }
             }
             // Accordion
-            &[data-toggle="collapse"]::after {
+            &[data-bs-toggle="collapse"]::after {
                 color: fade-out($white, 0.5);
             }
         }
@@ -410,19 +376,7 @@
         }
     }
     // Color the sidebar toggler
-    #sidebarToggle {
-        background-color: fade-out($white, 0.8);
-        &::after {
-            color: fade-out($white, 0.5);
-        }
-        &:hover {
-            background-color: fade-out($white, 0.75);
-        }
-    }
     &.toggled {
-        #sidebarToggle::after {
-            color: fade-out($white, 0.5);
-        }
 
         img.logo {
             width: 75px;

@@ -22,7 +22,7 @@
                         data-cookie-id-table="trainings"
                         data-cookie-expire="90d"
                         data-page-size="100"
-                        data-toggle="table"
+                        data-bs-toggle="table"
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
@@ -128,7 +128,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
 </script>
 @endsection

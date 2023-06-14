@@ -131,7 +131,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
 </script>
 <!-- Multiple select datalist from https://www.meziantou.net/html-multiple-selections-with-datalist.htm -->

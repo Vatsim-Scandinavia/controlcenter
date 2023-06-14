@@ -3,7 +3,7 @@
 @section('title', 'Notification Templates')
 @section('title-extension')
     <div class="dropdown show" style="display: inline;">
-        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Filter: {{ $currentArea->name }}
         </a>
     

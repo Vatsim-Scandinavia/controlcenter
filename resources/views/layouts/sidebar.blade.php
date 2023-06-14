@@ -63,7 +63,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
                 <i class="fas fa-fw fa-flag"></i>
                 <span>Requests</span>
             </a>
@@ -89,7 +89,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMem" aria-expanded="true" aria-controls="collapseMem">
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMem" aria-expanded="true" aria-controls="collapseMem">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span>
                 </a>
@@ -105,7 +105,7 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
                 <i class="fas fa-fw fa-check-square"></i>
                 <span>Endorsements</span>
             </a>
@@ -125,7 +125,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-clipboard-list"></i>
                 <span>Reports</span>
             </a>
@@ -159,7 +159,7 @@
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Administration</span>
             </a>
@@ -182,11 +182,6 @@
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
 
         @if(Config::get('app.env') != "production")
             <div class="alert alert-warning" style="font-size: 80%;" role="alert">
