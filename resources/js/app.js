@@ -32,10 +32,12 @@ window.addEventListener('load', function(event) {
     sidebarButton.onclick = function(event){
         event.preventDefault();
         sidebar.classList.toggle('sidebar-show');
+        document.body.classList.toggle('fixed-body');
     }
 
     sidebarCloseButton.onclick = function(event){
         event.preventDefault();
         sidebar.classList.toggle('sidebar-show');
+        document.body.classList.toggle('fixed-body');
     }
 });

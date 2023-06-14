@@ -5,7 +5,7 @@
         @include('layouts.header')
     </head>
 
-    <body id="page-top">
+    <body>
     <div id='app'></div>
 
     <!-- Page Wrapper -->

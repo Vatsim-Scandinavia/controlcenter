@@ -56,3 +56,10 @@ a.version-front{
     color: #8da0ab;
 
 }
+
+.fixed-body{
+    position: initial;
+    @include media-breakpoint-down(lg) { 
+        position: fixed;
+    }
+}
