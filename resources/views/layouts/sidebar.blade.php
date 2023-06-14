@@ -1,6 +1,7 @@
 <nav>
+
     <ul class="navbar-nav sidebar" id="sidebar">
-        
+
         {{-- Sidebar - Brand --}}
         <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
             <div class="sidebar-brand-icon">
@@ -15,7 +16,7 @@
         </a>
 
         {{-- Divider --}}
-        <div class="sidebar-divider my-0">
+        <div class="sidebar-divider my-0"></div>
 
         <li class="nav-item {{ Route::is('dashboard') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('dashboard') }}">
@@ -185,17 +186,20 @@
         @endif
 
         {{-- Divider --}}
-        <div class="sidebar-divider d-none d-md-block">
+        <div class="sidebar-divider d-none d-md-block"></div>
 
         @if(Config::get('app.env') != "production")
-            <div class="alert alert-warning" style="font-size: 80%;" role="alert">
+            <div class="alert alert-warning" style="font-size: 80%; margin-top: 1rem;" role="alert">
                 Development Env
             </div>
         @endif
 
-        {{--  Logo --}}
-        <a href="{{ Setting::get('linkHome') }}"><img class="logo" src="{{ asset('images/logos/'.Config::get('app.logo')) }}"></a>
-        <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version">Control Center v{{ config('app.version') }}</a>
-
+        {{--  Logo and version element --}}
+        <div class="d-flex flex-column align-items-center mt-auto mb-3">
+            <a href="{{ Setting::get('linkHome') }}" class="d-block"><img class="logo" src="{{ asset('images/logos/'.Config::get('app.logo')) }}"></a>
+            <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version">Control Center v{{ config('app.version') }}</a>
+        </div>
+        
     </ul>
+
 </nav>

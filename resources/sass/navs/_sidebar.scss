@@ -4,6 +4,7 @@
     height: 100%;
     min-height: 100vh;
 
+    padding: 0 1.0rem;
     position: relative;
     background-color: $primary;
 
@@ -43,7 +44,6 @@
         text-decoration: none;
         font-size: 1rem;
         font-weight: 800;
-        padding: 1.5rem 1rem;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0.05rem;
@@ -74,7 +74,7 @@
 
     &-heading {
         text-align: left;
-        padding: 0 1rem;
+        padding: 0;
         font-weight: 800;
         font-size: 0.65rem;
         color: fade-out($white, 0.6);
@@ -82,7 +82,8 @@
     }
 
     &-divider {
-        border-top: 1px solid fade-out($white, 0.85);
+        height: 1px;
+        background: fade-out($white, 0.85);
         margin: 0 0 1rem;
     }
 
@@ -95,7 +96,7 @@
             top: 0;
 
             z-index: 1;
-            margin: 0 1rem;
+            margin: 0;
             
             .collapse-inner {
                 .collapse-item {
@@ -120,8 +121,7 @@
         .nav-link {
             display: block;
             text-align: left;
-            padding: 0.75rem 1rem;
-            width: $sidebar-base-width;
+            padding: 0.75rem 0;
 
             color: fade-out($white, 0.2);
  
@@ -175,15 +175,7 @@
     }
 
     img.logo {
-        width: 175px;
-        position: absolute;
-        bottom: 20px;
-        left: 22px;
-
-        @include media-breakpoint-down(md) {
-            left: 10px;
-            width: 80%;
-        }
+        width: 11rem;
     }
 
     a.version{
@@ -191,19 +183,10 @@
         font-size: 10px;
         color: #8da0ab;
         text-decoration: none;
-
-        position: absolute;
-        width: 160px;
-        
-        bottom: 15px;
-        left: 32px;
+        margin-top: -0.5rem;
 
         &:hover{
             text-decoration: underline;
-        }
-
-        @include media-breakpoint-down(md) {
-            display: none;
         }
     }
 }
@@ -213,6 +196,7 @@
         width: 100vw;
         height: 100vh;
 
+        padding: 0 1.5rem;
         overflow-y: scroll;
         display: none;
 
@@ -225,6 +209,7 @@
         }
 
         &-brand-topbar{
+            padding: 0;
             display: flex;
         }
 

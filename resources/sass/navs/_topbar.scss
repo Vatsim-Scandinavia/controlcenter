@@ -2,7 +2,6 @@
 .topbar {
     height: $topbar-base-height;
     .navbar-search {
-        width: 25rem;
         input {
             font-size: 0.85rem;
         }
@@ -100,18 +99,20 @@
     }
 }
 
-.topbar.navbar-light {
-    .navbar-nav {
-        .nav-item {
-            .nav-link {
-                color: $gray-400;
-                &:hover {
-                    color: $gray-500;
-                }
-                &:active {
-                    color: $gray-600;
-                }
-            }
+.nav-link {
+    color: $primary;
+    
+    &:hover {
+        color: $gray-500;
+    }
+    &:active {
+        color: $gray-600;
+    }
+
+    i{
+        font-size: 1rem;
+        @include media-breakpoint-down(lg) { 
+            font-size: 1.3rem;
         }
     }
 }
