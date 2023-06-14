@@ -7,6 +7,37 @@
     position: relative;
     background-color: $primary;
 
+    &-button {
+        color: $primary;
+
+        border: 0;
+        margin: 0 1rem;
+
+        background: transparent;
+        display: none;
+        
+        i{
+            font-size: 1.4rem;
+            padding: 0.5rem;
+        }
+    }
+
+    &-button-close {
+        border: 0;
+        margin: 0;
+
+        color: $primary;
+        background: $white;
+        border-radius: $border-radius;
+
+        display: none;
+
+        i {
+            font-size: 1.4rem;
+            padding: 0.5rem;
+        }
+    }
+
     &-brand {
         height: $topbar-base-height;
         text-decoration: none;
@@ -19,19 +50,25 @@
         z-index: 1;
         color: $white;
 
-        .sidebar-brand-icon img {
-            height: 2em;
-            width: 2em;
+        &-icon {
+            img, svg {
+                height: 2em;
+                width: 2em;
+            }
+            svg {
+                fill: $primary;
+            }
         }
-        .sidebar-brand-text {
+        &-text {
             width: 65px;
             font-size: 0.95rem;
             text-align: left;
             line-height: 18px;
             display: inline;
         }
-        .sidebar-brand-icon{
-            padding-left: 17px;
+
+        &-topbar{
+            display: none;
         }
     }
 
@@ -170,4 +207,27 @@
             display: none;
         }
     }
+}
+
+@include media-breakpoint-down(lg) { 
+    .sidebar {
+        width: 100vw;
+        height: 100vh;
+
+        overflow-y: scroll;
+        display: none;
+
+        &-show{
+            display: block;
+        }
+
+        &-button, &-button-close{
+            display: block;
+        }
+
+        &-brand-topbar{
+            display: flex;
+        }
+    }
+
 }

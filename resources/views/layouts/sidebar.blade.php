@@ -1,5 +1,6 @@
 <nav>
-    <ul class="navbar-nav sidebar" id="accordionSidebar">
+    <ul class="navbar-nav sidebar" id="sidebar">
+        
         {{-- Sidebar - Brand --}}
         <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
             <div class="sidebar-brand-icon">
@@ -7,6 +8,10 @@
             </div>
 
             <div class="sidebar-brand-text mx-3">{{ config('app.name') }}</div>
+
+            <button type="button" id="sidebar-button-close" class="sidebar-button-close ms-auto">
+                <i class="fas fa-times"></i>
+            </button>
         </a>
 
         {{-- Divider --}}
@@ -66,7 +71,7 @@
                 <i class="fas fa-fw fa-flag"></i>
                 <span>Requests</span>
             </a>
-            <div id="collapseReq" class="collapse" data-bs-parent="#accordionSidebar">
+            <div id="collapseReq" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
                 <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
@@ -108,7 +113,7 @@
                 <i class="fas fa-fw fa-check-square"></i>
                 <span>Endorsements</span>
             </a>
-            <div id="collapseEndorsements" class="collapse" data-bs-parent="#accordionSidebar">
+            <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('endorsements.mascs') }}">Airports and Centers</a>
                 <a class="collapse-item" href="{{ route('endorsements.trainings') }}">Trainings</a>
@@ -128,7 +133,7 @@
                 <i class="fas fa-fw fa-clipboard-list"></i>
                 <span>Reports</span>
             </a>
-            <div id="collapseTwo" class="collapse" data-bs-parent="#accordionSidebar">
+            <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                 
                 @if(\Auth::user()->isAdmin())
@@ -162,7 +167,7 @@
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Administration</span>
             </a>
-            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#accordionSidebar">
+            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                 @if (\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
