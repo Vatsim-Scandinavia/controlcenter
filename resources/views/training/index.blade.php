@@ -22,7 +22,7 @@
                         data-cookie-id-table="trainings"
                         data-cookie-expire="90d"
                         data-page-size="100"
-                        data-bs-toggle="table"
+                        data-toggle="table"
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">

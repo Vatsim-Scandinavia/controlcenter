@@ -168,7 +168,7 @@ dl.copyable{
 }
 
 // Lets tweak a bit the style of bootstrap-table plugin
-table[data-bs-toggle="table"] {
+table[data-toggle="table"] {
     th {
         &:first-child {
             padding-left: 10px !important;
