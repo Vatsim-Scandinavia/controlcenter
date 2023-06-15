@@ -26,12 +26,8 @@
             outline: none;
         }
     }
-    .dropdown {
+    .dropdown { 
         position: static;
-        .dropdown-menu {
-            width: calc(100% - #{$grid-gutter-width});
-            right: calc($grid-gutter-width / 2);
-        }
     }
     .dropdown-list {
         padding: 0;
@@ -83,10 +79,6 @@
     @include media-breakpoint-up(sm) {
         .dropdown {
             position: relative;
-            .dropdown-menu {
-                width: auto;
-                right: 0;
-            }
         }
         .dropdown-list {
             width: 20rem !important;

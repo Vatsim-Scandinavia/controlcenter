@@ -44,7 +44,7 @@
                     <i class="fas fa-search fa-fw"></i>
                 </a>
                 {{-- Dropdown - Messages --}}
-                <div class="dropdown-menu dropdown-menu-right p-3 shadow" aria-labelledby="searchDropdown">
+                <div class="dropdown-menu dropdown-menu-end p-3 shadow" aria-labelledby="searchDropdown">
                     <form class="w-100 navbar-search" id="user-search-form-mobile">
                         <div class="search input-group input-lg">
                             <div class="search-icon bg-light input-group-prepend">
@@ -72,7 +72,7 @@
                 <i class="fas fa-user"></i>
             </a>
             {{-- Dropdown - User Information --}}
-            <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="userDropdown">
+            <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="{{ route('user.show', Auth::user()->id) }}">
                     <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>
                     My details
