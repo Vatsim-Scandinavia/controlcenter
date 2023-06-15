@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 @section('content')
 
-<!-- Success message fed via JS for TR -->
+{{-- Success message fed via JS for TR  --}}
 <div class="alert alert-success d-none" id="success-message"></div>
 
 @if($dueInterestRequest)
@@ -258,7 +258,6 @@
     </div>
     </div>
 
-    <!-- Pie Chart -->
     <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->

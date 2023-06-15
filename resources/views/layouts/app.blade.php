@@ -8,26 +8,25 @@
     <body>
     <div id='app'></div>
 
-    <!-- Page Wrapper -->
+    {{-- Page Wrapper --}}
     <div id="wrapper">
 
         @auth
             @include('layouts.sidebar')
         @endauth
 
-        <!-- Content Wrapper -->
+        {{-- Content Wrapper --}}
         <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
+        {{-- Main Content --}}
         <div id="content">
 
             @auth
                 @include('layouts.topbar')
             @endauth
 
-            @yield('content-master') <!-- For special things to be done outside the container -->
-
-            <!-- Begin Page Content -->
+            @yield('content-master') {{-- For special things to be done outside the container --}}
+            
             <div class="container-fluid">
 
                 @if(!Route::is('front'))
@@ -59,18 +58,17 @@
 
                 @yield('content')
             </div>
-            <!-- /.container-fluid -->
 
         </div>
-        <!-- End of Main Content -->
+        {{-- End of Main Content --}}
 
         </div>
-        <!-- End of Content Wrapper -->
+        {{-- End of Content Wrapper --}}
 
     </div>
-    <!-- End of Page Wrapper -->
+    {{-- End of Page Wrapper --}}
 
-    <!-- Bootstrap core JavaScript-->
+    {{-- Bootstrap core JavaScript--}}
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
         // Bootstrap-table: Filter function to strip html from bootstrap table column filters
