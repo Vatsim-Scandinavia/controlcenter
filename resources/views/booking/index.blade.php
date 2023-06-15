@@ -12,7 +12,8 @@
     @endcannot
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Booked Sessions<span class="zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span></h6> 
+                <h6 class="m-0 fw-bold text-white">Booked Sessions</h6>
+                <span class="m-0 fw-bold text-white">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

@@ -186,7 +186,7 @@
                         <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip" data-bs-placement="left" title="Add new endorsement"><i class="fas fa-plus"></i></a>
                     @endcan
                 </div>
-                <div class="card-body d-flex flex-wrap gap-1">
+                <div class="card-body d-flex flex-wrap gap-3">
 
                     @if($endorsements->count() == 0)
                         <p class="mb-0">No registered endrosements</p>

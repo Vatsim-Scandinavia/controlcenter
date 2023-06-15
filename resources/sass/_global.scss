@@ -9,12 +9,6 @@ body {
     height: 100%;
 }
 
-a {
-    &:focus {
-        outline: none;
-    }
-}
-
 p {
     a {
         text-decoration: underline;
@@ -233,11 +227,6 @@ table.table-card{
     }
 }
 
-.zulu-clock{
-    position: absolute;
-    right: 16px;
-}
-
 .link-tooltip{
     text-decoration: none;
     background-image: linear-gradient(90deg,#294661 33%,#fff 0);
@@ -250,14 +239,6 @@ table.table-card{
     text-align: left;
     white-space: pre-line;
     max-width: 50vw !important;
-}
-
-.visiting-toggle:hover{
-    text-decoration: none;
-}
-
-.gap-1{
-    gap: 1rem;
 }
 
 .endorsement-card{

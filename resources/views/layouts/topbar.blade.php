@@ -72,7 +72,7 @@
                 <i class="fas fa-user"></i>
             </a>
             {{-- Dropdown - User Information --}}
-            <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+            <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="{{ route('user.show', Auth::user()->id) }}">
                     <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>
                     My details

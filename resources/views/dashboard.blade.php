@@ -43,7 +43,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-uppercase text-gray-600 mb-1">Current Rating</div>
+            <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Current Rating</div>
             <div class="h5 mb-0 fw-bold text-gray-800">{{ $data['rating'] }} ({{ $data['rating_short'] }})</div>
             </div>
             <div class="col-auto">
@@ -60,7 +60,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-uppercase text-gray-600 mb-1">Your associated division</div>
+            <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Your associated division</div>
             <div class="h5 mb-0 fw-bold text-gray-800">
                 {{ $data['division'] }}/{{ $data['subdivision'] }}
             </div>
@@ -79,7 +79,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-success text-uppercase mb-1">ATC Hours (Last {{ Setting::get("atcActivityQualificationPeriod") }} months)</div>
+            <div class="fs-sm fw-bold text-success text-uppercase mb-1">ATC Hours (Last {{ Setting::get("atcActivityQualificationPeriod") }} months)</div>
             <div class="h5 mb-0 fw-bold text-gray-800">{{ $atcHours ? round($atcHours).' hours of '.Setting::get("atcActivityRequirement").' required' : 'N/A' }}</div>
             </div>
             <div class="col-auto">
@@ -98,7 +98,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-info text-uppercase mb-1">My last training</div>
+            <div class="fs-sm fw-bold text-info text-uppercase mb-1">My last training</div>
             <div class="row g-0 align-items-center">
                 <div class="col-auto">
                 @if ($data['report'] != null) <a href="{{ $data['report']->training->path() }}"> @endif

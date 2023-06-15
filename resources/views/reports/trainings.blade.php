@@ -28,7 +28,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-uppercase text-gray-600 mb-1">In queue</div>
+            <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">In queue</div>
             <div class="h5 mb-0 fw-bold text-gray-800">{{ $cardStats["waiting"] }} requests</div>
             </div>
             <div class="col-auto">
@@ -44,7 +44,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-warning text-uppercase mb-1">In training</div>
+            <div class="fs-sm fw-bold text-warning text-uppercase mb-1">In training</div>
             <div class="h5 mb-0 fw-bold text-gray-800">{{ $cardStats["training"] }} requests</div>
             </div>
             <div class="col-auto">
@@ -60,7 +60,7 @@
         <div class="card-body">
         <div class="row g-0 align-items-center">
             <div class="col me-2">
-            <div class="text-xs fw-bold text-info text-uppercase mb-1">Awaiting exam</div>
+            <div class="fs-sm fw-bold text-info text-uppercase mb-1">Awaiting exam</div>
             <div class="h5 mb-0 fw-bold text-gray-800">{{ $cardStats["exam"] }} requests</div>
             </div>
             <div class="col-auto">
@@ -76,7 +76,7 @@
             <div class="card-body">
             <div class="row g-0 align-items-center">
                 <div class="col me-2">
-                <div class="text-xs fw-bold text-success text-uppercase mb-1">Completed this year</div>
+                <div class="fs-sm fw-bold text-success text-uppercase mb-1">Completed this year</div>
                 <div class="row g-0 align-items-center">
                     <div class="col-auto">
                         <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $cardStats["completed"] }} requests</div>
@@ -96,7 +96,7 @@
             <div class="card-body">
             <div class="row g-0 align-items-center">
                 <div class="col me-2">
-                <div class="text-xs fw-bold text-danger text-uppercase mb-1">Closed this year</div>
+                <div class="fs-sm fw-bold text-danger text-uppercase mb-1">Closed this year</div>
                 <div class="row g-0 align-items-center">
                     <div class="col-auto">
                         <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $cardStats["closed"] }} requests</div>
