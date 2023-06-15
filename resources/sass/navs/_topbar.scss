@@ -1,18 +1,26 @@
 // Topbar
 .topbar {
+
     height: $topbar-base-height;
-    .navbar-search {
-        input {
-            font-size: 0.85rem;
-        }
-    }
-    .topbar-divider {
+
+    &-divider {
         width: 0;
         border-right: 1px solid $border-color;
         height: calc(#{$topbar-base-height} - 2rem);
         margin: auto 1rem;
     }
+
+    .navbar-search {
+        input {
+            font-size: 1rem;
+        }
+    }
+
     .nav-item {
+        &:focus {
+            outline: none;
+        }
+
         .nav-link {
             height: $topbar-base-height;
             display: flex;
@@ -22,13 +30,12 @@
                 outline: none;
             }
         }
-        &:focus {
-            outline: none;
-        }
     }
+
     .dropdown { 
         position: static;
     }
+
     .dropdown-list {
         padding: 0;
         border: none;
@@ -76,10 +83,13 @@
             }
         }
     }
+
     @include media-breakpoint-up(sm) {
+
         .dropdown {
             position: relative;
         }
+
         .dropdown-list {
             width: 20rem !important;
             .dropdown-item {
@@ -88,29 +98,11 @@
                 }
             }
         }
-    }
-}
 
-.nav-link {
-    color: $primary;
-    
-    &:hover {
-        color: $gray-500;
-    }
-    &:active {
-        color: $gray-600;
-    }
-
-    i{
-        font-size: 1rem;
-        @include media-breakpoint-down(lg) { 
-            font-size: 1.3rem;
-        }
     }
 }
 
 .search{
-
     &.input-group{
         width: 300px;
         border-bottom: 1px solid transparent;
