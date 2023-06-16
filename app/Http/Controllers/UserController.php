@@ -104,7 +104,7 @@ class UserController extends Controller
 
         if (strlen($query) >= 2) {
             $data = User::query()
-                ->select('id')
+                ->select(['id', 'first_name', 'last_name'])
                 ->where(DB::raw('LOWER(id)'), 'like', '%' . strtolower($query) . '%')
                 ->orWhere(DB::raw('LOWER(CONCAT(first_name, " ", last_name))'), 'like', '%' . strtolower($query) . '%')
                 ->orderByDesc('last_login')

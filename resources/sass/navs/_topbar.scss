@@ -112,8 +112,8 @@
             border-bottom: 1px solid $darkblue;
         }
 
-        @include media-breakpoint-down(sm) {
-            width: 100%;
+        @include media-breakpoint-down(md) {
+            width: 50vw;
             border-bottom: 1px solid $darkblue;
         }
         
@@ -149,7 +149,7 @@
             visibility: visible;
         }
 
-        @include media-breakpoint-down(sm) {
+        @include media-breakpoint-down(md) {
             position: inherit;
             margin: auto;
             margin-top: 25px;
@@ -178,8 +178,8 @@
 
         background-color: white;
 
-        @include media-breakpoint-down(sm) {
-            position: inherit;
+        @include media-breakpoint-down(md) {
+            position: static;
             width: 100%;
 
             font-size: 1rem;
@@ -189,7 +189,7 @@
         a {
             color: $darkblue;
             display: block;
-            height: 25px;
+            min-height: 25px;
             line-height: 25px;
             padding: 0 15px;
         }

@@ -92,53 +92,75 @@
         }
 
         // Search bar
-        $(document).ready(function(){
+        window.addEventListener('load', function(event) {
 
-            var currentRequest = null;
-            
-            function fetch_users(query = '')
-            {
-                
-                if(currentRequest != null){
-                    currentRequest.abort();
+            var requestController = new AbortController()
+            var currentRequest = null
+
+            var searchResults = document.querySelectorAll('.search-results')
+            var searchSpinner = document.querySelectorAll('.search-spinner')
+
+            async function fetch_users(query = ''){
+
+                requestController.abort()
+                requestController = new AbortController()
+
+                const currentRequest = await fetch('{{ route('user.search') }}?query='+query, {signal: requestController.signal})
+                    .then((response) => {
+                        if(response.ok){
+                            return response
+                        } else {
+                            throw new Error('Something went wrong')
+                        }
+                    })
+                    .catch((error) => {
+                        console.warn(error)
+                    })
+
+                var result = null
+                try{
+                    result = await currentRequest.json() 
+                } catch(error){
+                    result = null
                 }
 
-                currentRequest = $.ajax({
-                    url:"{{ route('user.search') }}",
-                    method:'GET',
-                    data:{query:query},
-                    dataType:'json',
-                    success: function(data)
-                    {
-                        if(data.length > 0){
+                if(result && result.length > 0){
+                    var html = '';
+                    var baseUrl = '{{ URL::to('/user') }}\/'
 
-                            var html = '';
-                            var baseUrl = '{{ URL::to('/user') }}\/'
-
-                            for(var i=0; i < data.length; i++){
-                                html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
-                            }
-
-                            $('.search-results').html(html);
-                        } else {
-                            $('.search-results').html("<a href='#''>No results</a>");
-                        }
-
-                        $('.search-results').slideDown("fast");
-                        $('.search-spinner').removeClass('search-spinner-visible');
-                    },
-                    error: function(){
-                        $('.search-results').html("<a href='#''>No results</a>");
-                        $('.search-results').slideDown("fast");
-                        $('.search-spinner').removeClass('search-spinner-visible');
+                    for(var i=0; i < result.length; i++){
+                        html +='<a href="'+ baseUrl + result[i]['id'] +'">'+ result[i]['id'] + ": "+ result[i]['name'] +'</a>'
                     }
-                })
+
+                    searchResults.forEach((el) => {
+                        el.innerHTML = html;
+                    });
+
+                    searchSpinner.forEach((el) => {
+                        el.classList.remove('search-spinner-visible')
+                    });
+
+                    searchResults.forEach((el) => {
+                        el.style.display = 'block'
+                    });
+
+                } else {
+                    searchResults.forEach((el) => {
+                        el.innerHTML = "<a href='#''>No results</a>";
+                    });
+                }
+
+                
+
             }
-    
+
             var timer = null
-            $('.search .search-input').keyup(function(){
-                var query = $(this).val();
-                $('.search-spinner').addClass('search-spinner-visible');
+            document.querySelector('.search-input').addEventListener('keyup', function(){
+                var query = this.value;
+
+                searchSpinner.forEach((el) => {
+                    el.classList.add('search-spinner-visible')
+                });
                 
                 clearTimeout(timer);
                 timer = setTimeout(fetch_users, 200, query)
@@ -146,10 +168,10 @@
 
             // When pressing enter on desktop, redirect directly to inputed userID if it's a number
             // otherwise just prevent and let ajax do its thing.
-            $('#user-search-form-desktop').on('submit', function(e){ 
+            document.querySelector('#user-search-form-desktop').addEventListener('submit', function(e){ 
                 e.preventDefault();
 
-                var query = parseInt($('.search-input').val());
+                var query = parseInt(document.querySelector('.search-input').value);
                 if(Number.isInteger(query)){
                     location.assign("{{ route('user.show', '') }}/" + query); 
                 }
@@ -157,27 +179,36 @@
             });
 
             // When pressing enter on mobile start the search
-            $('#user-search-form-mobile').on('submit', function(e){
-                $('.search-spinner').addClass('search-spinner-visible');
-                
-                var query = $('.search-input').val();
-                clearTimeout(timer);
-                timer = setTimeout(fetch_users, 200, query)
-
+            document.querySelector('#user-search-form-mobile').addEventListener('submit', function(e){
                 e.preventDefault() 
-            });
 
-            $(document).on("click", function(event) {
-                var obj = $(".search-results");
-                if (!$(event.target).closest(obj).length) {
-                    
-                    $('.search-results').slideUp("fast");
-                    $('.search-spinner').removeClass('search-spinner-visible');
+                var query = null
+                document.querySelectorAll('.search-input').forEach((el) => {
+                    if(el.value != '') query = el.value
+                });
+
+                searchSpinner.forEach((el) => {
+                    el.classList.add('search-spinner-visible')
+                });
                 
-                }
+                console.log(query)
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 200, query, true)
             });
 
-        });
+            document.addEventListener("click", function(event) {
+                if(event.target.closest('.search-results') == null){
+
+                    searchResults.forEach((el) => {
+                        el.style.display = 'none'
+                    });
+
+                    searchSpinner.forEach((el) => {
+                        el.classList.remove('search-spinner-visible')
+                    });
+                }
+                });
+            });
     </script>
 
     @yield('js')
