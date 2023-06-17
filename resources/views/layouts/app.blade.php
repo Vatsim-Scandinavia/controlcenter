@@ -93,15 +93,10 @@
 
         // Search bar
         window.addEventListener('load', function(event) {
+            var requestController = new AbortController()
 
-            var requestController = new AbortController() // abort as well when you close the window
-            var currentRequest = null
-
-            var searchResults = document.querySelectorAll('.search-results')
-            var searchSpinner = document.querySelectorAll('.search-spinner')
-
+            // Search for a user with query
             async function fetch_users(query = ''){
-
                 requestController.abort()
                 requestController = new AbortController()
 
@@ -116,11 +111,12 @@
                         return null
                     })
 
-                
+                // Check if the request is not aborted or blank
                 if(request && request != ''){
                     data = JSON.parse(request)
                 }
 
+                // Only update search if the request didn't error
                 if(request !== null){
                     if(data && data.length > 0){
                         var html = '';
@@ -130,52 +126,42 @@
                             html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
                         }
 
-                        searchResults.forEach((el) => {
-                            el.innerHTML = html;
-                        });     
-                        
-                        searchSpinner.forEach((el) => {
-                            el.classList.remove('search-spinner-visible')
-                        });
-
-                        searchResults.forEach((el) => {
-                            el.style.display = 'block'
-                        });
+                        showSpinner(false)
+                        showResults(true, html)
 
                     } else {
-                        searchResults.forEach((el) => {
-                            el.innerHTML = "<a href='#''>No results</a>";
-                        });
-
-                        searchSpinner.forEach((el) => {
-                            el.classList.remove('search-spinner-visible')
-                        });
-
-                        searchResults.forEach((el) => {
-                            el.style.display = 'block'
-                        });
+                        showSpinner(false)
+                        showResults(true, "<a href='#''>No results</a>")
                     }
                 }
 
 
             }
 
+            function showSpinner(boolean){
+                document.querySelectorAll('.search-spinner').forEach((el) => {
+                    boolean ? el.classList.add('search-spinner-visible') : el.classList.remove('search-spinner-visible')
+                });
+            }
+
+            function showResults(boolean, html = null){
+                document.querySelectorAll('.search-results').forEach((el) => {
+                    if(html) el.innerHTML = html;
+                    boolean ? el.style.display = 'block' : el.style.display = 'none'
+                });
+            }
+
+            // Start search when typing in search bar with a 200ms delay
             var timer = null
             document.querySelectorAll('.search-input').forEach((input) => {
                 input.addEventListener('keyup', function(){
-                    var query = this.value;
-
-                    searchSpinner.forEach((el) => {
-                        el.classList.add('search-spinner-visible')
-                    });
-                    
+                    showSpinner(true)
                     clearTimeout(timer);
-                    timer = setTimeout(fetch_users, 200, query)
+                    timer = setTimeout(fetch_users, 200, this.value)
                 });
             });
 
             // When pressing enter on desktop, redirect directly to inputed userID if it's a number
-            // otherwise just prevent and let ajax do its thing.
             document.querySelector('#user-search-form-desktop').addEventListener('submit', function(e){ 
                 e.preventDefault();
 
@@ -195,28 +181,20 @@
                     if(el.value != '') query = el.value
                 });
 
-                searchSpinner.forEach((el) => {
-                    el.classList.add('search-spinner-visible')
-                });
-                
-                console.log(query)
+                showSpinner(true)
+        
                 clearTimeout(timer);
                 timer = setTimeout(fetch_users, 200, query, true)
             });
 
+            // Close search results when clicking outside of it
             document.addEventListener("click", function(event) {
                 if(event.target.closest('.search-results') == null){
-
-                    searchResults.forEach((el) => {
-                        el.style.display = 'none'
-                    });
-
-                    searchSpinner.forEach((el) => {
-                        el.classList.remove('search-spinner-visible')
-                    });
+                    showResults(false)
+                    showSpinner(false)
                 }
-                });
             });
+        });
     </script>
 
     @yield('js')
