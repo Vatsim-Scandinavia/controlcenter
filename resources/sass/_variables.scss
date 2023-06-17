@@ -64,6 +64,8 @@ $card-border-color: $border-color;
 // Adjust column spacing for symmetry
 $spacer: 1rem;
 $grid-gutter-width: $spacer * 1.5;
+$card-spacer-y: 1.25rem;
+$card-spacer-x: 1.25rem;
 
 // Transitions
 $transition-collapse: height 0.15s ease !default;
