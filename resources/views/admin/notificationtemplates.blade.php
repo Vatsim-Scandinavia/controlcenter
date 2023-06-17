@@ -27,7 +27,7 @@
 
                     <div class="row row-cols-auto g-1">
                         <div class="col">
-                            <select class="form-select" onchange="selectedNotification(this.value)" style="width: 200px" id="notification">
+                            <select class="form-select" onchange="selectedNotification(this.value)" id="notification">
                                 <option selected disabled>Choose Notification</option>
                                 <option value="1">New Request</option>
                                 <option value="2">New Mentor</option>
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <div class="row" id="newreqrow" style="display: none;">
+    <div class="row" id="newreqrow">
 
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <div class="row" id="newmentorrow" style="display: none;">
+    <div class="row" id="newmentorrow">
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -124,7 +124,7 @@
         </div>
     </div>
 
-    <div class="row" id="pretrainingrow" style="display: none;">
+    <div class="row" id="pretrainingrow">
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">

@@ -189,7 +189,7 @@
         <div class="sidebar-divider d-none d-md-block"></div>
 
         @if(Config::get('app.env') != "production")
-            <div class="alert alert-warning" style="font-size: 80%; margin-top: 1rem;" role="alert">
+            <div class="alert alert-warning mt-2 fs-sm" role="alert">
                 Development Env
             </div>
         @endif
