@@ -60,6 +60,7 @@ $sidebar-base-width: 14rem;
 // Card
 $card-cap-bg: $gray-100;
 $card-border-color: $border-color;
+$card-border-radius: calc($border-radius + 1px);
 
 // Adjust column spacing for symmetry
 $spacer: 1rem;
