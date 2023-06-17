@@ -51,7 +51,7 @@ $box-shadow: 0 0.15rem 1.75rem 0 rgba($gray-900, 0.15) !default;
 
 // Borders Radius
 $border-radius: $envBorderRadius !default;
-$border-color: darken($gray-200, 2%);
+$border-color: $gray-400;
 
 // Spacing Variables
 $topbar-base-height: 4.375rem;
