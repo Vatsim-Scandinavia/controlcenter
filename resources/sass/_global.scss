@@ -170,11 +170,16 @@ dl.copyable{
     .table-light {
         th {
             color: $gray-800;
+            background: $gray-200;
         }
     }
 
     tr {
         color: $gray-800;
+    }
+
+    td {
+        color: $gray-900;
     }
 }
 
