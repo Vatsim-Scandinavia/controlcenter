@@ -1,17 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Notification Templates')
-@section('title-extension')
-    <div class="dropdown show" style="display: inline;">
-        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Filter: {{ $currentArea->name }}
-        </a>
-    
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            @foreach($areas as $area)
-                <a class="dropdown-item" href="{{ route('admin.templates.area', $area->id) }}">{{ $area->name }}</a>
-            @endforeach 
-        </div>
+@section('title-flex')
+    <div>
+        <i class="fas fa-filter"></i>&nbsp;Filter:&nbsp;
+        @foreach($areas as $area)
+            <a class="btn btn-sm {{ $currentArea == $area ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('admin.templates.area', $area->id) }}">{{ $area->name }}</a>
+        @endforeach
     </div>
 @endsection
 

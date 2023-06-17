@@ -30,10 +30,13 @@
             <div class="container-fluid">
 
                 @if(!Route::is('front'))
-                    <h3 class="mb-4 text-gray-800">
-                        @yield('title', 'Page Title')
-                        @yield('title-extension')
-                    </h3>
+
+                    <div class="d-flex justify-content-between">
+                        <h3 class="mb-4 text-gray-800">
+                            @yield('title', 'Page Title')
+                        </h3>
+                        @yield('title-flex')
+                    </div>
 
                     @if(Session::has('success') OR isset($success))
                         <div class="alert alert-success" role="alert">

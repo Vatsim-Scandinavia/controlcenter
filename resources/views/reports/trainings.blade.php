@@ -1,22 +1,17 @@
 @extends('layouts.app')
 
 @section('title', 'Training Statistics')
-@section('title-extension')
-    <div class="dropdown show" style="display: inline;">
-        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Filter: {{ $filterName }}
-        </a>
-    
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            @if(\Auth::user()->isAdmin())
-                <a class="dropdown-item" href="{{ route('reports.trainings') }}">All Areas</a>
+@section('title-flex')
+    <div>
+        <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
+        @if(\Auth::user()->isAdmin())
+            <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.trainings') }}">All Areas</a>
+        @endif
+        @foreach($areas as $area)
+            @if(\Auth::user()->isModeratorOrAbove($area))
+                <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
             @endif
-            @foreach($areas as $area)
-                @if(\Auth::user()->isModeratorOrAbove($area))
-                    <a class="dropdown-item" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
-                @endif
-            @endforeach 
-        </div>
+        @endforeach 
     </div>
 @endsection
 @section('content')

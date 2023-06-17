@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Training Endorsements')
-@section('title-extension')
-    @can('create', \App\Models\Endorsement::class)
-        <a href="{{ route('endorsements.create') }}" class="btn btn-sm btn-success">Add new endorsement</a>
-    @endcan
+@section('title-flex')
+    <div>
+        @if (\Auth::user()->isModeratorOrAbove())
+            <a href="{{ route('endorsements.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new endorsement</a>
+        @endif
+    </div>
 @endsection
 @section('content')
 

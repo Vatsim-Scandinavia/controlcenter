@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Training')
-@section('title-extension')
-    @can('close', $training)
-        <a href="{{ route('training.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger btn-sm">Close my training</a>
-    @endcan
-
+@section('title-flex')
+    <div>
+        @can('close', $training)
+            <a href="{{ route('training.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger"><i class="fas fa-xmark"></i> Close my training</a>
+        @endcan
+    </div>
 @endsection
 @section('content')
 
