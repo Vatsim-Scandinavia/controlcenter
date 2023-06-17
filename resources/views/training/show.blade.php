@@ -36,8 +36,8 @@
 <div class="row">
     <div class="col-xl-3 col-md-12 col-sm-12 mb-12">
         <div class="card shadow mb-2">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">
+            <div class="card-header bg-primary py-3 d-flex flex-row column-gap-3 pe-0">
+                <h6 class="m-0 fw-bold text-white flex-grow-1">
                     <i class="fas fa-flag"></i>&nbsp;{{ $training->user->first_name }}'s training for
                     @foreach($training->ratings as $rating)
                         @if ($loop->last)
@@ -48,11 +48,15 @@
                     @endforeach
                 </h6>
 
+                @can('edit', [\App\Models\Training::class, $training])
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
+                @endcan
+
                 @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
-                    <div class="dropdown" style="display: inline;">
-                        <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-link"></i> Create
-                        </button>
+                    <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-link"></i> Create
+                    </button>    
+                    <div class="dropdown">
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
                                 <button class="dropdown-item" id="getOneTimeLinkReport">Report one-time link</button>
@@ -62,12 +66,9 @@
                             @endif
                         </div>
                     </div>
-                @endif
+                @endif                
             </div>
             <div class="card-body">
-                @can('edit', [\App\Models\Training::class, $training])
-                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon float-end"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
-                @endcan
                 <dl class="copyable">
                     <dt>State</dt>
                     <dd><i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}</dd>
