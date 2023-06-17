@@ -94,7 +94,7 @@
         // Search bar
         window.addEventListener('load', function(event) {
 
-            var requestController = new AbortController()
+            var requestController = new AbortController() // abort as well when you close the window
             var currentRequest = null
 
             var searchResults = document.querySelectorAll('.search-results')
@@ -105,65 +105,73 @@
                 requestController.abort()
                 requestController = new AbortController()
 
-                const currentRequest = await fetch('{{ route('user.search') }}?query='+query, {signal: requestController.signal})
-                    .then((response) => {
-                        if(response.ok){
-                            return response
-                        } else {
-                            throw new Error('Something went wrong')
-                        }
+                var data = null
+                const request = await fetch('{{ route('user.search') }}?query='+query, {signal: requestController.signal})
+                    .then(res => {
+                        if (res.ok) return res.text()
+                        return Promise.reject(res)
                     })
-                    .catch((error) => {
-                        console.warn(error)
+                    .catch(err => {
+                        if (err.name !== 'AbortError') console.error(err)
+                        return null
                     })
-
-                var result = null
-                try{
-                    result = await currentRequest.json() 
-                } catch(error){
-                    result = null
-                }
-
-                if(result && result.length > 0){
-                    var html = '';
-                    var baseUrl = '{{ URL::to('/user') }}\/'
-
-                    for(var i=0; i < result.length; i++){
-                        html +='<a href="'+ baseUrl + result[i]['id'] +'">'+ result[i]['id'] + ": "+ result[i]['name'] +'</a>'
-                    }
-
-                    searchResults.forEach((el) => {
-                        el.innerHTML = html;
-                    });
-
-                    searchSpinner.forEach((el) => {
-                        el.classList.remove('search-spinner-visible')
-                    });
-
-                    searchResults.forEach((el) => {
-                        el.style.display = 'block'
-                    });
-
-                } else {
-                    searchResults.forEach((el) => {
-                        el.innerHTML = "<a href='#''>No results</a>";
-                    });
-                }
 
                 
+                if(request && request != ''){
+                    data = JSON.parse(request)
+                }
+
+                if(request !== null){
+                    if(data && data.length > 0){
+                        var html = '';
+                        var baseUrl = '{{ URL::to('/user') }}\/'
+
+                        for(var i=0; i < data.length; i++){
+                            html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
+                        }
+
+                        searchResults.forEach((el) => {
+                            el.innerHTML = html;
+                        });     
+                        
+                        searchSpinner.forEach((el) => {
+                            el.classList.remove('search-spinner-visible')
+                        });
+
+                        searchResults.forEach((el) => {
+                            el.style.display = 'block'
+                        });
+
+                    } else {
+                        searchResults.forEach((el) => {
+                            el.innerHTML = "<a href='#''>No results</a>";
+                        });
+
+                        searchSpinner.forEach((el) => {
+                            el.classList.remove('search-spinner-visible')
+                        });
+
+                        searchResults.forEach((el) => {
+                            el.style.display = 'block'
+                        });
+                    }
+                }
+
 
             }
 
             var timer = null
-            document.querySelector('.search-input').addEventListener('keyup', function(){
-                var query = this.value;
+            document.querySelectorAll('.search-input').forEach((input) => {
+                input.addEventListener('keyup', function(){
+                    var query = this.value;
 
-                searchSpinner.forEach((el) => {
-                    el.classList.add('search-spinner-visible')
+                    searchSpinner.forEach((el) => {
+                        el.classList.add('search-spinner-visible')
+                    });
+                    
+                    clearTimeout(timer);
+                    timer = setTimeout(fetch_users, 200, query)
                 });
-                
-                clearTimeout(timer);
-                timer = setTimeout(fetch_users, 200, query)
             });
 
             // When pressing enter on desktop, redirect directly to inputed userID if it's a number
