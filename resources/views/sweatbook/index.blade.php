@@ -80,7 +80,7 @@
             <div class="card-body">
                 <form action="{!! action('SweatbookController@store') !!}" method="POST">
                     @csrf
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
                         @error('date')
@@ -88,7 +88,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ old('start_at') }}" required>
                         @error('start_at')
@@ -96,7 +96,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ old('end_at') }}" required>
                         @error('end_at')
@@ -104,7 +104,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="position">Position</label>
                         <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
@@ -121,7 +121,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="mentor_notes">Mentor notes</label>
                         <textarea class="form-control @error('mentor_notes') is-invalid @enderror" id="mentor_notes" rows="8" placeholder="Write booking notes here" name="mentor_notes">{{ old('mentor_notes') }}</textarea>
                         @error('mentor_notes')

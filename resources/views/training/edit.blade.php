@@ -17,7 +17,7 @@
                     @method('PATCH')
                     @csrf
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label my-1 me-2" for="typeSelect">Training type</label>
                         <select id="typeSelect" name="type" class="custom-select my-1 me-sm-2 @error('type') is-invalid @enderror" @change="onChange($event)">
                             <option selected disabled>Choose training type</option>
@@ -34,12 +34,12 @@
                         @enderror
                     </div>
                     
-                    <div class="form-group form-check">
+                    <div class="mb-3 form-check">
                         <input value="true" type="checkbox" class="form-check-input" id="englishOnly" name="englishOnly" {{ $training->english_only_training ? 'checked' : '' }}>
                         <label class="form-check-label" for="englishOnly">English only training</label>
                     </div>
  
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label my-1 me-2" for="ratingSelect">Training level <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple id="ratingSelect" name="ratings[]" class="form-control @error('ratings') is-invalid @enderror" size="5">
                             @foreach($ratings as $rating)

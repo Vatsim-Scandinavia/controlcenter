@@ -22,7 +22,7 @@
                 <form action="{{ route('training.report.store', ['training' => $training->id]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="position">Position</label>
                         <input
                             id="position"
@@ -48,7 +48,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ old('report_date') }}" required>
                         @error('report_date')
@@ -56,7 +56,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="contentBox">Report</label>
                         <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ old('content') }}</textarea>
                         @error('content')
@@ -64,7 +64,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="contentimprove">Areas to improve</label>
                         <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ old('contentimprove') }}</textarea>
                         @error('contentimprove')
@@ -72,7 +72,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="attachments">Attachments</label>
                         <div>
                             <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" multiple>
@@ -84,7 +84,7 @@
 
                     <hr>
 
-                    <div class="form-group form-check">
+                    <div class="mb-3 form-check">
                         <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck">
                         <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
                         @error('draft')

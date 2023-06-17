@@ -55,12 +55,12 @@
                     <form action="{{ route('training.examination.store', ['training' => $training->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label" for="examination_date">Date</label>
                             <input id="examination_date" class="datepicker form-control" type="text" name="examination_date" required>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label" for="position">Position</label>
                             <input
                                 id="position"
@@ -86,7 +86,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label" for="result">Result</label>
                             <select class="form-control" name="result" id="result" required>
                                 <option disabled selected>Choose a result</option>
@@ -97,7 +97,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label" for="attachments">Attachments</label>
                             <div>
                                 <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf" multiple>

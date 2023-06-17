@@ -14,22 +14,22 @@
             <div class="card-body">
                 <form action="{!! action('BookingController@update') !!}" method="POST">
                     @csrf
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control" type="text" name="date" value="{{ Carbon\Carbon::parse($booking->time_start)->format('d/m/Y') }}" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ empty(old('start_at')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_start)->format('H:i') : old('start_at') }}" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <labe class="form-label"l for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ empty(old('end_at')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_end)->format('H:i') : old('end_at') }}" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="position">Position</label>
                     <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ $booking->position->callsign }}" required/>
                         <datalist id="positions">
@@ -44,7 +44,7 @@
                     </div>
 
                     @can('bookTags', \App\Models\Booking::class)
-                        <div class="form-group">
+                        <div class="mb-3">
                             @can('bookTrainingTag', \App\Models\Booking::class)
                                 <input id="training" type="checkbox" name="tag" value=1 {{ $booking->training == 1 ? 'checked' : '' }} onClick="change(this)">
                                 <label class="form-label" for="training">Training</label>
@@ -64,7 +64,7 @@
                         </div>
                     @endcan
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="user">User</label>
                         <input id="user" class="form-control" type="text" name="user" readonly="readonly" value="{{ $booking->user->name }} ({{ $booking->user->id }})">
                     </div>

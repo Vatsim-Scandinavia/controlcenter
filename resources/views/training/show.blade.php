@@ -145,7 +145,7 @@
                         @method('PATCH')
                         @csrf
 
-                        <div class="form-group">
+                        <div class="mb-3">
 
                             @if($activeTrainingInterest)
                                 <div class="alert alert-warning" role="alert">
@@ -167,7 +167,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group" id="closedReasonInput" style="display: none">
+                        <div class="mb-3" id="closedReasonInput" style="display: none">
                             <label class="form-label" for="trainingCloseReason">Closed reason</label>
                             <input type="text" id="trainingCloseReason" class="form-control" name="closed_reason" placeholder="{{ $training->closed_reason }}" maxlength="65">
                         </div>
@@ -185,7 +185,7 @@
                         <hr>
 
                         @if (\Auth::user()->isModeratorOrAbove())
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label" for="assignMentors">Assigned mentors: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                             <select multiple class="form-control" name="mentors[]" id="assignMentors">
                                 @foreach($trainingMentors as $mentor)

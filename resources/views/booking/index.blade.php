@@ -104,7 +104,7 @@
             <div class="card-body">
                 <form action="{!! action('BookingController@store') !!}" method="POST">
                     @csrf
-                    <div class="form-group">
+                    <div class="mb-3 mb-3">
                         <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
                         @error('date')
@@ -113,7 +113,7 @@
                     </div>
                     
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ old('start_at') }}" required>
                         @error('start_at')
@@ -121,7 +121,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ old('end_at') }}" required>
                         @error('end_at')
@@ -129,7 +129,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="position">Position</label>
                         <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
@@ -147,7 +147,7 @@
                     </div>
 
                     @can('bookTags', \App\Models\Booking::class)
-                        <div class="form-group">
+                        <div class="mb-3">
                             @can('bookTrainingTag', \App\Models\Booking::class)
                                 <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
                                 <label class="form-label" for="training">Training</label>

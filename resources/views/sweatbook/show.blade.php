@@ -14,12 +14,12 @@
             <div class="card-body">
                 <form action="{!! action('SweatbookController@update') !!}" method="POST">
                     @csrf
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control" type="text" name="date" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ empty(old('start_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->start_at)->format('H:i') : old('start_at') }}" required>
                         @error('start_at')
@@ -27,7 +27,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ empty(old('end_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->end_at)->format('H:i') : old('end_at') }}" required>
                         @error('end_at')
@@ -35,7 +35,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="position">Position</label>
                     <input id="position" class="form-control" type="text" name="position" list="positions" value="{{ $booking->position->callsign }}" required/>
                         <datalist id="positions">
@@ -49,7 +49,7 @@
                         </datalist>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="mentor_notes">Mentor notes</label>
                         @if (old('mentor_notes'))
                             <textarea class="form-control" id="mentor_notes" rows="8" placeholder="Write booking notes here" name="mentor_notes">{{ old('mentor_notes') }}</textarea>
@@ -58,7 +58,7 @@
                         @endif
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="mentor">Mentor</label>
                         <input id="mentor" class="form-control" type="text" name="mentor" readonly="readonly" value="{{ $booking->user->name }} ({{ $booking->user->id }})">
                     </div>

@@ -378,7 +378,7 @@
                             </table>
 
                             @if (\Illuminate\Support\Facades\Gate::inspect('update', $user)->allowed())
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <button type="submit" class="btn btn-primary">Save access</button>
                                 </div>
                             @endif

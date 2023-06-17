@@ -64,7 +64,7 @@
                     <h6 class="m-0 fw-bold text-white">New Request Notification</h6> 
                 </div>        
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <textarea class="form-control @error('newrequestaddition') is-invalid @enderror" name="newrequestaddition" id="newrequestaddition" rows="8" placeholder="Append text here or leave blank for no FIR-specific text.">{{ $template_newreq }}</textarea>
                         @error('newrequestaddition')
                             <span class="text-danger">{{ $errors->first('newrequestaddition') }}</span>
@@ -102,7 +102,7 @@
                     <h6 class="m-0 fw-bold text-white">New Mentor Notification</h6> 
                 </div>        
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <textarea class="form-control @error('newmentoraddition') is-invalid @enderror" name="newmentoraddition" id="newmentoraddition" rows="8" placeholder="Append text here or leave blank for no FIR-specific text.">{{ $template_newmentor }}</textarea>
                         @error('newmentoraddition')
                             <span class="text-danger">{{ $errors->first('newmentoraddition') }}</span>
@@ -139,7 +139,7 @@
                     <h6 class="m-0 fw-bold text-white">Pre-Training Notification</h6> 
                 </div>        
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <textarea class="form-control @error('pretrainingaddition') is-invalid @enderror" name="pretrainingaddition" id="pretrainingaddition" rows="8" placeholder="Append text here or leave blank for no FIR-specific text.">{{ $template_pretraining }}</textarea>
                         @error('pretrainingaddition')
                             <span class="text-danger">{{ $errors->first('pretrainingaddition') }}</span>

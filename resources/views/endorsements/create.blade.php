@@ -16,7 +16,7 @@
                     @csrf
 
                     {{-- User --}} 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label class="form-label" for="user">User</label>
                         <input 
                             id="user"
@@ -42,7 +42,7 @@
 
                     {{-- Endorsement --}}
                     <label class="form-label">Endorsement</label>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeMASC">
@@ -88,7 +88,7 @@
                     {{-- Training Type --}} 
                     <div v-show="endorsementType == 'TRAINING'" style="display: none">
                         <label class="form-label">Type</label>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType" v-on:change="updateButtonText">
                                 <label class="form-check-label" for="trainingTypeS1">
@@ -105,7 +105,7 @@
                     </div>
 
                     {{-- Expires --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
                         <label for="expire">Expires</label>
                         <input
                             id="expire"
@@ -126,7 +126,7 @@
                     </div>
 
                     {{-- Training Positions --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
                         <label class="form-label" for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
                         <input 
                             id="positions"
@@ -164,7 +164,7 @@
                     </div>
 
                     {{-- MASC Ratings --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'MASC'">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'MASC'">
                         <label class="form-label" for="ratingMASC">Rating</label>
                         <select class="form-control" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
                             <option selected disabled>Select rating</option>
@@ -176,7 +176,7 @@
                     </div>
 
                     {{-- Visiting Rating --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING' || endorsementType == 'EXAMINER'">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'VISITING' || endorsementType == 'EXAMINER'">
                         <label class="form-label" for="ratingGRP">Rating</label>
                         <select class="form-control" name="ratingGRP" id="ratingGRP" v-model="ratingGRP" v-bind:class="{'is-invalid': (validationError && ratingGRP == null)}">
                             <option selected disabled>Select rating</option>
@@ -188,7 +188,7 @@
                     </div>
 
                     {{-- Examiner/Visiting Areas --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
                         <label class="form-label" for="areas">Areas: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
                             @foreach($areas as $area)
