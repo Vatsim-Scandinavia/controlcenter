@@ -189,23 +189,34 @@ table[data-toggle="table"] {
     }
 }
 
-table.table-card{
+table{
 
-    width: 100%;
+    a {
+        text-decoration: none;
 
-    th,td{
-        vertical-align: baseline;
+        &:hover{
+            text-decoration: underline;
+        }
     }
 
-    th{
-        width: 10ch;
-    }
+    .table-card{
 
-    tr.spacing > td{
-        padding-bottom: 1rem;
-    }
-    tr.spacing > th{
-        padding-bottom: 1rem;
+        width: 100%;
+
+        th,td{
+            vertical-align: baseline;
+        }
+
+        th{
+            width: 10ch;
+        }
+
+        tr.spacing > td{
+            padding-bottom: 1rem;
+        }
+        tr.spacing > th{
+            padding-bottom: 1rem;
+        }
     }
 }
 
