@@ -299,7 +299,6 @@ class ReportController extends Controller
                 ->where('result', 'PASSED')
                 ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
                 ->where('area_id', $areaFilter)
-                ->where('rating_training.rating_id', '>=', 3)
                 ->groupBy('month')
                 ->get();
 
