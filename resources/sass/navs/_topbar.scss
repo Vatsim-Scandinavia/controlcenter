@@ -132,8 +132,8 @@
         color: $darkblue;
 
         i{
-            padding-top: 18px;
-            padding-left: 15px;
+            padding-top: 1.125rem;
+            padding-left: 1rem;
         }   
     }
 
@@ -153,8 +153,8 @@
         @include media-breakpoint-down(md) {
             position: inherit;
             margin: auto;
-            margin-top: 25px;
-            margin-bottom: 25px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
 
             display: none;
 
@@ -191,8 +191,8 @@
             color: $darkblue;
             display: block;
             min-height: 25px;
-            line-height: 25px;
-            padding: 0 15px;
+            line-height: 1.5rem;
+            padding: 0 1rem;
         }
 
         a:hover{

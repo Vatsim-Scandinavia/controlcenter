@@ -95,8 +95,8 @@ dl.copyable{
             line-height: 0;
 
             img {
-                height: 48px;
-                margin-bottom: 10px;
+                height: 3rem;
+                margin-bottom: 0.625rem;
             }
 
             @include media-breakpoint-down(sm) {
@@ -105,28 +105,28 @@ dl.copyable{
         }
 
         &-description {
-            font-size: 22px;
+            font-size: 1.375rem;
             color: white;
 
             @include media-breakpoint-down(sm) {
-                font-size: 15px;
+                font-size: 1rem;
             }
         }
 
         a {
-            margin-top: 20px;
-            padding-top: 6px;
+            margin-top: 1.25rem;
+            padding-top: 0.375;
             width: 72%;
         }
     }
 
     .logo {
         position: absolute;
-        bottom: 20px;
-        left: calc(50vw - (215px / 2));
+        bottom: 1.25rem;
+        left: calc(50vw - (14.5rem / 2));
 
         img {
-            width: 215px;
+            width: 14.5rem;
         }
     }
 }
@@ -137,7 +137,7 @@ dl.copyable{
         tbody {
             th:first-child,
             td:first-child {
-                padding-left: 15px;
+                padding-left: 1rem;
             }
         }
     }
@@ -165,11 +165,11 @@ dl.copyable{
 table[data-toggle="table"] {
     th {
         &:first-child {
-            padding-left: 10px !important;
+            padding-left: 0.5rem !important;
         }
 
         &:last-child {
-            padding-right: 10px !important;
+            padding-right: 0.5rem !important;
         }
     }
 
@@ -211,8 +211,8 @@ table.table-card{
 
 // Tweaks to the pagination of bootstrap-table plugin, fixes padding issues and more
 .fixed-table-pagination {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 
     // Forcefully changing the rows for each page dropdown, as we can't change the html afaik
     div.float-left.pagination-detail > span.page-list > span > button {
@@ -269,8 +269,8 @@ table.table-card{
         padding-bottom: 1.5rem;
         border-left: 1px solid $primary;
         position: relative;
-        padding-left: 20px;
-        margin-left: 30px;
+        padding-left: 1.25rem;
+        margin-left: 1.5rem;
 
         &:last-child{
             border: 0px;
@@ -285,8 +285,8 @@ table.table-card{
             border: 1px solid $primary;
             border-radius: 50%;
             position: absolute;
-            left: -8px;
-            top: 0px;
+            left: -0.5rem;
+            top: 0rem;
         }
     }
 
