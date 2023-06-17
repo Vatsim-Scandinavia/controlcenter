@@ -55,6 +55,7 @@
             border-right: 1px solid $border-color;
             border-bottom: 1px solid $border-color;
             line-height: 1.3rem;
+
             .dropdown-list-image {
                 position: relative;
                 height: 2.5rem;
@@ -74,9 +75,11 @@
                     border: 0.125rem solid $white;
                 }
             }
+
             .text-truncate {
                 max-width: 10rem;
             }
+
             &:active {
                 background-color: $gray-200;
                 color: $gray-900;
