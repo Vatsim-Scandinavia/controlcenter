@@ -144,6 +144,7 @@
         top: 8px;
         z-index: 10;
         visibility: hidden;
+        border-radius: 50% !important;
 
         &-visible{
             visibility: visible;
