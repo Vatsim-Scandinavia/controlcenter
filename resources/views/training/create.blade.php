@@ -17,7 +17,7 @@
                     @csrf
 
                     <div class="form-group">
-                        <label for="student">Student</label>
+                        <label class="form-label" for="student">Student</label>
                         <input 
                             id="student"
                             class="form-control @error('student') is-invalid @enderror"
@@ -43,7 +43,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="my-1 me-2" for="areaSelect">Training area</label>
+                        <label class="form-label my-1 me-2" for="areaSelect">Training area</label>
                         <select id="areaSelect" name="training_area" class="custom-select my-1 me-sm-2 @error('training_area') is-invalid @enderror" @change="onChange($event)">
                             <option selected disabled>Choose training area</option>
                             @foreach($ratings as $areaId => $area)
@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="my-1 me-2" for="typeSelect">Training type</label>
+                        <label class="form-label my-1 me-2" for="typeSelect">Training type</label>
                         <select id="typeSelect" name="type" class="custom-select my-1 me-sm-2 @error('type') is-invalid @enderror">
                             <option selected disabled>Choose training type</option>
                             @foreach($types as $id => $data)
@@ -74,7 +74,7 @@
                     </div>
  
                     <div class="form-group">
-                        <label class="my-1 me-2" for="ratingSelect">Training level <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label class="form-label my-1 me-2" for="ratingSelect">Training level <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple id="ratingSelect" name="ratings[]" class="form-control @error('ratings') is-invalid @enderror" size="5">
                             <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
                         </select>

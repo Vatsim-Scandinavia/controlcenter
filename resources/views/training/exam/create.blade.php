@@ -56,12 +56,12 @@
                         @csrf
 
                         <div class="form-group">
-                            <label for="examination_date">Date</label>
+                            <label class="form-label" for="examination_date">Date</label>
                             <input id="examination_date" class="datepicker form-control" type="text" name="examination_date" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="position">Position</label>
+                            <label class="form-label" for="position">Position</label>
                             <input
                                 id="position"
                                 class="form-control @error('position') is-invalid @enderror"
@@ -87,7 +87,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="result">Result</label>
+                            <label class="form-label" for="result">Result</label>
                             <select class="form-control" name="result" id="result" required>
                                 <option disabled selected>Choose a result</option>
                                 <option value="FAILED">Failed</option>
@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="attachments">Attachments</label>
+                            <label class="form-label" for="attachments">Attachments</label>
                             <div>
                                 <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf" multiple>
                             </div>

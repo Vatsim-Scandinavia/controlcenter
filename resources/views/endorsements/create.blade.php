@@ -17,7 +17,7 @@
 
                     {{-- User --}} 
                     <div class="form-group">
-                        <label for="user">User</label>
+                        <label class="form-label" for="user">User</label>
                         <input 
                             id="user"
                             class="form-control"
@@ -41,7 +41,7 @@
                     </div>
 
                     {{-- Endorsement --}}
-                    <label>Endorsement</label>
+                    <label class="form-label">Endorsement</label>
                     <div class="form-group">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
@@ -87,7 +87,7 @@
 
                     {{-- Training Type --}} 
                     <div v-show="endorsementType == 'TRAINING'" style="display: none">
-                        <label>Type</label>
+                        <label class="form-label">Type</label>
                         <div class="form-group">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType" v-on:change="updateButtonText">
@@ -127,7 +127,7 @@
 
                     {{-- Training Positions --}}
                     <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
-                        <label for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
+                        <label class="form-label" for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
                         <input 
                             id="positions"
                             class="form-control"
@@ -165,7 +165,7 @@
 
                     {{-- MASC Ratings --}}
                     <div class="form-group" style="display: none" v-show="endorsementType == 'MASC'">
-                        <label for="ratingMASC">Rating</label>
+                        <label class="form-label" for="ratingMASC">Rating</label>
                         <select class="form-control" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsMASC as $rating)
@@ -177,7 +177,7 @@
 
                     {{-- Visiting Rating --}}
                     <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING' || endorsementType == 'EXAMINER'">
-                        <label for="ratingGRP">Rating</label>
+                        <label class="form-label" for="ratingGRP">Rating</label>
                         <select class="form-control" name="ratingGRP" id="ratingGRP" v-model="ratingGRP" v-bind:class="{'is-invalid': (validationError && ratingGRP == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsGRP as $rating)
@@ -189,7 +189,7 @@
 
                     {{-- Examiner/Visiting Areas --}}
                     <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
-                        <label for="areas">Areas: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label class="form-label" for="areas">Areas: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-control" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
                             @foreach($areas as $area)
                                 <option value="{{ $area->id }}">{{ $area->name }}</option>

@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 mb-12">
-                                    <label class="my-1 me-2" for="areaSelect">Training area</label>
+                                    <label class="form-label my-1 me-2" for="areaSelect">Training area</label>
                                     <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="custom-select my-1 me-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
@@ -49,7 +49,7 @@
                                     <span v-show="errArea" class="text-danger" style="display: none">Select training area</span>
                                 </div>
                                 <div class="col-xl-6 col-md-6 mb-12">
-                                    <label class="my-1 me-2" for="ratingSelect">Training type</label>
+                                    <label class="form-label my-1 me-2" for="ratingSelect">Training type</label>
                                     <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="custom-select my-1 me-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
                                         <option v-for="rating in ratings" :value="rating.id" :data-hour-requirement="rating.hour_requirement">@{{ rating.name }}</option>
@@ -96,7 +96,7 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                                 <div class="form-group">
-                                    <label for="experience">Experience level</label>
+                                    <label class="form-label" for="experience">Experience level</label>
                                     <select class="custom-select" name="experience" id="experience">
                                         <option selected disabled>Choose best fitting level...</option>
                                         @foreach(\App\Http\Controllers\TrainingController::$experiences as $id => $data)
@@ -114,7 +114,7 @@
                                 <hr>
 
                                 <div class="form-group" v-show="motivationRequired">
-                                    <label for="motivationTextarea">Letter of motivation</label>
+                                    <label class="form-label" for="motivationTextarea">Letter of motivation</label>
                                     <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ Config::get('app.owner') }}</p>
                                     <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500"></textarea>
                                     <span v-show="errLOM" class="text-danger" style="display: none">The letter of motivation needs at least 250 characters</span>
@@ -126,7 +126,7 @@
                                 </div>
 
                                 <div class="form-group" v-show="remarkChecked">
-                                    <label for="remarkTextarea">Remark</label>
+                                    <label class="form-label" for="remarkTextarea">Remark</label>
                                     <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Please don't repeat information from the application" maxlength="500"></textarea>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@
                 <form action="{!! action('VoteController@store') !!}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="date">End Date</label>
+                        <label class="form-label" for="date">End Date</label>
                         <input id="date" class="datepicker form-control @error('expire_date') is-invalid @enderror" type="text" name="expire_date" value="{{ old('expire_date') }}" required>
                         @error('expire_date')
                             <span class="text-danger">{{ $errors->first('expire_date') }}</span>
@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="end_at">End Time (Zulu)</label>
+                        <label class="form-label" for="end_at">End Time (Zulu)</label>
                         <input id="end_at" class="form-control @error('expire_time') is-invalid @enderror" type="time" name="expire_time" placeholder="12:00" value="{{ old('expire_time') }}" required>
                         @error('expire_time')
                             <span class="text-danger">{{ $errors->first('expire_time') }}</span>
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="question">Question</label>
+                        <label class="form-label" for="question">Question</label>
                         <input id="question" class="form-control @error('question') is-invalid @enderror" type="text" name="question" value="{{ old('question') }}" required>
                         @error('question')
                             <span class="text-danger">{{ $errors->first('question') }}</span>
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="vote_alternatives">Answer Options</label>
+                        <label class="form-label" for="vote_alternatives">Answer Options</label>
                         <textarea class="form-control @error('vote_options') is-invalid @enderror" id="vote_alternatives" rows="8" placeholder="Write options here, separated by new line" name="vote_options">{{ old('vote_options') }}</textarea>
                         @error('vote_options')
                             <span class="text-danger">{{ $errors->first('vote_options') }}</span>

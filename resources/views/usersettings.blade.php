@@ -26,7 +26,7 @@
                             </div>
                             
                             <div class="form-group mt-4">
-                                <label for="active_email">Your registered e-mail</label>
+                                <label class="form-label" for="active_email">Your registered e-mail</label>
                                 <input type="email" class="form-control" name="active_email" value="{{ $user->email }}" disabled>
                                 <small class="form-text text-muted">We're sending notifications to this address.</small>
                             </div>

@@ -15,7 +15,7 @@
                 <form action="{!! action('BookingController@storeBulk') !!}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="date">Date</label>
+                        <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
                         @error('date')
                             <span class="text-danger">{{ $errors->first('date') }}</span>
@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="start_at">Start (Zulu)</label>
+                        <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ old('start_at') }}" required>
                         @error('start_at')
                             <span class="text-danger">{{ $errors->first('start_at') }}</span>
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="end_at">End (Zulu)</label>
+                        <label class="form-label" for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ old('end_at') }}" required>
                         @error('end_at')
                             <span class="text-danger">{{ $errors->first('end_at') }}</span>
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
+                        <label class="form-label" for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
                         <input 
                             id="positions"
                             class="form-control"
@@ -64,11 +64,11 @@
                     @can('bookTags', \App\Models\Booking::class)
                         <div class="form-group">
                             <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                            <label for="exam">Exam</label>
+                            <label class="form-label" for="exam">Exam</label>
                             &nbsp;&nbsp;&nbsp;
 
                             <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                            <label for="event">Event</label>
+                            <label class="form-label" for="event">Event</label>
                         </div>
                     @endcan
 

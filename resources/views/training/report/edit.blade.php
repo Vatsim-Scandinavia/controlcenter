@@ -21,7 +21,7 @@
                     @method('PATCH')
 
                     <div class="form-group">
-                        <label for="position">Position</label>
+                        <label class="form-label" for="position">Position</label>
                         <input
                             id="position"
                             class="form-control @error('position') is-invalid @enderror"
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="date">Date</label>
+                        <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ empty(old('report_date')) ? $report->report_date->toEuropeanDate() : old('report_date')}}" required>
                         @error('report_date')
                             <span class="text-danger">{{ $errors->first('report_date') }}</span>
@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="contentBox">Report</label>
+                        <label class="form-label" for="contentBox">Report</label>
                         <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ empty(old('content')) ? $report->content : old('content') }}</textarea>
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="contentimprove">Areas to improve</label>
+                        <label class="form-label" for="contentimprove">Areas to improve</label>
                         <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ empty(old('contentimprove')) ? $report->contentimprove : old('contentimprove') }}</textarea>
                         @error('contentimprove')
                             <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
@@ -119,7 +119,7 @@
                     @csrf
 
                     <div class="form-group">
-                        <label for="attachments">Attachments</label>
+                        <label class="form-label" for="attachments">Attachments</label>
                         <div>
                             <input type="file" name="file" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" onchange="uploadFile(this)" multiple>
                         </div>
