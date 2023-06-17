@@ -15,6 +15,12 @@ p {
     }
 }
 
+form {
+    input, select {
+        border-color: $gray-400 !important;
+    }
+}
+
 .accordion button{
     text-decoration: none;
 }
