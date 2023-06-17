@@ -29,6 +29,13 @@ dl dd.separator{
 
 dl.copyable{
 
+    a {
+        text-decoration: none;
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+
     dd button, dd a.link-btn, dt a{
         background: transparent;
         border: none;
