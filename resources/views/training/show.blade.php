@@ -188,7 +188,7 @@
 
                         @if (\Auth::user()->isModeratorOrAbove())
                         <div class="mb-3">
-                            <label class="form-label" for="assignMentors">Assigned mentors: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                            <label class="form-label" for="assignMentors">Assigned mentors: <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
                             <select multiple class="form-select" name="mentors[]" id="assignMentors">
                                 @foreach($trainingMentors as $mentor)
                                     <option value="{{ $mentor->id }}" {{ ($training->mentors->contains($mentor->id)) ? "selected" : "" }}>{{ $mentor->name }}</option>

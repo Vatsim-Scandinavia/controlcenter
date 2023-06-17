@@ -189,7 +189,7 @@
 
                     {{-- Examiner/Visiting Areas --}}
                     <div class="mb-3" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
-                        <label class="form-label" for="areas">Areas: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <label class="form-label" for="areas">Areas: <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple class="form-select" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
                             @foreach($areas as $area)
                                 <option value="{{ $area->id }}">{{ $area->name }}</option>
