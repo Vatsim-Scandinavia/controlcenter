@@ -9,16 +9,20 @@ body {
     height: 100%;
 }
 
-a {
-    &:focus {
-        outline: none;
-    }
-}
-
 p {
     a {
         text-decoration: underline;
     }
+}
+
+form {
+    input, select {
+        border-color: $gray-400 !important;
+    }
+}
+
+.accordion button{
+    text-decoration: none;
 }
 
 #markdown-content ul li a, #markdown-improve ul li a {
@@ -30,6 +34,13 @@ dl dd.separator{
 }
 
 dl.copyable{
+
+    a {
+        text-decoration: none;
+        &:hover{
+            text-decoration: underline;
+        }
+    }
 
     dd button, dd a.link-btn, dt a{
         background: transparent;
@@ -101,8 +112,8 @@ dl.copyable{
             line-height: 0;
 
             img {
-                height: 48px;
-                margin-bottom: 10px;
+                height: 3rem;
+                margin-bottom: 0.625rem;
             }
 
             @include media-breakpoint-down(sm) {
@@ -111,28 +122,28 @@ dl.copyable{
         }
 
         &-description {
-            font-size: 22px;
+            font-size: 1.375rem;
             color: white;
 
             @include media-breakpoint-down(sm) {
-                font-size: 15px;
+                font-size: 1rem;
             }
         }
 
         a {
-            margin-top: 20px;
-            padding-top: 6px;
+            margin-top: 1.25rem;
+            padding-top: 0.375;
             width: 72%;
         }
     }
 
     .logo {
         position: absolute;
-        bottom: 20px;
-        left: calc(50vw - (215px / 2));
+        bottom: 1.25rem;
+        left: calc(50vw - (14.5rem / 2));
 
         img {
-            width: 215px;
+            width: 14.5rem;
         }
     }
 }
@@ -143,12 +154,12 @@ dl.copyable{
         tbody {
             th:first-child,
             td:first-child {
-                padding-left: 15px;
+                padding-left: 1rem;
             }
         }
     }
 
-    .thead-dark,
+    .table-dark,
     .tbody-dark {
         th {
             border-color: $blue;
@@ -156,14 +167,19 @@ dl.copyable{
         }
     }
 
-    .thead-light {
+    .table-light {
         th {
             color: $gray-800;
+            background: $gray-200;
         }
     }
 
     tr {
         color: $gray-800;
+    }
+
+    td {
+        color: $gray-900;
     }
 }
 
@@ -171,11 +187,11 @@ dl.copyable{
 table[data-toggle="table"] {
     th {
         &:first-child {
-            padding-left: 10px !important;
+            padding-left: 0.5rem !important;
         }
 
         &:last-child {
-            padding-right: 10px !important;
+            padding-right: 0.5rem !important;
         }
     }
 
@@ -195,30 +211,41 @@ table[data-toggle="table"] {
     }
 }
 
-table.table-card{
+table{
 
-    width: 100%;
+    a {
+        text-decoration: none;
 
-    th,td{
-        vertical-align: baseline;
+        &:hover{
+            text-decoration: underline;
+        }
     }
 
-    th{
-        width: 10ch;
-    }
+    .table-card{
 
-    tr.spacing > td{
-        padding-bottom: 1rem;
-    }
-    tr.spacing > th{
-        padding-bottom: 1rem;
+        width: 100%;
+
+        th,td{
+            vertical-align: baseline;
+        }
+
+        th{
+            width: 10ch;
+        }
+
+        tr.spacing > td{
+            padding-bottom: 1rem;
+        }
+        tr.spacing > th{
+            padding-bottom: 1rem;
+        }
     }
 }
 
 // Tweaks to the pagination of bootstrap-table plugin, fixes padding issues and more
 .fixed-table-pagination {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 
     // Forcefully changing the rows for each page dropdown, as we can't change the html afaik
     div.float-left.pagination-detail > span.page-list > span > button {
@@ -233,11 +260,6 @@ table.table-card{
     }
 }
 
-.zulu-clock{
-    position: absolute;
-    right: 16px;
-}
-
 .link-tooltip{
     text-decoration: none;
     background-image: linear-gradient(90deg,#294661 33%,#fff 0);
@@ -250,14 +272,6 @@ table.table-card{
     text-align: left;
     white-space: pre-line;
     max-width: 50vw !important;
-}
-
-.visiting-toggle:hover{
-    text-decoration: none;
-}
-
-.gap-1{
-    gap: 1rem;
 }
 
 .endorsement-card{
@@ -288,8 +302,8 @@ table.table-card{
         padding-bottom: 1.5rem;
         border-left: 1px solid $primary;
         position: relative;
-        padding-left: 20px;
-        margin-left: 30px;
+        padding-left: 1.25rem;
+        margin-left: 1.5rem;
 
         &:last-child{
             border: 0px;
@@ -304,8 +318,8 @@ table.table-card{
             border: 1px solid $primary;
             border-radius: 50%;
             position: absolute;
-            left: -8px;
-            top: 0px;
+            left: -0.5rem;
+            top: 0rem;
         }
     }
 
@@ -318,4 +332,11 @@ table.table-card{
         line-height: 1.5;
         margin-top:0.4rem;
     }
+}
+
+.submit-spinner {
+    display: none;
+    margin-left: 8px;
+    margin-bottom: 3px;
+    vertical-align: middle;
 }

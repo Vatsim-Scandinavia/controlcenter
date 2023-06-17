@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 @section('content')
 
-<!-- Success message fed via JS for TR -->
+{{-- Success message fed via JS for TR  --}}
 <div class="alert alert-success d-none" id="success-message"></div>
 
 @if($dueInterestRequest)
@@ -41,10 +41,10 @@
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Current Rating</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $data['rating'] }} ({{ $data['rating_short'] }})</div>
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Current Rating</div>
+            <div class="h5 mb-0 fw-bold text-gray-800">{{ $data['rating'] }} ({{ $data['rating_short'] }})</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-id-badge fa-2x text-gray-300"></i>
@@ -58,10 +58,10 @@
     <div class="col-xl-3 col-md-6 mb-4 d-none d-xl-block d-lg-block d-md-block">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase text-gray-600 mb-1">Your associated division</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Your associated division</div>
+            <div class="h5 mb-0 fw-bold text-gray-800">
                 {{ $data['division'] }}/{{ $data['subdivision'] }}
             </div>
             </div>
@@ -77,10 +77,10 @@
     <div class="col-xl-3 col-md-6 mb-4 d-none d-xl-block d-lg-block d-md-block">
     <div class="card {{ ($atcHours < Setting::get('atcActivityRequirement', 10)) ? 'border-left-danger' : 'border-left-success' }} shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">ATC Hours (Last {{ Setting::get("atcActivityQualificationPeriod") }} months)</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $atcHours ? round($atcHours).' hours of '.Setting::get("atcActivityRequirement").' required' : 'N/A' }}</div>
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="fs-sm fw-bold text-success text-uppercase mb-1">ATC Hours (Last {{ Setting::get("atcActivityQualificationPeriod") }} months)</div>
+            <div class="h5 mb-0 fw-bold text-gray-800">{{ $atcHours ? round($atcHours).' hours of '.Setting::get("atcActivityRequirement").' required' : 'N/A' }}</div>
             </div>
             <div class="col-auto">
             <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -96,13 +96,13 @@
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
-        <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">My last training</div>
-            <div class="row no-gutters align-items-center">
+        <div class="row g-0 align-items-center">
+            <div class="col me-2">
+            <div class="fs-sm fw-bold text-info text-uppercase mb-1">My last training</div>
+            <div class="row g-0 align-items-center">
                 <div class="col-auto">
                 @if ($data['report'] != null) <a href="{{ $data['report']->training->path() }}"> @endif
-                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $data['report'] != null ? $data['report']->report_date->toEuropeanDate() : "-" }}</div>
+                <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $data['report'] != null ? $data['report']->report_date->toEuropeanDate() : "-" }}</div>
                 @if ($data['report'] != null) </a> @endif
                 </div>
             </div>
@@ -125,7 +125,7 @@
             <div class="card shadow mb-4 d-none d-xl-block d-lg-block d-md-block">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">My Students</h6>
+                    <h6 class="m-0 fw-bold text-white">My Students</h6>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body {{ sizeof($studentTrainings) == 0 ? '' : 'p-0' }}">
@@ -135,7 +135,7 @@
                     @else
                         <div class="table-responsive">
                             <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                                <thead class="thead-light">
+                                <thead class="table-light">
                                 <tr>
                                     <th>Student</th>
                                     <th>Level</th>
@@ -197,7 +197,7 @@
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-white">My Trainings</h6>
+            <h6 class="m-0 fw-bold text-white">My Trainings</h6>
         </div>
         <!-- Card Body -->
         <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
@@ -207,7 +207,7 @@
             @else
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                         <tr>
                             <th>Level</th>
                             <th>Area</th>
@@ -258,12 +258,11 @@
     </div>
     </div>
 
-    <!-- Pie Chart -->
     <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-white">Request Training</h6>
+            <h6 class="m-0 fw-bold text-white">Request Training</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
@@ -271,14 +270,16 @@
                     <img class="img-fluid px-3 px-sm-4 mb-4" style="width: 25rem;" src="images/undraw_speech_to_text_vatsim.svg" alt="">
                 </div>
                 <p>Are you interested in becoming an Air Traffic Controller? Wish to receive training for a higher rating? Request training below and you will be notified when a space is available.</p>
-
+                
                 @can('apply', \App\Models\Training::class)
-                    <a href="{{ route('training.apply') }}" class="btn btn-success btn-block">
-                        Request training
-                    </a>
+                    <div class="d-grid">
+                        <a href="{{ route('training.apply') }}" class="btn btn-success">
+                            Request training
+                        </a>
+                    </div>
                 @else
 
-                    <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} btn-block disabled not-allowed" role="button" aria-disabled="true">
+                    <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} disabled not-allowed" role="button" aria-disabled="true">
                         @if(\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled'))
                             <i class="fas fa-check"></i>
                         @else

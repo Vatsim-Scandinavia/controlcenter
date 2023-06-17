@@ -12,7 +12,8 @@
     @endcannot
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Booked Sessions<span class="zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span></h6> 
+                <h6 class="m-0 fw-bold text-white">Booked Sessions</h6>
+                <span class="m-0 fw-bold text-white">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -26,7 +27,7 @@
                         data-page-size="25"
                         data-page-list=[10,15,25,50]
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false" data-filter-order-by="desc">Date</th>
                                 <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
@@ -48,9 +49,9 @@
                                         @if(Auth::user()->id == $booking->user_id || $user->isModeratorOrAbove())
 
                                             @if($booking->source == "DISCORD")
-                                                <i class="fab fa-discord text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
+                                                <i class="fab fa-discord text-primary" data-bs-toggle="tooltip" data-bs-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
                                             @else
-                                                <i class="fas fa-info-circle text-primary" data-toggle="tooltip" data-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
+                                                <i class="fas fa-info-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
                                             @endif
 
                                         @endif
@@ -65,11 +66,11 @@
                                 <td>
                                     {{ $booking->position->callsign }} ({{ $booking->position->name }})
                                     @if($booking->training)
-                                        <span class="badge badge-primary">Training</span>
+                                        <span class="badge bg-primary">Training</span>
                                     @elseif($booking->event)
-                                        <span class="badge badge-success">Event</span>
+                                        <span class="badge bg-success">Event</span>
                                     @elseif($booking->exam)
-                                        <span class="badge badge-danger">Exam</span>
+                                        <span class="badge bg-danger">Exam</span>
                                     @endif
                                 </td>
                                 <td>
@@ -96,15 +97,15 @@
     <div class="col-xl-4 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Create Booking 
                 </h6> 
             </div>
             <div class="card-body">
                 <form action="{!! action('BookingController@store') !!}" method="POST">
                     @csrf
-                    <div class="form-group">
-                        <label for="date">Date</label>
+                    <div class="mb-3 mb-3">
+                        <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
                         @error('date')
                             <span class="text-danger">{{ $errors->first('date') }}</span>
@@ -112,24 +113,24 @@
                     </div>
                     
 
-                    <div class="form-group">
-                        <label for="start_at">Start (Zulu)</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ old('start_at') }}" required>
                         @error('start_at')
                             <span class="text-danger">{{ $errors->first('start_at') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="end_at">End (Zulu)</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ old('end_at') }}" required>
                         @error('end_at')
                             <span class="text-danger">{{ $errors->first('end_at') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="position">Position</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="position">Position</label>
                         <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
@@ -146,22 +147,22 @@
                     </div>
 
                     @can('bookTags', \App\Models\Booking::class)
-                        <div class="form-group">
+                        <div class="mb-3">
                             @can('bookTrainingTag', \App\Models\Booking::class)
                                 <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
-                                <label for="training">Training</label>
+                                <label class="form-label" for="training">Training</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
                             @can('bookExamTag', \App\Models\Booking::class)
                                 <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                                <label for="exam">Exam</label>
+                                <label class="form-label" for="exam">Exam</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
                             @can('bookEventTag', \App\Models\Booking::class)
                                 <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                                <label for="event">Event</label>
+                                <label class="form-label" for="event">Event</label>
                             @endcan
                         </div>
                     @endcan
@@ -226,7 +227,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
 </script>
 @endsection

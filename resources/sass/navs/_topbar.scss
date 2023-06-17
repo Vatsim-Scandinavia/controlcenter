@@ -1,29 +1,26 @@
 // Topbar
 .topbar {
+
     height: $topbar-base-height;
-    #sidebarToggleTop {
-        height: 2.5rem;
-        width: 2.5rem;
-        &:hover {
-            background-color: $gray-200;
-        }
-        &:active {
-            background-color: $gray-300;
-        }
-    }
-    .navbar-search {
-        width: 25rem;
-        input {
-            font-size: 0.85rem;
-        }
-    }
-    .topbar-divider {
+
+    &-divider {
         width: 0;
         border-right: 1px solid $border-color;
         height: calc(#{$topbar-base-height} - 2rem);
         margin: auto 1rem;
     }
+
+    .navbar-search {
+        input {
+            font-size: 1rem;
+        }
+    }
+
     .nav-item {
+        &:focus {
+            outline: none;
+        }
+
         .nav-link {
             height: $topbar-base-height;
             display: flex;
@@ -33,17 +30,12 @@
                 outline: none;
             }
         }
-        &:focus {
-            outline: none;
-        }
     }
-    .dropdown {
+
+    .dropdown { 
         position: static;
-        .dropdown-menu {
-            width: calc(100% - #{$grid-gutter-width});
-            right: calc($grid-gutter-width / 2);
-        }
     }
+
     .dropdown-list {
         padding: 0;
         border: none;
@@ -63,6 +55,7 @@
             border-right: 1px solid $border-color;
             border-bottom: 1px solid $border-color;
             line-height: 1.3rem;
+
             .dropdown-list-image {
                 position: relative;
                 height: 2.5rem;
@@ -82,23 +75,24 @@
                     border: 0.125rem solid $white;
                 }
             }
+
             .text-truncate {
                 max-width: 10rem;
             }
+
             &:active {
                 background-color: $gray-200;
                 color: $gray-900;
             }
         }
     }
+
     @include media-breakpoint-up(sm) {
+
         .dropdown {
             position: relative;
-            .dropdown-menu {
-                width: auto;
-                right: 0;
-            }
         }
+
         .dropdown-list {
             width: 20rem !important;
             .dropdown-item {
@@ -107,27 +101,11 @@
                 }
             }
         }
-    }
-}
 
-.topbar.navbar-light {
-    .navbar-nav {
-        .nav-item {
-            .nav-link {
-                color: $gray-400;
-                &:hover {
-                    color: $gray-500;
-                }
-                &:active {
-                    color: $gray-600;
-                }
-            }
-        }
     }
 }
 
 .search{
-
     &.input-group{
         width: 300px;
         border-bottom: 1px solid transparent;
@@ -137,8 +115,8 @@
             border-bottom: 1px solid $darkblue;
         }
 
-        @include media-breakpoint-down(sm) {
-            width: 100%;
+        @include media-breakpoint-down(md) {
+            width: 50vw;
             border-bottom: 1px solid $darkblue;
         }
         
@@ -157,8 +135,8 @@
         color: $darkblue;
 
         i{
-            padding-top: 18px;
-            padding-left: 15px;
+            padding-top: 1.125rem;
+            padding-left: 1rem;
         }   
     }
 
@@ -169,16 +147,17 @@
         top: 8px;
         z-index: 10;
         visibility: hidden;
+        border-radius: 50% !important;
 
         &-visible{
             visibility: visible;
         }
 
-        @include media-breakpoint-down(sm) {
+        @include media-breakpoint-down(md) {
             position: inherit;
             margin: auto;
-            margin-top: 25px;
-            margin-bottom: 25px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
 
             display: none;
 
@@ -203,8 +182,8 @@
 
         background-color: white;
 
-        @include media-breakpoint-down(sm) {
-            position: inherit;
+        @include media-breakpoint-down(md) {
+            position: static;
             width: 100%;
 
             font-size: 1rem;
@@ -214,9 +193,9 @@
         a {
             color: $darkblue;
             display: block;
-            height: 25px;
-            line-height: 25px;
-            padding: 0 15px;
+            min-height: 25px;
+            line-height: 1.5rem;
+            padding: 0 1rem;
         }
 
         a:hover{

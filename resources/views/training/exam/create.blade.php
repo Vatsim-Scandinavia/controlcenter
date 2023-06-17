@@ -7,14 +7,14 @@
         <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">
+                    <h6 class="m-0 fw-bold text-white">
                         {{ $training->user->name }}
                     </h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="thead-light">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Vatsim ID</th>
                                     <th>Current Rating</th>
@@ -44,7 +44,7 @@
             </div>
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">
+                    <h6 class="m-0 fw-bold text-white">
                         New Examination Report
                     </h6>
                     @if(Setting::get('trainingExamTemplate') != "")
@@ -55,13 +55,13 @@
                     <form action="{{ route('training.examination.store', ['training' => $training->id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <div class="form-group">
-                            <label for="examination_date">Date</label>
+                        <div class="mb-3">
+                            <label class="form-label" for="examination_date">Date</label>
                             <input id="examination_date" class="datepicker form-control" type="text" name="examination_date" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="position">Position</label>
+                        <div class="mb-3">
+                            <label class="form-label" for="position">Position</label>
                             <input
                                 id="position"
                                 class="form-control @error('position') is-invalid @enderror"
@@ -86,9 +86,9 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="result">Result</label>
-                            <select class="form-control" name="result" id="result" required>
+                        <div class="mb-3">
+                            <label class="form-label" for="result">Result</label>
+                            <select class="form-select" name="result" id="result" required>
                                 <option disabled selected>Choose a result</option>
                                 <option value="FAILED">Failed</option>
                                 <option value="PASSED">Passed</option>
@@ -97,8 +97,8 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="attachments">Attachments</label>
+                        <div class="mb-3">
+                            <label class="form-label" for="attachments">Attachments</label>
                             <div>
                                 <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf" multiple>
                             </div>

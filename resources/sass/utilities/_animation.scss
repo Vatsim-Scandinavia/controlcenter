@@ -13,12 +13,6 @@
     }
 }
 
-.animated--grow-in {
-    animation-name: growIn;
-    animation-duration: 200ms;
-    animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
-}
-
 // Fade In Animation
 
 @keyframes fadeIn {
@@ -34,4 +28,10 @@
     animation-name: fadeIn;
     animation-duration: 200ms;
     animation-timing-function: opacity cubic-bezier(0, 1, 0.4, 1);
+}
+
+.animated--grow-in {
+    animation-name: growIn;
+    animation-duration: 200ms;
+    animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
 }

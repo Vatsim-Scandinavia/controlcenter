@@ -13,7 +13,7 @@
             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                 <div class="card shadow mb-4 border-left-warning">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Important information</h6>
+                        <h6 class="m-0 fw-bold text-primary">Important information</h6>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-graduation-cap"></i>&nbsp;What is ATC training?</h5>
@@ -34,13 +34,13 @@
             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                 <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Training options</h6>
+                            <h6 class="m-0 fw-bold text-primary">Training options</h6>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 mb-12">
-                                    <label class="my-1 mr-2" for="areaSelect">Training area</label>
-                                    <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="custom-select my-1 mr-sm-2">
+                                    <label class="form-label my-1 me-2" for="areaSelect">Training area</label>
+                                    <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
                                             <option value="{{ $areaId }}">{{ $area["name"] }}</option>
@@ -49,8 +49,8 @@
                                     <span v-show="errArea" class="text-danger" style="display: none">Select training area</span>
                                 </div>
                                 <div class="col-xl-6 col-md-6 mb-12">
-                                    <label class="my-1 mr-2" for="ratingSelect">Training type</label>
-                                    <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="custom-select my-1 mr-sm-2">
+                                    <label class="form-label my-1 me-2" for="ratingSelect">Training type</label>
+                                    <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
                                         <option v-for="rating in ratings" :value="rating.id" :data-hour-requirement="rating.hour_requirement">@{{ rating.name }}</option>
                                     </select> 
@@ -70,7 +70,7 @@
             <div class="col-xl-12 col-md-12 mb-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Standard Operating Procedures</h6>
+                        <h6 class="m-0 fw-bold text-primary">Standard Operating Procedures</h6>
                     </div>
                     <div class="card-body">
 
@@ -90,14 +90,14 @@
 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Details</h6>
+                        <h6 class="m-0 fw-bold text-primary">Details</h6>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
-                                <div class="form-group">
-                                    <label for="experience">Experience level</label>
-                                    <select class="custom-select" name="experience" id="experience">
+                                <div class="mb-3">
+                                    <label class="form-label" for="experience">Experience level</label>
+                                    <select class="form-select" name="experience" id="experience">
                                         <option selected disabled>Choose best fitting level...</option>
                                         @foreach(\App\Http\Controllers\TrainingController::$experiences as $id => $data)
                                             <option value="{{ $id }}">{{ $data["text"] }}</option>
@@ -106,27 +106,27 @@
                                     <span v-show="errExperience" class="text-danger" style="display: none">Please select a proper experience level</span>
                                 </div>
 
-                                <div class="form-group form-check">
+                                <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="englishOnly" name="englishOnly" value="true">
                                     <label class="form-check-label" for="englishOnly">I'm <u>only</u> able to receive training in English instead of local language</label>
                                 </div>
 
                                 <hr>
 
-                                <div class="form-group" v-show="motivationRequired">
-                                    <label for="motivationTextarea">Letter of motivation</label>
+                                <div class="mb-3" v-show="motivationRequired">
+                                    <label class="form-label" for="motivationTextarea">Letter of motivation</label>
                                     <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ Config::get('app.owner') }}</p>
                                     <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500"></textarea>
                                     <span v-show="errLOM" class="text-danger" style="display: none">The letter of motivation needs at least 250 characters</span>
                                 </div>
 
-                                <div class="form-group form-check">
+                                <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="wantRemark" v-model="remarkChecked">
                                     <label class="form-check-label" for="wantRemark">I've an important remark about my training I would like to add</label>
                                 </div>
 
-                                <div class="form-group" v-show="remarkChecked">
-                                    <label for="remarkTextarea">Remark</label>
+                                <div class="mb-3" v-show="remarkChecked">
+                                    <label class="form-label" for="remarkTextarea">Remark</label>
                                     <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Please don't repeat information from the application" maxlength="500"></textarea>
                                 </div>
                             </div>

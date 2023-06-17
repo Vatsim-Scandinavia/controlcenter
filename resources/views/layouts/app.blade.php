@@ -5,36 +5,38 @@
         @include('layouts.header')
     </head>
 
-    <body id="page-top">
+    <body>
     <div id='app'></div>
 
-    <!-- Page Wrapper -->
+    {{-- Page Wrapper --}}
     <div id="wrapper">
 
         @auth
             @include('layouts.sidebar')
         @endauth
 
-        <!-- Content Wrapper -->
+        {{-- Content Wrapper --}}
         <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
+        {{-- Main Content --}}
         <div id="content">
 
             @auth
                 @include('layouts.topbar')
             @endauth
 
-            @yield('content-master') <!-- For special things to be done outside the container -->
-
-            <!-- Begin Page Content -->
+            @yield('content-master') {{-- For special things to be done outside the container --}}
+            
             <div class="container-fluid">
 
                 @if(!Route::is('front'))
-                    <h3 class="mb-4 text-gray-800">
-                        @yield('title', 'Page Title')
-                        @yield('title-extension')
-                    </h3>
+
+                    <div class="d-flex justify-content-between">
+                        <h3 class="mb-4 text-gray-800">
+                            @yield('title', 'Page Title')
+                        </h3>
+                        @yield('title-flex')
+                    </div>
 
                     @if(Session::has('success') OR isset($success))
                         <div class="alert alert-success" role="alert">
@@ -59,18 +61,17 @@
 
                 @yield('content')
             </div>
-            <!-- /.container-fluid -->
 
         </div>
-        <!-- End of Main Content -->
+        {{-- End of Main Content --}}
 
         </div>
-        <!-- End of Content Wrapper -->
+        {{-- End of Content Wrapper --}}
 
     </div>
-    <!-- End of Page Wrapper -->
+    {{-- End of Page Wrapper --}}
 
-    <!-- Bootstrap core JavaScript-->
+    {{-- Bootstrap core JavaScript--}}
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
         // Bootstrap-table: Filter function to strip html from bootstrap table column filters
@@ -94,64 +95,80 @@
         }
 
         // Search bar
-        $(document).ready(function(){
+        window.addEventListener('load', function(event) {
+            var requestController = new AbortController()
 
-            var currentRequest = null;
-            
-            function fetch_users(query = '')
-            {
-                
-                if(currentRequest != null){
-                    currentRequest.abort();
+            // Search for a user with query
+            async function fetch_users(query = ''){
+                requestController.abort()
+                requestController = new AbortController()
+
+                var data = null
+                const request = await fetch('{{ route('user.search') }}?query='+query, {signal: requestController.signal})
+                    .then(res => {
+                        if (res.ok) return res.text()
+                        return Promise.reject(res)
+                    })
+                    .catch(err => {
+                        if (err.name !== 'AbortError') console.error(err)
+                        return null
+                    })
+
+                // Check if the request is not aborted or blank
+                if(request && request != ''){
+                    data = JSON.parse(request)
                 }
 
-                currentRequest = $.ajax({
-                    url:"{{ route('user.search') }}",
-                    method:'GET',
-                    data:{query:query},
-                    dataType:'json',
-                    success: function(data)
-                    {
-                        if(data.length > 0){
+                // Only update search if the request didn't error
+                if(request !== null){
+                    if(data && data.length > 0){
+                        var html = '';
+                        var baseUrl = '{{ URL::to('/user') }}\/'
 
-                            var html = '';
-                            var baseUrl = '{{ URL::to('/user') }}\/'
-
-                            for(var i=0; i < data.length; i++){
-                                html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
-                            }
-
-                            $('.search-results').html(html);
-                        } else {
-                            $('.search-results').html("<a href='#''>No results</a>");
+                        for(var i=0; i < data.length; i++){
+                            html +='<a href="'+ baseUrl + data[i]['id'] +'">'+ data[i]['id'] + ": "+ data[i]['name'] +'</a>'
                         }
 
-                        $('.search-results').slideDown("fast");
-                        $('.search-spinner').removeClass('search-spinner-visible');
-                    },
-                    error: function(){
-                        $('.search-results').html("<a href='#''>No results</a>");
-                        $('.search-results').slideDown("fast");
-                        $('.search-spinner').removeClass('search-spinner-visible');
+                        showSpinner(false)
+                        showResults(true, html)
+
+                    } else {
+                        showSpinner(false)
+                        showResults(true, "<a href='#''>No results</a>")
                     }
-                })
+                }
+
+
             }
-    
+
+            function showSpinner(boolean){
+                document.querySelectorAll('.search-spinner').forEach((el) => {
+                    boolean ? el.classList.add('search-spinner-visible') : el.classList.remove('search-spinner-visible')
+                });
+            }
+
+            function showResults(boolean, html = null){
+                document.querySelectorAll('.search-results').forEach((el) => {
+                    if(html) el.innerHTML = html;
+                    boolean ? el.style.display = 'block' : el.style.display = 'none'
+                });
+            }
+
+            // Start search when typing in search bar with a 200ms delay
             var timer = null
-            $('.search .search-input').keyup(function(){
-                var query = $(this).val();
-                $('.search-spinner').addClass('search-spinner-visible');
-                
-                clearTimeout(timer);
-                timer = setTimeout(fetch_users, 200, query)
+            document.querySelectorAll('.search-input').forEach((input) => {
+                input.addEventListener('keyup', function(){
+                    showSpinner(true)
+                    clearTimeout(timer);
+                    timer = setTimeout(fetch_users, 200, this.value)
+                });
             });
 
             // When pressing enter on desktop, redirect directly to inputed userID if it's a number
-            // otherwise just prevent and let ajax do its thing.
-            $('#user-search-form-desktop').on('submit', function(e){ 
+            document.querySelector('#user-search-form-desktop').addEventListener('submit', function(e){ 
                 e.preventDefault();
 
-                var query = parseInt($('.search-input').val());
+                var query = parseInt(document.querySelector('.search-input').value);
                 if(Number.isInteger(query)){
                     location.assign("{{ route('user.show', '') }}/" + query); 
                 }
@@ -159,26 +176,27 @@
             });
 
             // When pressing enter on mobile start the search
-            $('#user-search-form-mobile').on('submit', function(e){
-                $('.search-spinner').addClass('search-spinner-visible');
-                
-                var query = $('.search-input').val();
-                clearTimeout(timer);
-                timer = setTimeout(fetch_users, 200, query)
-
+            document.querySelector('#user-search-form-mobile').addEventListener('submit', function(e){
                 e.preventDefault() 
+
+                var query = null
+                document.querySelectorAll('.search-input').forEach((el) => {
+                    if(el.value != '') query = el.value
+                });
+
+                showSpinner(true)
+        
+                clearTimeout(timer);
+                timer = setTimeout(fetch_users, 200, query, true)
             });
 
-            $(document).on("click", function(event) {
-                var obj = $(".search-results");
-                if (!$(event.target).closest(obj).length) {
-                    
-                    $('.search-results').slideUp("fast");
-                    $('.search-spinner').removeClass('search-spinner-visible');
-                
+            // Close search results when clicking outside of it
+            document.addEventListener("click", function(event) {
+                if(event.target.closest('.search-results') == null){
+                    showResults(false)
+                    showSpinner(false)
                 }
             });
-
         });
     </script>
 

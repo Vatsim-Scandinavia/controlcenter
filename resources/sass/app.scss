@@ -5,7 +5,6 @@
 @import "~bootstrap/scss/bootstrap";
 
 // Import app scss
-@import "mixins.scss";
 @import "global.scss";
 @import "utilities.scss";
 
@@ -13,14 +12,3 @@
 @import "dropdowns.scss";
 @import "navs.scss";
 @import "buttons.scss";
-@import "cards.scss";
-@import "error.scss";
-@import "footer.scss";
-
-// Override boostrap on the input color
-.form-control {
-    &,
-    &:focus {
-        color: $tertiary;
-    }
-}

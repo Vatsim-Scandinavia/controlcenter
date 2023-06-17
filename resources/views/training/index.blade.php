@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Training Requests')
-@section('title-extension')
-    @if (\Auth::user()->isModeratorOrAbove())
-        <a href="{{ route('training.create') }}" class="btn btn-sm btn-success">Add new request</a>
-    @endif
+@section('title-flex')
+    <div>
+        @if (\Auth::user()->isModeratorOrAbove())
+            <a href="{{ route('training.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new request</a>
+        @endif
+    </div>
 @endsection
 @section('content')
 
@@ -13,7 +15,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Open training requests</h6>
+                <h6 class="m-0 fw-bold text-white">Open training requests</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -26,7 +28,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="state" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">State</th>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
@@ -58,9 +60,9 @@
                                         <a 
                                             href="/training/{{ $training->id }}"
                                             class="link-tooltip" 
-                                            data-toggle="tooltip" 
-                                            data-html="true" 
-                                            data-placement="right" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-html="true" 
+                                            data-bs-placement="right" 
                                             title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $notes) }}"
                                             >
                                             {{ $statuses[$training->status]["text"] }}
@@ -128,7 +130,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
 </script>
 @endsection

@@ -7,7 +7,8 @@
     <div class="col-xl-8 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Booked Sessions<span class="zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span></h6> 
+                <h6 class="m-0 fw-bold text-white">Booked Sessions</h6> 
+                <span class="m-0 fw-bold text-white">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -18,7 +19,7 @@
                         data-page-size="15"
                         data-page-list=[10,15,25,50]
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Date</th>
                                 <th data-field="start" data-sortable="true" data-filter-control="select">Start (Zulu)</th>
@@ -72,39 +73,39 @@
     <div class="col-xl-4 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Create Booking 
                 </h6> 
             </div>
             <div class="card-body">
                 <form action="{!! action('SweatbookController@store') !!}" method="POST">
                     @csrf
-                    <div class="form-group">
-                        <label for="date">Date</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('date') is-invalid @enderror" type="text" name="date" required>
                         @error('date')
                             <span class="text-danger">{{ $errors->first('date') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="start_at">Start (Zulu)</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="start_at">Start (Zulu)</label>
                         <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ old('start_at') }}" required>
                         @error('start_at')
                             <span class="text-danger">{{ $errors->first('start_at') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="end_at">End (Zulu)</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="end_at">End (Zulu)</label>
                         <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ old('end_at') }}" required>
                         @error('end_at')
                             <span class="text-danger">{{ $errors->first('end_at') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="position">Position</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="position">Position</label>
                         <input id="position" class="form-control @error('position') is-invalid @enderror" type="text" name="position" list="positions" value="{{ old('position') }}" required/>
                         <datalist id="positions">
                             @foreach($positions as $position)
@@ -120,8 +121,8 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="mentor_notes">Mentor notes</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="mentor_notes">Mentor notes</label>
                         <textarea class="form-control @error('mentor_notes') is-invalid @enderror" id="mentor_notes" rows="8" placeholder="Write booking notes here" name="mentor_notes">{{ old('mentor_notes') }}</textarea>
                         @error('mentor_notes')
                             <span class="text-danger">{{ $errors->first('mentor_notes') }}</span>

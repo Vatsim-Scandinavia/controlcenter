@@ -8,7 +8,7 @@
     <div class="col-xl-6 col-md-6 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Cast your vote</h6>
+                <h6 class="m-0 fw-bold text-white">Cast your vote</h6>
             </div>
             <div class="card-body">
                 <h3>{{ $vote->question }}</h3>
@@ -55,7 +55,7 @@
     <div class="col-xl-6 col-md-6 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Vote summary</h6>
+                <h6 class="m-0 fw-bold text-white">Vote summary</h6>
             </div>
             <div class="card-body">
 

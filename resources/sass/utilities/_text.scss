@@ -1,10 +1,10 @@
 // Grayscale Text Utilities
 
-.text-xs {
+.fs-sm {
     font-size: 0.7rem;
 }
 
-.text-lg {
+.fs-lg {
     font-size: 1.2rem;
 }
 
@@ -44,17 +44,8 @@
     color: $gray-900 !important;
 }
 
-.icon-circle {
-    height: 2.5rem;
-    width: 2.5rem;
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 blockquote{
-    padding-left: 10px;
+    padding-left: 0.625rem;
     border-left: 3px solid grey;
     
     color: $gray-900;

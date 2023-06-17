@@ -1,22 +1,17 @@
 @extends('layouts.app')
 
 @section('title', 'Training Activities')
-@section('title-extension')
-    <div class="dropdown show" style="display: inline;">
-        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Filter: {{ $filterName }}
-        </a>
-    
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            @if(\Auth::user()->isAdmin())
-                <a class="dropdown-item" href="{{ route('reports.activities') }}">All Areas</a>
+@section('title-flex')
+    <div>
+        <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
+        @if(\Auth::user()->isAdmin())
+            <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities') }}">All Areas</a>
+        @endif
+        @foreach($areas as $area)
+            @if(\Auth::user()->isModeratorOrAbove($area))
+                <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
             @endif
-            @foreach($areas as $area)
-                @if(\Auth::user()->isModeratorOrAbove($area))
-                    <a class="dropdown-item" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
-                @endif
-            @endforeach 
-        </div>
+        @endforeach 
     </div>
 @endsection
 @section('content')
@@ -26,7 +21,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Training Activities
                 </h6>
             </div>
@@ -41,7 +36,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="id" data-sortable="false" data-filter-control="input">Training</th>
                                 <th data-field="who" data-sortable="false" data-filter-control="input">Who</th>
@@ -83,21 +78,21 @@
 
                                         @if($activity->type == "STATUS")
                                             @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
-                                                Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                            to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
-                                            with reason <span class="badge badge-light">{{ $activity->comment }}</span>
+                                                Status changed from <span class="badge text-bg-light text-primary">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                            to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            with reason <span class="badge text-bg-light">{{ $activity->comment }}</span>
                                             @else
-                                                Status changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                            to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                                Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                            to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                             @endif
                                         @elseif($activity->type == "TYPE")
-                                            Training type changed from <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                            to <span class="badge badge-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                            Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
+                                            to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
                                         @elseif($activity->type == "MENTOR")
                                             @if($activity->new_data)
-                                                <span class="badge badge-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                                <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
                                             @elseif($activity->old_data)
-                                            <span class="badge badge-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                            <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
                                             @endif
                                         @elseif($activity->type == "PAUSE")
                                             @if($activity->new_data)
@@ -108,10 +103,10 @@
                                         @elseif($activity->type == "ENDORSEMENT")
                                             @if(\App\Models\Endorsement::find($activity->new_data) !== null)
                                                 @empty($activity->comment)
-                                                    <span class="badge badge-light">
+                                                    <span class="badge text-bg-light">
                                                         {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
                                                     </span> granted, valid to 
-                                                    <span class="badge badge-light">
+                                                    <span class="badge text-bg-light">
                                                         @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                             {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
                                                         @else
@@ -119,10 +114,10 @@
                                                         @endisset
                                                     </span>
                                                 @else
-                                                    <span class="badge badge-light">
+                                                    <span class="badge text-bg-light">
                                                         {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
                                                     </span> granted, valid to 
-                                                    <span class="badge badge-light">
+                                                    <span class="badge text-bg-light">
                                                         @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                             {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
                                                         @else
@@ -131,7 +126,7 @@
                                                     </span>
                                                     for positions: 
                                                     @foreach(explode(',', $activity->comment) as $p)
-                                                        <span class="badge badge-light">{{ $p }}</span>
+                                                        <span class="badge text-bg-light">{{ $p }}</span>
                                                     @endforeach
                                                 @endempty
                                             @endif
@@ -145,7 +140,7 @@
 
                                     </td>
                                     <td>
-                                        <span data-toggle="tooltip" data-placement="top" title="{{ $activity->created_at->toEuropeanDateTime() }}">
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $activity->created_at->toEuropeanDateTime() }}">
                                             {{ $activity->created_at->diffForHumans() }}
                                         </span>
                                     </td>
@@ -166,7 +161,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
 </script>
 @endsection

@@ -7,7 +7,7 @@
     <div class="col-xl-5 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Create 
                 </h6> 
             </div>
@@ -16,8 +16,8 @@
                     @csrf
 
                     {{-- User --}} 
-                    <div class="form-group">
-                        <label for="user">User</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="user">User</label>
                         <input 
                             id="user"
                             class="form-control"
@@ -41,8 +41,8 @@
                     </div>
 
                     {{-- Endorsement --}}
-                    <label>Endorsement</label>
-                    <div class="form-group">
+                    <label class="form-label">Endorsement</label>
+                    <div class="mb-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeMASC">
@@ -87,8 +87,8 @@
 
                     {{-- Training Type --}} 
                     <div v-show="endorsementType == 'TRAINING'" style="display: none">
-                        <label>Type</label>
-                        <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <div class="mb-3">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType" v-on:change="updateButtonText">
                                 <label class="form-check-label" for="trainingTypeS1">
@@ -105,7 +105,7 @@
                     </div>
 
                     {{-- Expires --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
                         <label for="expire">Expires</label>
                         <input
                             id="expire"
@@ -126,8 +126,8 @@
                     </div>
 
                     {{-- Training Positions --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
-                        <label for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                        <label class="form-label" for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
                         <input 
                             id="positions"
                             class="form-control"
@@ -147,8 +147,8 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
-                        <div class="dropdown float-right">
-                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="dropdown float-end">
+                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Template
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -164,9 +164,9 @@
                     </div>
 
                     {{-- MASC Ratings --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'MASC'">
-                        <label for="ratingMASC">Rating</label>
-                        <select class="form-control" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'MASC'">
+                        <label class="form-label" for="ratingMASC">Rating</label>
+                        <select class="form-select" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsMASC as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
@@ -176,9 +176,9 @@
                     </div>
 
                     {{-- Visiting Rating --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'VISITING' || endorsementType == 'EXAMINER'">
-                        <label for="ratingGRP">Rating</label>
-                        <select class="form-control" name="ratingGRP" id="ratingGRP" v-model="ratingGRP" v-bind:class="{'is-invalid': (validationError && ratingGRP == null)}">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'VISITING' || endorsementType == 'EXAMINER'">
+                        <label class="form-label" for="ratingGRP">Rating</label>
+                        <select class="form-select" name="ratingGRP" id="ratingGRP" v-model="ratingGRP" v-bind:class="{'is-invalid': (validationError && ratingGRP == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsGRP as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->name }}</option>
@@ -188,9 +188,9 @@
                     </div>
 
                     {{-- Examiner/Visiting Areas --}}
-                    <div class="form-group" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
-                        <label for="areas">Areas: <span class="badge badge-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple class="form-control" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'EXAMINER' || endorsementType == 'VISITING'">
+                        <label class="form-label" for="areas">Areas: <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
+                        <select multiple class="form-select" name="areas[]" id="areas" v-model="areas" v-bind:class="{'is-invalid': (validationError && !areas.length)}">
                             @foreach($areas as $area)
                                 <option value="{{ $area->id }}">{{ $area->name }}</option>
                             @endforeach

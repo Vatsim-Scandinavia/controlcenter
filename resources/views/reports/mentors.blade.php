@@ -8,7 +8,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Mentor Report
                 </h6>
             </div>
@@ -23,7 +23,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Mentor ID</th>
                                 <th data-field="mentor" data-sortable="true" data-filter-control="input">Mentor</th>
@@ -45,7 +45,7 @@
                                             @php
                                                 $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
                                             @endphp
-                                            <span data-toggle="tooltip" data-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
+                                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
                                                     Today
                                                 @elseif($reportDate->isYesterday())
@@ -77,7 +77,7 @@
                                                         $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
                                                         $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                                     @endphp
-                                                    <span data-toggle="tooltip" data-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                         @if($reportDate->isToday())
                                                             <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
                                                         @elseif($reportDate->isYesterday())
@@ -111,7 +111,7 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
+        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
     });
 </script>
 @endsection

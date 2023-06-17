@@ -1,17 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Notification Templates')
-@section('title-extension')
-    <div class="dropdown show" style="display: inline;">
-        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Filter: {{ $currentArea->name }}
-        </a>
-    
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            @foreach($areas as $area)
-                <a class="dropdown-item" href="{{ route('admin.templates.area', $area->id) }}">{{ $area->name }}</a>
-            @endforeach 
-        </div>
+@section('title-flex')
+    <div>
+        <i class="fas fa-filter"></i>&nbsp;Filter:&nbsp;
+        @foreach($areas as $area)
+            <a class="btn btn-sm {{ $currentArea == $area ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('admin.templates.area', $area->id) }}">{{ $area->name }}</a>
+        @endforeach
     </div>
 @endsection
 
@@ -25,40 +20,43 @@
         <div class="col-xl-12 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">{{ $currentArea->name }}'s Notifications</h6> 
+                    <h6 class="m-0 fw-bold text-white">{{ $currentArea->name }}'s Notifications</h6> 
                 </div>        
                 <div class="card-body">
                     <p>These editors give you the possiblity to append your FIR-specific text to the templates available, for the e-mail notifications. The notification text must be in English.</p>
 
-                    <div class="form-inline">
-                        <select class="form-control" onchange="selectedNotification(this.value)" style="width: 200px" id="notification">
-                            <option selected disabled>Choose Notification</option>
-                            <option value="1">New Request</option>
-                            <option value="2">New Mentor</option>
-                            <option value="3">Pre-Training</option>
-                        </select>
+                    <div class="row row-cols-auto g-1">
+                        <div class="col">
+                            <select class="form-select" onchange="selectedNotification(this.value)" id="notification">
+                                <option selected disabled>Choose Notification</option>
+                                <option value="1">New Request</option>
+                                <option value="2">New Mentor</option>
+                                <option value="3">Pre-Training</option>
+                            </select>
+                        </div>
 
-                        @can('modifyAreaTemplate', [App\Notification::class, $currentArea])
-                            <button class="btn btn-success ml-2" type="submit">Save {{ $currentArea->name }}'s notifications</button>
-                        @else
-                            <button class="btn btn-success ml-2" disabled>Save {{ $currentArea->name }}'s notifications</button>
-                        @endcan
-                    </div>
-
+                        <div class="col">
+                            @can('modifyAreaTemplate', [App\Notification::class, $currentArea])
+                                <button class="btn btn-success ms-2" type="submit">Save {{ $currentArea->name }}'s notifications</button>
+                            @else
+                                <button class="btn btn-success ms-2" disabled>Save {{ $currentArea->name }}'s notifications</button>
+                            @endcan
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row" id="newreqrow" style="display: none;">
+    <div class="row" id="newreqrow">
 
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">New Request Notification</h6> 
+                    <h6 class="m-0 fw-bold text-white">New Request Notification</h6> 
                 </div>        
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <textarea class="form-control @error('newrequestaddition') is-invalid @enderror" name="newrequestaddition" id="newrequestaddition" rows="8" placeholder="Append text here or leave blank for no FIR-specific text.">{{ $template_newreq }}</textarea>
                         @error('newrequestaddition')
                             <span class="text-danger">{{ $errors->first('newrequestaddition') }}</span>
@@ -72,7 +70,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Preview</h6> 
+                    <h6 class="m-0 fw-bold text-white">Preview</h6> 
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>
@@ -89,14 +87,14 @@
         </div>
     </div>
 
-    <div class="row" id="newmentorrow" style="display: none;">
+    <div class="row" id="newmentorrow">
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">New Mentor Notification</h6> 
+                    <h6 class="m-0 fw-bold text-white">New Mentor Notification</h6> 
                 </div>        
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <textarea class="form-control @error('newmentoraddition') is-invalid @enderror" name="newmentoraddition" id="newmentoraddition" rows="8" placeholder="Append text here or leave blank for no FIR-specific text.">{{ $template_newmentor }}</textarea>
                         @error('newmentoraddition')
                             <span class="text-danger">{{ $errors->first('newmentoraddition') }}</span>
@@ -109,7 +107,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Preview</h6> 
+                    <h6 class="m-0 fw-bold text-white">Preview</h6> 
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>
@@ -126,14 +124,14 @@
         </div>
     </div>
 
-    <div class="row" id="pretrainingrow" style="display: none;">
+    <div class="row" id="pretrainingrow">
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Pre-Training Notification</h6> 
+                    <h6 class="m-0 fw-bold text-white">Pre-Training Notification</h6> 
                 </div>        
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <textarea class="form-control @error('pretrainingaddition') is-invalid @enderror" name="pretrainingaddition" id="pretrainingaddition" rows="8" placeholder="Append text here or leave blank for no FIR-specific text.">{{ $template_pretraining }}</textarea>
                         @error('pretrainingaddition')
                             <span class="text-danger">{{ $errors->first('pretrainingaddition') }}</span>
@@ -146,7 +144,7 @@
         <div class="col-xl-6 col-md-12 mb-12">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Preview</h6> 
+                    <h6 class="m-0 fw-bold text-white">Preview</h6> 
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>

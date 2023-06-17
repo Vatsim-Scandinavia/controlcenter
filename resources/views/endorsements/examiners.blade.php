@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Examiners')
-@section('title-extension')
-    @can('create', \App\Models\Endorsement::class)
-        <a href="{{ route('endorsements.create') }}" class="btn btn-sm btn-success">Add new endorsement</a>
-    @endcan
+@section('title-flex')
+    <div>
+        @if (\Auth::user()->isModeratorOrAbove())
+            <a href="{{ route('endorsements.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new endorsement</a>
+        @endif
+    </div>
 @endsection
 @section('content')
 
@@ -13,7 +15,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Examiners</h6> 
+                <h6 class="m-0 fw-bold text-white">Examiners</h6> 
             </div>        
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -24,7 +26,7 @@
                         data-filter-control="true"
                         data-sort-reset="true"
                         >
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Examining</th>

@@ -9,12 +9,12 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">Overview</h6>
+                <h6 class="m-0 fw-bold text-white">Overview</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="thead-light">
+                        <thead class="table-light">
                             <tr>
                                 <th>Question</th>
                                 <th>Start</th>

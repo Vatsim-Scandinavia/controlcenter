@@ -8,7 +8,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Settings</h6> 
+                <h6 class="m-0 fw-bold text-primary">Settings</h6> 
             </div>
             <div class="card-body">
                 <div class="row">
@@ -25,8 +25,8 @@
                                 </label>
                             </div>
                             
-                            <div class="form-group mt-4">
-                                <label for="active_email">Your registered e-mail</label>
+                            <div class="mb-3 mt-4">
+                                <label class="form-label" for="active_email">Your registered e-mail</label>
                                 <input type="email" class="form-control" name="active_email" value="{{ $user->email }}" disabled>
                                 <small class="form-text text-muted">We're sending notifications to this address.</small>
                             </div>
@@ -55,8 +55,8 @@
                                     </label>
                                 </div>
                                 
-                                <div class="form-group mt-4">
-                                    <label for="setting_workmail_address">Work e-mail</label>
+                                <div class="mb-3 mt-4">
+                                    <label class="form-label" for="setting_workmail_address">Work e-mail</label>
                                     <input type="email" class="form-control @error('setting_workmail_address') is-invalid @enderror" id="setting_workmail_address" name="setting_workmail_address" value="{{ $user->setting_workmail_address ? $user->setting_workmail_address : "" }}">
                                     <small class="form-text text-muted">Enter a work e-mail address to send all notifications to instead. Has to be &#64;{{ Setting::get('linkDomain') }}</small>
                                     @error('setting_workmail_address')

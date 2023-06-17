@@ -8,10 +8,10 @@
     <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     {{ $report->training->user->first_name }}'s training {{ $report->report_date->toEuropeanDate() }}
                     @if($report->draft)
-                        <span class='badge badge-danger'>Draft</span>
+                        <span class='badge bg-danger'>Draft</span>
                     @endif
                 </h6>
             </div>
@@ -20,8 +20,8 @@
                     @csrf
                     @method('PATCH')
 
-                    <div class="form-group">
-                        <label for="position">Position</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="position">Position</label>
                         <input
                             id="position"
                             class="form-control @error('position') is-invalid @enderror"
@@ -46,31 +46,31 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="date">Date</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ empty(old('report_date')) ? $report->report_date->toEuropeanDate() : old('report_date')}}" required>
                         @error('report_date')
                             <span class="text-danger">{{ $errors->first('report_date') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="contentBox">Report</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="contentBox">Report</label>
                         <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ empty(old('content')) ? $report->content : old('content') }}</textarea>
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="contentimprove">Areas to improve</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="contentimprove">Areas to improve</label>
                         <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ empty(old('contentimprove')) ? $report->contentimprove : old('contentimprove') }}</textarea>
                         @error('contentimprove')
                             <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group form-check">
+                    <div class="mb-3 form-check">
                         <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck" {{ $report->draft ? "checked" : "" }}>
                         <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
                         @error('draft')
@@ -92,7 +92,7 @@
     <div class="col-xl-5 col-lg-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-white">
+                <h6 class="m-0 fw-bold text-white">
                     Manage attachments
                 </h6>
             </div>
@@ -118,8 +118,8 @@
                 <form method="post" id="file-form" action="{{ route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $report->id]) }}" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="form-group">
-                        <label for="attachments">Attachments</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="attachments">Attachments</label>
                         <div>
                             <input type="file" name="file" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" onchange="uploadFile(this)" multiple>
                         </div>
