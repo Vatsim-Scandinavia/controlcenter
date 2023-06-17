@@ -48,9 +48,6 @@
                             @endcan
                         </div>
                     </form>
-
-                    text-fuck-left;
-
                 </div>
             </div>
         </div>
