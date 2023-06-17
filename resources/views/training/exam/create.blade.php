@@ -88,7 +88,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="result">Result</label>
-                            <select class="form-control" name="result" id="result" required>
+                            <select class="form-select" name="result" id="result" required>
                                 <option disabled selected>Choose a result</option>
                                 <option value="FAILED">Failed</option>
                                 <option value="PASSED">Passed</option>

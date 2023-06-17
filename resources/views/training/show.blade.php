@@ -155,7 +155,7 @@
                             @endif
 
                             <label class="form-label" for="trainingStateSelect">Select training state</label>
-                            <select class="form-control" name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                            <select class="form-select" name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                                 @foreach($statuses as $id => $data)
                                     @if($data["assignableByStaff"])
                                         @if($id == $training->status)
@@ -188,7 +188,7 @@
                         @if (\Auth::user()->isModeratorOrAbove())
                         <div class="mb-3">
                             <label class="form-label" for="assignMentors">Assigned mentors: <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                            <select multiple class="form-control" name="mentors[]" id="assignMentors">
+                            <select multiple class="form-select" name="mentors[]" id="assignMentors">
                                 @foreach($trainingMentors as $mentor)
                                     <option value="{{ $mentor->id }}" {{ ($training->mentors->contains($mentor->id)) ? "selected" : "" }}>{{ $mentor->name }}</option>
                                 @endforeach

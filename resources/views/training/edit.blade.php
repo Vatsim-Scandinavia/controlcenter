@@ -19,7 +19,7 @@
 
                     <div class="mb-3">
                         <label class="form-label my-1 me-2" for="typeSelect">Training type</label>
-                        <select id="typeSelect" name="type" class="custom-select my-1 me-sm-2 @error('type') is-invalid @enderror" @change="onChange($event)">
+                        <select id="typeSelect" name="type" class="form-select my-1 me-sm-2 @error('type') is-invalid @enderror" @change="onChange($event)">
                             <option selected disabled>Choose training type</option>
                             @foreach($types as $id => $data)
                                 @if( $id == $training->type )
@@ -41,7 +41,7 @@
  
                     <div class="mb-3">
                         <label class="form-label my-1 me-2" for="ratingSelect">Training level <span class="badge bg-dark">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple id="ratingSelect" name="ratings[]" class="form-control @error('ratings') is-invalid @enderror" size="5">
+                        <select multiple id="ratingSelect" name="ratings[]" class="form-select @error('ratings') is-invalid @enderror" size="5">
                             @foreach($ratings as $rating)
                                 @if($training->ratings->where('id', $rating->id)->count())
                                     <option value="{{ $rating->id }}" selected>{{ $rating->name }}</option>

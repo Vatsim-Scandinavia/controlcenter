@@ -40,7 +40,7 @@
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 mb-12">
                                     <label class="form-label my-1 me-2" for="areaSelect">Training area</label>
-                                    <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="custom-select my-1 me-sm-2">
+                                    <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
                                             <option value="{{ $areaId }}">{{ $area["name"] }}</option>
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="col-xl-6 col-md-6 mb-12">
                                     <label class="form-label my-1 me-2" for="ratingSelect">Training type</label>
-                                    <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="custom-select my-1 me-sm-2">
+                                    <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
                                         <option v-for="rating in ratings" :value="rating.id" :data-hour-requirement="rating.hour_requirement">@{{ rating.name }}</option>
                                     </select> 
@@ -97,7 +97,7 @@
                             <div class="col-xl-6 col-lg-12 col-md-12 mb-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="experience">Experience level</label>
-                                    <select class="custom-select" name="experience" id="experience">
+                                    <select class="form-select" name="experience" id="experience">
                                         <option selected disabled>Choose best fitting level...</option>
                                         @foreach(\App\Http\Controllers\TrainingController::$experiences as $id => $data)
                                             <option value="{{ $id }}">{{ $data["text"] }}</option>
