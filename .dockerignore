@@ -5,3 +5,5 @@ Dockerfile
 node_modules
 # No tests either, you're damn straight.
 tests
+# Don't care about the devcontainer
+.devcontainer
