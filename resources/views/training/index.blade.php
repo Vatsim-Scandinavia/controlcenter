@@ -3,7 +3,7 @@
 @section('title', 'Training Requests')
 @section('title-flex')
     <div>
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if ($userIsModeratorOrAbove)
             <a href="{{ route('training.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new request</a>
         @endif
     </div>
