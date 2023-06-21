@@ -9,8 +9,8 @@
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"dockerFile": "../Dockerfile",
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": ["8080:80", "8443:443"],
+	// Use 'appPort' to define the application-specific ports and their "cousins"
+	"appPort": ["8080:80", "8443:443"],
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",
