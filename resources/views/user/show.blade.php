@@ -72,7 +72,7 @@
                             Trainings
                         </h6>
                         @can('create', \App\Models\Training::class)
-                            <a href="{{ route('training.create.id', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip" data-bs-placement="left" title="Add new training"><i class="fas fa-plus"></i></a>
+                            <a href="{{ route('training.create.id', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add new training</a>
                         @endcan
                     </div>
                     <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
@@ -144,7 +144,7 @@
                         <h6 class="m-0 fw-bold text-white">
                             Mentoring
                         </h6>
-                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip">See reports</a>
+                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-file"></i> See reports</a>
                     </div>
                     <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
         
@@ -183,7 +183,7 @@
                         Endorsements
                     </h6>
                     @can('create', \App\Models\Endorsement::class)
-                        <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-icon btn-light" data-bs-toggle="tooltip" data-bs-placement="left" title="Add new endorsement"><i class="fas fa-plus"></i></a>
+                        <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add new endorsement</a>
                     @endcan
                 </div>
                 <div class="card-body d-flex flex-wrap gap-3">
