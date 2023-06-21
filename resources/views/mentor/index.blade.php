@@ -72,9 +72,9 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
+                                    @if($training->reports->where('training_id', $training->id)->count() > 0)
                                         @php
-                                            $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->latest()->get()->first()->report_date)
+                                            $reportDate = Carbon\Carbon::make($training->reports->where('training_id', $training->id)->last()->report_date)
                                         @endphp
 
                                         @if($reportDate->isToday())
