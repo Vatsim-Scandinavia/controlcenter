@@ -50,8 +50,7 @@ COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
 
 WORKDIR /app
 
-RUN mkdir -p /app/logs && \
-        chmod -R 755 storage bootstrap/cache && \
+RUN chmod -R 755 storage bootstrap/cache && \
         composer install --no-dev --no-interaction --prefer-dist
 
 # Wrap around the default PHP entrypoint with a custom entrypoint
