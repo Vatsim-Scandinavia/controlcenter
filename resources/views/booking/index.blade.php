@@ -77,10 +77,10 @@
                                     {{ $booking->position->fir }}
                                 </td>
                                 <td>
-                                    @can('view', \App\Models\User::find($booking->user_id))
-                                        <a href="{{ route('user.show', $booking->user_id) }}">{{ \App\Models\User::find($booking->user_id)->name }} ({{ $booking->user_id }})</a>
+                                    @can('view', $booking->user)
+                                        <a href="{{ route('user.show', $booking->user_id) }}">{{ $booking->user->name }} ({{ $booking->user_id }})</a>
                                     @else
-                                        {{ \App\Models\User::find($booking->user_id)->name }}
+                                        {{ $booking->user->name }}
                                         ({{ $booking->user_id }})
                                     @endcan
                                 </td>
