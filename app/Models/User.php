@@ -386,10 +386,10 @@ class User extends Authenticatable
     public function isMentor(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', 3)->exists();
+            return $this->groups->where('id', 3)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', 3)->wherePivot('area_id', $area->id)->exists();
+        return $this->groups->where('id', 3)->wherePivot('area_id', $area->id)->isNotEmpty();
     }
 
     /**
@@ -400,10 +400,10 @@ class User extends Authenticatable
     public function isMentorOrAbove(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', '<=', 3)->exists();
+            return $this->groups->where('id', '<=', 3)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', '<=', 3)->wherePivot('area_id', $area->id)->exists();
+        return $this->groups->where('id', '<=', 3)->wherePivot('area_id', $area->id)->isNotEmpty();
     }
 
     /**
@@ -414,10 +414,10 @@ class User extends Authenticatable
     public function isModerator(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', 2)->exists();
+            return $this->groups->where('id', 2)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', 2)->wherePivot('area_id', $area->id)->exists();
+        return $this->groups->where('id', 2)->wherePivot('area_id', $area->id)->isNotEmpty();
     }
 
     /**
@@ -428,14 +428,14 @@ class User extends Authenticatable
     public function isModeratorOrAbove(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', '<=', 2)->exists();
+            return $this->groups->where('id', '<=', 2)->isNotEmpty();
         }
 
         if ($this->isAdmin()) {
-            return $this->groups()->where('id', '<=', 2)->exists();
+            return $this->groups->where('id', '<=', 2)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', '<=', 2)->wherePivot('area_id', $area->id)->exists();
+        return $this->groups->where('id', '<=', 2)->wherePivot('area_id', $area->id)->isNotEmpty();
     }
 
     /**
