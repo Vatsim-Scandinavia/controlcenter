@@ -18,7 +18,6 @@
 	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
 	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
 
-	"mounts": [ "source=./,target=/app,type=bind" ],
 	// Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
 
@@ -26,5 +25,8 @@
 	// "remoteUser": "vscode"
 
 	// Use the /app folder rather than /workspaces
-	"workspaceFolder": "/app"
+	"workspaceFolder": "/app",
+
+	// Override the mount to point to /app
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind"
 }
