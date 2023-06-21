@@ -1,0 +1,9 @@
+# Docker itself and relevant files
+Dockerfile
+.env
+# No, no node modules.
+node_modules
+# No tests either, you're damn straight.
+tests
+# Don't care about the devcontainer
+.devcontainer
