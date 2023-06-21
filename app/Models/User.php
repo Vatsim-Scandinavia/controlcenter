@@ -389,7 +389,14 @@ class User extends Authenticatable
             return $this->groups->where('id', 3)->isNotEmpty();
         }
 
-        return $this->groups->where('id', 3)->wherePivot('area_id', $area->id)->isNotEmpty();
+        // Check if user is mentor in the specified area
+        foreach($this->groups->where('id', 3) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -403,7 +410,14 @@ class User extends Authenticatable
             return $this->groups->where('id', '<=', 3)->isNotEmpty();
         }
 
-        return $this->groups->where('id', '<=', 3)->wherePivot('area_id', $area->id)->isNotEmpty();
+        // Check if user is mentor or above in the specified area
+        foreach($this->groups->where('id', '<=', 3) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -417,7 +431,14 @@ class User extends Authenticatable
             return $this->groups->where('id', 2)->isNotEmpty();
         }
 
-        return $this->groups->where('id', 2)->wherePivot('area_id', $area->id)->isNotEmpty();
+        // Check if user is moderator in the specified area
+        foreach($this->groups->where('id', 2) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -432,10 +453,17 @@ class User extends Authenticatable
         }
 
         if ($this->isAdmin()) {
-            return $this->groups->where('id', '<=', 2)->isNotEmpty();
+            return true;
         }
 
-        return $this->groups->where('id', '<=', 2)->wherePivot('area_id', $area->id)->isNotEmpty();
+        // Check if user is moderator or above in the specified area
+        foreach($this->groups->where('id', '<=', 2) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
