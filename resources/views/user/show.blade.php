@@ -19,7 +19,7 @@
                         {{ $user->id }}
                         <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
                         @if($user->division == 'EUD')
-                            <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $user->id }}" target="_blank" title="ATSimTest Profile" class="link-btn"><i class="fas fa-a"></i></button>
+                            <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $user->id }}" target="_blank" title="ATSimTest Profile" class="link-btn"><i class="fas fa-a"></i></button></a>
                         @endif
                     </dd>
 
