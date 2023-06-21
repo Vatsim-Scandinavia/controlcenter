@@ -82,7 +82,8 @@ class User extends Authenticatable
         return $this->hasMany(TrainingActivity::class);
     }
 
-    public function trainingReports(){
+    public function trainingReports()
+    {
         return $this->hasMany(TrainingReport::class, 'written_by_id');
     }
 
@@ -394,7 +395,7 @@ class User extends Authenticatable
         }
 
         // Check if user is mentor in the specified area
-        foreach($this->groups->where('id', 3) as $group) {
+        foreach ($this->groups->where('id', 3) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -415,7 +416,7 @@ class User extends Authenticatable
         }
 
         // Check if user is mentor or above in the specified area
-        foreach($this->groups->where('id', '<=', 3) as $group) {
+        foreach ($this->groups->where('id', '<=', 3) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -436,7 +437,7 @@ class User extends Authenticatable
         }
 
         // Check if user is moderator in the specified area
-        foreach($this->groups->where('id', 2) as $group) {
+        foreach ($this->groups->where('id', 2) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -461,7 +462,7 @@ class User extends Authenticatable
         }
 
         // Check if user is moderator or above in the specified area
-        foreach($this->groups->where('id', '<=', 2) as $group) {
+        foreach ($this->groups->where('id', '<=', 2) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
