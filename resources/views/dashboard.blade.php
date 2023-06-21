@@ -161,9 +161,9 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td>
-                                    @if(\App\Models\TrainingReport::where(['training_id' => $training->id])->count() > 0)
+                                    @if($training->reports->where(['training_id' => $training->id])->count() > 0)
                                     @php
-                                    $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
+                                    $reportDate = Carbon\Carbon::make($training->reports->where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
                                     $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                     @endphp
                                     <span title="{{ $reportDate->toEuropeanDate() }}">
