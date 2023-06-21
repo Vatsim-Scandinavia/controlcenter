@@ -54,7 +54,7 @@ class BookingController extends Controller
     {
         $user = Auth::user();
         $this->authorize('view', Booking::class);
-        $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
+        $bookings = Booking::where('deleted', false)->with('user', 'position')->get()->sortBy('time_start');
         $positions = $this->getBookablePositions($user);
 
         return view('booking.index', compact('bookings', 'user', 'positions'));

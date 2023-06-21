@@ -27,7 +27,7 @@ class SweatbookController extends Controller
     {
         $user = Auth::user();
         $this->authorize('view', Sweatbook::class);
-        $bookings = Sweatbook::all()->sortBy('date')->sortBy('start_at');
+        $bookings = Sweatbook::with('user', 'position')->get()->sortBy('date')->sortBy('start_at');
         $positions = Position::all();
 
         return view('sweatbook.index', compact('bookings', 'user', 'positions'));

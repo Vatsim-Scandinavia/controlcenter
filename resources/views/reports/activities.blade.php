@@ -52,8 +52,8 @@
                                         <a href="{{ route('training.show', $activity->training) }}">{{ $activity->training->user->name }}'s {{ $activity->training->getInlineRatings() }}</a>
                                     </td>
                                     <td>
-                                        @isset($activity->triggered_by_id)
-                                            {{ \App\Models\User::find($activity->triggered_by_id)->name }}
+                                        @isset($activity->user)
+                                            {{ $activity->user->name }}
                                         @else
                                             System
                                         @endisset
@@ -90,9 +90,9 @@
                                             to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
                                         @elseif($activity->type == "MENTOR")
                                             @if($activity->new_data)
-                                                <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                                <span class="badge text-bg-light">{{ $activity->user->name }}</span> assigned as mentor
                                             @elseif($activity->old_data)
-                                            <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                            <span class="badge text-bg-light">{{ $activity->user->name }}</span> removed as mentor
                                             @endif
                                         @elseif($activity->type == "PAUSE")
                                             @if($activity->new_data)
@@ -101,25 +101,25 @@
                                                 Training unpaused
                                             @endif
                                         @elseif($activity->type == "ENDORSEMENT")
-                                            @if(\App\Models\Endorsement::find($activity->new_data) !== null)
+                                            @if( $activity->endorsement !== null)
                                                 @empty($activity->comment)
                                                     <span class="badge text-bg-light">
-                                                        {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
+                                                        {{ str($activity->endorsement->type)->lower()->ucfirst() }} endorsement
                                                     </span> granted, valid to 
                                                     <span class="badge text-bg-light">
-                                                        @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
-                                                            {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
+                                                        @isset($activity->endorsement->valid_to)
+                                                            {{ $activity->endorsement->valid_to->toEuropeanDateTime() }}
                                                         @else
                                                             Forever
                                                         @endisset
                                                     </span>
                                                 @else
                                                     <span class="badge text-bg-light">
-                                                        {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
+                                                        {{ str($activity->endorsement->type)->lower()->ucfirst() }} endorsement
                                                     </span> granted, valid to 
                                                     <span class="badge text-bg-light">
-                                                        @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
-                                                            {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
+                                                        @isset($activity->endorsement->valid_to)
+                                                            {{ $activity->endorsement->valid_to->toEuropeanDateTime() }}
                                                         @else
                                                             Forever
                                                         @endisset

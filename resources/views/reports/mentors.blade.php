@@ -41,9 +41,9 @@
                                         {{ $mentor->getInlineMentoringAreas() }}
                                     </td>
                                     <td>
-                                        @if(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->count() > 0)
+                                        @if($mentor->trainingReports->count() > 0)
                                             @php
-                                                $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('written_by_id', $mentor->id)->latest()->get()->first()->report_date);
+                                                $reportDate = Carbon\Carbon::make($mentor->trainingReports->last()->first()->report_date);
                                             @endphp
                                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
@@ -72,9 +72,9 @@
                 
                                                 <a href="{{ route('training.show', $training->id) }}">{{ $training->user->name }}</a> / Last training: 
                                                 
-                                                @if(\App\Models\TrainingReport::where('training_id', $training->id)->count() > 0)
+                                                @if($training->reports->count() > 0)
                                                     @php
-                                                        $reportDate = Carbon\Carbon::make(\App\Models\TrainingReport::where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
+                                                        $reportDate = Carbon\Carbon::make($training->reports->sortBy('report_date')->last()->report_date);
                                                         $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                                     @endphp
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">

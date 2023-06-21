@@ -82,6 +82,11 @@ class User extends Authenticatable
         return $this->hasMany(TrainingActivity::class);
     }
 
+    public function trainingReports()
+    {
+        return $this->hasMany(TrainingReport::class, 'written_by_id');
+    }
+
     public function teaches()
     {
         return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');
@@ -231,7 +236,7 @@ class User extends Authenticatable
     {
         $trainings = Training::where('status', '>=', 1)->whereHas('mentors', function ($query) {
             $query->where('user_id', $this->id);
-        })->orderBy('id')->get();
+        })->with('area', 'ratings', 'reports', 'user')->orderBy('id')->get();
 
         return $trainings;
     }
@@ -386,10 +391,17 @@ class User extends Authenticatable
     public function isMentor(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', 3)->exists();
+            return $this->groups->where('id', 3)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', 3)->wherePivot('area_id', $area->id)->exists();
+        // Check if user is mentor in the specified area
+        foreach ($this->groups->where('id', 3) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -400,10 +412,17 @@ class User extends Authenticatable
     public function isMentorOrAbove(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', '<=', 3)->exists();
+            return $this->groups->where('id', '<=', 3)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', '<=', 3)->wherePivot('area_id', $area->id)->exists();
+        // Check if user is mentor or above in the specified area
+        foreach ($this->groups->where('id', '<=', 3) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -414,10 +433,17 @@ class User extends Authenticatable
     public function isModerator(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', 2)->exists();
+            return $this->groups->where('id', 2)->isNotEmpty();
         }
 
-        return $this->groups()->where('id', 2)->wherePivot('area_id', $area->id)->exists();
+        // Check if user is moderator in the specified area
+        foreach ($this->groups->where('id', 2) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -428,14 +454,21 @@ class User extends Authenticatable
     public function isModeratorOrAbove(Area $area = null)
     {
         if ($area == null) {
-            return $this->groups()->where('id', '<=', 2)->exists();
+            return $this->groups->where('id', '<=', 2)->isNotEmpty();
         }
 
         if ($this->isAdmin()) {
-            return $this->groups()->where('id', '<=', 2)->exists();
+            return true;
         }
 
-        return $this->groups()->where('id', '<=', 2)->wherePivot('area_id', $area->id)->exists();
+        // Check if user is moderator or above in the specified area
+        foreach ($this->groups->where('id', '<=', 2) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
