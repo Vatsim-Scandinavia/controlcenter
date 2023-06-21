@@ -63,7 +63,6 @@ class Kernel extends HttpKernel
         'client' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
         'api-token' => \App\Http\Middleware\ApiToken::class,
         'activity' => \App\Http\Middleware\UserActive::class,
-        'permissions' => \App\Http\Middleware\UserPermissions::class,
     ];
 
     /**

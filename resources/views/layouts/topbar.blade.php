@@ -15,7 +15,7 @@
     </a>
 
     {{-- Topbar Desktop Search --}}
-    @if($userIsMentorOrAbove)
+    @if(\Auth::user()->isMentorOrAbove())
         <form class="d-none d-md-inline-block my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
             <div class="input-group">
                 <div class="search input-group input-lg">
@@ -36,7 +36,7 @@
     {{-- Topbar Navbar --}}
     <ul class="navbar-nav">
 
-        @if($userIsMentorOrAbove)
+        @if(\Auth::user()->isMentorOrAbove())
 
             {{-- Search Dropdown (Visible Only XS) --}}
             <li class="nav-item dropdown no-arrow d-md-none">
