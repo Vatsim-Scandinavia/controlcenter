@@ -7,6 +7,8 @@ services:
     ports:
       - 8080:80
       - 8443:443
+    extra_hosts:
+        - "vatsca.local:host-gateway"
     volumes:
       - ./:/app
     env_file: .env
