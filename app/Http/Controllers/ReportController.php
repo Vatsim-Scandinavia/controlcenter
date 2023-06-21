@@ -82,11 +82,11 @@ class ReportController extends Controller
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
 
         if ($filterArea) {
-            $activities = TrainingActivity::orderByDesc('created_at')->whereHas('training', function (Builder $q) use ($filterArea) {
+            $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->whereHas('training', function (Builder $q) use ($filterArea) {
                 $q->where('area_id', $filterArea);
             })->limit(100)->get();
         } else {
-            $activities = TrainingActivity::orderByDesc('created_at')->limit(100)->get();
+            $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->limit(100)->get();
         }
 
         $statuses = TrainingController::$statuses;
@@ -109,9 +109,9 @@ class ReportController extends Controller
         $this->authorize('viewMentors', ManagementReport::class);
 
         if (auth()->user()->isAdmin()) {
-            $mentors = Group::find(3)->users;
+            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->get();
         } else {
-            $mentors = Group::find(3)->users()->whereHas('groups', function (Builder $query) {
+            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->whereHas('groups', function (Builder $query) {
                 $query->whereIn('area_id', auth()->user()->groups()->pluck('area_id'));
             })->get();
         }

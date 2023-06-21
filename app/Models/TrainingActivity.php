@@ -22,6 +22,11 @@ class TrainingActivity extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id', 'triggered_by_id');
+        return $this->belongsTo(User::class, 'triggered_by_id');
+    }
+
+    public function endorsement()
+    {
+        return $this->belongsTo(Endorsement::class, 'new_data');
     }
 }
