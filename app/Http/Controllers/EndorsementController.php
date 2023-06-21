@@ -28,7 +28,7 @@ class EndorsementController extends Controller
     {
         $users = User::whereHas('endorsements', function (Builder $query) {
             $query->where('type', 'MASC')->where('revoked', false)->where('expired', false);
-        })->with('endorsements')->get();
+        })->with('endorsements', 'endorsements.ratings')->get();
         $ratings = Rating::whereNull('vatsim_rating')->get();
 
         return view('endorsements.mascs', compact('users', 'ratings'));
@@ -44,7 +44,7 @@ class EndorsementController extends Controller
         $endorsements = Endorsement::where(function ($q) {
             $q->where('type', 'S1')
                 ->orWhere('type', 'SOLO');
-        })
+        })->with('positions', 'user')
             ->where(function ($q) {
                 $q->orWhere(function ($q2) {
                     $q2->where('expired', false)
@@ -85,7 +85,7 @@ class EndorsementController extends Controller
      */
     public function indexVisitors()
     {
-        $endorsements = Endorsement::where('type', 'VISITING')->where('revoked', false)->get();
+        $endorsements = Endorsement::where('type', 'VISITING')->where('revoked', false)->with('user', 'ratings', 'areas.ratings')->get();
         $areas = Area::all();
 
         return view('endorsements.visiting', compact('endorsements', 'areas'));
