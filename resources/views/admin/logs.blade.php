@@ -35,7 +35,7 @@
                                 <td>{{ $log->category }}</td>
                                 <td>
                                     @if(isset($log->user_id))
-                                        <a href="{{ route('user.show', $log->user_id) }}">{{ App\Models\User::find($log->user_id)->name }} ({{ $log->user_id }})</a>
+                                        <a href="{{ route('user.show', $log->user_id) }}">{{ $log->user->name }} ({{ $log->user_id }})</a>
                                     @else
                                         SYSTEM
                                     @endif
