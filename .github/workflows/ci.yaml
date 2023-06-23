@@ -33,8 +33,8 @@ jobs:
           tags: |
             type=ref,event=pr
             type=sha,event=branch,prefix=
-            type=semver,pattern=v{{version}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=semver,pattern=v{{major}},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=semver,event=tag,pattern=v{{version}}
+            type=semver,event=tag,pattern=v{{major}}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
       - name: build & push container image
