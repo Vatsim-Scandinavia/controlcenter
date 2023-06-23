@@ -8,8 +8,8 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Booking 
-                </h6> 
+                    Booking
+                </h6>
             </div>
             <div class="card-body">
                 <form action="{!! action('BookingController@update') !!}" method="POST">
@@ -45,31 +45,43 @@
 
                     @can('bookTags', \App\Models\Booking::class)
                         <div class="mb-3">
+                            <div class="btn-group input-group-sm w-100" role="group">
+                                <input type="radio" class="btn-check" id="normal" name="tag"
+                                    value="" checked>
+                                <label class="btn btn-outline-secondary" for="normal">
+                                    <i class="fa-solid fa-tower-broadcast"></i>
+                                    Normal
+                            </label>
                             @can('bookTrainingTag', \App\Models\Booking::class)
-                                <input id="training" type="checkbox" name="tag" value=1 {{ $booking->training == 1 ? 'checked' : '' }} onClick="change(this)">
-                                <label class="form-label" for="training">Training</label>
-                                &nbsp;&nbsp;&nbsp;
+                                    <input type="radio" class="btn-check" id="training" name="tag" value="1" {{ $booking->training == 1 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="training">
+                                        <i class="fa-solid fa-book-open"></i>
+                                        Training
+                                    </label>
                             @endcan
 
                             @can('bookExamTag', \App\Models\Booking::class)
-                                <input id="exam" type="checkbox" name="tag" value=2 {{ $booking->exam == 1 ? 'checked' : '' }} onClick="change(this)">
+                                <input id="exam" type="radio" name="tag" value=2 {{ $booking->exam == 1 ? 'checked' : '' }}>
                                 <label class="form-label" for="exam">Exam</label>
                                 &nbsp;&nbsp;&nbsp;
                             @endcan
 
                             @can('bookEventTag', \App\Models\Booking::class)
-                                <input id="event" type="checkbox" name="tag" value=3 {{ $booking->event == 1 ? 'checked' : '' }} onClick="change(this)">
-                                <label class="form-label" for="event">Event</label>
+                                <input id="event" type="radio" class="btn-check" name="tag" value=3 {{ $booking->event == 1 ? 'checked' : '' }}>
+                                <label class="btn btn-outline-success" for="event">
+                                    <i class="fa-solid fa-calendar-day"></i>
+                                    Event
+                                </label>
                             @endcan
-                        </div>
-                    @endcan
+                    </div>
+                @endcan
 
                     <div class="mb-3">
                         <label class="form-label" for="user">User</label>
                         <input id="user" class="form-control" type="text" name="user" readonly="readonly" value="{{ $booking->user->name }} ({{ $booking->user->id }})">
                     </div>
 
-                    <input type="hidden" name="id" value="{{{ $booking->id }}}"> 
+                    <input type="hidden" name="id" value="{{{ $booking->id }}}">
 
                     <button type="submit" class="btn btn-primary">Save</button>
                     <a href="{{ route('booking.delete', $booking->id) }}" onclick="return confirm('Are you sure you want to delete this booking?')" class="btn btn-danger">Delete</a>
@@ -89,37 +101,14 @@
 <script>
     //Activate bootstrap tooltips
     $(document).ready(function() {
-        let checkboxes = document.querySelectorAll('input[type=checkbox]'); 
-        let checked = [].filter.call(checkboxes, el => el.checked);
-        checked.forEach(checkbox => change(checkbox));
-
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $booking->time_start)->format('d/m/Y') : old('date') }}"
 
         $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
-        
+
         $('.flatpickr-input:visible').on('focus', function () {
             $(this).blur();
         });
         $('.flatpickr-input:visible').prop('readonly', false);
     })
-
-    change = (type) => {
-        let name = document.getElementsByName(type.name);
-        let checked = document.getElementById(type.id);
-
-        if (checked.checked) {
-            for(let i = 0; i < name.length; i++) {
-                if(!name[i].checked) {
-                    name[i].disabled = true;
-                } else {
-                    name[i].disabled = false;
-                }
-            }
-        } else {
-            for(let i = 0; i < name.length; i++) {
-                name[i].disabled = false;
-            }
-        }
-    }
 </script>
 @endsection
