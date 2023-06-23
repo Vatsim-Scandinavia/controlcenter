@@ -38,6 +38,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            
                             @foreach($bookings as $booking)
                             <tr>
                                 <td>
