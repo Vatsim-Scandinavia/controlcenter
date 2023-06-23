@@ -42,7 +42,7 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/booking/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}   
+                                        <a href="/booking/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
                                            <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
                                     @else
                                         {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
@@ -90,7 +90,7 @@
                     </table>
                 </div>
             </div>
-            
+
         </div>
     </div>
     @can('create', \App\Models\Booking::class)
@@ -98,8 +98,8 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Create Booking 
-                </h6> 
+                    Create Booking
+                </h6>
             </div>
             <div class="card-body">
                 <form action="{!! action('BookingController@store') !!}" method="POST">
@@ -111,7 +111,7 @@
                             <span class="text-danger">{{ $errors->first('date') }}</span>
                         @enderror
                     </div>
-                    
+
 
                     <div class="mb-3">
                         <label class="form-label" for="start_at">Start (Zulu)</label>
@@ -148,22 +148,38 @@
 
                     @can('bookTags', \App\Models\Booking::class)
                         <div class="mb-3">
-                            @can('bookTrainingTag', \App\Models\Booking::class)
-                                <input id="training" type="checkbox" name="tag" value=1 onClick="change(this)">
-                                <label class="form-label" for="training">Training</label>
-                                &nbsp;&nbsp;&nbsp;
-                            @endcan
+                            <label class="form-label">Type</label>
+                            <div class="btn-group input-group-sm w-100" role="group">
+                                <input type="radio" class="btn-check" id="normal" name="tag" value="" checked>
+                                <label class="btn btn-outline-secondary" for="normal">
+                                    <i class="fa-solid fa-tower-broadcast"></i>
+                                    Normal
+                                </label>
 
-                            @can('bookExamTag', \App\Models\Booking::class)
-                                <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                                <label class="form-label" for="exam">Exam</label>
-                                &nbsp;&nbsp;&nbsp;
-                            @endcan
+                                @can('bookTrainingTag', \App\Models\Booking::class)
+                                    <input type="radio" class="btn-check" id="training" name="tag" value="1">
+                                    <label class="btn btn-outline-primary" for="training">
+                                        <i class="fa-solid fa-book-open"></i>
+                                        Training
+                                    </label>
+                                @endcan
 
-                            @can('bookEventTag', \App\Models\Booking::class)
-                                <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                                <label class="form-label" for="event">Event</label>
-                            @endcan
+                                @can('bookExamTag', \App\Models\Booking::class)
+                                    <input type="radio" class="btn-check" id="exam" name="tag" value="2">
+                                    <label class="btn btn-outline-danger" for="exam">
+                                        <i class="fa-solid fa-graduation-cap"></i>
+                                        Exam
+                                    </label>
+                                @endcan
+
+                                @can('bookEventTag', \App\Models\Booking::class)
+                                    <input type="radio" class="btn-check" id="event" name="tag" value="3">
+                                    <label class="btn btn-outline-success" for="event">
+                                        <i class="fa-solid fa-calendar-day"></i>
+                                        Event
+                                    </label>
+                                @endcan
+                            </div>
                         </div>
                     @endcan
 
@@ -195,34 +211,16 @@
         $('.flatpickr-input:visible').prop('readonly', false);
 
         // Zulu clock
-        var currentdate = new Date(); 
+        var currentdate = new Date();
         var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
 
         setInterval(function (){
-            var currentdate = new Date(); 
+            var currentdate = new Date();
             var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
             $('.zulu-clock').text(datetime + 'z');
         },1000);
     })
 
-    change = (type) => {
-        let name = document.getElementsByName(type.name);
-        let checked = document.getElementById(type.id);
-
-        if (checked.checked) {
-            for(let i = 0; i < name.length; i++) {
-                if(!name[i].checked) {
-                    name[i].disabled = true;
-                } else {
-                    name[i].disabled = false;
-                }
-            }
-        } else {
-            for(let i = 0; i < name.length; i++) {
-                name[i].disabled = false;
-            }
-        }
-    }
 </script>
 <script>
     //Activate bootstrap tooltips
