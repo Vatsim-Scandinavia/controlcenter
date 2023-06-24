@@ -32,7 +32,7 @@ Table with all the variables, default value and explanation. Override the enviro
 | OAUTH_URL | https://auth.vatsim.net | OAuth URL of VATSIM |
 | OAUTH_ID | null | OAuth ID of your subdivision |
 | OAUTH_SECRET | null | OAuth secret of your subdivision |
-| VATSIM_BOOKING_API_URL | null | URL to VATSIM Booking API |
+| VATSIM_BOOKING_API_URL | https://atc-bookings.vatsim.net/api | URL to VATSIM Booking API |
 | VATSIM_BOOKING_API_TOKEN | null | Token to VATSIM Booking API |
 | MAIL_MAILER | smtp | Mailer type |
 | MAIL_HOST | smtp.mailgun.org | Mail host |
