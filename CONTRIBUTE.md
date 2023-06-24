@@ -19,6 +19,8 @@ To develop Control Center, we recommend running the docker container with the in
 
 If you need test data, you can also seed the database with `php artisan db:seed`
 
+If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder.
+
 ### Run unit tests
 
 To run the PHP unit tests use `./vendor/bin/phpunit --color=always --testdox`\
