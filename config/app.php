@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'owner' => env('APP_OWNER', 'VATSIM'),
+    'owner' => env('APP_OWNER', 'Subdivision Name'),
 
     /*
     |--------------------------------------------------------------------------
@@ -99,8 +99,8 @@ return [
     |
     */
 
-    'logo' => env('APP_LOGO', 'logo.png'),
-    'logo_mail' => env('APP_LOGO_MAIL', env('APP_LOGO')),
+    'logo' => env('APP_LOGO', 'vatsca.svg'),
+    'logo_mail' => env('APP_LOGO_MAIL', 'vatsca-email.png'),
 
     /*
     |--------------------------------------------------------------------------

@@ -5,7 +5,7 @@ return [
     /*
      * The location of the VATSIM OAuth interface
      */
-    'base' => env('OAUTH_URL', 'https://handover.vatsim-scandinavia.org'),
+    'base' => env('OAUTH_URL', 'https://auth.vatsim.net'),
 
     /*
      * The consumer key for your organisation
