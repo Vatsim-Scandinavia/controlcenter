@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  web:
+    container_name: control-center
+    image: ghcr.io/vatsim-scandinavia/control-center:v4
+    ports:
+      - 8080:80
+      - 8443:443
+    environment:
+      # Please check the complete configure guide for all variables and their description
+      # You need to adjust this file to your needs
+      - APP_NAME=Control Center
+      - APP_OWNER=Your VACC Name
+      - APP_OWNER_SHORT=SCA
+      - APP_URL=https://cc.yourvacc.com
+      - APP_ENV=production
+      - DB_HOST=localhost
+      - DB_DATABASE=control-center
+      - DB_USERNAME=control-center
+      - DB_PASSWORD=yourPASShere
+      - OAUTH_ID=yourIDhere
+      - OAUTH_SECRET=yourSECREThere
+      - VATSIM_BOOKING_API_TOKEN=yourTOKENhere
+      - MAIL_HOST=smtp.mailgun.org
+      - MAIL_PORT=587
+      - MAIL_USERNAME=yourUSERNAMEhere
+      - MAIL_PASSWORD=yourPASSWORDhere
+      - MAIL_FROM_ADDRESS=noreply@yourvacc.com

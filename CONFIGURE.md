@@ -9,7 +9,7 @@ Table of Contents
 
 ## Environment
 
-Here is a list over all environment variables you may tweak.
+Here is a list over all environment variables you may tweak. You may start the container with `docker-compose.yaml` from the root folder, but fill it out with the required variables first.
 
 ### Required
 
