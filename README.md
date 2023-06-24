@@ -29,7 +29,7 @@ To setup your Docker instance simply follow these steps:
 2. Setup your MySQL database (not included in Docker image)
 3. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 4. Run the container
-5. Run `php artisan generate:key` inside the container
+5. Run `php artisan key:generate` inside the container
 6. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
 7. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 

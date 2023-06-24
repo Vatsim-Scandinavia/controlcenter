@@ -21,7 +21,7 @@ We now offer a Docker container that can be used to run Control Center, this is 
 1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.0` Docker image
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
-4. Run `php artisan generate:key` inside the container,
+4. Run `php artisan key:generate` inside the container,
 5. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
 6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
