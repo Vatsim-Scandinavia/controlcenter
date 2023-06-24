@@ -21,13 +21,13 @@ We now offer a Docker container that can be used to run Control Center, this is 
 1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.0` Docker image
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
-4. Run `php artisan key:generate` and `php artisan migrate` inside the container
+4. Run `php artisan key:generate` inside the container
 5. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
 6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 #### Data Migration
 
-1. Do not erase the `DB_HANDOVER_` database config from your .env this is required to perform the migration.
+1. Make sure that `DB_HANDOVER_` database config is present in your environment file or docker configuration. Do not remove this as it's required for the migration.
 2. Run the migration with `php artisan migrate` inside the container, this will copy over the required data fields from Handover so CC can run on it's own
 3. If the migration was successful you may now remove the `DB_HANDOVER_*` environment settings as it'll no longer be used.
 4. If you don't want to use Handover at all anymore, you can at this point change the OAUTH environment settings to the VATSIM OAuth settings.
