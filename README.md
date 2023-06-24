@@ -1,56 +1,50 @@
 ## Control Center
-Training Management System originally created by [Daniel L.](https://github.com/blt950) (1352906), [Gustav K.](https://github.com/gustavkauman) (1262761) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 9`, based on `SB Admin 2` boostrap theme.
+Training Management System created by [Daniel L.](https://github.com/blt950) (1352906), [Gustav K.](https://github.com/gustavkauman) (1262761) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 9` in a pre-packed Docker container.
 
-The project is open source and contains some restirctions. Read the [LICENSE.md](LICENSE.md) for details.
+📝 The project is open source and contains some restirctions. Read the [LICENSE](LICENSE) for details.\
+👁️ Remember to watch this repository to get notified of our patches and updates!
 
-**Remember to watch this repository to get notified of our patches and updates!*
-
-![2022-05-22 12_42_15-Dashboard _ Control Center and 11 more pages - Personal - Microsoft​ Edge](https://user-images.githubusercontent.com/2505044/169692486-50ca8cb6-54a4-41a7-a18d-13a329234d30.png)
-
-## Migrating from 3.x to 4.0 (TODO)
-- If you use Handover as data source, do not erase the database config from your .env
-- Run the migration, this will copy over the required data fields from Handover so CC can run on it's own
-- You may now remove the `DB_HANDOVER_*` environment settings as it'll no longer be used.
-
-Note: Data pull won't work because missing access tokens etcetcetc....
+![Picture of Control Center dashboard](https://user-images.githubusercontent.com/2505044/169692486-50ca8cb6-54a4-41a7-a18d-13a329234d30.png)
 
 ## Prerequisites
+
+### Docker (Recommended)
+- A Docker environment to deploy containers.
+- MySQL database (or MariaDB) to store data.
+- Preferably a reverse proxy setup if you plan to host more than one website on the same server.
+
+### Manual (Unsupported)
+If you don't want to use Docker, you need:
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
-- [Laravel 9 Requirements](https://laravel.com/docs/9.x/deployment#server-requirements)
-- Using [Handover](https://github.com/Vatsim-Scandinavia/handover) as user data source
+- Comply with [Laravel 9 Requirements](https://laravel.com/docs/9.x/deployment#server-requirements)
+
+*Remember to build the composer, npm and setting up cron jobs as well.*
 
 ## Setup and install
-Just clone this repository and you're almost ready. First, make sure you've installed [Composer](https://getcomposer.org) and [Node.js](https://nodejs.org/en/) in your environment.
 
-1. Upload your logo and optionally a email specific logo to `/public/images/logos/`
-2. Copy and configure the .env file accordingly, including logos, simple theming and if you use Docker; container name without qoutation marks. 
-3. Run `./deploy init` in root folder to setup the required files. If you're not using Docker containers run `./deploy init` directly located in `.docker` folder instead.
-4. Run `npm run dev` in development environment or `npm run dev` in production to build front-end assets
-5. Run `php artisan serve` to host the page at `localhost:8000` in development environment.
+*Upgrading from to v4 from v3? Read the [UPGRADE.md](UPGRADE.md) instead for details.*
+
+To setup your Docker instance simply follow these steps:
+1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4` Docker image
+2. Setup your MySQL database (not included in Docker image)
+3. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
+4. Run the container
+5. Run `php artisan generate:key` inside the container
 
 ## Configuring
+
 To have Control Center reflect your division correctly, you need to do some tweaks.
-- Once you've made your user admin by manipulating the database, you can access `Administration -> Settings` in menu to tweak the most basic settings for your division.
-- [Setup Cron in your environment](https://laravel.com/docs/9.x/scheduling#running-the-scheduler)
+- Give your user admin access by manipulating the database table `permissions`. Set your `group_id` to `1`. Area need to be specified but can be any.
+- You can now access `Administration -> Settings` in the menu to tweak the most basic settings for your division.
 - You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples
 
-## Deployment
-
-To deploy in development environment use `./deploy dev <container name>`, in production use `./deploy prod <container name>`. This will automatically put the site in maintenance mode while it's deploying and open back up when finished.
-
 ## Using the API
-There's an Control Center API that you can use to
-- GET, POST, PATCH and DELETE bookings `/api/bookings` and more
-- GET users assigned roles and their area `/api/roles`
-- GET users holding Major Airport / Special Center endorsements `/api/endorsements/masc`
-- GET users holding Training endorsements `/api/endorsements/training/solo` & `/api/endorsements/training/s1`
-- GET users holding Examiner endorsements `/api/endorsements/examiner`
-- GET users holding Visiting endorsements `/api/endorsements/visiting`
 
-To create an API key use `php artisan create:apikey`, use the returned token as authentication bearer.
+Control Center has an API that you can use to fetch useful data from the database. Read more in the [API documentation](API.md).
 
 ## Present automations
 There's quite a few automations in Control Center that are running through the cron-jobs. They're as follows:
+
 - All trainings with status In Queue or Pre-Training are given a continued interest request each month, and a reminder after a week. Failing to reply within two weeks closes the request automatically.
 - ATC Active is flag given based on ATC activity. Refreshes daily with data from VATSIM Data API. It counts the hours from today's date and backwards according to the length of qualification period.
 - Daily member cleanup, if a member leaves the division, their training will be automatically closed. Same for mentors. Does not apply to visitors.
@@ -58,6 +52,5 @@ There's quite a few automations in Control Center that are running through the c
 
 ## Contributing, conventions and intro to Laravel
 
-Do you want to help us with improving Control Center? Curious about whether we use testing? Stylistic choices?
-
+Do you want to help us with improving Control Center? Curious about whether we use testing? Stylistic choices?\
 [Read the `CONTRIBUTE.md`](CONTRIBUTE.md) for details.

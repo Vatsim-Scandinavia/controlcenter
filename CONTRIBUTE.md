@@ -1,45 +1,28 @@
-## Contribution and conventions
-Contributions are much appreciated to help everyone move this service forward with fixes and functionalities. We recommend you to fork this repository here on GitHub so you can easily create pull requests back to the main project.
+# Contribute
 
-In order to keep a collaborative project in the same style and understandable, it's important to follow some conventions:
+Table of Contents
+- [Running the development environment](#running-the-development-environment)
+- [Conventions](#conventions)
+- [Introduction to Laravel](#introduction-to-laravel)
 
-### GitHub Branches
-We name branches with `topic/name-here` including fixes and features, for instance `topic/new-api` or `topic/mentor-mail-fix`
+## Running the development environment
 
-### Testing
+To develop Control Center, we recommend running the docker container with the included `docker-compose.yaml` file inside `.devcontainer` folder. Note that the dev-container setup is WIP, therefore we recommend using the Docker compose file. This also binds the whole application folder into the container so you can edit the files locally and they'll be updated in the container.
 
-We strive to create tests for the features we do. This helps reduce the risk of us breaking the feature in the future.
-It also helps us to keep the code cleaner. Imagine how you'd like to use your own feature if it were provided as a library to yourself. From that, try to create some accompanying tests, whether they're unit or feature tests.
+### Setup inside container
 
-#### Getting started
+1. Run `composer install` to install all dependencies
+2. Run `npm install ` to install all dependencies
+3. Run `npm run dev` to compile the assets
+4. Run `php artisan migrate` to setup the database
+5. Run `php artisan generate:key` to generate a new application key
 
-To get you started these instructions overlap a little with typical Laravel project setup.
-For additional details, see Laravel documentation on setting up a new project.
+If you need test data, you can also seed the database with `php artisan db:seed`
 
-```shell
-# 0. Install the dependencies
-composer install
+### Run unit tests
 
-# 1. Setup a local environment variables file
-cp -n .env.example .env
-
-# 2. Generate and set a Laravel application key in your environment variables
-php artisan key:generate
-
-# 3. Create a local database
-php artisan migrate --database sqlite-testing
-```
-
-You should now be able to run the tests locally. To the next section.
-
-
-#### Running the tests
-
-Once you've got your setup locally, running the tests is a brief affair.
-
-```shell
-php artisan test
-```
+To run the PHP unit tests use `./vendor/bin/phpunit --color=always --testdox`\
+The tests are run in a local sqlite database.
 
 #### Quicker feedback during development
 
@@ -49,11 +32,25 @@ php artisan test
 [Install the `pre-commit` project](https://pre-commit.com/#install) locally and you'll be able to take advantage of our pre-commit hooks.
 They help you keep formatting consistent and avoid mistakes that'll be caught by the continous integration tests.
 
+### Run formatting
+
+To run the formatting script that ensures consistent Laravel PHP code use `./vendor/bin/pint`
+
+
+## Conventions
+
+Contributions are much appreciated to help everyone evolve this service with fixes and functionalities. We recommend you to fork this repository here on GitHub so you can easily create pull requests back to the main project.
+
+To keep a collaborative project in the same style and understandable, it's important to follow some conventions:
+
+### GitHub Branches
+We name branches with `feat/name-here`, `fix/name-here` or `misc/name-here`, for instance `feat/new-api` or `fix/mentor-mail`
+
 ### Models/SQL
 * MySQL tables are named in plural e.g `training_reports`, not `training_report`
 * Models are named in singular e.g. `Training`, not `Trainings`
 * Models names don't have any specific suffix or prefix
-* Models are per Laravel 8 located in root of `App/Models` folder.
+* Models are located in root of `App/Models` folder.
 
 ### Controllers
 * Controllers are suffixed with `Controller`, for instance `TrainingController`
@@ -68,15 +65,15 @@ They help you keep formatting consistent and avoid mistakes that'll be caught by
 
 ## Introduction to Laravel
 
-##### Basics
+### Basics
 This project has a prerequisite that you're familiar with PHP and Object-oriented programming. If you're unfamiliar with Laravel, check out these resources:
 
 * [Laravel Documentation](https://laravel.com/docs)
-* [Free and high-quality Laravel 6.0 tutorial](https://laracasts.com/series/laravel-6-from-scratch)
+* [Free and high-quality Laravel 8 tutorial](https://laracasts.com/series/laravel-8-from-scratch)
 * [Laravel essentials in 45 min](https://www.youtube.com/watch?v=ubfxi21M1vQ)
 
-##### Workspace
-Everyone has their own setup for workspace, but if you're new to Laravel and this project, we recommend to check out our setup:
+### Workspace
+Everyone has their own setup for workspace, but if you're new to Laravel and this project, check out our recommendations:
 
 1. Use [Visual Studio Code](https://code.visualstudio.com/) as editor.
 2. Install the [following plugins](https://medium.com/@rohan_krishna/how-to-setup-visual-studio-code-for-laravel-php-276643c3013c) in VS Code.
