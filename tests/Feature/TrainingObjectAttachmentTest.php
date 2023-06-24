@@ -112,22 +112,22 @@ class TrainingObjectAttachmentTest extends TestCase
             ->assertStatus(200);
     }
 
-// TODO: Re-enable this test once hidden / not hidden has been fully implemented
+    // TODO: Re-enable this test once hidden / not hidden has been fully implemented
 
-//    /** @test */
-//    public function student_cant_access_hidden_attachment()
-//    {
-//        $student = $this->report->training->user;
-//        $file = UploadedFile::fake()->image($this->faker->word);
-//
-//        $id = $this->actingAs($this->report->user)
-//            ->postJson(route('training.report.attachment.store', ['report' => $this->report, 'hidden' => true]), ['file' => $file])
-//            ->decodeResponseJson('id')[0];
-//
-//        $this->actingAs($student)->followingRedirects()
-//            ->get(route('training.report.attachment.show', ['attachment' => $id]))
-//            ->assertStatus(403);
-//    }
+    //    /** @test */
+    //    public function student_cant_access_hidden_attachment()
+    //    {
+    //        $student = $this->report->training->user;
+    //        $file = UploadedFile::fake()->image($this->faker->word);
+    //
+    //        $id = $this->actingAs($this->report->user)
+    //            ->postJson(route('training.report.attachment.store', ['report' => $this->report, 'hidden' => true]), ['file' => $file])
+    //            ->decodeResponseJson('id')[0];
+    //
+    //        $this->actingAs($student)->followingRedirects()
+    //            ->get(route('training.report.attachment.show', ['attachment' => $id]))
+    //            ->assertStatus(403);
+    //    }
 
     /** @test */
     public function mentor_can_access_hidden_attachment()

@@ -44,26 +44,26 @@ class TrainingExaminationsTest extends TestCase
     }
 
     // TODO Fix this test as it's breaking now with the notifications
-//    /** @test */
-//    public function examiner_can_store_examination()
-//    {
-//
-//        $data = $this->examination->getAttributes();
-//        $data['examination_date'] = Carbon::parse($data['examination_date'])->format('d/m/Y');
-//        $data['position'] = \App\Models\Position::find($data['position_id'])->callsign;
-//        unset($data['position_id']);
-//
-//        $this->actingAs($this->examination->examiner)->followingRedirects()
-//            ->postJson(route('training.examination.store', ['training' => $this->training]), $data)
-//            ->assertStatus(200)
-//            ->assertJson(['message' => 'Examination successfully added']);
-//
-//        $this->assertDatabaseHas('training_examinations', [
-//            'training_id' => $data['training_id'],
-//            'examiner_id' => $data['examiner_id']
-//        ]);
-//
-//    }
+    //    /** @test */
+    //    public function examiner_can_store_examination()
+    //    {
+    //
+    //        $data = $this->examination->getAttributes();
+    //        $data['examination_date'] = Carbon::parse($data['examination_date'])->format('d/m/Y');
+    //        $data['position'] = \App\Models\Position::find($data['position_id'])->callsign;
+    //        unset($data['position_id']);
+    //
+    //        $this->actingAs($this->examination->examiner)->followingRedirects()
+    //            ->postJson(route('training.examination.store', ['training' => $this->training]), $data)
+    //            ->assertStatus(200)
+    //            ->assertJson(['message' => 'Examination successfully added']);
+    //
+    //        $this->assertDatabaseHas('training_examinations', [
+    //            'training_id' => $data['training_id'],
+    //            'examiner_id' => $data['examiner_id']
+    //        ]);
+    //
+    //    }
 
     /** @test */
     public function student_cant_store_examination()
@@ -98,61 +98,61 @@ class TrainingExaminationsTest extends TestCase
         ]);
     }
 
-//    /** @test */
-//    public function moderator_can_update_non_draft_examination()
-//    {
-//
-//        $examination = factory(TrainingExamination::class)->create(['draft' => false]);
-//        $moderator = factory(User::class)->create(['group' => 2]);
-//
-//        $this->actingAs($moderator)->followingRedirects()
-//            ->patchJson(route('training.examination.update', ['examination' => $examination]), ['result' => 'PASSED'])
-//            ->assertJson(['message' => 'Examination successfully updated'])
-//            ->assertStatus(200);
-//
-//        $this->assertDatabaseHas('training_examinations', [
-//            'id' => $examination->id,
-//            'result' => 'PASSED'
-//        ]);
-//
-//    }
-//
-//    /** @test */
-//    public function examiner_cant_update_non_draft_examination()
-//    {
-//
-//        $examination = factory(TrainingExamination::class)->create(['draft' => false]);
-//        $examination->examiner->update(['group' => 3]);
-//
-//        $this->actingAs($examination->examiner)->followingRedirects()
-//            ->patchJson(route('training.examination.update', ['examination' => $examination]), ['result' => 'PASSED'])
-//            ->assertJsonMissing(['message'])
-//            ->assertStatus(403);
-//
-//        $this->assertDatabaseMissing('training_examinations', [
-//            'id' => $examination->id,
-//            'result' => 'PASSED'
-//        ]);
-//
-//    }
-//
-//    /** @test */
-//    public function examiner_can_update_draft_examination()
-//    {
-//
-//        $examination = factory(TrainingExamination::class)->create(['draft' => true]);
-//        $examination->examiner->update(['group' => 3]);
-//
-//        $this->actingAs($examination->examiner)->followingRedirects()
-//            ->patchJson(route('training.examination.update', ['examination' => $examination]), ['result' => 'PASSED'])
-//            ->assertJson(['message' => 'Examination successfully updated'])
-//            ->assertStatus(200);
-//
-//        $this->assertDatabaseHas('training_examinations', [
-//            'id' => $examination->id,
-//            'result' => 'PASSED'
-//        ]);
-//    }
+    //    /** @test */
+    //    public function moderator_can_update_non_draft_examination()
+    //    {
+    //
+    //        $examination = factory(TrainingExamination::class)->create(['draft' => false]);
+    //        $moderator = factory(User::class)->create(['group' => 2]);
+    //
+    //        $this->actingAs($moderator)->followingRedirects()
+    //            ->patchJson(route('training.examination.update', ['examination' => $examination]), ['result' => 'PASSED'])
+    //            ->assertJson(['message' => 'Examination successfully updated'])
+    //            ->assertStatus(200);
+    //
+    //        $this->assertDatabaseHas('training_examinations', [
+    //            'id' => $examination->id,
+    //            'result' => 'PASSED'
+    //        ]);
+    //
+    //    }
+    //
+    //    /** @test */
+    //    public function examiner_cant_update_non_draft_examination()
+    //    {
+    //
+    //        $examination = factory(TrainingExamination::class)->create(['draft' => false]);
+    //        $examination->examiner->update(['group' => 3]);
+    //
+    //        $this->actingAs($examination->examiner)->followingRedirects()
+    //            ->patchJson(route('training.examination.update', ['examination' => $examination]), ['result' => 'PASSED'])
+    //            ->assertJsonMissing(['message'])
+    //            ->assertStatus(403);
+    //
+    //        $this->assertDatabaseMissing('training_examinations', [
+    //            'id' => $examination->id,
+    //            'result' => 'PASSED'
+    //        ]);
+    //
+    //    }
+    //
+    //    /** @test */
+    //    public function examiner_can_update_draft_examination()
+    //    {
+    //
+    //        $examination = factory(TrainingExamination::class)->create(['draft' => true]);
+    //        $examination->examiner->update(['group' => 3]);
+    //
+    //        $this->actingAs($examination->examiner)->followingRedirects()
+    //            ->patchJson(route('training.examination.update', ['examination' => $examination]), ['result' => 'PASSED'])
+    //            ->assertJson(['message' => 'Examination successfully updated'])
+    //            ->assertStatus(200);
+    //
+    //        $this->assertDatabaseHas('training_examinations', [
+    //            'id' => $examination->id,
+    //            'result' => 'PASSED'
+    //        ]);
+    //    }
 
     /** @test */
     public function moderator_can_delete_training_examination()

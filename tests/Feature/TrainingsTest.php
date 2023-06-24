@@ -86,7 +86,7 @@ class TrainingsTest extends TestCase
             ->assertStatus(403);
     }
 
-//    /** @test */
+    //    /** @test */
     public function moderator_can_update_the_trainings_status()
     {
         $training = Training::factory()->create([
@@ -131,45 +131,45 @@ class TrainingsTest extends TestCase
         ]);
     }
 
-//    /** @test */
-//    public function a_mentor_can_be_added()
-//    {
-//        $training = factory(\App\Models\Training::class)->create();
-//        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
-//        $mentor = factory(\App\Models\User::class)->create(['group' => 3]);
-//
-//        $training->area->mentors()->attach($mentor);
-//
-//        $this->actingAs($moderator)
-//            ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])
-//            ->assertStatus(302);
-//
-//        $this->assertTrue($training->mentors->contains($mentor));
-//    }
+    //    /** @test */
+    //    public function a_mentor_can_be_added()
+    //    {
+    //        $training = factory(\App\Models\Training::class)->create();
+    //        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
+    //        $mentor = factory(\App\Models\User::class)->create(['group' => 3]);
+    //
+    //        $training->area->mentors()->attach($mentor);
+    //
+    //        $this->actingAs($moderator)
+    //            ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])
+    //            ->assertStatus(302);
+    //
+    //        $this->assertTrue($training->mentors->contains($mentor));
+    //    }
 
-//    /** @test */
-//    public function a_training_can_have_many_mentors_added()
-//    {
-//        $training = factory(\App\Models\Training::class)->create();
-//        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
-//
-//        $attributes = [
-//            'mentors' => [
-//                factory(\App\Models\User::class)->create(['group' => 3])->id,
-//                factory(\App\Models\User::class)->create(['group' => 3])->id
-//            ]
-//        ];
-//
-//        $training->area->mentors()->attach($attributes['mentors']);
-//
-//        $this->actingAs($moderator)
-//                ->patchJson(route('training.update', ['training' => $training]), $attributes)
-//                ->assertStatus(302);
-//
-//        $this->assertTrue($training->mentors->contains($attributes['mentors'][0]));
-//        $this->assertTrue($training->mentors->contains($attributes['mentors'][1]));
-//
-//    }
+    //    /** @test */
+    //    public function a_training_can_have_many_mentors_added()
+    //    {
+    //        $training = factory(\App\Models\Training::class)->create();
+    //        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
+    //
+    //        $attributes = [
+    //            'mentors' => [
+    //                factory(\App\Models\User::class)->create(['group' => 3])->id,
+    //                factory(\App\Models\User::class)->create(['group' => 3])->id
+    //            ]
+    //        ];
+    //
+    //        $training->area->mentors()->attach($attributes['mentors']);
+    //
+    //        $this->actingAs($moderator)
+    //                ->patchJson(route('training.update', ['training' => $training]), $attributes)
+    //                ->assertStatus(302);
+    //
+    //        $this->assertTrue($training->mentors->contains($attributes['mentors'][0]));
+    //        $this->assertTrue($training->mentors->contains($attributes['mentors'][1]));
+    //
+    //    }
 
     /** @test */
     public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_area()

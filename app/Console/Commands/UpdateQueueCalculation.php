@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Area;
-use App\Models\Training;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

@@ -87,15 +87,15 @@ class Training extends Model
         }
     }
 
-     /**
-      * Get a inline string of ratings associated with a training.
-      *
-      * @return string
-      */
-     public function getInlineRatings()
-     {
-         return $this->ratings->pluck('name')->implode(' + ');
-     }
+    /**
+     * Get a inline string of ratings associated with a training.
+     *
+     * @return string
+     */
+    public function getInlineRatings()
+    {
+        return $this->ratings->pluck('name')->implode(' + ');
+    }
 
     /**
      * Get a inline string of ratings associated with a training.
