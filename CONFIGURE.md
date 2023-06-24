@@ -19,7 +19,7 @@ Table with all the variables, default value and explanation. Override the enviro
 | ------- | --- | --- |
 | APP_NAME | Control Center | Name of your subdivision |
 | APP_OWNER | Subdivision Name | Name of your subdivision |
-| APP_OWNER_SHORT | SCA | Short name of your subdivision |
+| APP_OWNER_SHORT | SCA | Usually 3 letter name identifying your vACC within VATSIM API |
 | APP_URL | http://localhost | URL to your Control Center |
 | APP_ENV | production | Environment of your Control Center |
 | DB_CONNECTION | mysql | Database connection type |
