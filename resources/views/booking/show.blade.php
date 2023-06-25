@@ -61,9 +61,11 @@
                             @endcan
 
                             @can('bookExamTag', \App\Models\Booking::class)
-                                <input id="exam" type="radio" name="tag" value=2 {{ $booking->exam == 1 ? 'checked' : '' }}>
-                                <label class="form-label" for="exam">Exam</label>
-                                &nbsp;&nbsp;&nbsp;
+                                <input type="radio" class="btn-check" id="exam" name="tag" value="2" {{ $booking->exam == 1 ? 'checked' : '' }}>
+                                <label class="btn btn-outline-danger" for="exam">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    Exam
+                                </label>
                             @endcan
 
                             @can('bookEventTag', \App\Models\Booking::class)
