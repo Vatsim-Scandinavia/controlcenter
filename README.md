@@ -4,7 +4,7 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 📝 The project is open source and contains some restirctions. Read the [LICENSE](LICENSE) for details.\
 👁️ Remember to watch this repository to get notified of our patches and updates!
 
-![Picture of Control Center dashboard](https://user-images.githubusercontent.com/2505044/169692486-50ca8cb6-54a4-41a7-a18d-13a329234d30.png)
+![Picture of Control Center dashboard](https://github.com/Vatsim-Scandinavia/controlcenter/assets/2505044/e115c1d0-d7e5-41cb-8fd6-0a787f06c0ea)
 
 ## Prerequisites
 
