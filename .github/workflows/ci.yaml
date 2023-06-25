@@ -1,5 +1,5 @@
 ---
-name: "[ci] Continuous Integration"
+name: "Test & Build"
 
 on:
   push:
