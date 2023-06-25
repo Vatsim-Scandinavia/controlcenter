@@ -369,9 +369,9 @@ class BookingController extends Controller
     private function getVatsimBookingUrl(string $type, int $id = null)
     {
         if ($type == 'get' || $type == 'post') {
-            $url = Config::get('vatsim.booking_api_url') . '/booking';
+            $url = config('vatsim.booking_api_url') . '/booking';
         } elseif ($type == 'put' || $type == 'delete') {
-            $url = Config::get('vatsim.booking_api_url') . '/booking/' . $id;
+            $url = config('vatsim.booking_api_url') . '/booking/' . $id;
         } else {
             return null;
         }
@@ -383,7 +383,7 @@ class BookingController extends Controller
     {
         try {
             $headers = [
-                'Authorization' => 'Bearer ' . Config::get('vatsim.booking_api_token'),
+                'Authorization' => 'Bearer ' . config('vatsim.booking_api_token'),
                 'Accept' => 'application/json',
             ];
             if ($type == 'get') {
