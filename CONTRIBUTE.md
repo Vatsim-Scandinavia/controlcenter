@@ -15,7 +15,6 @@ To develop Control Center, we recommend running the docker container with the in
 2. Run `npm install ` to install all dependencies
 3. Run `npm run dev` to compile the assets
 4. Run `php artisan migrate` to setup the database
-5. Run `php artisan key:generate` to generate a new application key
 
 If you need test data, you can also seed the database with `php artisan db:seed`
 
