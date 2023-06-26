@@ -211,7 +211,6 @@
                                 <th>Area</th>
                                 <th>Period</th>
                                 <th>State</th>
-                                <th>Reports</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,9 +241,6 @@
                                 </td>
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
-                                </td>
-                                <td>
-                                    <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
                                 </td>
                             </tr>
                             @endforeach
