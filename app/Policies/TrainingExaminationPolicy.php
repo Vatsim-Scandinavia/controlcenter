@@ -30,7 +30,9 @@ class TrainingExaminationPolicy
     public function create(User $user, Training $training)
     {
 
-        if($user->isAdmin()) return true;
+        if ($user->isAdmin()) {
+            return true;
+        }
 
         // If one-time link is used
         if (($link = $this->getOneTimeLink($training)) != null) {
@@ -49,7 +51,10 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
-        if($user->isAdmin()) return true;
+        if ($user->isAdmin()) {
+            return true;
+        }
+
         return $examination->draft ? ($user->isModeratorOrAbove($examination->training->area) || $user->isExaminer()) : $user->isModeratorOrAbove($examination->training->area);
     }
 
