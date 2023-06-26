@@ -4,7 +4,7 @@
 @section('title-flex')
     <div>
         @if (\Auth::user()->isModeratorOrAbove())
-            <a href="{{ route('training.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new request</a>
+            <a href="{{ route('training.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new request</a>
         @endif
     </div>
 @endsection
