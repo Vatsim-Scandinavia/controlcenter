@@ -29,6 +29,9 @@ class TrainingExaminationPolicy
      */
     public function create(User $user, Training $training)
     {
+
+        if($user->isAdmin()) return true;
+
         // If one-time link is used
         if (($link = $this->getOneTimeLink($training)) != null) {
             return $user->isExaminer($link->training->area) && $user->isNot($training->user);
@@ -46,6 +49,7 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
+        if($user->isAdmin()) return true;
         return $examination->draft ? ($user->isModeratorOrAbove($examination->training->area) || $user->isExaminer()) : $user->isModeratorOrAbove($examination->training->area);
     }
 
@@ -56,7 +60,7 @@ class TrainingExaminationPolicy
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
-        return $user->isModeratorOrAbove($trainingExamination->training->area);
+        return $user->isModeratorOrAbove($trainingExamination->training->area) || $user->isAdmin();
     }
 
     /**
