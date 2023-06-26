@@ -47,7 +47,7 @@ Table with all the variables, default value and explanation. Override the enviro
 
 Control Center supports both VATSIM Connect and other OAuth providers to authenticate and fetch user data. If you're looking for a centrailised login system check out our [Handover](https://github.com/Vatsim-Scandinavia/handover) service. Otherwise you may use VATSIM Connect.
 
-If you use Handover, please use the following values:
+If you use Handover, please use the values in the table below. Please note these values will change in a future update of Handover to simplify the process.
 
 | Variable | [Handover](https://github.com/Vatsim-Scandinavia/handover) value | Explanation |
 | ------- | --- | --- |

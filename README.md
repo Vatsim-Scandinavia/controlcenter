@@ -18,7 +18,7 @@ If you don't want to use Docker, you need:
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
 - Comply with [Laravel 9 Requirements](https://laravel.com/docs/9.x/deployment#server-requirements)
 
-*Remember to build the composer, npm and setting up cron jobs as well.*
+*Remember to build the composer, npm and setting up cron jobs and clearing all caches as well.*
 
 ## Setup and install
 
@@ -30,12 +30,13 @@ To setup your Docker instance simply follow these steps:
 3. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 4. Run the container
 5. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+6. To ensure that users will not need to login after each time you re-deploy/upgrade the container, enter the container and run `php artisan key:get`. Copy the key and set it as the `APP_KEY` environment variable in your docker configuration.
+7. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 ## Configuring
 
 To have Control Center reflect your division correctly, you need to do some tweaks.
-- Give your user admin access by manipulating the database table `permissions`. Set your `group_id` to `1`. Area need to be specified but can be any.
+- Give your user admin access by running `php artisan user:makeadmin` inside your container and following the instructions. Area need to be specified but can be any.
 - You can now access `Administration -> Settings` in the menu to tweak the most basic settings for your division.
 - You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples
 

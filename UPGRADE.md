@@ -1,8 +1,10 @@
 # Upgrading
 
-## Upgrading from 3.4.0 to 4.0
+## Upgrading from version 3.4 to 4.0
 
-These are the steps required to migrate from 3.4.0 to 4.0, please make sure you've a backup and upgraded to minimum 3.4.0 before starting this process.
+To have the smoothest upgrade experience, we highly recommend that you've upgraded to v3.4.0 before upgrading to v4.0.0. This way it'll be easier to isolate issues that might happen on the way. 
+
+Make sure you have a manual backup of the database before upgrading.
 
 ### Breaking change ⚠️
 
@@ -22,7 +24,8 @@ We now offer a Docker container that can be used to run Control Center, this is 
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
 4. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-5. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+5. To ensure that users will not need to login after each time you re-deploy/upgrade the container, enter the container and run `php artisan key:get`. Copy the key and set it as the `APP_KEY` environment variable in your docker configuration.
+6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 #### Data Migration
 
