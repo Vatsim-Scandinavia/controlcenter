@@ -1,8 +1,8 @@
 # Upgrading
 
-## Upgrading from 3.x to 4.0
+## Upgrading from 3.4.0 to 4.0
 
-These are the steps required to migrate from 3.x to 4.0, please make sure you've a backup before starting this process.
+These are the steps required to migrate from 3.4.0 to 4.0, please make sure you've a backup and upgraded to minimum 3.4.0 before starting this process.
 
 ### Breaking change ⚠️
 
