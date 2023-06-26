@@ -161,25 +161,25 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td>
-                                    @if($training->reports->where(['training_id' => $training->id])->count() > 0)
-                                    @php
-                                    $reportDate = Carbon\Carbon::make($training->reports->where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
-                                    $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
-                                    @endphp
-                                    <span title="{{ $reportDate->toEuropeanDate() }}">
-                                        @if($reportDate->isToday())
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
-                                        @elseif($reportDate->isYesterday())
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
-                                        @elseif($reportDate->diffInDays() <= 7)
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
-                                        @else
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
-                                        @endif
-                                        
-                                    </span>
+                                    @if($training->reports->count() > 0)
+                                        @php
+                                            $reportDate = Carbon\Carbon::make($training->reports->sortBy('report_date')->last()->report_date);
+                                            $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
+                                        @endphp
+                                        <span title="{{ $reportDate->toEuropeanDate() }}">
+                                            @if($reportDate->isToday())
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
+                                            @elseif($reportDate->isYesterday())
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
+                                            @elseif($reportDate->diffInDays() <= 7)
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                            @else
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                            @endif
+                                            
+                                        </span>
                                     @else
-                                    No registered training yet
+                                        No registered training yet
                                     @endif
                                 </td>
                             </tr>
