@@ -31,8 +31,8 @@
 
                 @if(!Route::is('front'))
 
-                    <div class="d-flex justify-content-between">
-                        <h3 class="mb-4 text-gray-800">
+                    <div class="page-title d-flex justify-content-between">
+                        <h3 class="text-gray-800">
                             @yield('title', 'Page Title')
                         </h3>
                         @yield('title-flex')

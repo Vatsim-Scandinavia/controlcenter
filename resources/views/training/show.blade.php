@@ -48,10 +48,6 @@
                     @endforeach
                 </h6>
 
-                @can('edit', [\App\Models\Training::class, $training])
-                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-light btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit request</a>       
-                @endcan
-
                 @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
                     <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-link"></i> Create
@@ -136,6 +132,10 @@
                         @endif
                     </dd>
                 </dl>
+
+                @can('edit', [\App\Models\Training::class, $training])
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-outline-primary btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit training</a>       
+                @endcan
             </div>
         </div>
 

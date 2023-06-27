@@ -22,8 +22,15 @@ If you encounter permissions errors you might want to `chown -R www-data:www-dat
 
 ### Run unit tests
 
-To run the PHP unit tests use `./vendor/bin/phpunit --color=always --testdox`\
-The tests are run in a local sqlite database.
+#### First run
+
+On first run you might need to setup the testing sqlite database first.
+Run the command `php artisan migrate --database sqlite-testing` to setup the database.
+
+#### Test
+
+To run the PHP unit tests use `php artisan test`\
+The tests run with the local SQLite test database, not your development database.
 
 #### Quicker feedback during development
 

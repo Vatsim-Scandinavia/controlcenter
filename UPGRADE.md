@@ -1,8 +1,10 @@
 # Upgrading
 
-## Upgrading from 3.4.0 to 4.0
+## Upgrading from version 3.4 to 4.0
 
-These are the steps required to migrate from 3.4.0 to 4.0, please make sure you've a backup and upgraded to minimum 3.4.0 before starting this process.
+To have the smoothest upgrade experience, we highly recommend that you've upgraded to v3.4.0 before upgrading to v4.0.0. This way it'll be easier to isolate issues that might happen on the way. 
+
+Make sure you have a manual backup of the database before upgrading.
 
 ### Breaking change ⚠️
 
@@ -16,18 +18,26 @@ Please note that users need to login again after this update, as it'll create a 
 
 We now offer a Docker container that can be used to run Control Center, this is the recommended hosting now that ensures correct environement. If you still prefer to run it without Docker, this is still possible by cloning the repo and building the project manually.
 
-*Note: The included docker-compose.yaml is only for development purposes and should not be used in production.*
+In the instructions where we use `docker exec` we assume your container is named `control-center`. If you have named differently, please replace this.
 
-1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.0` Docker image
+1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.2` Docker image
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
 4. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-5. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+5. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment.
+   ```sh
+   docker exec -it control-center php artisan key:get
+   ```
+   Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
+6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 #### Data Migration
 
 1. Make sure that `DB_HANDOVER_` database config is present in your environment file or docker configuration. Do not remove this as it's required for the migration.
-2. Run the migration with `php artisan migrate` inside the container, this will copy over the required data fields from Handover so CC can run on it's own
+2. Run the migration, this will copy over the required data fields from Handover so CC can run on it's own
+   ```sh
+   docker exec -it control-center php artisan migrate
+   ```
 3. If the migration was successful you may now remove the `DB_HANDOVER_*` environment settings as it'll no longer be used.
 4. If you don't want to use Handover at all anymore, you can at this point change the OAUTH environment settings to the VATSIM OAuth settings.
 

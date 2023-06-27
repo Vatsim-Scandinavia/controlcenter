@@ -13,12 +13,15 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 - MySQL database (or MariaDB) to store data.
 - Preferably a reverse proxy setup if you plan to host more than one website on the same server.
 
+In the instructions where we use `docker exec`, we assume your container is named `control-center`. If you have named it differently, please replace this.
+
 ### Manual (Unsupported)
 If you don't want to use Docker, you need:
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
+- MySQL database (or MariaDB) to store data.
 - Comply with [Laravel 9 Requirements](https://laravel.com/docs/9.x/deployment#server-requirements)
 
-*Remember to build the composer, npm and setting up cron jobs as well.*
+*Remember to build the composer, npm and setting up cron jobs and clearing all caches as well.*
 
 ## Setup and install
 
@@ -27,17 +30,30 @@ If you don't want to use Docker, you need:
 To setup your Docker instance simply follow these steps:
 1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4` Docker image
 2. Setup your MySQL database (not included in Docker image)
-3. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
-4. Run the container
-5. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+3. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md#environment)
+4. Start the container in the background.
+5. Setup the database.
+   ```sh
+   docker exec -it control-center php artisan migrate
+   ```
+6. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment.
+   ```sh
+   docker exec -it control-center php artisan key:get
+   ```
+   Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
+7. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
+8. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 ## Configuring
 
 To have Control Center reflect your division correctly, you need to do some tweaks.
-- Give your user admin access by manipulating the database table `permissions`. Set your `group_id` to `1`. Area need to be specified but can be any.
+
+- Give your user admin access
+   ```sh
+   docker exec -it control-center php artisan user:makeadmin
+   ```
 - You can now access `Administration -> Settings` in the menu to tweak the most basic settings for your division.
-- You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md) with examples
+- You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md#database) with examples
 
 ## Using the API
 

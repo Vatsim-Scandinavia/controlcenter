@@ -72,20 +72,24 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($training->reports->where('training_id', $training->id)->count() > 0)
+                                    @if($training->reports->count() > 0)
                                         @php
-                                            $reportDate = Carbon\Carbon::make($training->reports->where('training_id', $training->id)->last()->report_date)
+                                            $reportDate = Carbon\Carbon::make($training->reports->last()->report_date);
+                                            $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                         @endphp
 
-                                        @if($reportDate->isToday())
-                                            Today
-                                        @elseif($reportDate->isYesterday())
-                                            Yesterday
-                                        @elseif($reportDate->diffInDays() <= 7)
-                                            {{ $reportDate->diffForHumans(['parts' => 1]) }}
-                                        @else
-                                            {{ $reportDate->diffForHumans(['parts' => 2]) }}
-                                        @endif
+                                        <span title="{{ $reportDate->toEuropeanDate() }}">
+                                            @if($reportDate->isToday())
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
+                                            @elseif($reportDate->isYesterday())
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
+                                            @elseif($reportDate->diffInDays() <= 7)
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                            @else
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                            @endif
+                                            
+                                        </span>
 
                                     @else
                                         No report yet
