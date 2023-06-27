@@ -13,7 +13,7 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 - MySQL database (or MariaDB) to store data.
 - Preferably a reverse proxy setup if you plan to host more than one website on the same server.
 
-In the instructions where we use `docker exec` we assume your container is named `control-center`. If you have named differently, please replace this.
+In the instructions where we use `docker exec`, we assume your container is named `control-center`. If you have named it differently, please replace this.
 
 ### Manual (Unsupported)
 If you don't want to use Docker, you need:
