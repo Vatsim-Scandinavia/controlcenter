@@ -37,7 +37,7 @@ class UserMakeAdmin extends Command
             $this->info('User found: ' . $user->name);
 
             $areas = Area::all();
-            $area = $this->choice('Which area? Practically admin has all access, but an area must be selected regardless.', $areas->pluck('name')->toArray());
+            $area = $this->choice('Which area? The admin has access across areas, but an area must be selected regardless.', $areas->pluck('name')->toArray());
             if ($area != null) {
                 $area = Area::where('name', $area)->first();
 
