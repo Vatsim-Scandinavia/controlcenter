@@ -21,7 +21,7 @@ class UserMakeAdmin extends Command
      *
      * @var string
      */
-    protected $description = 'Makes the specificed user an admin';
+    protected $description = 'Make the specified user into an admin';
 
     /**
      * Execute the console command.
