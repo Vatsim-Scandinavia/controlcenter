@@ -29,7 +29,7 @@ Run the command `php artisan migrate --database sqlite-testing` to setup the dat
 
 #### Test
 
-To run the PHP unit tests use `./vendor/bin/phpunit --color=always --testdox`\
+To run the PHP unit tests use `php artisan test`\
 The tests run with the local SQLite test database, not your development database.
 
 #### Quicker feedback during development
