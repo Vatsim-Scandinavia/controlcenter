@@ -24,13 +24,20 @@ In the instructions where we use `docker exec` we assume your container is named
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
 4. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-5. To ensure that users will not need to login after each time you re-deploy/upgrade the container, run `docker exec control-center php artisan key:get` from outside the container. Copy the key and set it as the `APP_KEY` environment variable in your docker configuration.
+5. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment.
+   ```sh
+   docker exec -it control-center php artisan key:get
+   ```
+   Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
 6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 #### Data Migration
 
 1. Make sure that `DB_HANDOVER_` database config is present in your environment file or docker configuration. Do not remove this as it's required for the migration.
-2. Run the migration with `php artisan migrate` inside the container, this will copy over the required data fields from Handover so CC can run on it's own
+2. Run the migration, this will copy over the required data fields from Handover so CC can run on it's own
+   ```sh
+   docker exec -it control-center php artisan migrate
+   ```
 3. If the migration was successful you may now remove the `DB_HANDOVER_*` environment settings as it'll no longer be used.
 4. If you don't want to use Handover at all anymore, you can at this point change the OAUTH environment settings to the VATSIM OAuth settings.
 

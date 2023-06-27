@@ -31,17 +31,27 @@ To setup your Docker instance simply follow these steps:
 1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4` Docker image
 2. Setup your MySQL database (not included in Docker image)
 3. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md#environment)
-4. Run the container and access it with `docker exec -it control-center bash`
-    - Run `php artisan migrate` to setup the database
-    - To ensure that users will not need to login after each time you re-deploy/upgrade the container, run `php artisan key:get`. Copy the key and set it as the `APP_KEY` environment variable in your docker configuration.
-5. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+4. Start the container in the background.
+5. Setup the database.
+   ```sh
+   docker exec -it control-center php artisan migrate
+   ```
+6. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment.
+   ```sh
+   docker exec -it control-center php artisan key:get
+   ```
+   Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
+7. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
+8. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 ## Configuring
 
 To have Control Center reflect your division correctly, you need to do some tweaks.
 
-- Access your container with `docker exec -it control-center bash` and run give your user admin access by running `php artisan user:makeadmin` and following the instructions. Area need to be specified but can be any.
+- Give your user admin access
+   ```sh
+   docker exec -it control-center php artisan user:makeadmin
+   ```
 - You can now access `Administration -> Settings` in the menu to tweak the most basic settings for your division.
 - You are also required to configure logic and datasets in the MySQL database as described in [CONFIGURE.md](CONFIGURE.md#database) with examples
 
