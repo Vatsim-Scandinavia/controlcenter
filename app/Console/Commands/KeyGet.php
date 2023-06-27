@@ -18,7 +18,7 @@ class KeyGet extends Command
      *
      * @var string
      */
-    protected $description = 'Get the currenlt application key';
+    protected $description = 'Get the current application key';
 
     /**
      * Execute the console command.
