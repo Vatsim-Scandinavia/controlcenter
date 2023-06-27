@@ -18,13 +18,13 @@ Please note that users need to login again after this update, as it'll create a 
 
 We now offer a Docker container that can be used to run Control Center, this is the recommended hosting now that ensures correct environement. If you still prefer to run it without Docker, this is still possible by cloning the repo and building the project manually.
 
-*Note: The included docker-compose.yaml is only for development purposes and should not be used in production.*
+In the instructions where we use `docker exec` we assume your container is named `control-center`. If you have named differently, please replace this.
 
-1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.0` Docker image
+1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.2` Docker image
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
 4. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-5. To ensure that users will not need to login after each time you re-deploy/upgrade the container, enter the container and run `php artisan key:get`. Copy the key and set it as the `APP_KEY` environment variable in your docker configuration.
+5. To ensure that users will not need to login after each time you re-deploy/upgrade the container, run `docker exec control-center php artisan key:get` from outside the container. Copy the key and set it as the `APP_KEY` environment variable in your docker configuration.
 6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 #### Data Migration
