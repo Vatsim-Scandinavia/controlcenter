@@ -29,7 +29,12 @@ In the instructions where we use `docker exec` we assume your container is named
    docker exec -it control-center php artisan key:get
    ```
    Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
-6. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+6. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
+7. To keep uploaded files between deployments, you need to bind this to a host folder, such as `/YOUR/HOST/LOCATION:/app/storage/app/public/files`, and set correct permissions of this folder with
+   ```sh 
+   docker exec -it control-center chown -R www-data:www-data /app/storage/app/public/files
+   ```
+8. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 #### Data Migration
 

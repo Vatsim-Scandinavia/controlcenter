@@ -42,6 +42,11 @@ To setup your Docker instance simply follow these steps:
    ```
    Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
 7. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
+8. To keep uploaded files between deployments, you need to bind this to a host folder, such as `/YOUR/HOST/LOCATION:/app/storage/app/public/files`, and set correct permissions of this folder with
+   ```sh 
+   docker exec -it control-center chown -R www-data:www-data /app/storage/app/public/files
+   ```
+9. For sessions to save between deployments, you need to setup a shared volume. If you don't do this, users will be logged out every time you re-deploy the container. Run `docker volume create controlcenter_sessions` and bind the volume when creating the container with `controlcenter_sessions:/app/storage/framework/sessions`.
 8. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 ## Configuring

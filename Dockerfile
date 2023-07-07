@@ -51,7 +51,8 @@ COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
 WORKDIR /app
 
 RUN chmod -R 755 storage bootstrap/cache && \
-        composer install --no-dev --no-interaction --prefer-dist
+        composer install --no-dev --no-interaction --prefer-dist && \
+        mkdir -p /app/storage/app/public/files
 
 # Wrap around the default PHP entrypoint with a custom entrypoint
 COPY ./container/entrypoint.sh /usr/local/bin/controlcenter-entrypoint
