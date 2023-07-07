@@ -7,6 +7,8 @@ services:
     ports:
       - 8080:80
       - 8443:443
+    volumes:
+      - sessions:/app/storage/framework/sessions
     environment:
       # Please check the complete configure guide for all variables and their description
       # You need to adjust this file to your needs
@@ -27,3 +29,5 @@ services:
       - MAIL_USERNAME=yourUSERNAMEhere
       - MAIL_PASSWORD=yourPASSWORDhere
       - MAIL_FROM_ADDRESS=noreply@yourvacc.com
+volumes:
+  sessions:
