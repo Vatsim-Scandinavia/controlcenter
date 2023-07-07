@@ -20,7 +20,7 @@ We now offer a Docker container that can be used to run Control Center, this is 
 
 In the instructions where we use `docker exec` we assume your container is named `control-center`. If you have named differently, please replace this.
 
-1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.2` Docker image
+1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4.0.3` Docker image
 2. Configure the environment variables as described in the [CONFIGURE.md](CONFIGURE.md)
 3. Start the container
 4. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
