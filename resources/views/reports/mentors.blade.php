@@ -43,7 +43,7 @@
                                     <td>
                                         @if($mentor->trainingReports->count() > 0)
                                             @php
-                                                $reportDate = Carbon\Carbon::make($mentor->trainingReports->last()->first()->report_date);
+                                                $reportDate = Carbon\Carbon::make($mentor->trainingReports->sortBy('report_date')->last()->report_date);
                                             @endphp
                                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
