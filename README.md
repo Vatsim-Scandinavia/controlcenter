@@ -1,5 +1,5 @@
 ## Control Center
-Training Management System created by [Daniel L.](https://github.com/blt950) (1352906), [Gustav K.](https://github.com/gustavkauman) (1262761) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 9` in a pre-packed Docker container.
+Training Management System created by [Daniel L.](https://github.com/blt950) (1352906), [Gustav K.](https://github.com/gustavkauman) (1262761) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 9` in a pre-built Docker container.
 
 📝 The project is open source and contains some restirctions. Read the [LICENSE](LICENSE) for details.\
 👁️ Remember to watch this repository to get notified of our patches and updates!
@@ -9,8 +9,8 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 ## Prerequisites
 
 ### Docker (Recommended)
-- A Docker environment to deploy containers.
-- MySQL database (or MariaDB) to store data.
+- A Docker environment to deploy containers. We recommend [Portainer](https://www.portainer.io/).
+- MySQL database to store data.
 - Preferably a reverse proxy setup if you plan to host more than one website on the same server.
 
 In the instructions where we use `docker exec`, we assume your container is named `control-center`. If you have named it differently, please replace this.
@@ -18,10 +18,9 @@ In the instructions where we use `docker exec`, we assume your container is name
 ### Manual (Unsupported)
 If you don't want to use Docker, you need:
 - An environment that can host PHP websites, such as Apache, Ngnix or similar.
-- MySQL database (or MariaDB) to store data.
+- MySQL database to store data.
 - Comply with [Laravel 9 Requirements](https://laravel.com/docs/9.x/deployment#server-requirements)
-
-*Remember to build the composer, npm and setting up cron jobs and clearing all caches as well.*
+- Manually build the composer, npm and setting up cron jobs and clearing all caches on updates.
 
 ## Setup and install
 
@@ -36,18 +35,18 @@ To setup your Docker instance simply follow these steps:
    ```sh
    docker exec -it control-center php artisan migrate
    ```
-6. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment.
+6. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment and setup a shared volume. 
    ```sh
    docker exec -it control-center php artisan key:get
+   docker volume create controlcenter_sessions
    ```
-   Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration.
-7. Setup a crontab outside the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
-8. To keep uploaded files between deployments, you need to bind this to a host folder, such as `/YOUR/HOST/LOCATION:/app/storage/app/public/files`, and set correct permissions of this folder with
+   Copy the key and set it as the `APP_KEY` environment variable in your Docker configuration and bind the volume when creating the container with `controlcenter_sessions:/app/storage/framework/sessions`.
+7. To keep uploaded files between deployments, you need to bind this to a host folder, such as `/YOUR/HOST/LOCATION:/app/storage/app/public/files`, and set correct permissions of this folder.
    ```sh 
    docker exec -it control-center chown -R www-data:www-data /app/storage/app/public/files
    ```
-9. For sessions to save between deployments, you need to setup a shared volume. If you don't do this, users will be logged out every time you re-deploy the container. Run `docker volume create controlcenter_sessions` and bind the volume when creating the container with `controlcenter_sessions:/app/storage/framework/sessions`.
-8. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
+8. Setup a crontab _outside_ the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
+9. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
 ## Configuring
 
