@@ -88,10 +88,11 @@ To change the colors of your Control Center, change the following variables and 
 ### Optional: Extras
 
 | Variable | Default value | Explanation |
-| ------- | --- | --- |
+| ------- | --- | --- 
 | APP_DEBUG | false | Toggle debug mode of your Control Center |
-| DEBUGBAR_ENABLED | false | Toggle debug bar of your Control Center |
 | APP_TRACKING_SCRIPT | null | Input javascript here with your tracking script, e.g. Google Analytics |
+| DEBUGBAR_ENABLED | false | Toggle debug bar of your Control Center |
+| SESSION_LIFETIME | 120 | Session lifetime in minutes, forces a new login when passed |
 | SENTRY_LARAVEL_DSN | null | The Sentry DSN |
 | SENTRY_TRACES_SAMPLE_RATE | 0.1 | The Sentry sample rate |
 
