@@ -86,7 +86,7 @@ class OAuthController extends GenericProvider
         };
 
         $resolved = $getfunc($data, $property);
-        if (isset($resolved)) {
+        if (isset($resolved) && $resolved != '') {
             return $resolved;
         }
 
