@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand bg-white topbar {{ (\Auth::user()->isModeratorOrAbove()) ? 'justify-content-between' : 'justify-content-end' }} mb-4 ps-4 pe-4 static-top shadow">
+<nav class="navbar navbar-expand bg-white topbar justify-content-between mb-4 ps-4 pe-4 static-top shadow">
 
     <a class="sidebar-brand sidebar-brand-topbar align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
