@@ -1,4 +1,5 @@
 ## Control Center
+
 Training Management System created by [Daniel L.](https://github.com/blt950) (1352906), [Gustav K.](https://github.com/gustavkauman) (1262761) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 9` in a pre-built Docker container.
 
 📝 The project is open source and contains some restirctions. Read the [LICENSE](LICENSE) for details.\
