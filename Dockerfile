@@ -1,5 +1,5 @@
 # Intermediate build container for front-end resources
-FROM docker.io/library/node:20.3.0-alpine as frontend
+FROM docker.io/library/node:20.3.0-alpine@sha256:9c92cf1a355d10af63a57d2c71034a6ba36a571d9a83be354c0422f1e7ef6cec as frontend
 # Easy to prune intermediary containers
 LABEL stage=build
 
@@ -11,7 +11,7 @@ RUN npm ci --omit dev && \
 
 ####################################################################################################
 # Primary container
-FROM docker.io/library/php:8.1.10-apache-bullseye
+FROM docker.io/library/php:8.1.10-apache-bullseye@sha256:37f1f4545f9f8845f5d6dbc53d3f36a72d745d14ea3c96be8936c575b0f720e8
 
 # Default container port for the apache configuration
 EXPOSE 80 443
@@ -35,7 +35,7 @@ COPY ./container/configs/php.ini /usr/local/etc/php/php.ini
 
 
 # Install PHP extension(s)
-COPY --from=mlocati/php-extension-installer:2.1.30 /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=mlocati/php-extension-installer:2.1.30@sha256:49ab3535cb92a954ae6c4c0ec46c3aa718244b726a9508bb48b113b8aa1c3410 /usr/bin/install-php-extensions /usr/local/bin/
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
@@ -43,7 +43,7 @@ COPY --from=mlocati/php-extension-installer:2.1.30 /usr/bin/install-php-extensio
 RUN install-php-extensions pdo_mysql
 
 # Install composer
-COPY --from=docker.io/library/composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=docker.io/library/composer:latest@sha256:572a3d91b1233a8dc9397627f41832a6aa4d0dc63b18c1da816490e6b7f9536a /usr/bin/composer /usr/bin/composer
 # Copy over the application, static files, plus the ones built/transpiled by Mix in the frontend stage further up
 COPY --chown=www-data:www-data ./ /app/
 COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
