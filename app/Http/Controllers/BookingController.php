@@ -117,7 +117,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
         $booking->name = $user->name;
         $booking->user_id = $user->id;
 
@@ -258,9 +258,9 @@ class BookingController extends Controller
 
             $booking->callsign = strtoupper($position);
 
-            $positionModel = Position::all()->firstWhere('callsign', strtoupper($position));
+            $positionModel = Position::firstWhere('callsign', $position);
             if (isset($positionModel)) {
-                $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($position))->id;
+                $booking->position_id = Position::firstWhere('callsign', $position)->id;
             } else {
                 return redirect(route('booking'))->withErrors('The position ' . $position . ' does not exist. The bulk booking stopped here, but previous positions in the list have been booked.')->withInput();
             }
@@ -380,7 +380,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
 
         $this->authorize('position', $booking);
 

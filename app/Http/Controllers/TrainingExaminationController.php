@@ -51,7 +51,7 @@ class TrainingExaminationController extends Controller
 
         $date = Carbon::createFromFormat('d/m/Y', $data['examination_date']);
 
-        $position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+        $position_id = Position::firstWhere('callsign', $data['position'])->id;
 
         $examination = TrainingExamination::create([
             'position_id' => $position_id,

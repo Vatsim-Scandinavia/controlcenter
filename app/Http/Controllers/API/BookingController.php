@@ -55,7 +55,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
         $booking->name = $user->name;
         $booking->user_id = $user->id;
         $booking->source = strtoupper($data['source']);
@@ -223,7 +223,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
