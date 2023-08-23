@@ -32,7 +32,7 @@
             </li>
         @endcan
 
-        @if(Setting::get('linkMoodle') != "")
+        @if(Setting::get('linkMoodle') && Setting::get('linkMoodle') != "")
             <li class="nav-item">
             <a class="nav-link" href="{{ Setting::get('linkMoodle') }}" target="_blank">
                 <i class="fas fa-graduation-cap"></i>
