@@ -90,9 +90,9 @@
                                             to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
                                         @elseif($activity->type == "MENTOR")
                                             @if($activity->new_data)
-                                                <span class="badge text-bg-light">{{ $activity->user->name }}</span> assigned as mentor
+                                                <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
                                             @elseif($activity->old_data)
-                                            <span class="badge text-bg-light">{{ $activity->user->name }}</span> removed as mentor
+                                            <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
                                             @endif
                                         @elseif($activity->type == "PAUSE")
                                             @if($activity->new_data)
