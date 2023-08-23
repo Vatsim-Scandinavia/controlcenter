@@ -61,7 +61,7 @@ class CheckOnlineControllers extends Command
         $dataUri = Http::get('https://status.vatsim.net/status.json')['data']['v3'][0];
         $dataReturn = Http::get($dataUri);
 
-        if(isset($dataReturn)){
+        if (isset($dataReturn)) {
             $vatsimData = $dataReturn['controllers'];
 
             foreach ($vatsimData as $d) {
@@ -104,7 +104,7 @@ class CheckOnlineControllers extends Command
                 }
             }
         }
-        
+
         return 0;
     }
 }
