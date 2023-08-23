@@ -43,7 +43,7 @@ COPY --from=mlocati/php-extension-installer:2.1.38@sha256:c3a2b786a0ed48919fea7a
 RUN install-php-extensions pdo_mysql
 
 # Install composer
-COPY --from=docker.io/library/composer:latest@sha256:572a3d91b1233a8dc9397627f41832a6aa4d0dc63b18c1da816490e6b7f9536a /usr/bin/composer /usr/bin/composer
+COPY --from=docker.io/library/composer:latest@sha256:7c03aa544494973299998db9e51f3c4ca880f2d51475b78a4bca4214a8a4fe82 /usr/bin/composer /usr/bin/composer
 # Copy over the application, static files, plus the ones built/transpiled by Mix in the frontend stage further up
 COPY --chown=www-data:www-data ./ /app/
 COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
