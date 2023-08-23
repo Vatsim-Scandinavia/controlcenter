@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\DBAL\TimestampType;
 use Illuminate\Support\Str;
 
 return [
@@ -185,6 +186,22 @@ return [
             'database' => env('REDIS_CACHE_DB', 1),
         ],
 
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Adding Doctrine Type Mapping
+    |--------------------------------------------------------------------------
+    |
+    | This section is used to add custom Doctrine type mapping for the
+    | database connection.
+    |
+    */
+
+    'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
+        ],
     ],
 
 ];
