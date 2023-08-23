@@ -689,6 +689,14 @@
             document.getElementById('activity_update_id').value = id
             document.getElementById('activity_comment').value = oldText
             document.getElementById('activity_button').innerHTML = 'Update'
+
+            // flash the activity_comment field yellow for a second
+            document.getElementById('activity_comment').style.backgroundColor = '#fff7bd'
+            document.getElementById('activity_comment').style.transition = 'background-color 100ms linear'
+            setTimeout(function(){
+                document.getElementById('activity_comment').style.backgroundColor = '#ffffff'
+            }, 750)
+            
         }
 
     </script>
