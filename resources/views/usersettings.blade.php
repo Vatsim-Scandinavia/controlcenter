@@ -16,7 +16,7 @@
                         <form action="{{ route('user.settings.store') }}" method="POST">
                             @csrf
 
-                            <p><b>To change email or password, log into <a href="https://my.vatsim.net/" target="_blank">myVatsim</a>.</b></p>
+                            <p><b>To change email or password, log into <a href="https://my.vatsim.net/" target="_blank">myVATSIM</a>.</b></p>
                         
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="check0" name="setting_notify_newreport" {{ $user->setting_notify_newreport ? "checked" : "" }}>
