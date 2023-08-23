@@ -1,5 +1,5 @@
 # Intermediate build container for front-end resources
-FROM docker.io/library/node:20.3.0-alpine@sha256:9c92cf1a355d10af63a57d2c71034a6ba36a571d9a83be354c0422f1e7ef6cec as frontend
+FROM docker.io/library/node:20.5.1-alpine@sha256:f62abc08fe1004555c4f28b6793af8345a76230b21d2d249976f329079e2fef2 as frontend
 # Easy to prune intermediary containers
 LABEL stage=build
 
