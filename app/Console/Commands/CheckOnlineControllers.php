@@ -59,48 +59,52 @@ class CheckOnlineControllers extends Command
 
         // Fetch the latest URI to data feed
         $dataUri = Http::get('https://status.vatsim.net/status.json')['data']['v3'][0];
-        $vatsimData = Http::get($dataUri)['controllers'];
+        $dataReturn = Http::get($dataUri);
 
-        foreach ($vatsimData as $d) {
-            if (preg_match($areasRegex, $d['callsign'])) {
-                // Lets check this user
-                $this->info('Checking user ' . $d['cid']);
-                $user = User::find($d['cid']);
-                if (isset($user) && ! $user->isVisiting()) {
-                    if (! $user->active && ! $user->hasActiveTrainings(false) && ! $user->hasRecentlyCompletedTraining()) {
-                        if (! isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))) {
-                            // Send warning to user
-                            $user->notify(new InactiveOnlineNotification($user));
-                            $this->info($user->name . ' is inactive. Sending notification.');
-                            $user->last_inactivity_warning = now();
-                            $user->save();
+        if(isset($dataReturn)){
+            $vatsimData = $dataReturn['controllers'];
 
-                            // Send warning to all admins, and moderators in selected area
-                            $position = Position::where('callsign', $d['callsign'])->get()->first();
-                            $sendToStaff = User::allWithGroup(1);
+            foreach ($vatsimData as $d) {
+                if (preg_match($areasRegex, $d['callsign'])) {
+                    // Lets check this user
+                    $this->info('Checking user ' . $d['cid']);
+                    $user = User::find($d['cid']);
+                    if (isset($user) && ! $user->isVisiting()) {
+                        if (! $user->active && ! $user->hasActiveTrainings(false) && ! $user->hasRecentlyCompletedTraining()) {
+                            if (! isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))) {
+                                // Send warning to user
+                                $user->notify(new InactiveOnlineNotification($user));
+                                $this->info($user->name . ' is inactive. Sending notification.');
+                                $user->last_inactivity_warning = now();
+                                $user->save();
 
-                            if ($position) {
-                                $moderators = User::allWithGroup(2);
-                                foreach ($moderators as $m) {
-                                    if ($sendToStaff->where('id', $m->id)->count()) {
-                                        continue;
-                                    }
+                                // Send warning to all admins, and moderators in selected area
+                                $position = Position::where('callsign', $d['callsign'])->get()->first();
+                                $sendToStaff = User::allWithGroup(1);
 
-                                    if ($m->isModerator(Area::find($position->area))) {
-                                        $sendToStaff->push($m);
+                                if ($position) {
+                                    $moderators = User::allWithGroup(2);
+                                    foreach ($moderators as $m) {
+                                        if ($sendToStaff->where('id', $m->id)->count()) {
+                                            continue;
+                                        }
+
+                                        if ($m->isModerator(Area::find($position->area))) {
+                                            $sendToStaff->push($m);
+                                        }
                                     }
                                 }
-                            }
 
-                            $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d['callsign'], $d['logon_time']));
-                        } else {
-                            $this->info($user->name . ' is inactive. Supressing notification due to one already been sent recently.');
+                                $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d['callsign'], $d['logon_time']));
+                            } else {
+                                $this->info($user->name . ' is inactive. Supressing notification due to one already been sent recently.');
+                            }
                         }
                     }
                 }
             }
         }
-
+        
         return 0;
     }
 }
