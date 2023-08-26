@@ -30,7 +30,6 @@ class OAuthHelper
 
     public function fetchUser(User $user)
     {
-
         try {
             $response = $this->client->get($this->baseUrl . '/api/user', [
                 'headers' => [
@@ -54,8 +53,8 @@ class OAuthHelper
                 'form_params' => [
                     'grant_type' => 'refresh_token',
                     'refresh_token' => $user->refresh_token,
-                    'client_id' => env('VATSIM_OAUTH_CLIENT'),
-                    'client_secret' => env('VATSIM_OAUTH_SECRET'),
+                    'client_id' => config('oauth.id'),
+                    'client_secret' => config('oauth.secret'),
                     'scope' => implode(' ', config('oauth.scopes')),
                 ],
             ]);
