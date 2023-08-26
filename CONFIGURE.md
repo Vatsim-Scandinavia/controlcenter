@@ -45,11 +45,14 @@ Table with all the variables, default value and explanation. Override the enviro
 
 #### OAuth
 
-Control Center supports both VATSIM Connect and other OAuth providers to authenticate and fetch user data. If you're looking for a centrailised login system check out our [Handover](https://github.com/Vatsim-Scandinavia/handover) service. Otherwise you may use VATSIM Connect.
+Control Center supports both VATSIM Connect, [Handover](https://github.com/Vatsim-Scandinavia/handover) and other OAuth providers to authenticate and fetch user data. If you're looking for a centrailised login system check out our [Handover](https://github.com/Vatsim-Scandinavia/handover) service, or use VATSIM Connect.
 
-If you use Handover, please use the values in the table below. Please note these values will change in a future update of Handover to simplify the process.
+> **Note:**
+> No explicit configuration is required for VATSIM Connect or Handover.
 
-| Variable | [Handover](https://github.com/Vatsim-Scandinavia/handover) value | Explanation |
+If you use your own custom Oauth provider, you need to configure the following variables.
+
+| Variable | Your OAuth provider array path | Explanation |
 | ------- | --- | --- |
 | OAUTH_MAPPING_CID | data-id | OAuth mapping of VATSIM CID |
 | OAUTH_MAPPING_EMAIL | data-email | OAuth mapping of VATSIM e-mail |
