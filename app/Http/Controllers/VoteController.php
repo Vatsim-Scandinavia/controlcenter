@@ -81,7 +81,7 @@ class VoteController extends Controller
 
         $vote->question = $data['question'];
         $vote->require_active = $require_active;
-        $vote->require_our_member = $require_our_member;
+        $vote->require_member = $require_our_member;
         $vote->closed = false;
         $vote->end_at = $expire->format('Y-m-d H:i:s');
 
