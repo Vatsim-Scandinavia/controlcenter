@@ -45,6 +45,7 @@ class CreateApiKey extends Command
             'id' => $secret,
             'name' => $name,
             'read_only' => $readonly,
+            'created_at' => now(),
         ]);
 
         $this->comment('API key `' . $name . '` has been created with following token: `' . $secret . '`');
