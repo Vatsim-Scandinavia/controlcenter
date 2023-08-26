@@ -52,29 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Control Center
-      uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
+      uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
       with:
         path: controlcenter
-
-    - name: Checkout Handover
-      uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
-      with:
-        repository: vatsim-scandinavia/handover
-        path: handover
-
-    - name: Setup dependencies for Handover
-      uses: ./controlcenter/.github/actions/setup-dependencies
-      with:
-        path: handover
-        setup-node: false
-
-    - name: Setup Handover
-      uses: ./controlcenter/.github/actions/setup-project
-      with:
-        path: handover
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
 
     - name: Setup dependencies for Control Center
       uses: ./controlcenter/.github/actions/setup-dependencies
@@ -90,8 +70,6 @@ jobs:
         seed-database: true
       env:
         DB_CONNECTION: sqlite-testing
-        DB_HANDOVER_CONNECTION: sqlite-handover
-        DB_HANDOVER_DATABASE: ../handover/database/database.sqlite
 
     - name: Execute unit and feature tests via PHPUnit
       run: ./vendor/bin/phpunit --color=always --testdox
