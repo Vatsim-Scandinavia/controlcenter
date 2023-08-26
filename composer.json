@@ -11,7 +11,7 @@
         "php": "^8.0.2",
         "anlutro/l4-settings": "^1.1.1",
         "doctrine/dbal": "^3.3.6",
-        "graham-campbell/markdown": "^14.0",
+        "graham-campbell/markdown": "^15.0",
         "guzzlehttp/guzzle": "^7.4.2",
         "hisorange/browser-detect": "^4.5",
         "laravel/framework": "^9.0",
