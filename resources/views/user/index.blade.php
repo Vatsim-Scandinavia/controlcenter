@@ -8,7 +8,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
 
         <div class="alert alert-info" role="alert">
-            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows division members who have logged into Handover, and therefore might differ from VATSIM CERT.
+            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows division members who have logged into Control Center, and therefore might differ from VATSIM CERT.
         </div>
 
         <div class="card shadow mb-4">
