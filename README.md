@@ -33,7 +33,7 @@ To setup your Docker instance simply follow these steps:
 4. Start the container in the background.
 5. Setup the database.
    ```sh
-   docker exec -it control-center php artisan migrate
+   docker exec -it --user www-data control-center php artisan migrate
    ```
 6. To ensure that users will not need to log in after each time you re-deploy or upgrade the container, you need to create and store an application key in your environment and setup a shared volume. 
    ```sh

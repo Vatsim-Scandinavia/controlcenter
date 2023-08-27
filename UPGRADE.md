@@ -41,7 +41,7 @@ In the instructions where we use `docker exec` we assume your container is named
 1. Make sure that `DB_HANDOVER_` database config is present in your environment file or docker configuration. Do not remove this as it's required for the migration.
 2. Run the migration, this will copy over the required data fields from Handover so CC can run on it's own
    ```sh
-   docker exec -it control-center php artisan migrate
+   docker exec -it --user www-data control-center php artisan migrate
    ```
 3. If the migration was successful you may now remove the `DB_HANDOVER_*` environment settings as it'll no longer be used.
 4. If you don't want to use Handover at all anymore, you can at this point change the OAUTH environment settings to the VATSIM OAuth settings.
