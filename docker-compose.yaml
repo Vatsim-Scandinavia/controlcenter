@@ -3,7 +3,7 @@ version: "3"
 services:
   web:
     container_name: control-center
-    image: ghcr.io/vatsim-scandinavia/control-center:v4
+    image: ghcr.io/vatsim-scandinavia/control-center:v4@sha256:cf916f16d5ac9364252ff6e6172dbd6d21a874dad41dd3b6074e60a0adcc46b6
     ports:
       - 8080:80
       - 8443:443
