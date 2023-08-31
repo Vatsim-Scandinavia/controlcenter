@@ -58,7 +58,7 @@ class UpdateMemberData extends Command
         }
 
         foreach ($users as $user) {
-            
+
             if (Carbon::parse($user->token_expires)->isPast()) {
 
                 $refresh = $this->oauthHelper->refreshToken($user);
@@ -84,7 +84,7 @@ class UpdateMemberData extends Command
 
             $response = $this->oauthHelper->fetchUser($user);
 
-            if (collect($response)->isNotEmpty()) {
+            if ($response && collect($response)->isNotEmpty()) {
 
                 $user->email = OAuthController::getOAuthProperty(config('oauth.mapping_mail'), $response);
                 $user->first_name = OAuthController::getOAuthProperty(config('oauth.mapping_first_name'), $response);

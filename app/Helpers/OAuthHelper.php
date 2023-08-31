@@ -23,6 +23,7 @@ class OAuthHelper
         return new Client([
             'base_uri' => $this->baseUrl,
             'headers' => [
+                'Accept' => 'application/json',
                 'Content-type' => 'application/json',
             ],
         ]);
@@ -43,6 +44,8 @@ class OAuthHelper
         } catch (\Exception $exception) {
             Log::critical($exception->getMessage());
         }
+
+        return false;
 
     }
 
