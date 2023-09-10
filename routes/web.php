@@ -59,7 +59,8 @@ Route::middleware(['auth', 'activity'])->group(function () {
 
     // Endorsements
     Route::controller(EndorsementController::class)->group(function () {
-        Route::get('/endorsements/mascs', 'indexMascs')->name('endorsements.mascs');
+        Route::get('/endorsements/roster', 'indexRoster')->name('endorsements.roster');
+		Route::get('/endorsements/mascs', 'indexMascs')->name('endorsements.mascs');
         Route::get('/endorsements/trainings', 'indexTrainings')->name('endorsements.trainings');
         Route::get('/endorsements/examiners', 'indexExaminers')->name('endorsements.examiners');
         Route::get('/endorsements/visiting', 'indexVisitors')->name('endorsements.visiting');
