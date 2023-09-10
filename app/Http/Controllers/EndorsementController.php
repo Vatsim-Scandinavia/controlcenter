@@ -19,6 +19,18 @@ use Illuminate\Support\Facades\Auth;
 
 class EndorsementController extends Controller
 {
+	/**
+     * Display a listing of the ATC Roster
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexRoster()
+    {
+        $users = User::where('rating', '>=', VatsimRating::S1)->where('subdivision', 'SCA')->get();
+
+        return view('endorsements.roster', compact('users'));
+    }
+	
     /**
      * Display a listing of the MA/SC Endorsements
      *
