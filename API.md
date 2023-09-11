@@ -3,6 +3,7 @@
 ## API Endpoints
 - GET, POST, PATCH and DELETE bookings `/api/bookings` and more
 - GET users assigned roles and their area `/api/roles`
+- GET users who have an active training per area and rating `/api/students`
 - GET users holding Major Airport / Special Center endorsements `/api/endorsements/masc`
 - GET users holding Training endorsements `/api/endorsements/training/solo` & `/api/endorsements/training/s1`
 - GET users holding Examiner endorsements `/api/endorsements/examiner`
