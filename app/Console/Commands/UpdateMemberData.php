@@ -51,7 +51,7 @@ class UpdateMemberData extends Command
 
         $optionalUserIdFilter = $this->argument('user');
 
-        if(!$optionalUserIdFilter) {
+        if (! $optionalUserIdFilter) {
             $users = User::query()->where('refresh_token', '!=', null)->get();
         } else {
             $users = User::findOrFail($optionalUserIdFilter);
@@ -62,7 +62,6 @@ class UpdateMemberData extends Command
             if (Carbon::parse($user->token_expires)->isPast()) {
 
                 $refresh = $this->oauthHelper->refreshToken($user);
-                
 
                 if (! $refresh) {
 
