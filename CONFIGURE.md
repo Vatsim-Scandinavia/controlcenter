@@ -42,6 +42,7 @@ Table with all the variables, default value and explanation. Override the enviro
 | MAIL_ENCRYPTION | null | Mail encryption |
 | MAIL_FROM_NAME | Control Center | Mail from name |
 | MAIL_FROM_ADDRESS | noreply@yourvacc.com | Mail from address |
+| TRUSTED_PROXIES | null | Comma-separated list of trusted proxy addresses or '*' for all |
 
 #### OAuth
 

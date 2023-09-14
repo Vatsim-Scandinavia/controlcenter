@@ -242,6 +242,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Network & Requests
+    |--------------------------------------------------------------------------
+    | Configure the list of proxies that you trust if you are running Control
+    | Center behind a proxy such as nginx, traefik or similarly.
+    | Separate allowed proxies with a comma (no space!).
+    | If you're running Control Center in a container, you may set it to '*'.
+    */
+    'proxies' => [
+        'trusted' => env('TRUSTED_PROXIES'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Class Aliases
     |--------------------------------------------------------------------------
     |
