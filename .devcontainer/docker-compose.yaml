@@ -15,7 +15,7 @@ services:
 
   db:
     container_name: database
-    image: docker.io/library/mysql:8.1.0@sha256:c0455ac041844b5e65cd08571387fa5b50ab2a6179557fd938298cab13acf0dd
+    image: docker.io/library/mysql:8.1.0
     ports:
       - 3306:3306
     environment:
