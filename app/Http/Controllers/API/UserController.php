@@ -25,38 +25,52 @@ class UserController extends Controller
         // Validate data
         //
         $parameters = $request->validate([
+            'onlyAtcActive' => 'sometimes|boolean',
             'include' => 'sometimes|array',
         ]);
 
+        $paramIncludeDivisionUsers = (isset($parameters['include']) && in_array('divisionUsers', $parameters['include'])) ?? false;
         $paramIncludeName = (isset($parameters['include']) && in_array('name', $parameters['include'])) ?? false;
         $paramIncludeEmail = (isset($parameters['include']) && in_array('email', $parameters['include'])) ?? false;
         $paramIncludeDivisions = (isset($parameters['include']) && in_array('divisions', $parameters['include'])) ?? false;
         $paramIncludeEndorsements = (isset($parameters['include']) && in_array('endorsements', $parameters['include'])) ?? false;
         $paramIncludeRoles = (isset($parameters['include']) && in_array('roles', $parameters['include'])) ?? false;
         $paramIncludeTraining = (isset($parameters['include']) && in_array('training', $parameters['include'])) ?? false;
+        $paramOnlyActive = (isset($parameters['onlyAtcActive']) && boolval($parameters['onlyAtcActive'])) ? $paramOnlyActive = true : $paramOnlyActive = false;
 
         //
         // Get all needed users based on criteria
         //
-        $returnUsers = User::where('subdivision', config('app.owner_short'))->get();
+
+        if($paramIncludeDivisionUsers){
+            $returnUsers = User::where('subdivision', config('app.owner_short'));
+            if($paramOnlyActive) $returnUsers = $returnUsers->where('atc_active', true);
+            $returnUsers = $returnUsers->get();
+        }
 
         if($paramIncludeEndorsements){
-            $endorsementUsers = User::whereHas('endorsements', function (Builder $q){
-                $q->where('expired', false)->where('revoked', false);
-            })->whereNotIn('id', $returnUsers->pluck('id'))->get();
+            $endorsementUsers = User::whereHas('endorsements', function (Builder $q){$q->where('expired', false)->where('revoked', false);})->whereNotIn('id', $returnUsers->pluck('id'));
+            if($paramOnlyActive) $endorsementUsers = $endorsementUsers->where('atc_active', true);
+            $endorsementUsers = $endorsementUsers->get();
 
             $returnUsers = $returnUsers->merge($endorsementUsers);
         }
 
         if($paramIncludeRoles){
-            $roleUsers = User::whereHas('groups')->whereNotIn('id', $returnUsers->pluck('id'))->get();
+            $roleUsers = User::whereHas('groups')->whereNotIn('id', $returnUsers->pluck('id'));
+            if($paramOnlyActive) $roleUsers = $roleUsers->where('atc_active', true);
+            $roleUsers = $roleUsers->get();
+
             $returnUsers = $returnUsers->merge($roleUsers);
         }
 
         if($paramIncludeTraining){
             $trainingUsers = User::whereHas('trainings', function (Builder $q){
                 $q->where('status', '>=', 0);
-            })->whereNotIn('id', $returnUsers->pluck('id'))->get();
+            })->whereNotIn('id', $returnUsers->pluck('id'));
+            if($paramOnlyActive) $trainingUsers = $trainingUsers->where('atc_active', true);
+            $trainingUsers = $trainingUsers->get();
+
             $returnUsers = $returnUsers->merge($trainingUsers);
         }
 
