@@ -253,6 +253,7 @@ class UserController extends Controller
     private function mapTrainings(Collection $trainings)
     {
         $areas = Area::all();
+
         return $trainings->map(function ($training) use ($areas) {
             return [
                 'area' => $areas->where('id', $training->area_id)->first()->name,
