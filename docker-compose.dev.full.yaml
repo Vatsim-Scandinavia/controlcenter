@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  web:
+    container_name: controlcenter
+    build: .
+    ports:
+      - 8080:80
+      - 8443:443
+    extra_hosts:
+        - "vatsca.local:host-gateway"
+    volumes:
+      - ./:/app
+  db:
+    image: docker.io/library/mariadb:10
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_DATABASE: controlcenter
+      MARIADB_ROOT_PASSWORD: root
+  redis:
+    image: docker.io/library/redis:6.2-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - cache:/data
+volumes:
+  cache:
+    driver: local
