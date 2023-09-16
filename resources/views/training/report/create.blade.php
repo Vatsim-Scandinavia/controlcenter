@@ -104,13 +104,38 @@
 
 @section('js')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>    
+    document.addEventListener("DOMContentLoaded", function () {
+        var submitClicked = false
+        document.addEventListener("submit", function(event) {
+            if (event.target.tagName === "FORM") {
+                submitClicked = true;
+            }
+        });
+
+
+        // Confirm closing window if there are unsaved changes
+        window.addEventListener('beforeunload', function (e) {
+            if(!submitClicked && (simplemde1.value() != '' || simplemde2.value() != '')){
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+    })
+</script>
+
+<!-- Flatpickr -->
+@include('scripts.flatpickr')
 <script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
+    var defaultDate = "{{ old('report_date') }}"
+    document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+</script>
+
+<!-- Markdown Editor -->
+@include('scripts.mdeditor')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         var simplemde1 = new SimpleMDE({ 
             element: document.getElementById("contentBox"), 
             status: false, 
@@ -127,29 +152,7 @@
                 link: ["[","](link)"],
             }
         });
-
-        var defaultDate = "{{ old('report_date') }}"
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
-
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input:visible').prop('readonly', false);
-
-        var submitClicked = false
-        $(document).on("submit", "form", function(event){
-            submitClicked = true
-        });
-
-        // Confirm closing window if there are unsaved changes
-        window.addEventListener('beforeunload', function (e) {
-            if(!submitClicked && (simplemde1.value() != '' || simplemde2.value() != '')){
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
     })
-    
 </script>
+
 @endsection

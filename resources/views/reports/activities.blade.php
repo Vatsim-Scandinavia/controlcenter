@@ -156,12 +156,3 @@
 </div>
 
 @endsection
-
-@section('js')
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-    });
-</script>
-@endsection

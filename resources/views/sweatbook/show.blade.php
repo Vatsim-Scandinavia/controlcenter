@@ -78,19 +78,13 @@
 
 @section('js')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Flatpickr -->
+@include('scripts.flatpickr')
 <script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $booking->date)->format('d/m/Y') : old('date') }}"
-        
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 }});
-
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input:visible').prop('readonly', false);
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 }});
     })
 </script>
+
 @endsection

@@ -141,29 +141,16 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Flatpickr -->
+@include('scripts.flatpickr')
 <script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var defaultDate = "{{ old('date') }}"
-
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
-
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input:visible').prop('readonly', false);
-
-        // Zulu clock
-        var currentdate = new Date(); 
-        var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
-
-        setInterval(function (){
-            var currentdate = new Date(); 
-            var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
-            $('.zulu-clock').text(datetime + 'z');
-        },1000);
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
     })
 </script>
+
+@include('scripts.zulutime')
+
 @endsection

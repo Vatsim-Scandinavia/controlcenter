@@ -395,13 +395,12 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Flatpickr -->
+@include('scripts.flatpickr')
 <script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-        $(".flatpickr").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
             onChange: function(selectedDates, dateStr, instance) {
                 if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
                     window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
@@ -410,8 +409,10 @@
             onReady: function(dateObj, dateStr, instance){ instance.config.maxDate = instance.input.dataset.date }
         });
     });
+</script>
 
-    // Fetch VATSIM data async
+<!-- VATSIM Data Fetch -->
+<script>
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "{{route('user.vatsimhours')}}?cid={{$user->id}}");
     xhr.send();
@@ -432,6 +433,6 @@
             vatsimHours.innerHTML = vatsimHours.innerHTML + "<dd>No Data</dd>"
         }
     };
-
 </script>
+
 @endsection

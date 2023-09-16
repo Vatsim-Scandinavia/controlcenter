@@ -162,32 +162,34 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script>
 
+<script>
     function selectedNotification(el){
         if(el == 1){
-            $('#newreqrow').show();
-            $('#newmentorrow').hide();
-            $('#pretrainingrow').hide();
+            document.getElementById("newreqrow").style.display = "block";
+            document.getElementById("newmentorrow").style.display = "none";
+            document.getElementById("pretrainingrow").style.display = "none";
 
             newRequestMde.codemirror.refresh();
         } else if(el == 2){
-            $('#newreqrow').hide();
-            $('#newmentorrow').show();
-            $('#pretrainingrow').hide();
+            document.getElementById("newreqrow").style.display = "none";
+            document.getElementById("newmentorrow").style.display = "block";
+            document.getElementById("pretrainingrow").style.display = "none";
 
             newMentorMde.codemirror.refresh();
         } else if(el == 3){
-            $('#newreqrow').hide();
-            $('#newmentorrow').hide();
-            $('#pretrainingrow').show();
-
+            document.getElementById("newreqrow").style.display = "none";
+            document.getElementById("newmentorrow").style.display = "none";
+            document.getElementById("pretrainingrow").style.display = "block";
+            
             preTrainingMde.codemirror.refresh();
         }
     }
+</script>
 
+<!-- Markdown Editor -->
+@include('scripts.mdeditor')
+<script>
     var newRequestMde = new SimpleMDE({ 
         element: document.getElementById("newrequestaddition"), 
         status: false, 

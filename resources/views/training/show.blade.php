@@ -623,14 +623,14 @@
 @section('js')
 
     <!-- One Time Links -->
-    <script type="text/javascript">
+    <script>
 
         // Generate a one time report link
-        $('#getOneTimeLinkReport').click(async function (event) {
+        document.getElementById('getOneTimeLinkReport').addEventListener('click', async function (event) {
             event.preventDefault();
-            $(this).prop('disabled', true);
+            document.querySelector(this).disabled = true
             let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
-            $(this).prop('disabled', false);
+            document.querySelector(this).disabled = false
 
             document.getElementById('otl-alert').style.display = "block";
             document.getElementById('otl-type').innerHTML = "Training Report one-time link";
@@ -640,11 +640,11 @@
         });
 
         // Generate a one time exam report link
-        $('#getOneTimeLinkExam').click(async function (event) {
+        document.getElementById('getOneTimeLinkExam').addEventListener('click', async function (event) {
             event.preventDefault();
-            $(this).prop('disabled', true);
+            document.querySelector(this).disabled = true
             let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
-            $(this).prop('disabled', false);document.getElementById('otl-link-copy-btn').onclick = function(){console.log(route); navigator.clipboard.writeText(route)}
+            document.querySelector(this).disabled = false
 
             document.getElementById('otl-alert').style.display = "block";
             document.getElementById('otl-type').innerHTML = "Examination Report";
@@ -703,36 +703,70 @@
 
     <!-- Training report accordian -->
     <script>
-        $(document).ready(function(){
+        document.addEventListener("DOMContentLoaded", function () {
             // Add minus icon for collapse element which is open by default
-            $(".collapse.show").each(function(){
-                $(this).prev(".card-header").find(".fas").addClass("fa-chevron-down").removeClass("fa-chevron-right");
+            var showCollapses = document.querySelectorAll(".collapse.show");
+            showCollapses.forEach(function(collapse) {
+                var cardHeader = collapse.previousElementSibling;
+                var icon = cardHeader.querySelector(".fas");
+                if (icon) {
+                    icon.classList.add("fa-chevron-down");
+                    icon.classList.remove("fa-chevron-right");
+                }
             });
 
             // Toggle plus minus icon on show hide of collapse element
-            $(".collapse").on('show.bs.collapse', function(){
-                $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-right").addClass("fa-chevron-down");
-            }).on('hide.bs.collapse', function(){
-                $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-down").addClass("fa-chevron-right");
+            var collapses = document.querySelectorAll(".collapse");
+            collapses.forEach(function(collapse) {
+                collapse.addEventListener('show.bs.collapse', function() {
+                    var cardHeader = collapse.previousElementSibling;
+                    var icon = cardHeader.querySelector(".fas");
+                    if (icon) {
+                        icon.classList.remove("fa-chevron-right");
+                        icon.classList.add("fa-chevron-down");
+                    }
+                });
+
+                collapse.addEventListener('hide.bs.collapse', function() {
+                    var cardHeader = collapse.previousElementSibling;
+                    var icon = cardHeader.querySelector(".fas");
+                    if (icon) {
+                        icon.classList.remove("fa-chevron-down");
+                        icon.classList.add("fa-chevron-right");
+                    }
+                });
             });
 
             // Closure reason input
-            toggleClosureReasonField($('#trainingStateSelect').val())
+            toggleClosureReasonField(document.querySelector('#trainingStateSelect').value);
 
-            $('#trainingStateSelect').on('change', function () {
-                toggleClosureReasonField($('#trainingStateSelect').val())
-            });
+            var trainingStateSelect = document.querySelector('#trainingStateSelect');
+            if (trainingStateSelect) {
+                trainingStateSelect.addEventListener('change', function () {
+                    toggleClosureReasonField(trainingStateSelect.value);
+                });
+            }
 
-            function toggleClosureReasonField(val){
-                if(val == -2){
-                    $('#closedReasonInput').slideDown(100)
-                } else {
-                    $('#closedReasonInput').hide()
+            function toggleClosureReasonField(val) {
+                var closedReasonInput = document.querySelector('#closedReasonInput');
+                if (closedReasonInput) {
+                    if (val == -2) {
+                        closedReasonInput.style.display = 'block';
+                    } else {
+                        closedReasonInput.style.display = 'none';
+                    }
                 }
             }
 
-            $("#markdown-content").children("p").children("a").attr('target','_blank');
-            $("#markdown-improve").children("p").children("a").attr('target','_blank');
+            var markdownContentLinks = document.querySelectorAll("#markdown-content p a");
+            markdownContentLinks.forEach(function(link) {
+                link.setAttribute('target', '_blank');
+            });
+
+            var markdownImproveLinks = document.querySelectorAll("#markdown-improve p a");
+            markdownImproveLinks.forEach(function(link) {
+                link.setAttribute('target', '_blank');
+            });
         });
     </script>
 @endsection
