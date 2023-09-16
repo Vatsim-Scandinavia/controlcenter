@@ -38,6 +38,12 @@ class UserController extends Controller
         $paramIncludeTraining = (isset($parameters['include']) && in_array('training', $parameters['include'])) ?? false;
         $paramOnlyActive = (isset($parameters['onlyAtcActive']) && boolval($parameters['onlyAtcActive'])) ? $paramOnlyActive = true : $paramOnlyActive = false;
 
+        // Gather which data to include in queries for optimisation
+        $queryInclude = [];
+        ($paramIncludeEndorsements) ? array_push($queryInclude, 'endorsements', 'endorsements.areas', 'endorsements.ratings', 'endorsements.positions') : null;
+        ($paramIncludeRoles) ? array_push($queryInclude, 'groups') : null;
+        ($paramIncludeTraining) ? array_push($queryInclude, 'trainings', 'trainings.ratings', 'trainings.area') : null;
+
         //
         // Get all needed users based on criteria
         //
@@ -47,7 +53,7 @@ class UserController extends Controller
             if ($paramOnlyActive) {
                 $returnUsers = $returnUsers->where('atc_active', true);
             }
-            $returnUsers = $returnUsers->get();
+            $returnUsers = $returnUsers->with($queryInclude)->get();
         }
 
         if ($paramIncludeEndorsements) {
@@ -57,7 +63,7 @@ class UserController extends Controller
             if ($paramOnlyActive) {
                 $endorsementUsers = $endorsementUsers->where('atc_active', true);
             }
-            $endorsementUsers = $endorsementUsers->get();
+            $endorsementUsers = $endorsementUsers->with($queryInclude)->get();
 
             $returnUsers = $returnUsers->merge($endorsementUsers);
         }
@@ -67,7 +73,7 @@ class UserController extends Controller
             if ($paramOnlyActive) {
                 $roleUsers = $roleUsers->where('atc_active', true);
             }
-            $roleUsers = $roleUsers->get();
+            $roleUsers = $roleUsers->with($queryInclude)->get();
 
             $returnUsers = $returnUsers->merge($roleUsers);
         }
@@ -79,7 +85,7 @@ class UserController extends Controller
             if ($paramOnlyActive) {
                 $trainingUsers = $trainingUsers->where('atc_active', true);
             }
-            $trainingUsers = $trainingUsers->get();
+            $trainingUsers = $trainingUsers->with($queryInclude)->get();
 
             $returnUsers = $returnUsers->merge($trainingUsers);
         }
@@ -252,11 +258,9 @@ class UserController extends Controller
      */
     private function mapTrainings(Collection $trainings)
     {
-        $areas = Area::all();
-
-        return $trainings->map(function ($training) use ($areas) {
+        return $trainings->map(function ($training) {
             return [
-                'area' => $areas->where('id', $training->area_id)->first()->name,
+                'area' => $training->area->name,
                 'type' => \App\Http\Controllers\TrainingController::$types[$training->type]['text'],
                 'status' => $training->status,
                 'status_description' => \App\Http\Controllers\TrainingController::$statuses[$training->status]['text'],
