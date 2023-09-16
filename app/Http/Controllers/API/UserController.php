@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use App\Models\Area;
 
 class UserController extends Controller
 {
@@ -31,39 +32,73 @@ class UserController extends Controller
         $paramIncludeEmail = (isset($parameters['include']) && in_array('email', $parameters['include'])) ?? false;
         $paramIncludeDivisions = (isset($parameters['include']) && in_array('divisions', $parameters['include'])) ?? false;
         $paramIncludeEndorsements = (isset($parameters['include']) && in_array('endorsements', $parameters['include'])) ?? false;
-        $paramIncludeRole = (isset($parameters['include']) && in_array('role', $parameters['include'])) ?? false;
+        $paramIncludeRoles = (isset($parameters['include']) && in_array('roles', $parameters['include'])) ?? false;
         $paramIncludeTraining = (isset($parameters['include']) && in_array('training', $parameters['include'])) ?? false;
-        $paramIncludeBookings = (isset($parameters['include']) && in_array('bookings', $parameters['include'])) ?? false;
 
         //
-        // Get all division users
+        // Get all needed users based on criteria
         //
         $returnUsers = User::where('subdivision', config('app.owner_short'))->get();
 
-        //
-        // Endorsements
-        //
         if($paramIncludeEndorsements){
-
             $endorsementUsers = User::whereHas('endorsements', function (Builder $q){
                 $q->where('expired', false)->where('revoked', false);
             })->whereNotIn('id', $returnUsers->pluck('id'))->get();
 
-            if($endorsementUsers->count()){
+            $returnUsers = $returnUsers->merge($endorsementUsers);
+        }
 
-                // Get all users and enrich with endorsements
-                $returnUsers = $returnUsers->merge($endorsementUsers);
+        if($paramIncludeRoles){
+            $roleUsers = User::whereHas('groups')->whereNotIn('id', $returnUsers->pluck('id'))->get();
+            $returnUsers = $returnUsers->merge($roleUsers);
+        }
 
-                foreach($returnUsers as $user){
-                    $user->endorsements = $this->mapEndorsements($user->endorsements->where('expired', false)->where('revoked', false));
+        if($paramIncludeTraining){
+            $trainingUsers = User::whereHas('trainings', function (Builder $q){
+                $q->where('status', '>=', 0);
+            })->whereNotIn('id', $returnUsers->pluck('id'))->get();
+            $returnUsers = $returnUsers->merge($trainingUsers);
+        }
+
+        //
+        // Process the paramters
+        //
+
+        // Endorsements
+        if($paramIncludeEndorsements){
+            foreach($returnUsers as $user){
+                $user->endorsements = $this->mapEndorsements($user->endorsements->where('expired', false)->where('revoked', false));
+            }
+        }
+
+        // Roles
+        if($paramIncludeRoles){
+            foreach($returnUsers as $user){
+                $user->roles = collect();
+
+                foreach(Area::all() as $area){
+                    $areaRoles = $user->groups->where('pivot.area_id', $area->id)->pluck('name');
+
+                    if($areaRoles->count()){
+                        $user->roles[$area->name] = ($user->groups->where('pivot.area_id', $area->id)->pluck('name'));
+                    } else {
+                        $user->roles[$area->name] = null;
+                    }
                 }
+            }
+        }
+
+        // Trainings
+        if($paramIncludeTraining){
+            foreach($returnUsers as $user){
+                $user->training = $this->mapTrainings($user->trainings->where('status', '>=', 0));
             }
         }
         
         //
         // Return the final result
         //
-        $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeDivisions, $paramIncludeEmail, $paramIncludeEndorsements);
+        $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeEmail, $paramIncludeDivisions, $paramIncludeEndorsements, $paramIncludeRoles, $paramIncludeTraining);
         $returnUsers = $returnUsers->sortBy('id')->values();
 
         return response()->json(['data' => [
@@ -77,8 +112,8 @@ class UserController extends Controller
      * @param Collection $users
      * @return Collection
      */
-    private function mapUsers(Collection $users, Bool $includeName, Bool $includeDivisions, Bool $includeEmail, Bool $includeEndorsements){
-        return $users->map(function ($user) use ($includeName, $includeDivisions, $includeEmail, $includeEndorsements) {
+    private function mapUsers(Collection $users, Bool $includeName, Bool $includeEmail, Bool $includeDivisions, Bool $includeEndorsements, Bool $includeRoles, Bool $includeTraining){
+        return $users->map(function ($user) use ($includeName, $includeEmail, $includeDivisions, $includeEndorsements, $includeRoles, $includeTraining) {
 
             $returnData = [];
 
@@ -92,6 +127,8 @@ class UserController extends Controller
             ($includeDivisions) ? $returnData['subdivision'] = $user->subdivision : null;
             $returnData['atc_active'] = boolval($user->atc_active);
             ($includeEndorsements) ? $returnData['endorsements'] = $user->endorsements : null;
+            ($includeRoles) ? $returnData['roles'] = $user->roles : null;
+            ($includeTraining) ? $returnData['training'] = $user->training : null;
 
             return $returnData;
         });
@@ -182,4 +219,24 @@ class UserController extends Controller
 
         return $returnData;
      }
+
+    /**
+    * Map out the training and put them in a category for each type
+    * 
+    * @param Collection $trainings
+    * @return Collection
+    */
+    private function mapTrainings(Collection $trainings){
+        return $trainings->map(function ($training){
+            return [
+                'area' => $training->area_id,
+                'type' => \App\Http\Controllers\TrainingController::$types[$training->type]['text'],
+                'status' => $training->status,
+                'status_description' => \App\Http\Controllers\TrainingController::$statuses[$training->status]['text'],
+                'created_at' => $training->created_at,
+                'started_at' => $training->started_at,
+                'ratings' => $training->ratings->pluck('name'),
+            ];
+        });
+    }
 }
