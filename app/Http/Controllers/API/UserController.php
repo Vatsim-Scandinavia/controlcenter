@@ -252,9 +252,10 @@ class UserController extends Controller
      */
     private function mapTrainings(Collection $trainings)
     {
-        return $trainings->map(function ($training) {
+        $areas = Area::all();
+        return $trainings->map(function ($training) use ($areas) {
             return [
-                'area' => $training->area_id,
+                'area' => $areas->where('id', $training->area_id)->first()->name,
                 'type' => \App\Http\Controllers\TrainingController::$types[$training->type]['text'],
                 'status' => $training->status,
                 'status_description' => \App\Http\Controllers\TrainingController::$statuses[$training->status]['text'],
