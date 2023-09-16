@@ -29,6 +29,7 @@ class UserController extends Controller
 
         $paramIncludeName = (isset($parameters['include']) && in_array('name', $parameters['include'])) ?? false;
         $paramIncludeEmail = (isset($parameters['include']) && in_array('email', $parameters['include'])) ?? false;
+        $paramIncludeDivisions = (isset($parameters['include']) && in_array('divisions', $parameters['include'])) ?? false;
         $paramIncludeEndorsements = (isset($parameters['include']) && in_array('endorsements', $parameters['include'])) ?? false;
         $paramIncludeRole = (isset($parameters['include']) && in_array('role', $parameters['include'])) ?? false;
         $paramIncludeTraining = (isset($parameters['include']) && in_array('training', $parameters['include'])) ?? false;
@@ -37,21 +38,21 @@ class UserController extends Controller
         //
         // Get all division users
         //
-        $divisionUsers = User::where('subdivision', config('app.owner_short'))->get();
+        $returnUsers = User::where('subdivision', config('app.owner_short'))->get();
 
         //
         // Endorsements
         //
         if($paramIncludeEndorsements){
-            
+
             $endorsementUsers = User::whereHas('endorsements', function (Builder $q){
                 $q->where('expired', false)->where('revoked', false);
-            })->whereNotIn('id', $divisionUsers->pluck('id'))->get();
+            })->whereNotIn('id', $returnUsers->pluck('id'))->get();
 
             if($endorsementUsers->count()){
 
                 // Get all users and enrich with endorsements
-                $returnUsers = $divisionUsers->merge($endorsementUsers);
+                $returnUsers = $returnUsers->merge($endorsementUsers);
 
                 foreach($returnUsers as $user){
                     $user->endorsements = $this->mapEndorsements($user->endorsements->where('expired', false)->where('revoked', false));
@@ -62,7 +63,7 @@ class UserController extends Controller
         //
         // Return the final result
         //
-        $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeEmail);
+        $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeDivisions, $paramIncludeEmail, $paramIncludeEndorsements);
         $returnUsers = $returnUsers->sortBy('id')->values();
 
         return response()->json(['data' => [
@@ -76,8 +77,8 @@ class UserController extends Controller
      * @param Collection $users
      * @return Collection
      */
-    private function mapUsers(Collection $users, Bool $includeName, Bool $includeEmail){
-        return $users->map(function ($user) use ($includeName, $includeEmail) {
+    private function mapUsers(Collection $users, Bool $includeName, Bool $includeDivisions, Bool $includeEmail, Bool $includeEndorsements){
+        return $users->map(function ($user) use ($includeName, $includeDivisions, $includeEmail, $includeEndorsements) {
 
             $returnData = [];
 
@@ -86,11 +87,11 @@ class UserController extends Controller
             ($includeName) ? $returnData['first_name'] = $user->first_name : null;
             ($includeName) ? $returnData['last_name'] = $user->last_name : null;
             $returnData['rating'] = $user->rating_short;
-            $returnData['region'] = $user->region;
-            $returnData['division'] = $user->division;
-            $returnData['subdivision'] = $user->subdivision;
+            ($includeDivisions) ? $returnData['region'] = $user->region : null;
+            ($includeDivisions) ? $returnData['division'] = $user->division : null;
+            ($includeDivisions) ? $returnData['subdivision'] = $user->subdivision : null;
             $returnData['atc_active'] = boolval($user->atc_active);
-            $returnData['endorsements'] = $user->endorsements;
+            ($includeEndorsements) ? $returnData['endorsements'] = $user->endorsements : null;
 
             return $returnData;
         });
