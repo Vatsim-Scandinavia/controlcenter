@@ -29,7 +29,6 @@ Will be documented one day.
 Older endpoints that will be replaced with the `api/users` endpoint. Do not use these if you're creating a new integration.
 
 - GET users assigned roles and their area `/api/roles`
-- GET users who have an active training per area and rating `/api/students`
 - GET users holding Major Airport / Special Center endorsements `/api/endorsements/masc`
 - GET users holding Training endorsements `/api/endorsements/training/solo` & `/api/endorsements/training/s1`
 - GET users holding Examiner endorsements `/api/endorsements/examiner`
