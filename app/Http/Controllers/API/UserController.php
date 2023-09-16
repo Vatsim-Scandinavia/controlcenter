@@ -138,7 +138,7 @@ class UserController extends Controller
      * Map out the endorsements and put them in a category for each type
      * 
      * @param Collection $endorsements
-     * @return Collection
+     * @return Array
      */
     private function mapEndorsements(Collection $endorsements){
 
@@ -189,7 +189,7 @@ class UserController extends Controller
      * Map out the endorsement details
      * 
      * @param Endorsement $endorsements
-     * @return Endorsement
+     * @return Array
      */
      private function mapEndorsementDetails(Endorsement $endorsement, String $type){
         $returnData = [
@@ -224,7 +224,7 @@ class UserController extends Controller
     * Map out the training and put them in a category for each type
     * 
     * @param Collection $trainings
-    * @return Collection
+    * @return Array
     */
     private function mapTrainings(Collection $trainings){
         return $trainings->map(function ($training){
