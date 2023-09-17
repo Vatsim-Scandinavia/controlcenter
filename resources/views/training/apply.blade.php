@@ -173,25 +173,26 @@
                 var validated = true
 
                 if(page == 1){
-                    let trainingArea = $('#areaSelect').val();
-                    let trainingLevel = $('#ratingSelect').val();
-                    let requiredHours = $('#ratingSelect').find(':selected').attr('data-hour-requirement');
+                    let trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
+                    let trainingLevel = Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value;
+
+                    let requiredHours = document.getElementById('ratingSelect').options[document.getElementById('ratingSelect').selectedIndex].getAttribute('data-hour-requirement')
 
                     if (trainingArea == null){
-                        $('#areaSelect').addClass('is-invalid');
+                        document.getElementById('areaSelect').classList.add('is-invalid')
                         this.errArea = true;
                         validated = false;
                     }
 
                     if (trainingLevel == null) {
-                        $('#ratingSelect').addClass('is-invalid');
+                        document.getElementById('ratingSelect').classList.add('is-invalid')
                         this.errRating = true;
                         validated = false;
                     }
 
                     if (requiredHours !== undefined && atcHours < requiredHours){
-                        $('#ratingSelect').addClass('is-invalid');
-                        $('#errHours').html("To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours.");
+                        document.getElementById('ratingSelect').classList.add('is-invalid')
+                        document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours."
                         this.errHours = true;
                         validated = false;
                     }
@@ -208,42 +209,42 @@
                 // Reset errors
                 this.errExperience = false;
                 this.errLOM = false;
-                $('#experience').removeClass('is-invalid');
-                $('#motivationTextarea').removeClass('is-invalid');
+                document.getElementById('experience').classList.remove('is-invalid');
+                document.getElementById('motivationTextarea').classList.remove('is-invalid');
 
                 // Validate
-                let trainingExperience = $('#experience').val();
-                let trainingLOM = $('#motivationTextarea').val();
+                let trainingExperience = Array.from(document.getElementById('experience').options).find(option => option.selected && !option.disabled)?.value;
+                let trainingLOM = document.getElementById('motivationTextarea').value;
                 var errored = false;
 
                 if(trainingExperience == null){
-                    $('#experience').addClass('is-invalid');
+                    document.getElementById('experience').classList.add('is-invalid')
                     this.errExperience = true;
                 }
 
                 if(trainingLOM.length < 250 && this.motivationRequired){
-                    $('#motivationTextarea').addClass('is-invalid');
+                    document.getElementById('motivationTextarea').classList.add('is-invalid')
                     this.errLOM = true;
                 }
 
                 // Submit form if validation is successful
                 if(!this.errExperience && !this.errLOM){
-                    $('#training-submit-btn').prop('disabled', true);
-                    $('.submit-spinner').css('display', 'inherit');
-                    $('#training-form').submit();
+                    document.getElementById('training-submit-btn').disabled = true;
+                    document.querySelector('.submit-spinner').style.display = 'inherit';
+                    document.getElementById('training-form').submit();
                 }
     
             },
             areaSelectChange(event) {
                 this.ratingSelectUpdate(event.srcElement.value);
-                $('#areaSelect').removeClass('is-invalid');
-                $('#ratingSelect').removeClass('is-invalid');
+                document.getElementById('areaSelect').classList.remove('is-invalid');
+                document.getElementById('ratingSelect').classList.remove('is-invalid');
                 this.errArea = false;
                 this.errRating = false;
                 this.errHours = false;
             },
             ratingSelectChange(event){
-                $('#ratingSelect').removeClass('is-invalid');
+                document.getElementById('ratingSelect').classList.remove('is-invalid');
                 this.errHours = false;
             },
             ratingSelectUpdate(areaId){
