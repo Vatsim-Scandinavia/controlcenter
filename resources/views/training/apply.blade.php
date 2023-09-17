@@ -4,7 +4,7 @@
 @section('content')
 
 <div id="application">
-
+    
     <form id="training-form" action="{{ route('training.store') }}" method="post">
         @csrf
 
@@ -149,110 +149,113 @@
 @section('js')
 <script>
 
-    var payload = {!! json_encode($payload, true) !!}
-    var atcHours = {!! json_encode($atc_hours, true) !!}
+    document.addEventListener("DOMContentLoaded", function () {
 
-    const application = new Vue({
-        el: '#application',
-        data: {
-            step: 1,
-            ratings: '',
-            remarkChecked: 0,
-            errArea: 0,
-            errRating: 0,
-            errHours: 0,
-            errExperience: 0,
-            errLOM: 0,
-            motivationRequired: {{ $motivation_required }},
-        },
-        methods:{
-            next() {
-                if(this.validate(this.step)) this.step++;
+        var payload = {!! json_encode($payload, true) !!}
+        var atcHours = {!! json_encode($atc_hours, true) !!}
+
+        const application = createApp({
+            data(){
+                return {
+                    step: 1,
+                    ratings: '',
+                    remarkChecked: 0,
+                    errArea: 0,
+                    errRating: 0,
+                    errHours: 0,
+                    errExperience: 0,
+                    errLOM: 0,
+                    motivationRequired: {{ $motivation_required }},
+                }
             },
-            validate(page){
-                var validated = true
+            methods:{
+                next() {
+                    if(this.validate(this.step)) this.step++;
+                },
+                validate(page){
+                    var validated = true
 
-                if(page == 1){
-                    let trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
-                    let trainingLevel = Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value;
+                    if(page == 1){
+                        let trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
+                        let trainingLevel = Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value;
 
-                    let requiredHours = document.getElementById('ratingSelect').options[document.getElementById('ratingSelect').selectedIndex].getAttribute('data-hour-requirement')
+                        let requiredHours = document.getElementById('ratingSelect').options[document.getElementById('ratingSelect').selectedIndex].getAttribute('data-hour-requirement')
 
-                    if (trainingArea == null){
-                        document.getElementById('areaSelect').classList.add('is-invalid')
-                        this.errArea = true;
-                        validated = false;
+                        if (trainingArea == null){
+                            document.getElementById('areaSelect').classList.add('is-invalid')
+                            this.errArea = true;
+                            validated = false;
+                        }
+
+                        if (trainingLevel == null) {
+                            document.getElementById('ratingSelect').classList.add('is-invalid')
+                            this.errRating = true;
+                            validated = false;
+                        }
+
+                        if (requiredHours !== undefined && atcHours < requiredHours){
+                            document.getElementById('ratingSelect').classList.add('is-invalid')
+                            document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours."
+                            this.errHours = true;
+                            validated = false;
+                        }
+
+                    } else if(page == 2){
+                        validated = true;
                     }
 
-                    if (trainingLevel == null) {
-                        document.getElementById('ratingSelect').classList.add('is-invalid')
-                        this.errRating = true;
-                        validated = false;
+                    return validated
+                },
+                submit(event) {
+                    event.preventDefault();
+
+                    // Reset errors
+                    this.errExperience = false;
+                    this.errLOM = false;
+                    document.getElementById('experience').classList.remove('is-invalid');
+                    document.getElementById('motivationTextarea').classList.remove('is-invalid');
+
+                    // Validate
+                    let trainingExperience = Array.from(document.getElementById('experience').options).find(option => option.selected && !option.disabled)?.value;
+                    let trainingLOM = document.getElementById('motivationTextarea').value;
+                    var errored = false;
+
+                    if(trainingExperience == null){
+                        document.getElementById('experience').classList.add('is-invalid')
+                        this.errExperience = true;
                     }
 
-                    if (requiredHours !== undefined && atcHours < requiredHours){
-                        document.getElementById('ratingSelect').classList.add('is-invalid')
-                        document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours."
-                        this.errHours = true;
-                        validated = false;
+                    if(trainingLOM.length < 250 && this.motivationRequired){
+                        document.getElementById('motivationTextarea').classList.add('is-invalid')
+                        this.errLOM = true;
                     }
 
-                } else if(page == 2){
-                    validated = true;
+                    // Submit form if validation is successful
+                    if(!this.errExperience && !this.errLOM){
+                        document.getElementById('training-submit-btn').disabled = true;
+                        document.querySelector('.submit-spinner').style.display = 'inherit';
+                        document.getElementById('training-form').submit();
+                    }
+        
+                },
+                areaSelectChange(event) {
+                    this.ratingSelectUpdate(event.srcElement.value);
+                    document.getElementById('areaSelect').classList.remove('is-invalid');
+                    document.getElementById('ratingSelect').classList.remove('is-invalid');
+                    this.errArea = false;
+                    this.errRating = false;
+                    this.errHours = false;
+                },
+                ratingSelectChange(event){
+                    document.getElementById('ratingSelect').classList.remove('is-invalid');
+                    this.errHours = false;
+                },
+                ratingSelectUpdate(areaId){
+                    this.ratings = payload[areaId].data
                 }
-
-                return validated
-            },
-            submit(event) {
-                event.preventDefault();
-
-                // Reset errors
-                this.errExperience = false;
-                this.errLOM = false;
-                document.getElementById('experience').classList.remove('is-invalid');
-                document.getElementById('motivationTextarea').classList.remove('is-invalid');
-
-                // Validate
-                let trainingExperience = Array.from(document.getElementById('experience').options).find(option => option.selected && !option.disabled)?.value;
-                let trainingLOM = document.getElementById('motivationTextarea').value;
-                var errored = false;
-
-                if(trainingExperience == null){
-                    document.getElementById('experience').classList.add('is-invalid')
-                    this.errExperience = true;
-                }
-
-                if(trainingLOM.length < 250 && this.motivationRequired){
-                    document.getElementById('motivationTextarea').classList.add('is-invalid')
-                    this.errLOM = true;
-                }
-
-                // Submit form if validation is successful
-                if(!this.errExperience && !this.errLOM){
-                    document.getElementById('training-submit-btn').disabled = true;
-                    document.querySelector('.submit-spinner').style.display = 'inherit';
-                    document.getElementById('training-form').submit();
-                }
-    
-            },
-            areaSelectChange(event) {
-                this.ratingSelectUpdate(event.srcElement.value);
-                document.getElementById('areaSelect').classList.remove('is-invalid');
-                document.getElementById('ratingSelect').classList.remove('is-invalid');
-                this.errArea = false;
-                this.errRating = false;
-                this.errHours = false;
-            },
-            ratingSelectChange(event){
-                document.getElementById('ratingSelect').classList.remove('is-invalid');
-                this.errHours = false;
-            },
-            ratingSelectUpdate(areaId){
-                this.ratings = payload[areaId].data
             }
-        }
-
-    });
+        }).mount('#application');
+    })
 
 </script>
 @endsection

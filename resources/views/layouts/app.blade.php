@@ -6,7 +6,6 @@
     </head>
 
     <body>
-    <div id='app'></div>
 
     {{-- Page Wrapper --}}
     <div id="wrapper">
@@ -72,7 +71,7 @@
     {{-- End of Page Wrapper --}}
 
     {{-- Bootstrap core JavaScript--}}
-    <script src="{{ asset('js/app.js') }}"></script>
+    @vite(['resources/js/app.js'])
     <script>
         // Bootstrap-table: Filter function to strip html from bootstrap table column filters
         window.tableFilterStripHtml = function (value) {

@@ -3,7 +3,7 @@
 @section('title', 'Create Endorsement')
 @section('content')
 
-<div class="row" id="application">
+<div class="row" id="giveEndorsements">
     <div class="col-xl-5 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -221,117 +221,120 @@
 
 <script>
 
-    // Vue
-    const application = new Vue({
-        el: '#application',
-        data: {
-            endorsementType: null,
-            trainingType: null,
-            user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
-            expire: null,
-            expireInf: null,
-            positions: null,
-            ratingMASC: null,
-            ratingGRP: null,
-            ratingExaminate: null,
-            areas: [],
-            soloChecked: false,
-            validationError: false,
-            errSoloPositionCount: false,
-        },
-        methods:{
-            updateButtonText(){
+    document.addEventListener("DOMContentLoaded", function () {
 
-                var btn = document.getElementById("submit_btn");
-                var end = ""
-
-                const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
-
-                if(this.endorsementType == 'MASC'){
-                    end = "MA/SC"
-                } else if(this.endorsementType == 'TRAINING'){
-                    end = "Training"
-                    if(this.trainingType == 'S1'){
-                        end = "S1"
-                        // While at it, let's set calendar max date as well
-                        flatpickr.config.maxDate = moment().add(3, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
-                    } else if(this.trainingType == 'SOLO') {
-                        end = "Solo"
-                        // While at it, let's set calendar max date as well
-                        flatpickr.config.maxDate = moment().add(1, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
-                    }
-                } else if(this.endorsementType == 'EXAMINER'){
-                    end = "Examiner"
-                } else if(this.endorsementType == 'VISITING'){
-                    end = "Visiting"
+        const giveEndorsements = createApp({
+            data() {
+                return {
+                    endorsementType: null,
+                    trainingType: null,
+                    user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
+                    expire: null,
+                    expireInf: null,
+                    positions: null,
+                    ratingMASC: null,
+                    ratingGRP: null,
+                    ratingExaminate: null,
+                    areas: [],
+                    soloChecked: false,
+                    validationError: false,
+                    errSoloPositionCount: false,
                 }
-
-                btn.innerText = "Create " + end + " Endorsement";
-
             },
-            validate(){
+            methods:{
+                updateButtonText(){
 
-                /*
-                    All -> User
+                    var btn = document.getElementById("submit_btn");
+                    var end = ""
 
-                    Airport/Center -> Single MA/SC Rating
-                    Training -> Type + Expire + Position (Multiple if S1)
-                    Examiner -> GRP Ratings + Areas
-                    Visitor -> Areas + Single GRP Rating
+                    const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
 
-                    Specials:
-                    Positions: Only 1 for Solo.
-
-                */
-
-                var validated = true
-
-                if(this.user == null) validated = false
-
-                if(this.endorsementType == 'MASC'){
-
-                    if(this.ratingMASC == null) validated = false
-
-                } else if(this.endorsementType == 'TRAINING'){
-
-                    if(this.expire == null && this.expireInf != true) validated = false
-                    if(this.positions == null) validated = false
-                    
-                    if(this.trainingType == 'SOLO'){
-                        if(this.soloChecked == false) validated = false
-                        if(this.positions && this.positions.includes(',')) { 
-                            validated = false
-                            this.errSoloPositionCount = true 
+                    if(this.endorsementType == 'MASC'){
+                        end = "MA/SC"
+                    } else if(this.endorsementType == 'TRAINING'){
+                        end = "Training"
+                        if(this.trainingType == 'S1'){
+                            end = "S1"
+                            // While at it, let's set calendar max date as well
+                            flatpickr.config.maxDate = moment().add(3, 'M').toDate()
+                            flatpickr.jumpToDate(moment().toDate())
+                        } else if(this.trainingType == 'SOLO') {
+                            end = "Solo"
+                            // While at it, let's set calendar max date as well
+                            flatpickr.config.maxDate = moment().add(1, 'M').toDate()
+                            flatpickr.jumpToDate(moment().toDate())
                         }
+                    } else if(this.endorsementType == 'EXAMINER'){
+                        end = "Examiner"
+                    } else if(this.endorsementType == 'VISITING'){
+                        end = "Visiting"
                     }
 
-                } else if(this.endorsementType == 'EXAMINER'){
+                    btn.innerText = "Create " + end + " Endorsement";
 
-                    if(this.ratingGRP == null) validated = false
-                    if(this.areas.length == 0) validated = false
+                },
+                validate(){
 
-                } else if(this.endorsementType == 'VISITING'){
+                    /*
+                        All -> User
 
-                    if(this.ratingGRP == null) validated = false
-                    if(this.areas.length == 0) validated = false
+                        Airport/Center -> Single MA/SC Rating
+                        Training -> Type + Expire + Position (Multiple if S1)
+                        Examiner -> GRP Ratings + Areas
+                        Visitor -> Areas + Single GRP Rating
 
-                }
+                        Specials:
+                        Positions: Only 1 for Solo.
 
-                return validated
-            },
-            submit(event) {
-                event.preventDefault()
+                    */
 
-                if(this.validate()){
-                    document.getElementById('endorsementForm').submit()
-                } else {
-                    this.validationError = true
+                    var validated = true
+
+                    if(this.user == null) validated = false
+
+                    if(this.endorsementType == 'MASC'){
+
+                        if(this.ratingMASC == null) validated = false
+
+                    } else if(this.endorsementType == 'TRAINING'){
+
+                        if(this.expire == null && this.expireInf != true) validated = false
+                        if(this.positions == null) validated = false
+                        
+                        if(this.trainingType == 'SOLO'){
+                            if(this.soloChecked == false) validated = false
+                            if(this.positions && this.positions.includes(',')) { 
+                                validated = false
+                                this.errSoloPositionCount = true 
+                            }
+                        }
+
+                    } else if(this.endorsementType == 'EXAMINER'){
+
+                        if(this.ratingGRP == null) validated = false
+                        if(this.areas.length == 0) validated = false
+
+                    } else if(this.endorsementType == 'VISITING'){
+
+                        if(this.ratingGRP == null) validated = false
+                        if(this.areas.length == 0) validated = false
+
+                    }
+
+                    return validated
+                },
+                submit(event) {
+                    event.preventDefault()
+
+                    if(this.validate()){
+                        document.getElementById('endorsementForm').submit()
+                    } else {
+                        this.validationError = true
+                    }
                 }
             }
-        }
 
+        }).mount('#giveEndorsements');
     });
 
 </script>

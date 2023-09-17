@@ -95,28 +95,32 @@
 
 @section('js')
 <script>
-    var payload = {!! json_encode($ratings, true) !!}
+    document.addEventListener("DOMContentLoaded", function () {
 
-    const area = new Vue({
-        el: '#areaSelect',
-        methods: {
-            onChange(event) {
-                rating.update(event.srcElement.options[event.srcElement.selectedIndex])
-            }
-        }
-    });
+        var payload = {!! json_encode($ratings, true) !!}
 
-    const rating = new Vue({
-        el: '#ratingSelect',
-        data: {
-            ratings: '',
-        },
-        methods: {
-            update: function(value){
-                this.ratings = payload[value.getAttribute('data-id')].ratings
-                this.ratings.push({id: 5, name: "C3"})
+        const area = createApp({
+            methods: {
+                onChange(event) {
+                    rating.update(event.srcElement.options[event.srcElement.selectedIndex])
+                }
             }
-        }
+        }).mount('#areaSelect');
+
+        const rating = createApp({
+            data(){
+                return {
+                    ratings: ''
+                }
+            },
+            methods: {
+                update: function(value){
+                    this.ratings = payload[value.getAttribute('data-id')].ratings
+                    this.ratings.push({id: 5, name: "C3"})
+                }
+            }
+        }).mount('#ratingSelect');
+    
     });
 </script>
 @endsection

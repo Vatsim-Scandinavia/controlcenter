@@ -1,28 +1,19 @@
 /**
- * Init all project's JavaScript dependecies
- */
+ * Imports
+*/
 
-require('./bootstrap');
+import bootstrap from 'bootstrap';
 import moment from 'moment';
-import Vue from 'vue';
+
+/**
+ * Insert global variables
+*/
 
 window.moment = moment;
-window.Vue = Vue;
 
 /**
- * Register Vue components
- */
-
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
-
-/**
- * Create a fresh Vue application instance
- */
-
-const app = new Vue({
-    el: '#app',
-});
+ * Sidebar logic
+*/
 
 window.addEventListener('load', function(event) {
     var sidebar = document.getElementById('sidebar');
