@@ -63,14 +63,28 @@
                     </div>
 
                     @can('bookTags', \App\Models\Booking::class)
-                        <div class="mb-3">
-                            <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                            <label class="form-label" for="exam">Exam</label>
-                            &nbsp;&nbsp;&nbsp;
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <div class="btn-group input-group-sm w-100" role="group">
+                            <input type="radio" class="btn-check" id="normal" name="tag" value="" checked>
+                            <label class="btn btn-outline-secondary" for="normal">
+                                <i class="fa-solid fa-tower-broadcast"></i>
+                                Normal
+                            </label>
 
-                            <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                            <label class="form-label" for="event">Event</label>
+                            <input type="radio" class="btn-check" id="exam" name="tag" value="2">
+                            <label class="btn btn-outline-danger" for="exam">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                Exam
+                            </label>
+
+                            <input type="radio" class="btn-check" id="event" name="tag" value="3">
+                            <label class="btn btn-outline-success" for="event">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                Event
+                            </label>
                         </div>
+                    </div>
                     @endcan
 
                     <button type="submit" class="btn btn-success">Add Bookings</button>
@@ -84,27 +98,6 @@
 @endsection
 
 @section('js')
-
-<script>
-    change = (type) => {
-        let name = document.getElementsByName(type.name);
-        let checked = document.getElementById(type.id);
-
-        if (checked.checked) {
-            for(let i = 0; i < name.length; i++) {
-                if(!name[i].checked) {
-                    name[i].disabled = true;
-                } else {
-                    name[i].disabled = false;
-                }
-            }
-        } else {
-            for(let i = 0; i < name.length; i++) {
-                name[i].disabled = false;
-            }
-        }
-    }
-</script>
 
 <!-- Flatpickr -->
 @include('scripts.flatpickr')
