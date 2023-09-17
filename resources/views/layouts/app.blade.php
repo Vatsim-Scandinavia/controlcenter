@@ -165,30 +165,37 @@
             });
 
             // When pressing enter on desktop, redirect directly to inputed userID if it's a number
-            document.querySelector('#user-search-form-desktop').addEventListener('submit', function(e){ 
-                e.preventDefault();
+            var userSearchFormDesktop = document.querySelector('#user-search-form-desktop')
+            if(userSearchFormDesktop){
+                userSearchFormDesktop.addEventListener('submit', function(e){ 
+                    e.preventDefault();
 
-                var query = parseInt(document.querySelector('.search-input').value);
-                if(Number.isInteger(query)){
-                    location.assign("{{ route('user.show', '') }}/" + query); 
-                }
+                    var query = parseInt(document.querySelector('.search-input').value);
+                    if(Number.isInteger(query)){
+                        location.assign("{{ route('user.show', '') }}/" + query); 
+                    }
 
-            });
+                });
+            }
 
             // When pressing enter on mobile start the search
-            document.querySelector('#user-search-form-mobile').addEventListener('submit', function(e){
-                e.preventDefault() 
+            var userSearchFormMobile = document.querySelector('#user-search-form-mobile')
+            if(userSearchFormMobile){
+                userSearchFormMobile.addEventListener('submit', function(e){
+                    e.preventDefault() 
 
-                var query = null
-                document.querySelectorAll('.search-input').forEach((el) => {
-                    if(el.value != '') query = el.value
+                    var query = null
+                    document.querySelectorAll('.search-input').forEach((el) => {
+                        if(el.value != '') query = el.value
+                    });
+
+                    showSpinner(true)
+            
+                    clearTimeout(timer);
+                    timer = setTimeout(fetch_users, 200, query, true)
                 });
-
-                showSpinner(true)
-        
-                clearTimeout(timer);
-                timer = setTimeout(fetch_users, 200, query, true)
-            });
+            }
+            
 
             // Close search results when clicking outside of it
             document.addEventListener("click", function(event) {
