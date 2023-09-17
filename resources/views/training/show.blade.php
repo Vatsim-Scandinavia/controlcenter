@@ -626,32 +626,39 @@
     <script>
 
         // Generate a one time report link
-        document.getElementById('getOneTimeLinkReport').addEventListener('click', async function (event) {
-            event.preventDefault();
-            document.querySelector(this).disabled = true
-            let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
-            document.querySelector(this).disabled = false
+        var getOneTimeLinkReport = document.getElementById('getOneTimeLinkReport')
+        if(getOneTimeLinkReport){
+            getOneTimeLinkReport.addEventListener('click', async function (event) {
+                event.preventDefault();
+                document.querySelector(this).disabled = true
+                let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
+                document.querySelector(this).disabled = false
 
-            document.getElementById('otl-alert').style.display = "block";
-            document.getElementById('otl-type').innerHTML = "Training Report one-time link";
-            document.getElementById('otl-link').href = route
-            document.getElementById('otl-link').innerHTML = route
-            document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
-        });
+                document.getElementById('otl-alert').style.display = "block";
+                document.getElementById('otl-type').innerHTML = "Training Report one-time link";
+                document.getElementById('otl-link').href = route
+                document.getElementById('otl-link').innerHTML = route
+                document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
+            });
+        }
+        
 
         // Generate a one time exam report link
-        document.getElementById('getOneTimeLinkExam').addEventListener('click', async function (event) {
-            event.preventDefault();
-            document.querySelector(this).disabled = true
-            let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
-            document.querySelector(this).disabled = false
+        var getOneTimeLinkExam = document.getElementById('getOneTimeLinkExam')
+        if(getOneTimeLinkExam){
+            getOneTimeLinkExam.addEventListener('click', async function (event) {
+                event.preventDefault();
+                document.querySelector(this).disabled = true
+                let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
+                document.querySelector(this).disabled = false
 
-            document.getElementById('otl-alert').style.display = "block";
-            document.getElementById('otl-type').innerHTML = "Examination Report";
-            document.getElementById('otl-link').href = route
-            document.getElementById('otl-link').innerHTML = route
-            document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
-        });
+                document.getElementById('otl-alert').style.display = "block";
+                document.getElementById('otl-type').innerHTML = "Examination Report";
+                document.getElementById('otl-link').href = route
+                document.getElementById('otl-link').innerHTML = route
+                document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
+            });
+        }
 
         async function getOneTimeLink(type) {
             return '{!! env('APP_URL') !!}' + '/training/onetime/' + await getOneTimeLinkKey(type);
@@ -738,22 +745,25 @@
             });
 
             // Closure reason input
-            toggleClosureReasonField(document.querySelector('#trainingStateSelect').value);
-
             var trainingStateSelect = document.querySelector('#trainingStateSelect');
-            if (trainingStateSelect) {
-                trainingStateSelect.addEventListener('change', function () {
-                    toggleClosureReasonField(trainingStateSelect.value);
-                });
-            }
+            if(trainingStateSelect){
+                toggleClosureReasonField(document.querySelector('#trainingStateSelect').value);
 
-            function toggleClosureReasonField(val) {
-                var closedReasonInput = document.querySelector('#closedReasonInput');
-                if (closedReasonInput) {
-                    if (val == -2) {
-                        closedReasonInput.style.display = 'block';
-                    } else {
-                        closedReasonInput.style.display = 'none';
+                var trainingStateSelect = document.querySelector('#trainingStateSelect');
+                if (trainingStateSelect) {
+                    trainingStateSelect.addEventListener('change', function () {
+                        toggleClosureReasonField(trainingStateSelect.value);
+                    });
+                }
+
+                function toggleClosureReasonField(val) {
+                    var closedReasonInput = document.querySelector('#closedReasonInput');
+                    if (closedReasonInput) {
+                        if (val == -2) {
+                            closedReasonInput.style.display = 'block';
+                        } else {
+                            closedReasonInput.style.display = 'none';
+                        }
                     }
                 }
             }
