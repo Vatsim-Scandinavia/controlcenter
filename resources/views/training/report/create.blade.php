@@ -104,27 +104,6 @@
 
 @section('js')
 
-<script>    
-    document.addEventListener("DOMContentLoaded", function () {
-        var submitClicked = false
-        document.addEventListener("submit", function(event) {
-            if (event.target.tagName === "FORM") {
-                submitClicked = true;
-            }
-        });
-
-
-        // Confirm closing window if there are unsaved changes
-        window.addEventListener('beforeunload', function (e) {
-            if(!submitClicked && (simplemde1.value() != '' || simplemde2.value() != '')){
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-    })
-</script>
-
 <!-- Flatpickr -->
 @include('scripts.flatpickr')
 <script>
@@ -150,6 +129,21 @@
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
             insertTexts: {
                 link: ["[","](link)"],
+            }
+        });
+
+        var submitClicked = false
+        document.addEventListener("submit", function(event) {
+            if (event.target.tagName === "FORM") {
+                submitClicked = true;
+            }
+        });
+
+        // Confirm closing window if there are unsaved changes
+        window.addEventListener('beforeunload', function (e) {
+            if(!submitClicked && (simplemde1.value() != '' || simplemde2.value() != '')){
+                e.preventDefault();
+                e.returnValue = '';
             }
         });
     })
