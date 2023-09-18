@@ -397,8 +397,8 @@
 @section('js')
 
     <!-- Flatpickr -->
-    @include('scripts.tooltips')
     @include('scripts.flatpickr')
+    @include('scripts.tooltips')
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
