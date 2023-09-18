@@ -147,6 +147,7 @@
 @endsection
 
 @section('js')
+@vite('resources/js/vue.js')
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
