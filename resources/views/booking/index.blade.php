@@ -197,15 +197,16 @@
 
 @section('js')
 
-<!-- Flatpickr --> 
-@include('scripts.flatpickr')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var defaultDate = "{{ old('date') }}"
-        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
-    })
-</script>
+    <!-- Flatpickr --> 
+    @include('scripts.flatpickr')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var defaultDate = "{{ old('date') }}"
+            document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+        })
+    </script>
 
-@include('scripts.zulutime')
+    @include('scripts.zulutime')
+    @include('scripts.tooltips')
 
 @endsection

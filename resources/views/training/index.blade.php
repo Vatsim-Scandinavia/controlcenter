@@ -127,5 +127,5 @@
 @endsection
 
 @section('js')
-@include('scripts.tooltips')
+    @include('scripts.tooltips')
 @endsection

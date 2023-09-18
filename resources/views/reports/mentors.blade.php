@@ -106,3 +106,7 @@
 </div>
 
 @endsection
+
+@section('js')
+    @include('scripts.tooltips')
+@endsection
