@@ -178,8 +178,10 @@
 <!-- Flatpickr -->
 @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
-    var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
-    document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: new Date("{{ $report->report_date }}"), locale: {firstDayOfWeek: 1 } });
+    document.addEventListener("DOMContentLoaded", function () {
+        var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: new Date("{{ $report->report_date }}"), locale: {firstDayOfWeek: 1 } });
+    });
 </script>
 
 <!-- Markdown Editor -->
