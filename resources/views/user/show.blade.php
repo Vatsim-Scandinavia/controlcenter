@@ -402,11 +402,11 @@
 @section('js')
 
     <!-- Flatpickr -->
-    @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
     @include('scripts.tooltips')
+    @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
+            document.querySelectorAll('.flatpickr').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
                 onChange: function(selectedDates, dateStr, instance) {
                     if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
                         window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
