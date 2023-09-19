@@ -630,9 +630,9 @@
         if(getOneTimeLinkReport){
             getOneTimeLinkReport.addEventListener('click', async function (event) {
                 event.preventDefault();
-                document.querySelector(this).disabled = true
+                event.target.disabled = true
                 let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
-                document.querySelector(this).disabled = false
+                event.target.disabled = false
 
                 document.getElementById('otl-alert').style.display = "block";
                 document.getElementById('otl-type').innerHTML = "Training Report one-time link";
@@ -648,9 +648,9 @@
         if(getOneTimeLinkExam){
             getOneTimeLinkExam.addEventListener('click', async function (event) {
                 event.preventDefault();
-                document.querySelector(this).disabled = true
+                event.target.disabled = true
                 let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
-                document.querySelector(this).disabled = false
+                event.target.disabled = false
 
                 document.getElementById('otl-alert').style.display = "block";
                 document.getElementById('otl-type').innerHTML = "Examination Report";
@@ -665,31 +665,31 @@
         }
 
         async function getOneTimeLinkKey(type) {
-            let key, result;
-            result = await $.ajax('{!! route('training.onetimelink.store', ['training' => $training]) !!}', {
-                type: 'POST',
+            let key;
+
+            const response = await fetch('{{ route('training.onetimelink.store', ['training' => $training]) }}', {
+                method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': "{!! csrf_token() !!}"
+                    'X-CSRF-TOKEN': '{!! csrf_token() !!}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                 },
-                data: {
-                    'type': type
-                },
-                success: function (response) {
-                    return response;
-                },
-                error: function (response) {
+                body: JSON.stringify({ type }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
                     console.error(response);
-                    alert("An error occured while trying to generate the one-time link.");
+                    alert('An error occurred while trying to generate the one-time link.');
                 }
-            });
-
-            try {
-                key = JSON.parse(result).key
-            } catch (error) {
+            })
+            .catch(error => {
                 console.error(error);
-            }
-
-            return key;
+                alert('An error occurred while trying to generate the one-time link.');
+            })
+            
+            return response.key;
         }
 
         function updateComment(id, oldText){
