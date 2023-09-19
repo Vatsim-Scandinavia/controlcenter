@@ -32,6 +32,7 @@ export default ({ mode }) => {
                 '/resources/sass/app.scss',
                 '/resources/js/app.js',
                 '/resources/js/vue.js',
+                '/resources/js/chart.js',
                 '/resources/sass/bootstrap-table.scss',
                 '/resources/js/bootstrap-table.js'
             ]),

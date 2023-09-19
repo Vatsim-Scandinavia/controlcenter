@@ -79,47 +79,50 @@
 @endsection
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@vite('resources/js/chart.js')
 <script>
 
-    var vote = {!! json_encode($vote->option) !!};
+    document.addEventListener("DOMContentLoaded", function () {
 
-    var voteOption = [];
-    var voteVotes = [];
-    for (i = 0; i < vote.length; i++) {
-        voteOption.push(vote[i]['option']);
-        voteVotes.push(vote[i]['voted']);
-    }
+        var vote = {!! json_encode($vote->option) !!};
 
-    var barChartData = {
-        labels: voteOption,
-        datasets: [{
-            label: 'Votes',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: voteVotes,
-        }]
-
-    };
-
-    var mix = document.getElementById("voteResults").getContext('2d');
-    var voteResults = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
-            scales: {
-                y: {
-                    ticks: {
-                        beginAtZero: true,
-                        stepSize: 1,
-                    }
-                }
-            },
-            responsive: true,
+        var voteOption = [];
+        var voteVotes = [];
+        for (i = 0; i < vote.length; i++) {
+            voteOption.push(vote[i]['option']);
+            voteVotes.push(vote[i]['voted']);
         }
+
+        var barChartData = {
+            labels: voteOption,
+            datasets: [{
+                label: 'Votes',
+                backgroundColor: 'rgb(200, 100, 100)',
+                data: voteVotes,
+            }]
+
+        };
+
+        var mix = document.getElementById("voteResults").getContext('2d');
+        var voteResults = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 1,
+                        }
+                    }
+                },
+                responsive: true,
+            }
+        });
     });
 
 </script>
