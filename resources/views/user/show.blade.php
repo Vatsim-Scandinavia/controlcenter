@@ -419,26 +419,27 @@
 
     <!-- VATSIM Data Fetch -->
     <script>
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "{{route('user.vatsimhours')}}?cid={{$user->id}}");
-        xhr.send();
-
-        xhr.onload = function(){
-            let data = JSON.parse(xhr.responseText)["data"];
-            var vatsimHours = document.getElementById("vatsim-data");
-
-            if (data) {
-                for(let key in data){
-                    if(key == "pilot"){
-                        vatsimHours.innerHTML += "<dd class='mb-0'>Pilot: " + Math.round(data[key]) + "h</dd>"
-                    } else if(key != "id" && key != "pilot" && key != "atc" && data[key] > 0){
-                        vatsimHours.innerHTML += "<dd class='mb-0'>" + key.toUpperCase() + ": " + Math.round(data[key]) + "h</dd>"
+        fetch("{{ route('user.vatsimhours') }}?cid={{ $user->id }}")
+            .then(response => response.json())
+            .then(data => {
+                var vatsimHours = document.getElementById("vatsim-data");
+    
+                if (data.data) {
+                    for (let key in data.data) {
+                        if (key === "pilot") {
+                            vatsimHours.innerHTML += "<dd class='mb-0'>Pilot: " + Math.round(data.data[key]) + "h</dd>"
+                        } else if (key !== "id" && key !== "pilot" && key !== "atc" && data.data[key] > 0) {
+                            vatsimHours.innerHTML += "<dd class='mb-0'>" + key.toUpperCase() + ": " + Math.round(data.data[key]) + "h</dd>"
+                        }
                     }
+                } else {
+                    vatsimHours.innerHTML = vatsimHours.innerHTML + "<dd>No Data</dd>"
                 }
-            } else {
-                vatsimHours.innerHTML = vatsimHours.innerHTML + "<dd>No Data</dd>"
-            }
-        };
-    </script>
+            })
+            .catch(error => {
+                console.error(error);
+                alert('An error occurred while fetching VATSIM hours data.');
+            });
+    </script>    
 
 @endsection
