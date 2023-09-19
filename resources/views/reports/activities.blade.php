@@ -15,7 +15,7 @@
     </div>
 @endsection
 
-@section('css')
+@section('header')
     @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
 @endsection
 

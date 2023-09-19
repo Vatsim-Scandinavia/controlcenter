@@ -73,6 +73,7 @@
     {{-- JavaScripts--}}
     @vite(['resources/js/app.js'])
     @include('scripts.global')
+    
     @yield('js')
     
     </body>
