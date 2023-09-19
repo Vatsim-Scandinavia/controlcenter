@@ -79,7 +79,7 @@
 @section('js')
 
 <!-- Flatpickr -->
-@include('scripts.flatpickr')
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $booking->date)->format('d/m/Y') : old('date') }}"

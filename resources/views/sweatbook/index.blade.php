@@ -143,7 +143,7 @@
 @section('js')
 
 <!-- Flatpickr -->
-@include('scripts.flatpickr')
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var defaultDate = "{{ old('date') }}"

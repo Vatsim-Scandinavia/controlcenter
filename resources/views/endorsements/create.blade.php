@@ -340,7 +340,7 @@
 </script>
 
 <!-- Flatpickr --> 
-@include('scripts.flatpickr')
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });

@@ -397,7 +397,7 @@
 @section('js')
 
     <!-- Flatpickr -->
-    @include('scripts.flatpickr')
+    @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
     @include('scripts.tooltips')
     <script>
         document.addEventListener("DOMContentLoaded", function () {

@@ -105,7 +105,7 @@
 @section('js')
 
 <!-- Flatpickr -->
-@include('scripts.flatpickr')
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     var defaultDate = "{{ old('report_date') }}"
     document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });

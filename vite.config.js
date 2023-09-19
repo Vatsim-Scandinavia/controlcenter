@@ -33,8 +33,10 @@ export default ({ mode }) => {
                 '/resources/js/app.js',
                 '/resources/js/vue.js',
                 '/resources/js/chart.js',
+                '/resources/js/flatpickr.js',
+                '/resources/sass/flatpickr.scss',
+                '/resources/js/bootstrap-table.js',
                 '/resources/sass/bootstrap-table.scss',
-                '/resources/js/bootstrap-table.js'
             ]),
         ],
         resolve: {
