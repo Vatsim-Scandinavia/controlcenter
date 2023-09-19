@@ -188,43 +188,44 @@
 </script>
 
 <!-- Markdown Editor -->
-@include('scripts.mdeditor')
+@vite(['resources/js/easymde.js', 'resources/sass/easymde.scss'])
 <script>
-    var newRequestMde = new SimpleMDE({ 
-        element: document.getElementById("newrequestaddition"), 
-        status: false, 
-        toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-        insertTexts: {
-            link: ["[","](link)"],
-        },
+    document.addEventListener("DOMContentLoaded", function () {
+        var newRequestMde = new EasyMDE({ 
+            element: document.getElementById("newrequestaddition"), 
+            status: false, 
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
+            insertTexts: {
+                link: ["[","](link)"],
+            },
+        });
+
+        var newMentorMde = new EasyMDE({ 
+            element: document.getElementById("newmentoraddition"), 
+            status: false, 
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
+            insertTexts: {
+                link: ["[","](link)"],
+            },
+        });
+
+        var preTrainingMde = new EasyMDE({ 
+            element: document.getElementById("pretrainingaddition"), 
+            status: false, 
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
+            insertTexts: {
+                link: ["[","](link)"],
+            },
+        });
+
+        var newRequestPreview = setInterval(function(){
+
+            document.getElementById("newrequestaddition-preview").innerHTML = newRequestMde.markdown(newRequestMde.value());
+            document.getElementById("newmentoraddition-preview").innerHTML = newMentorMde.markdown(newMentorMde.value());
+            document.getElementById("pretrainingaddition-preview").innerHTML = preTrainingMde.markdown(preTrainingMde.value());
+        
+        }, 1000);
     });
-
-    var newMentorMde = new SimpleMDE({ 
-        element: document.getElementById("newmentoraddition"), 
-        status: false, 
-        toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-        insertTexts: {
-            link: ["[","](link)"],
-        },
-    });
-
-    var preTrainingMde = new SimpleMDE({ 
-        element: document.getElementById("pretrainingaddition"), 
-        status: false, 
-        toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-        insertTexts: {
-            link: ["[","](link)"],
-        },
-    });
-
-    var newRequestPreview = setInterval(function(){
-
-        document.getElementById("newrequestaddition-preview").innerHTML = newRequestMde.markdown(newRequestMde.value());
-        document.getElementById("newmentoraddition-preview").innerHTML = newMentorMde.markdown(newMentorMde.value());
-        document.getElementById("pretrainingaddition-preview").innerHTML = preTrainingMde.markdown(preTrainingMde.value());
-    
-    }, 1000);
-
 </script>
 
 @endsection

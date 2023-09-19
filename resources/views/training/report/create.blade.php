@@ -107,15 +107,17 @@
 <!-- Flatpickr -->
 @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
-    var defaultDate = "{{ old('report_date') }}"
-    document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+    document.addEventListener("DOMContentLoaded", function () {
+        var defaultDate = "{{ old('report_date') }}"
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", maxDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });  
+    });
 </script>
 
 <!-- Markdown Editor -->
-@include('scripts.mdeditor')
+@vite(['resources/js/easymde.js', 'resources/sass/easymde.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var simplemde1 = new SimpleMDE({ 
+        var simplemde1 = new EasyMDE({ 
             element: document.getElementById("contentBox"), 
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
@@ -123,7 +125,7 @@
                 link: ["[","](link)"],
             }
         });
-        var simplemde2 = new SimpleMDE({ 
+        var simplemde2 = new EasyMDE({ 
             element: document.getElementById("contentimprove"), 
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],

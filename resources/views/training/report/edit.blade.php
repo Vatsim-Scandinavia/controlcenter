@@ -183,10 +183,10 @@
 </script>
 
 <!-- Markdown Editor -->
-@include('scripts.mdeditor')
+@vite(['resources/js/easymde.js', 'resources/sass/easymde.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var simplemde1 = new SimpleMDE({ 
+        var simplemde1 = new EasyMDE({ 
             element: document.getElementById("contentBox"), 
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
@@ -194,7 +194,7 @@
                 link: ["[","](link)"],
             }
         });
-        var simplemde2 = new SimpleMDE({ 
+        var simplemde2 = new EasyMDE({ 
             element: document.getElementById("contentimprove"), 
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
