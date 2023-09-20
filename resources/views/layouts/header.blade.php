@@ -7,12 +7,10 @@
 
 <title>@yield('title', 'Home') | {{ config('app.name') }}</title>
 
-{{-- Custom fonts for this template  --}} 
-<link href="https://fonts.googleapis.com/css?family=Roboto:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+@vite(['resources/sass/app.scss'])
 
-{{-- Custom styles for this template --}}
-<link href="{{ asset('css/app.css' ) }}" rel="stylesheet">
-<link href="{{ asset('css/vendor.css' ) }}" rel="stylesheet">
+{{-- Custom fonts --}} 
+<link href="https://fonts.googleapis.com/css?family=Roboto:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
 {{-- Favicon --}}
 <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
@@ -26,7 +24,8 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex">
 
-@yield('css')
+{{-- Page specific header elements --}}
+@yield('header')
 
 @if(!empty(Config::get('app.tracking_script')))
     {{-- Tracking script of choice --}}

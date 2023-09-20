@@ -14,6 +14,11 @@
         @endforeach 
     </div>
 @endsection
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -158,10 +163,5 @@
 @endsection
 
 @section('js')
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-    });
-</script>
+    @include('scripts.tooltips')
 @endsection

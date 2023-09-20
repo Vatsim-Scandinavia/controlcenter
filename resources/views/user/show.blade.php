@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'User Details')
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -395,43 +400,46 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-        $(".flatpickr").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
-            onChange: function(selectedDates, dateStr, instance) {
-                if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
-                    window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
-                }
-            },
-            onReady: function(dateObj, dateStr, instance){ instance.config.maxDate = instance.input.dataset.date }
+
+    <!-- Flatpickr -->
+    @include('scripts.tooltips')
+    @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.flatpickr').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
+                onChange: function(selectedDates, dateStr, instance) {
+                    if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
+                        window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
+                    }
+                },
+                onReady: function(dateObj, dateStr, instance){ instance.config.maxDate = instance.input.dataset.date }
+            });
         });
-    });
+    </script>
 
-    // Fetch VATSIM data async
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", "{{route('user.vatsimhours')}}?cid={{$user->id}}");
-    xhr.send();
-
-    xhr.onload = function(){
-        let data = JSON.parse(xhr.responseText)["data"];
-        var vatsimHours = document.getElementById("vatsim-data");
-
-        if (data) {
-            for(let key in data){
-                if(key == "pilot"){
-                    vatsimHours.innerHTML += "<dd class='mb-0'>Pilot: " + Math.round(data[key]) + "h</dd>"
-                } else if(key != "id" && key != "pilot" && key != "atc" && data[key] > 0){
-                    vatsimHours.innerHTML += "<dd class='mb-0'>" + key.toUpperCase() + ": " + Math.round(data[key]) + "h</dd>"
+    <!-- VATSIM Data Fetch -->
+    <script>
+        fetch("{{ route('user.vatsimhours') }}?cid={{ $user->id }}")
+            .then(response => response.json())
+            .then(data => {
+                var vatsimHours = document.getElementById("vatsim-data");
+    
+                if (data.data) {
+                    for (let key in data.data) {
+                        if (key === "pilot") {
+                            vatsimHours.innerHTML += "<dd class='mb-0'>Pilot: " + Math.round(data.data[key]) + "h</dd>"
+                        } else if (key !== "id" && key !== "pilot" && key !== "atc" && data.data[key] > 0) {
+                            vatsimHours.innerHTML += "<dd class='mb-0'>" + key.toUpperCase() + ": " + Math.round(data.data[key]) + "h</dd>"
+                        }
+                    }
+                } else {
+                    vatsimHours.innerHTML = vatsimHours.innerHTML + "<dd>No Data</dd>"
                 }
-            }
-        } else {
-            vatsimHours.innerHTML = vatsimHours.innerHTML + "<dd>No Data</dd>"
-        }
-    };
+            })
+            .catch(error => {
+                console.error(error);
+                alert('An error occurred while fetching VATSIM hours data.');
+            });
+    </script>    
 
-</script>
 @endsection

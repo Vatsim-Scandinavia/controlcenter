@@ -24,7 +24,7 @@ p {
         margin-bottom: 1.5rem;
     }
 
-    @include media-breakpoint-down(sm) { 
+    @include media-breakpoint-down(sm) {
 
         h3{
             margin-bottom: 0.5rem;
@@ -71,14 +71,14 @@ dl.copyable{
     }
 
     dd:hover button, dd:hover a.link-btn, dt:hover a{
-        
+
         visibility: visible;
         color: $gray-400;
-    
+
         &:hover{
             color: $gray-500;
         }
-    
+
         &:active{
             color: $success;
         }
@@ -111,7 +111,7 @@ dl.copyable{
     width: 100%;
     height: 100vh;
 
-    background: url(/images/front.jpg);
+    background: url("../images/front.jpg");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;

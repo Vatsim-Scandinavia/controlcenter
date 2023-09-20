@@ -75,7 +75,7 @@ To change the logo to yours, bind your logo image files to `public/images/logos`
 | APP_LOGO | vatsca.svg | The logo of your subdivision, located in `public/images/logos` |
 | APP_LOGO_MAIL | vatsca-email.png | The logo of your subdivision, located in `public/images/logos` |
 
-To change the colors of your Control Center, change the following variables and run `npm run prod` in the container to rebuild.
+To change the colors of your Control Center, change the following variables and run `npm run build` in the container to rebuild.
 
 | Variable | Default value | Explanation |
 | ------- | --- | --- |

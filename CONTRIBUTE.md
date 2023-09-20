@@ -13,7 +13,7 @@ To develop Control Center, we recommend running the docker container with the in
 
 1. Run `composer install` to install all dependencies
 2. Run `npm install ` to install all dependencies
-3. Run `npm run dev` to compile the assets
+3. Run `npm run build` to compile the assets
 4. Run `php artisan migrate` to setup the database
 
 If you need test data, you can also seed the database with `php artisan db:seed`

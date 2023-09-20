@@ -10,6 +10,7 @@
                 <h6 class="m-0 fw-bold text-white">
                     Create Bulk Bookings
                 </h6> 
+                <span class="m-0 fw-bold text-white zulu-clock">{{ \Carbon\Carbon::now()->format('H:i\z') }}</span>
             </div>
             <div class="card-body">
                 <form action="{!! action('BookingController@storeBulk') !!}" method="POST">
@@ -62,14 +63,28 @@
                     </div>
 
                     @can('bookTags', \App\Models\Booking::class)
-                        <div class="mb-3">
-                            <input id="exam" type="checkbox" name="tag" value=2 onClick="change(this)">
-                            <label class="form-label" for="exam">Exam</label>
-                            &nbsp;&nbsp;&nbsp;
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <div class="btn-group input-group-sm w-100" role="group">
+                            <input type="radio" class="btn-check" id="normal" name="tag" value="" checked>
+                            <label class="btn btn-outline-secondary" for="normal">
+                                <i class="fa-solid fa-tower-broadcast"></i>
+                                Normal
+                            </label>
 
-                            <input id="event" type="checkbox" name="tag" value=3 onClick="change(this)">
-                            <label class="form-label" for="event">Event</label>
+                            <input type="radio" class="btn-check" id="exam" name="tag" value="2">
+                            <label class="btn btn-outline-danger" for="exam">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                Exam
+                            </label>
+
+                            <input type="radio" class="btn-check" id="event" name="tag" value="3">
+                            <label class="btn btn-outline-success" for="event">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                Event
+                            </label>
                         </div>
+                    </div>
                     @endcan
 
                     <button type="submit" class="btn btn-success">Add Bookings</button>
@@ -84,96 +99,16 @@
 
 @section('js')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-
-        var defaultDate = "{{ old('date') }}"
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
-
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input:visible').prop('readonly', false);
-
-        // Zulu clock
-        var currentdate = new Date(); 
-        var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
-
-        setInterval(function (){
-            var currentdate = new Date(); 
-            var datetime = ('0'+currentdate.getUTCHours()).substr(-2,2) + ":" + ('0'+currentdate.getUTCMinutes()).substr(-2,2);
-            $('.zulu-clock').text(datetime + 'z');
-        },1000);
-    })
-
-    change = (type) => {
-        let name = document.getElementsByName(type.name);
-        let checked = document.getElementById(type.id);
-
-        if (checked.checked) {
-            for(let i = 0; i < name.length; i++) {
-                if(!name[i].checked) {
-                    name[i].disabled = true;
-                } else {
-                    name[i].disabled = false;
-                }
-            }
-        } else {
-            for(let i = 0; i < name.length; i++) {
-                name[i].disabled = false;
-            }
-        }
-    }
-</script>
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-    });
-</script>
-<!-- Multiple select datalist from https://www.meziantou.net/html-multiple-selections-with-datalist.htm -->
+<!-- Flatpickr -->
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const separator = ',';
-        for (const input of document.getElementsByTagName("input")) {
-            if (!input.multiple) {
-                continue;
-            }
-            if (input.list instanceof HTMLDataListElement) {
-                const optionsValues = Array.from(input.list.options).map(opt => opt.value);
-                let valueCount = input.value.split(separator).length;
-                input.addEventListener("input", () => {
-                    const currentValueCount = input.value.split(separator).length;
-                    // Do not update list if the user doesn't add/remove a separator
-                    // Current value: "a, b, c"; New value: "a, b, cd" => Do not change the list
-                    // Current value: "a, b, c"; New value: "a, b, c," => Update the list
-                    // Current value: "a, b, c"; New value: "a, b" => Update the list
-                    if (valueCount !== currentValueCount) {
-                        const lsIndex = input.value.lastIndexOf(separator);
-                        const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
-                        filldatalist(input, optionsValues, str);
-                        valueCount = currentValueCount;
-                    }
-                });
-            }
-        }
-        function filldatalist(input, optionValues, optionPrefix) {
-            const list = input.list;
-            if (list && optionValues.length > 0) {
-                list.innerHTML = "";
-                const usedOptions = optionPrefix.split(separator).map(value => value.trim());
-                for (const optionsValue of optionValues) {
-                    if (usedOptions.indexOf(optionsValue) < 0) {
-                        const option = document.createElement("option");
-                        option.value = optionPrefix + optionsValue;
-                        list.append(option);
-                    }
-                }
-            }
-        }
-    });
+        var defaultDate = "{{ old('date') }}"
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 } });
+    })
 </script>
+
+@include('scripts.zulutime')
+@include('scripts.multipledatalist')
+
 @endsection

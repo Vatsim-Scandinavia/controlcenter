@@ -213,425 +213,440 @@
 @endsection
 
 @section('js')
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+@vite('resources/js/chart.js')
 <script>
 
-    // Total training amount chart
-    var ctx = document.getElementById('trainingChart').getContext('2d');
-    ctx.canvas.width = 1000;
-    ctx.canvas.height = 200;
+    document.addEventListener("DOMContentLoaded", function () {
 
-    var requestData = {!! json_encode($totalRequests) !!} 
-    
-    var color = Chart.helpers.color;
-    var cfg = {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'Training Requests',
-                borderColor: 'rgb(255, 100, 100)',
-                backgroundColor: 'rgba(255,50,50, 0.1)',
-                pointBackgroundColor: 'rgb(255,75,75)',
-                pointRadius: 1,
-                data: requestData,
-                fill: {
-                    target: 'origin',
-                }
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false
+        // Total training amount chart
+        var ctx = document.getElementById('trainingChart').getContext('2d');
+        ctx.canvas.width = 1000;
+        ctx.canvas.height = 200;
+
+        var requestData = {!! json_encode($totalRequests) !!} 
+        
+        var color = Chart.helpers.color;
+        var cfg = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Training Requests',
+                    borderColor: 'rgb(255, 100, 100)',
+                    backgroundColor: 'rgba(255,50,50, 0.1)',
+                    pointBackgroundColor: 'rgb(255,75,75)',
+                    pointRadius: 1,
+                    data: requestData,
+                    fill: {
+                        target: 'origin',
+                    }
+                }]
             },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'month',
-                        tooltipFormat:'DD/MM/YYYY', 
-                    },
-                    ticks: {
-                        major: {
-                            enabled: true,
-                            fontStyle: 'bold'
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            tooltipFormat:'DD/MM/YYYY', 
+                        },
+                        ticks: {
+                            major: {
+                                enabled: true,
+                                fontStyle: 'bold'
+                            },
                         },
                     },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Requests'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Requests'
+            }
+        };
+
+        var chart = new Chart(ctx, cfg);
+
+    });
+
+</script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // New request chart
+        var newRequestsData = {!! json_encode($newRequests) !!}
+
+        var barChartData = {
+            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                    moment().subtract(5, "month").startOf("month").format('MMMM'),
+                    moment().subtract(4, "month").startOf("month").format('MMMM'),
+                    moment().subtract(3, "month").startOf("month").format('MMMM'),
+                    moment().subtract(2, "month").startOf("month").format('MMMM'),
+                    moment().subtract(1, "month").startOf("month").format('MMMM'),
+                    moment().startOf("month").format('MMMM')],
+            datasets: [{
+                label: 'S1',
+                backgroundColor: 'rgb(250, 150, 150)',
+                data: newRequestsData["S1"]
+            }, {
+                label: 'S2',
+                backgroundColor: 'rgb(200, 100, 100)',
+                data: newRequestsData["S2"]
+            }, {
+                label: 'S3',
+                backgroundColor: 'rgb(100, 100, 200)',
+                data: newRequestsData["S3"]
+            }, {
+                label: 'C1',
+                backgroundColor: 'rgb(100, 200, 100)',
+                data: newRequestsData["C1"]
+            }, {
+                label: 'C3',
+                backgroundColor: 'rgb(150, 200, 100)',
+                data: newRequestsData["C3"]
+            }, {
+                label: 'MAE ENGM TWR',
+                backgroundColor: 'rgb(25, 25, 25)',
+                data: newRequestsData["MAE ENGM TWR"],
+                hidden: true
+            }, {
+                label: 'MAE ENGM APP',
+                backgroundColor: 'rgb(50, 50, 50)',
+                data: newRequestsData["MAE ENGM APP"],
+                hidden: true
+            }, {
+                label: 'MAE ESSA TWR',
+                backgroundColor: 'rgb(75, 75, 75)',
+                data: newRequestsData["MAE ESSA TWR"],
+                hidden: true
+            }, {
+                label: 'MAE ESSA APP',
+                backgroundColor: 'rgb(100, 100, 100)',
+                data: newRequestsData["MAE ESSA APP"],
+                hidden: true
+            }, {
+                label: 'MAE EKCH TWR',
+                backgroundColor: 'rgb(125, 125, 125)',
+                data: newRequestsData["MAE EKCH TWR"],
+                hidden: true
+            }, {
+                label: 'MAE EKCH APP',
+                backgroundColor: 'rgb(150, 150, 150)',
+                data: newRequestsData["MAE EKCH APP"],
+                hidden: true
+            }, {
+                label: 'Oceanic BICC',
+                backgroundColor: 'rgb(150, 150, 255)',
+                data: newRequestsData["Oceanic BICC"],
+                hidden: true
+            }, {
+                label: 'Oceanic ENOB',
+                backgroundColor: 'rgb(75, 75, 255)',
+                data: newRequestsData["Oceanic ENOB"],
+                hidden: true
+            }]
+
+        };
+
+        var mix = document.getElementById("newTrainingRequests").getContext('2d');
+        var newTrainingRequests = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        }
                     },
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-        }
-    };
-
-    var chart = new Chart(ctx, cfg);
-
-</script>
-
-<script>
-
-    // New request chart
-    var newRequestsData = {!! json_encode($newRequests) !!}
-
-    var barChartData = {
-        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                moment().subtract(5, "month").startOf("month").format('MMMM'),
-                moment().subtract(4, "month").startOf("month").format('MMMM'),
-                moment().subtract(3, "month").startOf("month").format('MMMM'),
-                moment().subtract(2, "month").startOf("month").format('MMMM'),
-                moment().subtract(1, "month").startOf("month").format('MMMM'),
-                moment().startOf("month").format('MMMM')],
-        datasets: [{
-            label: 'S1',
-            backgroundColor: 'rgb(250, 150, 150)',
-            data: newRequestsData["S1"]
-        }, {
-            label: 'S2',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: newRequestsData["S2"]
-        }, {
-            label: 'S3',
-            backgroundColor: 'rgb(100, 100, 200)',
-            data: newRequestsData["S3"]
-        }, {
-            label: 'C1',
-            backgroundColor: 'rgb(100, 200, 100)',
-            data: newRequestsData["C1"]
-        }, {
-            label: 'C3',
-            backgroundColor: 'rgb(150, 200, 100)',
-            data: newRequestsData["C3"]
-        }, {
-            label: 'MAE ENGM TWR',
-            backgroundColor: 'rgb(25, 25, 25)',
-            data: newRequestsData["MAE ENGM TWR"],
-            hidden: true
-        }, {
-            label: 'MAE ENGM APP',
-            backgroundColor: 'rgb(50, 50, 50)',
-            data: newRequestsData["MAE ENGM APP"],
-            hidden: true
-        }, {
-            label: 'MAE ESSA TWR',
-            backgroundColor: 'rgb(75, 75, 75)',
-            data: newRequestsData["MAE ESSA TWR"],
-            hidden: true
-        }, {
-            label: 'MAE ESSA APP',
-            backgroundColor: 'rgb(100, 100, 100)',
-            data: newRequestsData["MAE ESSA APP"],
-            hidden: true
-        }, {
-            label: 'MAE EKCH TWR',
-            backgroundColor: 'rgb(125, 125, 125)',
-            data: newRequestsData["MAE EKCH TWR"],
-            hidden: true
-        }, {
-            label: 'MAE EKCH APP',
-            backgroundColor: 'rgb(150, 150, 150)',
-            data: newRequestsData["MAE EKCH APP"],
-            hidden: true
-        }, {
-            label: 'Oceanic BICC',
-            backgroundColor: 'rgb(150, 150, 255)',
-            data: newRequestsData["Oceanic BICC"],
-            hidden: true
-        }, {
-            label: 'Oceanic ENOB',
-            backgroundColor: 'rgb(75, 75, 255)',
-            data: newRequestsData["Oceanic ENOB"],
-            hidden: true
-        }]
-
-    };
-
-    var mix = document.getElementById("newTrainingRequests").getContext('2d');
-    var newTrainingRequests = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
-                    }
-                },
-                y: {
-                    stacked: true,
-                    ticks: {
-                        stepSize: 1
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
+        });
     });
 </script>
 
 <script>
 
-    // Completed requests chart
-    var completedRequestsData = {!! json_encode($completedRequests) !!}
+    document.addEventListener("DOMContentLoaded", function () {
 
-    var barChartData = {
-        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                moment().subtract(5, "month").startOf("month").format('MMMM'),
-                moment().subtract(4, "month").startOf("month").format('MMMM'),
-                moment().subtract(3, "month").startOf("month").format('MMMM'),
-                moment().subtract(2, "month").startOf("month").format('MMMM'),
-                moment().subtract(1, "month").startOf("month").format('MMMM'),
-                moment().startOf("month").format('MMMM')],
-        datasets: [{
-            label: 'S1',
-            backgroundColor: 'rgb(250, 150, 150)',
-            data: completedRequestsData["S1"]
-        }, {
-            label: 'S2',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: completedRequestsData["S2"]
-        }, {
-            label: 'S3',
-            backgroundColor: 'rgb(100, 100, 200)',
-            data: completedRequestsData["S3"]
-        }, {
-            label: 'C1',
-            backgroundColor: 'rgb(100, 200, 100)',
-            data: completedRequestsData["C1"]
-        }, {
-            label: 'C3',
-            backgroundColor: 'rgb(150, 200, 100)',
-            data: completedRequestsData["C3"]
-        }, {
-            label: 'MAE ENGM TWR',
-            backgroundColor: 'rgb(25, 25, 25)',
-            data: completedRequestsData["MAE ENGM TWR"],
-            hidden: true
-        }, {
-            label: 'MAE ENGM APP',
-            backgroundColor: 'rgb(50, 50, 50)',
-            data: completedRequestsData["MAE ENGM APP"],
-            hidden: true
-        }, {
-            label: 'MAE ESSA TWR',
-            backgroundColor: 'rgb(75, 75, 75)',
-            data: completedRequestsData["MAE ESSA TWR"],
-            hidden: true
-        }, {
-            label: 'MAE ESSA APP',
-            backgroundColor: 'rgb(100, 100, 100)',
-            data: completedRequestsData["MAE ESSA APP"],
-            hidden: true
-        }, {
-            label: 'MAE EKCH TWR',
-            backgroundColor: 'rgb(125, 125, 125)',
-            data: completedRequestsData["MAE EKCH TWR"],
-            hidden: true
-        }, {
-            label: 'MAE EKCH APP',
-            backgroundColor: 'rgb(150, 150, 150)',
-            data: completedRequestsData["MAE EKCH APP"],
-            hidden: true
-        }, {
-            label: 'Oceanic BICC',
-            backgroundColor: 'rgb(150, 150, 255)',
-            data: completedRequestsData["Oceanic BICC"],
-            hidden: true
-        }, {
-            label: 'Oceanic ENOB',
-            backgroundColor: 'rgb(75, 75, 255)',
-            data: completedRequestsData["Oceanic ENOB"],
-            hidden: true
-        }]
+        // Completed requests chart
+        var completedRequestsData = {!! json_encode($completedRequests) !!}
 
-    };
+        var barChartData = {
+            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                    moment().subtract(5, "month").startOf("month").format('MMMM'),
+                    moment().subtract(4, "month").startOf("month").format('MMMM'),
+                    moment().subtract(3, "month").startOf("month").format('MMMM'),
+                    moment().subtract(2, "month").startOf("month").format('MMMM'),
+                    moment().subtract(1, "month").startOf("month").format('MMMM'),
+                    moment().startOf("month").format('MMMM')],
+            datasets: [{
+                label: 'S1',
+                backgroundColor: 'rgb(250, 150, 150)',
+                data: completedRequestsData["S1"]
+            }, {
+                label: 'S2',
+                backgroundColor: 'rgb(200, 100, 100)',
+                data: completedRequestsData["S2"]
+            }, {
+                label: 'S3',
+                backgroundColor: 'rgb(100, 100, 200)',
+                data: completedRequestsData["S3"]
+            }, {
+                label: 'C1',
+                backgroundColor: 'rgb(100, 200, 100)',
+                data: completedRequestsData["C1"]
+            }, {
+                label: 'C3',
+                backgroundColor: 'rgb(150, 200, 100)',
+                data: completedRequestsData["C3"]
+            }, {
+                label: 'MAE ENGM TWR',
+                backgroundColor: 'rgb(25, 25, 25)',
+                data: completedRequestsData["MAE ENGM TWR"],
+                hidden: true
+            }, {
+                label: 'MAE ENGM APP',
+                backgroundColor: 'rgb(50, 50, 50)',
+                data: completedRequestsData["MAE ENGM APP"],
+                hidden: true
+            }, {
+                label: 'MAE ESSA TWR',
+                backgroundColor: 'rgb(75, 75, 75)',
+                data: completedRequestsData["MAE ESSA TWR"],
+                hidden: true
+            }, {
+                label: 'MAE ESSA APP',
+                backgroundColor: 'rgb(100, 100, 100)',
+                data: completedRequestsData["MAE ESSA APP"],
+                hidden: true
+            }, {
+                label: 'MAE EKCH TWR',
+                backgroundColor: 'rgb(125, 125, 125)',
+                data: completedRequestsData["MAE EKCH TWR"],
+                hidden: true
+            }, {
+                label: 'MAE EKCH APP',
+                backgroundColor: 'rgb(150, 150, 150)',
+                data: completedRequestsData["MAE EKCH APP"],
+                hidden: true
+            }, {
+                label: 'Oceanic BICC',
+                backgroundColor: 'rgb(150, 150, 255)',
+                data: completedRequestsData["Oceanic BICC"],
+                hidden: true
+            }, {
+                label: 'Oceanic ENOB',
+                backgroundColor: 'rgb(75, 75, 255)',
+                data: completedRequestsData["Oceanic ENOB"],
+                hidden: true
+            }]
 
-    var mix = document.getElementById("completedTrainingRequests").getContext('2d');
-    var completedTrainingRequests = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
-                    }
-                },
-                y: {
-                    stacked: true,
-                    ticks: {
-                        stepSize: 1
+        };
+
+        var mix = document.getElementById("completedTrainingRequests").getContext('2d');
+        var completedTrainingRequests = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
+        });
+
     });
 </script>
 
 <script>
 
-    // Closed requests chart
-    var closedRequestsData = {!! json_encode($closedRequests) !!}
+    document.addEventListener("DOMContentLoaded", function () {
 
-    var barChartData = {
-        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                moment().subtract(5, "month").startOf("month").format('MMMM'),
-                moment().subtract(4, "month").startOf("month").format('MMMM'),
-                moment().subtract(3, "month").startOf("month").format('MMMM'),
-                moment().subtract(2, "month").startOf("month").format('MMMM'),
-                moment().subtract(1, "month").startOf("month").format('MMMM'),
-                moment().startOf("month").format('MMMM')],
-        datasets: [{
-            label: 'S1',
-            backgroundColor: 'rgb(250, 150, 150)',
-            data: closedRequestsData["S1"]
-        }, {
-            label: 'S2',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: closedRequestsData["S2"]
-        }, {
-            label: 'S3',
-            backgroundColor: 'rgb(100, 100, 200)',
-            data: closedRequestsData["S3"]
-        }, {
-            label: 'C1',
-            backgroundColor: 'rgb(100, 200, 100)',
-            data: closedRequestsData["C1"]
-        }, {
-            label: 'C3',
-            backgroundColor: 'rgb(150, 200, 100)',
-            data: closedRequestsData["C3"]
-        }, {
-            label: 'MAE ENGM TWR',
-            backgroundColor: 'rgb(25, 25, 25)',
-            data: closedRequestsData["MAE ENGM TWR"],
-            hidden: true
-        }, {
-            label: 'MAE ENGM APP',
-            backgroundColor: 'rgb(50, 50, 50)',
-            data: closedRequestsData["MAE ENGM APP"],
-            hidden: true
-        }, {
-            label: 'MAE ESSA TWR',
-            backgroundColor: 'rgb(75, 75, 75)',
-            data: closedRequestsData["MAE ESSA TWR"],
-            hidden: true
-        }, {
-            label: 'MAE ESSA APP',
-            backgroundColor: 'rgb(100, 100, 100)',
-            data: closedRequestsData["MAE ESSA APP"],
-            hidden: true
-        }, {
-            label: 'MAE EKCH TWR',
-            backgroundColor: 'rgb(125, 125, 125)',
-            data: closedRequestsData["MAE EKCH TWR"],
-            hidden: true
-        }, {
-            label: 'MAE EKCH APP',
-            backgroundColor: 'rgb(150, 150, 150)',
-            data: closedRequestsData["MAE EKCH APP"],
-            hidden: true
-        }, {
-            label: 'Oceanic BICC',
-            backgroundColor: 'rgb(150, 150, 255)',
-            data: closedRequestsData["Oceanic BICC"],
-            hidden: true
-        }, {
-            label: 'Oceanic ENOB',
-            backgroundColor: 'rgb(75, 75, 255)',
-            data: closedRequestsData["Oceanic ENOB"],
-            hidden: true
-        }]
+        // Closed requests chart
+        var closedRequestsData = {!! json_encode($closedRequests) !!}
 
-    };
+        var barChartData = {
+            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                    moment().subtract(5, "month").startOf("month").format('MMMM'),
+                    moment().subtract(4, "month").startOf("month").format('MMMM'),
+                    moment().subtract(3, "month").startOf("month").format('MMMM'),
+                    moment().subtract(2, "month").startOf("month").format('MMMM'),
+                    moment().subtract(1, "month").startOf("month").format('MMMM'),
+                    moment().startOf("month").format('MMMM')],
+            datasets: [{
+                label: 'S1',
+                backgroundColor: 'rgb(250, 150, 150)',
+                data: closedRequestsData["S1"]
+            }, {
+                label: 'S2',
+                backgroundColor: 'rgb(200, 100, 100)',
+                data: closedRequestsData["S2"]
+            }, {
+                label: 'S3',
+                backgroundColor: 'rgb(100, 100, 200)',
+                data: closedRequestsData["S3"]
+            }, {
+                label: 'C1',
+                backgroundColor: 'rgb(100, 200, 100)',
+                data: closedRequestsData["C1"]
+            }, {
+                label: 'C3',
+                backgroundColor: 'rgb(150, 200, 100)',
+                data: closedRequestsData["C3"]
+            }, {
+                label: 'MAE ENGM TWR',
+                backgroundColor: 'rgb(25, 25, 25)',
+                data: closedRequestsData["MAE ENGM TWR"],
+                hidden: true
+            }, {
+                label: 'MAE ENGM APP',
+                backgroundColor: 'rgb(50, 50, 50)',
+                data: closedRequestsData["MAE ENGM APP"],
+                hidden: true
+            }, {
+                label: 'MAE ESSA TWR',
+                backgroundColor: 'rgb(75, 75, 75)',
+                data: closedRequestsData["MAE ESSA TWR"],
+                hidden: true
+            }, {
+                label: 'MAE ESSA APP',
+                backgroundColor: 'rgb(100, 100, 100)',
+                data: closedRequestsData["MAE ESSA APP"],
+                hidden: true
+            }, {
+                label: 'MAE EKCH TWR',
+                backgroundColor: 'rgb(125, 125, 125)',
+                data: closedRequestsData["MAE EKCH TWR"],
+                hidden: true
+            }, {
+                label: 'MAE EKCH APP',
+                backgroundColor: 'rgb(150, 150, 150)',
+                data: closedRequestsData["MAE EKCH APP"],
+                hidden: true
+            }, {
+                label: 'Oceanic BICC',
+                backgroundColor: 'rgb(150, 150, 255)',
+                data: closedRequestsData["Oceanic BICC"],
+                hidden: true
+            }, {
+                label: 'Oceanic ENOB',
+                backgroundColor: 'rgb(75, 75, 255)',
+                data: closedRequestsData["Oceanic ENOB"],
+                hidden: true
+            }]
 
-    var mix = document.getElementById("closedTrainingRequests").getContext('2d');
-    var closedTrainingRequests = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Note: One request may have multiple ratings shown indvidually in this graph'
-                    }
-                },
-                y: {
-                    stacked: true,
-                    ticks: {
-                        stepSize: 1
+        };
+
+        var mix = document.getElementById("closedTrainingRequests").getContext('2d');
+        var closedTrainingRequests = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Note: One request may have multiple ratings shown indvidually in this graph'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
+        });
     });
 </script>
 
 <script>
 
-    // Pass/fail rate for requests last 6 months
-    var passFailRequestsData = {!! json_encode($passFailRequests) !!}
+    document.addEventListener("DOMContentLoaded", function () {
 
-    var barChartData = {
-        labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                moment().subtract(5, "month").startOf("month").format('MMMM'),
-                moment().subtract(4, "month").startOf("month").format('MMMM'),
-                moment().subtract(3, "month").startOf("month").format('MMMM'),
-                moment().subtract(2, "month").startOf("month").format('MMMM'),
-                moment().subtract(1, "month").startOf("month").format('MMMM'),
-                moment().startOf("month").format('MMMM')],
-        datasets: [{
-            label: 'Failed',
-            backgroundColor: 'rgb(200, 100, 100)',
-            data: passFailRequestsData["Failed"]
-        }, {
-            label: 'Passed',
-            backgroundColor: 'rgb(100, 200, 100)',
-            data: passFailRequestsData["Passed"]
-        }]
+        // Pass/fail rate for requests last 6 months
+        var passFailRequestsData = {!! json_encode($passFailRequests) !!}
 
-    };
+        var barChartData = {
+            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
+                    moment().subtract(5, "month").startOf("month").format('MMMM'),
+                    moment().subtract(4, "month").startOf("month").format('MMMM'),
+                    moment().subtract(3, "month").startOf("month").format('MMMM'),
+                    moment().subtract(2, "month").startOf("month").format('MMMM'),
+                    moment().subtract(1, "month").startOf("month").format('MMMM'),
+                    moment().startOf("month").format('MMMM')],
+            datasets: [{
+                label: 'Failed',
+                backgroundColor: 'rgb(200, 100, 100)',
+                data: passFailRequestsData["Failed"]
+            }, {
+                label: 'Passed',
+                backgroundColor: 'rgb(100, 200, 100)',
+                data: passFailRequestsData["Passed"]
+            }]
 
-    var mix = document.getElementById("TrainingPassFailRate").getContext('2d');
-    var passFailTrainings = new Chart(mix, {
-        type: 'bar',
-        data: barChartData,
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Note: This graph only shows standard and fast-tracked CPTs excluding S1'
-                    }
-                },
-                y: {
-                    stacked: true,
-                    ticks: {
-                        stepSize: 1
+        };
+
+        var mix = document.getElementById("TrainingPassFailRate").getContext('2d');
+        var passFailTrainings = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Note: This graph only shows standard and fast-tracked CPTs excluding S1'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
+        });
     });
 </script>
 

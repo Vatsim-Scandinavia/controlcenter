@@ -8,6 +8,15 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        /**
+         * This mocks Vite while running tests, removing the need to either run a development mode or to build assets.
+         */
+        $this->withoutVite();
+    }
+
     /**
      * Configures the default list of transactioned connections
      **/

@@ -51,7 +51,7 @@
                 @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
                     <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-link"></i> Create
-                    </button>    
+                    </button>
                     <div class="dropdown">
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
@@ -62,7 +62,7 @@
                             @endif
                         </div>
                     </div>
-                @endif                
+                @endif
             </div>
             <div class="card-body">
                 <dl class="copyable">
@@ -86,7 +86,7 @@
                             {{ $ratings["name"] }}
                         @endif
                     </dd>
-               
+
                     <dt class="pt-2">Vatsim ID</dt>
                     <dd>
                         <a href="{{ route('user.show', $training->user->id) }}">
@@ -134,14 +134,14 @@
                 </dl>
 
                 @can('edit', [\App\Models\Training::class, $training])
-                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-outline-primary btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit training</a>       
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-outline-primary btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit training</a>
                 @endcan
             </div>
         </div>
 
         @can('update', $training)
             <div class="card shadow mb-4">
-                
+
                 <div class="card-body">
                     <form action="{{ route('training.update.details', ['training' => $training->id]) }}" method="POST">
                         @method('PATCH')
@@ -246,7 +246,7 @@
                                     @elseif($activity->type == "COMMENT")
                                         <i class="fas fa-comment"></i>
                                     @endif
-                                    
+
                                     @isset($activity->triggered_by_id)
                                         {{ \App\Models\User::find($activity->triggered_by_id)->name }} —
                                     @endisset
@@ -258,7 +258,7 @@
                                         @endif
                                     @endcan
                                 </div>
-                                <p> 
+                                <p>
 
                                     @if($activity->type == "STATUS")
                                         @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
@@ -289,7 +289,7 @@
                                             @empty($activity->comment)
                                                 <span class="badge text-bg-light">
                                                     {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to 
+                                                </span> granted, valid to
                                                 <span class="badge text-bg-light">
                                                     @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                         {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
@@ -300,7 +300,7 @@
                                             @else
                                                 <span class="badge text-bg-light">
                                                     {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to 
+                                                </span> granted, valid to
                                                 <span class="badge text-bg-light">
                                                     @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                         {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
@@ -308,7 +308,7 @@
                                                         Forever
                                                     @endisset
                                                 </span>
-                                                for positions: 
+                                                for positions:
                                                 @foreach(explode(',', $activity->comment) as $p)
                                                     <span class="badge text-bg-light">{{ $p }}</span>
                                                 @endforeach
@@ -331,7 +331,7 @@
                             <i class="fas fa-flag"></i>
                             {{ $training->created_at->toEuropeanDateTime() }}
                         </div>
-                        <p> 
+                        <p>
                             Training created
                         </p>
                     </li>
@@ -547,8 +547,8 @@
                                         </div>
                                     </div>
                                 @endif
-                            
-                            
+
+
                             @endforeach
                         @endif
                     </div>
@@ -613,7 +613,7 @@
 
             </div>
         </div>
-  
+
     </div>
 </div>
 
@@ -623,66 +623,73 @@
 @section('js')
 
     <!-- One Time Links -->
-    <script type="text/javascript">
+    <script>
 
         // Generate a one time report link
-        $('#getOneTimeLinkReport').click(async function (event) {
-            event.preventDefault();
-            $(this).prop('disabled', true);
-            let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
-            $(this).prop('disabled', false);
+        var getOneTimeLinkReport = document.getElementById('getOneTimeLinkReport')
+        if(getOneTimeLinkReport){
+            getOneTimeLinkReport.addEventListener('click', async function (event) {
+                event.preventDefault();
+                event.target.disabled = true
+                let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_REPORT_TYPE !!}');
+                event.target.disabled = false
 
-            document.getElementById('otl-alert').style.display = "block";
-            document.getElementById('otl-type').innerHTML = "Training Report one-time link";
-            document.getElementById('otl-link').href = route
-            document.getElementById('otl-link').innerHTML = route
-            document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
-        });
+                document.getElementById('otl-alert').style.display = "block";
+                document.getElementById('otl-type').innerHTML = "Training Report one-time link";
+                document.getElementById('otl-link').href = route
+                document.getElementById('otl-link').innerHTML = route
+                document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
+            });
+        }
+
 
         // Generate a one time exam report link
-        $('#getOneTimeLinkExam').click(async function (event) {
-            event.preventDefault();
-            $(this).prop('disabled', true);
-            let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
-            $(this).prop('disabled', false);document.getElementById('otl-link-copy-btn').onclick = function(){console.log(route); navigator.clipboard.writeText(route)}
+        var getOneTimeLinkExam = document.getElementById('getOneTimeLinkExam')
+        if(getOneTimeLinkExam){
+            getOneTimeLinkExam.addEventListener('click', async function (event) {
+                event.preventDefault();
+                event.target.disabled = true
+                let route = await getOneTimeLink('{!! \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE !!}');
+                event.target.disabled = false
 
-            document.getElementById('otl-alert').style.display = "block";
-            document.getElementById('otl-type').innerHTML = "Examination Report";
-            document.getElementById('otl-link').href = route
-            document.getElementById('otl-link').innerHTML = route
-            document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
-        });
+                document.getElementById('otl-alert').style.display = "block";
+                document.getElementById('otl-type').innerHTML = "Examination Report";
+                document.getElementById('otl-link').href = route
+                document.getElementById('otl-link').innerHTML = route
+                document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
+            });
+        }
 
         async function getOneTimeLink(type) {
             return '{!! env('APP_URL') !!}' + '/training/onetime/' + await getOneTimeLinkKey(type);
         }
 
         async function getOneTimeLinkKey(type) {
-            let key, result;
-            result = await $.ajax('{!! route('training.onetimelink.store', ['training' => $training]) !!}', {
-                type: 'POST',
+            let key;
+
+            const response = await fetch('{{ route('training.onetimelink.store', ['training' => $training]) }}', {
+                method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': "{!! csrf_token() !!}"
+                    'X-CSRF-TOKEN': '{!! csrf_token() !!}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                 },
-                data: {
-                    'type': type
-                },
-                success: function (response) {
-                    return response;
-                },
-                error: function (response) {
+                body: JSON.stringify({ type }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
                     console.error(response);
-                    alert("An error occured while trying to generate the one-time link.");
+                    alert('An error occurred while trying to generate the one-time link.');
                 }
-            });
-
-            try {
-                key = JSON.parse(result).key
-            } catch (error) {
+            })
+            .catch(error => {
                 console.error(error);
-            }
+                alert('An error occurred while trying to generate the one-time link.');
+            })
 
-            return key;
+            return response.key;
         }
 
         function updateComment(id, oldText){
@@ -696,43 +703,75 @@
             setTimeout(function(){
                 document.getElementById('activity_comment').style.backgroundColor = '#ffffff'
             }, 750)
-            
+
         }
 
     </script>
 
     <!-- Training report accordian -->
     <script>
-        $(document).ready(function(){
+        document.addEventListener("DOMContentLoaded", function () {
             // Add minus icon for collapse element which is open by default
-            $(".collapse.show").each(function(){
-                $(this).prev(".card-header").find(".fas").addClass("fa-chevron-down").removeClass("fa-chevron-right");
+            var showCollapses = document.querySelectorAll(".collapse.show");
+            showCollapses.forEach(function(collapse) {
+                var cardHeader = collapse.previousElementSibling;
+                var icon = cardHeader.querySelector(".fas");
+                if (icon) {
+                    icon.classList.add("fa-chevron-down");
+                    icon.classList.remove("fa-chevron-right");
+                }
             });
 
             // Toggle plus minus icon on show hide of collapse element
-            $(".collapse").on('show.bs.collapse', function(){
-                $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-right").addClass("fa-chevron-down");
-            }).on('hide.bs.collapse', function(){
-                $(this).prev(".card-header").find(".fas").removeClass("fa-chevron-down").addClass("fa-chevron-right");
+            var collapses = document.querySelectorAll(".collapse");
+            collapses.forEach(function(collapse) {
+                collapse.addEventListener('show.bs.collapse', function() {
+                    var cardHeader = collapse.previousElementSibling;
+                    var icon = cardHeader.querySelector(".fas");
+                    if (icon) {
+                        icon.classList.remove("fa-chevron-right");
+                        icon.classList.add("fa-chevron-down");
+                    }
+                });
+
+                collapse.addEventListener('hide.bs.collapse', function() {
+                    var cardHeader = collapse.previousElementSibling;
+                    var icon = cardHeader.querySelector(".fas");
+                    if (icon) {
+                        icon.classList.remove("fa-chevron-down");
+                        icon.classList.add("fa-chevron-right");
+                    }
+                });
             });
 
             // Closure reason input
-            toggleClosureReasonField($('#trainingStateSelect').val())
+            var trainingStateSelect = document.querySelector('#trainingStateSelect');
+            if(trainingStateSelect){
+                toggleClosureReasonField(document.querySelector('#trainingStateSelect').value);
 
-            $('#trainingStateSelect').on('change', function () {
-                toggleClosureReasonField($('#trainingStateSelect').val())
-            });
+                var trainingStateSelect = document.querySelector('#trainingStateSelect');
+                if (trainingStateSelect) {
+                    trainingStateSelect.addEventListener('change', function () {
+                        toggleClosureReasonField(trainingStateSelect.value);
+                    });
+                }
 
-            function toggleClosureReasonField(val){
-                if(val == -2){
-                    $('#closedReasonInput').slideDown(100)
-                } else {
-                    $('#closedReasonInput').hide()
+                function toggleClosureReasonField(val) {
+                    var closedReasonInput = document.querySelector('#closedReasonInput');
+                    if (closedReasonInput) {
+                        if (val == -2) {
+                            closedReasonInput.style.display = 'block';
+                        } else {
+                            closedReasonInput.style.display = 'none';
+                        }
+                    }
                 }
             }
 
-            $("#markdown-content").children("p").children("a").attr('target','_blank');
-            $("#markdown-improve").children("p").children("a").attr('target','_blank');
+            var markdownContentLinks = document.querySelectorAll("#markdown-content p a, #markdown-improve p a");
+            markdownContentLinks.forEach(function(link) {
+                link.setAttribute('target', '_blank');
+            });
         });
     </script>
 @endsection

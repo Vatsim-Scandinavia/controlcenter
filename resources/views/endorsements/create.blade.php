@@ -3,7 +3,7 @@
 @section('title', 'Create Endorsement')
 @section('content')
 
-<div class="row" id="application">
+<div class="row" id="giveEndorsements">
     <div class="col-xl-5 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -218,176 +218,135 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+@vite('resources/js/vue.js')
 <script>
-    //Activate bootstrap tooltips and calendar
-    $(document).ready(function() {
 
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
+    document.addEventListener("DOMContentLoaded", function () {
 
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input').prop('readonly', false);
-
-    })
-
-    // Vue
-    const application = new Vue({
-        el: '#application',
-        data: {
-            endorsementType: null,
-            trainingType: null,
-            user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
-            expire: null,
-            expireInf: null,
-            positions: null,
-            ratingMASC: null,
-            ratingGRP: null,
-            ratingExaminate: null,
-            areas: [],
-            soloChecked: false,
-            validationError: false,
-            errSoloPositionCount: false,
-        },
-        methods:{
-            updateButtonText(){
-
-                var btn = document.getElementById("submit_btn");
-                var end = ""
-
-                const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
-
-                if(this.endorsementType == 'MASC'){
-                    end = "MA/SC"
-                } else if(this.endorsementType == 'TRAINING'){
-                    end = "Training"
-                    if(this.trainingType == 'S1'){
-                        end = "S1"
-                        // While at it, let's set calendar max date as well
-                        flatpickr.config.maxDate = moment().add(3, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
-                    } else if(this.trainingType == 'SOLO') {
-                        end = "Solo"
-                        // While at it, let's set calendar max date as well
-                        flatpickr.config.maxDate = moment().add(1, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
-                    }
-                } else if(this.endorsementType == 'EXAMINER'){
-                    end = "Examiner"
-                } else if(this.endorsementType == 'VISITING'){
-                    end = "Visiting"
+        const giveEndorsements = createApp({
+            data() {
+                return {
+                    endorsementType: null,
+                    trainingType: null,
+                    user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
+                    expire: null,
+                    expireInf: null,
+                    positions: null,
+                    ratingMASC: null,
+                    ratingGRP: null,
+                    ratingExaminate: null,
+                    areas: [],
+                    soloChecked: false,
+                    validationError: false,
+                    errSoloPositionCount: false,
                 }
-
-                btn.innerText = "Create " + end + " Endorsement";
-
             },
-            validate(){
+            methods:{
+                updateButtonText(){
 
-                /*
-                    All -> User
+                    var btn = document.getElementById("submit_btn");
+                    var end = ""
 
-                    Airport/Center -> Single MA/SC Rating
-                    Training -> Type + Expire + Position (Multiple if S1)
-                    Examiner -> GRP Ratings + Areas
-                    Visitor -> Areas + Single GRP Rating
+                    const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
 
-                    Specials:
-                    Positions: Only 1 for Solo.
-
-                */
-
-                var validated = true
-
-                if(this.user == null) validated = false
-
-                if(this.endorsementType == 'MASC'){
-
-                    if(this.ratingMASC == null) validated = false
-
-                } else if(this.endorsementType == 'TRAINING'){
-
-                    if(this.expire == null && this.expireInf != true) validated = false
-                    if(this.positions == null) validated = false
-                    
-                    if(this.trainingType == 'SOLO'){
-                        if(this.soloChecked == false) validated = false
-                        if(this.positions && this.positions.includes(',')) { 
-                            validated = false
-                            this.errSoloPositionCount = true 
+                    if(this.endorsementType == 'MASC'){
+                        end = "MA/SC"
+                    } else if(this.endorsementType == 'TRAINING'){
+                        end = "Training"
+                        if(this.trainingType == 'S1'){
+                            end = "S1"
+                            // While at it, let's set calendar max date as well
+                            flatpickr.config.maxDate = moment().add(3, 'M').toDate()
+                            flatpickr.jumpToDate(moment().toDate())
+                        } else if(this.trainingType == 'SOLO') {
+                            end = "Solo"
+                            // While at it, let's set calendar max date as well
+                            flatpickr.config.maxDate = moment().add(1, 'M').toDate()
+                            flatpickr.jumpToDate(moment().toDate())
                         }
+                    } else if(this.endorsementType == 'EXAMINER'){
+                        end = "Examiner"
+                    } else if(this.endorsementType == 'VISITING'){
+                        end = "Visiting"
                     }
 
-                } else if(this.endorsementType == 'EXAMINER'){
+                    btn.innerText = "Create " + end + " Endorsement";
 
-                    if(this.ratingGRP == null) validated = false
-                    if(this.areas.length == 0) validated = false
+                },
+                validate(){
 
-                } else if(this.endorsementType == 'VISITING'){
+                    /*
+                        All -> User
 
-                    if(this.ratingGRP == null) validated = false
-                    if(this.areas.length == 0) validated = false
+                        Airport/Center -> Single MA/SC Rating
+                        Training -> Type + Expire + Position (Multiple if S1)
+                        Examiner -> GRP Ratings + Areas
+                        Visitor -> Areas + Single GRP Rating
 
-                }
+                        Specials:
+                        Positions: Only 1 for Solo.
 
-                return validated
-            },
-            submit(event) {
-                event.preventDefault()
+                    */
 
-                if(this.validate()){
-                    $('#endorsementForm').submit()
-                } else {
-                    this.validationError = true
+                    var validated = true
+
+                    if(this.user == null) validated = false
+
+                    if(this.endorsementType == 'MASC'){
+
+                        if(this.ratingMASC == null) validated = false
+
+                    } else if(this.endorsementType == 'TRAINING'){
+
+                        if(this.expire == null && this.expireInf != true) validated = false
+                        if(this.positions == null) validated = false
+                        
+                        if(this.trainingType == 'SOLO'){
+                            if(this.soloChecked == false) validated = false
+                            if(this.positions && this.positions.includes(',')) { 
+                                validated = false
+                                this.errSoloPositionCount = true 
+                            }
+                        }
+
+                    } else if(this.endorsementType == 'EXAMINER'){
+
+                        if(this.ratingGRP == null) validated = false
+                        if(this.areas.length == 0) validated = false
+
+                    } else if(this.endorsementType == 'VISITING'){
+
+                        if(this.ratingGRP == null) validated = false
+                        if(this.areas.length == 0) validated = false
+
+                    }
+
+                    return validated
+                },
+                submit(event) {
+                    event.preventDefault()
+
+                    if(this.validate()){
+                        document.getElementById('endorsementForm').submit()
+                    } else {
+                        this.validationError = true
+                    }
                 }
             }
-        }
 
+        }).mount('#giveEndorsements');
     });
 
 </script>
 
-<!-- Multiple select datalist from https://www.meziantou.net/html-multiple-selections-with-datalist.htm -->
+<!-- Flatpickr --> 
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const separator = ',';
-        for (const input of document.getElementsByTagName("input")) {
-            if (!input.multiple) {
-                continue;
-            }
-            if (input.list instanceof HTMLDataListElement) {
-                const optionsValues = Array.from(input.list.options).map(opt => opt.value);
-                let valueCount = input.value.split(separator).length;
-                input.addEventListener("input", () => {
-                    const currentValueCount = input.value.split(separator).length;
-                    // Do not update list if the user doesn't add/remove a separator
-                    // Current value: "a, b, c"; New value: "a, b, cd" => Do not change the list
-                    // Current value: "a, b, c"; New value: "a, b, c," => Update the list
-                    // Current value: "a, b, c"; New value: "a, b" => Update the list
-                    if (valueCount !== currentValueCount) {
-                        const lsIndex = input.value.lastIndexOf(separator);
-                        const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
-                        filldatalist(input, optionsValues, str);
-                        valueCount = currentValueCount;
-                    }
-                });
-            }
-        }
-        function filldatalist(input, optionValues, optionPrefix) {
-            const list = input.list;
-            if (list && optionValues.length > 0) {
-                list.innerHTML = "";
-                const usedOptions = optionPrefix.split(separator).map(value => value.trim());
-                for (const optionsValue of optionValues) {
-                    if (usedOptions.indexOf(optionsValue) < 0) {
-                        const option = document.createElement("option");
-                        option.value = optionPrefix + optionsValue;
-                        list.append(option);
-                    }
-                }
-            }
-        }
-    });
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
+    })
 </script>
+
+@include('scripts.multipledatalist')
+
 @endsection
