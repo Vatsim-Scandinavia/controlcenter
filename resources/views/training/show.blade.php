@@ -51,7 +51,7 @@
                 @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
                     <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-link"></i> Create
-                    </button>    
+                    </button>
                     <div class="dropdown">
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
@@ -62,7 +62,7 @@
                             @endif
                         </div>
                     </div>
-                @endif                
+                @endif
             </div>
             <div class="card-body">
                 <dl class="copyable">
@@ -86,7 +86,7 @@
                             {{ $ratings["name"] }}
                         @endif
                     </dd>
-               
+
                     <dt class="pt-2">Vatsim ID</dt>
                     <dd>
                         <a href="{{ route('user.show', $training->user->id) }}">
@@ -134,14 +134,14 @@
                 </dl>
 
                 @can('edit', [\App\Models\Training::class, $training])
-                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-outline-primary btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit training</a>       
+                    <a href="{{ route('training.edit', $training->id) }}" class="btn btn-outline-primary btn-icon"><i class="fas fa-pencil"></i>&nbsp;Edit training</a>
                 @endcan
             </div>
         </div>
 
         @can('update', $training)
             <div class="card shadow mb-4">
-                
+
                 <div class="card-body">
                     <form action="{{ route('training.update.details', ['training' => $training->id]) }}" method="POST">
                         @method('PATCH')
@@ -246,7 +246,7 @@
                                     @elseif($activity->type == "COMMENT")
                                         <i class="fas fa-comment"></i>
                                     @endif
-                                    
+
                                     @isset($activity->triggered_by_id)
                                         {{ \App\Models\User::find($activity->triggered_by_id)->name }} —
                                     @endisset
@@ -258,7 +258,7 @@
                                         @endif
                                     @endcan
                                 </div>
-                                <p> 
+                                <p>
 
                                     @if($activity->type == "STATUS")
                                         @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
@@ -289,7 +289,7 @@
                                             @empty($activity->comment)
                                                 <span class="badge text-bg-light">
                                                     {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to 
+                                                </span> granted, valid to
                                                 <span class="badge text-bg-light">
                                                     @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                         {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
@@ -300,7 +300,7 @@
                                             @else
                                                 <span class="badge text-bg-light">
                                                     {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to 
+                                                </span> granted, valid to
                                                 <span class="badge text-bg-light">
                                                     @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
                                                         {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
@@ -308,7 +308,7 @@
                                                         Forever
                                                     @endisset
                                                 </span>
-                                                for positions: 
+                                                for positions:
                                                 @foreach(explode(',', $activity->comment) as $p)
                                                     <span class="badge text-bg-light">{{ $p }}</span>
                                                 @endforeach
@@ -331,7 +331,7 @@
                             <i class="fas fa-flag"></i>
                             {{ $training->created_at->toEuropeanDateTime() }}
                         </div>
-                        <p> 
+                        <p>
                             Training created
                         </p>
                     </li>
@@ -547,8 +547,8 @@
                                         </div>
                                     </div>
                                 @endif
-                            
-                            
+
+
                             @endforeach
                         @endif
                     </div>
@@ -613,7 +613,7 @@
 
             </div>
         </div>
-  
+
     </div>
 </div>
 
@@ -641,7 +641,7 @@
                 document.getElementById('otl-link-copy-btn').onclick = function(){navigator.clipboard.writeText(route)}
             });
         }
-        
+
 
         // Generate a one time exam report link
         var getOneTimeLinkExam = document.getElementById('getOneTimeLinkExam')
@@ -688,7 +688,7 @@
                 console.error(error);
                 alert('An error occurred while trying to generate the one-time link.');
             })
-            
+
             return response.key;
         }
 
@@ -703,7 +703,7 @@
             setTimeout(function(){
                 document.getElementById('activity_comment').style.backgroundColor = '#ffffff'
             }, 750)
-            
+
         }
 
     </script>
@@ -768,13 +768,8 @@
                 }
             }
 
-            var markdownContentLinks = document.querySelectorAll("#markdown-content p a");
+            var markdownContentLinks = document.querySelectorAll("#markdown-content p a, #markdown-improve p a");
             markdownContentLinks.forEach(function(link) {
-                link.setAttribute('target', '_blank');
-            });
-
-            var markdownImproveLinks = document.querySelectorAll("#markdown-improve p a");
-            markdownImproveLinks.forEach(function(link) {
                 link.setAttribute('target', '_blank');
             });
         });
