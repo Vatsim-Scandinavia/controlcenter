@@ -169,20 +169,14 @@
             document.getElementById("newreqrow").style.display = "block";
             document.getElementById("newmentorrow").style.display = "none";
             document.getElementById("pretrainingrow").style.display = "none";
-
-            newRequestMde.codemirror.refresh();
         } else if(el == 2){
             document.getElementById("newreqrow").style.display = "none";
             document.getElementById("newmentorrow").style.display = "block";
             document.getElementById("pretrainingrow").style.display = "none";
-
-            newMentorMde.codemirror.refresh();
         } else if(el == 3){
             document.getElementById("newreqrow").style.display = "none";
             document.getElementById("newmentorrow").style.display = "none";
             document.getElementById("pretrainingrow").style.display = "block";
-            
-            preTrainingMde.codemirror.refresh();
         }
     }
 </script>
