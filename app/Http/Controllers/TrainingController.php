@@ -279,7 +279,7 @@ class TrainingController extends Controller
         ]);
 
         if (isset($data['comment'])) {
-            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: ' . $training->notes);
+            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: ' . $data['comment']);
         }
 
         if ($ratings->count() > 1) {
