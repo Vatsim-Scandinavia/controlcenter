@@ -185,31 +185,26 @@
 @vite(['resources/js/easymde.js', 'resources/sass/easymde.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var newRequestMde = new EasyMDE({ 
-            element: document.getElementById("newrequestaddition"), 
-            status: false, 
-            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
+        var opts = {
             insertTexts: {
                 link: ["[","](link)"],
             },
+            status: false,
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"]
+        }
+        var newRequestMde = new EasyMDE({
+            element: document.getElementById("newrequestaddition"),
+            ...opts
         });
 
-        var newMentorMde = new EasyMDE({ 
-            element: document.getElementById("newmentoraddition"), 
-            status: false, 
-            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-            insertTexts: {
-                link: ["[","](link)"],
-            },
+        var newMentorMde = new EasyMDE({
+            element: document.getElementById("newmentoraddition"),
+            ...opts
         });
 
-        var preTrainingMde = new EasyMDE({ 
-            element: document.getElementById("pretrainingaddition"), 
-            status: false, 
-            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-            insertTexts: {
-                link: ["[","](link)"],
-            },
+        var preTrainingMde = new EasyMDE({
+            element: document.getElementById("pretrainingaddition"),
+            ...opts
         });
 
         var newRequestPreview = setInterval(function(){
@@ -217,7 +212,7 @@
             document.getElementById("newrequestaddition-preview").innerHTML = newRequestMde.markdown(newRequestMde.value());
             document.getElementById("newmentoraddition-preview").innerHTML = newMentorMde.markdown(newMentorMde.value());
             document.getElementById("pretrainingaddition-preview").innerHTML = preTrainingMde.markdown(preTrainingMde.value());
-        
+
         }, 1000);
     });
 </script>
