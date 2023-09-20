@@ -7,7 +7,7 @@ WORKDIR /app
 COPY ./ /app/
 
 RUN npm ci --omit dev && \
-    npx vite build
+    npm run build
 
 ####################################################################################################
 # Primary container
