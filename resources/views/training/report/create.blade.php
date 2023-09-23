@@ -84,13 +84,15 @@
 
                     <hr>
 
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck">
-                        <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
-                        @error('draft')
-                            <span class="text-danger">{{ $errors->first('draft') }}</span>
-                        @enderror
-                    </div>
+                    @if(session()->get('onetimekey') == null)
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck">
+                            <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
+                            @error('draft')
+                                <span class="text-danger">{{ $errors->first('draft') }}</span>
+                            @enderror
+                        </div>
+                    @endif
 
                     <button type="submit" id="training-submit-btn" class="btn btn-success">Save report</button>
                 </form>

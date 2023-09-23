@@ -89,7 +89,7 @@ class TrainingReportController extends Controller
             OneTimeLink::where('key', $key)->delete();
             session()->pull('onetimekey');
 
-            return redirect('dashboard')->withSuccess('Report successfully created');
+            return redirect(route('user.reports', Auth::user()))->withSuccess('Report successfully created');
         }
 
         return redirect(route('training.show', $training->id))->withSuccess('Report successfully created');
