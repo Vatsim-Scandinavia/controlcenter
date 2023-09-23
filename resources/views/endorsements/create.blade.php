@@ -82,7 +82,7 @@
 
                     {{-- Info for MASC --}}
                     <div class="alert alert-info" style="display: none" role="alert" v-show="endorsementType == 'MASC'">
-                        <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training is marked completed with an passed examination.
+                        <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training are marked completed.
                     </div>
 
                     {{-- Training Type --}} 

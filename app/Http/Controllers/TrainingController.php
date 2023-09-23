@@ -515,7 +515,7 @@ class TrainingController extends Controller
                 $training->mentors()->detach();
 
                 // If the training was completed and double checked with a passed exam result, store the relevant endorsements
-                if ((int) $training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()) {
+                if ((int) $training->status == -1) {
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
                             // Revoke the old endorsement if active
