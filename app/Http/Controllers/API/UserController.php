@@ -15,8 +15,7 @@ class UserController extends Controller
     /**
      * Return data based on request parameters
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function index(Request $request)
     {
@@ -220,6 +219,7 @@ class UserController extends Controller
      * Map out the endorsement details
      *
      * @param  Endorsement  $endorsements
+     * @param  string  $type Type of endorsement
      * @return array
      */
     private function mapEndorsementDetails(Endorsement $endorsement, string $type)
