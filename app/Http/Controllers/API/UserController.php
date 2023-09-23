@@ -22,7 +22,7 @@ class UserController extends Controller
         $returnUsers = collect();
 
         //
-        // Validate data
+        // Validate data and set paramters to defaults
         //
         $parameters = $request->validate([
             'onlyAtcActive' => 'sometimes|boolean',
