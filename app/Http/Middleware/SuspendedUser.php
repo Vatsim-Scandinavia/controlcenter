@@ -10,7 +10,6 @@ class SuspendedUser
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -18,11 +17,13 @@ class SuspendedUser
     {
         if (\Auth::check()) {
             $user = \Auth::user();
-            if($user->rating == 0){
+            if ($user->rating == 0) {
                 \Auth::logout();
+
                 return redirect('/')->with('error', 'Your account has been suspended.');
             }
         }
+
         return $next($request);
     }
 }
