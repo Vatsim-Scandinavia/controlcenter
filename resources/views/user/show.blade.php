@@ -42,8 +42,13 @@
 
                     <dt class="pt-2">ATC Active</dt>
                     <dd>
-                        <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i>
-                        {!! ($isGraced) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
+                        @if($user->isVisiting())
+                            <i class="far fa-circle-check text-success"></i>
+                            Visiting
+                        @else
+                            <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i>
+                            {!! ($isGraced) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
+                        @endif
                     </dd>
 
                     <dt>ATC Hours</dt>
