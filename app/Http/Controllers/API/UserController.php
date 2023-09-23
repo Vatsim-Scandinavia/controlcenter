@@ -13,8 +13,9 @@ use Illuminate\Support\Collection;
 class UserController extends Controller
 {
     /**
-     * Get data based on GET request
+     * Return data based on request parameters
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
