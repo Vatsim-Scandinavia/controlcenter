@@ -24,7 +24,7 @@ If you don't want to use Docker, you need:
 
 ## Setup and install
 
-*Upgrading from to v4 from v3? Read the [UPGRADE.md](UPGRADE.md) instead for details.*
+*Upgrading from to v4.0 from v3.4? Read the [UPGRADE.md](https://github.com/Vatsim-Scandinavia/controlcenter/blob/v4.0.7/UPGRADE.md) in v4.0 documentation for details.*
 
 To setup your Docker instance simply follow these steps:
 1. Pull the `ghcr.io/vatsim-scandinavia/control-center:v4` Docker image
