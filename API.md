@@ -25,7 +25,7 @@ Returns a list of users with selected data. To reduce latency and response size,
 ### GET, POST, PATCH and DELETE `/api/bookings`
 Will be documented one day.
 
-## API Endpoints (soon deprecated!)
+## API Endpoints (deprecated)
 Older endpoints that will be replaced with the `api/users` endpoint. Do not use these if you're creating a new integration.
 
 - GET users assigned roles and their area `/api/roles`
