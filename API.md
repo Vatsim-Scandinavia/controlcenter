@@ -29,6 +29,79 @@ Parameters to add additional fields to the result
 | divisions | Include user's region, division and subdivision |
 
 
+#### Example return with all parameters
+
+```json
+{
+    "id": 10000001,
+    "email": "auth.dev1@vatsim.net",
+    "first_name": "Web",
+    "last_name": "One",
+    "rating": "OBS",
+    "region": "APAC",
+    "division": "PAC",
+    "subdivision": "SCA",
+    "atc_active": false,
+    "endorsements": {
+        "visiting": [
+            {
+                "valid_from": "2023-09-16T20:53:32.000000Z",
+                "valid_to": null,
+                "rating": "C3",
+                "areas": [
+                    "Finland"
+                ]
+            }
+        ],
+        "examiner": [
+            {
+                "valid_from": "2023-09-16T20:53:27.000000Z",
+                "valid_to": null,
+                "rating": "S3",
+                "areas": [
+                    "Finland"
+                ]
+            }
+        ],
+        "training": {
+            "solo": null,
+            "s1": null
+        },
+        "masc": [
+            {
+                "valid_from": "2023-09-16T20:53:00.000000Z",
+                "valid_to": null,
+                "rating": "MAE ENGM TWR"
+            }
+        ]
+    },
+    "roles": {
+        "Denmark": [
+            "Administrator",
+            "Moderator",
+            "Mentor"
+        ],
+        "Finland": null,
+        "Iceland": null,
+        "Norway": null,
+        "Sweden": null
+    },
+    "training": [
+        {
+            "area": "Denmark",
+            "type": "Transfer",
+            "status": 0,
+            "status_description": "In queue",
+            "created_at": "2021-12-16T10:00:51.000000Z",
+            "started_at": null,
+            "ratings": [
+                "S3"
+            ]
+        }
+    ]
+}
+```
+
 ### GET, POST, PATCH and DELETE `/api/bookings`
 Will be documented one day.
 
