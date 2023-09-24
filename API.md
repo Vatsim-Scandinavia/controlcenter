@@ -19,7 +19,7 @@ Parameters which filter the user selection
 | roles | Include user's Control Center roles |
 | training | Include user's with active training |
 
-Paramters to add additional fields to the result
+Parameters to add additional fields to the result
 | Relation | Explanation |
 | ------- | --- |
 | name | Include user's full name |
