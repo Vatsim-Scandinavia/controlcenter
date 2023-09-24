@@ -131,9 +131,7 @@ class UserController extends Controller
         $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeEmail, $paramIncludeDivisions, $paramIncludeEndorsements, $paramIncludeRoles, $paramIncludeTraining);
         $returnUsers = $returnUsers->sortBy('id')->values();
 
-        return response()->json(['data' => [
-            $returnUsers,
-        ]], 200);
+        return response()->json(['data' => $returnUsers], 200);
     }
 
     /**
