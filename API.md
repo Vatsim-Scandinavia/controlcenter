@@ -12,6 +12,7 @@ Returns a list of users with selected data. To reduce latency and response size,
 
 #### Include relations
 Parameters which filter the user selection
+
 | Relation | Explanation |
 | ------- | --- |
 | allUsers | Include all users in your division who have logged into Control Center |
@@ -20,6 +21,7 @@ Parameters which filter the user selection
 | training | Include user's with active training |
 
 Parameters to add additional fields to the result
+
 | Relation | Explanation |
 | ------- | --- |
 | name | Include user's full name |
