@@ -11,15 +11,20 @@ Returns a list of users with selected data. To reduce latency and response size,
 | onlyAtcActive | false | Only return users with an active ATC rating |
 
 #### Include relations
+Parameters which filter the user selection
 | Relation | Explanation |
 | ------- | --- |
-| divisionUsers | Include all division users |
+| allUsers | Include all users in your division who have logged into Control Center |
+| endorsements | Include user's endorsements |
+| roles | Include user's Control Center roles |
+| training | Include user's with active training |
+
+Paramters to add additional fields to the result
+| Relation | Explanation |
+| ------- | --- |
 | name | Include user's full name |
 | email | Include user's email |
 | divisions | Include user's region, division and subdivision |
-| endorsements | Include user's endorsements |
-| roles | Include user's roles |
-| training | Include user's training |
 
 
 ### GET, POST, PATCH and DELETE `/api/bookings`
