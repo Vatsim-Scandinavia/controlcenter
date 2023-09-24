@@ -29,7 +29,7 @@ class UserController extends Controller
             'include' => 'sometimes|array',
         ]);
 
-        $paramIncludeDivisionUsers = (isset($parameters['include']) && in_array('divisionUsers', $parameters['include'])) ?? false;
+        $paramIncludeAllUsers = (isset($parameters['include']) && in_array('allUsers', $parameters['include'])) ?? false;
         $paramIncludeName = (isset($parameters['include']) && in_array('name', $parameters['include'])) ?? false;
         $paramIncludeEmail = (isset($parameters['include']) && in_array('email', $parameters['include'])) ?? false;
         $paramIncludeDivisions = (isset($parameters['include']) && in_array('divisions', $parameters['include'])) ?? false;
@@ -48,7 +48,7 @@ class UserController extends Controller
         // Get all needed users based on criteria
         //
 
-        if ($paramIncludeDivisionUsers) {
+        if ($paramIncludeAllUsers) {
             $returnUsers = User::where('subdivision', config('app.owner_short'));
             if ($paramOnlyActive) {
                 $returnUsers = $returnUsers->where('atc_active', true);
