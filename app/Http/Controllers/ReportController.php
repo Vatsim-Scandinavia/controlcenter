@@ -341,7 +341,6 @@ class ReportController extends Controller
             foreach ($query as $entry) {
                 $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
             }
-
         } else {
             foreach (Rating::all() as $rating) {
                 $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
@@ -438,7 +437,6 @@ class ReportController extends Controller
             foreach ($query as $entry) {
                 $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
             }
-
         }
 
         return [$newRequests, $completedRequests, $closedRequests, $passFailRequests];

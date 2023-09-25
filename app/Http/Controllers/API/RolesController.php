@@ -58,10 +58,12 @@ class RolesController extends Controller
             }
         }
 
-        return response()->json(['data' => [
+        return response()->json([
+        'data' => [
             'mentors' => $mentors->values(),
             'moderators' => $moderators->values(),
             'admins' => $admins->values(),
-        ]], 200);
+        ],
+        ], 200);
     }
 }

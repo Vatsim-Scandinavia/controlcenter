@@ -137,40 +137,68 @@ class FactoryHelper
     public static function longRating(int $rating)
     {
         switch ($rating) {
-            case 0: return 'Suspended';
-            case 1: return 'Pilot/Observer';
-            case 2: return 'Tower Trainee';
-            case 3: return 'Tower Controller';
-            case 4: return 'TMA Controller';
-            case 5: return 'Enroute Controller';
-            case 6: return 'Senior Controller';
-            case 7: return 'Senior Controller';
-            case 8: return 'Instructor';
-            case 9: return 'Senior Instructor';
-            case 10: return 'Senior Instructor';
-            case 11: return 'Supervisor';
-            case 12: return 'Administrator';
-            default: return 'Inactive';
+            case 0:
+                return 'Suspended';
+            case 1:
+                return 'Pilot/Observer';
+            case 2:
+                return 'Tower Trainee';
+            case 3:
+                return 'Tower Controller';
+            case 4:
+                return 'TMA Controller';
+            case 5:
+                return 'Enroute Controller';
+            case 6:
+                return 'Senior Controller';
+            case 7:
+                return 'Senior Controller';
+            case 8:
+                return 'Instructor';
+            case 9:
+                return 'Senior Instructor';
+            case 10:
+                return 'Senior Instructor';
+            case 11:
+                return 'Supervisor';
+            case 12:
+                return 'Administrator';
+            default:
+                return 'Inactive';
         }
     }
 
     public static function shortRating(int $rating)
     {
         switch ($rating) {
-            case 0: return 'SUS';
-            case 1: return 'OBS';
-            case 2: return 'S1';
-            case 3: return 'S2';
-            case 4: return 'S3';
-            case 5: return 'C1';
-            case 6: return 'C2';
-            case 7: return 'C3';
-            case 8: return 'I1';
-            case 9: return 'I2';
-            case 10: return 'I3';
-            case 11: return 'SUP';
-            case 12: return 'ADM';
-            default: return 'INA';
+            case 0:
+                return 'SUS';
+            case 1:
+                return 'OBS';
+            case 2:
+                return 'S1';
+            case 3:
+                return 'S2';
+            case 4:
+                return 'S3';
+            case 5:
+                return 'C1';
+            case 6:
+                return 'C2';
+            case 7:
+                return 'C3';
+            case 8:
+                return 'I1';
+            case 9:
+                return 'I2';
+            case 10:
+                return 'I3';
+            case 11:
+                return 'SUP';
+            case 12:
+                return 'ADM';
+            default:
+                return 'INA';
         }
     }
 }
