@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class BookingTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private function assertCreateBookingAvailable(User $controller)
     {
@@ -69,7 +69,7 @@ class BookingTest extends TestCase
     /**
      * Provides a list of controllers to feed to the booking test.
      */
-    public function controllerProvider(): array
+    public static function controllerProvider(): array
     {
         return [
             'S1 Rating with endorsement' => [

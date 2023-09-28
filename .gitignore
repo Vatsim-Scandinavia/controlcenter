@@ -2,7 +2,6 @@
 .env
 .htaccess
 .idea/
-.phpunit.result.cache
 .vscode/
 /_ide_helper.php
 /.phpstorm.meta.php
@@ -22,3 +21,7 @@ public/images/logos/*
 public/js/*
 resources/sass/_env.scss
 yarn-error.log
+
+# phpunit and results
+*.phpunit.cache
+*.phpunit.result.cache
