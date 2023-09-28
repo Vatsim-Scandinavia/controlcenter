@@ -10,10 +10,10 @@ class AtcActivity extends Model
 
     protected $fillable = ['user_id', 'hours', 'start_of_grace_period'];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'start_of_grace_period',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'start_of_grace_period' => 'datetime',
     ];
 
     public function user()

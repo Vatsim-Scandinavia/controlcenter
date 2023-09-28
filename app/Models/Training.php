@@ -14,9 +14,9 @@ class Training extends Model
 
     protected $table = 'trainings';
 
-    protected $dates = [
-        'started_at',
-        'closed_at',
+    protected $casts = [
+        'started_at' => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     /**

@@ -10,10 +10,9 @@ class TrainingReport extends TrainingObject
 
     protected $guarded = [];
 
-    protected $dates = ['report_date'];
-
     protected $casts = [
         'draft' => 'boolean',
+        'report_date' => 'datetime',
     ];
 
     public function path()

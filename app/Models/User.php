@@ -19,10 +19,10 @@ class User extends Authenticatable
 
     public $timestamps = false;
 
-    protected $dates = [
-        'last_login',
-        'last_activity',
-        'last_inactivity_warning',
+    protected $casts = [
+        'last_login' => 'datetime',
+        'last_activity' => 'datetime',
+        'last_inactivity_warning' => 'datetime',
     ];
 
     /**
