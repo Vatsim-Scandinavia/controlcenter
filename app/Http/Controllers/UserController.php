@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Controller to handle user views
@@ -30,10 +31,40 @@ class UserController extends Controller
     {
         $this->authorize('index', \Auth::user());
 
-        $users = User::with('endorsements')->get();
-        $userHours = AtcActivity::all();
+        $response = $this->fetchApiUsers();
 
-        return view('user.index', compact('users', 'userHours'));
+        $apiUsers = [];
+        $ccUsers = User::pluck('id');
+        $ccUsersHours = AtcActivity::all();
+        $ccUsersActive = User::where('atc_active', true)->pluck('id');
+
+        // Only include users from the division and index by key
+        foreach ($response as $data) {
+            if ($data['subdivision'] == config('app.owner_short')) {
+                $apiUsers[$data['id']] = $data;
+            }
+        }
+
+        // Merge the data sources
+        $users = [];
+        foreach ($apiUsers as $apiUser) {
+            $users[$apiUser['id']] = $apiUser;
+
+            if (in_array($apiUser['id'], $ccUsers->toArray())) {
+                $users[$apiUser['id']]['cc_data'] = true;
+                $users[$apiUser['id']]['active'] = false;
+
+                if (isset($ccUsersHours->where('user_id', $apiUser['id'])->first()->hours)) {
+                    $users[$apiUser['id']]['hours'] = $ccUsersHours->where('user_id', $apiUser['id'])->first()->hours;
+                }
+
+                if (in_array($apiUser['id'], $ccUsersActive->toArray())) {
+                    $users[$apiUser['id']]['active'] = true;
+                }
+            }
+        }
+
+        return view('user.index', compact('users'));
     }
 
     /**
@@ -322,5 +353,22 @@ class UserController extends Controller
         } else {
             return redirect()->intended(route('user.settings'))->withErrors('Workmail is not due to expire');
         }
+    }
+
+    /**
+     * Fetch users from VATSIM API
+     *
+     * @return \Illuminate\Http\Response
+     */
+    private function fetchApiUsers()
+    {
+        $url = 'https://api.vatsim.net/api/subdivisions/'.config('app.owner_short').'/members/';
+        $response = Http::withHeaders([
+            'Authorization' => 'Token becdd5421c3f617c89480b8a923a10a880b609f7',
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->get($url)->json();
+
+        return $response;
     }
 }
