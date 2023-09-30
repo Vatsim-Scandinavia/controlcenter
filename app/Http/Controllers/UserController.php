@@ -362,7 +362,7 @@ class UserController extends Controller
      */
     private function fetchApiUsers()
     {
-        $url = 'https://api.vatsim.net/api/subdivisions/'.config('app.owner_short').'/members/';
+        $url = 'https://api.vatsim.net/api/subdivisions/' . config('app.owner_short') . '/members/';
         $response = Http::withHeaders([
             'Authorization' => 'Token becdd5421c3f617c89480b8a923a10a880b609f7',
             'Accept' => 'application/json',
