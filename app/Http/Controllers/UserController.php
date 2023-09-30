@@ -32,6 +32,10 @@ class UserController extends Controller
         $this->authorize('index', \Auth::user());
 
         $response = $this->fetchApiUsers();
+        if($response === false){
+            $users = [];
+            return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM API. Check if your token is correct.');
+        }
 
         $apiUsers = [];
         $ccUsers = User::pluck('id');
@@ -367,8 +371,12 @@ class UserController extends Controller
             'Authorization' => 'Token ' . config('vatsim.api_token'),
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-        ])->get($url)->json();
+        ])->get($url);
 
-        return $response;
+        if(!$response->successful()) {
+            return false;
+        }
+
+        return $response->json();
     }
 }
