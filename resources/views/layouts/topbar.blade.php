@@ -22,7 +22,7 @@
                     <div class="search-icon bg-light input-group-prepend">
                         <i class="fas fa-search fa-sm"></i>
                     </div>
-                    <input class="search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
+                    <input class="user-search search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
                 </div>
 
                 <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
@@ -50,7 +50,7 @@
                             <div class="search-icon bg-light input-group-prepend">
                                 <i class="fas fa-search fa-sm"></i>
                             </div>
-                            <input class="search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
+                            <input class="user-search search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
                         </div>
 
                         <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>

@@ -81,7 +81,7 @@
 
         // Start search when typing in search bar with a 200ms delay
         var timer = null
-        document.querySelectorAll('.search-input').forEach((input) => {
+        document.querySelectorAll('.user-search').forEach((input) => {
             input.addEventListener('keyup', function(){
                 showSpinner(true)
                 clearTimeout(timer);
@@ -95,7 +95,7 @@
             userSearchFormDesktop.addEventListener('submit', function(e){ 
                 e.preventDefault();
 
-                var query = parseInt(document.querySelector('.search-input').value);
+                var query = parseInt(document.querySelector('.user-search').value);
                 if(Number.isInteger(query)){
                     location.assign("{{ route('user.show', '') }}/" + query); 
                 }
@@ -110,7 +110,7 @@
                 e.preventDefault() 
 
                 var query = null
-                document.querySelectorAll('.search-input').forEach((el) => {
+                document.querySelectorAll('.user-search').forEach((el) => {
                     if(el.value != '') query = el.value
                 });
 
