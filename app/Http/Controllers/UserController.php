@@ -364,7 +364,7 @@ class UserController extends Controller
     {
         $url = 'https://api.vatsim.net/api/subdivisions/' . config('app.owner_short') . '/members/';
         $response = Http::withHeaders([
-            'Authorization' => 'Token becdd5421c3f617c89480b8a923a10a880b609f7',
+            'Authorization' => 'Token ' . config('vatsim.api_token'),
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ])->get($url)->json();
