@@ -117,8 +117,8 @@
                             :placeholder="expireInf && 'Never expires'" 
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
                         <span v-show="validationError && expire == null" class="text-danger">Fill out a valid expire date</span>
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" v-model="expireInf" name="expireInf" id="expireinf" value="true">
+                        <div class="form-check" v-show="trainingType == 'S1'">
+                            <input class="form-check-input" type="checkbox" v-model="expireInf" name="expireInf" id="expireinf" value="true">
                             <label class="form-check-label" for="expireinf">
                                 Infinte duration
                             </label>
@@ -147,7 +147,7 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
-                        <div class="dropdown float-end">
+                        <div class="dropdown">
                             <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Template
                             </button>
@@ -199,7 +199,7 @@
                     </div>
 
                     {{-- Training Checkbox --}}
-                    <div class="form-check" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType == 'SOLO'">
+                    <div class="form-check" class="mt-5" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType == 'SOLO'">
                         <input class="form-check-input" type="checkbox" id="soloChecked" v-model="soloChecked">
                         <label class="form-check-label" for="soloChecked">
                             {{ Setting::get('trainingSoloRequirement') }}
