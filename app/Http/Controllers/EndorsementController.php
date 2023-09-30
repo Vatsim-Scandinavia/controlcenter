@@ -62,6 +62,17 @@ class EndorsementController extends Controller
             })
             ->get();
 
+        // Sort endorsement to prioritise Solo over S1 and then by expiry date
+        $endorsements = $endorsements->sortByDesc(function ($endorsement) {
+            if ($endorsement->type == 'SOLO') {
+                if(now() > $endorsement->valid_to) return 2;
+                return 1;
+            } else {
+                if($endorsement->valid_to != null) return 0;
+                return -1;
+            }
+        });
+
         return view('endorsements.trainings', compact('endorsements'));
     }
 
