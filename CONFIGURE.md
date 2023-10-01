@@ -108,10 +108,10 @@ Here you find the diffrerent data tables which need to be edited to suit your su
 
 ### Areas
 In `Areas` table, create one or more areas. This is something student select between when applying for trianing.
-| id | name | contact | template_newreq | template_newmentor | template_pretraining |
-| ------- | --- | --- | --- |  --- |  --- |
-| x | Name | Contact e-mail that will be displayed to students | Can be set in Notification Editor, set NULL | Same as last | Same as last |
-| 1 | Norway | training-norway@vatsim-scandinavia.org | NULL | NULL | NULL |
+| id | name | contact | template_newreq | template_newmentor | template_pretraining | template_s1_positions |
+| ------- | --- | --- | --- |  --- |  --- | --- |
+| x | Name | Contact e-mail that will be displayed to students | Can be set in Notification Editor, set NULL | Same as last | Same as last | Comma seperated positions for fast filling when grating endorsements |
+| 1 | Norway | training-norway@vatsim-scandinavia.org | NULL | NULL | NULL | ENBR_DEL,ENBR_GND |
 
 ### Ratings
 In `Ratings` table, the default VATSIM ratings are present and if applicable, the endorsement ratings.
