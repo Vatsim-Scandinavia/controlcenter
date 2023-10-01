@@ -51,6 +51,7 @@ class GlobalSettingController extends Controller
             'atcActivityContact' => 'max:40',
             'atcActivityNotifyInactive' => '',
             'atcActivityAllowReactivation' => '',
+            'atcActivityAllowInactiveControlling' => '',
             'linkDomain' => 'required',
             'linkHome' => 'required|url',
             'linkJoin' => 'required|url',
@@ -65,6 +66,7 @@ class GlobalSettingController extends Controller
         isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
         isset($data['atcActivityAllowReactivation']) ? $atcActivityAllowReactivation = true : $atcActivityAllowReactivation = false;
+        isset($data['atcActivityAllowInactiveControlling']) ? $atcActivityAllowInactiveControlling = true : $atcActivityAllowInactiveControlling = false;
 
         // The setting dependency doesn't support null values, so we need to set it to false if it's not set
         isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
@@ -83,6 +85,7 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityContact', $data['atcActivityContact']);
         Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
         Setting::set('atcActivityAllowReactivation', $atcActivityAllowReactivation);
+        Setting::set('atcActivityAllowInactiveControlling', $atcActivityAllowInactiveControlling);
         Setting::set('linkDomain', $data['linkDomain']);
         Setting::set('linkHome', $data['linkHome']);
         Setting::set('linkJoin', $data['linkJoin']);

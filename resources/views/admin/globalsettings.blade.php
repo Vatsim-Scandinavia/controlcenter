@@ -161,6 +161,16 @@
                             Enabled: Same as above and if controller passes activity requirement they will automatically be set as ATC Active. 
                         </small>
                     </div>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input @error('atcActivityAllowInactiveControlling') is-invalid @enderror" type="checkbox" id="check3" name="atcActivityAllowInactiveControlling" {{ Setting::get('atcActivityAllowInactiveControlling') ? "checked" : "" }}>
+                        <label class="form-check-label" for="check3">
+                            Allow inactive controlling
+                        </label>
+                        <small class="form-text d-block">
+                            Disabled: Controllers will be warned if logged on network as inactive. When going inactive, we tell the controller that controlling is no longer allowed.<br>
+                            Enabled: Controllers will not be warned when logged on network as inactive. When going inactive, we tell the controller that controlling is still allowed.
+                        </small>
+                    </div>
                 </div>
             </div>
 
