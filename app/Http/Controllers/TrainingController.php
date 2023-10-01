@@ -210,8 +210,12 @@ class TrainingController extends Controller
         $this->authorize('create', Training::class);
 
         $students = User::all();
-        $ratings = Area::with('ratings')->get()->toArray();
         $types = TrainingController::$types;
+
+        // Fetch all ratings and add C3 to all areas
+        $ratings = Area::with('ratings')->get()->each(function ($area) {
+            $area->ratings->push(Rating::where('name', 'C3')->first());
+        })->sortBy('name')->toArray();
 
         return view('training.create', compact('students', 'ratings', 'types', 'prefillUserId'));
     }
