@@ -28,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            // No need to delete as it just won't have any effect
+            DB::table(Config::get('settings.table'))->where('key', 'atcActivityAllowInactiveControlling')->delete();
         });
     }
 };
