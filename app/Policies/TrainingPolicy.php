@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\Training;
 use App\Models\TrainingExamination;
@@ -56,7 +57,7 @@ class TrainingPolicy
      */
     public function close(User $user, Training $training)
     {
-        return $user->is($training->user) && $training->status == 0;
+        return $user->is($training->user) && $training->status == TrainingStatus::IN_QUEUE->value;
     }
 
     /**

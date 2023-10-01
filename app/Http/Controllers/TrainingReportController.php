@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TrainingStatus;
 use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Training;
@@ -42,7 +43,7 @@ class TrainingReportController extends Controller
     public function create(Training $training)
     {
         $this->authorize('create', [TrainingReport::class, $training]);
-        if ($training->status < 1) {
+        if ($training->status < TrainingStatus::PRE_TRAINING->value) {
             return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.');
         }
 

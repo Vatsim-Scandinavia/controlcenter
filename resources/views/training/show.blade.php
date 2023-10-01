@@ -10,7 +10,7 @@
 @endsection
 @section('content')
 
-@if($training->status < -1 && $training->status != -3)
+@if($training->status < \App\Helpers\TrainingStatus::COMPLETED->value && $training->status != \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
     <div class="alert alert-warning" role="alert">
         <b>Training is closed with reason: </b>
         @if(isset($training->closed_reason))
@@ -21,7 +21,7 @@
     </div>
 @endif
 
-@if($training->status == -3)
+@if($training->status == \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
     <div class="alert alert-warning" role="alert">
         <b>Training closed by student</b>
     </div>
@@ -383,7 +383,7 @@
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
 
-                @if($training->status >= 1 && $training->status <= 3)
+                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <h6 class="m-0 fw-bold text-white">
                 @else
                     <h6 class="m-0 mt-1 mb-2 fw-bold text-white">
@@ -391,14 +391,14 @@
                     Training Reports
                 </h6>
 
-                @if($training->status >= 1 && $training->status <= 3)
+                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <div class="dropdown" style="display: inline;">
                         <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-plus"></i> Add
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\TrainingReport::class, $training])
-                                @if($training->status >= 1)
+                                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
                                     <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
                                 @endif
                             @else
@@ -406,7 +406,7 @@
                             @endcan
 
                             @can('create', [\App\Models\TrainingExamination::class, $training])
-                                @if($training->status == 3)
+                                @if($training->status == \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                                     <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}">Exam Report</a>
                                 @endif
                             @else
