@@ -466,7 +466,7 @@ class TrainingController extends Controller
             }
 
             unset($attributes['mentors']);
-        } elseif (Auth::user()->isModeratorOrAbove()) { // XXX This is really hack since we don't send this attribute when mentors submit
+        } else {
             // Detach all if no passed key, as that means the list is empty
 
             foreach ($training->mentors as $mentor) {
