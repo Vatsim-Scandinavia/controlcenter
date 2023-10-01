@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
@@ -69,7 +70,9 @@ class DashboardController extends Controller
 
         $studentTrainings = \Auth::user()->mentoringTrainings();
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings'));
+        $cronJobError = ((App::environment('production')) && (\Carbon\Carbon::parse(Setting::get('lastCronRun')) <= \Carbon\Carbon::now()->subMinutes(5)));
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError'));
     }
 
     /**

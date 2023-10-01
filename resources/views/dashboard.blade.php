@@ -36,6 +36,12 @@
 </div>
 @endif
 
+@if($cronJobError)
+<div class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;<b>Configuration Error:</b> Cronjob is not running! Are the cron jobs set up according to the manual?
+</div>
+@endif
+
 <div class="row">
     <!-- Current rating card  -->
     <div class="col-xl-3 col-md-6 mb-4">

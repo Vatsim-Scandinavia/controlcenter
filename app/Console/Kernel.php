@@ -80,6 +80,12 @@ class Kernel extends ConsoleKernel
             $schedule->command('send:telemetry')
                 ->daily();
         }
+
+        // Log last cronjob time
+        $schedule->call(function () {
+            Setting::set('lastCronRun', now());
+            Setting::save();
+        })->everyMinute();
     }
 
     /**

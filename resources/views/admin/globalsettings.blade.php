@@ -19,6 +19,49 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-white">System Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-md-6 mb-12">
+
+                            <div class="mb-4">
+                                <label class="form-label" for="spoUrl">Control Center Version</label>
+                                <input type="text" class="form-control" required value="{{ config('app.version') }}" disabled>
+                            </div>
+
+                            @if(true)
+                                <div class="alert alert-success" role="alert">
+                                    You're running newest version
+                                </div>
+                            @endif
+
+                        </div>
+
+                        <div class="col-xl-6 col-md-6 mb-12">
+
+                            <div class="mb-4">
+                                <label class="form-label" for="spoUrl">Last Cronjob Run</label>
+                                <input type="text" class="form-control" required value="{{ \Carbon\Carbon::parse(Setting::get('lastCronRun'))->diffForHumans() }}" disabled>
+                            </div>
+
+                            @if(\Carbon\Carbon::parse(Setting::get('lastCronRun')) > \Carbon\Carbon::now()->subMinutes(5))
+                                <div class="alert alert-success" role="alert">
+                                    Cronjob is running as expected
+                                </div>
+                            @else
+                                <div class="alert alert-danger" role="alert">
+                                    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Cronjob is not running! Are the cron jobs set up?
+                                </div>
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 fw-bold text-white">Training</h6>
                 </div>
                 <div class="card-body">
