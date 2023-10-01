@@ -74,10 +74,11 @@ class TrainingReportController extends Controller
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
-        $data2 = $data; // TODO this should be refactored to something better
-        unset($data2['files']);
-        $report = TrainingReport::create($data2);
+        // Remove attachments , they are added in next step
+        unset($data['files']);
+        $report = TrainingReport::create($data);
 
+        // Add attachments
         TrainingObjectAttachmentController::saveAttachments($request, $report);
 
         // Notify student of new training request if it's not a draft
