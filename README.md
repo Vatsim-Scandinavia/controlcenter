@@ -48,6 +48,15 @@ To setup your Docker instance simply follow these steps:
 8. Setup a crontab _outside_ the container to run `* * * * * docker exec --user www-data -i control-center php artisan schedule:run >/dev/null` every minute. This patches into the container and runs the required cronjobs.
 9. Bind the 8080 (HTTP) and/or 8443 (HTTPS) port to your reverse proxy or similar.
 
+## Updating
+
+Updating only requires you to run migration and clear caches.
+
+```sh
+docker exec -it --user www-data control-center php artisan migrate
+docker exec -it --user www-data control-center php artisan optimize:clear
+```
+
 ## Configuring
 
 To have Control Center reflect your division correctly, you need to do some tweaks.
