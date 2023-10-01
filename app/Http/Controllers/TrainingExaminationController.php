@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TrainingStatus;
 use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Training;
@@ -27,7 +28,7 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
-        if ($training->status != 3) {
+        if ($training->status != TrainingStatus::AWAITING_EXAM->value) {
             return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.');
         }
 

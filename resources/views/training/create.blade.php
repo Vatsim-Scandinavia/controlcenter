@@ -110,7 +110,6 @@
                 showTrainingLevels: function(event) {
                     const selectedTrainingArea = event.srcElement.options[event.srcElement.selectedIndex];
                     this.ratings = payload[selectedTrainingArea.getAttribute('data-id')].ratings;
-                    this.ratings.push({id: 5, name: "C3"});
                 },
             },
         })

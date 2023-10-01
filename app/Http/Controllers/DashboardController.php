@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\AtcActivity;
 use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
 use App\Models\User;
@@ -66,8 +65,7 @@ class DashboardController extends Controller
         // Check if there's an active vote running to advertise
         $activeVote = Vote::where('closed', 0)->first();
 
-        $atcHoursDB = AtcActivity::find($user->id);
-        $atcHours = ($atcHoursDB == null) ? null : $atcHoursDB->hours;
+        $atcHours = $user->atcActivity->hours;
 
         $studentTrainings = \Auth::user()->mentoringTrainings();
 

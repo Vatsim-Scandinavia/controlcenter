@@ -17,7 +17,8 @@ class TrainingActivityPolicy
      */
     public function comment(User $user, Training $training)
     {
-        return $user->can('update', [Training::class, $training]);
+        return $training->mentors->contains($user) ||
+        $user->can('update', [Training::class, $training]);
     }
 
     /**

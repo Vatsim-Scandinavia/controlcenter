@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Helpers\FactoryHelper;
+use App\Helpers\TrainingStatus;
 use App\Models\Endorsement;
 use App\Models\Group;
 use App\Models\Position;
@@ -123,7 +124,7 @@ class DatabaseSeeder extends Seeder
             $training->ratings()->attach(Rating::where('vatsim_rating', '>', 1)->inRandomOrder()->first());
 
             // Give all non-queued trainings a mentor
-            if ($training->status > 0) {
+            if ($training->status > TrainingStatus::IN_QUEUE->value) {
                 $training->mentors()->attach(
                     User::whereHas('groups', function ($query) {
                         $query->where('id', 3);
@@ -137,7 +138,7 @@ class DatabaseSeeder extends Seeder
             }
 
             // Give all exam awaiting trainings a solo endorsement
-            if ($training->status == 3) {
+            if ($training->status == TrainingStatus::AWAITING_EXAM->value) {
                 if (! Endorsement::where('user_id', $training->user_id)->exists()) {
                     $soloEndorsement = Endorsement::factory()->create([
                         'user_id' => $training->user_id,

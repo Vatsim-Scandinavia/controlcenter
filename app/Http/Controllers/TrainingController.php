@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Rating;
@@ -209,8 +210,12 @@ class TrainingController extends Controller
         $this->authorize('create', Training::class);
 
         $students = User::all();
-        $ratings = Area::with('ratings')->get()->toArray();
         $types = TrainingController::$types;
+
+        // Fetch all ratings and add C3 to all areas
+        $ratings = Area::with('ratings')->get()->each(function ($area) {
+            $area->ratings->push(Rating::where('name', 'C3')->first());
+        })->sortBy('name')->toArray();
 
         return view('training.create', compact('students', 'ratings', 'types', 'prefillUserId'));
     }
@@ -461,7 +466,7 @@ class TrainingController extends Controller
             }
 
             unset($attributes['mentors']);
-        } elseif (Auth::user()->isModeratorOrAbove()) { // XXX This is really hack since we don't send this attribute when mentors submit
+        } else {
             // Detach all if no passed key, as that means the list is empty
 
             foreach ($training->mentors as $mentor) {
@@ -492,7 +497,7 @@ class TrainingController extends Controller
 
         // If training is closed, force to unpause
         if ((int) $training->status != $oldStatus) {
-            if ((int) $training->status < 0) {
+            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
                 $attributes['paused_at'] = null;
                 if (isset($training->paused_at)) {
                     TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
@@ -510,12 +515,12 @@ class TrainingController extends Controller
 
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if ((int) $training->status != $oldStatus) {
-            if ((int) $training->status < 0) {
+            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
                 // Detach all mentors
                 $training->mentors()->detach();
 
                 // If the training was completed and double checked with a passed exam result, store the relevant endorsements
-                if ((int) $training->status == -1) {
+                if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
                             // Revoke the old endorsement if active
@@ -546,7 +551,7 @@ class TrainingController extends Controller
                 }
 
                 // If training is completed with a passed exam result, let's set the user to active
-                if ((int) $training->status == -1) {
+                if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
                     if ($training->type <= 4) {
                         $training->user->atc_active = true;
@@ -571,7 +576,7 @@ class TrainingController extends Controller
                 return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
             }
 
-            if ((int) $training->status == 1) {
+            if ((int) $training->status == TrainingStatus::PRE_TRAINING->value) {
                 $training->user->notify(new TrainingPreStatusNotification($training));
 
                 return redirect($training->path())->withSuccess('Training successfully updated. E-mail confirmation of pre-training sent to the student.');
