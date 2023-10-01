@@ -66,7 +66,7 @@ class GlobalSettingController extends Controller
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
         isset($data['atcActivityAllowReactivation']) ? $atcActivityAllowReactivation = true : $atcActivityAllowReactivation = false;
 
-        // The setting dependecy removes keys that are empty, so this is a workaround...
+        // The setting dependency doesn't support null values, so we need to set it to false if it's not set
         isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
         isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
 
