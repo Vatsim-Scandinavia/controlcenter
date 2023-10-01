@@ -30,10 +30,14 @@
                                 <input type="text" class="form-control" required value="{{ config('app.version') }}" disabled>
                             </div>
 
-                            @if(true)
+                            @if(!Setting::get('_updateAvailable'))
                                 <div class="alert alert-success" role="alert">
                                     You're running newest version
                                 </div>
+                            @else
+                            <div class="alert alert-warning" role="alert">
+                                You're running an old version. <a href="https://github.com/Vatsim-Scandinavia/controlcenter/releases" target="_blank">Update {{ Setting::get('_updateAvailable') }} available.</a>
+                            </div>
                             @endif
 
                         </div>

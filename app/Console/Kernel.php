@@ -81,6 +81,10 @@ class Kernel extends ConsoleKernel
                 ->daily();
         }
 
+        // Check if updates are available
+        $schedule->command('check:update')
+            ->hourly();
+
         // Log last cronjob time
         $schedule->call(function () {
             Setting::set('lastCronRun', now());

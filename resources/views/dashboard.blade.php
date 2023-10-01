@@ -42,6 +42,12 @@
 </div>
 @endif
 
+@if($oudatedVersionWarning)
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i>&nbsp;&nbsp;<b>Update Available:</b> Control Center {{ $oudatedVersionWarning }} is available. You are running v{{ config('app.version') }}. <a href="https://github.com/Vatsim-Scandinavia/controlcenter/releases" target="_blank">See details here.</a>
+</div>
+@endif
+
 <div class="row">
     <!-- Current rating card  -->
     <div class="col-xl-3 col-md-6 mb-4">
