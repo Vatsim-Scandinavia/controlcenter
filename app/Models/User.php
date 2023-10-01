@@ -123,14 +123,6 @@ class User extends Authenticatable
         return $this->hasOne(AtcActivity::class);
     }
 
-    // TODO: decide if we should nuke me from orbit
-    public function atchours()
-    {
-        $atcHoursDB = AtcActivity::where('user_id', $this->id)->get()->first();
-
-        return ($atcHoursDB == null) ? null : $atcHoursDB->hours;
-    }
-
     public function getNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
