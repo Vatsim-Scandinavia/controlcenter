@@ -276,6 +276,7 @@ class TrainingController extends Controller
 
         $training = Training::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
+            'created_by' => \Auth::id(),
             'area_id' => $data['training_area'],
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,

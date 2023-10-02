@@ -330,6 +330,9 @@
                     <li>
                         <div class="time">
                             <i class="fas fa-flag"></i>
+                            @isset($training->created_by)
+                                {{ \App\Models\User::find($training->created_by)->name }} —
+                            @endisset 
                             {{ $training->created_at->toEuropeanDateTime() }}
                         </div>
                         <p>
