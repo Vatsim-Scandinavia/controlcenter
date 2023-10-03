@@ -50,7 +50,7 @@ To setup your Docker instance simply follow these steps:
 
 ## Updating
 
-Updating only requires you to run migration and clear caches.
+Updating only requires you to run migration and clear caches. Remember also running the theming command again if you have a custom theme.
 
 ```sh
 docker exec -it --user www-data control-center php artisan migrate
