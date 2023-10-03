@@ -24,6 +24,14 @@
             <span>Dashboard</span></a>
         </li>
 
+        <li class="nav-item {{ Route::is('tasks') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('tasks') }}">
+                <i class="fas fa-fw fa-list"></i>
+                <span>Tasks</span>
+                <span class="badge text-bg-danger">3</span>
+            </a>
+        </li>
+
         @can('view', \App\Models\Booking::class)
             <li class="nav-item {{ Route::is('booking*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('booking') }}">

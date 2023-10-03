@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SweatbookController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingActivityController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingExaminationController;
@@ -186,5 +187,9 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/vote/store', 'store')->name('vote.store');
         Route::patch('/vote/{id}', 'update')->name('vote.update');
         Route::get('/vote/{id}', 'show')->name('vote.show');
+    });
+
+    Route::controller(TaskController::class)->group(function () {
+        Route::get('/tasks', 'index')->name('tasks');
     });
 });
