@@ -55,6 +55,7 @@
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-key"></i> Theoretical Exam Token</button>
                         <button class="dropdown-item"><i class="fas fa-circle-arrow-up"></i> Rating Upgrade</button>
+                        <button class="dropdown-item"><i class="fas fa-clock"></i> Solo Endorsement</button>
                         <button class="dropdown-item"><i class="fas fa-message"></i> Custom Memo</button>
                     </div>
                 </div>

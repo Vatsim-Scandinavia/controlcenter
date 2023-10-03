@@ -88,6 +88,21 @@
                                 </td>
                             </tr>
 
+                            <tr>
+                                <td>15</td>
+                                <td><i class="fas fa-clock"></i> Solo Endorsement</td>
+                                <td>Sara Student (1000241)</td>
+                                <td>
+                                    Could you please add MAE to this student's training?
+                                </td>
+                                <td>John Doe (10000010)</td>
+                                
+                                <td>
+                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
+                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
+                                </td>
+                            </tr>
+
                         </tbody>
                     </table>
                 </div>
