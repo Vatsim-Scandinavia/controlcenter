@@ -22,4 +22,13 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'sender_user_id');
     }
+
+    public function type(){
+        if($this->type) {
+            return app($this->type);
+        } else {
+            throw new \Exception('Invalid task type: ' . $this->type);
+        }
+    }
+
 }

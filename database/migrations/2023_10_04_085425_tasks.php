@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('type');
+            $table->string('type');
             $table->tinyInteger('status')->default(0);
             $table->string('status_comment', 256)->nullable();
             $table->string('message', 256)->nullable();
