@@ -24,6 +24,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Task #</th>
+                                <th>Received</th>
                                 <th>Type</th>
                                 <th>Regarding</th>
                                 <th>Request</th>
@@ -33,80 +34,60 @@
                         </thead>
                         <tbody>
 
-                            <tr>
-                                <td>14</td>
-                                <td><i class="fas fa-circle-arrow-up"></i> Rating Upgrade</td>
-                                <td>Sara Student (1000241)</td>
-                                <td>
-                                    <a href="#" style="text-decoration: underline;">Grant S1 theoretical exam for Sara Student (1000241) <i class="fas fa-arrow-up-right-from-square"></i></a>
-                                </td>
-                                <td>John Doe (10000010)</td>
-                                
-                                <td>
-                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
-                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
-                                </td>
-                            </tr>
+                            @foreach($tasks as $task)
 
-                            <tr>
-                                <td>15</td>
-                                <td><i class="fas fa-key"></i> Theoretical Exam Access</td>
-                                <td>Sara Student (1000241)</td>
-                                <td>
-                                    <a href="#" style="text-decoration: underline;">Upgrade Sara Student (1000241) to S1 <i class="fas fa-arrow-up-right-from-square"></i></a>
-                                </td>
-                                <td>John Doe (10000010)</td>
-                                
-                                <td>
-                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
-                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>{{ $task->id }}</td>
+                                    <td><span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->created_at->toEuropeanDateTime() }}">{{ $task->created_at->diffForHumans() }}</span></td>
+                                    <td><i class="fas {{ $taskTypes[$task->type]["icon"] }}"></i> {{ $taskTypes[$task->type]["text"] }}</td>
+                                    <td><a href="{{ route('user.show', $task->reference_user_id) }}">{{ \App\Models\User::find($task->reference_user_id)->name }} ({{ $task->reference_user_id }})</a></td>
+                                    <td>
+                                        @if($task->type == \App\Helpers\TaskType::THEORY_EXAM->value)
 
-                            <tr>
-                                <td>15</td>
-                                <td><i class="fas fa-message"></i> Custom Memo</td>
-                                <td>Sara Student (1000241)</td>
-                                <td>
-                                    Could you please add MAE to this student's training?
-                                </td>
-                                <td>John Doe (10000010)</td>
-                                
-                                <td>
-                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
-                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
-                                </td>
-                            </tr>
+                                            @if(\App\Models\User::find($task->reference_user_id)->division == 'EUD')
+                                                <i class="fas fa-bolt"></i>
+                                                <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $task->reference_user_id }}" target="_blank" class="link-offset-1 dotted-underline">Grant theoretical exam access</a>
+                                            @else
+                                                Grant theoretical exam access
+                                            @endif
 
-                            <tr>
-                                <td>16</td>
-                                <td><i class="fas fa-clock"></i> Solo Endorsement</td>
-                                <td>Sara Student (1000241)</td>
-                                <td>
-                                    <a href="#" style="text-decoration: underline;">Grant Sara Student (1000001) a Solo Endorsement <i class="fas fa-arrow-up-right-from-square"></i></a>
-                                </td>
-                                <td>John Doe (10000010)</td>
-                                
-                                <td>
-                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
-                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
-                                </td>
-                            </tr>
+                                        @elseif($task->type == \App\Helpers\TaskType::SOLO_ENDORSEMENT->value)
 
-                            <tr>
-                                <td>17</td>
-                                <td><i class="fas fa-circle-arrow-up"></i> Rating Upgrade</td>
-                                <td>Sara Student (1000241)</td>
-                                <td>
-                                    <a href="#" style="text-decoration: underline;">Exam Completed. Upgrade to S2 <i class="fas fa-arrow-up-right-from-square"></i></a>
-                                </td>
-                                <td>John Doe (10000010)</td>
-                                
-                                <td>
-                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
-                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
-                                </td>
-                            </tr>
+                                            <i class="fas fa-bolt"></i>
+                                            <a href="{{ route('endorsements.create.id', $task->reference_user_id) }}" target="_blank" class="link-offset-1 dotted-underline">Grant solo endorsement</a>
+
+                                        @elseif($task->type == \App\Helpers\TaskType::RATING_UPGRADE->value)
+
+                                            @if(\App\Models\User::find($task->reference_user_id)->division == 'EUD')
+                                                <i class="fas fa-bolt"></i>
+                                                <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $task->reference_user_id }}" target="_blank" class="link-offset-1 dotted-underline">Upgrade rating to {{ \App\Models\Training::find($task->reference_training_id)->getInlineRatings() }}</a>
+                                            @else
+                                                Upgrade rating to {{ \App\Models\Training::find($task->reference_training_id)->getInlineRatings() }}
+                                            @endif
+
+                                            @if(\App\Models\Training::find($task->reference_training_id)->status == \App\Helpers\TrainingStatus::COMPLETED->value)
+                                                <span class="fw-light">(Examination completed)</span>
+                                            @endif
+                                            
+                                        @elseif($task->type == \App\Helpers\TaskType::MEMO->value)
+                                            {{ $task->message }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @isset($task->sender_user_id)
+                                            <a href="{{ route('user.show', $task->sender_user_id) }}">{{ \App\Models\User::find($task->sender_user_id)->name }} ({{ $task->sender_user_id }})</a>
+                                        @else
+                                            System
+                                        @endisset
+                                    </td>
+                                    
+                                    <td>
+                                        <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
+                                        <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
+                                    </td>
+                                </tr>
+
+                            @endforeach
 
                         </tbody>
                     </table>
@@ -117,4 +98,9 @@
     
 </div>
 
+@endsection
+
+
+@section('js')
+    @include('scripts.tooltips')
 @endsection

@@ -238,6 +238,10 @@ table{
     a {
         text-decoration: none;
 
+        &.dotted-underline{
+            text-decoration: dotted underline;
+        }
+
         &:hover{
             text-decoration: underline;
         }

@@ -28,7 +28,9 @@
             <a class="nav-link" href="{{ route('tasks') }}">
                 <i class="fas fa-fw fa-list"></i>
                 <span>Tasks</span>
-                <span class="badge text-bg-danger">3</span>
+                @if(\Auth::user()->tasks->count())
+                    <span class="badge text-bg-danger">{{ \Auth::user()->tasks->count() }}</span>
+                @endif
             </a>
         </li>
 

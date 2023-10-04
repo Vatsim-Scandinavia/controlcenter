@@ -118,6 +118,11 @@ class User extends Authenticatable
         return $this->hasMany(Vote::class);
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'recipient_user_id');
+    }
+
     public function atcActivity()
     {
         return $this->hasOne(AtcActivity::class);
