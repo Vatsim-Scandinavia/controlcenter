@@ -54,6 +54,12 @@
                                         Send notification of new examination reports
                                     </label>
                                 </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="check4" name="setting_notify_tasks" {{ $user->setting_notify_newexamreport ? "checked" : "" }}>
+                                    <label class="form-check-label" for="check4">
+                                        Send notification of new tasks
+                                    </label>
+                                </div>
                                 
                                 <div class="mb-3 mt-4">
                                     <label class="form-label" for="setting_workmail_address">Work e-mail</label>
