@@ -87,7 +87,7 @@ class Kernel extends ConsoleKernel
 
         // Log last cronjob time
         $schedule->call(function () {
-            Setting::set('lastCronRun', now());
+            Setting::set('_lastCronRun', now());
             Setting::save();
         })->everyMinute();
     }
