@@ -47,16 +47,17 @@
                         @endif
                     @endforeach
                 </h6>
-
                 <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-hand"></i> Request
                 </button>
                 <div class="dropdown">
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-key"></i> Theoretical Exam Token</button>
-                        <button class="dropdown-item"><i class="fas fa-circle-arrow-up"></i> Rating Upgrade</button>
-                        <button class="dropdown-item"><i class="fas fa-clock"></i> Solo Endorsement</button>
-                        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal2"><i class="fas fa-message"></i> Custom Memo</button>
+                        @foreach($requestTypes as $requestType)
+                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
+                                {{ $requestType->getName() }}
+                            </button>
+                        @endforeach
                     </div>
                 </div>
             </div>
