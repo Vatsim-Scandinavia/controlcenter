@@ -2,12 +2,12 @@
 
 namespace App\Tasks\Types;
 
-use App\Tasks\TaskTypes;
+use App\Tasks\Types\Types;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Training;
 
-class SoloEndorsement extends TaskTypes
+class SoloEndorsement extends Types
 {
     public function getName() {
         return 'Solo Endorsement';

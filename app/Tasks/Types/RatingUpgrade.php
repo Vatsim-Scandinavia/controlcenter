@@ -5,9 +5,9 @@ namespace App\Tasks\Types;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Training;
-use App\Tasks\TaskTypes;
+use App\Tasks\Types\Types;
 
-class RatingUpgrade extends TaskTypes
+class RatingUpgrade extends Types
 {
     public function getName() {
         return 'Rating Upgrade';

@@ -2,12 +2,12 @@
 
 namespace App\Tasks\Types;
 
-use App\Tasks\TaskTypes;
+use App\Tasks\Types\Types;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Training;
 
-class TheoreticalExam extends TaskTypes
+class TheoreticalExam extends Types
 {
     public function getName() {
         return 'Theoretical Exam Access';

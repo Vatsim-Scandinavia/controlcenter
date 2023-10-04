@@ -5,7 +5,7 @@ namespace App\Tasks\Types;
 use App\Tasks\TaskTypes;
 use App\Models\Task;
 
-class CustomRequest extends TaskTypes
+class CustomRequest extends Types
 {
     public function getName() {
         return 'Custom Request';

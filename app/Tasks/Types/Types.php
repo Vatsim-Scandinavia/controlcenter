@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tasks;
+namespace App\Tasks\Types;
 
 use App\Models\Task;
 
-abstract class TaskTypes
+abstract class Types
 {
     protected $name;
     protected $icon;
