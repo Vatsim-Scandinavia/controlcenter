@@ -70,9 +70,9 @@ class DashboardController extends Controller
 
         $studentTrainings = \Auth::user()->mentoringTrainings();
 
-        $cronJobError = ((App::environment('production')) && (\Carbon\Carbon::parse(Setting::get('lastCronRun')) <= \Carbon\Carbon::now()->subMinutes(5)));
+        $cronJobError = (($user->isAdmin() && App::environment('production')) && (\Carbon\Carbon::parse(Setting::get('_lastCronRun', '2000-01-01')) <= \Carbon\Carbon::now()->subMinutes(5)));
 
-        $oudatedVersionWarning = Setting::get('_updateAvailable');
+        $oudatedVersionWarning = $user->isAdmin() && Setting::get('_updateAvailable');
 
         return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
     }

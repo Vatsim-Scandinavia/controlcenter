@@ -46,10 +46,10 @@
 
                             <div class="mb-4">
                                 <label class="form-label" for="spoUrl">Last Cronjob Run</label>
-                                <input type="text" class="form-control" required value="{{ \Carbon\Carbon::parse(Setting::get('lastCronRun'))->diffForHumans() }}" disabled>
+                                <input type="text" class="form-control" required value="{{ \Carbon\Carbon::parse(Setting::get('_lastCronRun', '2000-01-01'))->diffForHumans() }}" disabled>
                             </div>
 
-                            @if(\Carbon\Carbon::parse(Setting::get('lastCronRun')) > \Carbon\Carbon::now()->subMinutes(5))
+                            @if(\Carbon\Carbon::parse(Setting::get('_lastCronRun', '2000-01-01')) > \Carbon\Carbon::now()->subMinutes(5))
                                 <div class="alert alert-success" role="alert">
                                     Cronjob is running as expected
                                 </div>

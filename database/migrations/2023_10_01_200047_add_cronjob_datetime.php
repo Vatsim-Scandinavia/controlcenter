@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('settings', function (Blueprint $table) {
             DB::table(Config::get('settings.table'))->insert([
-                ['key' => 'lastCronRun', 'value' => now()],
+                ['key' => '_lastCronRun', 'value' => now()],
             ]);
         });
     }
@@ -28,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            DB::table(Config::get('settings.table'))->where('key', 'lastCronRun')->delete();
+            DB::table(Config::get('settings.table'))->where('key', '_lastCronRun')->delete();
         });
     }
 };

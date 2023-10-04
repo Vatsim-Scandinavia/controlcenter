@@ -267,6 +267,6 @@ class UserController extends Controller
                 'started_at' => $training->started_at,
                 'ratings' => $training->ratings->pluck('name'),
             ];
-        });
+        })->values();
     }
 }
