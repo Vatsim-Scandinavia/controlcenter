@@ -56,7 +56,7 @@
                         <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-key"></i> Theoretical Exam Token</button>
                         <button class="dropdown-item"><i class="fas fa-circle-arrow-up"></i> Rating Upgrade</button>
                         <button class="dropdown-item"><i class="fas fa-clock"></i> Solo Endorsement</button>
-                        <button class="dropdown-item"><i class="fas fa-message"></i> Custom Memo</button>
+                        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal2"><i class="fas fa-message"></i> Custom Memo</button>
                     </div>
                 </div>
             </div>
@@ -665,6 +665,57 @@
                         <span class="badge text-bg-primary"><i class="fas fa-bolt"></i> Daniel Laaaange</span>
                         <span class="badge text-bg-primary"><i class="fas fa-bolt"></i> Krister Larsen</span>
                     </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success">Send request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Request</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="alert alert-primary">
+                    <i class="fas fa-message"></i> Custom Memo
+                </div>
+
+                <div class="mt-3">
+                    <label class="form-label" for="user">Send memo to</label>
+                    <input 
+                        id="user"
+                        class="form-control"
+                        type="text"
+                        name="user"
+                        list="userList"
+                        value=""
+                    >
+
+                    <datalist id="userList">
+                        <option value="1">Simo Pitikanenen</option>
+                        <option value="2">Christian Kovanenne</option>
+                        <option value="3">Daniel Lange</option>
+                    </datalist>
+
+                    <div>
+                        <span class="badge text-bg-primary"><i class="fas fa-bolt"></i> Christian Kovanen</span>
+                        <span class="badge text-bg-primary"><i class="fas fa-bolt"></i> Simo Pierkannana</span>
+                        <span class="badge text-bg-primary"><i class="fas fa-bolt"></i> Daniel Laaaange</span>
+                        <span class="badge text-bg-primary"><i class="fas fa-bolt"></i> Krister Larsen</span>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label class="form-label" for="comment">Message</label>
+                    <input type="text" class="form-control" id="comment" name="comment" maxlength="255">
                 </div>
             </div>
             <div class="modal-footer">

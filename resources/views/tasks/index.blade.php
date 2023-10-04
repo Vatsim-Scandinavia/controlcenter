@@ -10,10 +10,6 @@
     </div>
 @endsection
 
-@section('header')
-    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
-@endsection
-
 @section('content')
 
 <div class="row">
@@ -24,13 +20,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
-                        data-toggle="table"
-                        data-pagination="true"
-                        data-filter-control="true"
-                        data-page-size="15"
-                        data-page-list=[10,15,25,50]
-                        data-sort-reset="true">
+                    <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
                         <thead class="table-light">
                             <tr>
                                 <th>Task #</th>
@@ -89,11 +79,26 @@
                             </tr>
 
                             <tr>
-                                <td>15</td>
+                                <td>16</td>
                                 <td><i class="fas fa-clock"></i> Solo Endorsement</td>
                                 <td>Sara Student (1000241)</td>
                                 <td>
-                                    Could you please add MAE to this student's training?
+                                    <a href="#" style="text-decoration: underline;">Grant Sara Student (1000001) a Solo Endorsement <i class="fas fa-arrow-up-right-from-square"></i></a>
+                                </td>
+                                <td>John Doe (10000010)</td>
+                                
+                                <td>
+                                    <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
+                                    <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>17</td>
+                                <td><i class="fas fa-circle-arrow-up"></i> Rating Upgrade</td>
+                                <td>Sara Student (1000241)</td>
+                                <td>
+                                    <a href="#" style="text-decoration: underline;">Exam Completed. Upgrade to S2 <i class="fas fa-arrow-up-right-from-square"></i></a>
                                 </td>
                                 <td>John Doe (10000010)</td>
                                 
