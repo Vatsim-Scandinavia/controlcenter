@@ -286,6 +286,7 @@ class UserController extends Controller
             'setting_notify_newreq' => '',
             'setting_notify_closedreq' => '',
             'setting_notify_newexamreport' => '',
+            'setting_notify_tasks' => '',
             'setting_workmail_address' => 'nullable|email|max:64|regex:/(.*)' . Setting::get('linkDomain') . '$/i',
         ]);
 
@@ -293,11 +294,13 @@ class UserController extends Controller
         isset($data['setting_notify_newreq']) ? $setting_notify_newreq = true : $setting_notify_newreq = false;
         isset($data['setting_notify_closedreq']) ? $setting_notify_closedreq = true : $setting_notify_closedreq = false;
         isset($data['setting_notify_newexamreport']) ? $setting_notify_newexamreport = true : $setting_notify_newexamreport = false;
+        isset($data['setting_notify_tasks']) ? $setting_notify_tasks = true : $setting_notify_tasks = false;
 
         $user->setting_notify_newreport = $setting_notify_newreport;
         $user->setting_notify_newreq = $setting_notify_newreq;
         $user->setting_notify_closedreq = $setting_notify_closedreq;
         $user->setting_notify_newexamreport = $setting_notify_newexamreport;
+        $user->setting_notify_tasks = $setting_notify_tasks;
 
         if (! $user->setting_workmail_address && isset($data['setting_workmail_address'])) {
             $user->setting_workmail_address = $data['setting_workmail_address'];

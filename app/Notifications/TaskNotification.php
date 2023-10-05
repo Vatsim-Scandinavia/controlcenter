@@ -53,7 +53,7 @@ class TaskNotification extends Notification
     {
 
         $textLines = [];
-        $textLines[] = "Here is an update for some of your tasks.";
+        $textLines[] = "There is an update for some of your tasks.";
 
 
         if($this->receivedTasks->count()){
@@ -61,6 +61,8 @@ class TaskNotification extends Notification
 
             foreach($this->receivedTasks as $task){
                 $textLines[] = "- **" . $task->type()->getName() . "** from " . User::find($task->sender_user_id)->name . " (" . $task->sender_user_id . ")";
+                $task->recipient_notified = true;
+                $task->save();
             }
             
         }
@@ -69,10 +71,14 @@ class TaskNotification extends Notification
             $textLines[] = '## Updated tasks';
 
             foreach($this->updatedTasks as $task){
-                $textLines[] = "- **" . $task->type()->getName() . "** is now " . Str::lower(TaskStatus::from($task->status)->name);
+                $textLines[] = "- **" . $task->type()->getName() . "** for ". User::find($task->reference_user_id)->name ." (". $task->reference_user_id .") is " . strtolower(TaskStatus::from($task->status)->name);
+                $task->sender_notified = true;
+                $task->save();
             }
+            
         }
 
+        // Return the mail message
         return (new TaskMail('Task Digest', $this->user, $textLines))
             ->to($this->user->email);
     }
