@@ -17,12 +17,19 @@ class TaskController extends Controller
      * @return \Illuminate\Http\Response
      * 
      */
-    public function index()
+    public function index($activeFilter = null)
     {
         $user = auth()->user();
-        $tasks = Task::where('recipient_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
 
-        return view('tasks.index', compact('tasks'));
+        if($activeFilter == 'sent'){
+            $tasks = Task::where('sender_user_id', $user->id)->get()->sortBy('created_at');
+        } elseif($activeFilter == 'archive'){
+            $tasks = Task::where('recipient_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortBy('created_at');
+        } else {
+            $tasks = Task::where('recipient_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
+        }
+
+        return view('tasks.index', compact('tasks', 'activeFilter'));
     }
 
     /**

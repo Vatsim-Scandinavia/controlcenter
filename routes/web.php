@@ -191,6 +191,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     Route::controller(TaskController::class)->group(function () {
         Route::get('/tasks', 'index')->name('tasks');
+        Route::get('/tasks/{activeFilter}', 'index')->name('tasks.filtered');
         Route::get('/tasks/complete/{id}', 'complete')->name('task.complete');
         Route::post('/task/store', 'store')->name('task.store');
     });

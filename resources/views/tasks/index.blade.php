@@ -4,9 +4,9 @@
 @section('title-flex')
     <div>
         <i class="fas fa-filter"></i>&nbsp;Filter:&nbsp;
-        <a class="btn btn-sm btn-primary" href="">Open</a>
-        <a class="btn btn-sm btn-outline-primary" href="">Sent</a>
-        <a class="btn btn-sm btn-outline-primary" href="">Archived</a>
+        <a class="btn btn-sm {{ ($activeFilter != 'sent' && $activeFilter != 'archived') ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tasks') }}">Open</a>
+        <a class="btn btn-sm {{ ($activeFilter == 'sent') ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tasks.filtered', 'sent') }}">Sent</a>
+        <a class="btn btn-sm {{ ($activeFilter == 'archived') ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tasks.filtered', 'archived') }}">Archived</a>
     </div>
 @endsection
 
