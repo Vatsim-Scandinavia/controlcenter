@@ -32,7 +32,7 @@
                                     <th>Regarding</th>
                                     <th>Request</th>
                                     <th>From</th>
-                                    <th>Actions</th>
+                                    <th>{{ ($activeFilter != 'sent' && $activeFilter != 'archived') ? 'Actions' : 'Status' }}</th>
                                 </tr>
                             </thead>
                             <tbody>

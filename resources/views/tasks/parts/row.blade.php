@@ -19,7 +19,17 @@
     </td>
     
     <td>
-        <a href="{{ route('task.complete', $task->id) }}" class="btn btn-sm btn-outline-success text-decoration-none"><i class="fas fa-check"></i> Complete</a>
-        <a href="" class="btn btn-sm btn-outline-danger text-decoration-none"><i class="fas fa-xmark"></i> Decline</a>
+        @if($activeFilter != 'sent' && $activeFilter != 'archived')
+            <a href="{{ route('task.complete', $task->id) }}" class="btn btn-sm btn-outline-success text-decoration-none"><i class="fas fa-check"></i> Complete</a>
+            <a href="{{ route('task.decline', $task->id) }}" class="btn btn-sm btn-outline-danger text-decoration-none"><i class="fas fa-xmark"></i> Decline</a>
+        @else
+            @if($task->status == \App\Helpers\TaskStatus::COMPLETED->value)
+                <span class="badge bg-success">Completed</span>
+            @elseif($task->status == \App\Helpers\TaskStatus::DECLINED->value)
+                <span class="badge bg-danger">Declined</span>
+            @elseif($task->status == \App\Helpers\TaskStatus::PENDING->value)
+                <span class="badge bg-warning">Pending</span>
+            @endif
+        @endif
     </td>
 </tr>

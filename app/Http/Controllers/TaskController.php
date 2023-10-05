@@ -81,6 +81,27 @@ class TaskController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * 
+     * Decline the specified task
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Task  $task
+     */
+    public function decline(Request $request, int $task){
+
+        $task = Task::findOrFail($task);
+
+        $task->status = TaskStatus::DECLINED->value;
+        $task->closed_at = now();
+        $task->save();
+
+        // Run the decline method on the task type to trigger type specific actions on decline
+        $task->type()->decline($task);
+
+        return redirect()->back();
+    }
+
     /** 
      * 
      * Return the task type classes
