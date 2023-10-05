@@ -2,12 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Helpers\TaskStatus;
 use App\Mail\TaskMail;
 use App\Models\User;
-use App\Helpers\TaskStatus;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class TaskNotification extends Notification
@@ -53,29 +51,28 @@ class TaskNotification extends Notification
     {
 
         $textLines = [];
-        $textLines[] = "There is an update for some of your tasks.";
+        $textLines[] = 'There is an update for some of your tasks.';
 
-
-        if($this->receivedTasks->count()){
+        if ($this->receivedTasks->count()) {
             $textLines[] = '## New tasks';
 
-            foreach($this->receivedTasks as $task){
-                $textLines[] = "- **" . $task->type()->getName() . "** from " . User::find($task->sender_user_id)->name . " (" . $task->sender_user_id . ")";
+            foreach ($this->receivedTasks as $task) {
+                $textLines[] = '- **' . $task->type()->getName() . '** from ' . User::find($task->sender_user_id)->name . ' (' . $task->sender_user_id . ')';
                 $task->recipient_notified = true;
                 $task->save();
             }
-            
+
         }
 
-        if($this->updatedTasks->count()){
+        if ($this->updatedTasks->count()) {
             $textLines[] = '## Updated tasks';
 
-            foreach($this->updatedTasks as $task){
-                $textLines[] = "- **" . $task->type()->getName() . "** for ". User::find($task->reference_user_id)->name ." (". $task->reference_user_id .") is " . strtolower(TaskStatus::from($task->status)->name);
+            foreach ($this->updatedTasks as $task) {
+                $textLines[] = '- **' . $task->type()->getName() . '** for ' . User::find($task->reference_user_id)->name . ' (' . $task->reference_user_id . ') is ' . strtolower(TaskStatus::from($task->status)->name);
                 $task->sender_notified = true;
                 $task->save();
             }
-            
+
         }
 
         // Return the mail message

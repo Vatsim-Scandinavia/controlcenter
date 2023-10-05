@@ -95,7 +95,7 @@ class Training extends Model
     public function getInlineRatings(bool $vatsimRatingOnly = false)
     {
 
-        if($vatsimRatingOnly){
+        if ($vatsimRatingOnly) {
             return $this->ratings->where('vatsim_rating', true)->pluck('name')->implode(' + ');
         }
 

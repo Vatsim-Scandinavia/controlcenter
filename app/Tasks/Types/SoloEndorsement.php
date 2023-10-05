@@ -2,42 +2,47 @@
 
 namespace App\Tasks\Types;
 
-use App\Tasks\Types\Types;
 use App\Models\Task;
-use App\Models\User;
-use App\Models\Training;
 
 class SoloEndorsement extends Types
 {
-    public function getName() {
+    public function getName()
+    {
         return 'Solo Endorsement';
     }
 
-    public function getIcon() {
+    public function getIcon()
+    {
         return 'fa-clock';
     }
 
-    public function getText(Task $model) {
+    public function getText(Task $model)
+    {
         return 'Grant solo endorsement';
     }
 
-    public function getLink(Task $model){
+    public function getLink(Task $model)
+    {
         return route('endorsements.create.id', $model->reference_user_id);
     }
 
-    public function create(Task $model){
+    public function create(Task $model)
+    {
         parent::onCreated($model);
     }
 
-    public function complete(Task $model){
+    public function complete(Task $model)
+    {
         parent::onCompleted($model);
     }
 
-    public function decline(Task $model){
+    public function decline(Task $model)
+    {
         parent::onDeclined($model);
     }
 
-    public function showConnectedRatings(){
+    public function showConnectedRatings()
+    {
         return false;
     }
 }

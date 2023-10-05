@@ -3,27 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TaskStatus;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use App\Models\Task;
 use App\Rules\ValidTaskType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class TaskController extends Controller
 {
-
     /**
-     * 
      * Show the application task dashboard.
+     *
      * @return \Illuminate\Http\Response
-     * 
      */
     public function index($activeFilter = null)
     {
         $user = auth()->user();
 
-        if($activeFilter == 'sent'){
+        if ($activeFilter == 'sent') {
             $tasks = Task::where('sender_user_id', $user->id)->get()->sortBy('created_at');
-        } elseif($activeFilter == 'archived'){
+        } elseif ($activeFilter == 'archived') {
             $tasks = Task::where('recipient_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortBy('created_at');
         } else {
             $tasks = Task::where('recipient_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
@@ -33,12 +31,10 @@ class TaskController extends Controller
     }
 
     /**
-     * 
      * Store a newly created task in storage.
-     * @param  \Illuminate\Http\Request  $request
-     * 
      */
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $data = $request->validate([
             'type' => ['required', new ValidTaskType],
@@ -59,15 +55,14 @@ class TaskController extends Controller
 
         return redirect()->back()->with('success', 'Task created successfully.');
     }
-    
+
     /**
-     * 
      * Complete the specified task
-     * 
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @param  \App\Models\Task  $task
      */
-    public function complete(Request $request, int $task){
+    public function complete(Request $request, int $task)
+    {
 
         $task = Task::findOrFail($task);
 
@@ -82,13 +77,12 @@ class TaskController extends Controller
     }
 
     /**
-     * 
      * Decline the specified task
-     * 
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @param  \App\Models\Task  $task
      */
-    public function decline(Request $request, int $task){
+    public function decline(Request $request, int $task)
+    {
 
         $task = Task::findOrFail($task);
 
@@ -102,12 +96,13 @@ class TaskController extends Controller
         return redirect()->back();
     }
 
-    /** 
-     * 
+    /**
      * Return the task type classes
+     *
      * @return array
      */
-    public static function getTypes(){
+    public static function getTypes()
+    {
         // Specify the directory where your subclasses are located
         $subclassesDirectory = app_path('Tasks/Types');
 
@@ -119,7 +114,7 @@ class TaskController extends Controller
 
         foreach ($files as $file) {
             // Get the class name from the file path
-            $className = 'App\\Tasks\\Types\\' . pathinfo($file, PATHINFO_FILENAME);;
+            $className = 'App\\Tasks\\Types\\' . pathinfo($file, PATHINFO_FILENAME);
 
             // Check if the class exists and is a subclass of Types
             if (class_exists($className) && is_subclass_of($className, 'App\\Tasks\\Types\\Types')) {
@@ -131,22 +126,21 @@ class TaskController extends Controller
     }
 
     /**
-     * 
      * Check if a task type is valid
-     * @param string $type
+     *
+     * @param  string  $type
      * @return bool
-     * 
      */
-    public static function isValidType($type){
+    public static function isValidType($type)
+    {
         $types = self::getTypes();
 
-        foreach($types as $taskType){
-            if($taskType::class == $type){
+        foreach ($types as $taskType) {
+            if ($taskType::class == $type) {
                 return true;
             }
         }
 
         return false;
     }
-
 }

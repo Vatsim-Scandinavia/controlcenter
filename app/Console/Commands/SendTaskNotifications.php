@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
-use App\Helpers\TaskStatus;
 use App\Notifications\TaskNotification;
 use Illuminate\Console\Command;
-use App\Notifications\TrainingInterestNotification;
 
 class SendTaskNotifications extends Command
 {
@@ -45,22 +44,22 @@ class SendTaskNotifications extends Command
         $usersRecipients = $pendingTasks->pluck('recipient_user_id')->merge($completedTasks->pluck('sender_user_id'))->merge($declinedTasks->pluck('sender_user_id'))->unique();
         $userModels = User::whereIn('id', $usersRecipients)->get();
 
-        foreach($userModels as $user){
+        foreach ($userModels as $user) {
 
             // If no tasks for this user, skip
-            if(!$tasks->where('recipient_user_id', $user->id)->count() && ! $tasks->where('sender_user_id', $user->id)->count()){
+            if (! $tasks->where('recipient_user_id', $user->id)->count() && ! $tasks->where('sender_user_id', $user->id)->count()) {
                 continue;
             }
 
             // If user has disabled task notifications, mark as notified and skip
-            if(!$user->setting_notify_tasks){
-                
-                $tasks->where('recipient_user_id', $user->id)->each(function($task){
+            if (! $user->setting_notify_tasks) {
+
+                $tasks->where('recipient_user_id', $user->id)->each(function ($task) {
                     $task->recipient_notified = true;
                     $task->save();
                 });
 
-                $tasks->where('sender_user_id', $user->id)->each(function($task){
+                $tasks->where('sender_user_id', $user->id)->each(function ($task) {
                     $task->sender_notified = true;
                     $task->save();
                 });

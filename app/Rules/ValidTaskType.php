@@ -2,8 +2,8 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Http\Controllers\TaskController;
+use Illuminate\Contracts\Validation\Rule;
 
 class ValidTaskType implements Rule
 {

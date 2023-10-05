@@ -2,24 +2,27 @@
 
 namespace App\Tasks\Types;
 
-use App\Tasks\TaskTypes;
 use App\Models\Task;
 
 class Custom extends Types
 {
-    public function getName() {
+    public function getName()
+    {
         return 'Custom Request';
     }
 
-    public function getIcon() {
+    public function getIcon()
+    {
         return 'fa-message';
     }
 
-    public function getText(Task $model) {
+    public function getText(Task $model)
+    {
         return $model->message;
     }
 
-    public function getLink(Task $model){
+    public function getLink(Task $model)
+    {
         return false;
     }
 
@@ -28,20 +31,23 @@ class Custom extends Types
         return true;
     }
 
-    public function create(Task $model){
+    public function create(Task $model)
+    {
         parent::onCreated($model);
     }
 
-    public function complete(Task $model){
+    public function complete(Task $model)
+    {
         parent::onCompleted($model);
     }
 
-    public function decline(Task $model){
+    public function decline(Task $model)
+    {
         parent::onDeclined($model);
     }
 
-    public function showConnectedRatings(){
+    public function showConnectedRatings()
+    {
         return false;
     }
-
 }
