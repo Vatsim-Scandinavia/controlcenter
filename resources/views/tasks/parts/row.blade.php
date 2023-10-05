@@ -1,5 +1,4 @@
 <tr>
-    <td>{{ $task->id }}</td>
     <td><span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->created_at->toEuropeanDateTime() }}">{{ $task->created_at->diffForHumans() }}</span></td>
     <td><a href="{{ route('user.show', $task->reference_user_id) }}">{{ \App\Models\User::find($task->reference_user_id)->name }} ({{ $task->reference_user_id }})</a></td>
     <td>

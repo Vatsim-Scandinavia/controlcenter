@@ -2,27 +2,30 @@
 
 namespace App\Tasks\Types;
 
-use App\Tasks\Types\Types;
+use App\Tasks\TaskTypes;
 use App\Models\Task;
-use App\Models\User;
-use App\Models\Training;
 
-class SoloEndorsement extends Types
+class Custom extends Types
 {
     public function getName() {
-        return 'Solo Endorsement';
+        return 'Custom Request';
     }
 
     public function getIcon() {
-        return 'fa-clock';
+        return 'fa-message';
     }
 
     public function getText(Task $model) {
-        return 'Grant solo endorsement';
+        return $model->message;
     }
 
     public function getLink(Task $model){
-        return route('endorsements.create.id', $model->reference_user_id);
+        return false;
+    }
+
+    public function allowMessage()
+    {
+        return true;
     }
 
     public function create(Task $model){
@@ -40,4 +43,5 @@ class SoloEndorsement extends Types
     public function showConnectedRatings(){
         return false;
     }
+
 }

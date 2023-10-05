@@ -18,7 +18,7 @@ class TheoreticalExam extends Types
     }
 
     public function getText(Task $model) {
-        return 'Grant theoretical exam access';
+        return 'Grant theoretical exam access for ' . Training::find($model->reference_training_id)->getInlineRatings();
     }
 
     public function getLink(Task $model){
@@ -30,5 +30,21 @@ class TheoreticalExam extends Types
         }
 
         return false;
+    }
+
+    public function create(Task $model){
+        parent::onCreated($model);
+    }
+
+    public function complete(Task $model){
+        parent::onCompleted($model);
+    }
+
+    public function decline(Task $model){
+        parent::onDeclined($model);
+    }
+
+    public function showConnectedRatings(){
+        return true;
     }
 }

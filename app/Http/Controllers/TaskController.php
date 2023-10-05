@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\Models\Task;
+use App\Rules\ValidTaskType;
 
 class TaskController extends Controller
 {
@@ -23,6 +24,39 @@ class TaskController extends Controller
         return view('tasks.index', compact('tasks'));
     }
 
+    /**
+     * 
+     * Store a newly created task in storage.
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     */
+    public function store(Request $request){
+
+        $data = $request->validate([
+            'type' => ['required', new ValidTaskType],
+            'message' => 'sometimes|min:3|max:256',
+            'reference_user_id' => 'required|exists:users,id',
+            'reference_training_id' => 'required|exists:trainings,id',
+            'recipient_user_id' => 'required|exists:users,id',
+        ]);
+
+        $data['sender_user_id'] = auth()->user()->id;
+        $data['created_at'] = now();
+
+        // Create the model
+        $task = Task::create($data);
+
+        // Run the create method on the task type to trigger type specific actions on creation
+        $task->type()->create($task);
+
+        return redirect()->back()->with('success', 'Task created successfully.');
+    }
+
+    /** 
+     * 
+     * Return the task type classes
+     * @return array
+     */
     public static function getTypes(){
         // Specify the directory where your subclasses are located
         $subclassesDirectory = app_path('Tasks/Types');
@@ -44,6 +78,25 @@ class TaskController extends Controller
         }
 
         return $subclasses;
+    }
+
+    /**
+     * 
+     * Check if a task type is valid
+     * @param string $type
+     * @return bool
+     * 
+     */
+    public static function isValidType($type){
+        $types = self::getTypes();
+
+        foreach($types as $taskType){
+            if($taskType::class == $type){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

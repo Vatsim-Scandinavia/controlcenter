@@ -31,4 +31,20 @@ class RatingUpgrade extends Types
 
         return false;
     }
+
+    public function create(Task $model){
+        parent::onCreated($model);
+    }
+
+    public function complete(Task $model){
+        parent::onCompleted($model);
+    }
+
+    public function decline(Task $model){
+        parent::onDeclined($model);
+    }
+
+    public function showConnectedRatings(){
+        return true;
+    }
 }

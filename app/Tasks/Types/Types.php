@@ -3,6 +3,7 @@
 namespace App\Tasks\Types;
 
 use App\Models\Task;
+use App\Helpers\TaskStatus;
 
 abstract class Types
 {
@@ -15,21 +16,35 @@ abstract class Types
         $this->icon = $this->getIcon();
     }
 
-    public function onCreated(){
-        // Default logic for creating a task
+    public function onCreated(Task $model){
+        
     }
 
-    public function onCompleted(){
-        // Default logic for completing a task
+    public function onCompleted(Task $model){
+        $model->update([
+            'status' => TaskStatus::COMPLETED->value
+        ]);
     }
 
-    public function onDeclined(){
-        // Default logic for declining a task
+    public function onDeclined(Task $model){
+        $model->update([
+            'status' => TaskStatus::DECLINED->value
+        ]);
+    }
+
+    public function allowMessage(){
+        return false;
     }
 
     abstract public function getName();
     abstract public function getIcon();
     abstract public function getText(Task $model);
     abstract public function getLink(Task $model);
+
+    abstract public function create(Task $model);
+    abstract public function complete(Task $model);
+    abstract public function decline(Task $model);
+
+    abstract public function showConnectedRatings();
 
 }

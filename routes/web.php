@@ -191,5 +191,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     Route::controller(TaskController::class)->group(function () {
         Route::get('/tasks', 'index')->name('tasks');
+        Route::post('/task/store', 'store')->name('tasks.store');
     });
 });
