@@ -4,6 +4,10 @@ namespace App\Tasks\Types;
 
 use App\Models\Task;
 
+/**
+ * Abstract class for task types
+ * NOTE: Experimental feature, this interface/class is not stable. Changes to architecture may occur.
+ */
 abstract class Types
 {
     protected $name;
