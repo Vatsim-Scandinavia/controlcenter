@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TaskStatus;
 use App\Models\Task;
+use App\Models\User;
 use App\Rules\ValidTaskType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -17,6 +18,9 @@ class TaskController extends Controller
      */
     public function index($activeFilter = null)
     {
+
+        $this->authorize('update', Task::class);
+
         $user = auth()->user();
 
         if ($activeFilter == 'sent') {
@@ -36,6 +40,8 @@ class TaskController extends Controller
     public function store(Request $request)
     {
 
+        $this->authorize('create', Task::class);
+
         $data = $request->validate([
             'type' => ['required', new ValidTaskType],
             'message' => 'sometimes|min:3|max:256',
@@ -47,13 +53,22 @@ class TaskController extends Controller
         $data['sender_user_id'] = auth()->user()->id;
         $data['created_at'] = now();
 
-        // Create the model
-        $task = Task::create($data);
+        // Check if recipient is mentor or above
+        $recipient = User::findOrFail($data['recipient_user_id']);
 
-        // Run the create method on the task type to trigger type specific actions on creation
-        $task->type()->create($task);
+        // Policy check if recpient can recieve a task
+        if ($recipient->can('receive', Task::class)) {
+            // Create the model
+            $task = Task::create($data);
 
-        return redirect()->back()->with('success', 'Task created successfully.');
+            // Run the create method on the task type to trigger type specific actions on creation
+            $task->type()->create($task);
+
+            return redirect()->back()->with('success', 'Task created successfully.');
+        }
+
+        return redirect()->back()->withErrors('Recipient is not allowed to receive tasks.');
+
     }
 
     /**
@@ -63,6 +78,8 @@ class TaskController extends Controller
      */
     public function complete(Request $request, int $task)
     {
+
+        $this->authorize('update', Task::class);
 
         $task = Task::findOrFail($task);
 
@@ -83,6 +100,8 @@ class TaskController extends Controller
      */
     public function decline(Request $request, int $task)
     {
+
+        $this->authorize('update', Task::class);
 
         $task = Task::findOrFail($task);
 

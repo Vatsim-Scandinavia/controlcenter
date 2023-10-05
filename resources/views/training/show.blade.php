@@ -47,19 +47,23 @@
                         @endif
                     @endforeach
                 </h6>
-                <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-hand"></i> Request
-                </button>
-                <div class="dropdown">
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        @foreach($requestTypes as $requestType)
-                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
-                                <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
-                                {{ $requestType->getName() }}
-                            </button>
-                        @endforeach
+
+                @can('create', [\App\Models\Task::class])
+                    <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-hand"></i> Request
+                    </button>
+                    <div class="dropdown">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach($requestTypes as $requestType)
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
+                                    <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
+                                    {{ $requestType->getName() }}
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
+                @endcan
+
             </div>
             <div class="card-body">
                 <dl class="copyable">
