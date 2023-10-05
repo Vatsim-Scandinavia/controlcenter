@@ -18,7 +18,7 @@ class RatingUpgrade extends Types
     }
 
     public function getText(Task $model) {
-        return 'Upgrade rating to ' . Training::find($model->reference_training_id)->getInlineRatings();
+        return 'Upgrade rating to ' . Training::find($model->reference_training_id)->getInlineRatings(true);
     }
 
     public function getLink(Task $model){

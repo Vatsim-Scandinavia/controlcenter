@@ -13,7 +13,7 @@
                 
                     <div class="alert alert-primary">
                         @if($requestType->showConnectedRatings())
-                            <i class="fas {{ $requestType->getIcon() }}"></i> {{ $requestType->getName() }} for <b>{{ $training->getInlineRatings() }}</b> rating
+                            <i class="fas {{ $requestType->getIcon() }}"></i> {{ $requestType->getName() }} for <b>{{ $training->getInlineRatings(true) }}</b> rating
                         @else
                             <i class="fas {{ $requestType->getIcon() }}"></i> {{ $requestType->getName() }}
                         @endif

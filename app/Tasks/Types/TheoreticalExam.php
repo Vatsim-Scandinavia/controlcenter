@@ -18,7 +18,7 @@ class TheoreticalExam extends Types
     }
 
     public function getText(Task $model) {
-        return 'Grant theoretical exam access for ' . Training::find($model->reference_training_id)->getInlineRatings();
+        return 'Grant theoretical exam access for ' . Training::find($model->reference_training_id)->getInlineRatings(true);
     }
 
     public function getLink(Task $model){
