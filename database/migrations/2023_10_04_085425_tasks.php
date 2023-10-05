@@ -23,7 +23,8 @@ return new class extends Migration
             $table->unsignedBigInteger('reference_training_id')->nullable();
             $table->unsignedBigInteger('recipient_user_id');
             $table->unsignedBigInteger('sender_user_id')->nullable();
-            $table->boolean('notified')->default(false);
+            $table->boolean('recipient_notified')->default(false);
+            $table->boolean('sender_notified')->default(false);
             $table->timestamps();
             $table->timestamp('closed_at')->nullable();
 
