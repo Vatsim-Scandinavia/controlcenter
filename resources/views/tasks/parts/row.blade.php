@@ -19,7 +19,7 @@
     </td>
     
     <td>
-        <a href="" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Complete</a>
-        <a href="" class="btn btn-sm btn-outline-danger"><i class="fas fa-xmark"></i> Decline</a>
+        <a href="{{ route('task.complete', $task->id) }}" class="btn btn-sm btn-outline-success text-decoration-none"><i class="fas fa-check"></i> Complete</a>
+        <a href="" class="btn btn-sm btn-outline-danger text-decoration-none"><i class="fas fa-xmark"></i> Decline</a>
     </td>
 </tr>

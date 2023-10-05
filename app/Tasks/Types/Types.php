@@ -17,19 +17,15 @@ abstract class Types
     }
 
     public function onCreated(Task $model){
-        
+        // Default behaviour when task is created
     }
 
     public function onCompleted(Task $model){
-        $model->update([
-            'status' => TaskStatus::COMPLETED->value
-        ]);
+        // Default behaviour is completed
     }
 
     public function onDeclined(Task $model){
-        $model->update([
-            'status' => TaskStatus::DECLINED->value
-        ]);
+        // Default behaviour is declined
     }
 
     public function allowMessage(){

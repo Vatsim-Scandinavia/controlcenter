@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body">
 
-                <form action="{{ route('tasks.store') }}" method="POST">
+                <form action="{{ route('task.store') }}" method="POST">
 
                     @csrf
                 

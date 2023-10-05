@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TaskStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\Models\Task;
@@ -19,7 +20,7 @@ class TaskController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $tasks = Task::where('recipient_user_id', $user->id)->get()->sortBy('created_at');
+        $tasks = Task::where('recipient_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
 
         return view('tasks.index', compact('tasks'));
     }
@@ -50,6 +51,27 @@ class TaskController extends Controller
         $task->type()->create($task);
 
         return redirect()->back()->with('success', 'Task created successfully.');
+    }
+    
+    /**
+     * 
+     * Complete the specified task
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Task  $task
+     */
+    public function complete(Request $request, int $task){
+
+        $task = Task::findOrFail($task);
+
+        $task->status = TaskStatus::COMPLETED->value;
+        $task->closed_at = now();
+        $task->save();
+
+        // Run the complete method on the task type to trigger type specific actions on completion
+        $task->type()->complete($task);
+
+        return redirect()->back();
     }
 
     /** 
