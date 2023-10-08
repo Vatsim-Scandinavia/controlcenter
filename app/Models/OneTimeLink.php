@@ -14,8 +14,8 @@ class OneTimeLink extends Model
 
     public $timestamps = false;
 
-    protected $dates = [
-        'expires_at',
+    protected $casts = [
+        'expires_at' => 'datetime',
     ];
 
     /**
@@ -45,7 +45,7 @@ class OneTimeLink extends Model
      */
     public function reportType()
     {
-        return self::TRAINING_REPORT_TYPE == $this->training_object_type;
+        return $this->training_object_type == self::TRAINING_REPORT_TYPE;
     }
 
     /**
@@ -55,7 +55,7 @@ class OneTimeLink extends Model
      */
     public function examinationType()
     {
-        return self::TRAINING_EXAMINATION_TYPE == $this->training_object_type;
+        return $this->training_object_type == self::TRAINING_EXAMINATION_TYPE;
     }
 
     /**

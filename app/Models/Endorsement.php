@@ -9,11 +9,11 @@ class Endorsement extends Model
 {
     use HasFactory;
 
-    protected $dates = [
-        'valid_from',
-        'valid_to',
-        'created_at',
-        'updated_at',
+    protected $casts = [
+        'valid_from' => 'datetime',
+        'valid_to' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function ratings()

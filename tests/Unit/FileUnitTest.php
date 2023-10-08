@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class FileUnitTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private $controller;
 

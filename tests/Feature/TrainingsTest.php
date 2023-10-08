@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     //    /** @test */
     //    public function user_can_create_a_training_request()

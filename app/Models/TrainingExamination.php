@@ -10,10 +10,9 @@ class TrainingExamination extends TrainingObject
 
     protected $guarded = [];
 
-    protected $dates = ['examination_date'];
-
     protected $casts = [
         'draft' => 'boolean',
+        'examination_date' => 'datetime',
     ];
 
     public function position()
