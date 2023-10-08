@@ -58,8 +58,14 @@ class CheckOnlineControllers extends Command
         $this->info('Collecting online controllers...');
 
         // Fetch the latest URI to data feed
-        $dataUri = Http::get('https://status.vatsim.net/status.json')['data']['v3'][0];
-        $dataReturn = Http::get($dataUri);
+        $dataUri = Http::get('https://status.vatsim.net/status.json');
+        if (! isset($dataUri) || ! isset($dataUri['data']) || ! isset($dataUri['data']['v3']) || ! isset($dataUri['data']['v3'][0])) {
+            $this->info('No data URI found. Aborting.');
+
+            return;
+        }
+
+        $dataReturn = Http::get($dataUri['data']['v3'][0]);
 
         if (isset($dataReturn)) {
             $vatsimData = $dataReturn['controllers'];
