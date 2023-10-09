@@ -68,48 +68,45 @@ class TaskController extends Controller
     }
 
     /**
-     * Complete the specified task
-     *
-     * @param  \App\Models\Task  $task
+     * Close the specified task with a given status.
      */
-    public function complete(Request $request, int $task)
+    protected function close(Task|int $task, TaskStatus $status): Task
     {
-
         $this->authorize('update', Task::class);
-
         $task = Task::findOrFail($task);
-
-        $task->status = TaskStatus::COMPLETED->value;
+        $task->status = $status;
         $task->closed_at = now();
         $task->save();
 
-        // Run the complete method on the task type to trigger type specific actions on completion
-        $task->type()->complete($task);
-
-        return redirect()->back();
+        return $task;
     }
 
     /**
-     * Decline the specified task
-     *
-     * @param  \App\Models\Task  $task
+     * Complete the specified task.
      */
-    public function decline(Request $request, int $task)
+    public function complete(Request $request, Task|int $task): RedirectResponse
     {
+        $completed = self::close($task, TaskStatus::COMPLETED);
 
-        $this->authorize('update', Task::class);
+        // Run the complete method on the task type to trigger type specific actions on completion
+        $completed->type()->complete($completed);
 
-        $task = Task::findOrFail($task);
+        return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $completed->subject->name, $completed->creator->name));
+    }
 
-        $task->status = TaskStatus::DECLINED->value;
-        $task->closed_at = now();
-        $task->save();
+    /**
+     * Decline the specified task.
+     */
+    public function decline(Request $request, Task|int $task): RedirectResponse
+    {
+        $declined = self::close($task, TaskStatus::DECLINED);
 
         // Run the decline method on the task type to trigger type specific actions on decline
-        $task->type()->decline($task);
+        $declined->type()->decline($declined);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $declined->subject->name, $declined->creator->name));
     }
+
 
     /**
      * Return the task type classes
