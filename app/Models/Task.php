@@ -26,6 +26,10 @@ class Task extends Model
         return $this->belongsTo(User::class, 'subject_user_id');
     }
 
+    public function asignee(){
+        return $this->belongsTo(User::class, 'assignee_user_id');
+    }
+
     public function type()
     {
         if ($this->type) {
