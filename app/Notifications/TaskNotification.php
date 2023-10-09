@@ -57,7 +57,7 @@ class TaskNotification extends Notification
             $textLines[] = '## New tasks';
 
             foreach ($this->receivedTasks as $task) {
-                $textLines[] = '- **' . $task->type()->getName() . '** from ' . User::find($task->sender_user_id)->name . ' (' . $task->sender_user_id . ')';
+                $textLines[] = '- **' . $task->type()->getName() . '** from ' . User::find($task->creator_user_id)->name . ' (' . $task->creator_user_id . ')';
                 $task->recipient_notified = true;
                 $task->save();
             }
@@ -68,8 +68,8 @@ class TaskNotification extends Notification
             $textLines[] = '## Updated tasks';
 
             foreach ($this->updatedTasks as $task) {
-                $textLines[] = '- **' . $task->type()->getName() . '** for ' . User::find($task->reference_user_id)->name . ' (' . $task->reference_user_id . ') is ' . strtolower(TaskStatus::from($task->status)->name);
-                $task->sender_notified = true;
+                $textLines[] = '- **' . $task->type()->getName() . '** for ' . User::find($task->subject_user_id)->name . ' (' . $task->subject_user_id . ') is ' . strtolower(TaskStatus::from($task->status)->name);
+                $task->creator_notified = true;
                 $task->save();
             }
 

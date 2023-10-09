@@ -36,31 +36,31 @@ class SendTaskNotifications extends Command
         $pendingTasks = Task::where('status', TaskStatus::PENDING->value)->where('recipient_notified', false)->get();
 
         // For senders who have not yet been notified
-        $completedTasks = Task::where('status', TaskStatus::COMPLETED->value)->where('sender_notified', false)->get();
-        $declinedTasks = Task::where('status', TaskStatus::DECLINED->value)->where('sender_notified', false)->get();
+        $completedTasks = Task::where('status', TaskStatus::COMPLETED->value)->where('creator_notified', false)->get();
+        $declinedTasks = Task::where('status', TaskStatus::DECLINED->value)->where('creator_notified', false)->get();
 
         // Put together the list of email recipients
         $tasks = $pendingTasks->merge($completedTasks)->merge($declinedTasks);
-        $usersRecipients = $pendingTasks->pluck('recipient_user_id')->merge($completedTasks->pluck('sender_user_id'))->merge($declinedTasks->pluck('sender_user_id'))->unique();
+        $usersRecipients = $pendingTasks->pluck('assignee_user_id')->merge($completedTasks->pluck('creator_user_id'))->merge($declinedTasks->pluck('creator_user_id'))->unique();
         $userModels = User::whereIn('id', $usersRecipients)->get();
 
         foreach ($userModels as $user) {
 
             // If no tasks for this user, skip
-            if (! $tasks->where('recipient_user_id', $user->id)->count() && ! $tasks->where('sender_user_id', $user->id)->count()) {
+            if (! $tasks->where('assignee_user_id', $user->id)->count() && ! $tasks->where('creator_user_id', $user->id)->count()) {
                 continue;
             }
 
             // If user has disabled task notifications, mark as notified and skip
             if (! $user->setting_notify_tasks) {
 
-                $tasks->where('recipient_user_id', $user->id)->each(function ($task) {
+                $tasks->where('assignee_user_id', $user->id)->each(function ($task) {
                     $task->recipient_notified = true;
                     $task->save();
                 });
 
-                $tasks->where('sender_user_id', $user->id)->each(function ($task) {
-                    $task->sender_notified = true;
+                $tasks->where('creator_user_id', $user->id)->each(function ($task) {
+                    $task->creator_notified = true;
                     $task->save();
                 });
 
@@ -69,8 +69,8 @@ class SendTaskNotifications extends Command
 
             $user->notify(new TaskNotification(
                 $user,
-                $tasks->where('recipient_user_id', $user->id),
-                $tasks->where('sender_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value]),
+                $tasks->where('assignee_user_id', $user->id),
+                $tasks->where('creator_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value]),
             ));
         }
 

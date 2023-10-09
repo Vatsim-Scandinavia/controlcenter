@@ -1,6 +1,6 @@
 <tr>
     <td><span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->created_at->toEuropeanDateTime() }}">{{ $task->created_at->diffForHumans() }}</span></td>
-    <td><a href="{{ route('user.show', $task->reference_user_id) }}">{{ \App\Models\User::find($task->reference_user_id)->name }} ({{ $task->reference_user_id }})</a></td>
+    <td><a href="{{ route('user.show', $task->subject_user_id) }}">{{ \App\Models\User::find($task->subject_user_id)->name }} ({{ $task->subject_user_id }})</a></td>
     <td>
         <i class="fas {{ $task->type()->getIcon() }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->type()->getName() }}"></i>
 
@@ -11,8 +11,8 @@
         @endif
     </td>
     <td>
-        @isset($task->sender_user_id)
-            <a href="{{ route('user.show', $task->sender_user_id) }}">{{ \App\Models\User::find($task->sender_user_id)->name }} ({{ $task->sender_user_id }})</a>
+        @isset($task->creator_user_id)
+            <a href="{{ route('user.show', $task->creator_user_id) }}">{{ \App\Models\User::find($task->creator_user_id)->name }} ({{ $task->creator_user_id }})</a>
         @else
             System
         @endisset

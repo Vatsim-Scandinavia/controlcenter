@@ -25,7 +25,7 @@
                             id="user"
                             class="form-control"
                             type="text"
-                            name="recipient_user_id"
+                            name="assignee_user_id"
                             list="userList"
                             autocomplete="off"
                         >
@@ -36,8 +36,8 @@
                         </datalist>
 
                         <input type="hidden" name="type" value="{{ $requestType::class }}">
-                        <input type="hidden" name="reference_user_id" value="{{ $training->user->id }}">
-                        <input type="hidden" name="reference_training_id" value="{{ $training->id }}">
+                        <input type="hidden" name="subject_user_id" value="{{ $training->user->id }}">
+                        <input type="hidden" name="subject_training_id" value="{{ $training->id }}">
                     </div>
 
                     @if($requestType->allowMessage())

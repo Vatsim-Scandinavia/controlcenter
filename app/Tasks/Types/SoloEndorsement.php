@@ -23,7 +23,7 @@ class SoloEndorsement extends Types
 
     public function getLink(Task $model)
     {
-        return route('endorsements.create.id', $model->reference_user_id);
+        return route('endorsements.create.id', $model->subject_user_id);
     }
 
     public function create(Task $model)

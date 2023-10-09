@@ -24,11 +24,11 @@ class TaskController extends Controller
         $user = auth()->user();
 
         if ($activeFilter == 'sent') {
-            $tasks = Task::where('sender_user_id', $user->id)->get()->sortBy('created_at');
+            $tasks = Task::where('creator_user_id', $user->id)->get()->sortBy('created_at');
         } elseif ($activeFilter == 'archived') {
-            $tasks = Task::where('recipient_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortBy('created_at');
+            $tasks = Task::where('assignee_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortBy('created_at');
         } else {
-            $tasks = Task::where('recipient_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
+            $tasks = Task::where('assignee_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
         }
 
         return view('tasks.index', compact('tasks', 'activeFilter'));
@@ -45,16 +45,16 @@ class TaskController extends Controller
         $data = $request->validate([
             'type' => ['required', new ValidTaskType],
             'message' => 'sometimes|min:3|max:256',
-            'reference_user_id' => 'required|exists:users,id',
-            'reference_training_id' => 'required|exists:trainings,id',
-            'recipient_user_id' => 'required|exists:users,id',
+            'subject_user_id' => 'required|exists:users,id',
+            'subject_training_id' => 'required|exists:trainings,id',
+            'assignee_user_id' => 'required|exists:users,id',
         ]);
 
-        $data['sender_user_id'] = auth()->user()->id;
+        $data['creator_user_id'] = auth()->user()->id;
         $data['created_at'] = now();
 
         // Check if recipient is mentor or above
-        $recipient = User::findOrFail($data['recipient_user_id']);
+        $recipient = User::findOrFail($data['assignee_user_id']);
 
         // Policy check if recpient can recieve a task
         if ($recipient->can('receive', Task::class)) {
