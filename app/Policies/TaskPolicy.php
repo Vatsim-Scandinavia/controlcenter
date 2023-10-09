@@ -10,7 +10,7 @@ class TaskPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can create bookings.
+     * Determine whether the user can create tasks.
      *
      * @return bool
      */
