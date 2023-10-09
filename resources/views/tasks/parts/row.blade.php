@@ -1,6 +1,6 @@
 <tr>
     <td><span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->created_at->toEuropeanDateTime() }}">{{ $task->created_at->diffForHumans() }}</span></td>
-    <td><a href="{{ route('user.show', $task->subject_user_id) }}">{{ \App\Models\User::find($task->subject_user_id)->name }} ({{ $task->subject_user_id }})</a></td>
+    <td><a href="{{ route('user.show', $task->subject) }}">{{ $task->subject->name }} ({{ $task->subject->id }})</a></td>
     <td>
         <i class="fas {{ $task->type()->getIcon() }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->type()->getName() }}"></i>
 
