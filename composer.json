@@ -1,5 +1,5 @@
 {
-    "name": "control-center",
+    "name": "controlcenter",
     "type": "project",
     "description": "The training & booking management system for VATSIM entities.",
     "keywords": [
