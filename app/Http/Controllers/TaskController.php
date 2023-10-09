@@ -9,6 +9,7 @@ use App\Rules\ValidTaskType;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\View\View;
 
 class TaskController extends Controller
 {
