@@ -19,19 +19,14 @@ return new class extends Migration
             $table->tinyInteger('status')->default(0);
             $table->string('status_comment', 256)->nullable();
             $table->string('message', 256)->nullable();
-            $table->unsignedBigInteger('reference_user_id');
-            $table->unsignedBigInteger('reference_training_id')->nullable();
-            $table->unsignedBigInteger('recipient_user_id');
-            $table->unsignedBigInteger('sender_user_id')->nullable();
-            $table->boolean('recipient_notified')->default(false);
-            $table->boolean('sender_notified')->default(false);
+            $table->foreignId('subject_user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('subject_training_id')->constrained('trainings')->onDelete('cascade');
+            $table->foreignId('assignee_user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('creator_user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->boolean('assignee_notified')->default(false);
+            $table->boolean('creator_notified')->default(false);
             $table->timestamps();
             $table->timestamp('closed_at')->nullable();
-
-            $table->foreign('reference_user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('reference_training_id')->references('id')->on('trainings')->onDelete('cascade');
-            $table->foreign('recipient_user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('sender_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
