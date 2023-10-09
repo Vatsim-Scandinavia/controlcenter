@@ -11,8 +11,8 @@
         @endif
     </td>
     <td>
-        @isset($task->creator_user_id)
-            <a href="{{ route('user.show', $task->creator_user_id) }}">{{ \App\Models\User::find($task->creator_user_id)->name }} ({{ $task->creator_user_id }})</a>
+        @isset($task->creator)
+            <a href="{{ route('user.show', $task->creator) }}">{{ $task->creator->name }} ({{ $task->creator->id }})</a>
         @else
             System
         @endisset
