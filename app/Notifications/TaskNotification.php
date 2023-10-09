@@ -58,7 +58,7 @@ class TaskNotification extends Notification
 
             foreach ($this->receivedTasks as $task) {
                 $textLines[] = '- **' . $task->type()->getName() . '** from ' . User::find($task->creator_user_id)->name . ' (' . $task->creator_user_id . ')';
-                $task->recipient_notified = true;
+                $task->assignee_notified = true;
                 $task->save();
             }
 

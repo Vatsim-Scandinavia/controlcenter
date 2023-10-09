@@ -33,7 +33,7 @@ class SendTaskNotifications extends Command
     {
 
         // For recipients who have not yet been notified
-        $pendingTasks = Task::where('status', TaskStatus::PENDING->value)->where('recipient_notified', false)->get();
+        $pendingTasks = Task::where('status', TaskStatus::PENDING->value)->where('assignee_notified', false)->get();
 
         // For senders who have not yet been notified
         $completedTasks = Task::where('status', TaskStatus::COMPLETED->value)->where('creator_notified', false)->get();
@@ -55,7 +55,7 @@ class SendTaskNotifications extends Command
             if (! $user->setting_notify_tasks) {
 
                 $tasks->where('assignee_user_id', $user->id)->each(function ($task) {
-                    $task->recipient_notified = true;
+                    $task->assignee_notified = true;
                     $task->save();
                 });
 
