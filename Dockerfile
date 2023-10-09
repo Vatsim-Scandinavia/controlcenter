@@ -11,7 +11,7 @@ RUN npm ci --omit dev && \
 
 ####################################################################################################
 # Primary container
-FROM docker.io/library/php:8.1.10-apache-bullseye
+FROM docker.io/library/php:8.2.11-apache-bullseye
 
 # Default container port for the apache configuration
 EXPOSE 80 443
