@@ -19,17 +19,25 @@
     </td>
     
     <td>
-        @if($activeFilter != 'sent' && $activeFilter != 'archived')
-            <a href="{{ route('task.complete', $task->id) }}" class="btn btn-sm btn-outline-success text-decoration-none"><i class="fas fa-check"></i> Complete</a>
-            <a href="{{ route('task.decline', $task->id) }}" class="btn btn-sm btn-outline-danger text-decoration-none"><i class="fas fa-xmark"></i> Decline</a>
+        @if(!in_array($activeFilter, ['sent', 'archived']))
+            <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Task actions">
+                <div class="btn-group">
+                    <a href="{{ route('task.complete', $task) }}" class="btn btn-sm btn-outline-success text-end" title="Complete task" role="button"><i class="fas fa-check"></i> Complete</a>
+                    <a href="{{ route('task.decline', $task) }}" class="btn btn-sm btn-outline-danger text-decoration-none ms-1" title="Decline task" role="button" onclick="return confirm('Are you sure you want to decline this task?')">
+                        <i class="fas fa-xmark"></i><span class="visually-hidden">Decline</span>
+                    </a>
+                </div>
+            </div>
         @else
-            @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
-                <span class="badge bg-success">{{ Str::title(\App\Helpers\TaskStatus::COMPLETED->name) }}</span>
-            @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
-                <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}Declined</span>
-            @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
-                <span class="badge bg-warning">{{ Str::title(\App\Helpers\TaskStatus::PENDING->name) }}</span>
-            @endif
+            <div class="text-end">
+                @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
+                    <span class="badge bg-success">{{ Str::title(\App\Helpers\TaskStatus::COMPLETED->name) }}</span>
+                @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
+                    <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}Declined</span>
+                @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
+                    <span class="badge bg-warning">{{ Str::title(\App\Helpers\TaskStatus::PENDING->name) }}</span>
+                @endif
+            </div>
         @endif
     </td>
 </tr>
