@@ -26,7 +26,8 @@ class Task extends Model
         return $this->belongsTo(User::class, 'subject_user_id');
     }
 
-    public function subjectTraining(){
+    public function subjectTraining()
+    {
         return $this->belongsTo(Training::class, 'subject_training_id');
     }
 

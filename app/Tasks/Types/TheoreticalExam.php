@@ -3,8 +3,6 @@
 namespace App\Tasks\Types;
 
 use App\Models\Task;
-use App\Models\Training;
-use App\Models\User;
 
 class TheoreticalExam extends Types
 {
