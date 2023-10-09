@@ -25,6 +25,14 @@ class Task extends Model
         return $this->belongsTo(User::class, 'sender_user_id');
     }
 
+    /**
+     * The user which is the subject of the task.
+     */
+    public function subject()
+    {
+        return $this->belongsTo(User::class, 'reference_user_id');
+    }
+
     public function type()
     {
         if ($this->type) {
