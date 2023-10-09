@@ -12,7 +12,7 @@ class Task extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'closed_at' => 'datetime',
+        'status' => TaskStatus::class,
     ];
 
     public function recipient()
