@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "control-center",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "The training & booking management system for VATSIM entities.",
     "keywords": [
         "framework",
         "laravel"
