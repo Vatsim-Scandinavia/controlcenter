@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Helpers\TaskStatus;
 
 class Task extends Model
 {
@@ -26,7 +26,8 @@ class Task extends Model
         return $this->belongsTo(User::class, 'subject_user_id');
     }
 
-    public function asignee(){
+    public function assignee()
+    {
         return $this->belongsTo(User::class, 'assignee_user_id');
     }
 

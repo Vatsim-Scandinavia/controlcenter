@@ -20,8 +20,8 @@ class TaskMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param  string  $mailSubject
-     * @param  User  $user
+     * @param  string  $mailSubject the subject of the email
+     * @param  User  $user the user to send the email to
      * @param  array  $textLines an array of markdown lines to add
      * @return void
      */

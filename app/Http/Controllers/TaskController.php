@@ -6,9 +6,9 @@ use App\Helpers\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
 use App\Rules\ValidTaskType;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class TaskController extends Controller
 {
@@ -106,7 +106,6 @@ class TaskController extends Controller
 
         return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $declined->subject->name, $declined->creator->name));
     }
-
 
     /**
      * Return the task type classes
