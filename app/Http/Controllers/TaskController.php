@@ -13,15 +13,10 @@ class TaskController extends Controller
 {
     /**
      * Show the application task dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index($activeFilter = null)
+    public function index(Authenticatable $user, string $activeFilter = null): View
     {
-
         $this->authorize('update', Task::class);
-
-        $user = auth()->user();
 
         if ($activeFilter == 'sent') {
             $tasks = Task::where('creator_user_id', $user->id)->get()->sortBy('created_at');
