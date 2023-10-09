@@ -24,11 +24,11 @@
             <a href="{{ route('task.decline', $task->id) }}" class="btn btn-sm btn-outline-danger text-decoration-none"><i class="fas fa-xmark"></i> Decline</a>
         @else
             @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
-                <span class="badge bg-success">Completed</span>
+                <span class="badge bg-success">{{ Str::title(\App\Helpers\TaskStatus::COMPLETED->name) }}</span>
             @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
-                <span class="badge bg-danger">Declined</span>
+                <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}Declined</span>
             @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
-                <span class="badge bg-warning">Pending</span>
+                <span class="badge bg-warning">{{ Str::title(\App\Helpers\TaskStatus::PENDING->name) }}</span>
             @endif
         @endif
     </td>
