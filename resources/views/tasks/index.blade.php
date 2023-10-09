@@ -28,11 +28,11 @@
                         <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Received</th>
-                                    <th>Regarding</th>
+                                    <th>Created</th>
+                                    <th>Subject</th>
                                     <th>Request</th>
-                                    <th>From</th>
-                                    <th>{{ ($activeFilter != 'sent' && $activeFilter != 'archived') ? 'Actions' : 'Status' }}</th>
+                                    <th>Creator</th>
+                                    <th><span class="visually-hidden">Actions</span></th>
                                 </tr>
                             </thead>
                             <tbody>
