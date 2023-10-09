@@ -78,3 +78,13 @@ $transition-collapse: height 0.15s ease !default;
 // Dropdowns
 $dropdown-font-size: 0.85rem;
 $dropdown-border-color: $border-color;
+
+// Relative position values
+$position-values: (
+  0: 0,
+  25: 25%,
+  40: 40%,
+  50: 50%,
+  75: 75%,
+  100: 100%
+);

@@ -48,6 +48,7 @@
         "psr-4": {
             "App\\": "app/",
             "App\\Helpers\\": "app/helpers",
+            "App\\Tasks\\Types\\": "app/Tasks/Types/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
