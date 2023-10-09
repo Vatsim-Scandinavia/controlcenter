@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Rules\ValidTaskType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class TaskController extends Controller
 {
@@ -45,7 +46,7 @@ class TaskController extends Controller
             'assignee_user_id' => 'required|exists:users,id',
         ]);
 
-        $data['creator_user_id'] = auth()->user()->id;
+        $data['creator_user_id'] = $user->id;
         $data['created_at'] = now();
 
         // Check if recipient is mentor or above
