@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Rules\ValidTaskType;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
