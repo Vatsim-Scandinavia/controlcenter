@@ -20,7 +20,7 @@
     
     <td>
         @if(!in_array($activeFilter, ['sent', 'archived']))
-            <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Task actions">
+            <div class="btn-toolbar" role="toolbar" aria-label="Task actions">
                 <div class="btn-group">
                     <a href="{{ route('task.complete', $task) }}" class="btn btn-sm btn-outline-success text-end" title="Complete task" role="button"><i class="fas fa-check"></i> Complete</a>
                     <a href="{{ route('task.decline', $task) }}" class="btn btn-sm btn-outline-danger text-decoration-none ms-1" title="Decline task" role="button" onclick="return confirm('Are you sure you want to decline this task?')">
@@ -29,15 +29,13 @@
                 </div>
             </div>
         @else
-            <div class="text-end">
-                @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
-                    <span class="badge bg-success">{{ Str::title(\App\Helpers\TaskStatus::COMPLETED->name) }}</span>
-                @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
-                    <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}</span>
-                @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
-                    <span class="badge bg-warning">{{ Str::title(\App\Helpers\TaskStatus::PENDING->name) }}</span>
-                @endif
-            </div>
+            @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
+                <span class="badge bg-success">{{ Str::title(\App\Helpers\TaskStatus::COMPLETED->name) }}</span>
+            @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
+                <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}</span>
+            @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
+                <span class="badge bg-warning">{{ Str::title(\App\Helpers\TaskStatus::PENDING->name) }}</span>
+            @endif
         @endif
     </td>
 </tr>

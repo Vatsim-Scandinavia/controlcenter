@@ -32,7 +32,7 @@
                                     <th>Subject</th>
                                     <th>Request</th>
                                     <th>Creator</th>
-                                    <th><span class="visually-hidden">Actions</span></th>
+                                    <th>{{ (!in_array($activeFilter, ['sent', 'archived'])) ? 'Actions' : 'Status' }}</th>
                                 </tr>
                             </thead>
                             <tbody>
