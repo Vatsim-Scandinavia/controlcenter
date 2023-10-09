@@ -32,7 +32,7 @@ class TaskController extends Controller
     /**
      * Store a newly created task in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Authenticatable $user): RedirectResponse
     {
 
         $this->authorize('create', Task::class);
