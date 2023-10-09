@@ -31,13 +31,13 @@
                                     <th>Created</th>
                                     <th>Subject</th>
                                     <th>Request</th>
-                                    <th>Creator</th>
+                                    <th>{{ (!in_array($activeFilter, ['sent'])) ? 'Creator' : 'Assigned to' }}</th>
                                     <th>{{ (!in_array($activeFilter, ['sent', 'archived'])) ? 'Actions' : 'Status' }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($tasks as $task)
-                                    @include('tasks.parts.row', ['task' => $task])
+                                    @include('tasks.parts.row', ['task' => $task, 'activeFilter' => $activeFilter])
                                 @endforeach
                             </tbody>
                         </table>

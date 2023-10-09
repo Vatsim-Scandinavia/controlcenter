@@ -11,11 +11,15 @@
         @endif
     </td>
     <td>
-        @isset($task->creator)
-            <a href="{{ route('user.show', $task->creator) }}">{{ $task->creator->name }} ({{ $task->creator->id }})</a>
+        @if($activeFilter == 'sent')
+            <a href="{{ route('user.show', $task->assignee) }}">{{ $task->assignee->name }} ({{ $task->assignee->id }})</a>
         @else
-            System
-        @endisset
+            @isset($task->creator)
+                <a href="{{ route('user.show', $task->creator) }}">{{ $task->creator->name }} ({{ $task->creator->id }})</a>
+            @else
+                System
+            @endisset
+        @endif
     </td>
     
     <td>
