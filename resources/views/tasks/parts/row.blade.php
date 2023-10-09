@@ -23,11 +23,11 @@
             <a href="{{ route('task.complete', $task->id) }}" class="btn btn-sm btn-outline-success text-decoration-none"><i class="fas fa-check"></i> Complete</a>
             <a href="{{ route('task.decline', $task->id) }}" class="btn btn-sm btn-outline-danger text-decoration-none"><i class="fas fa-xmark"></i> Decline</a>
         @else
-            @if($task->status == \App\Helpers\TaskStatus::COMPLETED->value)
+            @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
                 <span class="badge bg-success">Completed</span>
-            @elseif($task->status == \App\Helpers\TaskStatus::DECLINED->value)
+            @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
                 <span class="badge bg-danger">Declined</span>
-            @elseif($task->status == \App\Helpers\TaskStatus::PENDING->value)
+            @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
                 <span class="badge bg-warning">Pending</span>
             @endif
         @endif
