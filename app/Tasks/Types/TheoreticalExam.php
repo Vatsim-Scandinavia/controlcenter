@@ -20,12 +20,12 @@ class TheoreticalExam extends Types
 
     public function getText(Task $model)
     {
-        return 'Grant theoretical exam access for ' . Training::find($model->subject_training_id)->getInlineRatings(true);
+        return 'Grant theoretical exam access for ' . $model->subjectTraining->getInlineRatings(true);
     }
 
     public function getLink(Task $model)
     {
-        $user = User::find($model->subject_user_id);
+        $user = $model->subject;
         $userEud = $user->division == 'EUD';
 
         if ($userEud) {

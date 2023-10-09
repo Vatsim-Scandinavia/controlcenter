@@ -26,7 +26,7 @@ class TaskController extends Controller
         } elseif ($activeFilter == 'archived') {
             $tasks = Task::where('assignee_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortBy('created_at');
         } else {
-            $tasks = Task::where('assignee_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->get()->sortBy('created_at');
+            $tasks = Task::where('assignee_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->with('creator', 'subject', 'assignee', 'subjectTraining')->get()->sortBy('created_at');
         }
 
         return view('tasks.index', compact('tasks', 'activeFilter'));
