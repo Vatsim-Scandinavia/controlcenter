@@ -2,9 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Helpers\TaskStatus;
 use App\Mail\TaskMail;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -57,7 +55,7 @@ class TaskNotification extends Notification
             $textLines[] = '## New tasks';
 
             foreach ($this->receivedTasks as $task) {
-                $textLines[] = '- **' . $task->type()->getName() . '** from ' . User::find($task->creator_user_id)->name . ' (' . $task->creator_user_id . ')';
+                $textLines[] = '- **' . $task->type()->getName() . '** from ' . $task->creator->name . ' (' . $task->creator->id . ')';
                 $task->assignee_notified = true;
                 $task->save();
             }
@@ -68,7 +66,7 @@ class TaskNotification extends Notification
             $textLines[] = '## Updated tasks';
 
             foreach ($this->updatedTasks as $task) {
-                $textLines[] = '- **' . $task->type()->getName() . '** for ' . User::find($task->subject_user_id)->name . ' (' . $task->subject_user_id . ') is ' . strtolower(TaskStatus::from($task->status)->name);
+                $textLines[] = '- **' . $task->type()->getName() . '** for ' . $task->subject->name . ' (' . $task->subject->id . ') is ' . strtolower($task->status->name);
                 $task->creator_notified = true;
                 $task->save();
             }

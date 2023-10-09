@@ -33,11 +33,11 @@ class SendTaskNotifications extends Command
     {
 
         // For recipients who have not yet been notified
-        $pendingTasks = Task::where('status', TaskStatus::PENDING->value)->where('assignee_notified', false)->get();
+        $pendingTasks = Task::where('status', TaskStatus::PENDING)->where('assignee_notified', false)->get();
 
         // For senders who have not yet been notified
-        $completedTasks = Task::where('status', TaskStatus::COMPLETED->value)->where('creator_notified', false)->get();
-        $declinedTasks = Task::where('status', TaskStatus::DECLINED->value)->where('creator_notified', false)->get();
+        $completedTasks = Task::where('status', TaskStatus::COMPLETED)->where('creator_notified', false)->get();
+        $declinedTasks = Task::where('status', TaskStatus::DECLINED)->where('creator_notified', false)->get();
 
         // Put together the list of email recipients
         $tasks = $pendingTasks->merge($completedTasks)->merge($declinedTasks);
@@ -70,7 +70,7 @@ class SendTaskNotifications extends Command
             $user->notify(new TaskNotification(
                 $user,
                 $tasks->where('assignee_user_id', $user->id),
-                $tasks->where('creator_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value]),
+                $tasks->where('creator_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED, TaskStatus::DECLINED]),
             ));
         }
 
