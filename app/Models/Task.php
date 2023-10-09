@@ -16,22 +16,14 @@ class Task extends Model
         'status' => TaskStatus::class,
     ];
 
-    public function recipient()
+    public function creator()
     {
-        return $this->belongsTo(User::class, 'recipient_user_id');
+        return $this->belongsTo(User::class, 'creator_user_id');
     }
 
-    public function sender()
-    {
-        return $this->belongsTo(User::class, 'sender_user_id');
-    }
-
-    /**
-     * The user which is the subject of the task.
-     */
     public function subject()
     {
-        return $this->belongsTo(User::class, 'reference_user_id');
+        return $this->belongsTo(User::class, 'subject_user_id');
     }
 
     public function type()
