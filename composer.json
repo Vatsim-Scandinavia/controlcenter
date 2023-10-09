@@ -13,7 +13,7 @@
         "doctrine/dbal": "^3.3.6",
         "graham-campbell/markdown": "^15.0",
         "guzzlehttp/guzzle": "^7.4.2",
-        "hisorange/browser-detect": "^4.5",
+        "hisorange/browser-detect": "^5.0",
         "laravel/framework": "^10.0",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.0",

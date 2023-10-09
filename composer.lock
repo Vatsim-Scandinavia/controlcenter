@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2bc62622ff9d36f3c32297a2211ef65c",
+    "content-hash": "a2b8a5a12acee31da1d22d6a28f2a3e1",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -1601,32 +1601,30 @@
         },
         {
             "name": "hisorange/browser-detect",
-            "version": "4.5.4",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hisorange/browser-detect.git",
-                "reference": "2a7c2b140209aa8477424614eb3aa6f7a7b9f429"
+                "reference": "e74a6fe95d61f185185fbaef583f28233a06b5d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hisorange/browser-detect/zipball/2a7c2b140209aa8477424614eb3aa6f7a7b9f429",
-                "reference": "2a7c2b140209aa8477424614eb3aa6f7a7b9f429",
+                "url": "https://api.github.com/repos/hisorange/browser-detect/zipball/e74a6fe95d61f185185fbaef583f28233a06b5d9",
+                "reference": "e74a6fe95d61f185185fbaef583f28233a06b5d9",
                 "shasum": ""
             },
             "require": {
                 "jaybizzle/crawler-detect": "~1.2",
                 "league/pipeline": "^1.0",
-                "matomo/device-detector": "^4.0 || ^5.0 || ^6.0",
-                "mobiledetect/mobiledetectlib": "~2.8",
-                "php": "^7.2 || ^8.0",
+                "matomo/device-detector": "^6.0",
+                "mobiledetect/mobiledetectlib": "~3.74",
+                "php": "^8.1",
                 "ua-parser/uap-php": "~3.9"
             },
             "require-dev": {
-                "orchestra/testbench": "~4.0 || ~5.0 || ~6.0 || ~7.0",
-                "php-coveralls/php-coveralls": "~1.0 || ~2.0",
-                "phpstan/phpstan": "^0.12.11",
-                "phpunit/phpunit": "~5.0 || ~6.0 || ~7.0 || ~8.0 || ~9.0",
-                "squizlabs/php_codesniffer": "^3.5"
+                "orchestra/testbench": "~7.0 || ~8.0",
+                "php-coveralls/php-coveralls": "~2.0",
+                "phpunit/phpunit": "~9.0 || ~10.0"
             },
             "type": "library",
             "extra": {
@@ -1650,7 +1648,7 @@
             ],
             "authors": [
                 {
-                    "name": "Varga Zsolt (hisorange)",
+                    "name": "Varga Zsolt",
                     "email": "hello@hisorange.me"
                 }
             ],
@@ -1663,16 +1661,15 @@
                 "hisorange",
                 "laravel",
                 "mobile",
-                "php",
                 "tablet",
                 "user agent",
                 "user-agent"
             ],
             "support": {
                 "issues": "https://github.com/hisorange/browser-detect/issues",
-                "source": "https://github.com/hisorange/browser-detect/tree/4.5.4"
+                "source": "https://github.com/hisorange/browser-detect/tree/5.0.0"
             },
-            "time": "2022-11-10T01:43:55+00:00"
+            "time": "2023-09-22T22:44:58+00:00"
         },
         {
             "name": "http-interop/http-factory-guzzle",
@@ -2883,31 +2880,33 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.41",
+            "version": "3.74.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "fc9cccd4d3706d5a7537b562b59cc18f9e4c0cb1"
+                "reference": "812a4aa4605c63fc33d7fe32ca82f29275940b9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/fc9cccd4d3706d5a7537b562b59cc18f9e4c0cb1",
-                "reference": "fc9cccd4d3706d5a7537b562b59cc18f9e4c0cb1",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/812a4aa4605c63fc33d7fe32ca82f29275940b9d",
+                "reference": "812a4aa4605c63fc33d7fe32ca82f29275940b9d",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.0.0"
+                "php": ">=7.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8.35||~5.7"
+                "friendsofphp/php-cs-fixer": "v2.19.3",
+                "phpunit/phpunit": "^7.0.0",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Detection": "namespaced/"
+                "psr-4": {
+                    "Detection\\": "src/"
                 },
                 "classmap": [
-                    "Mobile_Detect.php"
+                    "src/MobileDetect.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2933,9 +2932,9 @@
             ],
             "support": {
                 "issues": "https://github.com/serbanghita/Mobile-Detect/issues",
-                "source": "https://github.com/serbanghita/Mobile-Detect/tree/2.8.41"
+                "source": "https://github.com/serbanghita/Mobile-Detect/tree/3.74.0"
             },
-            "time": "2022-11-08T18:31:26+00:00"
+            "time": "2022-12-04T15:37:32+00:00"
         },
         {
             "name": "monolog/monolog",
