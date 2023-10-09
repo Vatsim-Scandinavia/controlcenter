@@ -33,7 +33,7 @@
                 @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
                     <span class="badge bg-success">{{ Str::title(\App\Helpers\TaskStatus::COMPLETED->name) }}</span>
                 @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
-                    <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}Declined</span>
+                    <span class="badge bg-danger">{{ Str::title(\App\Helpers\TaskStatus::DECLINED->name) }}</span>
                 @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
                     <span class="badge bg-warning">{{ Str::title(\App\Helpers\TaskStatus::PENDING->name) }}</span>
                 @endif
