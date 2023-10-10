@@ -35,7 +35,7 @@ COPY ./container/configs/php.ini /usr/local/etc/php/php.ini
 
 
 # Install PHP extension(s)
-COPY --from=mlocati/php-extension-installer:2.1.55 /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=mlocati/php-extension-installer:2.1.58 /usr/bin/install-php-extensions /usr/local/bin/
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
