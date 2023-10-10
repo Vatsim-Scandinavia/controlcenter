@@ -30,6 +30,7 @@
                         data-sort-reset="true">
                         <thead class="table-light">
                             <tr>
+                                <th data-field="received" data-sortable="true">Received</th>
                                 <th data-field="submitter" data-sortable="true" data-filter-control="input">Submitter</th>
                                 <th data-field="controller" data-sortable="true" data-filter-control="select">Controller</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
@@ -39,6 +40,7 @@
                         <tbody>
                             @foreach($feedback as $f)
                                 <tr>
+                                    <td>{{ $f->created_at->toEuropeanDateTime() }}</td>
                                     <td><a href="{{ route('user.show', $f->submitter->name) }}">{{ $f->submitter->name }} ({{ $f->submitter_user_id }})</a></td>
                                     <td>
                                         @isset($f->referenceUser)
