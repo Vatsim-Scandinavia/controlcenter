@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Feedback;
 use App\Models\Group;
 use App\Models\ManagementReport;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingActivity;
 use App\Models\User;
-use App\Models\Feedback;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -125,12 +125,13 @@ class ReportController extends Controller
 
     /**
      * Index received feedback
-     * 
+     *
      * @return \Illuminate\View\View
      */
-
-    public function feedback(){
+    public function feedback()
+    {
         $feedback = Feedback::all();
+
         return view('reports.feedback', compact('feedback'));
     }
 

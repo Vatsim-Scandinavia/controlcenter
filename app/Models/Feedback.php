@@ -11,16 +11,18 @@ class Feedback extends Model
 
     protected $guarded = [];
 
-    public function submitter(){
+    public function submitter()
+    {
         return $this->belongsTo(User::class, 'submitter_user_id');
     }
 
-    public function referenceUser(){
+    public function referenceUser()
+    {
         return $this->belongsTo(User::class, 'reference_user_id');
     }
 
-    public function referencePosition(){
+    public function referencePosition()
+    {
         return $this->belongsTo(Position::class, 'reference_position_id');
     }
-
 }

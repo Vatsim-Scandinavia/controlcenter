@@ -128,11 +128,13 @@ class User extends Authenticatable
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function submittedFeedback(){
+    public function submittedFeedback()
+    {
         return $this->hasMany(Feedback::class, 'submitter_user_id');
     }
 
-    public function receivedFeedback(){
+    public function receivedFeedback()
+    {
         return $this->hasMany(Feedback::class, 'reference_user_id');
     }
 

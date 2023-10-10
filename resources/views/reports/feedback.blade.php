@@ -39,13 +39,23 @@
                         <tbody>
                             @foreach($feedback as $f)
                                 <tr>
-                                    <td><a href="{{ route('user.show', $f->submitter->name) }}">{{ $f->submitter_user_id }}</a></td>
-                                    <td>{{ $f->reference_user_id }}</td>
+                                    <td><a href="{{ route('user.show', $f->submitter->name) }}">{{ $f->submitter->name }} ({{ $f->submitter_user_id }})</a></td>
                                     <td>
-                                        {{ $f->reference_position_id }}
+                                        @isset($f->referenceUser)
+                                            <a href="{{ route('user.show', $f->referenceUser) }}">{{ $f->referenceUser->name }} ({{ $f->referenceUser->id }})</a>
+                                        @else
+                                            N/A
+                                        @endisset
                                     </td>
                                     <td>
-                                        {{ $f->feedback }}
+                                        @isset($f->referencePosition)
+                                            {{ $f->referencePosition->callsign }}
+                                        @else
+                                            N/A
+                                        @endisset
+                                    </td>
+                                    <td>
+                                        {!! nl2br($f->feedback) !!}
                                     </td>
                                 </tr>
                             @endforeach
