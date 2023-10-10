@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
+use App\Notifications\FeedbackNotification;
 use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
@@ -16,6 +18,11 @@ class FeedbackController extends Controller
      */
     public function create()
     {
+
+        if (! Setting::get('feedbackEnabled')) {
+            return redirect()->route('dashboard')->withErrors('Feedback is currently disabled.');
+        }
+
         $positions = Position::all();
         $controllers = User::all();
 
@@ -29,6 +36,11 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
+
+        if (! Setting::get('feedbackEnabled')) {
+            return redirect()->route('dashboard')->withErrors('Feedback is currently disabled.');
+        }
+
         $data = $request->validate([
             'position' => 'nullable|exists:positions,callsign',
             'controller' => 'nullable|exists:users,id',
@@ -47,6 +59,11 @@ class FeedbackController extends Controller
             'reference_user_id' => isset($controller) ? $controller->id : null,
             'reference_position_id' => isset($position) ? $position->id : null,
         ]);
+
+        // Forward email if configured
+        if (Setting::get('feedbackForwardEmail')) {
+            $feedback->notify(new FeedbackNotification($feedback));
+        }
 
         return redirect()->route('dashboard')->with('success', 'Feedback submitted!');
 
