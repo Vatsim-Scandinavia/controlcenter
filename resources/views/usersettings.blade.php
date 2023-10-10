@@ -31,6 +31,20 @@
                                 <small class="form-text text-muted">We're sending notifications to this address.</small>
                             </div>
 
+                            @if($user->isMentorOrAbove())
+                                <hr>
+
+                                <h5>Mentor Notifications</h5>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="check4" name="setting_notify_tasks" {{ $user->setting_notify_tasks ? "checked" : "" }}>
+                                    <label class="form-check-label" for="check4">
+                                        Send notification of new tasks
+                                    </label>
+                                </div>
+                                
+                            @endif
+
                             @if($user->isModeratorOrAbove())
                                 <hr>
 

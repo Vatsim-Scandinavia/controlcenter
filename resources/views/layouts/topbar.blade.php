@@ -94,8 +94,13 @@
         </li>
 
         <li class="nav-item dropdown d-lg-none">
-            <button class="nav-link" id="sidebar-button">
+            <button class="nav-link position-relative" id="sidebar-button">
                 <i class="fas fa-bars"></i>
+                @if(\Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count())
+                    <span class="position-absolute top-40 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                @endif
             </button>
         </li>        
 

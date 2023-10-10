@@ -24,6 +24,18 @@
             <span>Dashboard</span></a>
         </li>
 
+        @can('update', [\App\Models\Task::class])
+            <li class="nav-item {{ Route::is('tasks') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('tasks') }}">
+                    <i class="fas fa-fw fa-list"></i>
+                    <span>Tasks</span>
+                    @if(\Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count())
+                        <span class="badge text-bg-danger">{{ \Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count() }}</span>
+                    @endif
+                </a>
+            </li>
+        @endcan
+
         @can('view', \App\Models\Booking::class)
             <li class="nav-item {{ Route::is('booking*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('booking') }}">

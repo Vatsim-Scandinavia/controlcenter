@@ -14,9 +14,9 @@ class Training extends Model
 
     protected $table = 'trainings';
 
-    protected $dates = [
-        'started_at',
-        'closed_at',
+    protected $casts = [
+        'started_at' => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     /**
@@ -92,8 +92,13 @@ class Training extends Model
      *
      * @return string
      */
-    public function getInlineRatings()
+    public function getInlineRatings(bool $vatsimRatingOnly = false)
     {
+
+        if ($vatsimRatingOnly) {
+            return $this->ratings->where('vatsim_rating', true)->pluck('name')->implode(' + ');
+        }
+
         return $this->ratings->pluck('name')->implode(' + ');
     }
 

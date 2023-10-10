@@ -20,13 +20,10 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        parent::boot();
-
+        // TODO: Insert RateLimiter added for the API specific routes in Laravel 10.x
         Route::pattern('trainingObjectType', 'report|examination');
 
         Route::bind('trainingObject', function ($id) {
@@ -42,10 +39,8 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Define the routes for the application.
-     *
-     * @return void
      */
-    public function map()
+    public function map(): void
     {
         $this->mapApiRoutes();
 

@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class TrainingReportsTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     /** @test */
     public function mentor_can_access_training_reports()

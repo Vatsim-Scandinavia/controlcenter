@@ -75,6 +75,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:workmails')
             ->daily();
 
+        // Send task notifications
+        $schedule->command('send:task:notifications')
+            ->hourly();
+
         // Send telemetry data
         if (Setting::get('telemetryEnabled')) {
             $schedule->command('send:telemetry')

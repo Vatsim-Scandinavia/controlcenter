@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SweatbookController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingActivityController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingExaminationController;
@@ -27,8 +28,8 @@ use App\Http\Controllers\VoteController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
@@ -189,8 +190,17 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/vote/{id}', 'show')->name('vote.show');
     });
 
+
     Route::controller(FeedbackController::class)->group(function () {
         Route::get('/feedback', 'create')->name('feedback');
         Route::post('/feedback/store', 'store')->name('feedback.store');
+    });
+
+    Route::controller(TaskController::class)->group(function () {
+        Route::get('/tasks', 'index')->name('tasks');
+        Route::get('/tasks/{activeFilter}', 'index')->name('tasks.filtered');
+        Route::get('/tasks/complete/{id}', 'complete')->name('task.complete');
+        Route::get('/tasks/decline/{id}', 'decline')->name('task.decline');
+        Route::post('/task/store', 'store')->name('task.store');
     });
 });

@@ -17,10 +17,8 @@ class UserFactory extends Factory
 
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
-    public function definition()
+    public function definition(): array
     {
 
         // get random region
@@ -43,9 +41,9 @@ class UserFactory extends Factory
         $rating = $this->faker->numberBetween(1, 12);
 
         return [
-            'first_name' => $this->faker->firstName,
-            'last_name' => $this->faker->lastName,
-            'email' => $this->faker->email,
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->unique()->safeEmail(),
 
             'rating' => $rating,
             'rating_short' => FactoryHelper::shortRating($rating),

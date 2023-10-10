@@ -48,21 +48,22 @@
                     @endforeach
                 </h6>
 
-                @if(\Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) || \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]))
+                @can('create', [\App\Models\Task::class])
                     <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-link"></i> Create
+                        <i class="fas fa-hand"></i> Request
                     </button>
                     <div class="dropdown">
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
-                                <button class="dropdown-item" id="getOneTimeLinkReport">Report one-time link</button>
-                            @endif
-                            @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE])
-                                <button class="dropdown-item" id="getOneTimeLinkExam">Examination one-time link</button>
-                            @endif
+                            @foreach($requestTypes as $requestType)
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
+                                    <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
+                                    {{ $requestType->getName() }}
+                                </button>
+                            @endforeach
                         </div>
                     </div>
-                @endif
+                @endcan
+
             </div>
             <div class="card-body">
                 <dl class="copyable">
@@ -395,15 +396,20 @@
                     Training Reports
                 </h6>
 
-                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                @if(
+                    \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) ||
+                    \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]) ||
+                    ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                )
                     <div class="dropdown" style="display: inline;">
                         <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-plus"></i> Add
+                            <i class="fas fa-plus"></i> Create
                         </button>
+                    
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\TrainingReport::class, $training])
                                 @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
-                                    <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}">Training Report</a>
+                                    <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}"><i class="fas fa-file"></i> Training Report</a>
                                 @endif
                             @else
                                 <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
@@ -411,11 +417,18 @@
 
                             @can('create', [\App\Models\TrainingExamination::class, $training])
                                 @if($training->status == \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
-                                    <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}">Exam Report</a>
+                                    <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}"><i class="fas fa-file"></i> Exam Report</a>
                                 @endif
                             @else
                                 <a class="dropdown-item disabled" href="#"><i class="fas fa-lock"></i>&nbsp;Exam Report</a>
                             @endcan
+
+                            @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE])
+                                <button class="dropdown-item" id="getOneTimeLinkReport"><i class="fas fa-link"></i> Report one-time link</button>
+                            @endif
+                            @can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE])
+                                <button class="dropdown-item" id="getOneTimeLinkExam"><i class="fas fa-link"></i> Examination one-time link</button>
+                            @endif
                         </div>
                     </div>
                 @endif
@@ -620,6 +633,10 @@
 
     </div>
 </div>
+
+@foreach($requestTypes as $requestType)
+    @include('training.parts.taskmodal', ['requestType' => $requestType, 'training' => $training])
+@endforeach
 
 
 @endsection

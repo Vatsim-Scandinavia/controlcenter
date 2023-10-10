@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class TrainingExaminationsTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private $examination;
 

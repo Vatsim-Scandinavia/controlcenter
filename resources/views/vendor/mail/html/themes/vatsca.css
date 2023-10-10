@@ -81,6 +81,11 @@ img {
     max-width: 100%;
 }
 
+ul li {
+    color: #3d4852;
+    font-size: 14px;
+}
+
 /* Layout */
 
 .wrapper {

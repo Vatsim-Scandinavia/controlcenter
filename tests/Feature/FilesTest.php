@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class FilesTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     /**
      * Create a special tearDown method since we don't want our test files

@@ -238,7 +238,11 @@ table{
     a {
         text-decoration: none;
 
-        &:hover{
+        &.dotted-underline{
+            text-decoration: dotted underline;
+        }
+
+        &:hover:not([role="button"]){
             text-decoration: underline;
         }
     }

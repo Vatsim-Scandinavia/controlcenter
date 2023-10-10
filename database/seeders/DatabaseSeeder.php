@@ -19,10 +19,8 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         // Create the default dev accounts corresponding to VATSIM Connect
         for ($i = 1; $i <= 11; $i++) {
