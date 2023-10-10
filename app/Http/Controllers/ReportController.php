@@ -130,7 +130,7 @@ class ReportController extends Controller
      */
     public function feedback()
     {
-        $feedback = Feedback::all();
+        $feedback = Feedback::all()->sortByDesc('created_at');
 
         return view('reports.feedback', compact('feedback'));
     }
