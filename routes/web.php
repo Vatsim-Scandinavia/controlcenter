@@ -190,7 +190,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/vote/{id}', 'show')->name('vote.show');
     });
 
-
     Route::controller(FeedbackController::class)->group(function () {
         Route::get('/feedback', 'create')->name('feedback');
         Route::post('/feedback/store', 'store')->name('feedback.store');
