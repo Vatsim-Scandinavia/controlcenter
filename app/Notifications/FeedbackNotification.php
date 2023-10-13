@@ -53,11 +53,12 @@ class FeedbackNotification extends Notification implements ShouldQueue
         $controller = isset($this->feedback->referenceUser) ? $this->feedback->referenceUser->name : 'N/A';
 
         $textLines = [
-            'New feedback has been submitted by ' . $this->feedback->submitter->name . ' (' . $this->feedback->submitter->id . ').',
-            '*You can reply to this email to respond directly.*',
-            '- **Controller**: ' . $controller,
-            '- **Position**: ' . $position,
-            '### Feedback',
+            'New feedback has been submitted by ' . $this->feedback->submitter->name . ' (' . $this->feedback->submitter->id . '). You may respond by replying to this email.',
+            '___',
+            '**Controller**: ' . $controller,
+            '**Position**: ' . $position,
+            '___',
+            '**Feedback**',
             $this->feedback->feedback,
 
         ];
