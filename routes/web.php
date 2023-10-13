@@ -93,6 +93,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/reports/activities/{id}', 'activities')->name('reports.activities.area');
         Route::get('/reports/mentors', 'mentors')->name('reports.mentors');
         Route::get('/reports/access', 'access')->name('reports.access');
+        Route::get('/reports/feedback', 'feedback')->name('reports.feedback');
     });
 
     // Admin
@@ -187,6 +188,11 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/vote/store', 'store')->name('vote.store');
         Route::patch('/vote/{id}', 'update')->name('vote.update');
         Route::get('/vote/{id}', 'show')->name('vote.show');
+    });
+
+    Route::controller(FeedbackController::class)->group(function () {
+        Route::get('/feedback', 'create')->name('feedback');
+        Route::post('/feedback/store', 'store')->name('feedback.store');
     });
 
     Route::controller(TaskController::class)->group(function () {

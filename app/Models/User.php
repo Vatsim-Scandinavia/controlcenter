@@ -133,6 +133,16 @@ class User extends Authenticatable
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function submittedFeedback()
+    {
+        return $this->hasMany(Feedback::class, 'submitter_user_id');
+    }
+
+    public function receivedFeedback()
+    {
+        return $this->hasMany(Feedback::class, 'reference_user_id');
+    }
+
     /**
      * @todo: Convert to to new v9.x+ mutators https://laravel.com/docs/9.x/eloquent-mutators
      */

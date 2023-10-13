@@ -166,6 +166,8 @@
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
                     <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
                 @endcan
+
+                <a class="collapse-item" href="{{ route('reports.feedback') }}">Feedback</a>
                 
                 </div>
             </div>

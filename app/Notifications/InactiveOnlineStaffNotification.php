@@ -60,7 +60,7 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
             'All admins and moderators in area in question has been notified.',
         ];
 
-        return (new StaffNoticeMail('Unauthorized network logon recorded', $this->user, $textLines))
+        return (new StaffNoticeMail('Unauthorized network logon recorded', $textLines))
             ->to($this->sendTo->pluck('email'));
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Feedback;
 use App\Models\Group;
 use App\Models\ManagementReport;
 use App\Models\Rating;
@@ -120,6 +121,18 @@ class ReportController extends Controller
         $statuses = TrainingController::$statuses;
 
         return view('reports.mentors', compact('mentors', 'statuses'));
+    }
+
+    /**
+     * Index received feedback
+     *
+     * @return \Illuminate\View\View
+     */
+    public function feedback()
+    {
+        $feedback = Feedback::all()->sortByDesc('created_at');
+
+        return view('reports.feedback', compact('feedback'));
     }
 
     /**

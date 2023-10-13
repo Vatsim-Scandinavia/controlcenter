@@ -305,6 +305,35 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-white">Feedback</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 mb-12">
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input @error('feedbackEnabled') is-invalid @enderror" type="checkbox" id="checkFeedback" name="feedbackEnabled" {{ Setting::get('feedbackEnabled') ? "checked" : "" }}>
+                                <label class="form-check-label" for="checkFeedback">
+                                    Enable feedback functionality
+                                </label>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label" for="feedbackForwardEmail">Forward feedback to e-mail</label>
+                                <input type="email" class="form-control @error('feedbackForwardEmail') is-invalid @enderror" id="feedbackForwardEmail" name="feedbackForwardEmail" value="{{ (Setting::get("feedbackForwardEmail") != false) ? Setting::get("feedbackForwardEmail") : '' }}">
+                                <small class="form-text">Forward feedback to the provided address. Leave blank to disable.</small>
+                            </div>
+                            @error('feedbackForwardEmail')
+                                <span class="text-danger">{{ $errors->first('feedbackForwardEmail') }}</span>
+                            @enderror
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 fw-bold text-white">Telemetry</h6>
                 </div>
                 <div class="card-body">
