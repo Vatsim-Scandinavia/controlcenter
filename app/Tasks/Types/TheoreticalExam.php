@@ -2,6 +2,7 @@
 
 namespace App\Tasks\Types;
 
+use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
 
 class TheoreticalExam extends Types
@@ -40,6 +41,7 @@ class TheoreticalExam extends Types
 
     public function complete(Task $model)
     {
+        TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Theoretical exam access granted.');
         parent::onCompleted($model);
     }
 

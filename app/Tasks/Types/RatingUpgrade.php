@@ -2,6 +2,7 @@
 
 namespace App\Tasks\Types;
 
+use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
 use App\Models\Training;
 use App\Models\User;
@@ -42,6 +43,7 @@ class RatingUpgrade extends Types
 
     public function complete(Task $model)
     {
+        TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Rating upgrade requested.');
         parent::onCompleted($model);
     }
 
