@@ -41,7 +41,7 @@ class EndorsementModifiedNotification extends Notification implements ShouldQueu
      */
     public function toMail($notifiable)
     {
-        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : 'Forver';
+        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : 'Forever';
 
         $textLines = [
             'Your **' . ucwords(strtolower((string) $this->endorsement->type)) . ' Endorsement** has been modified at following positions: *' . $this->endorsement->positions->pluck('callsign')->implode(', ') . '*',
