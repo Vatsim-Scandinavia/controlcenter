@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.3.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.3.0...v4.3.1) (2023-10-14)
+
+
+### Bug Fixes
+
+* added missing training activity comment ([e52b184](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e52b184a20c2004aa94880be397d3438fd04d2b2))
+* added optional label on feedback form ([75b8d52](https://github.com/Vatsim-Scandinavia/controlcenter/commit/75b8d5274328ad0102d3511ed180ab518fe53aea))
+* check online controllers errors ([fbb735e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fbb735ebc8c675449218350e19bbc336f9e59e16))
+* typo in endorsement emails ([4742a88](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4742a8857eb858ead24824b7005f5801a6d3064e))
+
 ## [4.3.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.2.3...v4.3.0) (2023-10-13)
 
 
