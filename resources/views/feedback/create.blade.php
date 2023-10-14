@@ -32,9 +32,9 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row mb-4">
                         <div class="col-md-6">
-                            <label class="form-label" for="controllers">Controller</label>
+                            <label class="form-label" for="controllers">Controller <small class="form-text"> (Optional)</small></label>
                             <input 
                                 id="controllers"
                                 class="form-control"
@@ -54,12 +54,13 @@
                                     @endbrowser
                                 @endforeach
                             </datalist>
+                            
                             @error('controller')
                                 <span class="text-danger">{{ $errors->first('controller') }}</span>
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="positions">Controller's position</label>
+                            <label class="form-label" for="positions">Controller's position <small class="form-text"> (Optional)</small></label>
                             <input 
                                 id="positions"
                                 class="form-control"
