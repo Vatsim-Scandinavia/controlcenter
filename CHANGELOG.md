@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.3.1...v4.3.2) (2023-10-14)
+
+
+### Bug Fixes
+
+* check controller sending email to all ([fec85e2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fec85e2096536b1c4e2a6f300da7416bdd6281c9))
+
 ## [4.3.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.3.0...v4.3.1) (2023-10-14)
 
 
