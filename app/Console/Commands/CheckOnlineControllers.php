@@ -45,8 +45,8 @@ class CheckOnlineControllers extends Command
 
         // Fetch which first four characters from ICAOs should look for based on positions database
         $areasRaw = DB::table('positions')
-        ->select(DB::raw('DISTINCT LEFT(callsign, 4) as prefix'))
-        ->get();
+            ->select(DB::raw('DISTINCT LEFT(callsign, 4) as prefix'))
+            ->get();
 
         $areas = collect();
         foreach ($areasRaw as $a) {
