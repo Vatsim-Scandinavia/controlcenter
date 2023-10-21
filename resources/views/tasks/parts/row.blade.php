@@ -1,5 +1,9 @@
 <tr>
-    <td><span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->created_at->toEuropeanDateTime() }}">{{ $task->created_at->diffForHumans() }}</span></td>
+    <td>
+        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ (in_array($activeFilter, ['archived'])) ? $task->closed_at->toEuropeanDateTime() : $task->created_at->toEuropeanDateTime() }}">
+            {{ (in_array($activeFilter, ['archived'])) ? $task->closed_at->diffForHumans() : $task->created_at->diffForHumans() }}
+        </span>
+    </td>
     <td><a href="{{ route('user.show', $task->subject) }}">{{ $task->subject->name }} ({{ $task->subject->id }})</a></td>
     <td>
         <i class="fas {{ $task->type()->getIcon() }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $task->type()->getName() }}"></i>

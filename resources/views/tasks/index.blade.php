@@ -28,7 +28,7 @@
                         <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Created</th>
+                                    <th>{{ (in_array($activeFilter, ['archived'])) ? 'Closed' : 'Created' }}</th>
                                     <th>Subject</th>
                                     <th>Request</th>
                                     <th>{{ (!in_array($activeFilter, ['sent'])) ? 'Creator' : 'Assigned to' }}</th>

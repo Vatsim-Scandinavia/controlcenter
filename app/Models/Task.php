@@ -14,6 +14,7 @@ class Task extends Model
 
     protected $casts = [
         'status' => TaskStatus::class,
+        'closed_at' => 'datetime',
     ];
 
     public function creator()

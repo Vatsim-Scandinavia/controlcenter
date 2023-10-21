@@ -22,9 +22,9 @@ class TaskController extends Controller
         $this->authorize('update', Task::class);
 
         if ($activeFilter == 'sent') {
-            $tasks = Task::where('creator_user_id', $user->id)->get()->sortBy('created_at');
+            $tasks = Task::where('creator_user_id', $user->id)->get()->sortByDesc('created_at');
         } elseif ($activeFilter == 'archived') {
-            $tasks = Task::where('assignee_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortBy('created_at');
+            $tasks = Task::where('assignee_user_id', $user->id)->whereIn('status', [TaskStatus::COMPLETED->value, TaskStatus::DECLINED->value])->get()->sortByDesc('closed_at');
         } else {
             $tasks = Task::where('assignee_user_id', $user->id)->where('status', TaskStatus::PENDING->value)->with('creator', 'subject', 'assignee', 'subjectTraining')->get()->sortBy('created_at');
         }
