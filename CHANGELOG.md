@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.3.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.3.2...v4.3.3) (2023-10-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency sass to v1.69.4 ([#672](https://github.com/Vatsim-Scandinavia/controlcenter/issues/672)) ([5f9f35f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5f9f35fc326365497d7d7e922a317b927d4c6915))
+* **deps:** update dependency vite to v4.5.0 ([#673](https://github.com/Vatsim-Scandinavia/controlcenter/issues/673)) ([b777960](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b7779608a47c79b0854fbcc576a0110f2f28146e))
+* **deps:** update dependency vue to v3.3.6 ([#677](https://github.com/Vatsim-Scandinavia/controlcenter/issues/677)) ([498f3e3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/498f3e34c89a9c0505ca70d23ab76da004ec9ed9))
+* sort sent/archived tasks with closed first ([1f392da](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1f392da2001a339338f8be5ae90ddf31260874df)), closes [#675](https://github.com/Vatsim-Scandinavia/controlcenter/issues/675)
+* update atc hours database error ([0ce09f4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0ce09f45a1e2681f62d6a11dd96afab20f24569f)), closes [#674](https://github.com/Vatsim-Scandinavia/controlcenter/issues/674)
+
 ## [4.3.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.3.1...v4.3.2) (2023-10-14)
 
 
