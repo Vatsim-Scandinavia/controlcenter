@@ -72,9 +72,10 @@ class UpdateAtcHours extends Command
     private function updateMemberATCHours(Collection $members)
     {
         $this->info('Fetching seen ATC positions...');
-        $divisionCallsignPrefixes = collect(DB::select(
-            DB::raw('SELECT DISTINCT LEFT(callsign, 4) as prefix FROM positions;')
-        ))->pluck('prefix');
+        $divisionCallsignPrefixes = DB::table('positions')
+            ->select(DB::raw('DISTINCT LEFT(callsign, 4) as prefix'))
+            ->get()
+            ->pluck('prefix');
 
         $this->info('Updating member ATC hours...');
 
