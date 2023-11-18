@@ -41,7 +41,7 @@
                             @foreach($feedback as $f)
                                 <tr>
                                     <td>{{ $f->created_at->toEuropeanDateTime() }}</td>
-                                    <td><a href="{{ route('user.show', $f->submitter->name) }}">{{ $f->submitter->name }} ({{ $f->submitter_user_id }})</a></td>
+                                    <td><a href="{{ route('user.show', $f->submitter->id) }}">{{ $f->submitter->name }} ({{ $f->submitter_user_id }})</a></td>
                                     <td>
                                         @isset($f->referenceUser)
                                             <a href="{{ route('user.show', $f->referenceUser) }}">{{ $f->referenceUser->name }} ({{ $f->referenceUser->id }})</a>
