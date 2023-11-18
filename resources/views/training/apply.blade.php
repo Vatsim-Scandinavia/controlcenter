@@ -196,7 +196,7 @@
 
                         if (requiredHours !== undefined && atcHours < requiredHours){
                             document.getElementById('ratingSelect').classList.add('is-invalid')
-                            document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours."
+                            document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.floor(atcHours) + " hours."
                             this.errHours = true;
                             validated = false;
                         }
