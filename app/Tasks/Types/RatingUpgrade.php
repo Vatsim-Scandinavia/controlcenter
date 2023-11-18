@@ -56,4 +56,9 @@ class RatingUpgrade extends Types
     {
         return true;
     }
+
+    public function allowNonVatsimRatings()
+    {
+        return false;
+    }
 }

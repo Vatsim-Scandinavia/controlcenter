@@ -55,4 +55,6 @@ abstract class Types
     abstract public function decline(Task $model);
 
     abstract public function showConnectedRatings();
+
+    abstract public function allowNonVatsimRatings();
 }

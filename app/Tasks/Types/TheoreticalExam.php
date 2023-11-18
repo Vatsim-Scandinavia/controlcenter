@@ -54,4 +54,9 @@ class TheoreticalExam extends Types
     {
         return true;
     }
+
+    public function allowNonVatsimRatings()
+    {
+        return false;
+    }
 }

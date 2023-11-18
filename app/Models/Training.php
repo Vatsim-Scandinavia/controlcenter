@@ -129,6 +129,22 @@ class Training extends Model
     }
 
     /**
+     * Check if training holds any VATSIM GCAP rating
+     *
+     * @return bool
+     */
+    public function hasVatsimRatings()
+    {
+        foreach ($this->ratings as $rating) {
+            if ($rating->vatsim_rating != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the student.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

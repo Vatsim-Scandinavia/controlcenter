@@ -50,4 +50,9 @@ class Custom extends Types
     {
         return false;
     }
+
+    public function allowNonVatsimRatings()
+    {
+        return true;
+    }
 }

@@ -55,10 +55,12 @@
                     <div class="dropdown">
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @foreach($requestTypes as $requestType)
-                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
-                                    <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
-                                    {{ $requestType->getName() }}
-                                </button>
+                                @if($requestType->allowNonVatsimRatings() == true || ($requestType->allowNonVatsimRatings() == false && $training->hasVatsimRatings() == true))
+                                    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
+                                        <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
+                                        {{ $requestType->getName() }}
+                                    </button>
+                                @endif
                             @endforeach
                         </div>
                     </div>
@@ -635,7 +637,9 @@
 </div>
 
 @foreach($requestTypes as $requestType)
-    @include('training.parts.taskmodal', ['requestType' => $requestType, 'training' => $training])
+    @if($requestType->allowNonVatsimRatings() == true || ($requestType->allowNonVatsimRatings() == false && $training->hasVatsimRatings() == true))
+        @include('training.parts.taskmodal', ['requestType' => $requestType, 'training' => $training])
+    @endif
 @endforeach
 
 

@@ -45,4 +45,9 @@ class SoloEndorsement extends Types
     {
         return false;
     }
+
+    public function allowNonVatsimRatings()
+    {
+        return false;
+    }
 }
