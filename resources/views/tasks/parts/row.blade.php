@@ -30,9 +30,9 @@
         @if(!in_array($activeFilter, ['sent', 'archived']))
             <div class="btn-toolbar" role="toolbar" aria-label="Task actions">
                 <div class="btn-group">
-                    <a href="{{ route('task.complete', $task) }}" class="btn btn-sm btn-outline-success text-end" title="Complete task" role="button"><i class="fas fa-check"></i> Complete</a>
-                    <a href="{{ route('task.decline', $task) }}" class="btn btn-sm btn-outline-danger text-decoration-none ms-1" title="Decline task" role="button" onclick="return confirm('Are you sure you want to decline this task?')">
-                        <i class="fas fa-xmark"></i><span class="visually-hidden">Decline</span>
+                    <a href="{{ route('task.complete', $task) }}" class="btn btn-sm btn-outline-success text-center" title="Complete task" role="button"><i class="fas fa-check"></i> Complete</a>
+                    <a href="{{ route('task.decline', $task) }}" class="btn btn-sm btn-outline-danger text-decoration-none ms-1 text-center" title="Decline task" role="button" onclick="return confirm('Are you sure you want to decline this task?')">
+                        <i class="fas fa-xmark"></i><span class="d-block d-md-none">Decline</span>
                     </a>
                 </div>
             </div>
