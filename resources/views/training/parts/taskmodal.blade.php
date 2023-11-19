@@ -28,6 +28,7 @@
                             name="assignee_user_id"
                             list="userList"
                             autocomplete="off"
+                            required
                         >
                         <datalist id="userList">
                             @foreach(\App\Models\User::has('groups')->get() as $user)
@@ -40,14 +41,23 @@
                         <input type="hidden" name="subject_training_id" value="{{ $training->id }}">
                     </div>
 
-                    @if($requestType->allowMessage())
-                        <div class="mt-3">
-                            <label class="form-label" for="{{ Str::camel($requestType->getName()) }}Message">Message</label>
-                            <input type="text" class="form-control" id="{{ Str::camel($requestType->getName()) }}Message" name="message" minlength="3" maxlength="255">
+                    @if($requestType->requireCheckboxConfirmation() !== false)
+                        <div class="mt-1">
+                            <input class="form-check-input" type="checkbox" id="{{ Str::camel($requestType->getName()) }}Checkbox" required>
+                            <label class="form-check-label" for="{{ Str::camel($requestType->getName()) }}Checkbox">
+                                {{ $requestType->requireCheckboxConfirmation() }}
+                            </label>
                         </div>
                     @endif
 
-                    <div class="modal-footer">
+                    @if($requestType->allowMessage())
+                        <div class="mt-3">
+                            <label class="form-label" for="{{ Str::camel($requestType->getName()) }}Message">Message</label>
+                            <input type="text" class="form-control" id="{{ Str::camel($requestType->getName()) }}Message" name="message" minlength="3" maxlength="255" required>
+                        </div>
+                    @endif
+
+                    <div class="modal-footer border-top-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success">Send request</button>
                     </div>

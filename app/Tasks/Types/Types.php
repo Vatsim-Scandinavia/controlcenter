@@ -40,6 +40,11 @@ abstract class Types
         return false;
     }
 
+    public function requireCheckboxConfirmation()
+    {
+        return false;
+    }
+
     abstract public function getName();
 
     abstract public function getIcon();
