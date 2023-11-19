@@ -46,7 +46,13 @@ class RatingUpgrade extends Types
 
     public function complete(Task $model)
     {
-        TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Rating upgrade requested.');
+        // If the training requires a VATSIM GCAP upgrade, create a comment on the training
+        $training = Training::find($model->subject_training_id);
+        if ($training->hasVatsimRatings()) {
+            TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Rating upgrade requested.');
+        }
+
+        // Run the parent method
         parent::onCompleted($model);
     }
 
