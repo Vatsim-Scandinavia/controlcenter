@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.4.0...v4.4.1) (2023-11-19)
+
+
+### Bug Fixes
+
+* incorrect versioning ([91c1ee9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/91c1ee9967a1736b490d100c310573619ff236a6))
+
 ## [4.4.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.3.3...v4.4.0) (2023-11-19)
 
 
