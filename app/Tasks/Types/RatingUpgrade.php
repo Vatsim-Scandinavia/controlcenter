@@ -21,16 +21,19 @@ class RatingUpgrade extends Types
 
     public function getText(Task $model)
     {
-        return 'Upgrade rating to ' . Training::find($model->subject_training_id)->getInlineRatings(true);
+        return 'Upgrade rating to ' . Training::find($model->subject_training_id)->getInlineRatings(false);
     }
 
     public function getLink(Task $model)
     {
+        $training = Training::find($model->subject_training_id);
         $user = User::find($model->subject_user_id);
         $userEud = $user->division == 'EUD';
 
-        if ($userEud) {
+        if ($userEud && $training->hasVatsimRatings()) {
             return 'https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid=' . $model->subject_user_id;
+        } elseif ($userEud && ! $training->hasVatsimRatings()) {
+            return route('endorsements.create.id', $user->id);
         }
 
         return false;
