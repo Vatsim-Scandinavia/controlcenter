@@ -107,7 +107,7 @@ class UserDelete extends Command
 
                     $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into CC again.');
                 }
-                // PERMANENTLY DELETE
+            // PERMANENTLY DELETE
             } elseif ($choice == $choices[1]) {
                 $confirmed = $this->confirm('Are you sure you want to PERMANENTLY DELETE ' . $userInfo . '? This is IRREVERSIBLE!');
                 if ($confirmed) {
