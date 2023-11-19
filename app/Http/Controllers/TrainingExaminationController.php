@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TrainingStatus;
+use App\Models\Group;
 use App\Models\OneTimeLink;
 use App\Models\Position;
+use App\Models\Task;
 use App\Models\Training;
 use App\Models\TrainingExamination;
+use App\Models\User;
 use App\Notifications\TrainingExamNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,8 +36,9 @@ class TrainingExaminationController extends Controller
         }
 
         $positions = Position::all();
+        $admins = Group::admins();
 
-        return view('training.exam.create', compact('training', 'positions'));
+        return view('training.exam.create', compact('training', 'positions', 'admins'));
     }
 
     /**
@@ -69,6 +73,27 @@ class TrainingExaminationController extends Controller
 
         $training->user->notify(new TrainingExamNotification($training, $examination));
 
+        // Create the upgrade task for the staff
+        if (isset($data['request_task_user_id'])) {
+
+            $taskAsignee = User::find($data['request_task_user_id']);
+            if ($taskAsignee->can('receive', Task::class)) {
+                $task = Task::create([
+                    'type' => \App\Tasks\Types\RatingUpgrade::class,
+                    'subject_user_id' => $training->user->id,
+                    'subject_training_id' => $training->id,
+                    'assignee_user_id' => $taskAsignee->id,
+                    'creator_user_id' => Auth::id(),
+                    'created_at' => now(),
+                ]);
+
+                // Run the create method on the task type to trigger type specific actions on creation
+                $task->type()->create($task);
+            }
+
+        }
+
+        // Redirect based on if request was made by OTL or other means
         if (($key = session()->get('onetimekey')) != null) {
             // Remove the link
             OneTimeLink::where('key', $key)->delete();
@@ -131,6 +156,7 @@ class TrainingExaminationController extends Controller
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
             'files.*' => 'sometimes|file|mimes:pdf',
+            'request_task_user_id' => 'nullable|exists:users,id',
         ]);
     }
 }
