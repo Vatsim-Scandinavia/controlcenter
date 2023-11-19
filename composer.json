@@ -19,7 +19,7 @@
         "laravel/ui": "^4.0",
         "league/commonmark": "^2.2",
         "league/oauth2-client": "^2.6.1",
-        "sentry/sentry-laravel": "^3.8",
+        "sentry/sentry-laravel": "^4.0",
         "spatie/laravel-ignition": "^2.0",
         "wildside/userstamps": "^2.2"
     },
