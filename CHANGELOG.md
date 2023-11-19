@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.4.1...v4.4.2) (2023-11-19)
+
+
+### Bug Fixes
+
+* rating upgrade task comment only for vatsim ratings ([2bcb484](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2bcb484788df37f283720d66efb1e3ea0f5e2cdd))
+
 ## [4.4.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.4.0...v4.4.1) (2023-11-19)
 
 
