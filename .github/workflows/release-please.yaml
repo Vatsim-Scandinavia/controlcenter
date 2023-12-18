@@ -1,3 +1,9 @@
+---
+# This workflow is used to release control-center. It runs an action that
+# determines whether it needs to create a release or create a PR which
+# contains a list of changes for the next release.
+name: Release (release-please)
+
 on:
   push:
     branches:
@@ -10,13 +16,12 @@ permissions:
   contents: write
   pull-requests: write
 
-name: release-please
-
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
         with:
+          token: ${{ secrets.VATSCA_BOT_TOKEN }}
           release-type: php
           draft: true
