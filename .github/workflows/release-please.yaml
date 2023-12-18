@@ -20,4 +20,3 @@ jobs:
         with:
           release-type: php
           draft: true
-
