@@ -7,7 +7,14 @@ repos:
     - id: trailing-whitespace
     - id: end-of-file-fixer
     - id: check-yaml
+      # Excluding mkdocs.yml due to the use of custom tags
+      exclude: ^docs/mkdocs.yml$
     - id: check-added-large-files
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+    - id: markdownlint
+      args: [--disable, line-length, --]
   - repo: local
     hooks:
     - id: composer

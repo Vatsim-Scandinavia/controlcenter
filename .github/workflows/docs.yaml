@@ -1,0 +1,81 @@
+---
+name: Publish Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - feat/initial-documentation
+    tags:
+      - '**'
+
+env:
+  COLUMNS: 150
+  PDM_DEPS: 'urllib3<2'
+
+defaults:
+  run:
+    working-directory: ./docs
+
+jobs:
+  # FIXME: shouldn't lint on all all files, ooof, needs to be in the PRs only
+  # FIXME: some of the rules need tweaking
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - uses: pdm-project/setup-pdm@v3
+  #       with:
+  #         python-version: '3.11'
+  #         cache: true
+  #         cache-dependency-path: docs/pdm.lock
+
+  #     - name: install
+  #       run: pdm install
+
+  #     - uses: pre-commit/action@v3.0.0
+  #       with:
+  #         extra_args: markdownlint --all-files --verbose
+  #       env:
+  #         SKIP: no-commit-to-branch
+
+  publish:
+    # needs: [lint]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CONTRIBUTORS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DOCS_BRANCH: gh-pages
+    steps:
+      - name: checkout docs-site
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DOCS_BRANCH }}
+
+      - name: checkout current branch
+        uses: actions/checkout@v4
+
+      - uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: '3.11'
+          cache-dependency-path: docs/pdm.lock
+
+      - name: install
+        run: |
+          pdm venv create --with-pip --force $PYTHON
+          pdm install
+
+      - name: Set git credentials
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - run: pdm run mike deploy -b ${{ env.DOCS_BRANCH }} dev --push
+        # FIXME: Something like this
+        # if: "github.ref == 'refs/heads/main'"
+        if: "github.ref == 'refs/heads/feat/initial-documentation'"
+
+      # FIXME: fetch the current version by either listening to release-please or by listening to tag events
+      - run: pdm run mike deploy -b ${{ env.DOCS_BRANCH }} 4.4 latest --update-aliases --push
+        if: "(github.ref == 'refs/heads/feat/initial-documentation' || startsWith(github.ref, 'refs/tags/'))"
