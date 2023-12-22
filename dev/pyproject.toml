@@ -1,0 +1,20 @@
+[project]
+name = "controlcenter-docs"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Thor K. Høgås", email = "thor.hogas@vatsim-scandinavia.org"},
+]
+requires-python = "==3.10.*"
+readme = "README.md"
+license = {text = "GPL3"}
+dependencies = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.5.2",
+    "mike>=2.0.0",
+    "mkdocs-exclude>=1.0.2",
+]
+
+
+[tool.pdm]
+package-type = "application"
