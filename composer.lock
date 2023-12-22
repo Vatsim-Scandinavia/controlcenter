@@ -988,16 +988,16 @@
         },
         {
             "name": "graham-campbell/markdown",
-            "version": "v15.0.0",
+            "version": "v15.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Laravel-Markdown.git",
-                "reference": "3c0bcf904ec02acb1afd0e23e7c170ac5199fc14"
+                "reference": "94917d0d712c26788095ad2b5eafd9b33cd43095"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Markdown/zipball/3c0bcf904ec02acb1afd0e23e7c170ac5199fc14",
-                "reference": "3c0bcf904ec02acb1afd0e23e7c170ac5199fc14",
+                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Markdown/zipball/94917d0d712c26788095ad2b5eafd9b33cd43095",
+                "reference": "94917d0d712c26788095ad2b5eafd9b33cd43095",
                 "shasum": ""
             },
             "require": {
@@ -1005,14 +1005,14 @@
                 "illuminate/filesystem": "^8.75 || ^9.0 || ^10.0",
                 "illuminate/support": "^8.75 || ^9.0 || ^10.0",
                 "illuminate/view": "^8.75 || ^9.0 || ^10.0",
-                "league/commonmark": "^2.3.9",
+                "league/commonmark": "^2.4.1",
                 "php": "^7.4.15 || ^8.0.2"
             },
             "require-dev": {
-                "graham-campbell/analyzer": "^4.0",
-                "graham-campbell/testbench": "^6.0",
-                "mockery/mockery": "^1.5.1",
-                "phpunit/phpunit": "^9.6.3 || ^10.0.12"
+                "graham-campbell/analyzer": "^4.1",
+                "graham-campbell/testbench": "^6.1",
+                "mockery/mockery": "^1.6.6",
+                "phpunit/phpunit": "^9.6.15 || ^10.4.2"
             },
             "type": "library",
             "extra": {
@@ -1052,7 +1052,7 @@
             ],
             "support": {
                 "issues": "https://github.com/GrahamCampbell/Laravel-Markdown/issues",
-                "source": "https://github.com/GrahamCampbell/Laravel-Markdown/tree/v15.0.0"
+                "source": "https://github.com/GrahamCampbell/Laravel-Markdown/tree/v15.1.0"
             },
             "funding": [
                 {
@@ -1064,7 +1064,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-26T14:22:13+00:00"
+            "time": "2023-12-04T02:43:19+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -9769,5 +9769,5 @@
         "php": "^8.1.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
