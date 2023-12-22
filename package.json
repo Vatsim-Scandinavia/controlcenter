@@ -15,7 +15,7 @@
         "chartjs-adapter-moment": "^1.0.1",
         "easymde": "^2.18.0",
         "flatpickr": "^4.6.13",
-        "laravel-vite-plugin": "^0.8.0",
+        "laravel-vite-plugin": "^1.0.0",
         "moment": "^2.29.1",
         "sass": "^1.68.0",
         "vite": "^4.4.9",
