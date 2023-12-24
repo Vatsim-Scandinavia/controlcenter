@@ -37,13 +37,23 @@ theme:
         icon: material/lightbulb
         name: "Switch to light mode"
   features:
+    # provide edit links for docs
+    - content.action.edit
+    # show custom tabs for instructions
     - content.tabs.link
+    # add annotations to code
     - content.code.annotate
+    # clipboard access for code
     - content.code.copy
+    # get rid of annotations we don't care to see
     - announce.dismiss
+    # tabs at the top from level 1 navigation
     - navigation.tabs
+    # footer at the bottom
     - navigation.footer
+    # use XHR for page browsing
     - navigation.instant
+    # add sections to the vertical left navigation menu
     - navigation.sections
   logo: '_assets/logo.png'
   favicon: '_assets/favicon.ico'
@@ -151,6 +161,18 @@ plugins:
         - _includes/*
         - _theme/*
         - __pycache__/*
+  - git-revision-date-localized:
+      enable_creation_date: true
+      exclude:
+        - index.md
+  # Show people who've contributed to the documentation page
+  # FIXME: disabled until PR is merged
+  - git-committers:
+      enabled: false
+      # enabled: !ENV ["CI", false]
+      repository: Vatsim-Scandinavia/controlcenter
+      branch: feat/initial-documentation
+      token: !ENV ["CONTRIBUTORS_TOKEN"]
 #  - mkdocstrings:
 #      handlers:
 #        python:
