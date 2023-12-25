@@ -9,7 +9,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.1.1",
         "@popperjs/core": "^2.11.8",
-        "@vitejs/plugin-vue": "^4.3.4",
+        "@vitejs/plugin-vue": "^5.0.0",
         "bootstrap": "^5.3.0",
         "bootstrap-table": "^1.19.1",
         "chart.js": "^4.4.0",
