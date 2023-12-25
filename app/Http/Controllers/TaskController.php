@@ -139,6 +139,23 @@ class TaskController extends Controller
     }
 
     /**
+     * Get popular task Assignees
+     *
+     * @return Illuminate\Database\Eloquent\Collection;
+     */
+    public static function getPopularAssignees()
+    {
+        $users = User::has('tasks')->withCount('tasks')->orderBy('tasks_count', 'desc')->limit(10)->get();
+
+        // Filter out users who no longer can receive tasks and end up with 3
+        $users = $users->filter(function ($user) {
+            return $user->can('receive', Task::class);
+        })->take(3);
+
+        return $users;
+    }
+
+    /**
      * Check if a task type is valid
      *
      * @param  string  $type

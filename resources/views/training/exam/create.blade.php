@@ -113,7 +113,7 @@
                             <div class="border-top mb-4"></div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <label class="form-label" for="user">Request rating upgrade from</label>
                                     <input 
                                         id="user"
@@ -128,6 +128,14 @@
                                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                                         @endforeach
                                     </datalist>
+                                    <div>
+                                        @foreach($taskPopularAssignees as $user)
+                                            <button type="button" class="btn btn-sm btn-outline-primary mt-1 me-1" onclick="document.getElementById('user').value = '{{ $user->id }}'">
+                                                <i class="fas fa-bolt"></i>
+                                                {{ $user->name }}
+                                            </button>
+                                        @endforeach
+                                    </div>
                                     <small class="form-text">Training director for ratings or local staff for endorsements</small>
                                     @error('request_task_user_id')
                                         <span class="text-danger">{{ $errors->first('request_task_user_id') }}</span>

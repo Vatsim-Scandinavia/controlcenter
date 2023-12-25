@@ -21,24 +21,38 @@
 
                     <div class="mt-3">
                         <label class="form-label" for="user">Send request to</label>
-                        <input 
-                            id="user"
-                            class="form-control"
-                            type="text"
-                            name="assignee_user_id"
-                            list="userList"
-                            autocomplete="off"
-                            required
-                        >
-                        <datalist id="userList">
-                            @foreach(\App\Models\User::has('groups')->get() as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </datalist>
+                        <div class="mt-1">
+                            <input 
+                                id="{{ Str::camel($requestType->getName()) }}User"
+                                class="form-control"
+                                type="text"
+                                name="assignee_user_id"
+                                list="userList"
+                                autocomplete="off"
+                                placeholder=""
+                                required
+                            >
+                            <datalist id="{{ Str::camel($requestType->getName()) }}UserList">
+                                @foreach(\App\Models\User::has('groups')->get() as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </datalist>
 
-                        <input type="hidden" name="type" value="{{ $requestType::class }}">
-                        <input type="hidden" name="subject_user_id" value="{{ $training->user->id }}">
-                        <input type="hidden" name="subject_training_id" value="{{ $training->id }}">
+                            <div>
+                                @foreach($requestPopularAssignees as $user)
+                                    <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="document.getElementById('{{ Str::camel($requestType->getName()) }}User').value = '{{ $user->id }}'">
+                                        <i class="fas fa-bolt"></i>
+                                        {{ $user->name }}
+                                    </button>
+                                @endforeach
+                            </div>
+
+                            <div class="mt-3">
+                                <input type="hidden" name="type" value="{{ $requestType::class }}">
+                                <input type="hidden" name="subject_user_id" value="{{ $training->user->id }}">
+                                <input type="hidden" name="subject_training_id" value="{{ $training->id }}">
+                            </div>
+                        </div>
                     </div>
 
                     @if($requestType->requireCheckboxConfirmation() !== false)
