@@ -342,10 +342,7 @@ class User extends Authenticatable
     {
         $training = $this->trainings->where('status', -1)->where('closed_at', '>', Carbon::now()->subDays(7))->first();
 
-        if ($training == null) {
-            return false;
-        }
-        if ($training->isMaeTraining()) {
+        if ($training == null || $training->isMaeTraining() || $training->type != 1) {
             return false;
         }
 
