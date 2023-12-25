@@ -36,9 +36,9 @@ class TrainingExaminationController extends Controller
         }
 
         $positions = Position::all();
-        $admins = Group::admins();
+        $taskRecipients = collect(Group::admins()->merge(Group::moderators()));
 
-        return view('training.exam.create', compact('training', 'positions', 'admins'));
+        return view('training.exam.create', compact('training', 'positions', 'taskRecipients'));
     }
 
     /**

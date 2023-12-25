@@ -124,7 +124,7 @@
                                         autocomplete="off"
                                     >
                                     <datalist id="userList">
-                                        @foreach($admins as $user)
+                                        @foreach($taskRecipients as $user)
                                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                                         @endforeach
                                     </datalist>
