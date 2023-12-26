@@ -27,7 +27,7 @@
                                 class="form-control"
                                 type="text"
                                 name="assignee_user_id"
-                                list="userList"
+                                list="{{ Str::camel($requestType->getName()) }}UserList"
                                 autocomplete="off"
                                 placeholder=""
                                 required
