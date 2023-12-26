@@ -77,6 +77,7 @@ class TaskController extends Controller
         $this->authorize('update', Task::class);
         $task = Task::findOrFail($task);
         $task->status = $status;
+        $task->assignee_notified = true;
         $task->closed_at = now();
         $task->save();
 
