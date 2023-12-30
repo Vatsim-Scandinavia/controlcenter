@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#ratings" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -717,7 +722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../custom/" class="md-nav__link">
+      <a href="../../setup/custom/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -820,7 +825,7 @@
         
   
   <span class="md-ellipsis">
-    Usage
+    The Dashboard
   </span>
   
 
@@ -1025,6 +1030,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m18.09 11.77 1.47 6.33L14 14.74 8.44 18.1l1.46-6.33L5 7.5l6.47-.54L14 1l2.53 5.96L23 7.5l-4.91 4.27M2 12.43c.19 0 .38-.06.55-.17l3.2-2.11-1.57-1.36-2.73 1.8c-.461.3-.589.91-.29 1.41.2.27.52.43.84.43m-.84 9.12c.2.29.52.45.84.45.19 0 .38-.05.55-.16l4.11-2.71.34-1.37.31-1.45-5.86 3.85c-.461.31-.589.93-.29 1.39m.29-6.17a1 1 0 0 0-.29 1.38c.2.3.52.45.84.45.19 0 .38-.05.55-.16l5.42-3.55.27-1.19-.92-.81-5.87 3.88Z"/></svg>
+  
+  <span class="md-ellipsis">
+    Ratings
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -1037,6 +1057,54 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-endorsements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Endorsements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Ratings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#not-applicable-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Not Applicable Ratings
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1326,6 +1394,43 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-endorsements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Endorsements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Ratings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#not-applicable-ratings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Not Applicable Ratings
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1348,9 +1453,43 @@
   
 
 
-  <h1>Ratings</h1>
+<h1 id="ratings">Ratings<a class="headerlink" href="#ratings" title="Permanent link">&para;</a></h1>
+<p>The ratings supported in Control Center are ratings that expand the scope and responsibilities that a division <abbr title="Air Traffic Controller">ATC</abbr> member can handle.</p>
+<div class="admonition notice">
+<p class="admonition-title">VATSIM Ratings</p>
+<p>While Control Center is opinionated, it is not responsible for and does not handle how ratings work in VATSIM.
+For additional details, please see the <a href="https://vatsim.net/docs/policy/global-controller-administration-policy">VATSIM Global Controller Administration Policy</a> and the <a href="https://cdn.vatsim.net/policy-documents/GCAP_v1_Release.pdf">most recent <abbr title="Global Controller Administration Policy">GCAP</abbr> document</a>.</p>
+</div>
+<h2 id="supported-endorsements">Supported Endorsements<a class="headerlink" href="#supported-endorsements" title="Permanent link">&para;</a></h2>
+<p>Control Center supports creating custom endorsements to support <em>Tier 1</em>, <em>Tier 2</em> and <em>Super Center</em> positions.</p>
+<p>In addition, Control Center supports the creation of <em>Solo Endorsements</em> for the purposes of facilitating training.</p>
+<h2 id="supported-ratings">Supported Ratings<a class="headerlink" href="#supported-ratings" title="Permanent link">&para;</a></h2>
+<!-- See _includes/abbreviations.md for the definitions of the ratings. -->
 
+<ul>
+<li><abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr></li>
+<li><abbr title="Aerodrome Controller (TWR and below)">S2</abbr></li>
+<li><abbr title="Terminal Controller (APP, DEP, and below)">S3</abbr></li>
+<li><abbr title="Enroute Controller (CTR, FSS, and below)">C1</abbr></li>
+</ul>
+<h2 id="not-applicable-ratings">Not Applicable Ratings<a class="headerlink" href="#not-applicable-ratings" title="Permanent link">&para;</a></h2>
+<p>The following ratings are not supported in Control Center by default as they tend to have specific non-training related requirements, such as mentoring hours, controlling hours or other large contributions to the specific VATSIM division.</p>
+<ul>
+<li><abbr title="Observer">OBS</abbr></li>
+<li><abbr title="Senior Controller (C1, no additional services)">C3</abbr></li>
+<li><abbr title="Instructor (C1 with training responsibilities)">I1</abbr></li>
+<li><abbr title="Senior Instructor (C1 with training responsibilities)">I3</abbr></li>
+</ul>
+<!--
+This is a list of abbreviations which will be automatically expanded on every content page.
+Don't add any words or abbreviations which are confusingly or rarely used.
+They'll be better off on the specific page in question.
+-->
 
+<!-- markdownlint-disable first-line-h1 -->
+
+<!-- VATSIM terms that are useful to remember -->
+<!-- Central ratings used by VATSIM in the new GCAP -->
 
 
 
@@ -1509,7 +1648,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
