@@ -51,11 +51,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vatsim-scandinavia.org/controlcenter/latest/concepts/exams/</loc>
-         <lastmod>2023-12-30</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://docs.vatsim-scandinavia.org/controlcenter/latest/concepts/mentors/</loc>
          <lastmod>2023-12-30</lastmod>
          <changefreq>daily</changefreq>
@@ -86,7 +81,7 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vatsim-scandinavia.org/controlcenter/latest/integrations/vatsim-auth/</loc>
+         <loc>https://docs.vatsim-scandinavia.org/controlcenter/latest/integrations/vatsim-connect/</loc>
          <lastmod>2023-12-30</lastmod>
          <changefreq>daily</changefreq>
     </url>

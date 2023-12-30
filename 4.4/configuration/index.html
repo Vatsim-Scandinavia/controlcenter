@@ -1140,29 +1140,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts/exams/" class="md-nav__link">
-        
-  
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10 17-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9m-6-6a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m7 0h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></svg>
-  
-  <span class="md-ellipsis">
-    Exams
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../concepts/mentors/" class="md-nav__link">
         
   
@@ -1445,11 +1422,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../integrations/vatsim-auth/" class="md-nav__link">
+      <a href="../integrations/vatsim-connect/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    VATSIM SSO
+    VATSIM Connect
   </span>
   
 
@@ -1670,7 +1647,7 @@
 <tr>
 <td><code>APP_OWNER_SHORT</code></td>
 <td>SCA</td>
-<td>Usually 3 letter name identifying your <abbr title="Virtual Area Control Centre">vACC</abbr> within VATSIM API</td>
+<td>Usually 3 letter name identifying your <abbr title="Virtual Area Control Centre">vACC</abbr> within <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> API</td>
 </tr>
 <tr>
 <td><code>APP_URL</code></td>
@@ -1736,12 +1713,12 @@
 </tr>
 </tbody>
 </table>
-<h3 id="authentication-vatsimhandover">Authentication (VATSIM/Handover)<a class="headerlink" href="#authentication-vatsimhandover" title="Permanent link">&para;</a></h3>
+<h3 id="authentication-vatsimhandover">Authentication (<abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr>/Handover)<a class="headerlink" href="#authentication-vatsimhandover" title="Permanent link">&para;</a></h3>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The authentication settings must be valid to get access to Control Center.</p>
 </div>
-<p>Settings related to configuring OAuth-based authentication adhering to the fields supported by VATSIM and <a href="../integrations/handover/">Handover</a>.</p>
+<p>Settings related to configuring OAuth-based authentication adhering to the fields supported by <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> and <a href="../integrations/handover/">Handover</a>.</p>
 <table>
 <thead>
 <tr>
@@ -1754,7 +1731,7 @@
 <tr>
 <td><code>OAUTH_URL</code></td>
 <td><code>https://auth.vatsim.net</code></td>
-<td>OAuth URL of VATSIM</td>
+<td>OAuth URL of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr></td>
 </tr>
 <tr>
 <td><code>OAUTH_ID</code></td>
@@ -1772,12 +1749,12 @@
 <p class="admonition-title">Other OAuth providers</p>
 <p>It's possible to setup your <a href="../setup/authentication/">own OAuth provider with Control Center</a>.</p>
 </div>
-<h3 id="vatsim">VATSIM<a class="headerlink" href="#vatsim" title="Permanent link">&para;</a></h3>
+<h3 id="vatsim"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr><a class="headerlink" href="#vatsim" title="Permanent link">&para;</a></h3>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The VATSIM settings must be valid for the membership tasks and bookings to function.</p>
+<p>The <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> settings must be valid for the membership tasks and bookings to function.</p>
 </div>
-<p>Settings related to the <a href="../integrations/vatsim/">VATSIM integration</a>.</p>
+<p>Settings related to the <a href="../integrations/vatsim/"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> integration</a>.</p>
 <table>
 <thead>
 <tr>
@@ -1790,17 +1767,17 @@
 <tr>
 <td><code>VATSIM_API_TOKEN</code></td>
 <td>null</td>
-<td>Token to VATSIM API</td>
+<td>Token to <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> API</td>
 </tr>
 <tr>
 <td><code>VATSIM_BOOKING_API_URL</code></td>
 <td><code>https://atc-bookings.vatsim.net/api</code></td>
-<td>URL to VATSIM Booking API</td>
+<td>URL to <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Booking API</td>
 </tr>
 <tr>
 <td><code>VATSIM_BOOKING_API_TOKEN</code></td>
 <td>null</td>
-<td>Token to VATSIM Booking API</td>
+<td>Token to <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Booking API</td>
 </tr>
 </tbody>
 </table>
@@ -1876,10 +1853,10 @@
 </tbody>
 </table>
 <h2 id="configuring-authentication-with-oauth">Configuring authentication with OAuth<a class="headerlink" href="#configuring-authentication-with-oauth" title="Permanent link">&para;</a></h2>
-<p>Control Center supports both VATSIM Connect, <a href="https://github.com/Vatsim-Scandinavia/handover">Handover</a> and other OAuth providers to authenticate and fetch user data. If you're looking for a centrailised login system check out our <a href="https://github.com/Vatsim-Scandinavia/handover">Handover</a> service, or use VATSIM Connect.</p>
+<p>Control Center supports both <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect, <a href="https://github.com/Vatsim-Scandinavia/handover">Handover</a> and other OAuth providers to authenticate and fetch user data. If you're looking for a centrailised login system check out our <a href="https://github.com/Vatsim-Scandinavia/handover">Handover</a> service, or use <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect.</p>
 <blockquote>
 <p><strong>Note:</strong>
-No explicit configuration is required for VATSIM Connect or Handover.</p>
+No explicit configuration is required for <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect or Handover.</p>
 </blockquote>
 <p>If you use your own custom Oauth provider, you need to configure the following variables.</p>
 <h3 id="environment-variables_1">Environment variables<a class="headerlink" href="#environment-variables_1" title="Permanent link">&para;</a></h3>
@@ -1895,52 +1872,52 @@ No explicit configuration is required for VATSIM Connect or Handover.</p>
 <tr>
 <td>OAUTH_MAPPING_CID</td>
 <td>data-id</td>
-<td>OAuth mapping of VATSIM CID</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> CID</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_EMAIL</td>
 <td>data-email</td>
-<td>OAuth mapping of VATSIM e-mail</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> e-mail</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_FIRSTNAME</td>
 <td>data-first_name</td>
-<td>OAuth mapping of VATSIM first name</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> first name</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_LASTNAME</td>
 <td>data-last_name</td>
-<td>OAuth mapping of VATSIM last name</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> last name</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_RATING</td>
 <td>data-vatsim_details-controller_rating-id</td>
-<td>OAuth mapping of VATSIM rating</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_RATING_SHORT</td>
 <td>data-vatsim_details-controller_rating-short</td>
-<td>OAuth mapping of VATSIM rating short</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating short</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_RATING_LONG</td>
 <td>data-vatsim_details-controller_rating-long</td>
-<td>OAuth mapping of VATSIM rating long</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating long</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_REGION</td>
 <td>data-vatsim_details-region</td>
-<td>OAuth mapping of VATSIM region</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> region</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_DIVISION</td>
 <td>data-vatsim_details-division</td>
-<td>OAuth mapping of VATSIM division</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> division</td>
 </tr>
 <tr>
 <td>OAUTH_MAPPING_SUBDIVISION</td>
 <td>data-vatsim_details-subdivision</td>
-<td>OAuth mapping of VATSIM subdivision</td>
+<td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> subdivision</td>
 </tr>
 </tbody>
 </table>
