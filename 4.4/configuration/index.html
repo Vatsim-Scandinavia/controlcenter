@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#environment" class="md-skip">
+        <a href="#initial-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -579,6 +579,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -608,6 +610,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Page contents">
   
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -722,6 +726,15 @@
   <a href="#optional-extras" class="md-nav__link">
     <span class="md-ellipsis">
       Optional: Extras
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
     </span>
   </a>
   
@@ -875,7 +888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom/" class="md-nav__link">
+      <a href="../setup/custom/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -976,7 +989,7 @@
         
   
   <span class="md-ellipsis">
-    Usage
+    The Dashboard
   </span>
   
 
@@ -1472,6 +1485,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1590,6 +1605,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1613,7 +1637,9 @@
   
 
 
-  <h1>Initial configuration</h1>
+<h1 id="initial-configuration">Initial Configuration<a class="headerlink" href="#initial-configuration" title="Permanent link">&para;</a></h1>
+<!-- As this document is divided into different sections, there will be duplicate headers -->
+<!-- markdownlint-disable no-duplicate-heading -->
 
 <p>To get Control Center running and have it reflect your division as you wish, there are several environment variables you must customise.</p>
 <h2 id="environment">Setting up the environment<a class="headerlink" href="#environment" title="Permanent link">&para;</a></h2>
@@ -1644,11 +1670,11 @@
 <tr>
 <td><code>APP_OWNER_SHORT</code></td>
 <td>SCA</td>
-<td>Usually 3 letter name identifying your vACC within VATSIM API</td>
+<td>Usually 3 letter name identifying your <abbr title="Virtual Area Control Centre">vACC</abbr> within VATSIM API</td>
 </tr>
 <tr>
 <td><code>APP_URL</code></td>
-<td>http://localhost</td>
+<td><code>http://localhost</code></td>
 <td>URL to your Control Center</td>
 </tr>
 <tr>
@@ -1727,7 +1753,7 @@
 <tbody>
 <tr>
 <td><code>OAUTH_URL</code></td>
-<td>https://auth.vatsim.net</td>
+<td><code>https://auth.vatsim.net</code></td>
 <td>OAuth URL of VATSIM</td>
 </tr>
 <tr>
@@ -1768,7 +1794,7 @@
 </tr>
 <tr>
 <td><code>VATSIM_BOOKING_API_URL</code></td>
-<td>https://atc-bookings.vatsim.net/api</td>
+<td><code>https://atc-bookings.vatsim.net/api</code></td>
 <td>URL to VATSIM Booking API</td>
 </tr>
 <tr>
@@ -1826,7 +1852,7 @@
 </tr>
 <tr>
 <td><code>MAIL_FROM_ADDRESS</code></td>
-<td>noreply@yourvacc.com</td>
+<td><code>noreply@yourvacc.com</code></td>
 <td>Mail from address</td>
 </tr>
 </tbody>
@@ -1960,11 +1986,18 @@ No explicit configuration is required for VATSIM Connect or Handover.</p>
 </tr>
 </tbody>
 </table>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<p>With a configured instance of Control Center, it is time to <a href="system/">complete the installation on the system Control Center is running</a>.</p>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
 They'll be better off on the specific page in question.
 -->
+
+<!-- markdownlint-disable first-line-h1 -->
+
+<!-- VATSIM terms that are useful to remember -->
+<!-- Central ratings used by VATSIM in the new GCAP -->
 
 
 
@@ -2123,7 +2156,7 @@ They'll be better off on the specific page in question.
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>

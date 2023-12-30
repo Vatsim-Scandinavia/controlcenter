@@ -45,6 +45,8 @@ theme:
     - content.code.annotate
     # clipboard access for code
     - content.code.copy
+    # use fancy material tooltips in lieu of browser default
+    - content.tooltips
     # get rid of annotations we don't care to see
     - announce.dismiss
     # tabs at the top from level 1 navigation
@@ -99,7 +101,7 @@ nav:
           - Define the division: setup/division.md
           - Changing the logo: setup/logo.md
           - Changing the colours & borders: setup/theme.md
-          - Creating a custom image: custom.md
+          - Creating a custom image: setup/custom.md
           - Custom OAuth authentication: setup/authentication.md
   - Usage:
       - concepts/index.md
@@ -138,18 +140,18 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.highlight:
       pygments_lang_class: true
-  - pymdownx.extra
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.tabbed:
-      alternate_style: true
   - pymdownx.snippets:
       check_paths: true
       base_path:
         - _includes
       auto_append:
         - abbreviations.md
+  - pymdownx.extra
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
 
 plugins:
   - mike:
@@ -162,6 +164,7 @@ plugins:
         - _theme/*
         - __pycache__/*
   - git-revision-date-localized:
+      enabled: !ENV ["CI", false]
       enable_creation_date: true
       exclude:
         - index.md

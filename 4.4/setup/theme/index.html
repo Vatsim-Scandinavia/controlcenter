@@ -16,7 +16,7 @@
         <link rel="prev" href="../logo/">
       
       
-        <link rel="next" href="../../custom/">
+        <link rel="next" href="../custom/">
       
       
       <link rel="icon" href="../../_assets/favicon.ico">
@@ -74,6 +74,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#customise-the-control-center-theme" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -706,6 +711,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -729,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../custom/" class="md-nav__link">
+      <a href="../custom/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -830,7 +837,7 @@
         
   
   <span class="md-ellipsis">
-    Usage
+    The Dashboard
   </span>
   
 
@@ -1326,6 +1333,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -1348,8 +1357,7 @@
   
 
 
-  <h1>Changing the colours & borders</h1>
-
+<h1 id="customise-the-control-center-theme">Customise the Control Center theme<a class="headerlink" href="#customise-the-control-center-theme" title="Permanent link">&para;</a></h1>
 <p>To change the bootstrap colors to match your division, first change the environment variables and then run the following command</p>
 <table>
 <thead>
@@ -1405,16 +1413,27 @@
 <p>Run this command to build the theme. If you get an error like <code>"#5f271a" is not a color</code>, remove the <code>"</code> quotes from your environment variable.</p>
 <div class="language-sh highlight"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>control-center<span class="w"> </span>sh<span class="w"> </span>container/theme/build.sh
 </code></pre></div>
-<blockquote>
-<p><strong>Note</strong>
-1. Building custom themes will increase your container size with ~200mb when completed. When you run this command, we need install dependencies inside your container to build the theme and then remove them again. This is done to keep the container size down.
-2. You need to run this command each time you recreate the container.</p>
-</blockquote>
+<div class="admonition warning">
+<p class="admonition-title">Custom themes increase container size</p>
+<p>Building custom themes will increase your container size with ~200mb when completed.
+When you run this command, we need to install dependencies inside your container to build the theme and then remove them again.
+This is done to keep the container size down.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Custom themes are temporary</p>
+<p>You need to run this command each time you recreate the container.
+To avoid this, <a href="../custom/">create a custom derivation of the container</a>.</p>
+</div>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
 They'll be better off on the specific page in question.
 -->
+
+<!-- markdownlint-disable first-line-h1 -->
+
+<!-- VATSIM terms that are useful to remember -->
+<!-- Central ratings used by VATSIM in the new GCAP -->
 
 
 
@@ -1495,7 +1514,7 @@ They'll be better off on the specific page in question.
         
         
           
-          <a href="../../custom/" class="md-footer__link md-footer__link--next" aria-label="Next: Creating a custom image">
+          <a href="../custom/" class="md-footer__link md-footer__link--next" aria-label="Next: Creating a custom image">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
@@ -1573,7 +1592,7 @@ They'll be better off on the specific page in question.
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>

@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#running-the-development-environment" class="md-skip">
+        <a href="#contributing" class="md-skip">
           Skip to content
         </a>
       
@@ -722,7 +722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom/" class="md-nav__link">
+      <a href="../setup/custom/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -823,7 +823,7 @@
         
   
   <span class="md-ellipsis">
-    Usage
+    The Dashboard
   </span>
   
 
@@ -1106,6 +1106,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -1140,6 +1142,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1150,11 +1154,11 @@
         <li class="md-nav__item">
   <a href="#running-the-development-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Running the development environment
+      Development environment
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Running the development environment">
+    <nav class="md-nav" aria-label="Development environment">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1303,6 +1307,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-to-the-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
   
 </li>
       
@@ -1520,6 +1533,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1530,11 +1545,11 @@
         <li class="md-nav__item">
   <a href="#running-the-development-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Running the development environment
+      Development environment
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Running the development environment">
+    <nav class="md-nav" aria-label="Development environment">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1686,6 +1701,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#contributing-to-the-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1709,8 +1733,7 @@
   
 
 
-  <h1>Contribute</h1>
-
+<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
 <p>Interested in hacking on Control Center? Adding a new, favourite feature? Say no more.</p>
 <h2 id="running-the-development-environment">Running the development environment<a class="headerlink" href="#running-the-development-environment" title="Permanent link">&para;</a></h2>
 <p>To develop Control Center, we recommend running the docker container with the included <code>docker-compose.yaml</code> file inside <code>.devcontainer</code> folder.
@@ -1786,11 +1809,38 @@ They help you keep formatting consistent and avoid mistakes that'll be caught by
 <li>Optionally install <a href="https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme">this icon pack</a> for some smooth icons.</li>
 <li>Learn tips and tricks for PHP and Laravel in VS Code in <a href="https://laracasts.com/series/visual-studio-code-for-php-developers/">these Laracasts</a></li>
 </ol>
+<h2 id="contributing-to-the-documentation">Contributing to the documentation<a class="headerlink" href="#contributing-to-the-documentation" title="Permanent link">&para;</a></h2>
+<p>To get started with the documentation locally you will need <a href="https://www.python.org/">Python</a> and <a href="https://github.com/pdm-project/pdm">PDM</a> installed.
+The docs are generated and pushed to the <code>gh-pages</code> branch.</p>
+<p>To build and preview the documentation locally, here's a quick start set of instructions:</p>
+<div class="language-sh highlight"><span class="filename">Getting started with docs tools</span><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>docs/<span class="w">  </span><span class="c1"># (1)!</span>
+pdm<span class="w"> </span>install<span class="w">  </span><span class="c1"># (2)!</span>
+</code></pre></div>
+<ol>
+<li>Enter the documentation folder.</li>
+<li>Install the dependencies for the documentation setup.</li>
+</ol>
+<p>You'll now need to run two different commands, one in the background and one in the foreground.
+Open two terminals in the same <code>docs/</code> folder:</p>
+<div class="language-sh highlight"><span class="filename">Viewing the documentation locally</span><pre><span></span><code>pdm<span class="w"> </span>run<span class="w"> </span>docs:serve
+</code></pre></div>
+<p>This will start a local web server, allowing you to view the current documentation via <a href="http://localhost:8000/dev/"><code>localhost:8000</code></a>, together with the documentation you build locally.</p>
+<p>Proceed to the next step after you've made changes to the documentation.</p>
+<div class="language-sh highlight"><span class="filename">Building the documentation locally</span><pre><span></span><code>pdm<span class="w"> </span>run<span class="w"> </span>docs:build
+</code></pre></div>
+<p>Re-run <code>pdm run mike deploy dev</code> whenever you've made any changes to the documentation.
+The changes will only be visible in <code>/dev/</code>.</p>
+<p>You can also create multiple versions in parallel by replacing <code>dev</code> with something else.</p>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
 They'll be better off on the specific page in question.
 -->
+
+<!-- markdownlint-disable first-line-h1 -->
+
+<!-- VATSIM terms that are useful to remember -->
+<!-- Central ratings used by VATSIM in the new GCAP -->
 
 
 
@@ -1949,7 +1999,7 @@ They'll be better off on the specific page in question.
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
