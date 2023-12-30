@@ -109,7 +109,7 @@ nav:
           - Training: concepts/training.md
           - Bookings: concepts/booking.md
       - Division:
-          - Exams: concepts/exams.md
+          # - Exams: concepts/exams.md
           - Mentoring: concepts/mentors.md
           - Ratings: concepts/ratings.md
   - Reference:
@@ -121,7 +121,7 @@ nav:
       # Insert discord.md and others here
       - VATSIM: integrations/vatsim.md
       - Handover: integrations/handover.md
-      - VATSIM SSO: integrations/vatsim-auth.md
+      - VATSIM Connect: integrations/vatsim-connect.md
 
 # Perform additional validation for the documentation content.
 # https://www.mkdocs.org/user-guide/configuration/#validation
@@ -140,6 +140,8 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.highlight:
       pygments_lang_class: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.snippets:
       check_paths: true
       base_path:
