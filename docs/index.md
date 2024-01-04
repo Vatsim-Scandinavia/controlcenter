@@ -4,10 +4,9 @@ hide:
   - toc
 ---
 
-# The Control Center for VATSIM divisions
-
+<h1 style="margin-bottom: 0px;">The Control Center for VATSIM divisions</h1>
 <!-- hide from table of contents-->
-<h2>Training, mentoring, bookings — made easy</h2>
+<h2 style="border-bottom: 0px; margin-top: 0;">Training, mentoring, bookings — made easy</h2>
 
 ![Screenshot of the Control Center dashboard, showing students and current trainings](https://github.com/Vatsim-Scandinavia/controlcenter/assets/2505044/e115c1d0-d7e5-41cb-8fd6-0a787f06c0ea)
 
