@@ -11,3 +11,13 @@
     --md-typeset-a-color: #43c6e7;
     --md-accent-fg-color: #dfebeb;
 }
+
+.md-content{
+    a{
+        text-decoration: underline;
+    }
+}
+
+.md-nav__link--active{
+    text-decoration: underline;
+}
