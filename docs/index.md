@@ -4,7 +4,7 @@ hide:
   - toc
 ---
 
-# The Control Center for VATSIM Subdivisons
+# The Control Center for VATSIM divisions
 
 <!-- hide from table of contents-->
 <h2>Training, mentoring, bookings — made easy</h2>

@@ -112,7 +112,7 @@ docker compose exec control-center php artisan user:makeadmin
 3. **Enjoy Full Access**: Log back into the Control Center. You should now have full administrative access, allowing you to manage settings, users, and all aspects of the virtual air traffic control environment.
 
 ??? note "Need Help?"
-    If you encounter any issues while elevating your account to admin, don't hesitate to reach out on our forums. We're here to make your journey with Control Center smoother and enjoyable.
+    If you encounter any issues while elevating your account to admin, don't hesitate to reach out to us on Discord. We're here to make your journey with Control Center smoother and enjoyable.
 
 By becoming an admin, you unlock the full potential of Control Center, giving you the power to shape and manage your virtual training just the way you want. Ready to take control? Let's fly high!
 
