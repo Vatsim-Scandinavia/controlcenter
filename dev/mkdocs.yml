@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 ---
 # The name of the documentation site.
-site_name: Control Center
+site_name: Control Center Docs
 
 # The description of what Control Center essentially is.
 site_description: Training, exam & booking management system for VATSIM regions
@@ -25,14 +25,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: deep orange
-      accent: blue
+      primary: custom
+      accent: cyan
       toggle:
         icon: material/lightbulb-outline
         name: "Switch to dark mode"
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      accent: deep orange
+      primary: custom
+      accent: cyan
       toggle:
         icon: material/lightbulb
         name: "Switch to light mode"
@@ -84,7 +85,8 @@ extra:
     - icon: fontawesome/brands/discord
       # TODO: Insert actual link to the server?
       link: "#"
-
+extra_css:
+  - stylesheets/extra.css
 # The navigation configuration. While this can be automatically discovered,
 # we get greater control by manually creating the structure.
 nav:
