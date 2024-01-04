@@ -41,6 +41,11 @@ class SoloEndorsement extends Types
         parent::onDeclined($model);
     }
 
+    public function requireCheckboxConfirmation()
+    {
+        return 'The student has passed the required theoretical exam.';
+    }
+
     public function showConnectedRatings()
     {
         return false;
