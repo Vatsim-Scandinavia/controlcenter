@@ -1461,10 +1461,12 @@ We recommend that <strong>most</strong>, if not all, <strong>users</strong> shou
 <p>You can customise the theme by <a href="../theme/">setting environment variables and running <code>/container/theme/build.sh</code></a>:</p>
 <div class="language-Dockerfile highlight"><span class="filename">Custom theme in Control Center</span><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">ghcr.io/vatsim-scandinavia/control-center:latest</span>
 
+<span class="c"># Add any relevant theming environment variables here</span>
 <span class="k">ENV</span><span class="w"> </span><span class="nv">VITE_THEME_PRIMARY</span><span class="o">=</span><span class="s2">&quot;#222222&quot;</span>
 <span class="c"># ...</span>
 
-<span class="k">RUN</span><span class="w"> </span>container/theme/build.sh
+<span class="c"># Make the theme build script executable and run it</span>
+<span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>container/theme/build.sh<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>container/theme/build.sh
 </code></pre></div>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
