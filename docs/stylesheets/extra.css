@@ -22,6 +22,7 @@
     text-decoration: underline;
 }
 
+
 h1{
     font-weight: 600 !important;
 }
@@ -32,4 +33,12 @@ h2{
 
 h1, h2, h3, h4, h5, h6 {
     color: var(--md-typeset-a-color) !important;
+}
+
+/* Tweak in-page content tabs as we don't want double underline */
+.md-typeset .tabbed-labels--linked > label > a {
+    text-decoration: none;
+}
+.js .md-typeset .tabbed-labels:before {
+    background: var(--md-accent-fg-color);
 }
