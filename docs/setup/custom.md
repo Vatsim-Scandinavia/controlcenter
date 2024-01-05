@@ -26,8 +26,10 @@ You can customise the theme by [setting environment variables and running `/cont
 ```Dockerfile title="Custom theme in Control Center"
 FROM ghcr.io/vatsim-scandinavia/control-center:latest
 
+# Add any relevant theming environment variables here
 ENV VITE_THEME_PRIMARY="#222222"
 # ...
 
-RUN container/theme/build.sh
+# Make the theme build script executable and run it
+RUN chmod +x container/theme/build.sh && container/theme/build.sh
 ```
