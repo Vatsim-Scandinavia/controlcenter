@@ -7,3 +7,5 @@ node_modules
 tests
 # Don't care about the devcontainer
 .devcontainer
+# Don't care about docs either, they're online.
+docs
