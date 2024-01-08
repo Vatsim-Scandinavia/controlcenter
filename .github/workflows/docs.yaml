@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - docs/*
     tags:
       - '**'
 
@@ -78,11 +79,11 @@ jobs:
           [ "$MINOR" != "" ] || { echo "Couldn't parse tag to get major-minor version"; exit 1; }
           echo "minor=$MINOR" >> $GITHUB_OUTPUT
 
-      - name: deploy latest development documentation
+      - name: deploy development documentation
         run: >-
           pdm run mike deploy -b "${{ env.DOCS_BRANCH }}"
           "${{ env.DOCS_DEVELOPMENT_ALIAS }}" --push
-        if: "github.ref == 'refs/heads/main'"
+        if: "!startsWith(github.ref, 'refs/tags/')"
 
       - name: deploy latest documentation for v${{ steps.version.outputs.tag }}
         run: >-
