@@ -158,43 +158,26 @@ markdown_extensions:
       alternate_style: true
 
 plugins:
+  # Generate multiple versions of docs
   - mike:
       alias_type: symlink
       canonical_version: latest
   - search
+  # Exclude files that aren't part of the site
   - exclude:
       glob:
         - _includes/*
         - _theme/*
         - __pycache__/*
+  # Show creation and revision date on each page
   - git-revision-date-localized:
       enabled: !ENV ["CI", false]
       enable_creation_date: true
       exclude:
         - index.md
-  # Show people who've contributed to the documentation page
-  # FIXME: disabled until PR is merged
+  # Show people who've contributed on each page
   - git-committers:
-      enabled: false
-      # enabled: !ENV ["CI", false]
+      enabled: !ENV ["CI", false]
       repository: Vatsim-Scandinavia/controlcenter
-      branch: feat/initial-documentation
+      branch: main
       token: !ENV ["CONTRIBUTORS_TOKEN"]
-#  - mkdocstrings:
-#      handlers:
-#        python:
-#          paths: [.]
-#          options:
-#            members_order: source
-#            separate_signature: true
-#            filters: ["!^_"]
-#            docstring_options:
-#              ignore_init_summary: true
-#            merge_init_into_class: true
-#            extensions:
-#              - docs/plugins/griffe_doclinks.py
-#  - mkdocs-simple-hooks:
-#      hooks:
-#        on_pre_build: 'docs.plugins.main:on_pre_build'
-#        on_files: 'docs.plugins.main:on_files'
-#        on_page_markdown: 'docs.plugins.main:on_page_markdown'
