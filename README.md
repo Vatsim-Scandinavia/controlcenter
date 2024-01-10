@@ -13,4 +13,4 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 
 Do you want to help us with improving Control Center? Curious about whether we use testing? Stylistic choices?
 
-➡️  **[Read our contribution guide](https://docs.vatsca.org/controlcenter/latest/contributing/)** for details.
+➡️  **[Read our contribution guide](https://docs.vatsca.org/controlcenter/dev/contribute/)** for details.
