@@ -64,7 +64,6 @@ class OAuthController extends GenericProvider
         ];
 
         return $data;
-
     }
 
     // Thanks to Moodle for this snippet

@@ -46,7 +46,6 @@ class OAuthHelper
         }
 
         return false;
-
     }
 
     public function refreshToken(User $user)
@@ -72,6 +71,5 @@ class OAuthHelper
         } catch (\Exception $exception) {
             Log::critical($exception->getMessage());
         }
-
     }
 }

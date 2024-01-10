@@ -73,8 +73,7 @@ class LoginController extends Controller
         $resourceOwner = json_decode(json_encode($this->provider->getResourceOwner($accessToken)->toArray()));
         $data = OAuthController::mapOAuthProperties($resourceOwner);
 
-        if (
-            ! $data['id'] ||
+        if (! $data['id'] ||
             ! $data['email'] ||
             ! $data['first_name'] ||
             ! $data['last_name'] ||

@@ -51,7 +51,6 @@ class UserMakeAdmin extends Command
 
                 return Command::FAILURE;
             }
-
         } else {
             $this->error('No records of ' . $cid . ' was found.');
 

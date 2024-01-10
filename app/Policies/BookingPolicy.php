@@ -30,8 +30,7 @@ class BookingPolicy
      */
     public function create(User $user)
     {
-        return
-            $user->active && $user->rating >= VatsimRating::S2->value
+        return $user->active && $user->rating >= VatsimRating::S2->value
             || $user->active && $user->rating >= VatsimRating::S1->value && $user->hasActiveEndorsement('S1', true)
             || $user->hasActiveEndorsement('VISITING')
             || $user->getActiveTraining(1) != null
@@ -112,8 +111,7 @@ class BookingPolicy
     {
         // TODO: Make it easier to read the order of checks
         if (($booking->position->rating > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->isModerator()) {
-            if (
-                $user->getActiveTraining(1) &&
+            if ($user->getActiveTraining(1) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating || $user->getActiveTraining()->isMaeTraining()) &&
                 $user->getActiveTraining()->area->id === $booking->position->area
             ) {

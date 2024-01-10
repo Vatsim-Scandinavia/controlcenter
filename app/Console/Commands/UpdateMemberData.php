@@ -58,33 +58,27 @@ class UpdateMemberData extends Command
         }
 
         foreach ($users as $user) {
-
             if (Carbon::parse($user->token_expires)->isPast()) {
-
                 $refresh = $this->oauthHelper->refreshToken($user);
 
                 if (! $refresh) {
-
                     $user->access_token = null;
                     $user->refresh_token = null;
                     $user->token_expires = null;
                     $user->save();
 
                     continue;
-
                 }
 
                 $user->access_token = $refresh->access_token;
                 $user->refresh_token = $refresh->refresh_token;
                 $user->token_expires = now()->addSeconds($refresh->expires_in)->timestamp;
                 $user->save();
-
             }
 
             $response = $this->oauthHelper->fetchUser($user);
 
             if ($response && collect($response)->isNotEmpty()) {
-
                 $user->email = OAuthController::getOAuthProperty(config('oauth.mapping_mail'), $response);
                 $user->first_name = OAuthController::getOAuthProperty(config('oauth.mapping_first_name'), $response);
                 $user->last_name = OAuthController::getOAuthProperty(config('oauth.mapping_last_name'), $response);
@@ -95,9 +89,7 @@ class UpdateMemberData extends Command
                 $user->division = OAuthController::getOAuthProperty(config('oauth.mapping_division'), $response);
                 $user->subdivision = OAuthController::getOAuthProperty(config('oauth.mapping_subdivision'), $response);
                 $user->save();
-
             }
         }
-
     }
 }

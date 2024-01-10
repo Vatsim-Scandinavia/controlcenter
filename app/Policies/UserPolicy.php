@@ -71,8 +71,7 @@ class UserPolicy
     {
         // Allow admins to set all ranks from Moderator and below, and moderators can only set new mentors.
         // Only Admin can set examinators.
-        return
-            $this->update($user, $model) &&
+        return $this->update($user, $model) &&
             (($user->isAdmin() && $requstedGroup->id >= 2) || ($user->isModerator($requestedArea) && $requstedGroup->id == 3));
     }
 }
