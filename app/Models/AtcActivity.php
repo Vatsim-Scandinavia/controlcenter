@@ -18,4 +18,9 @@ class AtcActivity extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 }
