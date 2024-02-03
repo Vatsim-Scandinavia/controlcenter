@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\VatsimRating;
+use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\User;
 use App\Notifications\InactivityNotification;
@@ -79,7 +80,22 @@ class UpdateAtcActivity extends Command
      */
     private static function hasTooFewHours(User $member)
     {
-        return $member->atcActivity->hours < Setting::get('atcActivityRequirement', 10);
+
+        if (Setting::get('atcActivityAllowTotalHours', true)) {
+            return $member->atcActivity->sum('hours') < Setting::get('atcActivityRequirement', 10);
+        } else {
+            $allAreasInactive = true;
+
+            foreach (Area::all() as $area) {
+                $activity = $member->atcActivity->where('area_id', $area->id)->first();
+                if ($activity && $activity->hours >= Setting::get('atcActivityRequirement', 10)) {
+                    $allAreasInactive = false;
+                }
+            }
+
+            return $allAreasInactive;
+        }
+
     }
 
     /**
@@ -90,8 +106,23 @@ class UpdateAtcActivity extends Command
     private static function notInGracePeriod(User $member)
     {
         $graceLengthMonths = Setting::get('atcActivityGracePeriod', 12);
+        $notInGracePeriod = true;
 
-        return $member->atcActivity->start_of_grace_period == null || now()->subMonths($graceLengthMonths)->gt($member->atcActivity->start_of_grace_period);
+        // If no grace is set or within grace period per area, return true
+        foreach (Area::all() as $area) {
+
+            $activity = $member->atcActivity->where('area_id', $area->id)->first();
+
+            if (
+                $activity
+                && $activity->start_of_grace_period != null
+                && now()->subMonths($graceLengthMonths)->lte($activity->start_of_grace_period)
+            ) {
+                $notInGracePeriod = false;
+            }
+        }
+
+        return $notInGracePeriod;
     }
 
     /**

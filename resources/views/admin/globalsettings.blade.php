@@ -192,6 +192,16 @@
                         </div>
                     </div>
                     <div class="form-check">
+                        <input class="form-check-input @error('atcActivityAllowTotalHours') is-invalid @enderror" type="checkbox" id="checkatcActivityAllowTotalHours" name="atcActivityAllowTotalHours" {{ Setting::get('atcActivityAllowTotalHours') ? "checked" : "" }}>
+                        <label class="form-check-label" for="checkatcActivityAllowTotalHours">
+                            Consider total controlling hours across all areas for ATC Active status
+                        </label>
+                        <small class="form-text d-block">
+                            Disabled: ATC Active status is granted if the activity requirement is met in one or more individual areas.<br>
+                            Enabled: ATC Active status is granted based on total controlling hours across all areas
+                        </small>
+                    </div>
+                    <div class="form-check mt-3">
                         <input class="form-check-input @error('atcActivityNotifyInactive') is-invalid @enderror" type="checkbox" id="check1" name="atcActivityNotifyInactive" {{ Setting::get('atcActivityNotifyInactive') ? "checked" : "" }}>
                         <label class="form-check-label" for="check1">
                             Send inactive login notification

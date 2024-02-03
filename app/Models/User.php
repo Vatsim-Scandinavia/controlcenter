@@ -125,7 +125,7 @@ class User extends Authenticatable
 
     public function atcActivity()
     {
-        return $this->hasOne(AtcActivity::class);
+        return $this->hasMany(AtcActivity::class);
     }
 
     public function getNameAttribute()
