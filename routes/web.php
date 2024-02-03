@@ -12,6 +12,7 @@ use App\Http\Controllers\MentorController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RosterController;
 use App\Http\Controllers\SweatbookController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingActivityController;
@@ -70,6 +71,9 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/endorsements/{id}/delete', 'destroy')->name('endorsements.delete');
         Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
     });
+
+    // ATC Roster
+    Route::get('/roster/{area}', [RosterController::class, 'index'])->name('roster');
 
     // Users
     Route::controller(UserController::class)->group(function () {

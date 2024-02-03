@@ -121,6 +121,21 @@
         @endif
 
         {{-- Nav Item - Pages Collapse Menu --}}
+        <li class="nav-item {{ Route::is('roster.*') ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRosters" aria-expanded="true" aria-controls="collapseRosters">
+                <i class="fas fa-fw fa-address-book"></i>
+                <span>ATC Roster</span>
+            </a>
+            <div id="collapseRosters" class="collapse" data-bs-parent="#sidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                @foreach(\App\Models\Area::all() as $area)
+                    <a class="collapse-item" href="{{ route('roster', $area->id) }}">{{ $area->name }}</a>
+                @endforeach
+                </div>
+            </div>
+        </li>
+
+        {{-- Nav Item - Pages Collapse Menu --}}
         <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
                 <i class="fas fa-fw fa-check-square"></i>
@@ -135,6 +150,8 @@
                 </div>
             </div>
         </li>
+
+        
 
         @if (\Auth::user()->isModeratorOrAbove())
             {{-- Divider --}}

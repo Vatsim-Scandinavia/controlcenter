@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Config;
+use anlutro\LaravelSettings\Facade as Setting;
 
 class User extends Authenticatable
 {
@@ -63,8 +64,17 @@ class User extends Authenticatable
     {
         return User::whereHas('groups', function ($query) use ($groupId, $IneqSymbol) {
             $query->where('id', $IneqSymbol, $groupId);
-        })
-            ->get();
+        })->get();
+    }
+
+    public static function allActiveInArea(Area $area)
+    {
+        return User::whereHas('atcActivity', function ($query) use ($area) {
+            $query->where('area_id', $area->id)->where(function ($query) {
+                $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                    ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
+            });
+        })->get();
     }
 
     public function endorsements()
