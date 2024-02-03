@@ -562,12 +562,13 @@ class TrainingController extends Controller
                         $training->user->save();
 
                         try {
-                            $activity = AtcActivity::findOrFail($training->user->id);
+                            $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
                             $activity->start_of_grace_period = now();
                             $activity->save();
                         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                             AtcActivity::create([
                                 'user_id' => $training->user->id,
+                                'area_id' => $training->area->id,
                                 'hours' => 0,
                                 'start_of_grace_period' => now(),
                             ]);
