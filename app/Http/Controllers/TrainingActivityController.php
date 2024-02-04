@@ -54,7 +54,7 @@ class TrainingActivityController extends Controller
                 return back()->withInput()->withErrors('Could not find comment to update.');
             }
 
-            if($activity->triggered_by_id != \Auth::user()->id) {
+            if ($activity->triggered_by_id != \Auth::user()->id) {
                 return back()->withInput()->withErrors('You are not allowed to update this comment.');
             }
 
