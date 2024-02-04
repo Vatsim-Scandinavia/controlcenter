@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'ATC Roster')
+@section('title', 'ATC Roster '.$area->name)
 
 @section('header')
     @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
@@ -13,7 +13,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Active controllers in {{ $area->name }}</h6> 
+                <h6 class="m-0 fw-bold text-white">Active controllers</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
