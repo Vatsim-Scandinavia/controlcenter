@@ -34,7 +34,7 @@ class LoginController extends Controller
     /**
      * Login the user
      *
-     * @param  \Illuminate\Http\Request  $request request to proccess
+     * @param  \Illuminate\Http\Request  $request  request to proccess
      * @return mixed
      */
     public function login(Request $request)
@@ -57,7 +57,7 @@ class LoginController extends Controller
     /**
      * Verify the login of the user's request before proceeding
      *
-     * @param  \Illuminate\Http\Request  $request request to proccess
+     * @param  \Illuminate\Http\Request  $request  request to proccess
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function verifyLogin(Request $request)

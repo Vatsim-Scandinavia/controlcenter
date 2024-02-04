@@ -210,7 +210,7 @@ class UserController extends Controller
      * Map out the endorsement details
      *
      * @param  Endorsement  $endorsements
-     * @param  string  $type Type of endorsement
+     * @param  string  $type  Type of endorsement
      * @return array
      */
     private function mapEndorsementDetails(Endorsement $endorsement, string $type)

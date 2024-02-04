@@ -32,8 +32,8 @@ class Training extends Model
     /**
      * Update the status of the training. This method will make sure that when updating the status the training that the timestamps are also correctly updated.
      *
-     * @param  int  $newStatus the new status to set
-     * @param  bool  $expiredInterest optional bool this expired an interest request
+     * @param  int  $newStatus  the new status to set
+     * @param  bool  $expiredInterest  optional bool this expired an interest request
      * @return void
      */
     public function updateStatus(int $newStatus, bool $expiredInterest = false)

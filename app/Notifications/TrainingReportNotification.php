@@ -20,7 +20,7 @@ class TrainingReportNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param  TrainingReport  $report to reference
+     * @param  TrainingReport  $report  to reference
      * @param  string  $key
      */
     public function __construct(Training $training, TrainingReport $report)

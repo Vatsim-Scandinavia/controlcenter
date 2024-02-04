@@ -57,7 +57,7 @@ class User extends Authenticatable
     /**
      * Find all users with queried group
      *
-     * @param  int  $groupId the id of the group to check for
+     * @param  int  $groupId  the id of the group to check for
      * @return Illuminate\Database\Eloquent\Collection
      */
     public static function allWithGroup($groupId, $IneqSymbol = '=')
@@ -70,7 +70,7 @@ class User extends Authenticatable
     /**
      * Find all users with queried group in the specified area
      *
-     * @param  Area  $area the area to check for
+     * @param  Area  $area  the area to check for
      * @return Illuminate\Database\Eloquent\Collection
      */
     public static function allActiveInArea(Area $area)
@@ -122,7 +122,7 @@ class User extends Authenticatable
     /**
      * Check is this user is teaching the queried user
      *
-     * @param  \App\Models\User  $user to check for
+     * @param  \App\Models\User  $user  to check for
      * @return bool
      */
     public function isTeaching(User $user)
