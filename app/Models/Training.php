@@ -215,6 +215,16 @@ class Training extends Model
     }
 
     /**
+     * Get the tasks related to the training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'subject_training_id');
+    }
+
+    /**
      * Get the one time link associated with the training
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

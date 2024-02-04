@@ -633,6 +633,66 @@
             </div>
         </div>
 
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Related Tasks
+                </h6>
+            </div>
+            <div class="card-body {{ $relatedTasks->count() == 0 ? '' : 'p-0' }}">
+
+                @if($relatedTasks->count() == 0)
+                    <p class="mb-0">No related task history</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Creator</th>
+                                    <th>Assignee</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($relatedTasks as $task)
+                                <tr>
+                                    <td>
+                                        <i class="fas {{ $task->type()->getIcon() }}" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                                        {{ $task->type()->getText($task) }}
+                                    </td>
+                                    <td>
+                                        {{ $task->creator->name }}
+                                    </td>
+                                    <td>
+                                        {{ $task->assignee->name }}
+                                    </td>
+                                    <td>
+                                        @if($task->status == \App\Helpers\TaskStatus::COMPLETED)
+                                            <i class="fas fa-check text-success"></i>
+                                        @elseif($task->status == \App\Helpers\TaskStatus::DECLINED)
+                                            <i class="fas fa-times text-danger"></i>
+                                        @elseif($task->status == \App\Helpers\TaskStatus::PENDING)
+                                            <i class="fas fa-hourglass text-warning"></i>
+                                        @endif
+
+                                        @if($task->status == \App\Helpers\TaskStatus::COMPLETED || $task->status == \App\Helpers\TaskStatus::DECLINED)
+                                            <span class="text-muted" title="{{ $task->closed_at->toEuropeanDateTime() }}">{{ $task->closed_at->diffForHumans() }}</span>
+                                        @else
+                                            <span class="text-muted" title="{{ $task->created_at->toEuropeanDateTime() }}">{{ $task->created_at->diffForHumans() }}</span>
+                                        @endif
+
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+            </div>
+        </div>
+
     </div>
 </div>
 
