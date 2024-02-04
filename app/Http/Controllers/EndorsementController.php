@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\VatsimRating;
 use App\Models\Area;
-use App\Models\AtcActivity;
 use App\Models\Endorsement;
 use App\Models\Position;
 use App\Models\Rating;

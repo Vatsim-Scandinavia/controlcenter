@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Rating;
 use App\Models\Area;
+use App\Models\Rating;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use anlutro\LaravelSettings\Facade as Setting;
-
 
 class RosterController extends Controller
 {

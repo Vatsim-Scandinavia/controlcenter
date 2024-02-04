@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\VatsimRating;
 use App\Models\Endorsement;
 use App\Notifications\EndorsementExpiredNotification;
 use Illuminate\Console\Command;

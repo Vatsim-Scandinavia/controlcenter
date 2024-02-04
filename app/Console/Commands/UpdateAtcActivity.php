@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Helpers\VatsimRating;
 use App\Models\Area;
-use App\Models\Endorsement;
 use App\Models\User;
 use App\Notifications\InactivityNotification;
 use Illuminate\Console\Command;

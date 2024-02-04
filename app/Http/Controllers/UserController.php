@@ -116,26 +116,26 @@ class UserController extends Controller
         $totalHours = 0;
         $atcActivites = AtcActivity::where('user_id', $user->id)->get();
 
-        foreach($areas as $area){
+        foreach ($areas as $area) {
             $activity = $atcActivites->firstWhere('area_id', $area->id);
 
-            if($activity){
+            if ($activity) {
 
-                $atcActivityHours[$area->id]["hours"] = $activity->hours;
+                $atcActivityHours[$area->id]['hours'] = $activity->hours;
                 $totalHours += $activity->hours;
-                
+
                 if ($activity->start_of_grace_period) {
-                    $atcActivityHours[$area->id]["graced"] = $activity->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod', 12))->gt(now());
+                    $atcActivityHours[$area->id]['graced'] = $activity->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod', 12))->gt(now());
                 } else {
-                    $atcActivityHours[$area->id]["graced"] = false;
+                    $atcActivityHours[$area->id]['graced'] = false;
                 }
 
-                $atcActivityHours[$area->id]["active"] = $activity->isActive();
+                $atcActivityHours[$area->id]['active'] = $activity->isActive();
 
             } else {
-                $atcActivityHours[$area->id]["hours"] = 0;
-                $atcActivityHours[$area->id]["active"] = false;
-                $atcActivityHours[$area->id]["graced"] = false;
+                $atcActivityHours[$area->id]['hours'] = 0;
+                $atcActivityHours[$area->id]['active'] = false;
+                $atcActivityHours[$area->id]['graced'] = false;
             }
         }
 

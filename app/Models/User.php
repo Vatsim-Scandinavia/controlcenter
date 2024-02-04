@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Config;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class User extends Authenticatable
 {
@@ -69,8 +69,8 @@ class User extends Authenticatable
 
     /**
      * Find all users with queried group in the specified area
-     * 
-     * @param Area $area the area to check for
+     *
+     * @param  Area  $area the area to check for
      * @return Illuminate\Database\Eloquent\Collection
      */
     public static function allActiveInArea(Area $area)

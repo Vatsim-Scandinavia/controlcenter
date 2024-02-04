@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Rating;
@@ -19,8 +21,6 @@ use App\Notifications\TrainingPreStatusNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use anlutro\LaravelSettings\Facade as Setting;
-use App\Helpers\VatsimRating;
 
 /**
  * Controller for all trainings
