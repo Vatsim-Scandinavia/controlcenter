@@ -121,7 +121,7 @@
         @endif
 
         {{-- Nav Item - Pages Collapse Menu --}}
-        <li class="nav-item {{ Route::is('roster.*') ? 'active' : '' }}">
+        <li class="nav-item {{ Route::is('roster') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRosters" aria-expanded="true" aria-controls="collapseRosters">
                 <i class="fas fa-fw fa-address-book"></i>
                 <span>ATC Roster</span>
