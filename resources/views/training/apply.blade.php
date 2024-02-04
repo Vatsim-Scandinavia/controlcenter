@@ -43,7 +43,7 @@
                                     <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
-                                            <option value="{{ $areaId }}">{{ $area["name"] }}</option>
+                                            <option value="{{ $areaId }}" data-atc-active="{{ $area['atcActive'] ? 'true' : 'false' }}">{{ $area['name'] }}</option>
                                         @endforeach
                                     </select>
                                     <span v-show="errArea" class="text-danger" style="display: none">Select training area</span>
@@ -58,6 +58,7 @@
                                 </div>
                             </div>
                             <div v-show="errHours" id="errHours" class="text-danger" style="display: none">You need to fulfill the hour requirement before applying for this option.</div>
+                            <div v-show="errAreaActive" id="errAreaActive" class="text-danger" style="display: none">You need to be an active controller in the selected area to apply, please contact local staff to apply.</div>
 
                             <a class="btn btn-success mt-2" href="#" v-on:click="next">Continue</a>
                         </div>
@@ -164,9 +165,12 @@
                     errArea: 0,
                     errRating: 0,
                     errHours: 0,
+                    errAreaActive: 0,
                     errExperience: 0,
                     errLOM: 0,
                     motivationRequired: {{ $motivation_required }},
+                    atcActiveRequired: {{ $atcActiveRequired }},
+                    atcActiveInArea: false,
                 }
             },
             methods:{
@@ -178,6 +182,7 @@
 
                     if(page == 1){
                         let trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
+                        let trainingAreaName = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.text;
                         let trainingLevel = Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value;
 
                         let requiredHours = document.getElementById('ratingSelect').options[document.getElementById('ratingSelect').selectedIndex].getAttribute('data-hour-requirement')
@@ -194,7 +199,12 @@
                             validated = false;
                         }
 
-                        if (requiredHours !== undefined && atcHours < requiredHours){
+                        if(this.atcActiveRequired && this.atcActiveInArea === 'false'){
+                            document.getElementById('areaSelect').classList.add('is-invalid')
+                            document.getElementById('errAreaActive').innerHTML = "You need to be an active controller in "+trainingAreaName+" to apply, contact local staff for help."
+                            this.errAreaActive = true;
+                            validated = false;
+                        } else if (requiredHours !== undefined && atcHours < requiredHours){
                             document.getElementById('ratingSelect').classList.add('is-invalid')
                             document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.floor(atcHours) + " hours."
                             this.errHours = true;
@@ -241,11 +251,13 @@
                 },
                 areaSelectChange(event) {
                     this.ratingSelectUpdate(event.srcElement.value);
+                    this.atcActiveInArea = event.srcElement.options[event.srcElement.selectedIndex].getAttribute('data-atc-active')
                     document.getElementById('areaSelect').classList.remove('is-invalid');
                     document.getElementById('ratingSelect').classList.remove('is-invalid');
                     this.errArea = false;
                     this.errRating = false;
                     this.errHours = false;
+                    this.errAreaActive = false;
                 },
                 ratingSelectChange(event){
                     document.getElementById('ratingSelect').classList.remove('is-invalid');

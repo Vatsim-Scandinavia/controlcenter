@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\VatsimRating;
 use App\Models\Area;
-use App\Models\AtcActivity;
 use App\Models\Endorsement;
 use App\Models\Position;
 use App\Models\Rating;
@@ -35,16 +33,13 @@ class EndorsementController extends Controller
     }
 
     /**
-     * Display a listing of the training related endorsements such as S1 and Solo
+     * Display a listing of the Solo endorsement
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexTrainings()
+    public function indexSolos()
     {
-        $endorsements = Endorsement::where(function ($q) {
-            $q->where('type', 'S1')
-                ->orWhere('type', 'SOLO');
-        })->with('positions', 'user')
+        $endorsements = Endorsement::where('type', 'SOLO')->with('positions', 'user')
             ->where(function ($q) {
                 $q->orWhere(function ($q2) {
                     $q2->where('expired', false)
@@ -62,24 +57,10 @@ class EndorsementController extends Controller
             })
             ->get();
 
-        // Sort endorsement to prioritise Solo over S1 and then by expiry date
-        $endorsements = $endorsements->sortByDesc(function ($endorsement) {
-            if ($endorsement->type == 'SOLO') {
-                if (now() > $endorsement->valid_to) {
-                    return 2;
-                }
+        // Sort endorsements
+        $endorsements = $endorsements->sortByDesc('valid_to');
 
-                return 1;
-            } else {
-                if ($endorsement->valid_to != null) {
-                    return 0;
-                }
-
-                return -1;
-            }
-        });
-
-        return view('endorsements.trainings', compact('endorsements'));
+        return view('endorsements.solos', compact('endorsements'));
     }
 
     /**
@@ -173,18 +154,16 @@ class EndorsementController extends Controller
             ' ― Rating: ' . Rating::find($data['ratingMASC'])->name);
 
             return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s endorsement created");
-        } elseif ($endorsementType == 'TRAINING') {
-            // Training endorsements Solo or S1
+        } elseif ($endorsementType == 'SOLO') {
+            // Training endorsements Solo
 
             $data = request()->validate([
                 'user' => 'required|numeric|exists:App\Models\User,id',
-                'trainingType' => ['required', 'regex:/(SOLO|S1)/i'],
                 'expires' => 'sometimes|date_format:d/m/Y',
                 'expireInf' => 'sometimes',
-                'positions' => 'required',
+                'position' => 'required',
             ]);
             $user = User::find($data['user']);
-            $trainingType = $data['trainingType'];
             $expireInfinite = isset($data['expireInf']) ? true : false;
             $linkedToTraining = true;
 
@@ -194,10 +173,8 @@ class EndorsementController extends Controller
                 $expireDate->setTime(23, 59);
 
                 $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
-                if ($trainingType == 'SOLO' && ($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonth()))) {
+                if (($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonth()))) {
                     return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
-                } elseif ($trainingType == 'S1' && ($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonths(3)))) {
-                    return back()->withInput()->withErrors(['expires' => 'S1 endorsements must expire within the next 3 months']);
                 }
             } else {
                 $expireDate = null;
@@ -205,8 +182,8 @@ class EndorsementController extends Controller
             }
 
             // Validate that this user has other endrosement of this type from before
-            if ($user->hasActiveEndorsement($trainingType)) {
-                return back()->withInput()->withErrors($user->name . ' has already an active ' . $trainingType . ' training endorsement. Revoke it first, to create a new one.');
+            if ($user->hasActiveEndorsement('SOLO')) {
+                return back()->withInput()->withErrors($user->name . ' has already an active solo endorsement. Revoke it first, to create a new one.');
             }
 
             // If it's not a infinite endorsement, it has to be tied to an existing training
@@ -215,38 +192,23 @@ class EndorsementController extends Controller
             }
 
             // Validate that solo only has one position and set expire time
-            if ($trainingType == 'SOLO') {
-                if ($expireDate != null) {
-                    $expireDate->setTime(12, 0);
-                }
-
-                if (str_contains($data['positions'], ',')) {
-                    return back()->withInput()->withErrors(['positions' => 'Solo endorsement can only have one assigned position']);
-                }
+            if ($expireDate != null) {
+                $expireDate->setTime(12, 0);
             }
 
             // All clear, create endorsement
             if ($expireDate != null) {
-                $endorsement = $this->createEndorsementModel($trainingType, $user, $expireDate->format('Y-m-d H:i:s'));
+                $endorsement = $this->createEndorsementModel('SOLO', $user, $expireDate->format('Y-m-d H:i:s'));
             } else {
-                $endorsement = $this->createEndorsementModel($trainingType, $user, $expireDate);
+                $endorsement = $this->createEndorsementModel('SOLO', $user, $expireDate);
             }
 
             // Add positions
-            if ($trainingType == 'SOLO') {
-                $endorsement->positions()->save(Position::where('callsign', $data['positions'])->get()->first());
-            } else {
-                // Are more than one positions defined?
-                if (str_contains($data['positions'], ',')) {
-                    $endorsement->positions()->saveMany(Position::whereIn('callsign', explode(',', str_replace(' ', '', $data['positions'])))->get());
-                } else {
-                    $endorsement->positions()->save(Position::where('callsign', $data['positions'])->get()->first());
-                }
-            }
+            $endorsement->positions()->save(Position::where('callsign', $data['position'])->get()->first());
 
-            ActivityLogController::warning('ENDORSEMENT', 'Created ' . $trainingType . ' endorsement ' .
+            ActivityLogController::warning('ENDORSEMENT', 'Created SOLO endorsement ' .
             ' ― User: ' . $endorsement->user_id .
-            ' ― Positions: ' . $data['positions']);
+            ' ― Positions: ' . $data['position']);
 
             // Log this new endorsement to the user's active training
             if ($linkedToTraining) {
@@ -255,7 +217,7 @@ class EndorsementController extends Controller
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
-            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s " . $trainingType . ' endorsement successfully created. E-mail confirmation sent to the student.');
+            return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . '\'s solo endorsement successfully created. E-mail confirmation sent to the student.');
         } elseif ($endorsementType == 'EXAMINER') {
             // Examiner endorsement
 
@@ -333,20 +295,13 @@ class EndorsementController extends Controller
             return redirect()->back()->withErrors($user->name . "'s " . $endorsement->type . ' endorsement is already revoked.');
         }
 
-        // Disable the ATC activity mark for users who have an S1 rating, which is defined by
-        // having an indefinite endorsemnet of type "S1"
-        if (VatsimRating::from($user->rating) == VatsimRating::S1 && $endorsement->type == 'S1' && $endorsement->valid_to == null) {
-            AtcActivity::where('user_id', $user->id)->update(['start_of_grace_period' => null]);
-            $this->disableAtc($user);
-        }
-
         $endorsement->revoked = true;
         $endorsement->revoked_by = \Auth::user()->id;
         $endorsement->valid_to = now();
         $endorsement->save();
 
         ActivityLogController::warning('ENDORSEMENT', 'Deleted ' . $user->name . '\'s ' . $endorsement->type . ' endorsement');
-        if ($endorsement->type == 'S1' || $endorsement->type == 'SOLO') {
+        if ($endorsement->type == 'SOLO') {
             $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
 
             return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s " . $endorsement->type . ' endorsement revoked. E-mail confirmation sent to the student.');
@@ -381,11 +336,7 @@ class EndorsementController extends Controller
             return redirect()->back()->withErrors('You can not shorten an endorsement to a future date.');
         }
 
-        if ($endorsement->type == 'S1') {
-            $date->setHour(23)->setMinute(59);
-        } else {
-            $date->setHour(12)->setMinute(00);
-        }
+        $date->setHour(12)->setMinute(00);
 
         $endorsement->valid_to = $date;
         $endorsement->save();

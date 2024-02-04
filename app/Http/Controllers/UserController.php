@@ -111,18 +111,35 @@ class UserController extends Controller
         $types = TrainingController::$types;
         $endorsements = $user->endorsements->sortByDesc('valid_to');
 
-        $atcActivityModel = AtcActivity::where('user_id', $user->id)->get()->first();
-        $isGraced = null;
-        if ($atcActivityModel && $atcActivityModel->start_of_grace_period) {
-            $isGraced = $atcActivityModel->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod', 12))->gt(now());
+        // Get hours and grace per area
+        $atcActivityHours = [];
+        $totalHours = 0;
+        $atcActivites = AtcActivity::where('user_id', $user->id)->get();
+
+        foreach ($areas as $area) {
+            $activity = $atcActivites->firstWhere('area_id', $area->id);
+
+            if ($activity) {
+
+                $atcActivityHours[$area->id]['hours'] = $activity->hours;
+                $totalHours += $activity->hours;
+
+                if ($activity->start_of_grace_period) {
+                    $atcActivityHours[$area->id]['graced'] = $activity->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod', 12))->gt(now());
+                } else {
+                    $atcActivityHours[$area->id]['graced'] = false;
+                }
+
+                $atcActivityHours[$area->id]['active'] = $activity->isActive();
+
+            } else {
+                $atcActivityHours[$area->id]['hours'] = 0;
+                $atcActivityHours[$area->id]['active'] = false;
+                $atcActivityHours[$area->id]['graced'] = false;
+            }
         }
 
-        $userHours = $atcActivityModel;
-        if (isset($userHours)) {
-            $userHours = $userHours->hours;
-        }
-
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'userHours', 'isGraced'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'atcActivityHours', 'totalHours'));
     }
 
     /**

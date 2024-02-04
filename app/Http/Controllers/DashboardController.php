@@ -66,7 +66,7 @@ class DashboardController extends Controller
         // Check if there's an active vote running to advertise
         $activeVote = Vote::where('closed', 0)->first();
 
-        $atcHours = isset($user->atcActivity->hours) ? $user->atcActivity->hours : null;
+        $atcHours = ($user->atcActivity->count()) ? $user->atcActivity->sum('hours') : null;
 
         $studentTrainings = \Auth::user()->mentoringTrainings();
 

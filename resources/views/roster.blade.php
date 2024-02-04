@@ -1,13 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Position Endorsements')
-@section('title-flex')
-    <div>
-        @if (\Auth::user()->isModeratorOrAbove())
-            <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
-        @endif
-    </div>
-@endsection
+@section('title', 'ATC Roster '.$area->name)
 
 @section('header')
     @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
@@ -20,8 +13,8 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Position Endorsements</h6> 
-            </div>        
+                <h6 class="m-0 fw-bold text-white">Active controllers</h6> 
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0"
@@ -34,6 +27,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
+                                <th data-field="rating" data-sortable="true" data-filter-control="input">Rating</th>
                                 <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 @foreach($ratings as $r)
                                     <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $r->name }}</th>
@@ -50,6 +44,7 @@
                                             {{ $u->name }} ({{ $u->id }})
                                         @endcan
                                     </td>
+                                    <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
                                     <td class="text-center text-white {{ $u->active ? 'bg-success' : 'bg-danger' }}">
                                         @if($u->active)
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>

@@ -47,13 +47,26 @@
                             <i class="far fa-circle-check text-success"></i>
                             Visiting
                         @else
-                            <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i>
-                            {!! ($isGraced) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
+                            <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
                         @endif
                     </dd>
 
                     <dt>ATC Hours</dt>
-                    <dd>{{ isset($userHours) ? round($userHours) : 'N/A' }}</dd>
+                    @foreach($areas as $area)
+                        <dd class="mb-0">
+
+                            @if(!Setting::get('atcActivityAllowTotalHours'))
+                                @if($atcActivityHours[$area->id]["active"])
+                                    <i class="far fa-circle-check text-success"></i>
+                                @else
+                                    <i class="far fa-circle-xmark text-danger"></i>
+                                @endif
+                            @endif
+
+                            {{ $area->name }}: {{ round($atcActivityHours[$area->id]["hours"]) }}h
+                            {!! ($atcActivityHours[$area->id]["graced"]) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
+                        </dd>
+                    @endforeach
 
                     <div id="vatsim-data">
                         <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
@@ -217,12 +230,12 @@
 
                                 {{ ($endorsement->type == "MASC") ? 'MA/SC' : ucfirst(strtolower($endorsement->type)) }} Endorsement
 
-                                @can('delete', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
-                                    <a href="{{ route('endorsements.delete', $endorsement['id']) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
+                                @can('delete', [\App\Models\Endorsement::class, $endorsement])
+                                    <a href="{{ route('endorsements.delete', $endorsement->id) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
                                 @endcan
 
-                                @if(($endorsement->type == "S1" || $endorsement->type == "SOLO") && isset($endorsement->valid_to))
-                                    @can('shorten', [\App\Models\Endorsement::class, \App\Models\Endorsement::find($endorsement['id'])])
+                                @if($endorsement->type == 'SOLO' && isset($endorsement->valid_to))
+                                    @can('shorten', [\App\Models\Endorsement::class, $endorsement])
                                         <span class="flatpickr">
                                             <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
                                             <a role="button" class="input-button text-muted float-end hover-red text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="top" title="Shorten expire date" data-toggle>
@@ -257,7 +270,7 @@
                                                 <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
                                             </tr>
                                         @endif                    
-                                    @elseif($endorsement->type == "S1" || $endorsement->type == "SOLO")
+                                    @elseif($endorsement->type == 'SOLO')
                                         <tr class="spacing">
                                             <th>Rating</th>
                                             <td>{{ implode(', ', $endorsement->positions->pluck('callsign')->toArray()) }}</td>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Exceptions\VatsimAPIException;
+use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\Position;
@@ -28,14 +30,26 @@ class BookingController extends Controller
      */
     private function getBookablePositions(User $user)
     {
+        // Moderators and above can book any position
         if ($user->isModeratorOrAbove()) {
             return Position::all();
         }
+
+        // Users with a rating of S1 or above can book positions up to their rating
         $positions = new Collection();
-        if ($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement('S1', true)) {
-            $positions = Position::where('rating', '<=', $user->rating)->get();
+
+        if ($user->rating >= VatsimRating::S1->value) {
+            if (Setting::get('atcActivityAllowTotalHours')) {
+                $positions = Position::where('rating', '<=', $user->rating)->get();
+            } else {
+
+                $activeAreas = $user->atcActivity->pluck('area_id');
+                $positionsInAreas = Position::whereIn('area', $activeAreas)->where('rating', '<=', $user->rating)->get();
+                $positions = $positions->merge($positionsInAreas);
+            }
         }
-        if ($user->getActiveTraining(1)) {
+
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
             $positions = $positions->merge(
                 $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)
             );
@@ -149,13 +163,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -413,13 +424,10 @@ class BookingController extends Controller
         $forcedTrainingTag = false;
         $bookingUser = User::find($booking->user_id);
 
-        if ($booking->position->rating == 2 && $bookingUser->rating == $booking->position->rating && ! $bookingUser->hasActiveEndorsement('S1', true)) {
+        if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(1) && $bookingUser->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
+        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {

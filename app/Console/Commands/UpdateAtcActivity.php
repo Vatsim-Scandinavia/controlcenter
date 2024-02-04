@@ -3,8 +3,7 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Helpers\VatsimRating;
-use App\Models\Endorsement;
+use App\Models\Area;
 use App\Models\User;
 use App\Notifications\InactivityNotification;
 use Illuminate\Console\Command;
@@ -47,8 +46,7 @@ class UpdateAtcActivity extends Command
         // Filter users
         $usersToSetAsInactive = $activeUsers
             ->filter(fn ($m) => $this::hasTooFewHours($m))
-            ->filter(fn ($m) => $this::notInGracePeriod($m))
-            ->filter(fn ($m) => $this::notInS1Training($m));
+            ->filter(fn ($m) => $this::notInGracePeriod($m));
 
         if ($dryRun) {
             $this->info('[DRY RUN] We would have made ' . $usersToSetAsInactive->count() . ' users inactive');
@@ -60,7 +58,6 @@ class UpdateAtcActivity extends Command
         // Execute updates on relevant users
         $this->info('Making ' . $usersToSetAsInactive->count() . ' users inactive');
         User::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
-        Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 
         // Send inactivity notification to the users
         if (! Setting::get('atcActivityAllowReactivation')) {
@@ -79,7 +76,22 @@ class UpdateAtcActivity extends Command
      */
     private static function hasTooFewHours(User $member)
     {
-        return $member->atcActivity->hours < Setting::get('atcActivityRequirement', 10);
+
+        if (Setting::get('atcActivityAllowTotalHours', true)) {
+            return $member->atcActivity->sum('hours') < Setting::get('atcActivityRequirement', 10);
+        } else {
+            $allAreasInactive = true;
+
+            foreach (Area::all() as $area) {
+                $activity = $member->atcActivity->firstWhere('area_id', $area->id);
+                if ($activity && $activity->hours >= Setting::get('atcActivityRequirement', 10)) {
+                    $allAreasInactive = false;
+                }
+            }
+
+            return $allAreasInactive;
+        }
+
     }
 
     /**
@@ -90,30 +102,22 @@ class UpdateAtcActivity extends Command
     private static function notInGracePeriod(User $member)
     {
         $graceLengthMonths = Setting::get('atcActivityGracePeriod', 12);
+        $notInGracePeriod = true;
 
-        return $member->atcActivity->start_of_grace_period == null || now()->subMonths($graceLengthMonths)->gt($member->atcActivity->start_of_grace_period);
-    }
+        // If no grace is set or within grace period per area, return true
+        foreach (Area::all() as $area) {
 
-    /**
-     * Check if the member is outside of S1 training.
-     *
-     * - Isn't S1, returns true.
-     * - Is S1, under permanent endorsement, returns true.
-     * - Is S1, is under active training, returns false.
-     *
-     * We need to exclude the active endorsement check from non-S1 ATC in order
-     * to not exclude them all from the inactivity check. This is "currently"
-     * redundant because the set of active ATC members does not include any
-     * S1-rated members under active training, but if it does...
-     *
-     * @param User member
-     */
-    private static function notInS1Training(User $member)
-    {
-        if (VatsimRating::from($member->rating) != VatsimRating::S1) {
-            return true;
+            $activity = $member->atcActivity->firstWhere('area_id', $area->id);
+
+            if (
+                $activity
+                && $activity->start_of_grace_period != null
+                && now()->subMonths($graceLengthMonths)->lte($activity->start_of_grace_period)
+            ) {
+                $notInGracePeriod = false;
+            }
         }
 
-        return $member->hasActiveEndorsement('S1', true);
+        return $notInGracePeriod;
     }
 }

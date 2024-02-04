@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Rating;
@@ -169,6 +171,7 @@ class TrainingController extends Controller
             // Inject the data into payload
             $payload[$area->id]['name'] = $area->name;
             $payload[$area->id]['data'] = $availableRatings;
+            $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->isActive()) ? true : false;
         }
 
         // Fetch user's ATC hours
@@ -192,10 +195,14 @@ class TrainingController extends Controller
             return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
         }
 
+        // Is activity in area required to apply for training?
+        $atcActiveRequired = $user->rating >= VatsimRating::S1->value && Setting::get('atcActivityAllowTotalHours') == false;
+
         // Return
         return view('training.apply', [
             'payload' => $payload,
             'atc_hours' => $vatsimStats,
+            'atcActiveRequired' => ($atcActiveRequired) ? 1 : 0,
             'motivation_required' => ($userVatsimRating <= 2) ? 1 : 0,
         ]);
     }
@@ -234,9 +241,26 @@ class TrainingController extends Controller
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
         }
 
+        // Only allow one training request at a time
+        if (isset($data['user_id'])) {
+            if (User::find($data['user_id'])->hasActiveTrainings(true)) {
+                return redirect()->back()->withErrors('The user already has an active training request.');
+            }
+        } elseif (Auth::user()->hasActiveTrainings(true)) {
+            return redirect()->back()->withErrors('You already have an active training request.');
+        }
+
         // Training_level comes from the application, ratings comes from the manual creation, we need to seperate those.
         if (isset($data['training_level'])) {
             $ratings = Rating::find(explode('+', $data['training_level']));
+
+            // Check if user is active in the area if required by setting
+            if (Setting::get('atcActivityAllowTotalHours') == false) {
+                $atcActivity = Auth::user()->atcActivity->firstWhere('area_id', $data['training_area']);
+                if (! $atcActivity || ! $atcActivity->isActive()) {
+                    return redirect()->back()->withErrors('You need to be active in the area to apply for training.');
+                }
+            }
 
             // Check if user fulfill rating hour requirement
             $vatsimStats = [];
@@ -562,12 +586,13 @@ class TrainingController extends Controller
                         $training->user->save();
 
                         try {
-                            $activity = AtcActivity::findOrFail($training->user->id);
+                            $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
                             $activity->start_of_grace_period = now();
                             $activity->save();
                         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                             AtcActivity::create([
                                 'user_id' => $training->user->id,
+                                'area_id' => $training->area->id,
                                 'hours' => 0,
                                 'start_of_grace_period' => now(),
                             ]);

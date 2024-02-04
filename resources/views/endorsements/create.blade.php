@@ -51,9 +51,9 @@
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="endorsementType" v-on:change="updateButtonText">
-                            <label class="form-check-label" for="endorsementTypeTraining">
-                                Training
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeSolo" value="SOLO" v-model="endorsementType" v-on:change="updateButtonText">
+                            <label class="form-check-label" for="endorsementTypeSolo">
+                                Solo
                             </label>
                         </div>
 
@@ -85,27 +85,8 @@
                         <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training are marked completed.
                     </div>
 
-                    {{-- Training Type --}} 
-                    <div v-show="endorsementType == 'TRAINING'" style="display: none">
-                        <label class="form-label">Type</label>
-                        <div class="mb-3">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType" v-on:change="updateButtonText">
-                                <label class="form-check-label" for="trainingTypeS1">
-                                    S1
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeSolo" value="SOLO" v-model="trainingType" v-on:change="updateButtonText">
-                                <label class="form-check-label" for="trainingTypeSolo">
-                                    Solo
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
                     {{-- Expires --}}
-                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'SOLO'">
                         <label for="expire">Expires</label>
                         <input
                             id="expire"
@@ -117,22 +98,16 @@
                             :placeholder="expireInf && 'Never expires'" 
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
                         <span v-show="validationError && expire == null" class="text-danger">Fill out a valid expire date</span>
-                        <div class="form-check" v-show="trainingType == 'S1'">
-                            <input class="form-check-input" type="checkbox" v-model="expireInf" name="expireInf" id="expireinf" value="true">
-                            <label class="form-check-label" for="expireinf">
-                                Infinte duration
-                            </label>
-                        </div>
                     </div>
 
                     {{-- Training Positions --}}
-                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
-                        <label class="form-label" for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'SOLO'">
+                        <label class="form-label" for="positions">Positions</label>
                         <input 
                             id="positions"
                             class="form-control"
                             type="text"
-                            name="positions"
+                            name="position"
                             list="positionsList"
                             multiple="multiple"
                             v-model="positions"
@@ -147,18 +122,6 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Template
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                @foreach($areas as $a)
-                                    @if($a->template_s1_positions)
-                                        <a class="dropdown-item" v-on:click="positions = '{{ $a->template_s1_positions }}'">{{ $a->name }}</a>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
                         <span v-show="validationError && positions == null" class="text-danger">Select at least one position</span>
                         <p v-show="validationError && errSoloPositionCount == true" class="text-danger">Solo Endorsement can only have one position.</p>
                     </div>
@@ -199,7 +162,7 @@
                     </div>
 
                     {{-- Training Checkbox --}}
-                    <div class="form-check" class="mt-5" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType == 'SOLO'">
+                    <div class="form-check" class="mt-5" style="display: none" v-show="endorsementType == 'SOLO'">
                         <input class="form-check-input" type="checkbox" id="soloChecked" v-model="soloChecked">
                         <label class="form-check-label" for="soloChecked">
                             {{ Setting::get('trainingSoloRequirement') }}
@@ -207,7 +170,7 @@
                         <p v-show="validationError && soloChecked == false" class="text-danger">Confirm that the requirements are filled</p>
                     </div>
 
-                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" v-on:click="submit" v-show="endorsementType != null && (endorsementType != 'TRAINING' || (endorsementType == 'TRAINING' && trainingType != null))" style="display: none">Create endorsement</button>
+                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" v-on:click="submit" v-show="endorsementType != null && (endorsementType != 'TRAINING' || (endorsementType == 'SOLO'))" style="display: none">Create endorsement</button>
                 </form>
             </div>
         </div>
@@ -227,7 +190,6 @@
             data() {
                 return {
                     endorsementType: null,
-                    trainingType: null,
                     user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
                     expire: null,
                     expireInf: null,
@@ -251,19 +213,10 @@
 
                     if(this.endorsementType == 'MASC'){
                         end = "MA/SC"
-                    } else if(this.endorsementType == 'TRAINING'){
-                        end = "Training"
-                        if(this.trainingType == 'S1'){
-                            end = "S1"
-                            // While at it, let's set calendar max date as well
-                            flatpickr.config.maxDate = moment().add(3, 'M').toDate()
-                            flatpickr.jumpToDate(moment().toDate())
-                        } else if(this.trainingType == 'SOLO') {
-                            end = "Solo"
-                            // While at it, let's set calendar max date as well
-                            flatpickr.config.maxDate = moment().add(1, 'M').toDate()
-                            flatpickr.jumpToDate(moment().toDate())
-                        }
+                    } else if(this.endorsementType == 'SOLO'){
+                        end = "Solo"
+                        flatpickr.config.maxDate = moment().add(1, 'M').toDate()
+                        flatpickr.jumpToDate(moment().toDate())
                     } else if(this.endorsementType == 'EXAMINER'){
                         end = "Examiner"
                     } else if(this.endorsementType == 'VISITING'){
@@ -296,17 +249,15 @@
 
                         if(this.ratingMASC == null) validated = false
 
-                    } else if(this.endorsementType == 'TRAINING'){
+                    } else if(this.endorsementType == 'SOLO'){
 
                         if(this.expire == null && this.expireInf != true) validated = false
                         if(this.positions == null) validated = false
-                        
-                        if(this.trainingType == 'SOLO'){
-                            if(this.soloChecked == false) validated = false
-                            if(this.positions && this.positions.includes(',')) { 
-                                validated = false
-                                this.errSoloPositionCount = true 
-                            }
+
+                        if(this.soloChecked == false) validated = false
+                        if(this.positions && this.positions.includes(',')) { 
+                            validated = false
+                            this.errSoloPositionCount = true 
                         }
 
                     } else if(this.endorsementType == 'EXAMINER'){
@@ -346,7 +297,5 @@
         document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
     })
 </script>
-
-@include('scripts.multipledatalist')
 
 @endsection

@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Database\Eloquent\Model;
 
 class AtcActivity extends Model
 {
-    public $primaryKey = 'user_id';
-
-    protected $fillable = ['user_id', 'hours', 'start_of_grace_period'];
+    protected $fillable = ['user_id', 'area_id', 'hours', 'start_of_grace_period'];
 
     protected $casts = [
         'created_at' => 'datetime',
@@ -19,5 +18,15 @@ class AtcActivity extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function isActive()
+    {
+        return $this->hours >= Setting::get('atcActivityRequirement') || ($this->start_of_grace_period != null && $this->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod'))->isFuture());
     }
 }

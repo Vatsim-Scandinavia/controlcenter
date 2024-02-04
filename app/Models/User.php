@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
@@ -63,8 +64,34 @@ class User extends Authenticatable
     {
         return User::whereHas('groups', function ($query) use ($groupId, $IneqSymbol) {
             $query->where('id', $IneqSymbol, $groupId);
-        })
-            ->get();
+        })->get();
+    }
+
+    /**
+     * Find all users with queried group in the specified area
+     *
+     * @param  Area  $area the area to check for
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public static function allActiveInArea(Area $area)
+    {
+
+        if (Setting::get('atcActivityAllowTotalHours')) {
+            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('area_id', $area->id)->where(function ($query) {
+                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                        ->orWhere('hours', '>=', 0);
+                });
+            })->get();
+        } else {
+            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('area_id', $area->id)->where(function ($query) {
+                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                        ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
+                });
+            })->get();
+        }
+
     }
 
     public function endorsements()
@@ -125,7 +152,7 @@ class User extends Authenticatable
 
     public function atcActivity()
     {
-        return $this->hasOne(AtcActivity::class);
+        return $this->hasMany(AtcActivity::class);
     }
 
     public function getNameAttribute()
@@ -323,13 +350,9 @@ class User extends Authenticatable
      * @param  bool  $onlyInfinteEndorsements
      * @return bool
      */
-    public function hasActiveEndorsement(string $type, $onlyInfinteEndorsements = false)
+    public function hasActiveEndorsement(string $type)
     {
-        if ($onlyInfinteEndorsements) {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', null)->exists();
-        } else {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
-        }
+        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
     }
 
     /**

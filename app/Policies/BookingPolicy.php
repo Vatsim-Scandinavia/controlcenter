@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\User;
@@ -31,10 +32,9 @@ class BookingPolicy
     public function create(User $user)
     {
         return
-            $user->active && $user->rating >= VatsimRating::S2->value
-            || $user->active && $user->rating >= VatsimRating::S1->value && $user->hasActiveEndorsement('S1', true)
+            $user->active && $user->rating >= VatsimRating::S1->value
             || $user->hasActiveEndorsement('VISITING')
-            || $user->getActiveTraining(1) != null
+            || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
             || $user->isModeratorOrAbove();
     }
 
@@ -80,7 +80,7 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->isVisiting();
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
     }
 
     /**
@@ -90,7 +90,7 @@ class BookingPolicy
      */
     public function bookEventTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->isVisiting();
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
     }
 
     /**
@@ -100,7 +100,7 @@ class BookingPolicy
      */
     public function bookExamTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 5) || $user->isModerator();
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::C1->value) || $user->isModerator();
     }
 
     /**
@@ -113,7 +113,7 @@ class BookingPolicy
         // TODO: Make it easier to read the order of checks
         if (($booking->position->rating > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->isModerator()) {
             if (
-                $user->getActiveTraining(1) &&
+                $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating || $user->getActiveTraining()->isMaeTraining()) &&
                 $user->getActiveTraining()->area->id === $booking->position->area
             ) {

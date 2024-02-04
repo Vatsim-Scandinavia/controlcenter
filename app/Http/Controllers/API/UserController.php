@@ -173,11 +173,8 @@ class UserController extends Controller
         $returnData = [
             'visiting' => [],
             'examiner' => [],
-            'training' => [
-                'solo' => [],
-                's1' => [],
-            ],
-            'masc' => [],
+            'solo' => [],
+            'position' => [],
         ];
 
         // Remembner adding the related rating/area to the query
@@ -191,13 +188,10 @@ class UserController extends Controller
                     array_push($returnData['examiner'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
                 case 'SOLO':
-                    array_push($returnData['training']['solo'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
-                    break;
-                case 'S1':
-                    array_push($returnData['training']['s1'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
+                    array_push($returnData['solo'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
                 case 'MASC':
-                    array_push($returnData['masc'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
+                    array_push($returnData['position'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
             }
 
@@ -205,9 +199,8 @@ class UserController extends Controller
 
         empty($returnData['visiting']) ? $returnData['visiting'] = null : null;
         empty($returnData['examiner']) ? $returnData['examiner'] = null : null;
-        empty($returnData['training']['solo']) ? $returnData['training']['solo'] = null : null;
-        empty($returnData['training']['s1']) ? $returnData['training']['s1'] = null : null;
-        empty($returnData['masc']) ? $returnData['masc'] = null : null;
+        empty($returnData['solo']) ? $returnData['solo'] = null : null;
+        empty($returnData['position']) ? $returnData['position'] = null : null;
 
         return $returnData;
 
@@ -237,9 +230,6 @@ class UserController extends Controller
                 $returnData['areas'] = $endorsement->areas->pluck('name');
                 break;
             case 'SOLO':
-                $returnData['positions'] = $endorsement->positions->pluck('callsign');
-                break;
-            case 'S1':
                 $returnData['positions'] = $endorsement->positions->pluck('callsign');
                 break;
             case 'MASC':
