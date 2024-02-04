@@ -284,7 +284,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function hasActiveTrainings(bool $includeWaiting, ?Area $area = null)
+    public function hasActiveTrainings(bool $includeWaiting, Area $area = null)
     {
         if ($includeWaiting) {
             if ($area == null) {
@@ -306,7 +306,7 @@ class User extends Authenticatable
      *
      * @return Training|null
      */
-    public function getActiveTraining(int $minStatus = 0, ?Area $area = null)
+    public function getActiveTraining(int $minStatus = 0, Area $area = null)
     {
         if ($area == null) {
             return $this->trainings()->where([['status', '>=', $minStatus]])->get()->first();
@@ -370,7 +370,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isVisiting(?Area $area = null)
+    public function isVisiting(Area $area = null)
     {
         if ($area == null) {
             return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->count();
@@ -389,7 +389,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isExaminer(?Area $area = null)
+    public function isExaminer(Area $area = null)
     {
         if ($area == null) {
             return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->count();
@@ -408,7 +408,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isMentor(?Area $area = null)
+    public function isMentor(Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', 3)->isNotEmpty();
@@ -429,7 +429,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isMentorOrAbove(?Area $area = null)
+    public function isMentorOrAbove(Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', '<=', 3)->isNotEmpty();
@@ -450,7 +450,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isModerator(?Area $area = null)
+    public function isModerator(Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', 2)->isNotEmpty();
@@ -471,7 +471,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isModeratorOrAbove(?Area $area = null)
+    public function isModeratorOrAbove(Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', '<=', 2)->isNotEmpty();

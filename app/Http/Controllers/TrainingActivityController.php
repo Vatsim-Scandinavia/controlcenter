@@ -16,7 +16,7 @@ class TrainingActivityController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public static function create(int $trainingId, string $type, ?int $new_data = null, ?int $old_data = null, ?int $userId = null, ?string $comment = null)
+    public static function create(int $trainingId, string $type, int $new_data = null, int $old_data = null, int $userId = null, string $comment = null)
     {
         $activity = new TrainingActivity();
         $activity->training_id = $trainingId;

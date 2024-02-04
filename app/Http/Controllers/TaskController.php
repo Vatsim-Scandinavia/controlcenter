@@ -17,7 +17,7 @@ class TaskController extends Controller
     /**
      * Show the application task dashboard.
      */
-    public function index(Authenticatable $user, ?string $activeFilter = null): View
+    public function index(Authenticatable $user, string $activeFilter = null): View
     {
         $this->authorize('update', Task::class);
 

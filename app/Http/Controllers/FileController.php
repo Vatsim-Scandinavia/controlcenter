@@ -93,7 +93,7 @@ class FileController extends Controller
      *
      * @return string
      */
-    public static function saveFile(UploadedFile $file, ?string $filename = null)
+    public static function saveFile(UploadedFile $file, string $filename = null)
     {
         $extension = $file->getClientOriginalExtension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
