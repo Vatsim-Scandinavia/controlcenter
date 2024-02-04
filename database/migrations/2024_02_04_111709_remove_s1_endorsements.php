@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Because we want to maintain SQlite compability for test suite, this is done a bit wierdly.
+        // Because we want to maintain SQlite compability for test suite, this is done step by step.
 
         Schema::table('endorsements', function (Blueprint $table) {
             $table->string('type_temp', 32)->after('type');
@@ -22,6 +22,9 @@ return new class extends Migration
 
         Schema::table('endorsements', function (Blueprint $table) {
             $table->dropColumn('type');
+        });
+
+        Schema::table('endorsements', function (Blueprint $table) {
             $table->renameColumn('type_temp', 'type');
         });
 
