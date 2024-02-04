@@ -174,7 +174,7 @@ class UserController extends Controller
             'visiting' => [],
             'examiner' => [],
             'solo' => [],
-            'masc' => [],
+            'position' => [],
         ];
 
         // Remembner adding the related rating/area to the query
@@ -191,7 +191,7 @@ class UserController extends Controller
                     array_push($returnData['solo'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
                 case 'MASC':
-                    array_push($returnData['masc'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
+                    array_push($returnData['position'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
             }
 
@@ -200,7 +200,7 @@ class UserController extends Controller
         empty($returnData['visiting']) ? $returnData['visiting'] = null : null;
         empty($returnData['examiner']) ? $returnData['examiner'] = null : null;
         empty($returnData['solo']) ? $returnData['solo'] = null : null;
-        empty($returnData['masc']) ? $returnData['masc'] = null : null;
+        empty($returnData['position']) ? $returnData['position'] = null : null;
 
         return $returnData;
 
