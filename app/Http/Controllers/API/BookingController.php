@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App;
+use App\Helpers\TrainingStatus;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -97,7 +98,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -184,7 +185,7 @@ class BookingController extends Controller
             $positions = Position::where('rating', '<=', $user->rating)->get();
         }
 
-        if ($user->getActiveTraining(1)) {
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
             $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->first()->vatsim_rating));
         }
 
@@ -261,7 +262,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {

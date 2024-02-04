@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\User;
@@ -33,7 +34,7 @@ class BookingPolicy
         return
             $user->active && $user->rating >= VatsimRating::S1->value
             || $user->hasActiveEndorsement('VISITING')
-            || $user->getActiveTraining(1) != null
+            || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
             || $user->isModeratorOrAbove();
     }
 
@@ -112,7 +113,7 @@ class BookingPolicy
         // TODO: Make it easier to read the order of checks
         if (($booking->position->rating > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->isModerator()) {
             if (
-                $user->getActiveTraining(1) &&
+                $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating || $user->getActiveTraining()->isMaeTraining()) &&
                 $user->getActiveTraining()->area->id === $booking->position->area
             ) {

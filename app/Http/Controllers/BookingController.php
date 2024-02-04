@@ -166,7 +166,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -427,7 +427,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(1) && $bookingUser->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
+        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
