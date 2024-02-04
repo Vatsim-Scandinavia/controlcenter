@@ -35,7 +35,7 @@ class EndorsementMail extends Mailable
      * @param  string  $actionColor optional bootstrap button color override
      * @return void
      */
-    public function __construct(string $mailSubject, Endorsement $endorsement, array $textLines, string $contactMail = null, string $actionUrl = null, string $actionText = null, string $actionColor = 'primary')
+    public function __construct(string $mailSubject, Endorsement $endorsement, array $textLines, ?string $contactMail = null, ?string $actionUrl = null, ?string $actionText = null, string $actionColor = 'primary')
     {
         $this->mailSubject = $mailSubject;
         $this->endorsement = $endorsement;
