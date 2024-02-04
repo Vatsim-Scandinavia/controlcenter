@@ -80,7 +80,7 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->isVisiting();
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
     }
 
     /**
@@ -90,7 +90,7 @@ class BookingPolicy
      */
     public function bookEventTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 3) || $user->isVisiting();
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
     }
 
     /**
@@ -100,7 +100,7 @@ class BookingPolicy
      */
     public function bookExamTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= 5) || $user->isModerator();
+        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::C1->value) || $user->isModerator();
     }
 
     /**
