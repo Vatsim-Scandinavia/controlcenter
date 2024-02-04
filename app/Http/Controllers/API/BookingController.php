@@ -360,7 +360,7 @@ class BookingController extends Controller
         ], 200);
     }
 
-    private function getVatsimBookingUrl(string $type, int $id = null)
+    private function getVatsimBookingUrl(string $type, ?int $id = null)
     {
         if ($type == 'get' || $type == 'post') {
             $url = config('vatsim.booking_api_url') . '/booking';
@@ -373,7 +373,7 @@ class BookingController extends Controller
         return $url;
     }
 
-    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null)
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, ?array $data = null)
     {
         try {
             $headers = [
