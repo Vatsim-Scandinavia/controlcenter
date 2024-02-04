@@ -75,12 +75,23 @@ class User extends Authenticatable
      */
     public static function allActiveInArea(Area $area)
     {
-        return User::whereHas('atcActivity', function ($query) use ($area) {
-            $query->where('area_id', $area->id)->where(function ($query) {
-                $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
-                    ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
-            });
-        })->get();
+
+        if (Setting::get('atcActivityAllowTotalHours')) {
+            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('area_id', $area->id)->where(function ($query) {
+                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                        ->orWhere('hours', '>=', 0);
+                });
+            })->get();
+        } else {
+            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('area_id', $area->id)->where(function ($query) {
+                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                        ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
+                });
+            })->get();
+        }
+
     }
 
     public function endorsements()
