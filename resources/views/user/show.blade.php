@@ -234,7 +234,7 @@
                                     <a href="{{ route('endorsements.delete', $endorsement->id) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
                                 @endcan
 
-                                @if(($endorsement->type == "S1" || $endorsement->type == "SOLO") && isset($endorsement->valid_to))
+                                @if($endorsement->type == 'SOLO' && isset($endorsement->valid_to))
                                     @can('shorten', [\App\Models\Endorsement::class, $endorsement])
                                         <span class="flatpickr">
                                             <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
@@ -270,7 +270,7 @@
                                                 <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
                                             </tr>
                                         @endif                    
-                                    @elseif($endorsement->type == "S1" || $endorsement->type == "SOLO")
+                                    @elseif($endorsement->type == 'SOLO')
                                         <tr class="spacing">
                                             <th>Rating</th>
                                             <td>{{ implode(', ', $endorsement->positions->pluck('callsign')->toArray()) }}</td>

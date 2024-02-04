@@ -48,8 +48,7 @@ class UpdateAtcActivity extends Command
         // Filter users
         $usersToSetAsInactive = $activeUsers
             ->filter(fn ($m) => $this::hasTooFewHours($m))
-            ->filter(fn ($m) => $this::notInGracePeriod($m))
-            ->filter(fn ($m) => $this::notInS1Training($m));
+            ->filter(fn ($m) => $this::notInGracePeriod($m));
 
         if ($dryRun) {
             $this->info('[DRY RUN] We would have made ' . $usersToSetAsInactive->count() . ' users inactive');
@@ -61,7 +60,6 @@ class UpdateAtcActivity extends Command
         // Execute updates on relevant users
         $this->info('Making ' . $usersToSetAsInactive->count() . ' users inactive');
         User::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
-        Endorsement::whereIn('user_id', $usersToSetAsInactive->pluck('id'))->where('type', 'S1')->where('valid_to', null)->update(['revoked' => true, 'valid_to' => now()]);
 
         // Send inactivity notification to the users
         if (! Setting::get('atcActivityAllowReactivation')) {
@@ -123,28 +121,5 @@ class UpdateAtcActivity extends Command
         }
 
         return $notInGracePeriod;
-    }
-
-    /**
-     * Check if the member is outside of S1 training.
-     *
-     * - Isn't S1, returns true.
-     * - Is S1, under permanent endorsement, returns true.
-     * - Is S1, is under active training, returns false.
-     *
-     * We need to exclude the active endorsement check from non-S1 ATC in order
-     * to not exclude them all from the inactivity check. This is "currently"
-     * redundant because the set of active ATC members does not include any
-     * S1-rated members under active training, but if it does...
-     *
-     * @param User member
-     */
-    private static function notInS1Training(User $member)
-    {
-        if (VatsimRating::from($member->rating) != VatsimRating::S1) {
-            return true;
-        }
-
-        return $member->hasActiveEndorsement('S1', true);
     }
 }

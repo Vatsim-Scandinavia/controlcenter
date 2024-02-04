@@ -32,7 +32,7 @@ class BookingController extends Controller
             return Position::all();
         }
         $positions = new Collection();
-        if ($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement('S1', true)) {
+        if ($user->rating >= VatsimRating::S1->value) {
             $positions = Position::where('rating', '<=', $user->rating)->get();
         }
         if ($user->getActiveTraining(1)) {
@@ -149,10 +149,7 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
@@ -413,10 +410,7 @@ class BookingController extends Controller
         $forcedTrainingTag = false;
         $bookingUser = User::find($booking->user_id);
 
-        if ($booking->position->rating == 2 && $bookingUser->rating == $booking->position->rating && ! $bookingUser->hasActiveEndorsement('S1', true)) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
+        if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($booking->position->mae && $bookingUser->getActiveTraining(1) && $bookingUser->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {

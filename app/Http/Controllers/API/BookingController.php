@@ -94,10 +94,7 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
@@ -261,10 +258,7 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {

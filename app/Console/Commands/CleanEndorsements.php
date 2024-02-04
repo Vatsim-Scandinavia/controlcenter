@@ -46,22 +46,11 @@ class CleanEndorsements extends Command
             $endorsement->save();
 
             // Only send e-mail notifications for training endorsements
-            if ($endorsement->type == 'SOLO' || $endorsement->type == 'S1') {
+            if ($endorsement->type == 'SOLO') {
                 $endorsement->user->notify(new EndorsementExpiredNotification($endorsement));
             }
         }
 
         $this->info('All expired endorsements have been cleaned.');
-
-        $permanentEndorsements = Endorsement::whereNull('valid_to')->where('type', 'S1')->where('expired', false)->where('revoked', false)->get();
-        foreach ($permanentEndorsements as $endorsement) {
-            if ($endorsement->user->rating >= VatsimRating::S2->value) {
-                $endorsement->expired = true;
-                $endorsement->valid_to = today();
-                $endorsement->save();
-            }
-        }
-
-        $this->info('All endorsements belonging to users who have achieved S2+ has been cleaned.');
     }
 }

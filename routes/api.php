@@ -32,7 +32,6 @@ Route::group(['middleware' => ['api-token']], function () {
     Route::get('/endorsements/visiting', [App\Http\Controllers\API\VisitingController::class, 'index'])->name('api.endorsement.visiting.index');
     Route::get('/endorsements/examiner', [App\Http\Controllers\API\ExaminerController::class, 'index'])->name('api.endorsement.examiner.index');
     Route::get('/endorsements/training/solo', [App\Http\Controllers\API\TrainingController::class, 'indexSolo'])->name('api.endorsement.training.solo.index');
-    Route::get('/endorsements/training/s1', [App\Http\Controllers\API\TrainingController::class, 'indexS1'])->name('api.endorsement.training.s1.index');
     Route::get('/endorsements/masc', [App\Http\Controllers\API\RatingController::class, 'index'])->name('api.endorsement.rating.index');
 
     Route::get('/users', [App\Http\Controllers\API\UserController::class, 'index'])->name('api.users.index');
