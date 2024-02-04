@@ -234,6 +234,15 @@ class TrainingController extends Controller
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
         }
 
+        // Only allow one training request at a time
+        if (isset($data['user_id'])) {
+            if (User::find($data['user_id'])->hasActiveTrainings(true)) {
+                return redirect()->back()->withErrors('The user already has an active training request.');
+            }
+        } elseif (Auth::user()->hasActiveTrainings(true)) {
+            return redirect()->back()->withErrors('You already have an active training request.');
+        }
+
         // Training_level comes from the application, ratings comes from the manual creation, we need to seperate those.
         if (isset($data['training_level'])) {
             $ratings = Rating::find(explode('+', $data['training_level']));
