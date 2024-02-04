@@ -55,10 +55,12 @@
                     @foreach($areas as $area)
                         <dd class="mb-0">
 
-                            @if($atcActivityHours[$area->id]["active"])
-                                <i class="far fa-circle-check text-success"></i>
-                            @else
-                                <i class="far fa-circle-xmark text-danger"></i>
+                            @if(!Setting::get('atcActivityAllowTotalHours'))
+                                @if($atcActivityHours[$area->id]["active"])
+                                    <i class="far fa-circle-check text-success"></i>
+                                @else
+                                    <i class="far fa-circle-xmark text-danger"></i>
+                                @endif
                             @endif
 
                             {{ $area->name }}: {{ round($atcActivityHours[$area->id]["hours"]) }}h
