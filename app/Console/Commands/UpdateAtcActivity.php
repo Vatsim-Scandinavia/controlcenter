@@ -87,7 +87,7 @@ class UpdateAtcActivity extends Command
             $allAreasInactive = true;
 
             foreach (Area::all() as $area) {
-                $activity = $member->atcActivity->where('area_id', $area->id)->first();
+                $activity = $member->atcActivity->firstWhere('area_id', $area->id);
                 if ($activity && $activity->hours >= Setting::get('atcActivityRequirement', 10)) {
                     $allAreasInactive = false;
                 }
@@ -111,7 +111,7 @@ class UpdateAtcActivity extends Command
         // If no grace is set or within grace period per area, return true
         foreach (Area::all() as $area) {
 
-            $activity = $member->atcActivity->where('area_id', $area->id)->first();
+            $activity = $member->atcActivity->firstWhere('area_id', $area->id);
 
             if (
                 $activity

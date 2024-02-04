@@ -110,15 +110,14 @@ class UserController extends Controller
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $endorsements = $user->endorsements->sortByDesc('valid_to');
-        $areas = Area::all();
 
         // Get hours and grace per area
         $atcActivityHours = [];
         $totalHours = 0;
         $atcActivites = AtcActivity::where('user_id', $user->id)->get();
 
-        foreach(Area::all() as $area){
-            $activity = $atcActivites->where('area_id', $area->id)->first();
+        foreach($areas as $area){
+            $activity = $atcActivites->firstWhere('area_id', $area->id);
 
             if($activity){
 
@@ -131,7 +130,7 @@ class UserController extends Controller
                     $atcActivityHours[$area->id]["graced"] = false;
                 }
 
-                $atcActivityHours[$area->id]["active"] = $atcActivityHours[$area->id]["graced"] || $activity->hours >= Setting::get('atcActivityRequirement', 10);
+                $atcActivityHours[$area->id]["active"] = $activity->isActive();
 
             } else {
                 $atcActivityHours[$area->id]["hours"] = 0;

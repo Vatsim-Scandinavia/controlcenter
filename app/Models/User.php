@@ -67,6 +67,12 @@ class User extends Authenticatable
         })->get();
     }
 
+    /**
+     * Find all users with queried group in the specified area
+     * 
+     * @param Area $area the area to check for
+     * @return Illuminate\Database\Eloquent\Collection
+     */
     public static function allActiveInArea(Area $area)
     {
         return User::whereHas('atcActivity', function ($query) use ($area) {
