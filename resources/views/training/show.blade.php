@@ -257,7 +257,7 @@
 
                                     {{ $activity->created_at->toEuropeanDateTime() }}
                                     @can('comment', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id)])
-                                        @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1))
+                                        @if($activity->type == "COMMENT" && now() <= $activity->created_at->addDays(1) && $activity->triggered_by_id == \Auth::user()->id)
                                             <button class="btn btn-sm float-end" onclick="updateComment({{ $activity->id }}, '{{ $activity->comment }}')"><i class="fas fa-pencil"></i></button>
                                         @endif
                                     @endcan
