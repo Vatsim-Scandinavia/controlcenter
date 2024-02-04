@@ -339,13 +339,9 @@ class User extends Authenticatable
      * @param  bool  $onlyInfinteEndorsements
      * @return bool
      */
-    public function hasActiveEndorsement(string $type, $onlyInfinteEndorsements = false)
+    public function hasActiveEndorsement(string $type)
     {
-        if ($onlyInfinteEndorsements) {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', null)->exists();
-        } else {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
-        }
+        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
     }
 
     /**
