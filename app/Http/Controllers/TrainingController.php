@@ -19,6 +19,8 @@ use App\Notifications\TrainingPreStatusNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\VatsimRating;
 
 /**
  * Controller for all trainings
@@ -169,6 +171,7 @@ class TrainingController extends Controller
             // Inject the data into payload
             $payload[$area->id]['name'] = $area->name;
             $payload[$area->id]['data'] = $availableRatings;
+            $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->isActive()) ? true : false;
         }
 
         // Fetch user's ATC hours
@@ -192,10 +195,14 @@ class TrainingController extends Controller
             return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
         }
 
+        // Is activity in area required to apply for training?
+        $atcActiveRequired = $user->rating >= VatsimRating::S1->value && Setting::get('atcActivityAllowTotalHours') == false;
+
         // Return
         return view('training.apply', [
             'payload' => $payload,
             'atc_hours' => $vatsimStats,
+            'atcActiveRequired' => ($atcActiveRequired) ? 1 : 0,
             'motivation_required' => ($userVatsimRating <= 2) ? 1 : 0,
         ]);
     }
@@ -246,6 +253,14 @@ class TrainingController extends Controller
         // Training_level comes from the application, ratings comes from the manual creation, we need to seperate those.
         if (isset($data['training_level'])) {
             $ratings = Rating::find(explode('+', $data['training_level']));
+
+            // Check if user is active in the area if required by setting
+            if (Setting::get('atcActivityAllowTotalHours') == false) {
+                $atcActivity = Auth::user()->atcActivity->firstWhere('area_id', $data['training_area']);
+                if (! $atcActivity || ! $atcActivity->isActive()) {
+                    return redirect()->back()->withErrors('You need to be active in the area to apply for training.');
+                }
+            }
 
             // Check if user fulfill rating hour requirement
             $vatsimStats = [];
