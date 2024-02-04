@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Exceptions\VatsimAPIException;
+use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\Position;
@@ -28,14 +30,26 @@ class BookingController extends Controller
      */
     private function getBookablePositions(User $user)
     {
+        // Moderators and above can book any position
         if ($user->isModeratorOrAbove()) {
             return Position::all();
         }
+
+        // Users with a rating of S1 or above can book positions up to their rating
         $positions = new Collection();
+
         if ($user->rating >= VatsimRating::S1->value) {
-            $positions = Position::where('rating', '<=', $user->rating)->get();
+            if (Setting::get('atcActivityAllowTotalHours')) {
+                $positions = Position::where('rating', '<=', $user->rating)->get();
+            } else {
+
+                $activeAreas = $user->atcActivity->pluck('area_id');
+                $positionsInAreas = Position::whereIn('area', $activeAreas)->where('rating', '<=', $user->rating)->get();
+                $positions = $positions->merge($positionsInAreas);
+            }
         }
-        if ($user->getActiveTraining(1)) {
+
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
             $positions = $positions->merge(
                 $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)
             );
