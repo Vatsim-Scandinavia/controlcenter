@@ -85,6 +85,17 @@
                 </dl>
             </div>
         </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Activity
+                </h6>
+            </div>
+            <div class="card-body">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <div class="col-xl-9 col-md-8 col-sm-12 mb-12">
@@ -422,7 +433,7 @@
 
     <!-- Flatpickr -->
     @include('scripts.tooltips')
-    @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
+    @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss', 'resources/js/chart.js'])
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.flatpickr').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
@@ -460,5 +471,68 @@
                 alert('An error occurred while fetching VATSIM hours data.');
             });
     </script>    
+
+    <!-- Activity chart -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Fetch activity data
+            // @TODO Add real user id and remove the hardcoded one
+            fetch("https://statsim.net/atc/vatsimid/?vatsimid={{ $user->id }}&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.length > 0) {
+
+                        // Process each connection and calculate hours
+                        data.forEach(function (connection) {
+                            connection.logontime = new Date(connection.logontime * 1000)
+                            connection.logofftime = new Date(connection.logofftime * 1000)
+                            connection.hours = parseFloat(((connection.logofftime - connection.logontime) / 1000 / 60 / 60).toFixed(1))
+                            connection.callsignSuffix = connection.callsign.split('_').pop()
+                        })
+
+                        // Store activity per month and sum the total hours
+                        var activity = []
+                        data.forEach(function (connection) {
+                            var month = connection.logontime.toLocaleString('default', { month: 'short' })
+                            if (activity[month]) {
+                                activity[month] += connection.hours
+                            } else {
+                                activity[month] = connection.hours
+                            }
+                        })
+
+                        // Define labels and chart data
+                        var chartLabels = Object.keys(activity)
+                        var chartData = Object.values(activity)
+                    
+                        // Create the chart
+                        var chart = new Chart(
+                            document.getElementById('activityChart'),
+                            {
+                                type: 'bar',
+                                data: {
+                                    labels: chartLabels,
+                                    datasets: [{
+                                        label: 'Hours online',
+                                        data: chartData,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        borderColor: 'rgb(54, 162, 235)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                            }
+                        );
+                        
+                    } else {
+                        document.getElementById('activityChart').parentElement.innerHTML = '<p class="mb-0">No data available</p>'
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('An error occurred while fetching STATSIM hours data.');
+                });
+        });
+    </script>
 
 @endsection
