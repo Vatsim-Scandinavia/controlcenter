@@ -28,8 +28,7 @@ return new class extends Migration
             $table->renameColumn('type_temp', 'type');
         });
 
-        // Delete all 'S1' endorsements
-        DB::table('endorsements')->where('type', 'S1')->delete();
+        // We won't delete the old S1 endorsements, to keep the history for training activity logs. However, they have no effect anymore in the code.
 
     }
 
