@@ -2,8 +2,10 @@
 
 namespace App\Tasks\Types;
 
+use App\Helpers\Vatsim;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
+use Illuminate\Support\Facades\Http;
 
 class TheoreticalExam extends Types
 {
@@ -41,6 +43,14 @@ class TheoreticalExam extends Types
 
     public function complete(Task $model)
     {
+        if (Vatsim::divisionIs('EUD')) {
+            $response = Http::post('https://core-dev.vateud.net/api/assign', [
+                'user_cid' => $model->subject_user_id,
+                'exam_id' => 1,
+                'instructor_cid' => $model->assignee_user_id,
+            ]);
+        }
+
         TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Theoretical exam access granted.');
         parent::onCompleted($model);
     }

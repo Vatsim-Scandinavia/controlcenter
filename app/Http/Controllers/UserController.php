@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Facades\DivisionApi;
+use App\Helpers\Vatsim;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
@@ -259,6 +261,16 @@ class UserController extends Controller
             if ($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0) {
                 if ($value == true) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
+
+                    // Call the division API to assign mentor
+                    if ($group->id == 3) {
+                        $response = DivisionApi::assignMentor($area, $user, Auth::id());
+                        if ($response && $response->failed()) {
+                            return back()->withErrors('Request failed due to error in Division API: ' . $response->json()['message']);
+                        }
+                    }
+
+                    // Attach the new permission
                     $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
                 }
             } else {
