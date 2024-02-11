@@ -477,7 +477,7 @@
         document.addEventListener("DOMContentLoaded", function () {
 
             // Fetch activity data
-            fetch("https://statsim.net/atc/vatsimid/?vatsimid=957907&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
+            fetch("https://statsim.net/atc/vatsimid/?vatsimid={{ $user->id }}&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
                 .then(response => response.json())
                 .then(data => {
                     if(data && data.length > 0) {
