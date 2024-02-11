@@ -477,7 +477,7 @@
         document.addEventListener("DOMContentLoaded", function () {
 
             // Fetch activity data
-            fetch("https://statsim.net/atc/vatsimid/?vatsimid={{ $user->id }}&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
+            fetch("https://statsim.net/atc/vatsimid/?vatsimid=957907&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
                 .then(response => response.json())
                 .then(data => {
                     if(data && data.length > 0) {
@@ -490,15 +490,16 @@
                             connection.callsignSuffix = connection.callsign.split('_').pop()
                         })
 
-                        // Store activity per month and sum the total hours
+                        // Create chart labels based on the last 11 months
                         var activity = []
+
+                        for (var i = 11; i >= 0; i--) {
+                            activity[new Date(new Date().setMonth(new Date().getMonth() - i)).toLocaleString('default', { month: 'short' })] = 0
+                        }
+
                         data.forEach(function (connection) {
                             var month = connection.logontime.toLocaleString('default', { month: 'short' })
-                            if (activity[month]) {
-                                activity[month] += connection.hours
-                            } else {
-                                activity[month] = connection.hours
-                            }
+                            activity[month] += connection.hours
                         })
 
                         // Define labels and chart data
