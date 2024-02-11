@@ -109,7 +109,7 @@ class UserController extends Controller
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        $endorsements = $user->endorsements->sortByDesc('valid_to');
+        $endorsements = $user->endorsements->whereIn('type', ['EXAMINER', 'MASC', 'SOLO', 'VISITING'])->sortByDesc('valid_to');
 
         // Get hours and grace per area
         $atcActivityHours = [];

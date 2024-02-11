@@ -97,7 +97,7 @@ class UserController extends Controller
         // Endorsements
         if ($paramIncludeEndorsements) {
             foreach ($returnUsers as $user) {
-                $user->endorsements = $this->mapEndorsements($user->endorsements->where('expired', false)->where('revoked', false));
+                $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'MASC', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
             }
         }
 
