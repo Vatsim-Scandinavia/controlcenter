@@ -67,7 +67,7 @@ class CheckOnlineControllers extends Command
 
         $dataReturn = Http::get($dataUri['data']['v3'][0]);
 
-        if (isset($dataReturn)) {
+        if (isset($dataReturn) && isset($dataReturn['controllers'])) {
             $vatsimData = $dataReturn['controllers'];
 
             foreach ($vatsimData as $d) {
