@@ -28,7 +28,7 @@
 
                         <div class="col-md-4">
                             <label class="form-label">Your email</label>
-                            <input class="form-control" type="text" value="{{ Auth::user()->email }}" disabled>
+                            <input class="form-control" type="text" value="{{ Auth::user()->notificationEmail }}" disabled>
                         </div>
                     </div>
 

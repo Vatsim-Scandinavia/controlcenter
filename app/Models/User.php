@@ -170,16 +170,13 @@ class User extends Authenticatable
         return $this->hasMany(Feedback::class, 'reference_user_id');
     }
 
-    /**
-     * @todo: Convert to to new v9.x+ mutators https://laravel.com/docs/9.x/eloquent-mutators
-     */
-    public function getEmailAttribute($value)
+    public function getNotificationEmailAttribute()
     {
         if ($this->setting_workmail_address) {
             return $this->setting_workmail_address;
         }
 
-        return $value;
+        return $this->email;
     }
 
     public function getActiveAttribute()

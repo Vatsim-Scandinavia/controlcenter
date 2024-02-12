@@ -33,7 +33,7 @@
                     <dd>{{ $user->first_name.' '.$user->last_name }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->first_name.' '.$user->last_name }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt>Email</dt>
-                    <dd class="separator pb-3">{{ $user->email }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->email }}')"><i class="fas fa-copy"></i></button></dd>
+                    <dd class="separator pb-3">{{ $user->notificationEmail }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->notificationEmail }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt class="pt-2">ATC Rating</dt>
                     <dd>{{ $user->rating_short }}</dd>
