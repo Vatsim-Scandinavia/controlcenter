@@ -99,7 +99,7 @@
                                     <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
                                 </td>
                                 <td>
-                                    {{ isset($training->user->atcActivity->hours) ? round($training->user->atcActivity->hours) : "0" }}h
+                                    {{ ($training->user->atcActivity->count()) ? $training->user->atcActivity->sum('hours') : "0" }}h
                                 </td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
