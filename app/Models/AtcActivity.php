@@ -12,6 +12,7 @@ class AtcActivity extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'atc_active' => 'boolean',
         'start_of_grace_period' => 'datetime',
     ];
 
@@ -25,8 +26,4 @@ class AtcActivity extends Model
         return $this->belongsTo(Area::class);
     }
 
-    public function isActive()
-    {
-        return $this->hours >= Setting::get('atcActivityRequirement') || ($this->start_of_grace_period != null && $this->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod'))->isFuture());
-    }
 }

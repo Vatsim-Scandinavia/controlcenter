@@ -130,7 +130,7 @@ class UserController extends Controller
                     $atcActivityHours[$area->id]['graced'] = false;
                 }
 
-                $atcActivityHours[$area->id]['active'] = $activity->isActive();
+                $atcActivityHours[$area->id]['active'] = ($activity->atc_active) ? true : false;
 
             } else {
                 $atcActivityHours[$area->id]['hours'] = 0;

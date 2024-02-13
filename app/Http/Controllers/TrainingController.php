@@ -171,7 +171,7 @@ class TrainingController extends Controller
             // Inject the data into payload
             $payload[$area->id]['name'] = $area->name;
             $payload[$area->id]['data'] = $availableRatings;
-            $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->isActive()) ? true : false;
+            $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->atc_active) ? true : false;
         }
 
         // Fetch user's ATC hours
@@ -257,7 +257,7 @@ class TrainingController extends Controller
             // Check if user is active in the area if required by setting
             if (Setting::get('atcActivityAllowTotalHours') == false) {
                 $atcActivity = Auth::user()->atcActivity->firstWhere('area_id', $data['training_area']);
-                if (! $atcActivity || ! $atcActivity->isActive()) {
+                if (! $atcActivity || ! $atcActivity->atc_active) {
                     return redirect()->back()->withErrors('You need to be active in the area to apply for training.');
                 }
             }
