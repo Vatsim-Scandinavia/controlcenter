@@ -46,8 +46,8 @@
                                         @endcan
                                     </td>
                                     <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
-                                    <td class="text-center text-white {{ $u->active ? 'bg-success' : 'bg-danger' }}">
-                                        @if($u->active)
+                                    <td class="text-center text-white {{ $u->isActiveAtc() ? 'bg-success' : 'bg-danger' }}">
+                                        @if($u->isActiveAtc())
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @else
                                             <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>

@@ -47,7 +47,7 @@
                             <i class="far fa-circle-check text-success"></i>
                             Visiting
                         @else
-                            <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
+                            <i class="fas fa-circle-{{ $user->isActiveAtc() ? 'check' : 'xmark' }} text-{{ $user->isActiveAtc() ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
                         @endif
                     </dd>
 
