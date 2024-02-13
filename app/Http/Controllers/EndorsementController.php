@@ -26,7 +26,7 @@ class EndorsementController extends Controller
     {
         $users = User::whereHas('endorsements', function (Builder $query) {
             $query->where('type', 'MASC')->where('revoked', false)->where('expired', false);
-        })->with('endorsements', 'endorsements.ratings')->get();
+        })->with('endorsements', 'endorsements.ratings', 'atcActivity')->get();
         $ratings = Rating::whereNull('vatsim_rating')->get()->sortBy('name');
 
         return view('endorsements.mascs', compact('users', 'ratings'));

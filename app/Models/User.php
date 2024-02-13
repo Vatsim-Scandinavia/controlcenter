@@ -81,14 +81,14 @@ class User extends Authenticatable
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
                         ->orWhere('hours', '>=', 0);
                 });
-            })->get();
+            })->with(['endorsements', 'atcActivity'])->get();
         } else {
             return User::whereHas('atcActivity', function ($query) use ($area) {
                 $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
                         ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
                 });
-            })->get();
+            })->with(['endorsements', 'atcActivity'])->get();
         }
 
     }
