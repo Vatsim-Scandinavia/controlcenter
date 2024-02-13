@@ -61,14 +61,12 @@ class BookingTest extends TestCase
             'rating' => $rating->value,
         ]);
 
-        $userActivity = new \App\Models\AtcActivity([
+        $controller->atcActivity()->create([
             'user_id' => $controller->id,
             'area_id' => 1,
             'hours' => 100,
             'atc_active' => true,
         ]);
-
-        $userActivity->save();
 
         $setup($controller);
         $this->assertCreateBookingAvailable($controller);
