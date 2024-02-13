@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Database\Eloquent\Model;
 
 class AtcActivity extends Model
@@ -25,5 +24,4 @@ class AtcActivity extends Model
     {
         return $this->belongsTo(Area::class);
     }
-
 }

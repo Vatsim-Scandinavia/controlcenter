@@ -1,12 +1,12 @@
 <?php
 
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\AtcActivity;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
-use App\Models\AtcActivity;
-use anlutro\LaravelSettings\Facade as Setting;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -19,7 +19,6 @@ return new class extends Migration
             $table->boolean('atc_active')->default(false)->after('start_of_grace_period');
         });
 
-
         // Update atc hours as this will basis for the migration
         //Artisan::call('update:atc:hours'); ENABLE ME BEFORE PUSHING DAMMI FUCK DAMMIT ASS
 
@@ -27,7 +26,7 @@ return new class extends Migration
         $users = User::where('atc_active', true)->get();
         foreach ($users as $user) {
             $activities = $user->atcActivity;
-            if($activities && $activities->count() > 0) {
+            if ($activities && $activities->count() > 0) {
                 foreach ($activities as $activity) {
                     // Let's deem everyone with hours active, this will be most correct as they might get withdrawn active status later on nightly cron job triggering a notification.
                     if ($activity->hours > 0 || $activity->start_of_grace_period != null && $activity->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod'))->isFuture()) {
@@ -65,6 +64,6 @@ return new class extends Migration
         Schema::table('atc_activities', function (Blueprint $table) {
             $table->dropColumn('atc_active');
         });
-       
+
     }
 };

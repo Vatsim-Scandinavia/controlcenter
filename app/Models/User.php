@@ -178,7 +178,6 @@ class User extends Authenticatable
         return $this->email;
     }
 
-
     /*
     * Check if the user is active as ATC
     *
@@ -204,8 +203,8 @@ class User extends Authenticatable
                 })->get();
         } else {
             return User::whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                })->get();
+                $query->where('atc_active', true);
+            })->get();
         }
     }
 
