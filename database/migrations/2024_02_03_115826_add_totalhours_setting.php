@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         DB::table(Config::get('settings.table'))->insert([
-            ['key' => 'atcActivityAllowTotalHours', 'value' => 1],
+            ['key' => 'atcActivityBasedOnTotalHours', 'value' => 1],
         ]);
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down()
     {
-        DB::raw('DELETE FROM ' . Config::get('settings.table') . ' WHERE key = `atcActivityAllowTotalHours`');
+        DB::raw('DELETE FROM ' . Config::get('settings.table') . ' WHERE key = `atcActivityBasedOnTotalHours`');
     }
 };

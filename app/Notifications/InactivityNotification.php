@@ -55,8 +55,8 @@ class InactivityNotification extends Notification implements ShouldQueue
             $inactiveString = 'Your ATC status has been set as **inactive**.';
         }
 
-        if(Setting::get('atcActivityAllowReactivation')){
-            $loginRuleString = 'You may however still log on the network in in '.(isset($this->area) ? $this->area->name : 'our area').' if you wish. Please check local rules for more information what it means to be inactive.';
+        if(Setting::get('atcActivityAllowInactiveControlling')){
+            $loginRuleString = 'You may however still log on the network in '.(isset($this->area) ? $this->area->name : 'our area').' if you wish. Please check local policies for more information what it means to be inactive.';
         } else {
             $loginRuleString = 'You are no longer allowed to log on the network in '.(isset($this->area) ? $this->area->name : 'our area').'. To control online again, you will need to apply for a refresh training with [' . Setting::get('atcActivityContact') . '](' . Setting::get('linkContact') . ')';
         }

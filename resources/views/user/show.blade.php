@@ -55,7 +55,7 @@
                     @foreach($areas as $area)
                         <dd class="mb-0">
 
-                            @if(!Setting::get('atcActivityAllowTotalHours'))
+                            @if(!Setting::get('atcActivityBasedOnTotalHours'))
                                 @if($atcActivityHours[$area->id]["active"])
                                     <i class="far fa-circle-check text-success"></i>
                                 @else

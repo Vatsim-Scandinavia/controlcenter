@@ -63,7 +63,7 @@ class UpdateAtcActivity extends Command
         AtcActivity::whereIn('id', $atcActiveAreasToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
 
         // Only once if all areas are counted as one, per area if counted per area
-        if (Setting::get('atcActivityAllowTotalHours', true)) {
+        if (Setting::get('atcActivityBasedOnTotalHours', true)) {
 
             $sentToUsers = collect();
             foreach($atcActiveAreasToSetAsInactive as $atcActivity){

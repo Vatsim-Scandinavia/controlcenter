@@ -49,7 +49,7 @@ class GlobalSettingController extends Controller
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
             'atcActivityContact' => 'max:40',
-            'atcActivityAllowTotalHours' => '',
+            'atcActivityBasedOnTotalHours' => '',
             'atcActivityNotifyInactive' => '',
             'atcActivityAllowReactivation' => '',
             'atcActivityAllowInactiveControlling' => '',
@@ -67,7 +67,7 @@ class GlobalSettingController extends Controller
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
         isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
-        isset($data['atcActivityAllowTotalHours']) ? $atcActivityAllowTotalHours = true : $atcActivityAllowTotalHours = false;
+        isset($data['atcActivityBasedOnTotalHours']) ? $atcActivityBasedOnTotalHours = true : $atcActivityBasedOnTotalHours = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
         isset($data['atcActivityAllowReactivation']) ? $atcActivityAllowReactivation = true : $atcActivityAllowReactivation = false;
         isset($data['atcActivityAllowInactiveControlling']) ? $atcActivityAllowInactiveControlling = true : $atcActivityAllowInactiveControlling = false;
@@ -89,7 +89,7 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
         Setting::set('atcActivityContact', $data['atcActivityContact']);
-        Setting::set('atcActivityAllowTotalHours', $atcActivityAllowTotalHours);
+        Setting::set('atcActivityBasedOnTotalHours', $atcActivityBasedOnTotalHours);
         Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
         Setting::set('atcActivityAllowReactivation', $atcActivityAllowReactivation);
         Setting::set('atcActivityAllowInactiveControlling', $atcActivityAllowInactiveControlling);

@@ -75,7 +75,7 @@ class User extends Authenticatable
      */
     public static function allActiveInArea(Area $area)
     {
-        if (Setting::get('atcActivityAllowTotalHours')) {
+        if (Setting::get('atcActivityBasedOnTotalHours')) {
             return User::whereHas('atcActivity', function ($query) use ($area) {
                 $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
@@ -185,7 +185,7 @@ class User extends Authenticatable
     */
     public function isAtcActive()
     {
-        if(Setting::get('atcActivityAllowTotalHours')) {
+        if(Setting::get('atcActivityBasedOnTotalHours')) {
             $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
             $isInGracePeriod = $this->atcActivity->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
 

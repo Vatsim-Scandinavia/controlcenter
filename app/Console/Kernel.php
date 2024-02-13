@@ -34,10 +34,8 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes();
 
         // Monitor who's online
-        if (! Setting::get('atcActivityAllowInactiveControlling')) {
-            $schedule->command('check:controllers')
-                ->everyTenMinutes();
-        }
+        $schedule->command('check:controllers')
+            ->everyTenMinutes();
 
         // Delete old Sweatbox bookings
         $schedule->command('clean:sweatbooks')
