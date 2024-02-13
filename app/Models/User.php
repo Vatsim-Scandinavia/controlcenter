@@ -183,7 +183,7 @@ class User extends Authenticatable
     *
     * @return bool
     */
-    public function isActiveAtc()
+    public function isAtcActive()
     {
         if(Setting::get('atcActivityAllowTotalHours')) {
             $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
