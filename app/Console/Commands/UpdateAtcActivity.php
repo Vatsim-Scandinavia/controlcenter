@@ -41,7 +41,7 @@ class UpdateAtcActivity extends Command
             $dryRun = true;
         }
 
-        if($optionalUserIdFilter){
+        if ($optionalUserIdFilter) {
             $activeAreas = AtcActivity::where('atc_active', true)->whereIn('user_id', $optionalUserIdFilter)->get();
         } else {
             $activeAreas = AtcActivity::where('atc_active', true)->get();
@@ -66,19 +66,19 @@ class UpdateAtcActivity extends Command
         if (Setting::get('atcActivityBasedOnTotalHours', true)) {
 
             $sentToUsers = collect();
-            foreach($atcActiveAreasToSetAsInactive as $atcActivity){
+            foreach ($atcActiveAreasToSetAsInactive as $atcActivity) {
 
                 // Skip if already sent to this user
-                if($sentToUsers->contains($atcActivity->user->id)){
+                if ($sentToUsers->contains($atcActivity->user->id)) {
                     continue;
                 }
-    
+
                 // Send one notification to the user going inactive
                 $atcActivity->user->notify(new InactivityNotification($atcActivity->user));
                 $sentToUsers->push($atcActivity->user->id);
             }
         } else {
-            foreach($atcActiveAreasToSetAsInactive as $atcActivity){
+            foreach ($atcActiveAreasToSetAsInactive as $atcActivity) {
                 // Send notification(s) to all users who went inactive per area
                 $atcActivity->user->notify(new InactivityNotification($atcActivity->user, $atcActivity->area));
             }

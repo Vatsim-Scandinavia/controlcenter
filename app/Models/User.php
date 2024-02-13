@@ -179,39 +179,41 @@ class User extends Authenticatable
     }
 
     /**
-    * Check if the user is active as ATC
-    *
-    * @return bool
-    */
+     * Check if the user is active as ATC
+     *
+     * @return bool
+     */
     public function isAtcActive(?Area $area = null)
     {
-        if(Setting::get('atcActivityBasedOnTotalHours')) {
+        if (Setting::get('atcActivityBasedOnTotalHours')) {
             $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
             $isInGracePeriod = $this->atcActivity->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
 
             return $hasEnoughHours || $isInGracePeriod;
         } else {
-            if($area){
+            if ($area) {
                 return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->where('area_id', $area->id)->exists();
             }
+
             return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
         }
-        
+
     }
 
     /**
-    * Check if the user is allowed to control online
-    *
-    * @return bool
-    */
-    public function isAllowedToControlOnline(Area $area = null){
+     * Check if the user is allowed to control online
+     *
+     * @return bool
+     */
+    public function isAllowedToControlOnline(?Area $area = null)
+    {
 
-        if(
-            !$this->isVisiting($area) &&
-            !$this->isAtcActive($area) &&
-            !$this->hasActiveTrainings(false, $area) &&
-            !$this->hasRecentlyCompletedTraining()
-        ){
+        if (
+            ! $this->isVisiting($area) &&
+            ! $this->isAtcActive($area) &&
+            ! $this->hasActiveTrainings(false, $area) &&
+            ! $this->hasRecentlyCompletedTraining()
+        ) {
             return false;
         }
 
