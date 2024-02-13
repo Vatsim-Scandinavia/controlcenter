@@ -76,7 +76,7 @@ class CheckOnlineControllers extends Command
                     $this->info('Checking user ' . $d['cid']);
                     $user = User::find($d['cid']);
                     if (isset($user) && ! $user->isVisiting()) {
-                        if (! $user->isActiveAtc() && ! $user->hasActiveTrainings(false) && ! $user->hasRecentlyCompletedTraining()) {
+                        if (! $user->isAtcActive() && ! $user->hasActiveTrainings(false) && ! $user->hasRecentlyCompletedTraining()) {
                             if (! isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))) {
                                 // Send warning to user
                                 $user->notify(new InactiveOnlineNotification($user));

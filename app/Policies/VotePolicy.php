@@ -60,7 +60,7 @@ class VotePolicy
         }
 
         if ($vote->require_active) {
-            if (! $user->isActiveAtc()) {
+            if (! $user->isAtcActive()) {
                 return Response::deny('Sorry, you do not qualify to participate in this vote. You must hold an active ATC rank to vote.');
             }
         }

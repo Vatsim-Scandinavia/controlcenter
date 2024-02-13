@@ -161,7 +161,7 @@ class UserController extends Controller
             ($includeDivisions) ? $returnData['region'] = $user->region : null;
             ($includeDivisions) ? $returnData['division'] = $user->division : null;
             ($includeDivisions) ? $returnData['subdivision'] = $user->subdivision : null;
-            $returnData['atc_active'] = $user->isActiveAtc();
+            $returnData['atc_active'] = $user->isAtcActive();
             ($includeEndorsements) ? $returnData['endorsements'] = $user->endorsements : null;
             ($includeRoles) ? $returnData['roles'] = $user->roles : null;
             ($includeTraining) ? $returnData['training'] = $user->training : null;

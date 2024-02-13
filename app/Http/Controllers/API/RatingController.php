@@ -23,7 +23,7 @@ class RatingController extends Controller
             if ($publishUser) {
                 $data->push([
                     'user_id' => $user->id,
-                    'user_atc_active' => $user->isActiveAtc(),
+                    'user_atc_active' => $user->isAtcActive(),
                     'ratings' => $ratings,
                 ]);
             }
