@@ -38,10 +38,9 @@ class UpdateAtcReactivate extends Command
         $atcHourRecords = AtcActivity::where('hours', '>=', Setting::get('atcActivityRequirement'))->get();
         $count = 0;
         foreach ($atcHourRecords as $record) {
-            $user = $record->user;
-            if ($user->atc_active == false) {
-                $user->atc_active = true;
-                $user->save();
+            if ($record->atc_active == false) {
+                $record->atc_active = true;
+                $record->save();
                 $count++;
             }
         }
