@@ -185,7 +185,15 @@ class User extends Authenticatable
     */
     public function isActiveAtc()
     {
-        return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+        if(Setting::get('atcActivityAllowTotalHours')) {
+            $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
+            $isInGracePeriod = $this->atcActivity->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
+
+            return $hasEnoughHours || $isInGracePeriod;
+        } else {
+            return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+        }
+        
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
+use App\Models\AtcActivity;
 use App\Models\User;
 use App\Notifications\InactivityNotification;
 use Illuminate\Console\Command;
@@ -40,29 +41,46 @@ class UpdateAtcActivity extends Command
             $dryRun = true;
         }
 
-        $activeMembers = User::getActiveAtcMembers($optionalUserIdFilter);
-        $activeUsers = User::whereIn('id', $activeMembers->pluck('id'))->has('atcActivity')->with('atcActivity')->get();
+        if($optionalUserIdFilter){
+            $activeAreas = AtcActivity::where('atc_active', true)->whereIn('user_id', $optionalUserIdFilter)->get();
+        } else {
+            $activeAreas = AtcActivity::where('atc_active', true)->get();
+        }
 
-        // Filter users
-        $usersToSetAsInactive = $activeUsers
-            ->filter(fn ($m) => $this::hasTooFewHours($m))
-            ->filter(fn ($m) => $this::notInGracePeriod($m));
+        $atcActiveAreasToSetAsInactive = $activeAreas
+            ->filter(fn ($a) => $this::hasTooFewHours($a))
+            ->filter(fn ($a) => $this::notInGracePeriod($a));
 
         if ($dryRun) {
-            $this->info('[DRY RUN] We would have made ' . $usersToSetAsInactive->count() . ' users inactive');
-            $this->info('[DRY RUN] Specifically: ' . $usersToSetAsInactive->pluck('id'));
+            $this->info('[DRY RUN] We would have made ' . $atcActiveAreasToSetAsInactive->count() . ' areas inactive');
+            $this->info('[DRY RUN] Specifically: ' . $atcActiveAreasToSetAsInactive->pluck('id'));
 
             return Command::SUCCESS;
         }
 
-        // Execute updates on relevant users
-        $this->info('Making ' . $usersToSetAsInactive->count() . ' users inactive');
-        User::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
+        // Execute updates on relevant areas
+        $this->info('Making ' . $atcActiveAreasToSetAsInactive->count() . ' areas inactive');
+        AtcActivity::whereIn('id', $atcActiveAreasToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
 
-        // Send inactivity notification to the users
-        if (! Setting::get('atcActivityAllowReactivation')) {
-            foreach ($usersToSetAsInactive as $userToSetAsInactive) {
-                $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
+        // Only once if all areas are counted as one, per area if counted per area
+        if (Setting::get('atcActivityAllowTotalHours', true)) {
+
+            $sentToUsers = collect();
+            foreach($atcActiveAreasToSetAsInactive as $atcActivity){
+
+                // Skip if already sent to this user
+                if($sentToUsers->contains($atcActivity->user->id)){
+                    continue;
+                }
+    
+                // Send one notification to the user going inactive
+                $atcActivity->user->notify(new InactivityNotification($atcActivity->user));
+                $sentToUsers->push($atcActivity->user->id);
+            }
+        } else {
+            foreach($atcActiveAreasToSetAsInactive as $atcActivity){
+                // Send notification(s) to all users who went inactive per area
+                $atcActivity->user->notify(new InactivityNotification($atcActivity->user, $atcActivity->area));
             }
         }
 
@@ -72,52 +90,21 @@ class UpdateAtcActivity extends Command
     /**
      * Check if the member has too few online hours to be considered active.
      *
-     * @param User member
+     * @param AtcActivity atcActivity
      */
-    private static function hasTooFewHours(User $member)
+    private static function hasTooFewHours(AtcActivity $atcActivity)
     {
-
-        if (Setting::get('atcActivityAllowTotalHours', true)) {
-            return $member->atcActivity->sum('hours') < Setting::get('atcActivityRequirement', 10);
-        } else {
-            $allAreasInactive = true;
-
-            foreach (Area::all() as $area) {
-                $activity = $member->atcActivity->firstWhere('area_id', $area->id);
-                if ($activity && $activity->hours >= Setting::get('atcActivityRequirement', 10)) {
-                    $allAreasInactive = false;
-                }
-            }
-
-            return $allAreasInactive;
-        }
-
+        return $atcActivity->hours < Setting::get('atcActivityRequirement', 10);
     }
 
     /**
      * Check if the member is outside of their grace period.
      *
-     * @param User member
+     * @param AtcActivity atcActivity
      */
-    private static function notInGracePeriod(User $member)
+    private static function notInGracePeriod(AtcActivity $atcActivity)
     {
-        $graceLengthMonths = Setting::get('atcActivityGracePeriod', 12);
-        $notInGracePeriod = true;
-
-        // If no grace is set or within grace period per area, return true
-        foreach (Area::all() as $area) {
-
-            $activity = $member->atcActivity->firstWhere('area_id', $area->id);
-
-            if (
-                $activity
-                && $activity->start_of_grace_period != null
-                && now()->subMonths($graceLengthMonths)->lte($activity->start_of_grace_period)
-            ) {
-                $notInGracePeriod = false;
-            }
-        }
-
-        return $notInGracePeriod;
+        // Grace period is not set or has expired
+        return $atcActivity->start_of_grace_period == null || now()->subMonths(Setting::get('atcActivityGracePeriod', 12))->gte($atcActivity->start_of_grace_period);
     }
 }
