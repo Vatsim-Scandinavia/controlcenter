@@ -584,11 +584,9 @@ class TrainingController extends Controller
                 if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
                     if ($training->type <= 4) {
-                        $training->user->atc_active = true;
-                        $training->user->save();
-
                         try {
                             $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
+                            $activity->atc_active = true;
                             $activity->start_of_grace_period = now();
                             $activity->save();
                         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
