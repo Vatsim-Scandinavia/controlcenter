@@ -32,7 +32,7 @@ class BookingPolicy
     public function create(User $user)
     {
         return
-            $user->active && $user->rating >= VatsimRating::S1->value
+            $user->isActiveAtc() && $user->rating >= VatsimRating::S1->value
             || $user->hasActiveEndorsement('VISITING')
             || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
             || $user->isModeratorOrAbove();
