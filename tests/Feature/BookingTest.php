@@ -58,9 +58,18 @@ class BookingTest extends TestCase
     {
         $controller = User::factory()->create([
             'id' => fake()->numberBetween(100),
-            'atc_active' => true,
             'rating' => $rating->value,
         ]);
+
+        $userActivity = new \App\Models\AtcActivity([
+            'user_id' => $controller->id,
+            'area_id' => 1,
+            'hours' => 100,
+            'atc_active' => true,
+        ]);
+
+        $userActivity->save();
+
         $setup($controller);
         $this->assertCreateBookingAvailable($controller);
         $this->createBooking($controller)->assertValid();

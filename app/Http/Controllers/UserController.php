@@ -41,7 +41,7 @@ class UserController extends Controller
         $apiUsers = [];
         $ccUsers = User::pluck('id');
         $ccUsersHours = AtcActivity::all();
-        $ccUsersActive = User::where('atc_active', true)->pluck('id');
+        $ccUsersActive = User::getActiveAtcMembers()->pluck('id');
 
         // Only include users from the division and index by key
         foreach ($response as $data) {

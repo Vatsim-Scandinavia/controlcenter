@@ -311,15 +311,6 @@ class EndorsementController extends Controller
     }
 
     /**
-     * @param User user
-     */
-    public static function disableAtc($user)
-    {
-        $user->atc_active = false;
-        $user->save();
-    }
-
-    /**
      * Shorten the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request

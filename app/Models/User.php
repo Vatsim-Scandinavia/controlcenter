@@ -75,17 +75,16 @@ class User extends Authenticatable
      */
     public static function allActiveInArea(Area $area)
     {
-
         if (Setting::get('atcActivityAllowTotalHours')) {
-            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('area_id', $area->id)->where(function ($query) {
+            return User::whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
                         ->orWhere('hours', '>=', 0);
                 });
             })->get();
         } else {
-            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('area_id', $area->id)->where(function ($query) {
+            return User::whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
                         ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
                 });
@@ -179,15 +178,15 @@ class User extends Authenticatable
         return $this->email;
     }
 
-    public function getActiveAttribute()
+
+    /*
+    * Check if the user is active as ATC
+    *
+    * @return bool
+    */
+    public function isActiveAtc()
     {
-        $val = $this->atc_active;
-
-        if ($val == null) {
-            return false;
-        }
-
-        return $val;
+        return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
     }
 
     /**
@@ -197,13 +196,16 @@ class User extends Authenticatable
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
-        // Return S1+ users who are VATSCA members
+        // Return S1+ users who are VATSCA members and active as ATC
         if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
-                ->where('atc_active', true)
-                ->get();
+                ->whereHas('atcActivity', function ($query) {
+                    $query->where('atc_active', true);
+                })->get();
         } else {
-            return User::where('atc_active', true)->get();
+            return User::whereHas('atcActivity', function ($query) {
+                    $query->where('atc_active', true);
+                })->get();
         }
     }
 
