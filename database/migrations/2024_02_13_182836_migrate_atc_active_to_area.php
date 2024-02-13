@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         // Update atc hours as this will basis for the migration
-        //Artisan::call('update:atc:hours'); ENABLE ME BEFORE PUSHING DAMMI FUCK DAMMIT ASS
+        Artisan::call('update:atc:hours');
 
         // Get all atc_active `users` and loop through them and their hours and set the `atc_active` column in `atc_activities` to true if they meet the requirements
         $users = User::where('atc_active', true)->get();
