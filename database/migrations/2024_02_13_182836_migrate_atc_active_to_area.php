@@ -5,6 +5,7 @@ use App\Models\AtcActivity;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
@@ -20,7 +21,9 @@ return new class extends Migration
         });
 
         // Update atc hours as this will basis for the migration
-        Artisan::call('update:atc:hours');
+        if (App::environment('production')) {
+            Artisan::call('update:atc:hours');
+        }
 
         // Get all atc_active `users` and loop through them and their hours and set the `atc_active` column in `atc_activities` to true if they meet the requirements
         $users = User::where('atc_active', true)->get();
