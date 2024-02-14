@@ -41,32 +41,48 @@ class UpdateAtcActivity extends Command
             $dryRun = true;
         }
 
-        if ($optionalUserIdFilter) {
-            $activeAreas = AtcActivity::where('atc_active', true)->whereIn('user_id', $optionalUserIdFilter)->get();
-        } else {
-            $activeAreas = AtcActivity::where('atc_active', true)->get();
+        // Get users deemed as active
+        $activeUsers = User::getActiveAtcMembers($optionalUserIdFilter);
+        $atcActivitiesToSetAsInactive = collect();
+
+        foreach ($activeUsers as $user) {
+
+            if (Setting::get('atcActivityBasedOnTotalHours', true)) {
+
+                $userActivities = $user->atcActivity;
+                $totalHours = $userActivities->sum('hours');
+                $hasAnyGrace = $userActivities
+                    ->where('start_of_grace_period', '>=', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                    ->count();
+
+                if ($totalHours < Setting::get('atcActivityRequirement', 10) && ! $hasAnyGrace) {
+                    $userActivities->map(fn ($a) => $atcActivitiesToSetAsInactive->push($a));
+                }
+
+            } else {
+                $user->atcActivity->where('atc_active', true)
+                    ->filter(fn ($a) => $this::hasTooFewHours($a))
+                    ->filter(fn ($a) => $this::notInGracePeriod($a))
+                    ->map(fn ($a) => $atcActivitiesToSetAsInactive->push($a));
+            }
         }
 
-        $atcActiveAreasToSetAsInactive = $activeAreas
-            ->filter(fn ($a) => $this::hasTooFewHours($a))
-            ->filter(fn ($a) => $this::notInGracePeriod($a));
-
         if ($dryRun) {
-            $this->info('[DRY RUN] We would have made ' . $atcActiveAreasToSetAsInactive->count() . ' areas inactive');
-            $this->info('[DRY RUN] Specifically: ' . $atcActiveAreasToSetAsInactive->pluck('id'));
+            $this->info('[DRY RUN] We would have made ' . $atcActivitiesToSetAsInactive->count() . ' areas inactive');
+            $this->info('[DRY RUN] Specifically: ' . $atcActivitiesToSetAsInactive->pluck('id'));
 
             return Command::SUCCESS;
         }
 
         // Execute updates on relevant areas
-        $this->info('Making ' . $atcActiveAreasToSetAsInactive->count() . ' areas inactive');
-        AtcActivity::whereIn('id', $atcActiveAreasToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
+        $this->info('Making ' . $atcActivitiesToSetAsInactive->count() . ' areas inactive');
+        AtcActivity::whereIn('id', $atcActivitiesToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
 
         // Only once if all areas are counted as one, per area if counted per area
         if (Setting::get('atcActivityBasedOnTotalHours', true)) {
 
             $sentToUsers = collect();
-            foreach ($atcActiveAreasToSetAsInactive as $atcActivity) {
+            foreach ($atcActivitiesToSetAsInactive as $atcActivity) {
 
                 // Skip if already sent to this user
                 if ($sentToUsers->contains($atcActivity->user->id)) {
@@ -78,7 +94,7 @@ class UpdateAtcActivity extends Command
                 $sentToUsers->push($atcActivity->user->id);
             }
         } else {
-            foreach ($atcActiveAreasToSetAsInactive as $atcActivity) {
+            foreach ($atcActivitiesToSetAsInactive as $atcActivity) {
                 // Send notification(s) to all users who went inactive per area
                 $atcActivity->user->notify(new InactivityNotification($atcActivity->user, $atcActivity->area));
             }
@@ -98,13 +114,12 @@ class UpdateAtcActivity extends Command
     }
 
     /**
-     * Check if the member is outside of their grace period.
+     * Check if the member is outside of their grace period. Grace period is not set or has expired
      *
      * @param AtcActivity atcActivity
      */
     private static function notInGracePeriod(AtcActivity $atcActivity)
     {
-        // Grace period is not set or has expired
         return $atcActivity->start_of_grace_period == null || now()->subMonths(Setting::get('atcActivityGracePeriod', 12))->gte($atcActivity->start_of_grace_period);
     }
 }
