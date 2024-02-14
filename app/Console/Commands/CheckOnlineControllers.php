@@ -71,14 +71,16 @@ class CheckOnlineControllers extends Command
             $vatsimData = $dataReturn['controllers'];
 
             foreach ($vatsimData as $d) {
+
                 if (preg_match($areasRegex, $d['callsign'])) {
 
                     // Lets check this user
                     $this->info('Checking user ' . $d['cid']);
                     $user = User::find($d['cid']);
-                    $position = Position::where('callsign', $d['callsign'])->get()->first();
+                    $position = Position::firstWhere('callsign', $d['callsign']);
+                    $area = (isset($position->area)) ? $position->area : null;
 
-                    if (isset($user) && ! $user->isAllowedToControlOnline($position->area)) {
+                    if (isset($user) && ! $user->isAllowedToControlOnline($area)) {
                         if (! isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))) {
                             // Send warning to user
                             $user->notify(new InactiveOnlineNotification($user));
@@ -89,14 +91,14 @@ class CheckOnlineControllers extends Command
                             // Send warning to all admins, and moderators in selected area
                             $sendToStaff = User::allWithGroup(1);
 
-                            if ($position) {
+                            if (isset($area)) {
                                 $moderators = User::allWithGroup(2);
                                 foreach ($moderators as $m) {
                                     if ($sendToStaff->where('id', $m->id)->count()) {
                                         continue;
                                     }
 
-                                    if ($m->isModerator(Area::find($position->area))) {
+                                    if ($m->isModerator($area)) {
                                         $sendToStaff->push($m);
                                     }
                                 }
