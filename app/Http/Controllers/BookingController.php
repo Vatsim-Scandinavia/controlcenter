@@ -39,7 +39,7 @@ class BookingController extends Controller
         $positions = new Collection();
 
         if ($user->rating >= VatsimRating::S1->value) {
-            if (Setting::get('atcActivityAllowTotalHours')) {
+            if (Setting::get('atcActivityBasedOnTotalHours')) {
                 $positions = Position::where('rating', '<=', $user->rating)->get();
             } else {
 
