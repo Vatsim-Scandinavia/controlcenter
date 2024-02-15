@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.0.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.0...v5.0.1) (2024-02-15)
+
+
+### Bug Fixes
+
+* ATC hours in training index was zero ([1b82ba9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1b82ba99722da5d77f7d700f6e144c499c457970)), closes [#792](https://github.com/Vatsim-Scandinavia/controlcenter/issues/792)
+* check online controllers missing null check ([c151f0a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c151f0aee0bf4b18549ce6fca22409abee28be1d)), closes [#793](https://github.com/Vatsim-Scandinavia/controlcenter/issues/793)
+* move activity and notification to area level fixes [#795](https://github.com/Vatsim-Scandinavia/controlcenter/issues/795) ([a05f7c3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a05f7c3bfeebca61a4e77ed6c4d6ba9ae7022c70))
+* roster dropdown rating filter ([460ddd5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/460ddd583e6a6549ea4d39b0005dedd898e6a7c2))
+* work email displaying wrong in settings ([11b8e51](https://github.com/Vatsim-Scandinavia/controlcenter/commit/11b8e51d454578cdbfeebad27bcb8f4ce8cf9cd9)), closes [#791](https://github.com/Vatsim-Scandinavia/controlcenter/issues/791)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.10.1 ([#794](https://github.com/Vatsim-Scandinavia/controlcenter/issues/794)) ([9b607d4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/9b607d45098104abe876b2b8d4831247dcfd6eb4))
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.10.5 ([#796](https://github.com/Vatsim-Scandinavia/controlcenter/issues/796)) ([4e1d154](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4e1d154219d23bb1e0e108fe9b19a893dc67e2d3))
+* **deps:** update dependency doctrine/dbal to v3.8.2 ([#803](https://github.com/Vatsim-Scandinavia/controlcenter/issues/803)) ([03aa548](https://github.com/Vatsim-Scandinavia/controlcenter/commit/03aa54810e7dc060467bd1562a9f9f5897a09615))
+* **deps:** update dependency laravel/framework to v10.44.0 ([#798](https://github.com/Vatsim-Scandinavia/controlcenter/issues/798)) ([356501c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/356501cfb8a8a3aa51a64a27634c58cf3552cbdc))
+* **deps:** update dependency laravel/pint to v1.13.11 ([#799](https://github.com/Vatsim-Scandinavia/controlcenter/issues/799)) ([c2f4b6b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c2f4b6bedbaeba63ebad03107b4bf264bae9fff1))
+* **deps:** update dependency vite to v5.1.3 ([#801](https://github.com/Vatsim-Scandinavia/controlcenter/issues/801)) ([cd17348](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cd17348163c23e8511a7600aca4bb193a158ab76))
+* **deps:** update dependency vue to v3.4.19 ([#797](https://github.com/Vatsim-Scandinavia/controlcenter/issues/797)) ([f4c9239](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f4c9239da4363c5ae6d81a04f1ac7ae9ea4bb139))
+
 ## [5.0.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v4.5.0...v5.0.0) (2024-02-11)
 
 
