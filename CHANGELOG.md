@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.1...v5.0.2) (2024-02-16)
+
+
+### Bug Fixes
+
+* area-&gt;positions relationship ([b3d5a7f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b3d5a7f13e90a4bc9b528dfa83d724400743f5c7))
+* rounded atc hours in training list ([19e40d5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/19e40d5936e930a90218bbabcbceaabef35d4902))
+
 ## [5.0.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.0...v5.0.1) (2024-02-15)
 
 
