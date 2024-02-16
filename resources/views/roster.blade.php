@@ -23,11 +23,12 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true"
+                        data-sort-select-options="true"
                         >
                         <thead class="table-light">
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="rating" data-sortable="true" data-filter-control="input">Rating</th>
+                                <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
                                 <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 @foreach($ratings as $r)
                                     <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $r->name }}</th>
@@ -45,8 +46,8 @@
                                         @endcan
                                     </td>
                                     <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
-                                    <td class="text-center text-white {{ $u->active ? 'bg-success' : 'bg-danger' }}">
-                                        @if($u->active)
+                                    <td class="text-center text-white {{ $u->isAtcActive() ? 'bg-success' : 'bg-danger' }}">
+                                        @if($u->isAtcActive())
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @else
                                             <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>

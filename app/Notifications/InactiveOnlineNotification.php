@@ -44,13 +44,14 @@ class InactiveOnlineNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+
         $textLines = [
-            'Please disconnect from the network. Your ATC status is **inactive**. Your unauthorized login has been reported to the local staff.',
+            'Please disconnect from the network. Your ATC status is **inactive** in the area you have connected. Your unauthorized login has been reported to the local staff.',
             'To control online again in our division, you will need to apply for a refresh training with [' . Setting::get('atcActivityContact') . '](' . Setting::get('linkContact') . '),',
         ];
 
         return (new WarningMail('Unauthorized network logon', $this->user, $textLines))
-            ->to($this->user->email, $this->user->name);
+            ->to($this->user->notificationEmail, $this->user->name);
     }
 
     /**

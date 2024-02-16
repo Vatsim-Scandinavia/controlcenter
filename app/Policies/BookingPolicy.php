@@ -32,7 +32,7 @@ class BookingPolicy
     public function create(User $user)
     {
         return
-            $user->active && $user->rating >= VatsimRating::S1->value
+            $user->isAtcActive() && $user->rating >= VatsimRating::S1->value
             || $user->hasActiveEndorsement('VISITING')
             || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
             || $user->isModeratorOrAbove();
@@ -115,7 +115,7 @@ class BookingPolicy
             if (
                 $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating || $user->getActiveTraining()->isMaeTraining()) &&
-                $user->getActiveTraining()->area->id === $booking->position->area
+                $user->getActiveTraining()->area->id === $booking->position->area->id
             ) {
                 return true;
             }

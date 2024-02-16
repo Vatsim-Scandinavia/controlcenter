@@ -32,7 +32,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'last_login', 'access_token', 'refresh_token', 'token_expires',
+        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'atc_active', 'last_login', 'access_token', 'refresh_token', 'token_expires',
     ];
 
     /**
@@ -75,21 +75,20 @@ class User extends Authenticatable
      */
     public static function allActiveInArea(Area $area)
     {
-
-        if (Setting::get('atcActivityAllowTotalHours')) {
-            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('area_id', $area->id)->where(function ($query) {
+        if (Setting::get('atcActivityBasedOnTotalHours')) {
+            return User::whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
                         ->orWhere('hours', '>=', 0);
                 });
-            })->get();
+            })->with(['endorsements', 'atcActivity'])->get();
         } else {
-            return User::where('atc_active', true)->whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('area_id', $area->id)->where(function ($query) {
+            return User::whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
                     $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
                         ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
                 });
-            })->get();
+            })->with(['endorsements', 'atcActivity'])->get();
         }
 
     }
@@ -170,27 +169,58 @@ class User extends Authenticatable
         return $this->hasMany(Feedback::class, 'reference_user_id');
     }
 
-    /**
-     * @todo: Convert to to new v9.x+ mutators https://laravel.com/docs/9.x/eloquent-mutators
-     */
-    public function getEmailAttribute($value)
+    public function getNotificationEmailAttribute()
     {
         if ($this->setting_workmail_address) {
             return $this->setting_workmail_address;
         }
 
-        return $value;
+        return $this->email;
     }
 
-    public function getActiveAttribute()
+    /**
+     * Check if the user is active as ATC
+     *
+     * @return bool
+     */
+    public function isAtcActive(?Area $area = null)
     {
-        $val = $this->atc_active;
+        if (Setting::get('atcActivityBasedOnTotalHours')) {
 
-        if ($val == null) {
+            $atLeastOneAreaActive = AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+
+            $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
+            $isInGracePeriod = $this->atcActivity->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
+
+            return $atLeastOneAreaActive && ($hasEnoughHours || $isInGracePeriod);
+        } else {
+            if ($area) {
+                return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->where('area_id', $area->id)->exists();
+            }
+
+            return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+        }
+
+    }
+
+    /**
+     * Check if the user is allowed to control online
+     *
+     * @return bool
+     */
+    public function isAllowedToControlOnline(?Area $area = null)
+    {
+
+        if (
+            ! $this->isVisiting($area) &&
+            ! $this->isAtcActive($area) &&
+            ! $this->hasActiveTrainings(false, $area) &&
+            ! $this->hasRecentlyCompletedTraining()
+        ) {
             return false;
         }
 
-        return $val;
+        return true;
     }
 
     /**
@@ -200,13 +230,16 @@ class User extends Authenticatable
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
-        // Return S1+ users who are VATSCA members
+        // Return S1+ users who are VATSCA members and active as ATC
         if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
-                ->where('atc_active', true)
-                ->get();
+                ->whereHas('atcActivity', function ($query) {
+                    $query->where('atc_active', true);
+                })->get();
         } else {
-            return User::where('atc_active', true)->get();
+            return User::whereHas('atcActivity', function ($query) {
+                $query->where('atc_active', true);
+            })->get();
         }
     }
 

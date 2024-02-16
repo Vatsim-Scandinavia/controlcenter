@@ -42,6 +42,8 @@ jobs:
     needs: [lint]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}
     env:
       CONTRIBUTORS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DOCS_BRANCH: gh-pages

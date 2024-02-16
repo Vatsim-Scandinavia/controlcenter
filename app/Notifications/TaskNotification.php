@@ -75,7 +75,7 @@ class TaskNotification extends Notification
 
         // Return the mail message
         return (new TaskMail('Task Digest', $this->user, $textLines))
-            ->to($this->user->email);
+            ->to($this->user->notificationEmail);
     }
 
     /**
