@@ -264,7 +264,7 @@ class UserController extends Controller
 
                     // Call the division API to assign mentor
                     if ($group->id == 3) {
-                        $response = DivisionApi::assignMentor($area, $user, Auth::id());
+                        $response = DivisionApi::assignMentor($user, Auth::id());
                         if ($response && $response->failed()) {
                             return back()->withErrors('Request failed due to error in '.DivisionApi::getName().' API: ' . $response->json()['error']);
                         }
@@ -279,7 +279,7 @@ class UserController extends Controller
 
                     // Call the division API to assign mentor
                     if ($group->id == 3) {
-                        $response = DivisionApi::removeMentor($area, $user, Auth::id());
+                        $response = DivisionApi::removeMentor($user, Auth::id());
                         if ($response && $response->failed()) {
                             return back()->withErrors('Request failed due to error in '.DivisionApi::getName().' API: ' . $response->json()['error']);
                         }

@@ -5,6 +5,7 @@ namespace App\Services\DivisionApi\Adapters;
 use App\Contracts\DivisionApiContract;
 use App\Models\Area;
 use App\Models\User;
+use App\Models\Group;
 use Illuminate\Support\Facades\Http;
 
 class VATEUD implements DivisionApiContract
@@ -25,8 +26,9 @@ class VATEUD implements DivisionApiContract
         return $this->name;
     }
 
-    public function assignMentor(Area $area, User $user, int $requesterId)
+    public function assignMentor(User $user, int $requesterId)
     {
+
         $url = $this->baseUrl . '/facility/training/assign/' . $user->id . '/mentor';
         $response = Http::withHeaders([
             'Accept' => 'application/json',
@@ -38,17 +40,26 @@ class VATEUD implements DivisionApiContract
         return $response;
     }
 
-    public function removeMentor(Area $area, User $user, int $requesterId)
+    public function removeMentor(User $user, int $requesterId)
     {
-        $url = $this->baseUrl . '/facility/training/remove/' . $user->id . '/mentor';
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'X-API-KEY' => $this->apiToken,
-        ])->post($url, [
-            'user_cid' => $requesterId,
-        ]);
 
-        return $response;
+        // Only remove from API if this is the last area in CC.
+        $mentorAssignments = Group::mentors()->where('id', $user->id)->count();
+
+        if($mentorAssignments <= 1){
+            $url = $this->baseUrl . '/facility/training/remove/' . $user->id . '/mentor';
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'X-API-KEY' => $this->apiToken,
+            ])->post($url, [
+                'user_cid' => $requesterId,
+            ]);
+
+            return $response;
+        } else {
+            return false;
+        }
+        
     }
 
     public function assignTheoryExam($parameters)

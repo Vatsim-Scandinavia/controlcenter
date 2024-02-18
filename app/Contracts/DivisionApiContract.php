@@ -7,8 +7,8 @@ use App\Models\User;
 
 interface DivisionApiContract
 {
-    public function assignMentor(Area $area, User $user, int $requesterId);
-    public function removeMentor(Area $area, User $user, int $requesterId);
+    public function assignMentor(User $user, int $requesterId);
+    public function removeMentor(User $user, int $requesterId);
 
     public function assignTheoryExam($parameters);
 }
