@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\DivisionApi;
 use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\Position;
@@ -233,6 +234,13 @@ class EndorsementController extends Controller
                 return back()->withInput()->withErrors($user->name . ' has already an ' . $endorsementType . ' endorsement. Revoke it first, to create a new one.');
             }
 
+            // All clear, let's start by attemping the insertion to the API
+            $rating = Rating::find($data['ratingGRP']);
+            $response = DivisionApi::assignExaminer($user, $rating, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+            }
+
             // All clear, create endorsement
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
 
@@ -293,6 +301,13 @@ class EndorsementController extends Controller
 
         if ($endorsement->revoked) {
             return redirect()->back()->withErrors($user->name . "'s " . $endorsement->type . ' endorsement is already revoked.');
+        }
+
+        if ($endorsement->type == 'EXAMINER') {
+            $response = DivisionApi::removeExaminer($user, $endorsement, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+            }
         }
 
         $endorsement->revoked = true;
