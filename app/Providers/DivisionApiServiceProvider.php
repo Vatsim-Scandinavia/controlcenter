@@ -5,7 +5,7 @@ namespace App\Providers;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Contracts\DivisionApiContract;
 use App\Helpers\Vatsim;
-use App\Services\DivisionApi\Adapters\EUD;
+use App\Services\DivisionApi\Adapters\VATEUD;
 use App\Services\DivisionApi\Adapters\NoOpAdapter;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +17,7 @@ class DivisionApiServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(DivisionApiContract::class, function ($app) {
-            $apiType = Vatsim::getDivision();
+            $apiType = "VATEUD";
             $enabled = Setting::get('division_api_enabled', true); // Setting from admin panel
 
             if (! $enabled) {
@@ -25,8 +25,8 @@ class DivisionApiServiceProvider extends ServiceProvider
             }
 
             switch ($apiType) {
-                case 'EUD':
-                    return new EUD();
+                case 'VATEUD':
+                    return new VATEUD();
                 default:
                     return new NoOpAdapter();
             }
