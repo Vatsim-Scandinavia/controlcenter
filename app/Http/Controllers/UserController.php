@@ -266,7 +266,7 @@ class UserController extends Controller
                     if ($group->id == 3) {
                         $response = DivisionApi::assignMentor($area, $user, Auth::id());
                         if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in Division API: ' . $response->json()['message']);
+                            return back()->withErrors('Request failed due to error in '.DivisionApi::getName().' API: ' . $response->json()['error']);
                         }
                     }
 
@@ -276,6 +276,16 @@ class UserController extends Controller
             } else {
                 if ($value == false) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
+
+                    // Call the division API to assign mentor
+                    if ($group->id == 3) {
+                        $response = DivisionApi::removeMentor($area, $user, Auth::id());
+                        if ($response && $response->failed()) {
+                            return back()->withErrors('Request failed due to error in '.DivisionApi::getName().' API: ' . $response->json()['error']);
+                        }
+                    }
+
+                    // Detach the permission
                     $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
                 }
             }
