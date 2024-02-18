@@ -4,8 +4,8 @@ namespace App\Services\DivisionApi\Adapters;
 
 use App\Contracts\DivisionApiContract;
 use App\Models\Area;
-use App\Models\User;
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
 class VATEUD implements DivisionApiContract
@@ -14,7 +14,7 @@ class VATEUD implements DivisionApiContract
 
     protected $apiToken;
 
-    protected $name = "VATEUD";
+    protected $name = 'VATEUD';
 
     public function __construct()
     {
@@ -22,7 +22,8 @@ class VATEUD implements DivisionApiContract
         $this->apiToken = config('vatsim.division_api_token');
     }
 
-    public function getName(){
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -46,7 +47,7 @@ class VATEUD implements DivisionApiContract
         // Only remove from API if this is the last area in CC.
         $mentorAssignments = Group::mentors()->where('id', $user->id)->count();
 
-        if($mentorAssignments <= 1){
+        if ($mentorAssignments <= 1) {
             $url = $this->baseUrl . '/facility/training/remove/' . $user->id . '/mentor';
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
@@ -59,7 +60,7 @@ class VATEUD implements DivisionApiContract
         } else {
             return false;
         }
-        
+
     }
 
     public function assignTheoryExam($parameters)

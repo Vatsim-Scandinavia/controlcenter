@@ -4,9 +4,8 @@ namespace App\Providers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Contracts\DivisionApiContract;
-use App\Helpers\Vatsim;
-use App\Services\DivisionApi\Adapters\VATEUD;
 use App\Services\DivisionApi\Adapters\NoOpAdapter;
+use App\Services\DivisionApi\Adapters\VATEUD;
 use Illuminate\Support\ServiceProvider;
 
 class DivisionApiServiceProvider extends ServiceProvider

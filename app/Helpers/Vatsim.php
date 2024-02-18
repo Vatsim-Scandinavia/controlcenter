@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 
 class Vatsim
 {
-
     /**
      * Checks if a position belongs to the division.
      *
@@ -29,5 +28,4 @@ class Vatsim
 
         return false;
     }
-
 }
