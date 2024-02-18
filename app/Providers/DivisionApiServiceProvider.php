@@ -17,8 +17,8 @@ class DivisionApiServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(DivisionApiContract::class, function ($app) {
-            $apiType = "VATEUD";
-            $enabled = Setting::get('division_api_enabled', true); // Setting from admin panel
+            $apiType = config('vatsim.division_api_driver'); // Setting from environment
+            $enabled = Setting::get('divisionApiEnabled', false); // Setting from admin panel
 
             if (! $enabled) {
                 return new NoOpAdapter();

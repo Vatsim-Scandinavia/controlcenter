@@ -315,6 +315,27 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-white">Division API</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 mb-12">
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input @error('divisionApiEnabled') is-invalid @enderror" type="checkbox" id="divisionApiEnabled" name="divisionApiEnabled" {{ Setting::get('divisionApiEnabled') ? "checked" : "" }}>
+                                <label class="form-check-label" for="divisionApiEnabled">
+                                    Enable division API calls
+                                </label>
+                                <small class="form-text d-block">Automatic calls based on the environmental configuration.</small>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 fw-bold text-white">Feedback</h6>
                 </div>
                 <div class="card-body">

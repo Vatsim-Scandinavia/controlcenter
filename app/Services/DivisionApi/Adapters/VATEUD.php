@@ -17,8 +17,8 @@ class VATEUD implements DivisionApiContract
 
     public function __construct()
     {
-        $this->baseUrl = config('app.division_api_endpoint');
-        $this->apiToken = config('app.division_api_token');
+        $this->baseUrl = config('vatsim.division_api_url');
+        $this->apiToken = config('vatsim.division_api_token');
     }
 
     public function getName(){

@@ -107,18 +107,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Divisional API Integration
-    |--------------------------------------------------------------------------
-    |
-    | This is the configuration for the divisional API integration.
-    | This is used to configure the secrets and endpoints.
-    |
-    */
-    'division_api_endpoint' => env('APP_DIVISION_API_ENDPOINT'),
-    'division_api_token' => env('APP_DIVISION_API_TOKEN'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

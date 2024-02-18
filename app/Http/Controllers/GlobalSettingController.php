@@ -60,6 +60,7 @@ class GlobalSettingController extends Controller
             'linkVisiting' => 'required|url',
             'linkDiscord' => 'required|url',
             'linkMoodle' => '',
+            'divisionApiEnabled' => '',
             'feedbackEnabled' => '',
             'feedbackForwardEmail' => 'nullable|email',
             'telemetryEnabled' => '',
@@ -71,6 +72,7 @@ class GlobalSettingController extends Controller
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
         isset($data['atcActivityAllowReactivation']) ? $atcActivityAllowReactivation = true : $atcActivityAllowReactivation = false;
         isset($data['atcActivityAllowInactiveControlling']) ? $atcActivityAllowInactiveControlling = true : $atcActivityAllowInactiveControlling = false;
+        isset($data['divisionApiEnabled']) ? $divisionApiEnabled = true : $divisionApiEnabled = false;
         isset($data['feedbackEnabled']) ? $feedbackEnabled = true : $feedbackEnabled = false;
 
         // The setting dependency doesn't support null values, so we need to set it to false if it's not set
@@ -100,6 +102,7 @@ class GlobalSettingController extends Controller
         Setting::set('linkVisiting', $data['linkVisiting']);
         Setting::set('linkDiscord', $data['linkDiscord']);
         Setting::set('linkMoodle', $linkMoodle);
+        Setting::set('divisionApiEnabled', $divisionApiEnabled);
         Setting::set('feedbackEnabled', $feedbackEnabled);
         Setting::set('feedbackForwardEmail', $feedbackForwardEmail);
         Setting::set('telemetryEnabled', $telemetryEnabled);
