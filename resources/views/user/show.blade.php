@@ -33,7 +33,7 @@
                     <dd>{{ $user->first_name.' '.$user->last_name }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->first_name.' '.$user->last_name }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt>Email</dt>
-                    <dd class="separator pb-3">{{ $user->notificationEmail }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->notificationEmail }}')"><i class="fas fa-copy"></i></button></dd>
+                    <dd class="separator pb-3">{{ $user->email }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->email }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt class="pt-2">ATC Rating</dt>
                     <dd>{{ $user->rating_short }}</dd>
@@ -47,7 +47,7 @@
                             <i class="far fa-circle-check text-success"></i>
                             Visiting
                         @else
-                            <i class="fas fa-circle-{{ $user->isAtcActive() ? 'check' : 'xmark' }} text-{{ $user->isAtcActive() ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
+                            <i class="fas fa-circle-{{ $user->active ? 'check' : 'xmark' }} text-{{ $user->active ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
                         @endif
                     </dd>
 
@@ -55,7 +55,7 @@
                     @foreach($areas as $area)
                         <dd class="mb-0">
 
-                            @if(!Setting::get('atcActivityBasedOnTotalHours'))
+                            @if(!Setting::get('atcActivityAllowTotalHours'))
                                 @if($atcActivityHours[$area->id]["active"])
                                     <i class="far fa-circle-check text-success"></i>
                                 @else
@@ -490,16 +490,15 @@
                             connection.callsignSuffix = connection.callsign.split('_').pop()
                         })
 
-                        // Create chart labels based on the last 11 months
+                        // Store activity per month and sum the total hours
                         var activity = []
-
-                        for (var i = 11; i >= 0; i--) {
-                            activity[new Date(new Date().setMonth(new Date().getMonth() - i)).toLocaleString('default', { month: 'short' })] = 0
-                        }
-
                         data.forEach(function (connection) {
                             var month = connection.logontime.toLocaleString('default', { month: 'short' })
-                            activity[month] += connection.hours
+                            if (activity[month]) {
+                                activity[month] += connection.hours
+                            } else {
+                                activity[month] = connection.hours
+                            }
                         })
 
                         // Define labels and chart data

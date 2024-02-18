@@ -51,9 +51,7 @@ class UserController extends Controller
         if ($paramIncludeAllUsers) {
             $returnUsers = User::where('subdivision', config('app.owner_short'));
             if ($paramOnlyActive) {
-                $returnUsers = $returnUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $returnUsers = $returnUsers->where('atc_active', true);
             }
             $returnUsers = $returnUsers->with($queryInclude)->get();
         }
@@ -63,9 +61,7 @@ class UserController extends Controller
                 $q->where('expired', false)->where('revoked', false);
             })->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
-                $endorsementUsers = $endorsementUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $endorsementUsers = $endorsementUsers->where('atc_active', true);
             }
             $endorsementUsers = $endorsementUsers->with($queryInclude)->get();
 
@@ -75,9 +71,7 @@ class UserController extends Controller
         if ($paramIncludeRoles) {
             $roleUsers = User::whereHas('groups')->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
-                $roleUsers = $roleUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $roleUsers = $roleUsers->where('atc_active', true);
             }
             $roleUsers = $roleUsers->with($queryInclude)->get();
 
@@ -89,9 +83,7 @@ class UserController extends Controller
                 $q->where('status', '>=', 0);
             })->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
-                $trainingUsers = $trainingUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $trainingUsers = $trainingUsers->where('atc_active', true);
             }
             $trainingUsers = $trainingUsers->with($queryInclude)->get();
 
@@ -105,7 +97,7 @@ class UserController extends Controller
         // Endorsements
         if ($paramIncludeEndorsements) {
             foreach ($returnUsers as $user) {
-                $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'MASC', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
+                $user->endorsements = $this->mapEndorsements($user->endorsements->where('expired', false)->where('revoked', false));
             }
         }
 
@@ -161,7 +153,7 @@ class UserController extends Controller
             ($includeDivisions) ? $returnData['region'] = $user->region : null;
             ($includeDivisions) ? $returnData['division'] = $user->division : null;
             ($includeDivisions) ? $returnData['subdivision'] = $user->subdivision : null;
-            $returnData['atc_active'] = $user->isAtcActive();
+            $returnData['atc_active'] = boolval($user->atc_active);
             ($includeEndorsements) ? $returnData['endorsements'] = $user->endorsements : null;
             ($includeRoles) ? $returnData['roles'] = $user->roles : null;
             ($includeTraining) ? $returnData['training'] = $user->training : null;

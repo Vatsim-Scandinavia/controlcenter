@@ -49,7 +49,7 @@ class EndorsementCreatedNotification extends Notification implements ShouldQueue
         ];
 
         return (new EndorsementMail('Training Endorsement Issued', $this->endorsement, $textLines))
-            ->to($this->endorsement->user->notificationEmail, $this->endorsement->user->name);
+            ->to($this->endorsement->user->email, $this->endorsement->user->name);
     }
 
     /**

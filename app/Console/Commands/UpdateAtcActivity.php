@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
-use App\Models\AtcActivity;
 use App\Models\User;
 use App\Notifications\InactivityNotification;
 use Illuminate\Console\Command;
@@ -41,62 +40,29 @@ class UpdateAtcActivity extends Command
             $dryRun = true;
         }
 
-        // Get users deemed as active
-        $activeUsers = User::getActiveAtcMembers($optionalUserIdFilter);
-        $atcActivitiesToSetAsInactive = collect();
+        $activeMembers = User::getActiveAtcMembers($optionalUserIdFilter);
+        $activeUsers = User::whereIn('id', $activeMembers->pluck('id'))->has('atcActivity')->with('atcActivity')->get();
 
-        foreach ($activeUsers as $user) {
-
-            if (Setting::get('atcActivityBasedOnTotalHours', true)) {
-
-                $userActivities = $user->atcActivity;
-                $totalHours = $userActivities->sum('hours');
-                $hasAnyGrace = $userActivities
-                    ->where('start_of_grace_period', '>=', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
-                    ->count();
-
-                if ($totalHours < Setting::get('atcActivityRequirement', 10) && ! $hasAnyGrace) {
-                    $userActivities->map(fn ($a) => $atcActivitiesToSetAsInactive->push($a));
-                }
-
-            } else {
-                $user->atcActivity->where('atc_active', true)
-                    ->filter(fn ($a) => $this::hasTooFewHours($a))
-                    ->filter(fn ($a) => $this::notInGracePeriod($a))
-                    ->map(fn ($a) => $atcActivitiesToSetAsInactive->push($a));
-            }
-        }
+        // Filter users
+        $usersToSetAsInactive = $activeUsers
+            ->filter(fn ($m) => $this::hasTooFewHours($m))
+            ->filter(fn ($m) => $this::notInGracePeriod($m));
 
         if ($dryRun) {
-            $this->info('[DRY RUN] We would have made ' . $atcActivitiesToSetAsInactive->count() . ' areas inactive');
-            $this->info('[DRY RUN] Specifically: ' . $atcActivitiesToSetAsInactive->pluck('id'));
+            $this->info('[DRY RUN] We would have made ' . $usersToSetAsInactive->count() . ' users inactive');
+            $this->info('[DRY RUN] Specifically: ' . $usersToSetAsInactive->pluck('id'));
 
             return Command::SUCCESS;
         }
 
-        // Execute updates on relevant areas
-        $this->info('Making ' . $atcActivitiesToSetAsInactive->count() . ' areas inactive');
-        AtcActivity::whereIn('id', $atcActivitiesToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
+        // Execute updates on relevant users
+        $this->info('Making ' . $usersToSetAsInactive->count() . ' users inactive');
+        User::whereIn('id', $usersToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
 
-        // Only once if all areas are counted as one, per area if counted per area
-        if (Setting::get('atcActivityBasedOnTotalHours', true)) {
-
-            $sentToUsers = collect();
-            foreach ($atcActivitiesToSetAsInactive as $atcActivity) {
-
-                // Skip if already sent to this user
-                if ($sentToUsers->contains($atcActivity->user->id)) {
-                    continue;
-                }
-
-                // Send one notification to the user going inactive
-                $atcActivity->user->notify(new InactivityNotification($atcActivity->user));
-                $sentToUsers->push($atcActivity->user->id);
-            }
-        } else {
-            foreach ($atcActivitiesToSetAsInactive as $atcActivity) {
-                // Send notification(s) to all users who went inactive per area
-                $atcActivity->user->notify(new InactivityNotification($atcActivity->user, $atcActivity->area));
+        // Send inactivity notification to the users
+        if (! Setting::get('atcActivityAllowReactivation')) {
+            foreach ($usersToSetAsInactive as $userToSetAsInactive) {
+                $userToSetAsInactive->notify(new InactivityNotification($userToSetAsInactive));
             }
         }
 
@@ -106,20 +72,52 @@ class UpdateAtcActivity extends Command
     /**
      * Check if the member has too few online hours to be considered active.
      *
-     * @param AtcActivity atcActivity
+     * @param User member
      */
-    private static function hasTooFewHours(AtcActivity $atcActivity)
+    private static function hasTooFewHours(User $member)
     {
-        return $atcActivity->hours < Setting::get('atcActivityRequirement', 10);
+
+        if (Setting::get('atcActivityAllowTotalHours', true)) {
+            return $member->atcActivity->sum('hours') < Setting::get('atcActivityRequirement', 10);
+        } else {
+            $allAreasInactive = true;
+
+            foreach (Area::all() as $area) {
+                $activity = $member->atcActivity->firstWhere('area_id', $area->id);
+                if ($activity && $activity->hours >= Setting::get('atcActivityRequirement', 10)) {
+                    $allAreasInactive = false;
+                }
+            }
+
+            return $allAreasInactive;
+        }
+
     }
 
     /**
-     * Check if the member is outside of their grace period. Grace period is not set or has expired
+     * Check if the member is outside of their grace period.
      *
-     * @param AtcActivity atcActivity
+     * @param User member
      */
-    private static function notInGracePeriod(AtcActivity $atcActivity)
+    private static function notInGracePeriod(User $member)
     {
-        return $atcActivity->start_of_grace_period == null || now()->subMonths(Setting::get('atcActivityGracePeriod', 12))->gte($atcActivity->start_of_grace_period);
+        $graceLengthMonths = Setting::get('atcActivityGracePeriod', 12);
+        $notInGracePeriod = true;
+
+        // If no grace is set or within grace period per area, return true
+        foreach (Area::all() as $area) {
+
+            $activity = $member->atcActivity->firstWhere('area_id', $area->id);
+
+            if (
+                $activity
+                && $activity->start_of_grace_period != null
+                && now()->subMonths($graceLengthMonths)->lte($activity->start_of_grace_period)
+            ) {
+                $notInGracePeriod = false;
+            }
+        }
+
+        return $notInGracePeriod;
     }
 }

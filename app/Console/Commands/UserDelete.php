@@ -91,6 +91,7 @@ class UserDelete extends Command
                     $user->region = 'XXX';
                     $user->division = null;
                     $user->subdivision = null;
+                    $user->atc_active = null;
                     $user->access_token = null;
                     $user->refresh_token = null;
                     $user->token_expires = null;

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\WarningMail;
-use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -17,17 +16,14 @@ class InactivityNotification extends Notification implements ShouldQueue
 
     private User $user;
 
-    private ?Area $area;
-
     /**
      * Create a new notification instance.
      *
      * @param  Endorsement  $endorsement
      */
-    public function __construct(User $user, ?Area $area = null)
+    public function __construct(User $user)
     {
         $this->user = $user;
-        $this->area = $area;
     }
 
     /**
@@ -49,27 +45,22 @@ class InactivityNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-
-        if (isset($this->area)) {
-            $inactiveString = 'Your ATC status has been set as **inactive** in **' . $this->area->name . '**.';
-        } else {
-            $inactiveString = 'Your ATC status has been set as **inactive**.';
-        }
-
         if (Setting::get('atcActivityAllowInactiveControlling')) {
-            $loginRuleString = 'You may however still log on the network in ' . (isset($this->area) ? $this->area->name : 'our area') . ' if you wish. Please check the local policies for more information what it means to be inactive.';
+            $textLines = [
+                'Your ATC Status has been set as **inactive**. You may however still log on the network in our division if you wish.',
+                'According to local rules, you are required to have at least ' . Setting::get('atcActivityRequirement') . ' online hours during the last ' . Setting::get('atcActivityQualificationPeriod') . ' months. You did not fulfill this requirement, and therefore you are now set as inactive.',
+                'Please check local rules for more information what it means to be inactive.',
+            ];
         } else {
-            $loginRuleString = 'You are no longer allowed to log on the network in ' . (isset($this->area) ? $this->area->name : 'our area') . '. To control online again, you will need to apply for a refresh training with [' . Setting::get('atcActivityContact') . '](' . Setting::get('linkContact') . ')';
+            $textLines = [
+                'Your ATC Status has been set as **inactive**. You are no longer allowed to log on the network in our division.',
+                'According to local rules, you are required to have at least ' . Setting::get('atcActivityRequirement') . ' online hours during the last ' . Setting::get('atcActivityQualificationPeriod') . ' months. You did not fulfill this requirement, and therefore you are now set as inactive.',
+                'To control online again, you will need to apply for a refresh training with [' . Setting::get('atcActivityContact') . '](' . Setting::get('linkContact') . '),',
+            ];
         }
-
-        $textLines = [
-            $inactiveString,
-            $loginRuleString,
-            'According to local rules, you are required to have at least ' . Setting::get('atcActivityRequirement') . ' online hours during the last ' . Setting::get('atcActivityQualificationPeriod') . ' months. You did not fulfill this requirement, and therefore you are now set as inactive.',
-        ];
 
         return (new WarningMail('You are now inactive', $this->user, $textLines))
-            ->to($this->user->notificationEmail, $this->user->name);
+            ->to($this->user->email, $this->user->name);
     }
 
     /**

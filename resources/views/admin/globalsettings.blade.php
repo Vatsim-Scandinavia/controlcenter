@@ -192,22 +192,21 @@
                         </div>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input @error('atcActivityBasedOnTotalHours') is-invalid @enderror" type="checkbox" id="checkatcActivityBasedOnTotalHours" name="atcActivityBasedOnTotalHours" {{ Setting::get('atcActivityBasedOnTotalHours') ? "checked" : "" }}>
-                        <label class="form-check-label" for="checkatcActivityBasedOnTotalHours">
-                            Activity based on total hours
+                        <input class="form-check-input @error('atcActivityAllowTotalHours') is-invalid @enderror" type="checkbox" id="checkatcActivityAllowTotalHours" name="atcActivityAllowTotalHours" {{ Setting::get('atcActivityAllowTotalHours') ? "checked" : "" }}>
+                        <label class="form-check-label" for="checkatcActivityAllowTotalHours">
+                            Consider total controlling hours across all areas for ATC Active status
                         </label>
                         <small class="form-text d-block">
-                            Enabled: ATC Active status is granted based on total controlling hours across all areas<br>
-                            Disabled: ATC Active status is granted if the activity requirement is met in one or more individual areas.
-                            
+                            Disabled: ATC Active status is granted if the activity requirement is met in one or more individual areas.<br>
+                            Enabled: ATC Active status is granted based on total controlling hours across all areas
                         </small>
                     </div>
                     <div class="form-check mt-3">
                         <input class="form-check-input @error('atcActivityNotifyInactive') is-invalid @enderror" type="checkbox" id="check1" name="atcActivityNotifyInactive" {{ Setting::get('atcActivityNotifyInactive') ? "checked" : "" }}>
                         <label class="form-check-label" for="check1">
-                            Send inactive controller login warnings
+                            Send inactive login notification
                         </label>
-                        <small class="form-text d-block">When a controller logs on the network as inactive, a warning email is sent to the controller with a copy to area staff.</small>
+                        <small class="form-text d-block">Sends an e-mail to users with copy to admins, when logged in as inactive controller on the network.</small>
                     </div>
                     <div class="form-check mt-3">
                         <input class="form-check-input @error('atcActivityAllowReactivation') is-invalid @enderror" type="checkbox" id="check2" name="atcActivityAllowReactivation" {{ Setting::get('atcActivityAllowReactivation') ? "checked" : "" }}>
@@ -215,8 +214,8 @@
                             Allow automatic re-activation of inactive controllers
                         </label>
                         <small class="form-text d-block">
-                            Enabled: Allow a controller to collect enough hours as inactive to automatically become active<br>
-                            Disabled: Only a training marked as completed will reactivate a controller as ATC Active
+                            Disabled: Only a training marked as completed will reactivate a controller as ATC Active<br>
+                            Enabled: Same as above and if controller passes activity requirement they will automatically be set as ATC Active. 
                         </small>
                     </div>
                     <div class="form-check mt-3">
@@ -225,9 +224,8 @@
                             Allow inactive controlling
                         </label>
                         <small class="form-text d-block">
-                            Enabled: When going inactive, we tell the controller that controlling is still allowed.<br>
-                            Disabled: When going inactive, we tell the controller that controlling is no longer allowed prior of refresh training.
-                            
+                            Disabled: Controllers will be warned if logged on network as inactive. When going inactive, we tell the controller that controlling is no longer allowed.<br>
+                            Enabled: Controllers will not be warned when logged on network as inactive. When going inactive, we tell the controller that controlling is still allowed.
                         </small>
                     </div>
                 </div>

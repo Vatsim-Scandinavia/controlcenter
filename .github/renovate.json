@@ -3,7 +3,6 @@
     "configMigration": true,
     "extends": [
         "config:recommended",
-        ":pinDevDependencies",
-        ":semanticPrefixChore"
+        ":pinDevDependencies"
     ]
 }

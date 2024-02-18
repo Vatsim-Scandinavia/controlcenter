@@ -26,11 +26,9 @@
                             </div>
                             
                             <div class="mb-3 mt-4">
-                                <label class="form-label" for="active_email">Your VATSIM registered e-mail</label>
+                                <label class="form-label" for="active_email">Your registered e-mail</label>
                                 <input type="email" class="form-control" name="active_email" value="{{ $user->email }}" disabled>
-                                @if(!$user->setting_workmail_address)
-                                    <small class="form-text text-muted">We're sending notifications to this address.</small>
-                                @endif
+                                <small class="form-text text-muted">We're sending notifications to this address.</small>
                             </div>
 
                             @if($user->isMentorOrAbove())
