@@ -144,6 +144,13 @@ class EndorsementController extends Controller
                 }
             }
 
+            // All clear, let's start by attemping the insertion to the API
+            $rating = Rating::find($data['ratingMASC']);
+            $response = DivisionApi::assignTierEndorsement($user, $rating, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+
             // All clear, create endorsement
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
 
@@ -305,6 +312,11 @@ class EndorsementController extends Controller
 
         if ($endorsement->type == 'EXAMINER') {
             $response = DivisionApi::removeExaminer($user, $endorsement, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+            }
+        } elseif($endorsement->type == 'MASC') {
+            $response = DivisionApi::revokeTierEndorsement($endorsement);
             if ($response && $response->failed()) {
                 return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
             }

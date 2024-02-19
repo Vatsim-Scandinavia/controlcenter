@@ -115,6 +115,59 @@ class VATEUD implements DivisionApiContract
         return false;
     }
 
+    /**
+     * Assign a training position to a user
+     *
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function assignTierEndorsement(User $user, Rating $rating, int $requesterId)
+    {
+
+        // Check for endorsement type to call correct endpoint, Special Center is not supported
+        if($rating->endorsement_type == 'T1'){
+            return $this->callApi('/facility/endorsements/tier-1', 'POST', [
+                'user_cid' => $user->id,
+                'position' => $rating->name,
+                'instructor_cid' => $requesterId,
+            ]);
+        } elseif($rating->endorsement_type == 'T2'){
+            return $this->callApi('/facility/endorsements/tier-2', 'POST', [
+                'user_cid' => $user->id,
+                'position' => $rating->name,
+                'instructor_cid' => $requesterId,
+            ]);
+        }
+
+        return false;
+    }
+
+    /**
+     * Remove a training position from a user
+     * 
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function revokeTierEndorsement(Endorsement $endorsement){
+
+        if($endorsement->ratings->first()->endorsement_type == 'T1'){
+            $externalEndorsements = $this->callApi('/facility/endorsements/tier-1', 'GET')->json()['data'];
+            foreach($externalEndorsements as $externalEndorsement){
+                if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name){
+                    return $this->callApi('/facility/endorsements/tier-1/' . $externalEndorsement['id'], 'DELETE');
+                }
+            }
+
+        } elseif($endorsement->ratings->first()->endorsement_type == 'T2'){
+            $externalEndorsements = $this->callApi('/facility/endorsements/tier-2', 'GET')->json()['data'];
+            foreach($externalEndorsements as $externalEndorsement){
+                if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name){
+                    return $this->callApi('/facility/endorsements/tier-2/' . $externalEndorsement['id'], 'DELETE');
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function assignTheoryExam($parameters)
     {
         dd('assign theory exam here');

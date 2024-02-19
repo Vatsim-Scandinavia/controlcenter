@@ -16,11 +16,11 @@ In `Areas` table, create one or more areas. This is something student select bet
 
 In `Ratings` table, the default VATSIM ratings are present and if applicable, the endorsement ratings.
 
-| id | name | description | vatsim_rating |
-| ------- | --- | --- | --- |
-| x | Rating Name | Description | The id of vatsim rating this represents, NULL if local endorsement |
-| 1 | S1 | Rating required to sit GND position | 2 |
-| 8 | MAE MAJOR AIRPORT | Rating required to sit on a selected airport | NULL |
+| id | name | description | vatsim_rating | endorsement_type | 
+| ------- | --- | --- | --- | --- |
+| x | Rating Name | Description | The id of vatsim rating this represents, NULL if local endorsement | NULL or GCAP type: T1, T2 or SC |
+| 1 | S1 | Rating required to sit GND position | 2 | NULL |
+| 8 | KJFK APP | Endorsement required to sit on a selected airport | NULL | T1 |
 
 ### Ratings in areas
 
