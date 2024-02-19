@@ -204,6 +204,12 @@ class EndorsementController extends Controller
                 $expireDate->setTime(12, 0);
             }
 
+            // All clear, call the API to create the endorsement
+            $response = DivisionApi::assignSoloEndorsement($user, Position::firstWhere('callsign', $data['position']), Auth::id(), $expireDate);
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+
             // All clear, create endorsement
             if ($expireDate != null) {
                 $endorsement = $this->createEndorsementModel('SOLO', $user, $expireDate->format('Y-m-d H:i:s'));
@@ -320,6 +326,11 @@ class EndorsementController extends Controller
             if ($response && $response->failed()) {
                 return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
             }
+        } elseif($endorsement->type == 'SOLO') {
+            $response = DivisionApi::revokeSoloEndorsement($endorsement);
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+            }
         }
 
         $endorsement->revoked = true;
@@ -365,6 +376,13 @@ class EndorsementController extends Controller
 
         $date->setHour(12)->setMinute(00);
 
+        // Push updated date to API
+        $response = DivisionApi::assignSoloEndorsement($endorsement->user, $endorsement->positions->first(), Auth::id(), $date);
+        if ($response && $response->failed()) {
+            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+        }
+
+        // Save new date
         $endorsement->valid_to = $date;
         $endorsement->save();
 

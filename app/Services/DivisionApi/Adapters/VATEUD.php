@@ -9,6 +9,8 @@ use App\Models\Endorsement;
 use App\Models\Group;
 use App\Models\Rating;
 use App\Models\User;
+use App\Models\Position;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class VATEUD implements DivisionApiContract
@@ -162,6 +164,38 @@ class VATEUD implements DivisionApiContract
                 if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name){
                     return $this->callApi('/facility/endorsements/tier-2/' . $externalEndorsement['id'], 'DELETE');
                 }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Assign a solo endorsement to a user
+     * 
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function assignSoloEndorsement(User $user, Position $position, int $requesterId, Carbon $expireAt = null)
+    {
+        return $this->callApi('/facility/endorsements/solo', 'POST', [
+            'user_cid' => $user->id,
+            'position' => $position->callsign,
+            'instructor_cid' => $requesterId,
+            'expire_at' => $expireAt->toDateTimeString()
+        ]);
+    }
+
+    /**
+     * Remove a solo endorsement from a user
+     * 
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function revokeSoloEndorsement(Endorsement $endorsement)
+    {
+        $externalEndorsements = $this->callApi('/facility/endorsements/solo', 'GET')->json()['data'];
+        foreach($externalEndorsements as $externalEndorsement){
+            if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->positions->first()->callsign){
+                return $this->callApi('/facility/endorsements/solo/' . $externalEndorsement['id'], 'DELETE');
             }
         }
 
