@@ -266,7 +266,7 @@ class UserController extends Controller
                     if ($group->id == 3) {
                         $response = DivisionApi::assignMentor($user, Auth::id());
                         if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
                         }
                     }
 
@@ -281,7 +281,7 @@ class UserController extends Controller
                     if ($group->id == 3) {
                         $response = DivisionApi::removeMentor($user, Auth::id());
                         if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['error']);
+                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
                         }
                     }
 
