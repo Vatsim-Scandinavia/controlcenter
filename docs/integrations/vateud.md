@@ -5,6 +5,6 @@ We provide a integration for the VATSIM Europe Division (VATEUD). This calls the
 - Mentors
 - Examiners
 - Tier 1/2 endorsements
-- Solo endorsements (via Tasks)
+- Solo endorsements
 - Rating upgrades (via Tasks) 
 - Theory test requests (via Tasks)
