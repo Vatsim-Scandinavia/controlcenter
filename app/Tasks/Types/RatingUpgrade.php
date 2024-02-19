@@ -2,11 +2,11 @@
 
 namespace App\Tasks\Types;
 
+use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
 use App\Models\Training;
 use App\Models\User;
-use App\Facades\DivisionApi;
 use Illuminate\Support\Facades\Auth;
 
 class RatingUpgrade extends Types

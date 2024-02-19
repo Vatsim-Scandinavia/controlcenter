@@ -7,9 +7,9 @@ use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\Group;
+use App\Models\Position;
 use App\Models\Rating;
 use App\Models\User;
-use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -126,13 +126,13 @@ class VATEUD implements DivisionApiContract
     {
 
         // Check for endorsement type to call correct endpoint, Special Center is not supported
-        if($rating->endorsement_type == 'T1'){
+        if ($rating->endorsement_type == 'T1') {
             return $this->callApi('/facility/endorsements/tier-1', 'POST', [
                 'user_cid' => $user->id,
                 'position' => $rating->name,
                 'instructor_cid' => $requesterId,
             ]);
-        } elseif($rating->endorsement_type == 'T2'){
+        } elseif ($rating->endorsement_type == 'T2') {
             return $this->callApi('/facility/endorsements/tier-2', 'POST', [
                 'user_cid' => $user->id,
                 'position' => $rating->name,
@@ -145,23 +145,24 @@ class VATEUD implements DivisionApiContract
 
     /**
      * Remove a training position from a user
-     * 
+     *
      * @return \Illuminate\Http\Client\Response
      */
-    public function revokeTierEndorsement(Endorsement $endorsement){
+    public function revokeTierEndorsement(Endorsement $endorsement)
+    {
 
-        if($endorsement->ratings->first()->endorsement_type == 'T1'){
+        if ($endorsement->ratings->first()->endorsement_type == 'T1') {
             $externalEndorsements = $this->callApi('/facility/endorsements/tier-1', 'GET')->json()['data'];
-            foreach($externalEndorsements as $externalEndorsement){
-                if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name){
+            foreach ($externalEndorsements as $externalEndorsement) {
+                if ($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name) {
                     return $this->callApi('/facility/endorsements/tier-1/' . $externalEndorsement['id'], 'DELETE');
                 }
             }
 
-        } elseif($endorsement->ratings->first()->endorsement_type == 'T2'){
+        } elseif ($endorsement->ratings->first()->endorsement_type == 'T2') {
             $externalEndorsements = $this->callApi('/facility/endorsements/tier-2', 'GET')->json()['data'];
-            foreach($externalEndorsements as $externalEndorsement){
-                if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name){
+            foreach ($externalEndorsements as $externalEndorsement) {
+                if ($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name) {
                     return $this->callApi('/facility/endorsements/tier-2/' . $externalEndorsement['id'], 'DELETE');
                 }
             }
@@ -172,29 +173,29 @@ class VATEUD implements DivisionApiContract
 
     /**
      * Assign a solo endorsement to a user
-     * 
+     *
      * @return \Illuminate\Http\Client\Response
      */
-    public function assignSoloEndorsement(User $user, Position $position, int $requesterId, Carbon $expireAt = null)
+    public function assignSoloEndorsement(User $user, Position $position, int $requesterId, ?Carbon $expireAt = null)
     {
         return $this->callApi('/facility/endorsements/solo', 'POST', [
             'user_cid' => $user->id,
             'position' => $position->callsign,
             'instructor_cid' => $requesterId,
-            'expire_at' => $expireAt->toDateTimeString()
+            'expire_at' => $expireAt->toDateTimeString(),
         ]);
     }
 
     /**
      * Remove a solo endorsement from a user
-     * 
+     *
      * @return \Illuminate\Http\Client\Response
      */
     public function revokeSoloEndorsement(Endorsement $endorsement)
     {
         $externalEndorsements = $this->callApi('/facility/endorsements/solo', 'GET')->json()['data'];
-        foreach($externalEndorsements as $externalEndorsement){
-            if($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->positions->first()->callsign){
+        foreach ($externalEndorsements as $externalEndorsement) {
+            if ($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->positions->first()->callsign) {
                 return $this->callApi('/facility/endorsements/solo/' . $externalEndorsement['id'], 'DELETE');
             }
         }
@@ -202,14 +203,14 @@ class VATEUD implements DivisionApiContract
         return false;
     }
 
-
     /**
      * Request a rating upgrade for a user
-     * 
+     *
      * @return \Illuminate\Http\Client\Response
      */
-    public function requestRatingUpgrade(User $user, Rating $rating, int $requesterId){
-        return $this->callApi('/facility/user/'.$user->id.'/upgrade', 'POST', [
+    public function requestRatingUpgrade(User $user, Rating $rating, int $requesterId)
+    {
+        return $this->callApi('/facility/user/' . $user->id . '/upgrade', 'POST', [
             'new_rating' => $rating->vatsim_rating,
             'instructor_cid' => $requesterId,
         ]);

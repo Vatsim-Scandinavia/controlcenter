@@ -89,11 +89,12 @@ class TaskController extends Controller
         $task = Task::findOrFail($task);
 
         $error = $task->type()->complete($task);
-        if(isset($error)){
+        if (isset($error)) {
             return redirect()->back()->withErrors($error);
         }
 
         self::close($task, TaskStatus::COMPLETED);
+
         return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $task->subject->name, $task->creator->name));
     }
 
@@ -106,11 +107,12 @@ class TaskController extends Controller
         $task = Task::findOrFail($task);
 
         $error = $task->type()->decline($task);
-        if(isset($error)){
+        if (isset($error)) {
             return redirect()->back()->withErrors($error);
         }
 
         self::close($task, TaskStatus::DECLINED);
+
         return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $task->subject->name, $task->creator->name));
     }
 

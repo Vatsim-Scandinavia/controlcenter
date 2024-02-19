@@ -2,10 +2,10 @@
 
 namespace App\Contracts;
 
-use App\Models\User;
-use App\Models\Rating;
 use App\Models\Endorsement;
 use App\Models\Position;
+use App\Models\Rating;
+use App\Models\User;
 use Carbon\Carbon;
 
 interface DivisionApiContract
@@ -22,8 +22,8 @@ interface DivisionApiContract
 
     public function revokeTierEndorsement(Endorsement $endorsement);
 
-    public function assignSoloEndorsement(User $user, Position $position, int $requesterId, Carbon $expireAt = null);
-    
+    public function assignSoloEndorsement(User $user, Position $position, int $requesterId, ?Carbon $expireAt = null);
+
     public function revokeSoloEndorsement(Endorsement $endorsement);
 
     public function requestRatingUpgrade(User $user, Rating $rating, int $requesterId);
