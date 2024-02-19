@@ -144,6 +144,15 @@ class Training extends Model
         return false;
     }
 
+    /** 
+     * Get highest VATSIM GCAP rating
+     * 
+     * @return Rating
+     */
+    public function getHighestVatsimRating(){
+        return $this->ratings->where('vatsim_rating', true)->sortByDesc('vatsim_rating')->first();
+    }
+
     /**
      * Get the student.
      *

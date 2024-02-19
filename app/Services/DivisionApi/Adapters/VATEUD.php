@@ -202,6 +202,19 @@ class VATEUD implements DivisionApiContract
         return false;
     }
 
+
+    /**
+     * Request a rating upgrade for a user
+     * 
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function requestRatingUpgrade(User $user, Rating $rating, int $requesterId){
+        return $this->callApi('/facility/user/'.$user->id.'/upgrade', 'POST', [
+            'new_rating' => $rating->vatsim_rating,
+            'instructor_cid' => $requesterId,
+        ]);
+    }
+
     public function assignTheoryExam($parameters)
     {
         dd('assign theory exam here');

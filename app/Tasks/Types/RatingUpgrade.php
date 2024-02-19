@@ -6,6 +6,8 @@ use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
 use App\Models\Training;
 use App\Models\User;
+use App\Facades\DivisionApi;
+use Illuminate\Support\Facades\Auth;
 
 class RatingUpgrade extends Types
 {
@@ -48,7 +50,17 @@ class RatingUpgrade extends Types
     {
         // If the training requires a VATSIM GCAP upgrade, create a comment on the training
         $training = Training::find($model->subject_training_id);
+        $user = User::find($model->subject_user_id);
+
         if ($training->hasVatsimRatings()) {
+
+            // Call the Division API to request the upgrade
+            $response = DivisionApi::requestRatingUpgrade($user, $training->getHighestVatsimRating(), Auth::id());
+            if ($response && $response->failed()) {
+                return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
+            }
+
+            // Log in training activity
             TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Rating upgrade requested.');
         }
 
