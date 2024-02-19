@@ -15,6 +15,34 @@ class NoOpAdapter implements DivisionApiContract
     {
     }
 
+    public function assignExaminer($user, $rating, $requesterId)
+    {
+    }
+
+    public function removeExaminer($user, $rating, $requesterId)
+    {
+    }
+
+    public function assignTierEndorsement($user, $rating, $requesterId)
+    {
+    }
+
+    public function revokeTierEndorsement($endorsement)
+    {
+    }
+
+    public function assignSoloEndorsement($user, $position, $requesterId, $expireAt = null)
+    {
+    }
+
+    public function revokeSoloEndorsement($endorsement)
+    {
+    }
+
+    public function requestRatingUpgrade($user, $rating, $requesterId)
+    {
+    }
+
     public function assignTheoryExam($parameters)
     {
     }
