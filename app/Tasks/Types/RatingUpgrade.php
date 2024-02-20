@@ -32,9 +32,7 @@ class RatingUpgrade extends Types
         $user = User::find($model->subject_user_id);
         $userEud = $user->division == 'EUD';
 
-        if ($userEud && $training->hasVatsimRatings()) {
-            return 'https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid=' . $model->subject_user_id;
-        } elseif ($userEud && ! $training->hasVatsimRatings()) {
+        if ($userEud && ! $training->hasVatsimRatings()) {
             return route('endorsements.create.id', $user->id);
         }
 
