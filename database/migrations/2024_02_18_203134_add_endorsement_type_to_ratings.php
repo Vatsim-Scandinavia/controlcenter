@@ -11,10 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // As always SQLite is acting up, so we need to disable foreign key checks
+        if (Schema::getConnection()->getDriverName() == 'sqlite') {
+            Schema::disableForeignKeyConstraints();
+        }
+
         Schema::table('ratings', function (Blueprint $table) {
             $table->string('endorsement_type')->nullable()->after('vatsim_rating');
             $table->string('name', 16)->change(); // We are changing this to match requirement from Division API
         });
+
+        // Re-enable foreign key checks for SQLite
+        if (Schema::getConnection()->getDriverName() == 'sqlite') {
+            Schema::enableForeignKeyConstraints();
+        }
     }
 
     /**
@@ -22,9 +32,19 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // As always SQLite is acting up, so we need to disable foreign key checks
+        if (Schema::getConnection()->getDriverName() == 'sqlite') {
+            Schema::disableForeignKeyConstraints();
+        }
+
         Schema::table('ratings', function (Blueprint $table) {
             $table->dropColumn('endorsement_type');
             $table->string('name', 50)->change();
         });
+
+        // Re-enable foreign key checks for SQLite
+        if (Schema::getConnection()->getDriverName() == 'sqlite') {
+            Schema::enableForeignKeyConstraints();
+        }
     }
 };
