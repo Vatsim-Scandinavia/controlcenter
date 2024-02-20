@@ -216,13 +216,27 @@ class VATEUD implements DivisionApiContract
         ]);
     }
 
-    public function assignTheoryExam($parameters)
+    /**
+     * Assign a theory exam for a user
+     *
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function assignTheoryExam(User $user, Rating $rating, int $requesterId)
     {
-        dd('assign theory exam here');
-        /*$response = Http::post('https://core-dev.vateud.net/api/assign', [
-            "user_cid" => $model->subject_user_id,
-            "exam_id" => 1,
-            "instructor_cid" => $model->assignee_user_id,
-        ]);*/
+        return $this->callApi('/facility/training/exams/assign', 'POST', [
+            'user_cid' => $user->id,
+            'exam_id' => 1, // TODO: Get the correct exam ID from API
+            'instructor_cid' => $requesterId,
+        ]);
+    }
+
+    /**
+     * Get the link to the theory exam
+     *
+     * @return string
+     */
+    public function getExamLink()
+    {
+        return 'https://core.vateud.net/training/exams';
     }
 }

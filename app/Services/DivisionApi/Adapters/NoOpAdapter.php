@@ -43,7 +43,12 @@ class NoOpAdapter implements DivisionApiContract
     {
     }
 
-    public function assignTheoryExam($parameters)
+    public function assignTheoryExam($user, $rating, $requesterId)
     {
+    }
+
+    public function getExamLink()
+    {
+        return false;
     }
 }

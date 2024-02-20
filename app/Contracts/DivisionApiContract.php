@@ -28,5 +28,7 @@ interface DivisionApiContract
 
     public function requestRatingUpgrade(User $user, Rating $rating, int $requesterId);
 
-    public function assignTheoryExam($parameters);
+    public function assignTheoryExam(User $user, Rating $rating, int $requesterId);
+
+    public function getExamLink();
 }
