@@ -16,7 +16,7 @@ interface DivisionApiContract
 
     public function assignExaminer(User $user, Rating $rating, int $requesterId);
 
-    public function removeExaminer(User $user, Rating $rating, int $requesterId);
+    public function removeExaminer(User $user, Endorsement $endorsement, int $requesterId);
 
     public function assignTierEndorsement(User $user, Rating $rating, int $requesterId);
 
