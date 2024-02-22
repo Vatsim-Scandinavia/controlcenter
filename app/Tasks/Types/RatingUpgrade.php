@@ -58,7 +58,7 @@ class RatingUpgrade extends Types
         if ($training->hasVatsimRatings()) {
 
             // Call the Division API to request the upgrade
-            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating->id : $training->getHighestVatsimRating();
+            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating : $training->getHighestVatsimRating();
             $response = DivisionApi::requestRatingUpgrade($user, $rating, Auth::id());
             if ($response && $response->failed()) {
                 return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];

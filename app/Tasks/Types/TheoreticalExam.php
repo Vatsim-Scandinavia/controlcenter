@@ -24,7 +24,11 @@ class TheoreticalExam extends Types
 
     public function getText(Task $model)
     {
-        return 'Grant theoretical exam access for ' . $model->subjectTraining->getInlineRatings(true);
+        if ($model->subjectTrainingRating) {
+            return 'Grant theoretical exam access for ' . $model->subjectTrainingRating->name;
+        } else {
+            return 'Grant theoretical exam access for ' . $model->subjectTraining->getInlineRatings(true);
+        }
     }
 
     public function getLink(Task $model)
@@ -47,7 +51,7 @@ class TheoreticalExam extends Types
         if ($training->hasVatsimRatings()) {
 
             // Call the Division API to request the upgrade
-            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating->id : $training->getHighestVatsimRating();
+            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating : $training->getHighestVatsimRating();
             $response = DivisionApi::assignTheoryExam($user, $rating, Auth::id());
             if ($response && $response->failed()) {
                 return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];

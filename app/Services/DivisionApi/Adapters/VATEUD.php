@@ -223,11 +223,19 @@ class VATEUD implements DivisionApiContract
      */
     public function assignTheoryExam(User $user, Rating $rating, int $requesterId)
     {
-        return $this->callApi('/facility/training/exams/assign', 'POST', [
-            'user_cid' => $user->id,
-            'exam_id' => 1, // TODO: Get the correct exam ID from API
-            'instructor_cid' => $requesterId,
-        ]);
+
+        // call facility/training/exams to get different exams, and assign the one that has flag_exam_type corresponding with the rating
+        $availableExams = $this->callApi('/facility/training/exams', 'GET')->json()['data'];
+        foreach($availableExams as $exam) {
+            // If the flag exam type is the same as the rating - 1, assign it. This is because VATEUD calls S2 = 2 instead of 3 like VATSIM does.
+            if ($exam['flag_exam_type'] == $rating->vatsim_rating-1) {
+                return $this->callApi('/facility/training/exams/assign', 'POST', [
+                    'user_cid' => $user->id,
+                    'exam_id' => $exam['id'],
+                    'instructor_cid' => $requesterId,
+                ]);
+            }
+        }
     }
 
     /**
