@@ -78,11 +78,13 @@ class TrainingExaminationController extends Controller
         if (isset($data['request_task_user_id'])) {
 
             $taskAsignee = User::find($data['request_task_user_id']);
+            $taskRating = isset($data['subject_training_rating_id']) ? (int) $data['subject_training_rating_id'] : null;
             if ($taskAsignee->can('receive', Task::class)) {
                 $task = Task::create([
                     'type' => \App\Tasks\Types\RatingUpgrade::class,
                     'subject_user_id' => $training->user->id,
                     'subject_training_id' => $training->id,
+                    'subject_training_rating_id' => $taskRating,
                     'assignee_user_id' => $taskAsignee->id,
                     'creator_user_id' => Auth::id(),
                     'created_at' => now(),
@@ -158,6 +160,7 @@ class TrainingExaminationController extends Controller
             'examination_date' => 'sometimes|date_format:d/m/Y',
             'files.*' => 'sometimes|file|mimes:pdf',
             'request_task_user_id' => 'nullable|exists:users,id',
+            'subject_training_rating_id' => 'nullable|exists:ratings,id',
         ]);
     }
 }

@@ -7,7 +7,6 @@ use App\Helpers\Vatsim;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
 use App\Models\Training;
-use App\Models\User;
 use App\Notifications\TrainingCustomNotification;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,13 +41,14 @@ class TheoreticalExam extends Types
     {
 
         // If the training requires a VATSIM GCAP upgrade, create a comment on the training
-        $training = Training::find($model->subject_training_id);
-        $user = User::find($model->subject_user_id);
+        $training = $model->subjectTraining;
+        $user = $model->subject;
 
         if ($training->hasVatsimRatings()) {
 
             // Call the Division API to request the upgrade
-            $response = DivisionApi::assignTheoryExam($user, $training->getHighestVatsimRating(), Auth::id());
+            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating->id : $training->getHighestVatsimRating();
+            $response = DivisionApi::assignTheoryExam($user, $rating, Auth::id());
             if ($response && $response->failed()) {
                 return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
             }
@@ -79,5 +79,10 @@ class TheoreticalExam extends Types
     public function allowNonVatsimRatings()
     {
         return false;
+    }
+
+    public function requireRatingSelection()
+    {
+        return true;
     }
 }

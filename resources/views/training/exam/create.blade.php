@@ -113,7 +113,7 @@
                             <div class="border-top mb-4"></div>
 
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <label class="form-label" for="user">Request rating upgrade from</label>
                                     <input 
                                         id="user"
@@ -136,11 +136,22 @@
                                             </button>
                                         @endforeach
                                     </div>
-                                    <small class="form-text">Training director for ratings or local staff for endorsements</small>
                                     @error('request_task_user_id')
                                         <span class="text-danger">{{ $errors->first('request_task_user_id') }}</span>
                                     @enderror
+
+                                    
                                 </div>  
+                                <div class="col-md-6">
+                                    @if($training->ratings->whereNotNull('vatsim_rating')->count() > 1)
+                                        <label class="form-label" for="chooseRating">Upgrade to rating</label>
+                                        <select class="form-select" id="chooseRating" name="subject_training_rating_id" required>
+                                            @foreach($training->ratings->whereNotNull('vatsim_rating')->sortByDesc('id') as $rating)
+                                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 

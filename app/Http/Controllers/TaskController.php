@@ -45,6 +45,7 @@ class TaskController extends Controller
             'message' => 'sometimes|min:3|max:256',
             'subject_user_id' => 'required|exists:users,id',
             'subject_training_id' => 'required|exists:trainings,id',
+            'subject_training_rating_id' => 'nullable|exists:ratings,id',
             'assignee_user_id' => 'required|exists:users,id',
         ]);
 

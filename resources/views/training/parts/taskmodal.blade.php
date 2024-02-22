@@ -64,6 +64,17 @@
                         </div>
                     @endif
 
+                    @if($requestType->requireRatingSelection() !== false && $training->ratings->whereNotNull('vatsim_rating')->count() > 1)
+                        <div class="mt-3">
+                            <label class="form-label" for="{{ Str::camel($requestType->getName()) }}Rating">Choose {{ Str::lower($requestType->getName()) }}</label>
+                            <select class="form-select" id="{{ Str::camel($requestType->getName()) }}Rating" name="subject_training_rating_id" required>
+                                @foreach($training->ratings->whereNotNull('vatsim_rating') as $rating)
+                                    <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
                     @if($requestType->allowMessage())
                         <div class="mt-3">
                             <label class="form-label" for="{{ Str::camel($requestType->getName()) }}Message">Message</label>
