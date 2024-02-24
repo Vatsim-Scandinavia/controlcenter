@@ -2,11 +2,10 @@
 
 namespace App\Tasks\Types;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
-use App\Helpers\Vatsim;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
-use App\Models\Training;
 use App\Notifications\TrainingCustomNotification;
 use Illuminate\Support\Facades\Auth;
 
@@ -88,5 +87,10 @@ class TheoreticalExam extends Types
     public function requireRatingSelection()
     {
         return true;
+    }
+
+    public function isApproval()
+    {
+        return Setting::get('divisionApiEnabled', false);
     }
 }
