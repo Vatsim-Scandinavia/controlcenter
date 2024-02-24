@@ -30,5 +30,7 @@ interface DivisionApiContract
 
     public function assignTheoryExam(User $user, Rating $rating, int $requesterId);
 
+    public function getUserExams(User $user);
+
     public function getExamLink();
 }

@@ -47,6 +47,10 @@ class NoOpAdapter implements DivisionApiContract
     {
     }
 
+    public function getUserExams($user)
+    {
+    }
+
     public function getExamLink()
     {
         return false;

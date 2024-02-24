@@ -239,6 +239,16 @@ class VATEUD implements DivisionApiContract
     }
 
     /**
+     * Get the user's exams
+     *
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function getUserExams(User $user)
+    {
+        return $this->callApi('/facility/user/' . $user->id . '/exams', 'GET');
+    }
+
+    /**
      * Get the link to the theory exam
      *
      * @return string
