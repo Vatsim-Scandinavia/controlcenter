@@ -132,7 +132,7 @@
                         <select class="form-select" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsMASC as $rating)
-                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                                <option value="{{ $rating->id }}">{{ $rating->endorsement_type }} {{ $rating->name }}</option>
                             @endforeach
                         </select>
                         <span v-show="validationError && ratingMASC == null" class="text-danger">Select at least one airport or center</span>

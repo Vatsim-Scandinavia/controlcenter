@@ -76,7 +76,7 @@
                     <div class="mb-3">
                         <label class="form-label my-1 me-2" for="ratingSelect">Training level <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
                         <select multiple id="ratingSelect" name="ratings[]" class="form-select @error('ratings') is-invalid @enderror" size="5">
-                            <option v-for="rating in ratings" :value="rating.id">@{{ rating.name }}</option>
+                            <option v-for="rating in ratings" :value="rating.id">@{{ rating.endorsement_type }} @{{ rating.name }}</option>
                         </select>
 
                         @error('ratings')

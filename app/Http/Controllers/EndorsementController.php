@@ -104,7 +104,7 @@ class EndorsementController extends Controller
         }
         $positions = Position::all();
         $areas = Area::all();
-        $ratingsMASC = Rating::where('vatsim_rating', null)->get();
+        $ratingsMASC = Rating::whereHas('areas')->whereNull('vatsim_rating')->get()->sortBy('name');
         $ratingsGRP = Rating::where('vatsim_rating', '<=', 7)->get();
 
         return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP', 'prefillUserId'));
