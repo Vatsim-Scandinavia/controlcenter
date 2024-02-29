@@ -52,6 +52,7 @@
                                     <label class="form-label my-1 me-2" for="ratingSelect">Training type</label>
                                     <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
+                                        <option v-if="ratings.length > 0" selected disabled>Choose training</option>
                                         <option v-for="rating in ratings" :value="rating.id" :data-hour-requirement="rating.hour_requirement">@{{ rating.name }}</option>
                                     </select> 
                                     <span v-show="errArea" class="text-danger" style="display: none">Select available rating</span>
