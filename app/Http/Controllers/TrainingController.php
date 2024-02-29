@@ -151,7 +151,7 @@ class TrainingController extends Controller
 
             foreach ($availableRatings as $ratingIndex => $rating) {
                 // If the rating is a MAE rating, or it's a VATSIM-rating allowed to bundle with MAEs. AND if the required vatsim rating to apply for the rating is S3 or below (so we don't bundle C1+ MAEs)
-                if (($rating->vatsim_rating == null || $rating->pivot->allow_bundling) && $rating->pivot->required_vatsim_rating <= 4) {
+                if ($rating->pivot->allow_bundling && $rating->pivot->required_vatsim_rating <= 4) {
                     $bundle['id'] = empty($bundle['id']) ? $rating->id : $bundle['id'] . '+' . $rating->id;
                     $bundle['name'] = empty($bundle['name']) ? $rating->name : $bundle['name'] . ' + ' . $rating->name;
                     if (! isset($bundle['hour_requirement']) || $rating->hour_requirement > $bundle['hour_requirement']) {
