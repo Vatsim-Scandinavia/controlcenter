@@ -76,15 +76,14 @@
                     </div>
                     <div class="card-body">
 
-                        <p>Please read through the standard operating procedures for students below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ Setting::get('trainingSOP') }}" target="_blank">click here</a>.</p>
-
                         @if(Str::of(Setting::get('trainingSOP'))->endsWith('.pdf'))
+                            <p>Please read through the policy for students below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ Setting::get('trainingSOP') }}" target="_blank">click here</a>.</p>
                             <embed src="{{ Setting::get('trainingSOP') }}" type="application/pdf" type="text/html" width="100%" height="800px">    
                         @else
-                            <iframe src="{{ Setting::get('trainingSOP') }}" width="100%" height="800px"></iframe>    
+                            <p>Please read through the <a href="{{ Setting::get('trainingSOP') }}" target="_blank">policy for students</a> and accept the terms by continuing to the next step.</p>
                         @endif
 
-                        <a class="btn btn-success"  href="#" v-on:click="next">I accept</a>
+                        <a class="btn btn-success" href="#" v-on:click="next">I accept</a>
                     </div>
                 </div>
             </div>

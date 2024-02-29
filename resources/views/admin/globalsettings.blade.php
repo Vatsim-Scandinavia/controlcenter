@@ -82,9 +82,9 @@
                             <hr>
 
                             <div class="mb-4">
-                                <label class="form-label" for="spoUrl">Student SOP URL</label>
+                                <label class="form-label" for="spoUrl">Student Policy URL</label>
                                 <input type="url" class="form-control @error('trainingSOP') is-invalid @enderror" id="spoUrl" name="trainingSOP" required value="{{ Setting::get("trainingSOP") }}">
-                                <small class="form-text">Link to PDF to display when applying for training</small>
+                                <small class="form-text">Link to PDF or webpage to make student accept when applying for training</small>
                             </div>
                             @error('trainingSOP')
                                 <span class="text-danger">{{ $errors->first('trainingSOP') }}</span>
