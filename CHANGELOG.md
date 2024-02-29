@@ -1,5 +1,32 @@
 # Changelog
 
+## [5.0.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.2...v5.0.3) (2024-02-29)
+
+
+### Bug Fixes
+
+* added endorsement type ([cf524f5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cf524f5a93fe4c247a80376d67447b2e62e15fc2))
+* area_id migration unsync ([12d02f5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/12d02f5d0a1a19b83d36927e4af1a279643cafe9))
+* force user to choose training ([063e64b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/063e64b951e2794b734c250be09bb6e5ab2a655f))
+* removed autobundle with ratings ([3f94802](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3f94802a6c86cb41b41c4f0626741f4226c2cc8d))
+* support for websites as student SOP ([c3a904e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c3a904ee53fed72c5bbce0a2cf1c50c4eebc5087))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency bootstrap to v5.3.3 ([dea9883](https://github.com/Vatsim-Scandinavia/controlcenter/commit/dea9883f7669f9f1d232a0d9a67d552eb50ecede))
+* **deps:** update dependency bootstrap-table to v1.22.3 ([7116357](https://github.com/Vatsim-Scandinavia/controlcenter/commit/71163578f18be31488067f833ca0d4e0edef44a6))
+* **deps:** update dependency chart.js to v4.4.2 ([8277249](https://github.com/Vatsim-Scandinavia/controlcenter/commit/827724947ef5777e4092f396b511994b512ade6b))
+* **deps:** update dependency laravel-vite-plugin to v1.0.2 ([aedaf76](https://github.com/Vatsim-Scandinavia/controlcenter/commit/aedaf766e9a9de57c63cf145ea4f0356aa7ee9f3))
+* **deps:** update dependency laravel/framework to v10.46.0 ([d469fa1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d469fa1ad22dd51b764e3c213b030f564df885f6))
+* **deps:** update dependency laravel/pint to v1.14.0 ([#812](https://github.com/Vatsim-Scandinavia/controlcenter/issues/812)) ([e9299a1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e9299a1dfc49ef5a4a07865e18cb00ba561c3209))
+* **deps:** update dependency phpunit/phpunit to v10.5.11 ([#814](https://github.com/Vatsim-Scandinavia/controlcenter/issues/814)) ([99a09d4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/99a09d46b4cc82cdee23e86ff242d4fade9ccd28))
+* **deps:** update dependency sass to v1.71.1 ([ff1fd4c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ff1fd4cacdcf3d4ab2c62759ee43309dca0f9b55))
+* **deps:** update dependency vite to v5.1.4 ([6c9a5bf](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6c9a5bf9e48cf99019125158aa2ec40ec263b9fc))
+* **deps:** update dependency vue to v3.4.21 ([de4ff64](https://github.com/Vatsim-Scandinavia/controlcenter/commit/de4ff640ed0698f49c0f04b1aaec5de022c17ff2))
+* **deps:** update docker.io/library/php docker tag to v8.3.3 ([#809](https://github.com/Vatsim-Scandinavia/controlcenter/issues/809)) ([8777b5c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/8777b5c940b72dc93efc7923f4c79f2156c07f68))
+* **deps:** update node.js to v21.6.2 ([#804](https://github.com/Vatsim-Scandinavia/controlcenter/issues/804)) ([5fbae0e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5fbae0eca516d60368082588dc61539e17731382))
+
 ## [5.0.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.1...v5.0.2) (2024-02-16)
 
 
