@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Facades\DivisionApi;
 use App\Http\Controllers\ActivityLogController;
+use App\Models\AtcActivity;
 use App\Models\Training;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
@@ -93,6 +95,24 @@ class UpdateMemberDetails extends Command
         }
 
         $this->info($count . ' trainings affected.');
+
+        // Make users who left subdivision inactive
+        $this->info('Making users who left subdivision inactive...');
+        $count = 0;
+
+        $membersNotInSubdivision = User::whereNotIn('subdivision', $subdivisions)->get();
+        $activeMembersNotInSubdivision = User::getActiveAtcMembers($membersNotInSubdivision->pluck('id')->toArray());
+
+        $activeMembersNotInSubdivision->each(function ($member) use (&$count) {
+
+            // Set as ATC Inactive
+            $atcActivitiesToSetAsInactive = $member->atcActivity->where('atc_active', true);
+            AtcActivity::whereIn('id', $atcActivitiesToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
+
+            $count++;
+        });
+
+        $this->info($count . ' users affected.');
 
         $this->info('Done');
     }
