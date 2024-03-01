@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.3...v5.0.4) (2024-03-01)
+
+
+### Bug Fixes
+
+* make users with familiarisation training active ([3f2f1b2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3f2f1b243c5143bf0f5ff6c9c659fd337f5587a7))
+* user activity not set on completion if they had no hours in area ([1ffca2d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1ffca2d885ffe6715a843d3a655ab42b4bc9f473))
+
 ## [5.0.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.2...v5.0.3) (2024-02-29)
 
 
