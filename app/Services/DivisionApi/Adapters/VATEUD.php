@@ -91,7 +91,7 @@ class VATEUD implements DivisionApiContract
     public function assignExaminer(User $user, Rating $rating, int $requesterId)
     {
         // Only assign if the user is S3 or higher, this is VATEUD's definition of examiner
-        if ($rating->vatsim_rating >= VatsimRating::S3->value) {
+        if ($user->rating >= VatsimRating::S3->value) {
             return $this->callApi('/facility/training/assign/' . $user->id . '/examiner', 'POST', [
                 'user_cid' => $requesterId,
             ]);
