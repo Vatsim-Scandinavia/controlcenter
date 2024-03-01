@@ -9,7 +9,7 @@ use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Console\Command;
 
-class SyncRoster extends Command
+class SyncEndorsements extends Command
 {
     /**
      * The name and signature of the console command.
