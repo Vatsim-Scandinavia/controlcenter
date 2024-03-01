@@ -45,8 +45,6 @@ class SyncRoster extends Command
                 $rosteredMembers = collect($json['data']['controllers']);
                 $activeMembers = User::getActiveAtcMembers()->pluck('id');
 
-                //dd($activeMembers->diff($rosteredMembers));
-
                 // Add members who don't exist in roster
                 $this->info('Adding new members to roster...');
                 $newMembers = $activeMembers->diff($rosteredMembers);
