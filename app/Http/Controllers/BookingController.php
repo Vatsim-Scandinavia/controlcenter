@@ -44,7 +44,7 @@ class BookingController extends Controller
             } else {
 
                 $activeAreas = $user->atcActivity->pluck('area_id');
-                $positionsInAreas = Position::whereIn('area', $activeAreas)->where('rating', '<=', $user->rating)->get();
+                $positionsInAreas = Position::whereIn('area_id', $activeAreas)->where('rating', '<=', $user->rating)->get();
                 $positions = $positions->merge($positionsInAreas);
             }
         }
