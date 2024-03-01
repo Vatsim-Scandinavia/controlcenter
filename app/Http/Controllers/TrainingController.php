@@ -459,6 +459,14 @@ class TrainingController extends Controller
 
         $attributes = $this->validateUpdateDetails();
         if (array_key_exists('status', $attributes)) {
+
+            // Don't allow re-opening a training if that causes student to have multiple trainings at the same time
+            if ($attributes['status'] >= 0 && $oldStatus < 0 && $training->user->hasActiveTrainings(true)) {
+                if ($training->user->hasActiveTrainings(true)) {
+                    return redirect($training->path())->withErrors('Training can not be reopened. The student already has an active training request.');
+                }
+            }
+
             $training->updateStatus($attributes['status']);
 
             if ($attributes['status'] != $oldStatus) {
