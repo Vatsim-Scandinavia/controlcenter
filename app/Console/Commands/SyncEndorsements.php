@@ -43,7 +43,7 @@ class SyncEndorsements extends Command
         //
         // This command is only meant to be ran manually at this point. Though it's a nice baseline for future sync functionalities
         // and for migration to the division api integration
-        //
+        // @TODO: Sync only endorsements who belong to active players in subdivision?
         //
 
         $this->info('Syncing endorsements with Division API...');
