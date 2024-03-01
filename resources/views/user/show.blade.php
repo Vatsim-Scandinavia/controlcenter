@@ -25,7 +25,7 @@
                         <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
                         <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" title="VATSIM Stats" class="link-btn me-1"><i class="fas fa-chart-simple"></i></button></a>
                         @if($user->division == 'EUD')
-                            <a href="https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid={{ $user->id }}" target="_blank" title="ATSimTest Profile" class="link-btn"><i class="fas fa-a"></i></button></a>
+                            <a href="https://core.vateud.net/manage/controller/{{ $user->id }}/view" target="_blank" title="VATEUD Core Profile" class="link-btn"><i class="fa-solid fa-earth-europe"></i></button></a>
                         @endif
                     </dd>
 
@@ -94,6 +94,41 @@
             </div>
             <div class="card-body">
                 <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Mentoring
+                </h6>
+                <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-file"></i> See reports</a>
+            </div>
+            <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
+
+                @if($user->teaches->count() == 0)
+                    <p class="mb-0">No registered students</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th data-sortable="true" data-filter-control="select">Teaches</th>
+                                    <th data-sortable="true" data-filter-control="input">Expires</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($user->teaches as $training)
+                                <tr>
+                                    <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
+                                    <td>{{ Carbon\Carbon::parse($user->teaches->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
             </div>
         </div>
     </div>
@@ -177,29 +212,50 @@
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 fw-bold text-white">
-                            Mentoring
+                            Division Exams
                         </h6>
-                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-file"></i> See reports</a>
                     </div>
-                    <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
+                    <div class="card-body {{ $divisionExams->count() == 0 ? '' : 'p-0' }}">
         
-                        @if($user->teaches->count() == 0)
-                            <p class="mb-0">No registered students</p>
+                        @if($divisionExams->count() == 0)
+                            <p class="mb-0">No division exam history</p>
                         @else
                             <div class="table-responsive">
                                 <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th data-sortable="true" data-filter-control="select">Teaches</th>
-                                            <th data-sortable="true" data-filter-control="input">Expires</th>
+                                            <th>Exam</th>
+                                            <th>Created</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($user->teaches as $training)
-                                        <tr>
-                                            <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
-                                            <td>{{ Carbon\Carbon::parse($user->teaches->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
-                                        </tr>
+                                        @foreach($divisionExams as $exam)
+                                            <tr>
+                                                <td>
+                                                    {{ $exam['rating'] }}
+                                                    @if($exam['category'] == 'reassignments')
+                                                        (Retake)
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    {{ $exam['created_at'] }}
+                                                </td>
+                                                <td>
+                                                    @if($exam['category'] == 'results')
+                                                        @if($exam['passed'])
+                                                            <i class="fas fa-circle-check text-success"></i>
+                                                            Pass {{ $exam['score'] }}%
+                                                        @else
+                                                            <i class="fas fa-circle-assigne text-danger"></i>
+                                                            Fail
+                                                        @endif
+                                                    @else
+                                                        <i class="fas fa-circle-minus text-warning"></i>
+                                                        Pending
+                                                    @endif
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>

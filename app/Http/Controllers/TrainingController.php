@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
+use App\Facades\DivisionApi;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
@@ -572,6 +573,12 @@ class TrainingController extends Controller
                                         break;
                                     }
                                 }
+                            }
+
+                            // All clear, let's start by attemping the insertion to the API
+                            $response = DivisionApi::assignTierEndorsement($training->user, $rating, Auth::id());
+                            if ($response && $response->failed()) {
+                                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
                             }
 
                             // Grant new endorsement

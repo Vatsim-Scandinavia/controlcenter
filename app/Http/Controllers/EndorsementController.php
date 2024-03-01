@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\DivisionApi;
 use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\Position;
@@ -143,6 +144,13 @@ class EndorsementController extends Controller
                 }
             }
 
+            // All clear, let's start by attemping the insertion to the API
+            $rating = Rating::find($data['ratingMASC']);
+            $response = DivisionApi::assignTierEndorsement($user, $rating, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+
             // All clear, create endorsement
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
 
@@ -196,6 +204,12 @@ class EndorsementController extends Controller
                 $expireDate->setTime(12, 0);
             }
 
+            // All clear, call the API to create the endorsement
+            $response = DivisionApi::assignSoloEndorsement($user, Position::firstWhere('callsign', $data['position']), Auth::id(), $expireDate);
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+
             // All clear, create endorsement
             if ($expireDate != null) {
                 $endorsement = $this->createEndorsementModel('SOLO', $user, $expireDate->format('Y-m-d H:i:s'));
@@ -231,6 +245,13 @@ class EndorsementController extends Controller
             // Check if already holding examiner endorsement
             if ($user->hasActiveEndorsement($endorsementType)) {
                 return back()->withInput()->withErrors($user->name . ' has already an ' . $endorsementType . ' endorsement. Revoke it first, to create a new one.');
+            }
+
+            // All clear, let's start by attemping the insertion to the API
+            $rating = Rating::find($data['ratingGRP']);
+            $response = DivisionApi::assignExaminer($user, $rating, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
             }
 
             // All clear, create endorsement
@@ -295,6 +316,23 @@ class EndorsementController extends Controller
             return redirect()->back()->withErrors($user->name . "'s " . $endorsement->type . ' endorsement is already revoked.');
         }
 
+        if ($endorsement->type == 'EXAMINER') {
+            $response = DivisionApi::removeExaminer($user, $endorsement, Auth::id());
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+        } elseif ($endorsement->type == 'MASC') {
+            $response = DivisionApi::revokeTierEndorsement($endorsement);
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+        } elseif ($endorsement->type == 'SOLO') {
+            $response = DivisionApi::revokeSoloEndorsement($endorsement);
+            if ($response && $response->failed()) {
+                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            }
+        }
+
         $endorsement->revoked = true;
         $endorsement->revoked_by = \Auth::user()->id;
         $endorsement->valid_to = now();
@@ -329,6 +367,13 @@ class EndorsementController extends Controller
 
         $date->setHour(12)->setMinute(00);
 
+        // Push updated date to API
+        $response = DivisionApi::assignSoloEndorsement($endorsement->user, $endorsement->positions->first(), Auth::id(), $date);
+        if ($response && $response->failed()) {
+            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+        }
+
+        // Save new date
         $endorsement->valid_to = $date;
         $endorsement->save();
 

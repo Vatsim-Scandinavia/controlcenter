@@ -213,6 +213,7 @@ return [
         */
 
         App\Providers\CarbonServiceProvider::class,
+        App\Providers\DivisionApiServiceProvider::class,
 
     ])->toArray(),
 

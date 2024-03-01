@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Facades\DivisionApi;
+use App\Helpers\Vatsim;
+use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
@@ -139,7 +142,25 @@ class UserController extends Controller
             }
         }
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'atcActivityHours', 'totalHours'));
+        // Fetch division exams
+        $divisionExams = collect();
+        $userExams = DivisionApi::getUserExams($user);
+        if ($userExams && $userExams->successful()) {
+
+            foreach ($userExams->json()['data'] as $category => $categories) {
+                foreach ($categories as $exam) {
+                    $exam['category'] = $category;
+                    $exam['rating'] = VatsimRating::from((int) $exam['flag_exam_type'] + 1)->name;
+                    $exam['created_at'] = Carbon::parse($exam['created_at'])->toEuropeanDate();
+                    $divisionExams->push($exam);
+                }
+            }
+
+            // Sort all entries by created_at
+            $divisionExams = $divisionExams->sortByDesc('created_at');
+        }
+
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours'));
     }
 
     /**
@@ -259,11 +280,31 @@ class UserController extends Controller
             if ($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0) {
                 if ($value == true) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
+
+                    // Call the division API to assign mentor
+                    if ($group->id == 3) {
+                        $response = DivisionApi::assignMentor($user, Auth::id());
+                        if ($response && $response->failed()) {
+                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                        }
+                    }
+
+                    // Attach the new permission
                     $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
                 }
             } else {
                 if ($value == false) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
+
+                    // Call the division API to assign mentor
+                    if ($group->id == 3) {
+                        $response = DivisionApi::removeMentor($user, Auth::id());
+                        if ($response && $response->failed()) {
+                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                        }
+                    }
+
+                    // Detach the permission
                     $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
                 }
             }

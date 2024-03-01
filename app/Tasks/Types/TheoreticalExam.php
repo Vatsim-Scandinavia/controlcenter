@@ -2,8 +2,12 @@
 
 namespace App\Tasks\Types;
 
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
+use App\Notifications\TrainingCustomNotification;
+use Illuminate\Support\Facades\Auth;
 
 class TheoreticalExam extends Types
 {
@@ -19,18 +23,15 @@ class TheoreticalExam extends Types
 
     public function getText(Task $model)
     {
-        return 'Grant theoretical exam access for ' . $model->subjectTraining->getInlineRatings(true);
+        if ($model->subjectTrainingRating) {
+            return 'Grant theoretical exam access for ' . $model->subjectTrainingRating->name;
+        } else {
+            return 'Grant theoretical exam access for ' . $model->subjectTraining->getInlineRatings(true);
+        }
     }
 
     public function getLink(Task $model)
     {
-        $user = $model->subject;
-        $userEud = $user->division == 'EUD';
-
-        if ($userEud) {
-            return 'https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid=' . $model->subject_user_id;
-        }
-
         return false;
     }
 
@@ -41,7 +42,30 @@ class TheoreticalExam extends Types
 
     public function complete(Task $model)
     {
-        TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Theoretical exam access granted.');
+
+        // If the training requires a VATSIM GCAP upgrade, create a comment on the training
+        $training = $model->subjectTraining;
+        $user = $model->subject;
+
+        if ($training->hasVatsimRatings()) {
+
+            // Call the Division API to request the upgrade
+            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating : $training->getHighestVatsimRating();
+            $response = DivisionApi::assignTheoryExam($user, $rating, Auth::id());
+            if ($response && $response->failed()) {
+                return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
+            }
+
+            // Send email regarding exam access
+            if (DivisionApi::getExamLink()) {
+                $user->notify(new TrainingCustomNotification($training, 'Theoretical Exam', [
+                    'You have been granted access to the theoretical exam for ' . $training->getInlineRatings(true) . '. You may now take the exam through the division website.',
+                ], DivisionApi::getExamLink(), 'Take the Exam'));
+            }
+
+            TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Theoretical exam access granted.');
+        }
+
         parent::onCompleted($model);
     }
 
@@ -58,5 +82,15 @@ class TheoreticalExam extends Types
     public function allowNonVatsimRatings()
     {
         return false;
+    }
+
+    public function requireRatingSelection()
+    {
+        return true;
+    }
+
+    public function isApproval()
+    {
+        return Setting::get('divisionApiEnabled', false);
     }
 }

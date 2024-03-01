@@ -32,6 +32,11 @@ class Task extends Model
         return $this->belongsTo(Training::class, 'subject_training_id');
     }
 
+    public function subjectTrainingRating()
+    {
+        return $this->belongsTo(Rating::class, 'subject_training_rating_id');
+    }
+
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_user_id');

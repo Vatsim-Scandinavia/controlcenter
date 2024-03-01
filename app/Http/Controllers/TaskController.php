@@ -45,6 +45,7 @@ class TaskController extends Controller
             'message' => 'sometimes|min:3|max:256',
             'subject_user_id' => 'required|exists:users,id',
             'subject_training_id' => 'required|exists:trainings,id',
+            'subject_training_rating_id' => 'nullable|exists:ratings,id',
             'assignee_user_id' => 'required|exists:users,id',
         ]);
 
@@ -72,16 +73,12 @@ class TaskController extends Controller
     /**
      * Close the specified task with a given status.
      */
-    protected function close(Task|int $task, TaskStatus $status): Task
+    protected function close(Task $task, TaskStatus $status): void
     {
-        $this->authorize('update', Task::class);
-        $task = Task::findOrFail($task);
         $task->status = $status;
         $task->assignee_notified = true;
         $task->closed_at = now();
         $task->save();
-
-        return $task;
     }
 
     /**
@@ -89,12 +86,17 @@ class TaskController extends Controller
      */
     public function complete(Request $request, Task|int $task): RedirectResponse
     {
-        $completed = self::close($task, TaskStatus::COMPLETED);
+        $this->authorize('update', Task::class);
+        $task = Task::findOrFail($task);
 
-        // Run the complete method on the task type to trigger type specific actions on completion
-        $completed->type()->complete($completed);
+        $error = $task->type()->complete($task);
+        if (isset($error)) {
+            return redirect()->back()->withErrors($error);
+        }
 
-        return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $completed->subject->name, $completed->creator->name));
+        self::close($task, TaskStatus::COMPLETED);
+
+        return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $task->subject->name, $task->creator->name));
     }
 
     /**
@@ -102,12 +104,17 @@ class TaskController extends Controller
      */
     public function decline(Request $request, Task|int $task): RedirectResponse
     {
-        $declined = self::close($task, TaskStatus::DECLINED);
+        $this->authorize('update', Task::class);
+        $task = Task::findOrFail($task);
 
-        // Run the decline method on the task type to trigger type specific actions on decline
-        $declined->type()->decline($declined);
+        $error = $task->type()->decline($task);
+        if (isset($error)) {
+            return redirect()->back()->withErrors($error);
+        }
 
-        return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $declined->subject->name, $declined->creator->name));
+        self::close($task, TaskStatus::DECLINED);
+
+        return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $task->subject->name, $task->creator->name));
     }
 
     /**

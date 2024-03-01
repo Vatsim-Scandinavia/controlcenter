@@ -45,6 +45,16 @@ abstract class Types
         return false;
     }
 
+    public function requireRatingSelection()
+    {
+        return false;
+    }
+
+    public function isApproval()
+    {
+        return false;
+    }
+
     abstract public function getName();
 
     abstract public function getIcon();

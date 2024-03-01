@@ -2,10 +2,11 @@
 
 namespace App\Tasks\Types;
 
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
-use App\Models\Training;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class RatingUpgrade extends Types
 {
@@ -21,18 +22,21 @@ class RatingUpgrade extends Types
 
     public function getText(Task $model)
     {
-        return 'Upgrade rating to ' . Training::find($model->subject_training_id)->getInlineRatings(false);
+        // Show the selected rating if set
+        if ($model->subjectTrainingRating) {
+            return 'Upgrade rating to ' . $model->subjectTrainingRating->name;
+        } else {
+            return 'Upgrade rating to ' . $model->subjectTraining->getInlineRatings(true);
+        }
     }
 
     public function getLink(Task $model)
     {
-        $training = Training::find($model->subject_training_id);
-        $user = User::find($model->subject_user_id);
+        $training = $model->subjectTraining;
+        $user = $model->subject;
         $userEud = $user->division == 'EUD';
 
-        if ($userEud && $training->hasVatsimRatings()) {
-            return 'https://www.atsimtest.com/index.php?cmd=admin&sub=memberdetail&memberid=' . $model->subject_user_id;
-        } elseif ($userEud && ! $training->hasVatsimRatings()) {
+        if ($userEud && ! $training->hasVatsimRatings()) {
             return route('endorsements.create.id', $user->id);
         }
 
@@ -47,8 +51,19 @@ class RatingUpgrade extends Types
     public function complete(Task $model)
     {
         // If the training requires a VATSIM GCAP upgrade, create a comment on the training
-        $training = Training::find($model->subject_training_id);
+        $training = $model->subjectTraining;
+        $user = $model->subject;
+
         if ($training->hasVatsimRatings()) {
+
+            // Call the Division API to request the upgrade
+            $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating : $training->getHighestVatsimRating();
+            $response = DivisionApi::requestRatingUpgrade($user, $rating, Auth::id());
+            if ($response && $response->failed()) {
+                return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
+            }
+
+            // Log in training activity
             TrainingActivityController::create($model->subjectTraining->id, 'COMMENT', null, null, $model->assignee->id, 'Rating upgrade requested.');
         }
 
@@ -69,5 +84,15 @@ class RatingUpgrade extends Types
     public function allowNonVatsimRatings()
     {
         return false;
+    }
+
+    public function requireRatingSelection()
+    {
+        return true;
+    }
+
+    public function isApproval()
+    {
+        return Setting::get('divisionApiEnabled', false);
     }
 }

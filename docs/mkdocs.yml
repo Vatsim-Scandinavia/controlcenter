@@ -121,8 +121,9 @@ nav:
       - Upgrading: upgrade.md
   - Integrations:
       # Insert discord.md and others here
-      - VATSIM: integrations/vatsim.md
       - Handover: integrations/handover.md
+      - VATEUD Core: integrations/vateud.md
+      - VATSIM: integrations/vatsim.md
       - VATSIM Connect: integrations/vatsim-connect.md
 
 # Perform additional validation for the documentation content.

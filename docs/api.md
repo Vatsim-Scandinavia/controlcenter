@@ -73,7 +73,7 @@ Parameters to add additional fields to the result
             {
                 "valid_from": "2023-09-16T20:53:00.000000Z",
                 "valid_to": null,
-                "rating": "MAE ENGM TWR"
+                "rating": "T1 ENGM TWR"
             }
         ]
     },
