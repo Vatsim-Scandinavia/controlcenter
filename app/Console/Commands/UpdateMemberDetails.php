@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Facades\DivisionApi;
 use App\Http\Controllers\ActivityLogController;
 use App\Models\AtcActivity;
 use App\Models\Training;
