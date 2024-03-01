@@ -71,6 +71,8 @@ class SyncRoster extends Command
 
                 $this->info('Syncing roster with Division API completed.');
             }
+        } else {
+            $this->error('Failed to sync roster with Division API: ' . $rosterResponse->json()['message']);
         }
 
     }
