@@ -248,16 +248,31 @@ class VATEUD implements DivisionApiContract
         return $this->callApi('/facility/user/' . $user->id . '/exams', 'GET');
     }
 
+    /**
+     * Get the roster
+     *
+     * @return \Illuminate\Http\Client\Response
+     */
     public function getRoster()
     {
         return $this->callApi('/facility/roster', 'GET');
     }
 
+    /**
+     * Assign a user to the roster
+     * 
+     * @return \Illuminate\Http\Client\Response
+     */
     public function assignRosterUser(int $userId)
     {
         return $this->callApi('/facility/roster/' . $userId, 'POST');
     }
 
+    /**
+     * Remove a user from the roster
+     * 
+     * @return \Illuminate\Http\Client\Response
+     */
     public function removeRosterUser(int $userId)
     {
         return $this->callApi('/facility/roster/' . $userId, 'DELETE');
