@@ -34,9 +34,9 @@ interface DivisionApiContract
 
     public function getRoster();
 
-    public function assignRosterUser(User $user);
+    public function assignRosterUser(int $userId);
 
-    public function removeRosterUser(User $user);
+    public function removeRosterUser(int $userId);
 
     public function getExamLink();
 }

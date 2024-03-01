@@ -43,10 +43,35 @@ class SyncRoster extends Command
             if (isset($json['data']) && isset($json['data']['controllers'])) {
 
                 $rosteredMembers = collect($json['data']['controllers']);
-                $activeMembers = User::getActiveAtcMembers();
+                $activeMembers = User::getActiveAtcMembers()->pluck('id');
 
-                dd($activeMembers);
-                dd($rosteredMembers);
+                //dd($activeMembers->diff($rosteredMembers));
+
+                // Add members who don't exist in roster
+                $this->info('Adding new members to roster...');
+                $newMembers = $activeMembers->diff($rosteredMembers);
+                $newMembers->each(function ($memberId) {
+                    $response = DivisionApi::assignRosterUser($memberId);
+                    if ($response->successful()) {
+                        $this->info('Added member ' . $memberId . ' to roster.');
+                    } else {
+                        $this->error('Failed to add member ' . $memberId . ' to roster.');
+                    }
+                });
+
+                // Remove member who are not active anymore
+                $this->info('Removing members from roster...');
+                $removedMembers = $rosteredMembers->diff($activeMembers);
+                $removedMembers->each(function ($memberId) {
+                    $response = DivisionApi::removeRosterUser($memberId);
+                    if ($response->successful()) {
+                        $this->info('Removed member ' . $memberId . ' from roster.');
+                    } else {
+                        $this->error('Failed to remove member ' . $memberId . ' from roster.');
+                    }
+                });
+
+                $this->info('Syncing roster with Division API completed.');
             }
         }
 
