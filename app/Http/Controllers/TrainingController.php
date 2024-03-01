@@ -583,7 +583,7 @@ class TrainingController extends Controller
                 // If training is completed with a passed exam result, let's set the user to active
                 if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
-                    if ($training->type <= 4) {
+                    if (! Setting::get('atcActivityBasedOnTotalHours') || Setting::get('atcActivityBasedOnTotalHours') && $training->type <= 4) {
                         try {
                             $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
                             $activity->atc_active = true;
