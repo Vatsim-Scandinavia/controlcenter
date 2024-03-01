@@ -260,7 +260,7 @@ class VATEUD implements DivisionApiContract
 
     /**
      * Assign a user to the roster
-     * 
+     *
      * @return \Illuminate\Http\Client\Response
      */
     public function assignRosterUser(int $userId)
@@ -270,7 +270,7 @@ class VATEUD implements DivisionApiContract
 
     /**
      * Remove a user from the roster
-     * 
+     *
      * @return \Illuminate\Http\Client\Response
      */
     public function removeRosterUser(int $userId)

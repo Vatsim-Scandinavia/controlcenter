@@ -53,7 +53,7 @@ class SyncRoster extends Command
                     if ($response->successful()) {
                         $this->info('Added member ' . $memberId . ' to roster.');
                     } else {
-                        $this->error('Failed to add member ' . $memberId . ' to roster.');
+                        $this->error('Failed to add member ' . $memberId . ' to roster: ' . $response->json()['message']);
                     }
                 });
 
@@ -65,7 +65,7 @@ class SyncRoster extends Command
                     if ($response->successful()) {
                         $this->info('Removed member ' . $memberId . ' from roster.');
                     } else {
-                        $this->error('Failed to remove member ' . $memberId . ' from roster.');
+                        $this->error('Failed to remove member ' . $memberId . ' from roster: ' . $response->json()['message']);
                     }
                 });
 
