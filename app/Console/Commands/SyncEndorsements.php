@@ -4,10 +4,10 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
-use App\Models\User;
-use Illuminate\Console\Command;
 use App\Models\Endorsement;
 use App\Models\Rating;
+use App\Models\User;
+use Illuminate\Console\Command;
 
 class SyncRoster extends Command
 {
@@ -51,14 +51,15 @@ class SyncRoster extends Command
         $rating = Rating::find($this->argument('rating_id'));
         $tier = $rating->endorsement_type;
 
-        if(!isset($tier)){
+        if (! isset($tier)) {
             $this->error('Rating not found or not a tiered rating');
+
             return Command::FAILURE;
         }
 
         $rosterResponse = DivisionApi::getTierEndorsements(substr($tier, -1));
         if ($rosterResponse && $rosterResponse->successful()) {
-        
+
             $apiEndorsements = collect($rosterResponse->json()['data']);
             $apiEndorsements = $apiEndorsements->where('position', $rating->name);
 
@@ -81,9 +82,9 @@ class SyncRoster extends Command
                 }
             });
 
-
         } else {
             $this->error('Failed to fetch endorsements from Division API');
+
             return Command::FAILURE;
         }
 

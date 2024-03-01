@@ -122,8 +122,9 @@ class VATEUD implements DivisionApiContract
      *
      * @return \Illuminate\Http\Client\Response
      */
-    public function getTierEndorsements(int $tier){;
-        return $this->callApi('/facility/endorsements/tier-'.$tier, 'GET');
+    public function getTierEndorsements(int $tier)
+    {
+        return $this->callApi('/facility/endorsements/tier-' . $tier, 'GET');
     }
 
     /**
