@@ -298,7 +298,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../integrations/vatsim/" class="md-tabs__link">
+        <a href="../../integrations/handover/" class="md-tabs__link">
           
   
   Integrations
@@ -1309,11 +1309,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrations/vatsim/" class="md-nav__link">
+      <a href="../../integrations/handover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    VATSIM
+    Handover
   </span>
   
 
@@ -1330,11 +1330,32 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrations/handover/" class="md-nav__link">
+      <a href="../../integrations/vateud/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Handover
+    VATEUD Core
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrations/vatsim/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VATSIM
   </span>
   
 
@@ -1520,6 +1541,7 @@
 <th>name</th>
 <th>description</th>
 <th>vatsim_rating</th>
+<th>endorsement_type</th>
 </tr>
 </thead>
 <tbody>
@@ -1528,18 +1550,21 @@
 <td>Rating Name</td>
 <td>Description</td>
 <td>The id of vatsim rating this represents, NULL if local endorsement</td>
+<td>NULL or <abbr title="Global Controller Administration Policy">GCAP</abbr> type: T1, T2 or SC</td>
 </tr>
 <tr>
 <td>1</td>
 <td><abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr></td>
 <td>Rating required to sit <abbr title="Ground Position">GND</abbr> position</td>
 <td>2</td>
+<td>NULL</td>
 </tr>
 <tr>
 <td>8</td>
-<td>MAE MAJOR AIRPORT</td>
-<td>Rating required to sit on a selected airport</td>
+<td>KJFK <abbr title="Approach Position">APP</abbr></td>
+<td>Endorsement required to sit on a selected airport</td>
 <td>NULL</td>
+<td>T1</td>
 </tr>
 </tbody>
 </table>

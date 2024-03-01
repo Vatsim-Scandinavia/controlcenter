@@ -81,6 +81,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.vatsim-scandinavia.org/controlcenter/latest/integrations/vateud/</loc>
+         <lastmod>2024-03-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.vatsim-scandinavia.org/controlcenter/latest/integrations/vatsim-connect/</loc>
          <lastmod>2024-03-01</lastmod>
          <changefreq>daily</changefreq>
