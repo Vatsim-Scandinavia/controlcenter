@@ -594,6 +594,7 @@ class TrainingController extends Controller
                                 'user_id' => $training->user->id,
                                 'area_id' => $training->area->id,
                                 'hours' => 0,
+                                'atc_active' => true,
                                 'start_of_grace_period' => now(),
                             ]);
                         }
