@@ -86,7 +86,7 @@ class Kernel extends ConsoleKernel
         // Sync the roster with Division API
         if (Setting::get('divisionApiEnabled')) {
             $schedule->command('sync:roster')
-                ->daily();
+                ->dailyAt('07:00');
         }
 
         // Check if updates are available
