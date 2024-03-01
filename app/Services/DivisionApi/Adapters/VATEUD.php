@@ -118,6 +118,15 @@ class VATEUD implements DivisionApiContract
     }
 
     /**
+     * Get the user's tier endorsements
+     *
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function getTierEndorsements(int $tier){;
+        return $this->callApi('/facility/endorsements/tier-'.$tier, 'GET');
+    }
+
+    /**
      * Assign a training position to a user
      *
      * @return \Illuminate\Http\Client\Response

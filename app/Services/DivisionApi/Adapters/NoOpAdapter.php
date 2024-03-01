@@ -23,6 +23,10 @@ class NoOpAdapter implements DivisionApiContract
     {
     }
 
+    public function getTierEndorsements($tier)
+    {
+    }
+
     public function assignTierEndorsement($user, $rating, $requesterId)
     {
     }
