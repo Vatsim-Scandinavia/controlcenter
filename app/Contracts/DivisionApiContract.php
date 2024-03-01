@@ -32,5 +32,11 @@ interface DivisionApiContract
 
     public function getUserExams(User $user);
 
+    public function getRoster();
+
+    public function assignRosterUser(User $user);
+
+    public function removeRosterUser(User $user);
+
     public function getExamLink();
 }

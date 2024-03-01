@@ -55,4 +55,17 @@ class NoOpAdapter implements DivisionApiContract
     {
         return false;
     }
+
+    public function getRoster()
+    {
+    }
+
+    public function assignRosterUser($user)
+    {
+    }
+
+    public function removeRosterUser($user)
+    {
+
+    }
 }

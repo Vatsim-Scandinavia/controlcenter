@@ -248,6 +248,21 @@ class VATEUD implements DivisionApiContract
         return $this->callApi('/facility/user/' . $user->id . '/exams', 'GET');
     }
 
+    public function getRoster()
+    {
+        return $this->callApi('/facility/roster', 'GET');
+    }
+
+    public function assignRosterUser(User $user)
+    {
+        return $this->callApi('/facility/roster/' . $user->id, 'POST');
+    }
+
+    public function removeRosterUser(User $user)
+    {
+        return $this->callApi('/facility/roster/' . $user->id, 'DELETE');
+    }
+
     /**
      * Get the link to the theory exam
      *
