@@ -297,7 +297,7 @@ class TrainingController extends Controller
             $ratings = Rating::find($data['ratings']);
 
             // If it's a refresh training, force the training to refresh all endorsements in respective area or deny the creation
-            if ($data['type'] == 2  || $data['type'] == 5) {
+            if ($data['type'] == 2 || $data['type'] == 5) {
                 // Ratings supplied in request
                 $appliedRatings = $ratings->pluck('name');
                 $validRefreshTraining = $this->validRefreshTraining($data['training_area'], $data['user_id'], $appliedRatings);
