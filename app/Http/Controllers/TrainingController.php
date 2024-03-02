@@ -296,6 +296,11 @@ class TrainingController extends Controller
         } elseif (isset($data['ratings'])) {
             $ratings = Rating::find($data['ratings']);
 
+            // Missing fields? Return error
+            if (! isset($data['training_area']) || ! isset($data['type'])) {
+                return redirect()->back()->withErrors('One or more fields were missing');
+            }
+
             // If it's a refresh training, force the training to refresh all endorsements in respective area or deny the creation
             if ($data['type'] == 2 || $data['type'] == 5) {
                 // Ratings supplied in request
