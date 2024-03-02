@@ -295,6 +295,37 @@ class TrainingController extends Controller
             }
         } elseif (isset($data['ratings'])) {
             $ratings = Rating::find($data['ratings']);
+
+            // If it's a refresh training, force the training to refresh all endorsements in respective area or deny the creation
+            if ($data['type'] == 2) {
+
+                // Ratings supplied in request
+                $appliedRatings = $ratings->pluck('name');
+
+                // Ratings applicable to area of request
+                $areaRatings = Rating::whereHas('areas', function ($query) use ($data) {
+                    $query->where('area_id', $data['training_area']);
+                })->whereNull('vatsim_rating')->get()->pluck('name');
+
+                // Ratings which user has today and needs to be refresh
+                $userRatings = User::find($data['user_id'])->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
+                    return $endorsement->ratings->first()->name;
+                });
+
+                // Gather expected ratings for this user in given area
+                $expectedRatings = collect();
+                foreach ($userRatings as $userRating) {
+                    if ($areaRatings->contains($userRating)) {
+                        $expectedRatings->push($userRating);
+                    }
+                }
+
+                $discrepancyRatings = $expectedRatings->diff($appliedRatings);
+                if ($discrepancyRatings->count() > 0) {
+                    return redirect()->back()->withErrors('A refresh training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $discrepancyRatings->implode(', '));
+                }
+            }
+
         } else {
             return redirect()->back()->withErrors('One or more ratings need to be selected to create training request.');
         }
