@@ -297,13 +297,13 @@ class TrainingController extends Controller
             $ratings = Rating::find($data['ratings']);
 
             // If it's a refresh training, force the training to refresh all endorsements in respective area or deny the creation
-            if ($data['type'] == 2) {
+            if ($data['type'] == 2  || $data['type'] == 5) {
                 // Ratings supplied in request
                 $appliedRatings = $ratings->pluck('name');
                 $validRefreshTraining = $this->validRefreshTraining($data['training_area'], $data['user_id'], $appliedRatings);
 
                 if (! $validRefreshTraining['success']) {
-                    return redirect()->back()->withErrors('A refresh training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
+                    return redirect()->back()->withErrors('A refresh/familiarisation training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
                 }
             }
 
@@ -421,12 +421,12 @@ class TrainingController extends Controller
         $preChangeType = $training->type;
 
         // If it's a refresh training, validate the requested endorsements
-        if ($attributes['type'] == 2) {
+        if ($attributes['type'] == 2 || $attributes['type'] == 5) {
             $appliedRatings = Rating::find($attributes['ratings'])->pluck('name');
             $validRefreshTraining = $this->validRefreshTraining($training->area_id, $training->user_id, $appliedRatings);
 
             if (! $validRefreshTraining['success']) {
-                return redirect()->back()->withErrors('A refresh training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
+                return redirect()->back()->withErrors('A refresh/familiarisation training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
             }
         }
 
