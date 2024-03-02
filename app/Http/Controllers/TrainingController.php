@@ -298,31 +298,12 @@ class TrainingController extends Controller
 
             // If it's a refresh training, force the training to refresh all endorsements in respective area or deny the creation
             if ($data['type'] == 2) {
-
                 // Ratings supplied in request
                 $appliedRatings = $ratings->pluck('name');
+                $validRefreshTraining = $this->validRefreshTraining($data['training_area'], $data['user_id'], $appliedRatings);
 
-                // Ratings applicable to area of request
-                $areaRatings = Rating::whereHas('areas', function ($query) use ($data) {
-                    $query->where('area_id', $data['training_area']);
-                })->whereNull('vatsim_rating')->get()->pluck('name');
-
-                // Ratings which user has today and needs to be refresh
-                $userRatings = User::find($data['user_id'])->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
-                    return $endorsement->ratings->first()->name;
-                });
-
-                // Gather expected ratings for this user in given area
-                $expectedRatings = collect();
-                foreach ($userRatings as $userRating) {
-                    if ($areaRatings->contains($userRating)) {
-                        $expectedRatings->push($userRating);
-                    }
-                }
-
-                $discrepancyRatings = $expectedRatings->diff($appliedRatings);
-                if ($discrepancyRatings->count() > 0) {
-                    return redirect()->back()->withErrors('A refresh training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $discrepancyRatings->implode(', '));
+                if (! $validRefreshTraining['success']) {
+                    return redirect()->back()->withErrors('A refresh training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
                 }
             }
 
@@ -438,6 +419,16 @@ class TrainingController extends Controller
         // Lets remeber what it was before for showing the change in logs
         $preChangeRatings = $training->ratings;
         $preChangeType = $training->type;
+
+        // If it's a refresh training, validate the requested endorsements
+        if ($attributes['type'] == 2) {
+            $appliedRatings = Rating::find($attributes['ratings'])->pluck('name');
+            $validRefreshTraining = $this->validRefreshTraining($training->area_id, $training->user_id, $appliedRatings);
+
+            if (! $validRefreshTraining['success']) {
+                return redirect()->back()->withErrors('A refresh training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
+            }
+        }
 
         // Detach all ratings connceed to training to save the new (or same) ones.
         $training->ratings()->detach();
@@ -725,6 +716,37 @@ class TrainingController extends Controller
         }
 
         return redirect()->to($training->path())->withErrors('We could not find a training interest confirmation for this training. Please contact our technical staff if this issue persists.');
+    }
+
+    /**
+     * Return if the refresh is correct. If not, returns descrepency rating names
+     */
+    protected function validRefreshTraining($areaId, $userId, $requestedRatings)
+    {
+        // Ratings applicable to area of request
+        $areaRatings = Rating::whereHas('areas', function ($query) use ($areaId) {
+            $query->where('area_id', $areaId);
+        })->whereNull('vatsim_rating')->get()->pluck('name');
+
+        // Ratings which user has today and needs to be refresh
+        $userRatings = User::find($userId)->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
+            return $endorsement->ratings->first()->name;
+        });
+
+        // Gather expected ratings for this user in given area
+        $expectedRatings = collect();
+        foreach ($userRatings as $userRating) {
+            if ($areaRatings->contains($userRating)) {
+                $expectedRatings->push($userRating);
+            }
+        }
+
+        $discrepancyRatings = $expectedRatings->diff($requestedRatings);
+        if ($discrepancyRatings->count() > 0) {
+            return ['success' => false, 'data' => $discrepancyRatings];
+        }
+
+        return ['success' => true];
     }
 
     /**
