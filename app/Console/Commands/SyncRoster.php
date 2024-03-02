@@ -30,7 +30,7 @@ class SyncRoster extends Command
     {
 
         if (! Setting::get('divisionApiEnabled')) {
-            $this->error('This command is only available when reactivation setting is enabled');
+            $this->error('This command is only available when Division API setting is enabled');
 
             return Command::FAILURE;
         }
