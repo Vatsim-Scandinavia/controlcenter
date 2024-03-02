@@ -31,7 +31,7 @@ class NoOpAdapter implements DivisionApiContract
     {
     }
 
-    public function revokeTierEndorsement($endorsement)
+    public function revokeTierEndorsement($tier, $userId, $endorsementName)
     {
     }
 

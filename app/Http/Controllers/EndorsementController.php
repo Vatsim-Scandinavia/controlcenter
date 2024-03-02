@@ -322,9 +322,11 @@ class EndorsementController extends Controller
                 return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
             }
         } elseif ($endorsement->type == 'MASC') {
-            $response = DivisionApi::revokeTierEndorsement($endorsement);
-            if ($response && $response->failed()) {
-                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            if (isset($endorsement->ratings->first()->endorsement_type)) {
+                $response = DivisionApi::revokeTierEndorsement($endorsement->ratings->first()->endorsement_type, $endorsement->user->id, $endorsement->ratings->first()->name);
+                if ($response && $response->failed()) {
+                    return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                }
             }
         } elseif ($endorsement->type == 'SOLO') {
             $response = DivisionApi::revokeSoloEndorsement($endorsement);

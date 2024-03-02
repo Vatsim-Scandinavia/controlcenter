@@ -158,23 +158,19 @@ class VATEUD implements DivisionApiContract
      *
      * @return \Illuminate\Http\Client\Response
      */
-    public function revokeTierEndorsement(Endorsement $endorsement)
+    public function revokeTierEndorsement(string $tier, int $userId, string $endorsementName)
     {
 
-        if ($endorsement->ratings->first()->endorsement_type == 'T1') {
-            $externalEndorsements = $this->callApi('/facility/endorsements/tier-1', 'GET')->json()['data'];
-            foreach ($externalEndorsements as $externalEndorsement) {
-                if ($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name) {
-                    return $this->callApi('/facility/endorsements/tier-1/' . $externalEndorsement['id'], 'DELETE');
-                }
-            }
+        $endpointTierString = 'tier-1';
+        if ($tier == 'T2') {
+            $endpointTierString = 'tier-2';
+        }
 
-        } elseif ($endorsement->ratings->first()->endorsement_type == 'T2') {
-            $externalEndorsements = $this->callApi('/facility/endorsements/tier-2', 'GET')->json()['data'];
-            foreach ($externalEndorsements as $externalEndorsement) {
-                if ($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->ratings->first()->name) {
-                    return $this->callApi('/facility/endorsements/tier-2/' . $externalEndorsement['id'], 'DELETE');
-                }
+        $externalEndorsements = $this->callApi('/facility/endorsements/' . $endpointTierString, 'GET')->json()['data'];
+
+        foreach ($externalEndorsements as $externalEndorsement) {
+            if ($externalEndorsement['user_cid'] == $userId && $externalEndorsement['position'] == $endorsementName) {
+                return $this->callApi('/facility/endorsements/' . $endpointTierString . '/' . $externalEndorsement['id'], 'DELETE');
             }
         }
 

@@ -22,7 +22,7 @@ interface DivisionApiContract
 
     public function assignTierEndorsement(User $user, Rating $rating, int $requesterId);
 
-    public function revokeTierEndorsement(Endorsement $endorsement);
+    public function revokeTierEndorsement(string $tier, int $userId, string $endorsementName);
 
     public function assignSoloEndorsement(User $user, Position $position, int $requesterId, ?Carbon $expireAt = null);
 

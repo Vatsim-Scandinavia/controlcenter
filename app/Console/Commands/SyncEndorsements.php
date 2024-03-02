@@ -16,7 +16,7 @@ class SyncEndorsements extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:endorsements {rating_id}';
+    protected $signature = 'sync:endorsements {addEndorsementsAsUser?} {--dry-run}';
 
     /**
      * The console command description.
@@ -32,61 +32,96 @@ class SyncEndorsements extends Command
     {
 
         if (! Setting::get('divisionApiEnabled')) {
-            $this->error('This command is only available when reactivation setting is enabled');
+            $this->error('This command is only available when Division API setting is enabled');
 
             return Command::FAILURE;
         }
 
-        //
-        // ** NOTE **
-        // ** EXPERIMENTAL FUNCTION **
-        //
-        // This command is only meant to be ran manually at this point. Though it's a nice baseline for future sync functionalities
-        // and for migration to the division api integration
-        // @TODO: Sync only endorsements who belong to active players in subdivision?
-        //
+        $addEndorsementsAsUser = $this->argument('addEndorsementsAsUser');
+        $dryRun = $this->option('dry-run');
+
+        if (! $dryRun && isset($addEndorsementsAsUser) && ! $this->confirm('Are you sure you want to add missing endorsements in API as VATSIM ID ' . $addEndorsementsAsUser . '?')) {
+            $this->error('Aborted.');
+
+            return Command::SUCCESS;
+        }
 
         $this->info('Syncing endorsements with Division API...');
+        $tieredRatings = Rating::whereIn('endorsement_type', ['T1', 'T2'])->get();
 
-        $rating = Rating::find($this->argument('rating_id'));
-        $tier = $rating->endorsement_type;
+        // Loop through all T1 and T2 ratings
+        foreach ($tieredRatings as $rating) {
 
-        if (! isset($tier)) {
-            $this->error('Rating not found or not a tiered rating');
+            $tier = $rating->endorsement_type;
 
-            return Command::FAILURE;
-        }
+            $this->info('[' . $rating->endorsement_type . ' ' . $rating->name . ']');
 
-        $rosterResponse = DivisionApi::getTierEndorsements(substr($tier, -1));
-        if ($rosterResponse && $rosterResponse->successful()) {
+            $rosterResponse = DivisionApi::getTierEndorsements(substr($tier, -1));
+            if ($rosterResponse && $rosterResponse->successful()) {
 
-            $apiEndorsements = collect($rosterResponse->json()['data']);
-            $apiEndorsements = $apiEndorsements->where('position', $rating->name);
+                // Endorsements stored in API
+                $apiEndorsements = collect($rosterResponse->json()['data']);
+                $apiEndorsements = $apiEndorsements->where('position', $rating->name);
 
-            $storedEndorsements = Endorsement::where('type', 'MASC')->whereHas('ratings', function ($query) use ($rating) {
-                $query->where('id', $rating->id);
-            })->with('ratings')->get();
+                // Relevant users we want to display endorsements of
+                $relevantActiveUsers = User::getActiveAtcMembers();
+                $relevantVisitingUsers = User::whereHas('endorsements', function ($query) {
+                    $query->where('type', 'VISITING')->where('revoked', false)->where('expired', false);
+                })->get();
 
-            $storedEndorsements->each(function ($storedEndorsement) use ($apiEndorsements, $rating) {
-                $apiEndorsement = $apiEndorsements->where('user_cid', $storedEndorsement->user_id)->first();
-                if ($apiEndorsement) {
-                    $this->info('Endorsement for ' . $storedEndorsement->user_id . ' already exists in Division API. SKIPPING...');
-                } else {
-                    $this->warn('Endorsement for ' . $storedEndorsement->user_id . ' does not exist in Division API. ADDING...');
-                    $response = DivisionApi::assignTierEndorsement(User::find($storedEndorsement->user_id), $rating, 1352906);
-                    if ($response->successful()) {
-                        $this->info('Added endorsement for ' . $storedEndorsement->user_id . ' to Division API.');
-                    } else {
-                        $this->error('Failed to add endorsement for ' . $storedEndorsement->user_id . ' to Division API: ' . $response->json()['message']);
-                    }
+                $relevantUsers = $relevantActiveUsers->merge($relevantVisitingUsers);
+
+                // Endorsements stored in CC
+                $storedEndorsements = Endorsement::where('type', 'MASC')
+                    ->where('revoked', false)
+                    ->where('expired', false)
+                    ->whereIn('user_id', $relevantUsers->pluck('id'))
+                    ->whereHas('ratings', function ($query) use ($rating) {
+                        $query->where('id', $rating->id);
+                    })
+                    ->with('ratings')
+                    ->get();
+
+                // Add endorsements which don't exist in Division API
+                if (isset($addEndorsementsAsUser)) {
+                    $storedEndorsements->each(function ($storedEndorsement) use ($apiEndorsements, $rating, $addEndorsementsAsUser, $dryRun) {
+                        $apiEndorsement = $apiEndorsements->where('user_cid', $storedEndorsement->user_id)->first();
+                        if (! $apiEndorsement) {
+                            $this->warn('Endorsement for ' . $storedEndorsement->user_id . ' is not stored in API. Adding...' . ($dryRun ? ' (dry run)' : ''));
+
+                            if (! $dryRun) {
+                                $response = DivisionApi::assignTierEndorsement(User::find($storedEndorsement->user_id), $rating, $addEndorsementsAsUser);
+                                if ($response->failed()) {
+                                    $this->error('Failed to add endorsement for ' . $storedEndorsement->user_id . ' to Division API: ' . $response->json()['message']);
+                                }
+                            }
+                        }
+                    });
                 }
-            });
 
-        } else {
-            $this->error('Failed to fetch endorsements from Division API');
+                // Remove endorsements which don't exist in CC
+                $apiEndorsements->each(function ($apiEndorsement) use ($storedEndorsements, $tier, $dryRun) {
+                    $storedEndorsement = $storedEndorsements->where('user_id', $apiEndorsement['user_cid'])->first();
+                    if (! $storedEndorsement) {
+                        $this->warn('Endorsement for ' . $apiEndorsement['user_cid'] . ' should not be stored in API. Removing...' . ($dryRun ? ' (dry run)' : ''));
 
-            return Command::FAILURE;
+                        if (! $dryRun) {
+                            $response = DivisionApi::revokeTierEndorsement($tier, $apiEndorsement['user_cid'], $apiEndorsement['position']);
+                            if ($response->failed()) {
+                                $this->error('Failed to remove endorsement for ' . $apiEndorsement['user_cid'] . ' from Division API: ' . $response->json()['message']);
+                            }
+                        }
+                    }
+                });
+
+            } else {
+                $this->error('Failed to fetch endorsements from Division API');
+
+                return Command::FAILURE;
+            }
         }
+
+        $this->info('Done!');
 
     }
 }
