@@ -157,7 +157,7 @@ class EndorsementController extends Controller
             // Add ratings
             $endorsement->ratings()->save(Rating::find($data['ratingMASC']));
 
-            ActivityLogController::warning('ENDORSEMENT', 'Created Airport/Center endorsement ' .
+            ActivityLogController::warning('ENDORSEMENT', 'Created facility endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Rating: ' . Rating::find($data['ratingMASC'])->name);
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Position Endorsements')
+@section('title', 'Facility Endorsements')
 @section('title-flex')
     <div>
         @if (\Auth::user()->isModeratorOrAbove())
@@ -20,7 +20,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Position Endorsements</h6> 
+                <h6 class="m-0 fw-bold text-white">Facility Endorsements</h6> 
             </div>        
             <div class="card-body p-0">
                 <div class="table-responsive">

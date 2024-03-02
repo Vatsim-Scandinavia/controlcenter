@@ -46,7 +46,7 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeMASC">
-                                Airport/Center
+                                Facility
                             </label>
                         </div>
 
@@ -231,7 +231,7 @@
                     /*
                         All -> User
 
-                        Airport/Center -> Single MA/SC Rating
+                        Airport/Center -> Single Facility Rating
                         Training -> Type + Expire + Position (Multiple if S1)
                         Examiner -> GRP Ratings + Areas
                         Visitor -> Areas + Single GRP Rating
