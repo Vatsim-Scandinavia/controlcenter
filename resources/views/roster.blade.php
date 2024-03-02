@@ -46,9 +46,12 @@
                                         @endcan
                                     </td>
                                     <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
-                                    <td class="text-center text-white {{ $u->isAtcActive() ? 'bg-success' : 'bg-danger' }}">
+                                    <td class="text-center text-white {{ $u->isAtcActive() || $u->isVisiting() ? 'bg-success' : 'bg-danger' }}">
                                         @if($u->isAtcActive())
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
+                                        @elseif($u->isVisiting())
+                                            <i class="far fa-check-circle"></i><span class="d-none">Visiting</span>
+                                            Visiting
                                         @else
                                             <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>
                                         @endif
