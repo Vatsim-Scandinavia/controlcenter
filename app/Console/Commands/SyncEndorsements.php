@@ -61,10 +61,14 @@ class SyncEndorsements extends Command
 
                 // Endorsements stored in API
                 $apiEndorsements = collect($rosterResponse->json()['data']);
-                $apiEndorsements = $apiEndorsements->where('position', $rating->name);
+                $apiEndorsements = $apiEndorsements->where('position', strtoupper($rating->name));
 
                 // Relevant users we want to display endorsements of
-                $relevantActiveUsers = User::getActiveAtcMembers();
+                $relevantActiveUsers = User::getActiveAtcMembers()->filter(function ($user) use ($rating) {
+                    // Only keep users who are active in Rating's area
+                    return $user->isAtcActive($rating->areas->first());
+                });
+
                 $relevantVisitingUsers = User::whereHas('endorsements', function ($query) {
                     $query->where('type', 'VISITING')->where('revoked', false)->where('expired', false);
                 })->get();
