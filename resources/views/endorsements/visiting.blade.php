@@ -65,7 +65,7 @@
 
                                                     {{-- Display the MASC endorsements connected to this area --}}
                                                     @foreach($endorsedArea->ratings->whereNull('vatsim_rating') as $areaRating)
-                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement)
+                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $mascEndorsement)
                                                             @if($areaRating->id == $mascEndorsement->ratings->first()->id)
                                                                 <small class="d-block">{{ $areaRating->name }}</small>
                                                             @endif
