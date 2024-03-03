@@ -181,7 +181,7 @@ class EndorsementController extends Controller
                 $expireDate->setTime(23, 59);
 
                 $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
-                if (($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addMonth()))) {
+                if (($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addDays(30)))) {
                     return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
                 }
             } else {

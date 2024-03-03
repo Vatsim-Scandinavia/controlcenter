@@ -94,8 +94,6 @@
                             type="text"
                             name="expires"
                             v-model="expire"
-                            :disabled="expireInf"
-                            :placeholder="expireInf && 'Never expires'" 
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
                         <span v-show="validationError && expire == null" class="text-danger">Fill out a valid expire date</span>
                     </div>
@@ -192,7 +190,6 @@
                     endorsementType: null,
                     user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
                     expire: null,
-                    expireInf: null,
                     positions: null,
                     ratingMASC: null,
                     ratingGRP: null,
@@ -215,8 +212,6 @@
                         end = "MA/SC"
                     } else if(this.endorsementType == 'SOLO'){
                         end = "Solo"
-                        flatpickr.config.maxDate = moment().add(1, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
                     } else if(this.endorsementType == 'EXAMINER'){
                         end = "Examiner"
                     } else if(this.endorsementType == 'VISITING'){
@@ -251,7 +246,7 @@
 
                     } else if(this.endorsementType == 'SOLO'){
 
-                        if(this.expire == null && this.expireInf != true) validated = false
+                        if(this.expire == null) validated = false
                         if(this.positions == null) validated = false
 
                         if(this.soloChecked == false) validated = false
@@ -294,7 +289,7 @@
 @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('30 days')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
     })
 </script>
 
