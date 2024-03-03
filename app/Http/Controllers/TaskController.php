@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\TaskStatus;
+use App\Models\Area;
 use App\Models\Task;
 use App\Models\User;
 use App\Rules\ValidTaskType;
@@ -11,7 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
-use App\Models\Area;
 
 class TaskController extends Controller
 {
@@ -154,8 +154,8 @@ class TaskController extends Controller
      */
     public static function getPopularAssignees(Area $area)
     {
-        $users = User::whereHas('tasks', function ($query) use ($area){
-            $query->whereHas('subjectTraining', function($query) use ($area){
+        $users = User::whereHas('tasks', function ($query) use ($area) {
+            $query->whereHas('subjectTraining', function ($query) use ($area) {
                 $query->where('area_id', $area->id);
             });
         })->withCount('tasks')->orderBy('tasks_count', 'desc')->limit(10)->get();

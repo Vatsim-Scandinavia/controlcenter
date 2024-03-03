@@ -43,6 +43,10 @@ class NoOpAdapter implements DivisionApiContract
     {
     }
 
+    public function uploadExamResults($studentId, $examinerId, $pass, $positionName, $filePath)
+    {
+    }
+
     public function requestRatingUpgrade($user, $rating, $requesterId)
     {
     }

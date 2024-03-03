@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\DivisionApi;
 use App\Helpers\TrainingStatus;
 use App\Models\Group;
 use App\Models\OneTimeLink;
@@ -52,15 +53,24 @@ class TrainingExaminationController extends Controller
     public function store(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
-
         $data = $this->validateRequest();
-
         $date = Carbon::createFromFormat('d/m/Y', $data['examination_date']);
+        $position = Position::firstWhere('callsign', $data['position']);
+        $pass = strtolower($data['result']) == 'passed' ? true : false;
 
-        $position_id = Position::firstWhere('callsign', $data['position'])->id;
+        // Attempt Division API sync first
+        if ($request->file('files')) {
+            foreach ($request->file('files') as $file) {
+                $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
+                if ($response && $response->failed()) {
+                    return redirect()->back()->withErrors('Please try uploading the examination again. Failed to upload exam results to the Division API: ' . $response->json()['message']);
+                }
+            }
+        }
 
+        // Save locally
         $examination = TrainingExamination::create([
-            'position_id' => $position_id,
+            'position_id' => $position->id,
             'training_id' => $training->id,
             'examiner_id' => Auth::id(),
             'examination_date' => $date->format('Y-m-d'),

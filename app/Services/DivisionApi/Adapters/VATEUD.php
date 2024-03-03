@@ -43,14 +43,27 @@ class VATEUD implements DivisionApiContract
      * @param  array  $data  to send
      * @return \Illuminate\Http\Client\Response
      */
-    private function callApi($url, $method = 'GET', $data = [])
+    private function callApi(string $url, string $method = 'GET', ?array $data = null, ?array $multipartData = null)
     {
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'X-API-KEY' => $this->apiToken,
-        ])->$method($this->baseUrl . $url, $data);
 
-        return $response;
+        // Send the call as normal or multipart
+        if (! $multipartData && $data) {
+
+            return Http::withHeaders([
+                'Accept' => 'application/json',
+                'X-API-KEY' => $this->apiToken,
+            ])->$method($this->baseUrl . $url, $data);
+
+        } elseif ($multipartData) {
+
+            return Http::withHeaders([
+                'Accept' => 'application/json',
+                'X-API-KEY' => $this->apiToken,
+            ])->asMultipart()->$method($this->baseUrl . $url, $multipartData);
+
+        }
+
+        return false;
     }
 
     /**
@@ -207,6 +220,33 @@ class VATEUD implements DivisionApiContract
         }
 
         return false;
+    }
+
+    /**
+     * Upload exam results
+     *
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function uploadExamResults(int $studentId, int $examinerId, bool $pass, string $positionName, string $filePath)
+    {
+        return $this->callApi('/facility/user/' . $studentId . '/notes/cpt', 'POST', null, [
+            [
+                'name' => 'examiner_cid',
+                'contents' => $examinerId,
+            ],
+            [
+                'name' => 'position',
+                'contents' => $positionName,
+            ],
+            [
+                'name' => 'cpt_pass',
+                'contents' => (int) $pass,
+            ],
+            [
+                'name' => 'file',
+                'contents' => fopen($filePath, 'r'),
+            ],
+        ]);
     }
 
     /**
