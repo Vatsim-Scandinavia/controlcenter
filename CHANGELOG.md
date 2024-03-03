@@ -1,5 +1,30 @@
 # Changelog
 
+## [5.1.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.4...v5.1.0) (2024-03-03)
+
+
+### Features
+
+* division API integration to tasks ([#789](https://github.com/Vatsim-Scandinavia/controlcenter/issues/789)) ([a0ab835](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a0ab83562584badb26e27cdcd3e78281311fdf50))
+* Mark users who leave subdiv as inactive ([0ddceb0](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0ddceb00cd185221c5097010ceef859c7a4b27d1))
+* require refresh to include all endorsements ([308d1b4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/308d1b420e09a6b34d989dfd96d33f616c37ab4d))
+
+
+### Bug Fixes
+
+* error when missing fields in manual training creation ([4f58bd9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4f58bd9b636b1a5f789d6c660d64f8c3a7bc4b9c))
+* improved sort of endorsements in user view ([891c81c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/891c81c951042a42fe0302fa1529bed6789c5dba))
+* re-opening trainings causing student to have multiple trainings ([89fd02f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/89fd02f291be0dbc8c917ad62518379b21ffe21e))
+* rename position to facility endorsements ([67a805d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/67a805d79370dd2ca220d9e4dd349c80d63079c0))
+* scoped task assign suggestion based on area ([4c19076](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4c19076fd9cf01a6d2fde06bd43866c7dc98b21e))
+* show visiting in roster ([5a3cd6d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5a3cd6d3de11aa3a40460bc7691dd78ecf4cddb9))
+* showing double of same endorsement for visitors ([cc9f118](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cc9f1186b1bb0572f4c32777610dfb29b7c82a4d))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.10.6 ([#822](https://github.com/Vatsim-Scandinavia/controlcenter/issues/822)) ([d605e32](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d605e32c0fb8c6a82c46026a9401a35671282de9))
+
 ## [5.0.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.3...v5.0.4) (2024-03-01)
 
 
