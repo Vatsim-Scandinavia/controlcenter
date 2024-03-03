@@ -44,6 +44,10 @@ class SyncRoster extends Command
 
                 $rosteredMembers = collect($json['data']['controllers']);
                 $activeMembers = User::getActiveAtcMembers()->pluck('id');
+                $visitingMembers = User::whereHas('endorsements', function ($query) {
+                    $query->where('type', 'VISITING')->where('revoked', false)->where('expired', false);
+                })->get()->pluck('id');
+                $activeMembers = $activeMembers->merge($visitingMembers)->unique();
 
                 // Add members who don't exist in roster
                 $this->info('Adding new members to roster...');
