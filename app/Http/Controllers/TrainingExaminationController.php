@@ -37,7 +37,7 @@ class TrainingExaminationController extends Controller
 
         $positions = Position::all();
         $taskRecipients = collect(Group::admins()->merge(Group::moderators()));
-        $taskPopularAssignees = TaskController::getPopularAssignees();
+        $taskPopularAssignees = TaskController::getPopularAssignees($training->area);
 
         return view('training.exam.create', compact('training', 'positions', 'taskRecipients', 'taskPopularAssignees'));
     }

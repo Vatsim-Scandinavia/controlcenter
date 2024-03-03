@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
+use App\Models\Area;
 
 class TaskController extends Controller
 {
@@ -151,9 +152,13 @@ class TaskController extends Controller
      *
      * @return Illuminate\Database\Eloquent\Collection;
      */
-    public static function getPopularAssignees()
+    public static function getPopularAssignees(Area $area)
     {
-        $users = User::has('tasks')->withCount('tasks')->orderBy('tasks_count', 'desc')->limit(10)->get();
+        $users = User::whereHas('tasks', function ($query) use ($area){
+            $query->whereHas('subjectTraining', function($query) use ($area){
+                $query->where('area_id', $area->id);
+            });
+        })->withCount('tasks')->orderBy('tasks_count', 'desc')->limit(10)->get();
 
         // Filter out users who no longer can receive tasks and end up with 3
         $users = $users->filter(function ($user) {

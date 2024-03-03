@@ -388,7 +388,7 @@ class TrainingController extends Controller
         $relatedTasks = $training->tasks->sortByDesc('created_at');
 
         $requestTypes = TaskController::getTypes();
-        $requestPopularAssignees = TaskController::getPopularAssignees();
+        $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
 
         return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees'));
     }
