@@ -38,29 +38,21 @@ class VATEUD implements DivisionApiContract
     /**
      * Call the API with all headers predefined
      *
-     * @param  string  $url  without base url
-     * @param  string  $method  HTTP method
-     * @param  array  $data  to send
      * @return \Illuminate\Http\Client\Response
      */
     private function callApi(string $url, string $method = 'GET', ?array $data = null, ?array $multipartData = null)
     {
-
-        // Send the call as normal or multipart
-        if (! $multipartData && $data) {
-
+        // Run a normal request if no multipart data is provided
+        if ($multipartData === null) {
             return Http::withHeaders([
                 'Accept' => 'application/json',
                 'X-API-KEY' => $this->apiToken,
             ])->$method($this->baseUrl . $url, $data);
-
-        } elseif ($multipartData) {
-
+        } else {
             return Http::withHeaders([
                 'Accept' => 'application/json',
                 'X-API-KEY' => $this->apiToken,
             ])->asMultipart()->$method($this->baseUrl . $url, $multipartData);
-
         }
 
         return false;
