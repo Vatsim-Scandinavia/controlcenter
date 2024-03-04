@@ -25,7 +25,7 @@ VATSIM API key v1 is required to enable this feature, contact VATSIM Tech Depart
 !!! info
 VATSIM Core API key v2 is required to enable this feature, contact VATSIM Tech Department using VATSIM Support to get your key.
 
-# VATSIM ATC Booking API
+# VATSIM ATC Bookings API
 
 [VATSIM ATC Bookings API][vatsim-atc-bookings-api] is used get, publish, edit and remove controller bookings.
 
