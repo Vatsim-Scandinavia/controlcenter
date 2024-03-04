@@ -65,11 +65,12 @@ Settings related to configuring OAuth-based authentication adhering to the field
 
 Settings related to the [VATSIM integration](../integrations/vatsim.md).
 
-| Variable | Default value | Explanation |
-| ------- | --- | --- |
-| `VATSIM_API_TOKEN` | null | Token to VATSIM API |
-| `VATSIM_BOOKING_API_URL` | `https://atc-bookings.vatsim.net/api` | URL to VATSIM Booking API |
-| `VATSIM_BOOKING_API_TOKEN` | null | Token to VATSIM Booking API |
+| Variable                   | Default value                         | Explanation                                                      |
+|----------------------------|---------------------------------------|------------------------------------------------------------------|
+| `VATSIM_API_TOKEN`         | null                                  | Token to VATSIM API **(Obsolete: Use VATSIM Core API instead.**) |
+| `VATSIM_CORE_API_TOKEN`    | null                                  | Token to VATSIM Core API                                         |
+| `VATSIM_BOOKING_API_URL`   | `https://atc-bookings.vatsim.net/api` | URL to VATSIM ATC Bookings API                                   |
+| `VATSIM_BOOKING_API_TOKEN` | null                                  | Token to VATSIM ATC Bookings API                                 |
 
 ### Mail
 

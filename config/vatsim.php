@@ -5,6 +5,9 @@ return [
     /*
     |--------------------------------------------------------------------------
     | VATSIM API
+    |
+    | This is the configuration for the VATSIM API integration.
+    | This is used to configure the secrets.
     |--------------------------------------------------------------------------
     |
     */
@@ -13,10 +16,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Booking API Integration
+    | VATSIM Core API
+    |
+    | This is the configuration for the VATSIM Core API integration.
+    | This is used to configure the secrets.
     |--------------------------------------------------------------------------
     |
-    | This is the configuration for the booking API integration.
+    */
+
+    'core_api_token' => env('VATSIM_CORE_API_TOKEN', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | VATSIM ATC Bookings API Integration
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration for the VATSIM ATC Bookings API integration.
     | This is used to configure the secrets and endpoints.
     |
     */

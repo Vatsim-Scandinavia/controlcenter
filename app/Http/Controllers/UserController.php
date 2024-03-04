@@ -34,11 +34,24 @@ class UserController extends Controller
     {
         $this->authorize('index', \Auth::user());
 
-        $response = $this->fetchApiUsers();
-        if ($response === false) {
-            $users = [];
+        $users = [];
 
-            return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM API. Check if your token is correct.');
+        if (! config('vatsim.core_api_token') && ! config('vatsim.core_api_token')) {
+            return view('user.index', compact('users'))->withErrors('Enable VATSIM Core API Integration to enable this feature.');
+        }
+
+        if (config('vatsim.core_api_token')) {
+            $response = $this->fetchUsersFromVatsimCoreApi();
+            if ($response === false) {
+                return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM Core API. Check if your token is correct.');
+            }
+        }
+
+        if (config('vatsim.api_token')) {
+            $response = $this->fetchUsersFromVatsimApi();
+            if ($response === false) {
+                return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM API. Check if your token is correct.');
+            }
         }
 
         $apiUsers = [];
@@ -46,10 +59,16 @@ class UserController extends Controller
         $ccUsersHours = AtcActivity::all();
         $ccUsersActive = User::getActiveAtcMembers()->pluck('id');
 
-        // Only include users from the division and index by key
-        foreach ($response as $data) {
-            if ($data['subdivision'] == config('app.owner_short')) {
+        if (config('vatsim.core_api_token')) {
+            foreach ($response as $data) {
                 $apiUsers[$data['id']] = $data;
+            }
+        } else {
+            // Only include users from the division and index by key
+            foreach ($response as $data) {
+                if ($data['subdivision'] == config('app.owner_short')) {
+                    $apiUsers[$data['id']] = $data;
+                }
             }
         }
 
@@ -422,18 +441,60 @@ class UserController extends Controller
     }
 
     /**
+     * Fetch users from VATSIM Core API
+     *
+     * @return \Illuminate\Http\Response|bool
+     */
+    private function fetchUsersFromVatsimCoreApi()
+    {
+        $url = sprintf('https://api.vatsim.net/v2/orgs/subdivision/%s', config('app.owner_short'));
+        $headers = [
+            'X-API-Key' => config('vatsim.core_api_token'),
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ];
+
+        $users = [];
+        $usersCount = 0;
+
+        $limit = 1000;
+        $count = -1;
+
+        do {
+            $response = Http::withHeaders($headers)->get(sprintf('%s?limit=%s&offset=%s', $url, $limit, $usersCount));
+
+            if (! $response->successful()) {
+                return false;
+            }
+
+            $jsonResponse = $response->json();
+
+            if ($count == -1) {
+                $count = $jsonResponse['count'];
+            }
+
+            $users = array_merge($users, $jsonResponse['items']);
+            $usersCount = count($users);
+        } while ($usersCount < $count);
+
+        return $users;
+    }
+
+    /**
      * Fetch users from VATSIM API
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|bool
      */
-    private function fetchApiUsers()
+    private function fetchUsersFromVatsimApi()
     {
-        $url = 'https://api.vatsim.net/api/subdivisions/' . config('app.owner_short') . '/members/';
-        $response = Http::withHeaders([
+        $url = sprintf('https://api.vatsim.net/api/subdivisions/%s/members/', config('app.owner_short'));
+        $headers = [
             'Authorization' => 'Token ' . config('vatsim.api_token'),
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-        ])->get($url);
+        ];
+
+        $response = Http::withHeaders($headers)->get($url);
 
         if (! $response->successful()) {
             return false;

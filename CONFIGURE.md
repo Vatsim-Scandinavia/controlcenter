@@ -15,35 +15,35 @@ Here is a list over all environment variables you may tweak. You may start the c
 
 Table with all the variables, default value and explanation. Override the environment variable to change the value if the default value does not fit your needs.
 
-| Variable | Default value | Explanation |
-| ------- | --- | --- |
-| APP_NAME | Control Center | Name of your subdivision |
-| APP_OWNER | Subdivision Name | Name of your subdivision |
-| APP_OWNER_SHORT | SCA | Usually 3 letter name identifying your vACC within VATSIM API |
-| APP_URL | http://localhost | URL to your Control Center |
-| APP_ENV | production | Environment of your Control Center |
-| DB_CONNECTION | mysql | Database connection type |
-| DB_HOST | localhost | Database host |
-| DB_PORT | 3306 | Database port |
-| DB_DATABASE | control-center | Database name |
-| DB_USERNAME | root | Database username |
-| DB_PASSWORD | root | Database password |
-| DB_TABLE_PREFIX | null | Database table prefix |
-| OAUTH_URL | https://auth.vatsim.net | OAuth URL of VATSIM |
-| OAUTH_ID | null | OAuth ID of your subdivision |
-| OAUTH_SECRET | null | OAuth secret of your subdivision |
-| VATSIM_API_TOKEN | null | Token to VATSIM API |
-| VATSIM_BOOKING_API_URL | https://atc-bookings.vatsim.net/api | URL to VATSIM Booking API |
-| VATSIM_BOOKING_API_TOKEN | null | Token to VATSIM Booking API |
-| MAIL_MAILER | smtp | Mailer type |
-| MAIL_HOST | smtp.mailgun.org | Mail host |
-| MAIL_PORT | 587 | Mail port |
-| MAIL_USERNAME | null | Mail username |
-| MAIL_PASSWORD | null | Mail password |
-| MAIL_ENCRYPTION | null | Mail encryption |
-| MAIL_FROM_NAME | Control Center | Mail from name |
-| MAIL_FROM_ADDRESS | noreply@yourvacc.com | Mail from address |
-| TRUSTED_PROXIES | null | Comma-separated list of trusted proxy addresses or '*' for all |
+| Variable                 | Default value                       | Explanation                                                    |
+|--------------------------|-------------------------------------|----------------------------------------------------------------|
+| APP_NAME                 | Control Center                      | Name of your subdivision                                       |
+| APP_OWNER                | Subdivision Name                    | Name of your subdivision                                       |
+| APP_OWNER_SHORT          | SCA                                 | Usually 3 letter name identifying your vACC within VATSIM API  |
+| APP_URL                  | http://localhost                    | URL to your Control Center                                     |
+| APP_ENV                  | production                          | Environment of your Control Center                             |
+| DB_CONNECTION            | mysql                               | Database connection type                                       |
+| DB_HOST                  | localhost                           | Database host                                                  |
+| DB_PORT                  | 3306                                | Database port                                                  |
+| DB_DATABASE              | control-center                      | Database name                                                  |
+| DB_USERNAME              | root                                | Database username                                              |
+| DB_PASSWORD              | root                                | Database password                                              |
+| DB_TABLE_PREFIX          | null                                | Database table prefix                                          |
+| OAUTH_URL                | https://auth.vatsim.net             | OAuth URL of VATSIM                                            |
+| OAUTH_ID                 | null                                | OAuth ID of your subdivision                                   |
+| OAUTH_SECRET             | null                                | OAuth secret of your subdivision                               |
+| VATSIM_CORE_API_TOKEN    | null                                | Token to VATSIM Core API                                       |
+| VATSIM_BOOKING_API_URL   | https://atc-bookings.vatsim.net/api | URL to VATSIM ATC Bookings API                                 |
+| VATSIM_BOOKING_API_TOKEN | null                                | Token to VATSIM ATC Bookings API                               |
+| MAIL_MAILER              | smtp                                | Mailer type                                                    |
+| MAIL_HOST                | smtp.mailgun.org                    | Mail host                                                      |
+| MAIL_PORT                | 587                                 | Mail port                                                      |
+| MAIL_USERNAME            | null                                | Mail username                                                  |
+| MAIL_PASSWORD            | null                                | Mail password                                                  |
+| MAIL_ENCRYPTION          | null                                | Mail encryption                                                |
+| MAIL_FROM_NAME           | Control Center                      | Mail from name                                                 |
+| MAIL_FROM_ADDRESS        | noreply@yourvacc.com                | Mail from address                                              |
+| TRUSTED_PROXIES          | null                                | Comma-separated list of trusted proxy addresses or '*' for all |
 
 #### OAuth
 
@@ -101,7 +101,7 @@ docker exec -it control-center sh container/theme/build.sh
 ### Optional: Extras
 
 | Variable | Default value | Explanation |
-| ------- | --- | --- 
+| ------- | --- | ---
 | APP_DEBUG | false | Toggle debug mode of your Control Center |
 | APP_TRACKING_SCRIPT | null | Input javascript here with your tracking script, e.g. Google Analytics |
 | DEBUGBAR_ENABLED | false | Toggle debug bar of your Control Center |
@@ -117,7 +117,7 @@ Here you find the diffrerent data tables which need to be edited to suit your su
 ### Areas
 In `Areas` table, create one or more areas. This is something student select between when applying for trianing.
 | id | name | contact | template_newreq | template_newmentor | template_pretraining | feedback_url |
-| ------- | --- | --- | --- |  --- |  --- | --- | 
+| ------- | --- | --- | --- |  --- |  --- | --- |
 | x | Name | Contact e-mail that will be displayed to students | Can be set in Notification Editor, set NULL | Same as last | Same as last | URL to feedback form shown in training completed email |
 | 1 | Norway | training-norway@vatsim-scandinavia.org | NULL | NULL | NULL | https://forms.gle/your-feedback-form |
 ### Ratings
@@ -143,5 +143,3 @@ In `positions` table, we define which positions are possible to book and their r
 | x | The callsign | Name of position showed when booking | optional frequency, not used inside CC for now | Used for filtering in bookings | id of area | vatsim rating id required to book position | Is this a endorsement position?
 | 1 | ENBR_TWR | Flesland Tower | NULL | ENOR | 4 | 3 | NULL
 | 2 | ENGM_TWR | Gardermoen Tower | NULL | ENOR | 4 | 3 | 1
-
-
