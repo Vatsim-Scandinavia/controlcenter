@@ -6,7 +6,7 @@
         ":pinDevDependencies",
         ":semanticCommitTypeAll(chore)"
     ],
-    "dependecies": {
+    "dependencies": {
         "major": {
             "semanticCommitType": "fix"
         }
