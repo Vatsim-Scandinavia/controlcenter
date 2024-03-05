@@ -6,9 +6,14 @@
         ":pinDevDependencies",
         ":semanticCommitTypeAll(chore)"
     ],
-    "dependencies": {
-        "major": {
-            "semanticCommitType": "fix"
+    "packageRules": [
+        {
+            "matchDepTypes": [
+                "dependencies"
+            ],
+            "major": {
+                "semanticCommitType": "fix"
+            }
         }
-    }
+    ]
 }
