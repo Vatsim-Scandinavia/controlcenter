@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.1.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.1.0...v5.1.1) (2024-03-05)
+
+
+### Bug Fixes
+
+* only upload CPT exams to integration ([239b0b9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/239b0b9cde26be688f5203d84090104a8eb40145)), closes [#832](https://github.com/Vatsim-Scandinavia/controlcenter/issues/832)
+
+
+### Miscellaneous Chores
+
+* **config:** migrate config .github/renovate.json ([0b6b635](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0b6b635d8392708e6ee0f17185ef8a0ad21d0faa))
+* **config:** migrate renovate config ([#839](https://github.com/Vatsim-Scandinavia/controlcenter/issues/839)) ([0b6b635](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0b6b635d8392708e6ee0f17185ef8a0ad21d0faa))
+* **deps:** update dependency doctrine/dbal to v3.8.3 ([b8df474](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b8df474f9814fde6afde6cce686a98f2fbb3e45f))
+* **deps:** update dependency laravel/framework to v10.47.0 ([2ff02ba](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2ff02ba745ff292d8d02b31e9cae54e1f1be06a4))
+* **deps:** update dependency laravel/ui to v4.5.0 ([eea1d9d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/eea1d9d4ac118d0fd120289cbcad8d55bb8cc7fa))
+* **deps:** update dependency vite to v5.1.5 ([1f2511a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1f2511a099094e5d1064640d95182596f7b4987a))
+
 ## [5.1.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.0.4...v5.1.0) (2024-03-03)
 
 
