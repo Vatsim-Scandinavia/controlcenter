@@ -15,35 +15,36 @@ Here is a list over all environment variables you may tweak. You may start the c
 
 Table with all the variables, default value and explanation. Override the environment variable to change the value if the default value does not fit your needs.
 
-| Variable                 | Default value                       | Explanation                                                    |
-|--------------------------|-------------------------------------|----------------------------------------------------------------|
-| APP_NAME                 | Control Center                      | Name of your subdivision                                       |
-| APP_OWNER                | Subdivision Name                    | Name of your subdivision                                       |
-| APP_OWNER_SHORT          | SCA                                 | Usually 3 letter name identifying your vACC within VATSIM API  |
-| APP_URL                  | http://localhost                    | URL to your Control Center                                     |
-| APP_ENV                  | production                          | Environment of your Control Center                             |
-| DB_CONNECTION            | mysql                               | Database connection type                                       |
-| DB_HOST                  | localhost                           | Database host                                                  |
-| DB_PORT                  | 3306                                | Database port                                                  |
-| DB_DATABASE              | control-center                      | Database name                                                  |
-| DB_USERNAME              | root                                | Database username                                              |
-| DB_PASSWORD              | root                                | Database password                                              |
-| DB_TABLE_PREFIX          | null                                | Database table prefix                                          |
-| OAUTH_URL                | https://auth.vatsim.net             | OAuth URL of VATSIM                                            |
-| OAUTH_ID                 | null                                | OAuth ID of your subdivision                                   |
-| OAUTH_SECRET             | null                                | OAuth secret of your subdivision                               |
-| VATSIM_CORE_API_TOKEN    | null                                | Token to VATSIM Core API                                       |
-| VATSIM_BOOKING_API_URL   | https://atc-bookings.vatsim.net/api | URL to VATSIM ATC Bookings API                                 |
-| VATSIM_BOOKING_API_TOKEN | null                                | Token to VATSIM ATC Bookings API                               |
-| MAIL_MAILER              | smtp                                | Mailer type                                                    |
-| MAIL_HOST                | smtp.mailgun.org                    | Mail host                                                      |
-| MAIL_PORT                | 587                                 | Mail port                                                      |
-| MAIL_USERNAME            | null                                | Mail username                                                  |
-| MAIL_PASSWORD            | null                                | Mail password                                                  |
-| MAIL_ENCRYPTION          | null                                | Mail encryption                                                |
-| MAIL_FROM_NAME           | Control Center                      | Mail from name                                                 |
-| MAIL_FROM_ADDRESS        | noreply@yourvacc.com                | Mail from address                                              |
-| TRUSTED_PROXIES          | null                                | Comma-separated list of trusted proxy addresses or '*' for all |
+| Variable                 | Default value                       | Explanation                                                                                            |
+|--------------------------|-------------------------------------|--------------------------------------------------------------------------------------------------------|
+| APP_NAME                 | Control Center                      | Name of your subdivision                                                                               |
+| APP_OWNER                | Subdivision Name                    | Name of your subdivision                                                                               |
+| APP_OWNER_SHORT          | SCA                                 | Usually 3 letter name identifying your vACC within VATSIM API                                          |
+| APP_URL                  | http://localhost                    | URL to your Control Center                                                                             |
+| APP_ENV                  | production                          | Environment of your Control Center                                                                     |
+| DB_CONNECTION            | mysql                               | Database connection type                                                                               |
+| DB_HOST                  | localhost                           | Database host                                                                                          |
+| DB_PORT                  | 3306                                | Database port                                                                                          |
+| DB_DATABASE              | control-center                      | Database name                                                                                          |
+| DB_USERNAME              | root                                | Database username                                                                                      |
+| DB_PASSWORD              | root                                | Database password                                                                                      |
+| DB_TABLE_PREFIX          | null                                | Database table prefix                                                                                  |
+| OAUTH_URL                | https://auth.vatsim.net             | OAuth URL of VATSIM                                                                                    |
+| OAUTH_ID                 | null                                | OAuth ID of your subdivision                                                                           |
+| OAUTH_SECRET             | null                                | OAuth secret of your subdivision                                                                       |
+| VATSIM_API_TOKEN         | null                                | API token (v1) to VATSIM API **(Obsolete: Use VATSIM Core API instead. VATSIM do not issue v1 keys.**) |
+| VATSIM_CORE_API_TOKEN    | null                                | API token (v2) to VATSIM Core API                                                                      |
+| VATSIM_BOOKING_API_URL   | https://atc-bookings.vatsim.net/api | URL to VATSIM ATC Bookings API                                                                         |
+| VATSIM_BOOKING_API_TOKEN | null                                | API Token to VATSIM ATC Bookings API                                                                   |
+| MAIL_MAILER              | smtp                                | Mailer type                                                                                            |
+| MAIL_HOST                | smtp.mailgun.org                    | Mail host                                                                                              |
+| MAIL_PORT                | 587                                 | Mail port                                                                                              |
+| MAIL_USERNAME            | null                                | Mail username                                                                                          |
+| MAIL_PASSWORD            | null                                | Mail password                                                                                          |
+| MAIL_ENCRYPTION          | null                                | Mail encryption                                                                                        |
+| MAIL_FROM_NAME           | Control Center                      | Mail from name                                                                                         |
+| MAIL_FROM_ADDRESS        | noreply@yourvacc.com                | Mail from address                                                                                      |
+| TRUSTED_PROXIES          | null                                | Comma-separated list of trusted proxy addresses or '*' for all                                         |
 
 #### OAuth
 

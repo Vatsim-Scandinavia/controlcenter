@@ -36,22 +36,18 @@ class UserController extends Controller
 
         $users = [];
 
-        if (! config('vatsim.core_api_token') && ! config('vatsim.core_api_token')) {
-            return view('user.index', compact('users'))->withErrors('Enable VATSIM Core API Integration to enable this feature.');
-        }
-
         if (config('vatsim.core_api_token')) {
             $response = $this->fetchUsersFromVatsimCoreApi();
             if ($response === false) {
                 return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM Core API. Check if your token is correct.');
             }
-        }
-
-        if (config('vatsim.api_token')) {
+        } else if (config('vatsim.api_token')) {
             $response = $this->fetchUsersFromVatsimApi();
             if ($response === false) {
                 return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM API. Check if your token is correct.');
             }
+        } else {
+            return view('user.index', compact('users'))->withErrors('Enable VATSIM Core API Integration to enable this feature.');
         }
 
         $apiUsers = [];
