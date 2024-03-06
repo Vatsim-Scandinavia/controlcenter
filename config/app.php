@@ -68,7 +68,6 @@ return [
 
     'owner_code' => env('APP_OWNER_CODE', env('APP_OWNER_SHORT', 'SCA')),
 
-
     /*
     |--------------------------------------------------------------------------
     | Application Environment
