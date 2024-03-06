@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#vatsim-api" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -1262,6 +1267,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    VATSIM
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1271,6 +1287,52 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vatsim-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      VATSIM API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vatsim-core-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      VATSIM Core API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vatsim-atc-bookings-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      VATSIM ATC Bookings API
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1325,6 +1387,41 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vatsim-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      VATSIM API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vatsim-core-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      VATSIM Core API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vatsim-atc-bookings-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      VATSIM ATC Bookings API
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1351,8 +1448,34 @@
 <!-- markdownlint-disable first-line-heading -->
 
 <p>There's no Control Center without <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr>.</p>
-<p>Besides supporting <a href="../vatsim-connect/"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect</a>, Control Center relies on the <a href="https://atc-bookings.vatsim.net"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> <abbr title="Air Traffic Controller">ATC</abbr> Bookings</a> to support bookings.</p>
-<p>Control Center uses <a href="https://atc-bookings.vatsim.net/api-doc">the central booking API</a> to <a href="../../concepts/booking/">get, publish, edit and remove controller bookings</a>.</p>
+<p>Besides supporting <a href="../vatsim-connect/"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect</a>, Control Center relies on:</p>
+<ul>
+<li><a href="https://api.vatsim.net/api/"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> API</a></li>
+<li><a href="https://vatsim.dev/api/core-api"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Core API</a></li>
+<li><a href="https://atc-bookings.vatsim.net/api-doc"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> <abbr title="Air Traffic Controller">ATC</abbr> Bookings API</a></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Use <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> APIs with Control Center</p>
+<p>See <a href="../../configuration/#vatsim">the configuration manual</a> to get started.</p>
+</div>
+<h2 id="vatsim-api"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> API<a class="headerlink" href="#vatsim-api" title="Permanent link">&para;</a></h2>
+<p><a href="https://api.vatsim.net/api/"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> API</a> is used to retrieve public user data. It can be used to retrieve members of a subdivision, but it is preferred to use <a href="https://vatsim.dev/api/core-api"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Core API</a> for this task as this approach is deprecated and will be removed in the future.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> API key v1 is required to enable this feature. If you don't have this key already, you need to ask <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Tech Department for a v2 key for Core API instead as they're not handing out v1 anymore.</p>
+</div>
+<h2 id="vatsim-core-api"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Core API<a class="headerlink" href="#vatsim-core-api" title="Permanent link">&para;</a></h2>
+<p><a href="https://vatsim.dev/api/core-api"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Core API</a> is used to retrieve members of a subdivision.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Core API key v2 is required to enable this feature, contact <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Tech Department using <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Support to get your key.</p>
+</div>
+<h2 id="vatsim-atc-bookings-api"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> <abbr title="Air Traffic Controller">ATC</abbr> Bookings API<a class="headerlink" href="#vatsim-atc-bookings-api" title="Permanent link">&para;</a></h2>
+<p><a href="https://atc-bookings.vatsim.net/api-doc"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> <abbr title="Air Traffic Controller">ATC</abbr> Bookings API</a> is used get, publish, edit and remove controller bookings.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> <abbr title="Air Traffic Controller">ATC</abbr> Bookings API key is required to enable this feature, contact <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Tech Department using <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Support to get your key.</p>
+</div>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
@@ -1412,6 +1535,11 @@ They'll be better off on the specific page in question.
 
     
     <nav>
+      
+        <a href="https://github.com/bedrich-schindler" class="md-author" title="@bedrich-schindler">
+          
+          <img src="https://avatars.githubusercontent.com/u/10213870?v=4&size=72" alt="bedrich-schindler">
+        </a>
       
         <a href="https://github.com/thor" class="md-author" title="@thor">
           
