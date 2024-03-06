@@ -41,7 +41,7 @@ class UserController extends Controller
             if ($response === false) {
                 return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM Core API. Check if your token is correct.');
             }
-        } else if (config('vatsim.api_token')) {
+        } elseif (config('vatsim.api_token')) {
             $response = $this->fetchUsersFromVatsimApi();
             if ($response === false) {
                 return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM API. Check if your token is correct.');
