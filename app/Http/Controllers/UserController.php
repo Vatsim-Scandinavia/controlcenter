@@ -457,7 +457,7 @@ class UserController extends Controller
         $count = -1;
 
         do {
-            $response = Http::withHeaders($headers)->get(sprintf('%s?limit=%s&offset=%s', $url, $limit, $usersCount));
+            $response = Http::withHeaders($headers)->get(sprintf('%s?include_inactive=1&limit=%s&offset=%s', $url, $limit, $usersCount));
 
             if (! $response->successful()) {
                 return false;
