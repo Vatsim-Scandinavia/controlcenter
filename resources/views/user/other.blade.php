@@ -12,11 +12,11 @@
 
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="alert alert-info" role="alert">
-            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows users from outside of VAT{{ Config::get('app.owner_short') }} who have logged into Control Center.
+            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows users from outside of {{ config('app.owner_name_short') }} who have logged into Control Center.
         </div>
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Registered Non-VAT{{ Config::get('app.owner_short') }} Users</h6> 
+                <h6 class="m-0 fw-bold text-white">Registered Non-{{ config('app.owner_name_short') }} Users</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -39,7 +39,7 @@
                         </thead>
                         <tbody>
                             @foreach($users as $user)
-                                @if($user->subdivision != Config::get('app.owner_short') && $user->isVisiting() == false)
+                                @if($user->subdivision != config('app.owner_code') && $user->isVisiting() == false)
                                     <tr>
                                         <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
                                         <td>{{ $user->first_name }}</td>

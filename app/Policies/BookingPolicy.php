@@ -8,7 +8,6 @@ use App\Models\Booking;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Config;
 
 class BookingPolicy
 {
@@ -80,7 +79,7 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
+        return ($user->subdivision == config('app.owner_code') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
     }
 
     /**
@@ -90,7 +89,7 @@ class BookingPolicy
      */
     public function bookEventTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
+        return ($user->subdivision == config('app.owner_code') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
     }
 
     /**
@@ -100,7 +99,7 @@ class BookingPolicy
      */
     public function bookExamTag(User $user)
     {
-        return ($user->subdivision == Config::get('app.owner_short') && $user->rating >= VatsimRating::C1->value) || $user->isModerator();
+        return ($user->subdivision == config('app.owner_code') && $user->rating >= VatsimRating::C1->value) || $user->isModerator();
     }
 
     /**

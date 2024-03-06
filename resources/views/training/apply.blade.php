@@ -17,7 +17,7 @@
                     </div>
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-graduation-cap"></i>&nbsp;What is ATC training?</h5>
-                        <p class="card-text">Welcome to the ATC Training Department of {{ Config::get('app.owner') }}. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
+                        <p class="card-text">Welcome to the ATC Training Department of {{ config('app.owner_name') }}. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
                         <hr>
                         <h5 class="card-title"><i class="fas fa-user"></i>&nbsp;What do we expect from you?</h5>
                         <p class="card-text">First of all, we expect that you take the training seriously and for you to show up on time and prepared for your online training sessions. We also expect that you respect that everyone in the Training Department is doing this as a hobby in their spare time. You have to be able to study on your own as part of the training program is designed as a self-study. We are not getting paid to do this job, but we simply want to see our network grow and be a great community.</p>
@@ -120,7 +120,7 @@
 
                                 <div class="mb-3" v-show="motivationRequired">
                                     <label class="form-label" for="motivationTextarea">Letter of motivation</label>
-                                    <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ Config::get('app.owner') }}</p>
+                                    <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ config('app.owner_name') }}</p>
                                     <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500"></textarea>
                                     <span v-show="errLOM" class="text-danger" style="display: none">The letter of motivation needs at least 250 characters</span>
                                 </div>

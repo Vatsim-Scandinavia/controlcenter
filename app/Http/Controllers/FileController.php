@@ -25,7 +25,7 @@ class FileController extends Controller
         $this->authorize('view', $file);
 
         if (Storage::exists($file->full_path)) {
-            return response()->file(Storage::path($file->full_path), ['Content-Disposition' => 'inline; filename="' . $file->name . '"', 'Content-Type' => Storage::mimeType($file->name)]);
+            return response()->file(Storage::path($file->full_path), ['Content-Disposition' => 'inline; filename="' . $file->name . '"', 'Content-Type' => Storage::mimeType($file->full_path)]);
         } else {
             return abort(404);
         }

@@ -54,8 +54,8 @@ class VotePolicy
         }
 
         if ($vote->require_our_member) {
-            if ($user->subdivision != Config::get('app.owner_short')) {
-                return Response::deny('Sorry, you do not qualify to participate in this vote. You must belong to ' . Config::get('app.owner') . ' subdivision to vote.');
+            if ($user->subdivision != config('app.owner_code')) {
+                return Response::deny('Sorry, you do not qualify to participate in this vote. You must belong to ' . config('app.owner_name') . ' to vote.');
             }
         }
 

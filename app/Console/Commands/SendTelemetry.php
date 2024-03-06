@@ -36,7 +36,7 @@ class SendTelemetry extends Command
                 'service' => 'cc',
                 'uuid' => $uuid,
                 'url' => Config::get('app.url'),
-                'owner' => Config::get('app.owner'),
+                'owner' => Config::get('app.owner_name'),
                 'version' => Config::get('app.version'),
                 'env' => Config::get('app.env'),
             ]);

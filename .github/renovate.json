@@ -4,6 +4,16 @@
     "extends": [
         "config:recommended",
         ":pinDevDependencies",
-        ":semanticPrefixChore"
+        ":semanticCommitTypeAll(chore)"
+    ],
+    "packageRules": [
+        {
+            "matchDepTypes": [
+                "dependencies"
+            ],
+            "major": {
+                "semanticCommitType": "fix"
+            }
+        }
     ]
 }

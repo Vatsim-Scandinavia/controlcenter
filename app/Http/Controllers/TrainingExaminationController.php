@@ -58,8 +58,8 @@ class TrainingExaminationController extends Controller
         $position = Position::firstWhere('callsign', $data['position']);
         $pass = strtolower($data['result']) == 'passed' ? true : false;
 
-        // Attempt Division API sync first
-        if ($request->file('files')) {
+        // Attempt Division API sync first if the training has VATSIM ratings
+        if ($request->file('files') && $training->hasVatsimRatings()) {
             foreach ($request->file('files') as $file) {
                 $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
                 if ($response && $response->failed()) {

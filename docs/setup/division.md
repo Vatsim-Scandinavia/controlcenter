@@ -22,6 +22,9 @@ In `Ratings` table, the default VATSIM ratings are present and if applicable, th
 | 1 | S1 | Rating required to sit GND position | 2 | NULL |
 | 8 | KJFK APP | Endorsement required to sit on a selected airport | NULL | T1 |
 
+!!! warning
+    Please do not remove the default VATSIM ratings (S1-I3), as they are used for the VATSIM integration.
+
 ### Ratings in areas
 
 In `area_rating` table, we define which ratings are available for which area for applications. If a rating is only applicable manually through a moderator there's no need to add it here.
