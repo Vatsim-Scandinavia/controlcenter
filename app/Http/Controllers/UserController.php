@@ -235,7 +235,7 @@ class UserController extends Controller
         $vatsimStats = [];
         try {
             $client = new \GuzzleHttp\Client();
-            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . $cid . '/rating_times/');
+            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $cid . '/stats');
             if ($res->getStatusCode() == 200) {
                 $vatsimStats = json_decode($res->getBody(), false);
             }
