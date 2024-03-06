@@ -21,7 +21,7 @@
                                 <th>End</th>
                                 <th>Status</th>
                                 <th>Only for ATC Active</th>
-                                <th>Only for VAT{{ Config::get('app.owner_short') }} members</th>
+                                <th>Only for {{ config('app.owner_name_short') }} members</th>
                             </tr>
                         </thead>
                         <tbody>

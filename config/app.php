@@ -41,19 +41,33 @@ return [
     |
     */
 
-    'owner' => env('APP_OWNER', 'Subdivision Name'),
+    'owner_name' => env('APP_OWNER_NAME', env('APP_OWNER', 'Subdivision Name')),
+    // APP_OWNER is deprecated, will be removed in next major version
 
     /*
     |--------------------------------------------------------------------------
     | Short name of application owner
     |--------------------------------------------------------------------------
     |
-    | Same as above, but this is the short name of your subdivision, excluding VAT prefix.
-    | For example 'SCA', NOT 'VATSCA' as that will break some checking logic.
+    | Same as above, but the shortened name. Mostly used in more compact views.
     |
     */
 
-    'owner_short' => env('APP_OWNER_SHORT', 'SCA'),
+    'owner_name_short' => env('APP_OWNER_NAME_SHORT', env('APP_OWNER_SHORT', 'SCA')),
+    // APP_OWNER_SHORT is deprecated, will be removed in next major version
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Owner Code
+    |--------------------------------------------------------------------------
+    |
+    | 3-4 letter name identifying the entity in VATSIM API.
+    | For example 'SCA', NOT 'VATSCA'.
+    |
+    */
+
+    'owner_code' => env('APP_OWNER_CODE', env('APP_OWNER_SHORT', 'SCA')),
+
 
     /*
     |--------------------------------------------------------------------------

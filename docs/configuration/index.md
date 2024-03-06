@@ -19,10 +19,11 @@ Settings related to URLs, subdivision names and other core application settings.
 
 | Variable | Default value | Explanation |
 | ------- | --- | --- |
-| `APP_NAME` | Control Center | Name of your subdivision |
-| `APP_OWNER` | Subdivision Name | Name of your subdivision |
-| `APP_OWNER_SHORT` | SCA | Usually 3 letter name identifying your vACC within VATSIM API |
-| `APP_URL` | `http://localhost` | URL to your Control Center |
+| `APP_NAME` | Control Center | What you want to call the software |
+| `APP_OWNER_NAME` | Subdivision Name | Full name of your subdivision such as `VATSIM Scandinavia` |
+| `APP_OWNER_NAME_SHORT` | vACC | Short name of choice for your vACC e.g. `VATSCA`/`ESTVACC`|
+| `APP_OWNER_CODE` | null | 3-4 letter name identifying your vACC within VATSIM API |
+| `APP_URL` | `http://localhost` | URL to your Control Center without slash at the end |
 | `APP_ENV` | production | Environment of your Control Center |
 
 ### Database

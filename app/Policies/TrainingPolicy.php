@@ -67,7 +67,7 @@ class TrainingPolicy
     public function apply(User $user)
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        $divisionName = Config::get('app.owner');
+        $divisionName = config('app.owner_name_short');
 
         // Global setting if trainings are enabled
         if (! Setting::get('trainingEnabled')) {
@@ -81,7 +81,7 @@ class TrainingPolicy
                 $subdiv = $user->subdivision;
             }
 
-            return Response::deny("You must join {$divisionName} subdivision to apply for training. You currently belong to " . $subdiv);
+            return Response::deny("You must join {$divisionName} to apply for training. You currently belong to " . $subdiv);
         }
 
         // Don't accept while user waits for rating upgrade or it's been less than 7 days

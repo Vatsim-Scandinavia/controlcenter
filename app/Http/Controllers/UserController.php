@@ -48,7 +48,7 @@ class UserController extends Controller
 
         // Only include users from the division and index by key
         foreach ($response as $data) {
-            if ($data['subdivision'] == config('app.owner_short')) {
+            if ($data['subdivision'] == config('app.owner_code')) {
                 $apiUsers[$data['id']] = $data;
             }
         }
@@ -428,7 +428,7 @@ class UserController extends Controller
      */
     private function fetchApiUsers()
     {
-        $url = 'https://api.vatsim.net/api/subdivisions/' . config('app.owner_short') . '/members/';
+        $url = 'https://api.vatsim.net/api/subdivisions/' . config('app.owner_code') . '/members/';
         $response = Http::withHeaders([
             'Authorization' => 'Token ' . config('vatsim.api_token'),
             'Accept' => 'application/json',

@@ -14,7 +14,7 @@
 
 @if($atcInactiveMessage)
 <div class="alert alert-warning" role="alert">
-    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in {{ Config::get('app.owner') }}. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact {{ Setting::get('atcActivityContact') }}</a> to request a refresh or transfer training to be allowed to control in our airspace.
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in {{ config('app.owner_name') }}. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact {{ Setting::get('atcActivityContact') }}</a> to request a refresh or transfer training to be allowed to control in our airspace.
 </div>
 @endif
 

@@ -20,7 +20,7 @@
             
             <div class="content-title"><img src="{{ asset('images/control-tower.svg') }}"> {{ config('app.name') }}</div>
             <div class="content-description">
-                @if(Config::get('app.owner_short') == 'SCA')
+                @if(config('app.owner_code') == 'SCA')
                     Scandinavian Training Administration
                 @else
                 Training Administration

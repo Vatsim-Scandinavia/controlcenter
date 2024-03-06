@@ -254,12 +254,12 @@ class User extends Authenticatable
         if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
                 ->where('rating', '>=', VatsimRating::S1)
-                ->where('subdivision', Config::get('app.owner_short'))
+                ->where('subdivision', config('app.owner_code'))
                 ->get();
         } else {
             return User::where([
                 ['rating', '>=', VatsimRating::S1],
-                ['subdivision', '=', Config::get('app.owner_short')],
+                ['subdivision', '=', config('app.owner_code')],
             ])->get();
         }
     }
