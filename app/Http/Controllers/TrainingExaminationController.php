@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\DivisionApi;
 use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Models\Group;
 use App\Models\OneTimeLink;
 use App\Models\Position;
@@ -58,8 +59,8 @@ class TrainingExaminationController extends Controller
         $position = Position::firstWhere('callsign', $data['position']);
         $pass = strtolower($data['result']) == 'passed' ? true : false;
 
-        // Attempt Division API sync first if the training has VATSIM ratings
-        if ($request->file('files') && $training->hasVatsimRatings()) {
+        // Attempt Division API sync first if the training has VATSIM ratings and it's an S2+ examination
+        if ($request->file('files') && $training->hasVatsimRatings() && $training->getHighestVatsimRating()->vatsim_rating >= VatsimRating::S2->value) {
             foreach ($request->file('files') as $file) {
                 $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
                 if ($response && $response->failed()) {
