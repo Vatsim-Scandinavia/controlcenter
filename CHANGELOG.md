@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.2.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.1.1...v5.2.0) (2024-03-11)
+
+
+### Features
+
+* integration with VATSIM API Core v2 (rating times) ([26a30f5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/26a30f5d1155e095e3e898e91d091482d8fed558))
+* integration with VATSIM API Core v2 (roster) ([b3ba08a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b3ba08a31537ce2d48def05314dd6d8b624d5480))
+* subdivision short names ([686985d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/686985d5820c532e9b3fa18ab00222077880e7be))
+
+
+### Bug Fixes
+
+* activity logic when applying ([e7f38b0](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e7f38b069a2ced933dae5a37feacdcadd63d4f2e))
+* missing Content-Type in FileController ([#841](https://github.com/Vatsim-Scandinavia/controlcenter/issues/841)) ([321cb28](https://github.com/Vatsim-Scandinavia/controlcenter/commit/321cb283d004fda82bea1d96ccc71a3941a7c5ed))
+* s1 exams no longer uploaded to division ([d519055](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d51905558fe855dfdc5e08a1294c3be41e504dc2))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.11.1 ([#845](https://github.com/Vatsim-Scandinavia/controlcenter/issues/845)) ([c69f961](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c69f961215191dd31817025e8e6e15dc56767b9f))
+* **deps:** update dependency phpunit/phpunit to v10.5.12 ([#846](https://github.com/Vatsim-Scandinavia/controlcenter/issues/846)) ([3a9d33d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3a9d33df5ccee973c31ceecd5269f68791ec3237))
+* **deps:** update dependency vite to v5.1.6 ([#847](https://github.com/Vatsim-Scandinavia/controlcenter/issues/847)) ([ba5e0d3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ba5e0d3cdf108dbdabb91ae9c19537b30fccbd67))
+* **deps:** update node.js to v21.7.1 ([#843](https://github.com/Vatsim-Scandinavia/controlcenter/issues/843)) ([ee75f42](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ee75f42f6796ed33bf0918c7024fccc455fd7c0a))
+
 ## [5.1.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.1.0...v5.1.1) (2024-03-05)
 
 
