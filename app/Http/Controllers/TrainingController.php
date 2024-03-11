@@ -256,11 +256,10 @@ class TrainingController extends Controller
             $ratings = Rating::find(explode('+', $data['training_level']));
 
             // Check if user is active in the area if required by setting
-            if (Setting::get('atcActivityBasedOnTotalHours') == false) {
-                $atcActivity = Auth::user()->atcActivity->firstWhere('area_id', $data['training_area']);
-                if (! $atcActivity || ! $atcActivity->atc_active) {
-                    return redirect()->back()->withErrors('You need to be active in the area to apply for training.');
-                }
+            $atcActivityRequired = Auth::user()->rating >= VatsimRating::S1->value && Setting::get('atcActivityBasedOnTotalHours') == false;
+            $activeInArea = Auth::user()->atcActivity->firstWhere('area_id', $data['training_area'])->atc_active;
+            if ($atcActivityRequired && ! $activeInArea) {
+                return redirect()->back()->withErrors('You need to be active in the area to apply for training.');
             }
 
             // Check if user fulfill rating hour requirement
