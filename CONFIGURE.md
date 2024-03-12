@@ -17,9 +17,10 @@ Table with all the variables, default value and explanation. Override the enviro
 
 | Variable                 | Default value                       | Explanation                                                                                            |
 |--------------------------|-------------------------------------|--------------------------------------------------------------------------------------------------------|
-| APP_NAME                 | Control Center                      | Name of your subdivision                                                                               |
-| APP_OWNER                | Subdivision Name                    | Name of your subdivision                                                                               |
-| APP_OWNER_SHORT          | SCA                                 | Usually 3 letter name identifying your vACC within VATSIM API                                          |
+| APP_NAME                 | Control Center                      | What you want to call the software                                                                     |
+| APP_OWNER_NAME           | Subdivision Name                    | Full name of your subdivision such as `VATSIM Scandinavia`                                             |
+| APP_OWNER_NAME_SHORT     | SCA                                 | Short name of choice for your vACC e.g. `VATSCA`/`ESTVACC`                                             |
+| APP_OWNER_CODE           | SCA                                 | 3-4 letter name identifying your vACC within VATSIM APIs                                               |
 | APP_URL                  | http://localhost                    | URL to your Control Center                                                                             |
 | APP_ENV                  | production                          | Environment of your Control Center                                                                     |
 | DB_CONNECTION            | mysql                               | Database connection type                                                                               |

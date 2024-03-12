@@ -13,7 +13,7 @@
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">VAT{{ Config::get('app.owner_short') }} Members</h6> 
+                <h6 class="m-0 fw-bold text-white">{{ Config::get('app.owner_name_short') }} Members</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
