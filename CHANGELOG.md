@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.2.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.0...v5.2.1) (2024-03-12)
+
+
+### Bug Fixes
+
+* error when applying for training ([575379a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/575379a323ea892300876bde83bd5e52c627e356))
+* subdivision short names ([#848](https://github.com/Vatsim-Scandinavia/controlcenter/issues/848)) ([3bfa594](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3bfa594be6830755418cb65d1bf0e39d4393c8af))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.12.1 ([#851](https://github.com/Vatsim-Scandinavia/controlcenter/issues/851)) ([9d328e8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/9d328e8411800c4ce077fcd3e7147c514035a9a0))
+* **deps:** update dependency laravel/framework to v10.48.2 ([#854](https://github.com/Vatsim-Scandinavia/controlcenter/issues/854)) ([13d27e3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/13d27e398021f64f5cbba22d2854f1abe3a4eb4c))
+* **deps:** update dependency mockery/mockery to v1.6.9 ([#852](https://github.com/Vatsim-Scandinavia/controlcenter/issues/852)) ([93cdbb3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/93cdbb3bdbdd391fa5ca649ddd109c503dcc5276))
+* **deps:** update dependency phpunit/phpunit to v10.5.13 ([#853](https://github.com/Vatsim-Scandinavia/controlcenter/issues/853)) ([b9657ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b9657ca4a3f6e4d8044605f9b6c99aa3eddb9830))
+
 ## [5.2.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.1.1...v5.2.0) (2024-03-11)
 
 
