@@ -118,7 +118,7 @@ dl.copyable{
     background-position: 50% 50%;
 
     .content {
-        width: 500px;
+        width: fit-content;
         margin: auto;
         text-align: center;
 
@@ -129,16 +129,20 @@ dl.copyable{
         }
 
         &-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
             font-size: 3rem;
             color: white;
-            line-height: 0;
 
             img {
                 height: 3rem;
-                margin-bottom: 0.625rem;
             }
 
             @include media-breakpoint-down(sm) {
+                flex-direction: column;
+                gap: 0.5rem;
                 font-size: 2rem;
             }
         }
@@ -148,6 +152,7 @@ dl.copyable{
             color: white;
 
             @include media-breakpoint-down(sm) {
+                margin-top: 0.5rem;
                 font-size: 1rem;
             }
         }
