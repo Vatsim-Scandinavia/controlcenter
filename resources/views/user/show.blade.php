@@ -247,11 +247,11 @@
                                                             <i class="fas fa-circle-check text-success"></i>
                                                             Pass {{ $exam['score'] }}%
                                                         @else
-                                                            <i class="fas fa-circle-assigne text-danger"></i>
-                                                            Fail
+                                                            <i class="fas fa-circle-xmark text-danger"></i>
+                                                            Fail {{ $exam['score'] }}%
                                                         @endif
                                                     @else
-                                                        <i class="fas fa-circle-minus text-warning"></i>
+                                                        <i class="fas fa-circle-half-stroke text-warning"></i>
                                                         Pending
                                                     @endif
                                                 </td>
