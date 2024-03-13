@@ -7613,25 +7613,25 @@
         },
         {
             "name": "wildside/userstamps",
-            "version": "2.3.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WildsideUK/Laravel-Userstamps.git",
-                "reference": "371cfbf5fda1872cc487888c6a8ac01e3e8249aa"
+                "reference": "4ebae014be56461acb7c2e4b6d2f86a2190307b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WildsideUK/Laravel-Userstamps/zipball/371cfbf5fda1872cc487888c6a8ac01e3e8249aa",
-                "reference": "371cfbf5fda1872cc487888c6a8ac01e3e8249aa",
+                "url": "https://api.github.com/repos/WildsideUK/Laravel-Userstamps/zipball/4ebae014be56461acb7c2e4b6d2f86a2190307b9",
+                "reference": "4ebae014be56461acb7c2e4b6d2f86a2190307b9",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/support": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "illuminate/database": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0",
-                "orchestra/testbench": "^3.1|^4.0|^5.0|^6.0|^7.0|^8.0",
+                "illuminate/database": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+                "orchestra/testbench": "^3.1|^4.0|^5.0|^6.0|^7.0|^8.0|^9.0",
                 "phpunit/phpunit": "^5.0|^6.0|^7.0|^8.4|^9.0|^10.0"
             },
             "type": "library",
@@ -7662,9 +7662,9 @@
             ],
             "support": {
                 "issues": "https://github.com/WildsideUK/Laravel-Userstamps/issues",
-                "source": "https://github.com/WildsideUK/Laravel-Userstamps/tree/2.3.0"
+                "source": "https://github.com/WildsideUK/Laravel-Userstamps/tree/2.4.0"
             },
-            "time": "2023-02-15T09:35:24+00:00"
+            "time": "2024-03-13T08:55:57+00:00"
         }
     ],
     "packages-dev": [
