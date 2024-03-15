@@ -53,7 +53,7 @@ class VotePolicy
             return Response::deny('The vote closed and concluded at ' . Carbon::create($vote->end_at)->toEuropeanDateTime());
         }
 
-        if ($vote->require_our_member) {
+        if ($vote->require_member) {
             if ($user->subdivision != config('app.owner_code')) {
                 return Response::deny('Sorry, you do not qualify to participate in this vote. You must belong to ' . config('app.owner_name') . ' to vote.');
             }
