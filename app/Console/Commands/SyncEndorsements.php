@@ -49,14 +49,23 @@ class SyncEndorsements extends Command
         $this->info('Syncing endorsements with Division API...');
         $tieredRatings = Rating::whereIn('endorsement_type', ['T1', 'T2'])->get();
 
+        $tier1Roster = DivisionApi::getTierEndorsements(1);
+        $tier2Roster = DivisionApi::getTierEndorsements(2);
+
         // Loop through all T1 and T2 ratings
         foreach ($tieredRatings as $rating) {
 
             $tier = $rating->endorsement_type;
-
             $this->info('[' . $rating->endorsement_type . ' ' . $rating->name . ']');
 
-            $rosterResponse = DivisionApi::getTierEndorsements(substr($tier, -1));
+            // Select the correct roster
+            if ($tier === 'T1') {
+                $rosterResponse = $tier1Roster;
+            } elseif ($tier === 'T2') {
+                $rosterResponse = $tier2Roster;
+            }
+
+            // If roster is fetched successfully
             if ($rosterResponse && $rosterResponse->successful()) {
 
                 // Endorsements stored in API
