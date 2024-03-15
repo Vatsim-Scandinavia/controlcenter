@@ -1,5 +1,25 @@
 # Changelog
 
+## [5.2.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.1...v5.2.2) (2024-03-15)
+
+
+### Bug Fixes
+
+* added missing User-Agent for division api ([6aed00b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6aed00bf8df9db1cf8891d6e5b7b301b104fa3d1)), closes [#866](https://github.com/Vatsim-Scandinavia/controlcenter/issues/866)
+* **ci:** move extra-files into config ([4607ed5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4607ed5bbb827cb55ea3b9c9a9045b5a3909faa1))
+* **ci:** update app version in release-please ([#857](https://github.com/Vatsim-Scandinavia/controlcenter/issues/857)) ([4a5cfa3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4a5cfa33a5b847a8f7447891c9b012b6f0eaa9b4))
+* division exam icons ([0bdf3ce](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0bdf3cef71f74977a526a2c2d1e8277a29c9b38f))
+* unnecessary amount of calls by endorsement sync ([752dbb3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/752dbb3cd2ef28d8f0eb5fced370183af891986d))
+* vote criteria that only members can vote ([24fd1f8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/24fd1f8caebc187e7147b493b0ab1db007427264)), closes [#867](https://github.com/Vatsim-Scandinavia/controlcenter/issues/867)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.12.2 ([#861](https://github.com/Vatsim-Scandinavia/controlcenter/issues/861)) ([4099f8f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4099f8fd2e1039450fb0bbc801aaf4a30e428b9b))
+* **deps:** update dependency laravel/framework to v10.48.3 ([#868](https://github.com/Vatsim-Scandinavia/controlcenter/issues/868)) ([02e0990](https://github.com/Vatsim-Scandinavia/controlcenter/commit/02e09906a51ffcc581f2c115045ecb8abc67fbc4))
+* **deps:** update dependency sass to v1.72.0 ([#865](https://github.com/Vatsim-Scandinavia/controlcenter/issues/865)) ([0c69fe2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0c69fe230ed950212b25a95c2752d1ef46c4f5fc))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.2.3 ([#869](https://github.com/Vatsim-Scandinavia/controlcenter/issues/869)) ([05cd0f7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/05cd0f773650b1ef1bc0b9637cfbbd237e9ad855))
+
 ## [5.2.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.0...v5.2.1) (2024-03-12)
 
 
