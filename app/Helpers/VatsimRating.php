@@ -7,7 +7,7 @@ namespace App\Helpers;
  */
 enum VatsimRating: int
 {
-    case INAC = -1;
+    case INA = -1;
     case SUS = 0;
     case OBS = 1;
     case S1 = 2;

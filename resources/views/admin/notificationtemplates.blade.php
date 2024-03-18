@@ -162,67 +162,59 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script>
 
+<script>
     function selectedNotification(el){
         if(el == 1){
-            $('#newreqrow').show();
-            $('#newmentorrow').hide();
-            $('#pretrainingrow').hide();
-
-            newRequestMde.codemirror.refresh();
+            document.getElementById("newreqrow").style.display = "block";
+            document.getElementById("newmentorrow").style.display = "none";
+            document.getElementById("pretrainingrow").style.display = "none";
         } else if(el == 2){
-            $('#newreqrow').hide();
-            $('#newmentorrow').show();
-            $('#pretrainingrow').hide();
-
-            newMentorMde.codemirror.refresh();
+            document.getElementById("newreqrow").style.display = "none";
+            document.getElementById("newmentorrow").style.display = "block";
+            document.getElementById("pretrainingrow").style.display = "none";
         } else if(el == 3){
-            $('#newreqrow').hide();
-            $('#newmentorrow').hide();
-            $('#pretrainingrow').show();
-
-            preTrainingMde.codemirror.refresh();
+            document.getElementById("newreqrow").style.display = "none";
+            document.getElementById("newmentorrow").style.display = "none";
+            document.getElementById("pretrainingrow").style.display = "block";
         }
     }
+</script>
 
-    var newRequestMde = new SimpleMDE({ 
-        element: document.getElementById("newrequestaddition"), 
-        status: false, 
-        toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-        insertTexts: {
-            link: ["[","](link)"],
-        },
+<!-- Markdown Editor -->
+@vite(['resources/js/easymde.js', 'resources/sass/easymde.scss'])
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var opts = {
+            insertTexts: {
+                link: ["[","](link)"],
+            },
+            status: false,
+            toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"]
+        }
+        var newRequestMde = new EasyMDE({
+            element: document.getElementById("newrequestaddition"),
+            ...opts
+        });
+
+        var newMentorMde = new EasyMDE({
+            element: document.getElementById("newmentoraddition"),
+            ...opts
+        });
+
+        var preTrainingMde = new EasyMDE({
+            element: document.getElementById("pretrainingaddition"),
+            ...opts
+        });
+
+        var newRequestPreview = setInterval(function(){
+
+            document.getElementById("newrequestaddition-preview").innerHTML = newRequestMde.markdown(newRequestMde.value());
+            document.getElementById("newmentoraddition-preview").innerHTML = newMentorMde.markdown(newMentorMde.value());
+            document.getElementById("pretrainingaddition-preview").innerHTML = preTrainingMde.markdown(preTrainingMde.value());
+
+        }, 1000);
     });
-
-    var newMentorMde = new SimpleMDE({ 
-        element: document.getElementById("newmentoraddition"), 
-        status: false, 
-        toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-        insertTexts: {
-            link: ["[","](link)"],
-        },
-    });
-
-    var preTrainingMde = new SimpleMDE({ 
-        element: document.getElementById("pretrainingaddition"), 
-        status: false, 
-        toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
-        insertTexts: {
-            link: ["[","](link)"],
-        },
-    });
-
-    var newRequestPreview = setInterval(function(){
-
-        document.getElementById("newrequestaddition-preview").innerHTML = newRequestMde.markdown(newRequestMde.value());
-        document.getElementById("newmentoraddition-preview").innerHTML = newMentorMde.markdown(newMentorMde.value());
-        document.getElementById("pretrainingaddition-preview").innerHTML = preTrainingMde.markdown(preTrainingMde.value());
-    
-    }, 1000);
-
 </script>
 
 @endsection

@@ -4,7 +4,7 @@
 @section('content')
 
 <div id="application">
-
+    
     <form id="training-form" action="{{ route('training.store') }}" method="post">
         @csrf
 
@@ -17,7 +17,7 @@
                     </div>
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-graduation-cap"></i>&nbsp;What is ATC training?</h5>
-                        <p class="card-text">Welcome to the ATC Training Department of {{ Config::get('app.owner') }}. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
+                        <p class="card-text">Welcome to the ATC Training Department of {{ config('app.owner_name') }}. In order to be able to control on our network you will need to complete our training course. To achieve an ATC rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
                         <hr>
                         <h5 class="card-title"><i class="fas fa-user"></i>&nbsp;What do we expect from you?</h5>
                         <p class="card-text">First of all, we expect that you take the training seriously and for you to show up on time and prepared for your online training sessions. We also expect that you respect that everyone in the Training Department is doing this as a hobby in their spare time. You have to be able to study on your own as part of the training program is designed as a self-study. We are not getting paid to do this job, but we simply want to see our network grow and be a great community.</p>
@@ -43,7 +43,7 @@
                                     <select id="areaSelect" name="training_area" @change="areaSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option selected disabled>Choose training area</option>
                                         @foreach($payload as $areaId => $area)
-                                            <option value="{{ $areaId }}">{{ $area["name"] }}</option>
+                                            <option value="{{ $areaId }}" data-atc-active="{{ $area['atcActive'] ? 'true' : 'false' }}">{{ $area['name'] }}</option>
                                         @endforeach
                                     </select>
                                     <span v-show="errArea" class="text-danger" style="display: none">Select training area</span>
@@ -52,12 +52,14 @@
                                     <label class="form-label my-1 me-2" for="ratingSelect">Training type</label>
                                     <select id="ratingSelect" name="training_level" @change="ratingSelectChange($event)" class="form-select my-1 me-sm-2">
                                         <option v-if="ratings.length == 0" selected disabled>None available</option>
+                                        <option v-if="ratings.length > 0" selected disabled>Choose training</option>
                                         <option v-for="rating in ratings" :value="rating.id" :data-hour-requirement="rating.hour_requirement">@{{ rating.name }}</option>
                                     </select> 
                                     <span v-show="errArea" class="text-danger" style="display: none">Select available rating</span>
                                 </div>
                             </div>
                             <div v-show="errHours" id="errHours" class="text-danger" style="display: none">You need to fulfill the hour requirement before applying for this option.</div>
+                            <div v-show="errAreaActive" id="errAreaActive" class="text-danger" style="display: none">You need to be an active controller in the selected area to apply, please contact local staff to apply.</div>
 
                             <a class="btn btn-success mt-2" href="#" v-on:click="next">Continue</a>
                         </div>
@@ -74,11 +76,14 @@
                     </div>
                     <div class="card-body">
 
-                        <p>Please read through the standard operating procedures for students below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ Setting::get('trainingSOP') }}" target="_blank">click here</a>.</p>
+                        @if(Str::of(Setting::get('trainingSOP'))->endsWith('.pdf'))
+                            <p>Please read through the policy for students below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ Setting::get('trainingSOP') }}" target="_blank">click here</a>.</p>
+                            <embed src="{{ Setting::get('trainingSOP') }}" type="application/pdf" type="text/html" width="100%" height="800px">    
+                        @else
+                            <p>Please read through the <a href="{{ Setting::get('trainingSOP') }}" target="_blank">policy for students</a> and accept the terms by continuing to the next step.</p>
+                        @endif
 
-                        <embed src="{{ Setting::get('trainingSOP') }}" type="application/pdf" width="100%" height="800px">
-
-                        <a class="btn btn-success"  href="#" v-on:click="next">I accept</a>
+                        <a class="btn btn-success" href="#" v-on:click="next">I accept</a>
                     </div>
                 </div>
             </div>
@@ -115,7 +120,7 @@
 
                                 <div class="mb-3" v-show="motivationRequired">
                                     <label class="form-label" for="motivationTextarea">Letter of motivation</label>
-                                    <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ Config::get('app.owner') }}</p>
+                                    <p class="text-muted">Please tell us about yourself, your background, experience and motivation for applying to {{ config('app.owner_name') }}</p>
                                     <textarea class="form-control" name="motivation" id="motivationTextarea" rows="10" placeholder="Minimum 250 characters" maxlength="1500"></textarea>
                                     <span v-show="errLOM" class="text-danger" style="display: none">The letter of motivation needs at least 250 characters</span>
                                 </div>
@@ -147,111 +152,127 @@
 @endsection
 
 @section('js')
+@vite('resources/js/vue.js')
 <script>
 
-    var payload = {!! json_encode($payload, true) !!}
-    var atcHours = {!! json_encode($atc_hours, true) !!}
+    document.addEventListener("DOMContentLoaded", function () {
 
-    const application = new Vue({
-        el: '#application',
-        data: {
-            step: 1,
-            ratings: '',
-            remarkChecked: 0,
-            errArea: 0,
-            errRating: 0,
-            errHours: 0,
-            errExperience: 0,
-            errLOM: 0,
-            motivationRequired: {{ $motivation_required }},
-        },
-        methods:{
-            next() {
-                if(this.validate(this.step)) this.step++;
+        var payload = {!! json_encode($payload, true) !!}
+        var atcHours = {!! json_encode($atc_hours, true) !!}
+
+        const application = createApp({
+            data(){
+                return {
+                    step: 1,
+                    ratings: '',
+                    remarkChecked: 0,
+                    errArea: 0,
+                    errRating: 0,
+                    errHours: 0,
+                    errAreaActive: 0,
+                    errExperience: 0,
+                    errLOM: 0,
+                    motivationRequired: {{ $motivation_required }},
+                    atcActiveRequired: {{ $atcActiveRequired }},
+                    atcActiveInArea: false,
+                }
             },
-            validate(page){
-                var validated = true
+            methods:{
+                next() {
+                    if(this.validate(this.step)) this.step++;
+                },
+                validate(page){
+                    var validated = true
 
-                if(page == 1){
-                    let trainingArea = $('#areaSelect').val();
-                    let trainingLevel = $('#ratingSelect').val();
-                    let requiredHours = $('#ratingSelect').find(':selected').attr('data-hour-requirement');
+                    if(page == 1){
+                        let trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
+                        let trainingAreaName = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.text;
+                        let trainingLevel = Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value;
 
-                    if (trainingArea == null){
-                        $('#areaSelect').addClass('is-invalid');
-                        this.errArea = true;
-                        validated = false;
+                        let requiredHours = document.getElementById('ratingSelect').options[document.getElementById('ratingSelect').selectedIndex].getAttribute('data-hour-requirement')
+
+                        if (trainingArea == null){
+                            document.getElementById('areaSelect').classList.add('is-invalid')
+                            this.errArea = true;
+                            validated = false;
+                        }
+
+                        if (trainingLevel == null) {
+                            document.getElementById('ratingSelect').classList.add('is-invalid')
+                            this.errRating = true;
+                            validated = false;
+                        }
+
+                        if(this.atcActiveRequired && this.atcActiveInArea === 'false'){
+                            document.getElementById('areaSelect').classList.add('is-invalid')
+                            document.getElementById('errAreaActive').innerHTML = "You need to be an active controller in "+trainingAreaName+" to apply, contact local staff for help."
+                            this.errAreaActive = true;
+                            validated = false;
+                        } else if (requiredHours !== undefined && atcHours < requiredHours){
+                            document.getElementById('ratingSelect').classList.add('is-invalid')
+                            document.getElementById('errHours').innerHTML = "To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.floor(atcHours) + " hours."
+                            this.errHours = true;
+                            validated = false;
+                        }
+
+                    } else if(page == 2){
+                        validated = true;
                     }
 
-                    if (trainingLevel == null) {
-                        $('#ratingSelect').addClass('is-invalid');
-                        this.errRating = true;
-                        validated = false;
+                    return validated
+                },
+                submit(event) {
+                    event.preventDefault();
+
+                    // Reset errors
+                    this.errExperience = false;
+                    this.errLOM = false;
+                    document.getElementById('experience').classList.remove('is-invalid');
+                    document.getElementById('motivationTextarea').classList.remove('is-invalid');
+
+                    // Validate
+                    let trainingExperience = Array.from(document.getElementById('experience').options).find(option => option.selected && !option.disabled)?.value;
+                    let trainingLOM = document.getElementById('motivationTextarea').value;
+                    var errored = false;
+
+                    if(trainingExperience == null){
+                        document.getElementById('experience').classList.add('is-invalid')
+                        this.errExperience = true;
                     }
 
-                    if (requiredHours !== undefined && atcHours < requiredHours){
-                        $('#ratingSelect').addClass('is-invalid');
-                        $('#errHours').html("To apply for this training you need " + Math.round(requiredHours) + " hours on your current rating. You have " + Math.round(atcHours) + " hours.");
-                        this.errHours = true;
-                        validated = false;
+                    if(trainingLOM.length < 250 && this.motivationRequired){
+                        document.getElementById('motivationTextarea').classList.add('is-invalid')
+                        this.errLOM = true;
                     }
 
-                } else if(page == 2){
-                    validated = true;
+                    // Submit form if validation is successful
+                    if(!this.errExperience && !this.errLOM){
+                        document.getElementById('training-submit-btn').disabled = true;
+                        document.querySelector('.submit-spinner').style.display = 'inherit';
+                        document.getElementById('training-form').submit();
+                    }
+        
+                },
+                areaSelectChange(event) {
+                    this.ratingSelectUpdate(event.srcElement.value);
+                    this.atcActiveInArea = event.srcElement.options[event.srcElement.selectedIndex].getAttribute('data-atc-active')
+                    document.getElementById('areaSelect').classList.remove('is-invalid');
+                    document.getElementById('ratingSelect').classList.remove('is-invalid');
+                    this.errArea = false;
+                    this.errRating = false;
+                    this.errHours = false;
+                    this.errAreaActive = false;
+                },
+                ratingSelectChange(event){
+                    document.getElementById('ratingSelect').classList.remove('is-invalid');
+                    this.errHours = false;
+                },
+                ratingSelectUpdate(areaId){
+                    this.ratings = payload[areaId].data
                 }
-
-                return validated
-            },
-            submit(event) {
-                event.preventDefault();
-
-                // Reset errors
-                this.errExperience = false;
-                this.errLOM = false;
-                $('#experience').removeClass('is-invalid');
-                $('#motivationTextarea').removeClass('is-invalid');
-
-                // Validate
-                let trainingExperience = $('#experience').val();
-                let trainingLOM = $('#motivationTextarea').val();
-                var errored = false;
-
-                if(trainingExperience == null){
-                    $('#experience').addClass('is-invalid');
-                    this.errExperience = true;
-                }
-
-                if(trainingLOM.length < 250 && this.motivationRequired){
-                    $('#motivationTextarea').addClass('is-invalid');
-                    this.errLOM = true;
-                }
-
-                // Submit form if validation is successful
-                if(!this.errExperience && !this.errLOM){
-                    $('#training-submit-btn').prop('disabled', true);
-                    $('.submit-spinner').css('display', 'inherit');
-                    $('#training-form').submit();
-                }
-    
-            },
-            areaSelectChange(event) {
-                this.ratingSelectUpdate(event.srcElement.value);
-                $('#areaSelect').removeClass('is-invalid');
-                $('#ratingSelect').removeClass('is-invalid');
-                this.errArea = false;
-                this.errRating = false;
-                this.errHours = false;
-            },
-            ratingSelectChange(event){
-                $('#ratingSelect').removeClass('is-invalid');
-                this.errHours = false;
-            },
-            ratingSelectUpdate(areaId){
-                this.ratings = payload[areaId].data
             }
-        }
-
-    });
+        }).mount('#application');
+    })
 
 </script>
 @endsection

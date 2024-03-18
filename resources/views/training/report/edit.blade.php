@@ -108,7 +108,7 @@
                             <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                 {{ $attachment->file->name }}
                             </a>
-                            <i data-attachment="{{ $attachment->id }}" onclick="deleteAttachment(this)" class="fa fa-lg fa-trash text-danger" style="cursor: pointer;"></i>
+                            <i data-attachment="{{ $attachment->id }}" class="fa fa-lg fa-trash text-danger deleteAttachmentBtn" style="cursor: pointer;"></i>
                         </div>
                     @endforeach
                 </div>
@@ -141,48 +141,54 @@
 @section('js')
 
 <!-- Attachment management -->
-<script type="text/javascript">
+<script>
 
     function uploadFile(input) {
         if (input.value != null) {
-            $("#file-form").submit();
+            document.getElementById('file-form').submit()
         }
     }
 
-    function deleteAttachment(input) {
+    var deleteAttachmentBtn = document.querySelectorAll('.deleteAttachmentBtn');
+    deleteAttachmentBtn.forEach(function (btn) {
+        btn.addEventListener('click', function () {
 
-        input = $(input);
-        let id = input.data('attachment');
+            let id = btn.dataset.attachment;
 
-        $.ajax('/training/attachment/' + id, {
-            'method' : "post",
-            'data' : {
-                '_token': "{!! csrf_token() !!}",
-                '_method': 'delete'
-            },
-            success: function (data) {
-                if (data.message === 'Attachment successfully deleted') {
-                    $("div[data-id="+id+"]").remove();
+            fetch('/training/attachment/'+id, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRF-TOKEN': "{!! csrf_token() !!}"
+                },
+                body: '_method=DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.querySelector('div[data-id="' + id + '"]').remove();
                 }
-            },
-            error: function (data) {
-                console.error("An error occurred while attempting to delete attachment.");
-            }
+            })
+            .catch(error => {
+                console.error("An error occurred while attempting to delete attachment:", error);
+            });
         });
-
-    }
-
+    });
 </script>
 
-<!-- Report MD Editor -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<!-- Flatpickr -->
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        var simplemde1 = new SimpleMDE({ 
+    document.addEventListener("DOMContentLoaded", function () {
+        var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: new Date("{{ $report->report_date }}"), locale: {firstDayOfWeek: 1 } });
+    });
+</script>
+
+<!-- Markdown Editor -->
+@vite(['resources/js/easymde.js', 'resources/sass/easymde.scss'])
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var simplemde1 = new EasyMDE({ 
             element: document.getElementById("contentBox"), 
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
@@ -190,7 +196,7 @@
                 link: ["[","](link)"],
             }
         });
-        var simplemde2 = new SimpleMDE({ 
+        var simplemde2 = new EasyMDE({ 
             element: document.getElementById("contentimprove"), 
             status: false, 
             toolbar: ["bold", "italic", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "preview", "side-by-side", "fullscreen", "|", "guide"],
@@ -198,14 +204,7 @@
                 link: ["[","](link)"],
             }
         });
-
-        var defaultDate = "{{ empty(old('created_at')) ? \Carbon\Carbon::make($report->created_at)->format('d/m/Y') : old('created_at') }}"
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d', strtotime('-1 months')) !!}", dateFormat: "d/m/Y", defaultDate: new Date("{{ $report->report_date }}"), locale: {firstDayOfWeek: 1 } });
-
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input:visible').prop('readonly', false);
     })
 </script>
+
 @endsection

@@ -4,10 +4,15 @@
 @section('title-flex')
     <div>
         @if (\Auth::user()->isModeratorOrAbove())
-            <a href="{{ route('endorsements.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new endorsement</a>
+            <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
         @endif
     </div>
 @endsection
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -60,7 +65,7 @@
 
                                                     {{-- Display the MASC endorsements connected to this area --}}
                                                     @foreach($endorsedArea->ratings->whereNull('vatsim_rating') as $areaRating)
-                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement)
+                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $mascEndorsement)
                                                             @if($areaRating->id == $mascEndorsement->ratings->first()->id)
                                                                 <small class="d-block">{{ $areaRating->name }}</small>
                                                             @endif

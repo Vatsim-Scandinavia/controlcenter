@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TrainingStatus;
 use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Training;
@@ -42,7 +43,7 @@ class TrainingReportController extends Controller
     public function create(Training $training)
     {
         $this->authorize('create', [TrainingReport::class, $training]);
-        if ($training->status < 1) {
+        if ($training->status < TrainingStatus::PRE_TRAINING->value) {
             return redirect(null, 400)->back()->withErrors('Training report cannot be created for a training not in progress.');
         }
 
@@ -73,10 +74,11 @@ class TrainingReportController extends Controller
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
-        $data2 = $data; // TODO this should be refactored to something better
-        unset($data2['files']);
-        $report = TrainingReport::create($data2);
+        // Remove attachments , they are added in next step
+        unset($data['files']);
+        $report = TrainingReport::create($data);
 
+        // Add attachments
         TrainingObjectAttachmentController::saveAttachments($request, $report);
 
         // Notify student of new training request if it's not a draft
@@ -89,7 +91,7 @@ class TrainingReportController extends Controller
             OneTimeLink::where('key', $key)->delete();
             session()->pull('onetimekey');
 
-            return redirect('dashboard')->withSuccess('Report successfully created');
+            return redirect(route('user.reports', Auth::user()))->withSuccess('Report successfully created');
         }
 
         return redirect(route('training.show', $training->id))->withSuccess('Report successfully created');

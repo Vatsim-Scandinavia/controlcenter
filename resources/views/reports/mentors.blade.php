@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Mentor Report')
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -43,7 +48,7 @@
                                     <td>
                                         @if($mentor->trainingReports->count() > 0)
                                             @php
-                                                $reportDate = Carbon\Carbon::make($mentor->trainingReports->last()->first()->report_date);
+                                                $reportDate = Carbon\Carbon::make($mentor->trainingReports->sortBy('report_date')->last()->report_date);
                                             @endphp
                                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                 @if($reportDate->isToday())
@@ -79,13 +84,13 @@
                                                     @endphp
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                         @if($reportDate->isToday())
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
                                                         @elseif($reportDate->isYesterday())
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
                                                         @elseif($reportDate->diffInDays() <= 7)
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
                                                         @else
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
                                                         @endif                                        
                                                     </span>
                                                 @else
@@ -108,10 +113,5 @@
 @endsection
 
 @section('js')
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-    });
-</script>
+    @include('scripts.tooltips')
 @endsection

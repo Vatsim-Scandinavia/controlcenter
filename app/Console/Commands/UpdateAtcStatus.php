@@ -37,6 +37,12 @@ class UpdateAtcStatus extends Command
             Artisan::call('update:atc:reactivate');
         }
 
+        // Sync with division api
+        if (Setting::get('divisionApiEnabled')) {
+            Artisan::call('sync:roster');
+            Artisan::call('sync:endorsements');
+        }
+
         return Command::SUCCESS;
     }
 }

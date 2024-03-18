@@ -81,7 +81,7 @@ class VoteController extends Controller
 
         $vote->question = $data['question'];
         $vote->require_active = $require_active;
-        $vote->require_our_member = $require_our_member;
+        $vote->require_member = $require_our_member;
         $vote->closed = false;
         $vote->end_at = $expire->format('Y-m-d H:i:s');
 
@@ -103,7 +103,7 @@ class VoteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id voteId
+     * @param  int  $id  voteId
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function show($id)
@@ -117,7 +117,7 @@ class VoteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id voteId
+     * @param  int  $id  voteId
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)

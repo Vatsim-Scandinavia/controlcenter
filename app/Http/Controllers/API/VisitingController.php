@@ -16,7 +16,7 @@ class VisitingController extends Controller
             foreach ($endorsement->areas as $area) {
                 $maes = collect();
                 foreach ($area->ratings->whereNull('vatsim_rating') as $r) {
-                    foreach ($endorsement->user->endorsements->where('type', 'MASC') as $mascEndorsement) {
+                    foreach ($endorsement->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $mascEndorsement) {
                         if ($r->id == $mascEndorsement->ratings->first()->id) {
                             $maes->push($r->name);
                         }

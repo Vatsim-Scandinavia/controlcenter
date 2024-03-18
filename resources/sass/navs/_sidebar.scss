@@ -60,7 +60,6 @@
             }
         }
         &-text {
-            width: 65px;
             font-size: 0.95rem;
             text-align: left;
             line-height: 1.125rem;
@@ -85,6 +84,11 @@
         height: 1px;
         background: fade-out($white, 0.85);
         margin: 0 0 1rem;
+    }
+
+    .badge{
+        font-size: 0.7rem !important;
+        border-radius: 50%;
     }
 
     .nav-item {

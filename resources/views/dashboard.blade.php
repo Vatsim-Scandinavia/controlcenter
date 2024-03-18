@@ -14,7 +14,7 @@
 
 @if($atcInactiveMessage)
 <div class="alert alert-warning" role="alert">
-    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in {{ Config::get('app.owner') }}. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact {{ Setting::get('atcActivityContact') }}</a> to request a refresh or transfer training to be allowed to control in our airspace.
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in {{ config('app.owner_name') }}. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact {{ Setting::get('atcActivityContact') }}</a> to request a refresh or transfer training to be allowed to control in our airspace.
 </div>
 @endif
 
@@ -33,6 +33,18 @@
 @if($activeVote)
 <div class="alert alert-info" role="alert">
     <i class="fas fa-vote-yea"></i>&nbsp;&nbsp;Vote <i>"{{ $activeVote->question }}"</i> is available. Vote closes {{ \Carbon\Carbon::create($activeVote->end_at)->toEuropeanDateTime() }}. <a href="{{ route('vote.show', $activeVote) }}">Click here to vote</a>.
+</div>
+@endif
+
+@if($cronJobError)
+<div class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;<b>Configuration Error:</b> Cronjob is not running! Are the cron jobs set up according to the manual?
+</div>
+@endif
+
+@if($oudatedVersionWarning)
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i>&nbsp;&nbsp;<b>Update Available:</b> Control Center {{ Setting::get('_updateAvailable') }} is available. You are running v{{ config('app.version') }}. <a href="https://github.com/Vatsim-Scandinavia/controlcenter/releases" target="_blank">See details here.</a>
 </div>
 @endif
 
@@ -161,25 +173,25 @@
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td>
-                                    @if($training->reports->where(['training_id' => $training->id])->count() > 0)
-                                    @php
-                                    $reportDate = Carbon\Carbon::make($training->reports->where('training_id', $training->id)->get()->sortBy('report_date')->last()->report_date);
-                                    $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
-                                    @endphp
-                                    <span title="{{ $reportDate->toEuropeanDate() }}">
-                                        @if($reportDate->isToday())
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
-                                        @elseif($reportDate->isYesterday())
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
-                                        @elseif($reportDate->diffInDays() <= 7)
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
-                                        @else
-                                        <span class="{{ ($trainingIntervalExceeded && $training->status != 3 && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
-                                        @endif
-                                        
-                                    </span>
+                                    @if($training->reports->count() > 0)
+                                        @php
+                                            $reportDate = Carbon\Carbon::make($training->reports->sortBy('report_date')->last()->report_date);
+                                            $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
+                                        @endphp
+                                        <span title="{{ $reportDate->toEuropeanDate() }}">
+                                            @if($reportDate->isToday())
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
+                                            @elseif($reportDate->isYesterday())
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
+                                            @elseif($reportDate->diffInDays() <= 7)
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                            @else
+                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                            @endif
+                                            
+                                        </span>
                                     @else
-                                    No registered training yet
+                                        No registered training yet
                                     @endif
                                 </td>
                             </tr>
@@ -211,7 +223,6 @@
                                 <th>Area</th>
                                 <th>Period</th>
                                 <th>State</th>
-                                <th>Reports</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,9 +253,6 @@
                                 </td>
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
-                                </td>
-                                <td>
-                                    <a href="{{ $training->path() }}" class="btn btn-sm btn-primary"><i class="fas fa-clipboard"></i>&nbsp;{{ sizeof($training->reports->toArray()) }}</a>
                                 </td>
                             </tr>
                             @endforeach
@@ -277,7 +285,7 @@
                 </div>
                 @else
                 
-                <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} disabled not-allowed" role="button" aria-disabled="true">
+                <div class="btn btn-{{ (\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled')) ? 'success' : 'primary' }} d-block disabled not-allowed" role="button" aria-disabled="true">
                     @if(\Auth::user()->hasActiveTrainings(true) && Setting::get('trainingEnabled'))
                     <i class="fas fa-check"></i>
                     @else

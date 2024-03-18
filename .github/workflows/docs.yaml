@@ -1,0 +1,94 @@
+---
+name: Publish Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - docs/*
+    tags:
+      - '**'
+
+env:
+  COLUMNS: 150
+  PDM_DEPS: 'urllib3<2'
+
+defaults:
+  run:
+    working-directory: ./docs
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: '3.11'
+          cache: true
+          cache-dependency-path: docs/pdm.lock
+
+      - name: install
+        run: pdm install
+
+      - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: markdownlint --verbose
+        env:
+          SKIP: no-commit-to-branch
+
+  publish:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}
+    env:
+      CONTRIBUTORS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DOCS_BRANCH: gh-pages
+      DOCS_LATEST_ALIAS: latest
+      DOCS_DEVELOPMENT_ALIAS: dev
+    steps:
+      - name: checkout docs-site
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DOCS_BRANCH }}
+
+      - name: checkout current branch
+        uses: actions/checkout@v4
+
+      - uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: '3.11'
+          cache-dependency-path: docs/pdm.lock
+
+      - name: install
+        run: |
+          pdm venv create --with-pip --force $PYTHON
+          pdm install
+
+      - name: set git credentials
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: get major-minor tag for docs
+        if: "startsWith(github.ref, 'refs/tags/')"
+        id: tag
+        run: |
+          MINOR=$(echo "${{ github.ref_name }}" | sed -En 's/^v?(([0-9]+)\.([0-9]+))\.([0-9]+)$/\1/p')
+          [ "$MINOR" != "" ] || { echo "Couldn't parse tag to get major-minor version"; exit 1; }
+          echo "minor=$MINOR" >> $GITHUB_OUTPUT
+
+      - name: deploy development documentation
+        run: >-
+          pdm run mike deploy -b "${{ env.DOCS_BRANCH }}"
+          "${{ env.DOCS_DEVELOPMENT_ALIAS }}" --push
+        if: "!startsWith(github.ref, 'refs/tags/')"
+
+      - name: deploy latest documentation for v${{ steps.version.outputs.tag }}
+        run: >-
+          pdm run mike deploy -b "${{ env.DOCS_BRANCH }}"
+          "${{ steps.tag.outputs.minor }}" "${{ env.DOCS_LATEST_ALIAS }}" --update-aliases --push
+        if: "startsWith(github.ref, 'refs/tags/')"

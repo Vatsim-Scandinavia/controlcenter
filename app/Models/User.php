@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\VatsimRating;
@@ -9,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Config;
 
 class User extends Authenticatable
 {
@@ -19,10 +19,10 @@ class User extends Authenticatable
 
     public $timestamps = false;
 
-    protected $dates = [
-        'last_login',
-        'last_activity',
-        'last_inactivity_warning',
+    protected $casts = [
+        'last_login' => 'datetime',
+        'last_activity' => 'datetime',
+        'last_inactivity_warning' => 'datetime',
     ];
 
     /**
@@ -31,7 +31,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'last_login', 'access_token', 'refresh_token', 'token_expires',
+        'id', 'email', 'first_name', 'last_name', 'rating', 'rating_short', 'rating_long', 'region', 'division', 'subdivision', 'atc_active', 'last_login', 'access_token', 'refresh_token', 'token_expires',
     ];
 
     /**
@@ -56,15 +56,40 @@ class User extends Authenticatable
     /**
      * Find all users with queried group
      *
-     * @param  int  $groupId the id of the group to check for
+     * @param  int  $groupId  the id of the group to check for
      * @return Illuminate\Database\Eloquent\Collection
      */
     public static function allWithGroup($groupId, $IneqSymbol = '=')
     {
         return User::whereHas('groups', function ($query) use ($groupId, $IneqSymbol) {
             $query->where('id', $IneqSymbol, $groupId);
-        })
-            ->get();
+        })->get();
+    }
+
+    /**
+     * Find all users with queried group in the specified area
+     *
+     * @param  Area  $area  the area to check for
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public static function allActiveInArea(Area $area)
+    {
+        if (Setting::get('atcActivityBasedOnTotalHours')) {
+            return User::whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
+                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                        ->orWhere('hours', '>=', 0);
+                });
+            })->with(['endorsements', 'atcActivity'])->get();
+        } else {
+            return User::whereHas('atcActivity', function ($query) use ($area) {
+                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
+                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                        ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
+                });
+            })->with(['endorsements', 'atcActivity'])->get();
+        }
+
     }
 
     public function endorsements()
@@ -95,7 +120,7 @@ class User extends Authenticatable
     /**
      * Check is this user is teaching the queried user
      *
-     * @param  \App\Models\User  $user to check for
+     * @param  \App\Models\User  $user  to check for
      * @return bool
      */
     public function isTeaching(User $user)
@@ -118,17 +143,14 @@ class User extends Authenticatable
         return $this->hasMany(Vote::class);
     }
 
-    public function atcActivity()
+    public function tasks()
     {
-        return $this->hasOne(AtcActivity::class);
+        return $this->hasMany(Task::class, 'assignee_user_id');
     }
 
-    // TODO: decide if we should nuke me from orbit
-    public function atchours()
+    public function atcActivity()
     {
-        $atcHoursDB = AtcActivity::where('user_id', $this->id)->get()->first();
-
-        return ($atcHoursDB == null) ? null : $atcHoursDB->hours;
+        return $this->hasMany(AtcActivity::class);
     }
 
     public function getNameAttribute()
@@ -136,27 +158,68 @@ class User extends Authenticatable
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    /**
-     * @todo: Convert to to new v9.x+ mutators https://laravel.com/docs/9.x/eloquent-mutators
-     */
-    public function getEmailAttribute($value)
+    public function submittedFeedback()
+    {
+        return $this->hasMany(Feedback::class, 'submitter_user_id');
+    }
+
+    public function receivedFeedback()
+    {
+        return $this->hasMany(Feedback::class, 'reference_user_id');
+    }
+
+    public function getNotificationEmailAttribute()
     {
         if ($this->setting_workmail_address) {
             return $this->setting_workmail_address;
         }
 
-        return $value;
+        return $this->email;
     }
 
-    public function getActiveAttribute()
+    /**
+     * Check if the user is active as ATC
+     *
+     * @return bool
+     */
+    public function isAtcActive(?Area $area = null)
     {
-        $val = $this->atc_active;
+        if (Setting::get('atcActivityBasedOnTotalHours')) {
 
-        if ($val == null) {
+            $atLeastOneAreaActive = AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+
+            $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
+            $isInGracePeriod = $this->atcActivity->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
+
+            return $atLeastOneAreaActive && ($hasEnoughHours || $isInGracePeriod);
+        } else {
+            if ($area) {
+                return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->where('area_id', $area->id)->exists();
+            }
+
+            return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+        }
+
+    }
+
+    /**
+     * Check if the user is allowed to control online
+     *
+     * @return bool
+     */
+    public function isAllowedToControlOnline(?Area $area = null)
+    {
+
+        if (
+            ! $this->isVisiting($area) &&
+            ! $this->isAtcActive($area) &&
+            ! $this->hasActiveTrainings(false, $area) &&
+            ! $this->hasRecentlyCompletedTraining()
+        ) {
             return false;
         }
 
-        return $val;
+        return true;
     }
 
     /**
@@ -166,13 +229,16 @@ class User extends Authenticatable
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
-        // Return S1+ users who are VATSCA members
+        // Return S1+ users who are VATSCA members and active as ATC
         if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
-                ->where('atc_active', true)
-                ->get();
+                ->whereHas('atcActivity', function ($query) {
+                    $query->where('atc_active', true);
+                })->get();
         } else {
-            return User::where('atc_active', true)->get();
+            return User::whereHas('atcActivity', function ($query) {
+                $query->where('atc_active', true);
+            })->get();
         }
     }
 
@@ -187,12 +253,12 @@ class User extends Authenticatable
         if (! empty($userIds)) {
             return User::whereIn('id', $userIds)
                 ->where('rating', '>=', VatsimRating::S1)
-                ->where('subdivision', Config::get('app.owner_short'))
+                ->where('subdivision', config('app.owner_code'))
                 ->get();
         } else {
             return User::where([
                 ['rating', '>=', VatsimRating::S1],
-                ['subdivision', '=', Config::get('app.owner_short')],
+                ['subdivision', '=', config('app.owner_code')],
             ])->get();
         }
     }
@@ -261,7 +327,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function hasActiveTrainings(bool $includeWaiting, Area $area = null)
+    public function hasActiveTrainings(bool $includeWaiting, ?Area $area = null)
     {
         if ($includeWaiting) {
             if ($area == null) {
@@ -283,7 +349,7 @@ class User extends Authenticatable
      *
      * @return Training|null
      */
-    public function getActiveTraining(int $minStatus = 0, Area $area = null)
+    public function getActiveTraining(int $minStatus = 0, ?Area $area = null)
     {
         if ($area == null) {
             return $this->trainings()->where([['status', '>=', $minStatus]])->get()->first();
@@ -316,13 +382,9 @@ class User extends Authenticatable
      * @param  bool  $onlyInfinteEndorsements
      * @return bool
      */
-    public function hasActiveEndorsement(string $type, $onlyInfinteEndorsements = false)
+    public function hasActiveEndorsement(string $type)
     {
-        if ($onlyInfinteEndorsements) {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->where('valid_to', null)->exists();
-        } else {
-            return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
-        }
+        return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
     }
 
     /**
@@ -335,10 +397,7 @@ class User extends Authenticatable
     {
         $training = $this->trainings->where('status', -1)->where('closed_at', '>', Carbon::now()->subDays(7))->first();
 
-        if ($training == null) {
-            return false;
-        }
-        if ($training->isMaeTraining()) {
+        if ($training == null || $training->isMaeTraining() || $training->type != 1) {
             return false;
         }
 
@@ -350,7 +409,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isVisiting(Area $area = null)
+    public function isVisiting(?Area $area = null)
     {
         if ($area == null) {
             return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->count();
@@ -369,7 +428,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isExaminer(Area $area = null)
+    public function isExaminer(?Area $area = null)
     {
         if ($area == null) {
             return $this->endorsements->where('type', 'EXAMINER')->where('revoked', false)->where('expired', false)->count();
@@ -388,7 +447,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isMentor(Area $area = null)
+    public function isMentor(?Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', 3)->isNotEmpty();
@@ -409,7 +468,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isMentorOrAbove(Area $area = null)
+    public function isMentorOrAbove(?Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', '<=', 3)->isNotEmpty();
@@ -430,7 +489,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isModerator(Area $area = null)
+    public function isModerator(?Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', 2)->isNotEmpty();
@@ -451,7 +510,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function isModeratorOrAbove(Area $area = null)
+    public function isModeratorOrAbove(?Area $area = null)
     {
         if ($area == null) {
             return $this->groups->where('id', '<=', 2)->isNotEmpty();

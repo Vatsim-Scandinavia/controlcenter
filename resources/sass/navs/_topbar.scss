@@ -3,6 +3,20 @@
 
     height: $topbar-base-height;
 
+    &-justify{
+        &-moderator{
+            justify-content: space-between;
+        }
+
+        &-user{
+            justify-content: flex-end;
+
+            @include media-breakpoint-down(lg) {
+                justify-content: space-between;
+            }
+        }
+    }
+
     &-divider {
         width: 0;
         border-right: 1px solid $border-color;
@@ -196,6 +210,7 @@
             min-height: 25px;
             line-height: 1.5rem;
             padding: 0 1rem;
+            text-decoration: none;
         }
 
         a:hover{

@@ -8,9 +8,9 @@ class TrainingInterest extends Model
 {
     protected $guarded = [];
 
-    protected $dates = [
-        'deadline',
-        'confirmed_at',
+    protected $casts = [
+        'deadline' => 'datetime',
+        'confirmed_at' => 'datetime',
     ];
 
     public function training()

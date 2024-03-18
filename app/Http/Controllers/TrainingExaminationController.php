@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\DivisionApi;
+use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
+use App\Models\Group;
 use App\Models\OneTimeLink;
 use App\Models\Position;
+use App\Models\Task;
 use App\Models\Training;
 use App\Models\TrainingExamination;
+use App\Models\User;
 use App\Notifications\TrainingExamNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,13 +33,15 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
-        if ($training->status != 3) {
+        if ($training->status != TrainingStatus::AWAITING_EXAM->value) {
             return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.');
         }
 
         $positions = Position::all();
+        $taskRecipients = collect(Group::admins()->merge(Group::moderators()));
+        $taskPopularAssignees = TaskController::getPopularAssignees($training->area);
 
-        return view('training.exam.create', compact('training', 'positions'));
+        return view('training.exam.create', compact('training', 'positions', 'taskRecipients', 'taskPopularAssignees'));
     }
 
     /**
@@ -46,15 +54,24 @@ class TrainingExaminationController extends Controller
     public function store(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
-
         $data = $this->validateRequest();
-
         $date = Carbon::createFromFormat('d/m/Y', $data['examination_date']);
+        $position = Position::firstWhere('callsign', $data['position']);
+        $pass = strtolower($data['result']) == 'passed' ? true : false;
 
-        $position_id = Position::all()->firstWhere('callsign', $data['position'])->id;
+        // Attempt Division API sync first if the training has VATSIM ratings and it's an S2+ examination
+        if ($request->file('files') && $training->hasVatsimRatings() && $training->getHighestVatsimRating()->vatsim_rating >= VatsimRating::S2->value) {
+            foreach ($request->file('files') as $file) {
+                $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
+                if ($response && $response->failed()) {
+                    return redirect()->back()->withErrors('Please try uploading the examination again. Failed to upload exam results to the Division API: ' . $response->json()['message']);
+                }
+            }
+        }
 
+        // Save locally
         $examination = TrainingExamination::create([
-            'position_id' => $position_id,
+            'position_id' => $position->id,
             'training_id' => $training->id,
             'examiner_id' => Auth::id(),
             'examination_date' => $date->format('Y-m-d'),
@@ -68,6 +85,29 @@ class TrainingExaminationController extends Controller
 
         $training->user->notify(new TrainingExamNotification($training, $examination));
 
+        // Create the upgrade task for the staff
+        if (isset($data['request_task_user_id'])) {
+
+            $taskAsignee = User::find($data['request_task_user_id']);
+            $taskRating = isset($data['subject_training_rating_id']) ? (int) $data['subject_training_rating_id'] : null;
+            if ($taskAsignee->can('receive', Task::class)) {
+                $task = Task::create([
+                    'type' => \App\Tasks\Types\RatingUpgrade::class,
+                    'subject_user_id' => $training->user->id,
+                    'subject_training_id' => $training->id,
+                    'subject_training_rating_id' => $taskRating,
+                    'assignee_user_id' => $taskAsignee->id,
+                    'creator_user_id' => Auth::id(),
+                    'created_at' => now(),
+                ]);
+
+                // Run the create method on the task type to trigger type specific actions on creation
+                $task->type()->create($task);
+            }
+
+        }
+
+        // Redirect based on if request was made by OTL or other means
         if (($key = session()->get('onetimekey')) != null) {
             // Remove the link
             OneTimeLink::where('key', $key)->delete();
@@ -130,6 +170,8 @@ class TrainingExaminationController extends Controller
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
             'files.*' => 'sometimes|file|mimes:pdf',
+            'request_task_user_id' => 'nullable|exists:users,id',
+            'subject_training_rating_id' => 'nullable|exists:ratings,id',
         ]);
     }
 }

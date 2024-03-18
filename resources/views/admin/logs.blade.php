@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Activity Logs')
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">

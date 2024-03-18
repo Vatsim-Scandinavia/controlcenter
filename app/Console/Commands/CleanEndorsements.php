@@ -45,7 +45,7 @@ class CleanEndorsements extends Command
             $endorsement->save();
 
             // Only send e-mail notifications for training endorsements
-            if ($endorsement->type == 'SOLO' || $endorsement->type == 'S1') {
+            if ($endorsement->type == 'SOLO') {
                 $endorsement->user->notify(new EndorsementExpiredNotification($endorsement));
             }
         }

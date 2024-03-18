@@ -53,7 +53,7 @@ class TrainingPreStatusNotification extends Notification implements ShouldQueue
         $contactMail = Area::find($this->training->area_id)->contact;
 
         return (new TrainingMail('Training Assigned', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->email, $this->training->user->name);
+            ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 
     /**

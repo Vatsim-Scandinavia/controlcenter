@@ -2,9 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Helpers\TrainingStatus;
 use App\Http\Controllers\TrainingController;
 use App\Mail\TrainingMail;
 use App\Models\Area;
+use App\Models\Feedback;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -17,6 +19,8 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
 
     private $training;
 
+    private $trainingStatus;
+
     private $closedBy;
 
     private $reason;
@@ -24,13 +28,14 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param  int|null  $closedBy the training status code that indicates who closed it
-     * @param  string|null  $reason optional reason of closure communicated to the receiver
+     * @param  int|null  $closedBy  the training status code that indicates who closed it
+     * @param  string|null  $reason  optional reason of closure communicated to the receiver
      */
-    public function __construct(Training $training, int $closedBy, string $reason = null)
+    public function __construct(Training $training, int $trainingStatus, ?string $reason = null)
     {
         $this->training = $training;
-        $this->closedBy = strtolower(TrainingController::$statuses[$closedBy]['text']);
+        $this->trainingStatus = $trainingStatus;
+        $this->closedBy = strtolower(TrainingController::$statuses[$trainingStatus]['text']);
         $this->reason = $reason;
     }
 
@@ -58,7 +63,14 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
             $textLines[] = '**Reason for closure:** ' . $this->reason;
         }
 
-        $contactMail = Area::find($this->training->area_id)->contact;
+        $area = Area::find($this->training->area_id);
+        $contactMail = $area->contact;
+        $feedback = $area->feedback_url;
+
+        // If the training was completed and the area has a feedback URL, ask for feedback
+        if ($this->trainingStatus == TrainingStatus::COMPLETED->value && isset($feedback)) {
+            $textLines[] = 'Could we ask for a moment of your time to [share your thoughts and experiences about your training](' . $feedback . ')? Any insights you can provide would be greatly appreciated and will help us improve our training.';
+        }
 
         // Find staff who wants notification of new training request
         $bcc = User::allWithGroup(2, '<=')->where('setting_notify_closedreq', true);
@@ -70,7 +82,7 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         }
 
         return (new TrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->email, $this->training->user->name)
+            ->to($this->training->user->notificationEmail, $this->training->user->name)
             ->bcc($bcc->pluck('email'));
     }
 

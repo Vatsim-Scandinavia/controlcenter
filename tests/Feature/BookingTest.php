@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class BookingTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private function assertCreateBookingAvailable(User $controller)
     {
@@ -58,9 +58,16 @@ class BookingTest extends TestCase
     {
         $controller = User::factory()->create([
             'id' => fake()->numberBetween(100),
-            'atc_active' => true,
             'rating' => $rating->value,
         ]);
+
+        $controller->atcActivity()->create([
+            'user_id' => $controller->id,
+            'area_id' => 1,
+            'hours' => 100,
+            'atc_active' => true,
+        ]);
+
         $setup($controller);
         $this->assertCreateBookingAvailable($controller);
         $this->createBooking($controller)->assertValid();
@@ -69,7 +76,7 @@ class BookingTest extends TestCase
     /**
      * Provides a list of controllers to feed to the booking test.
      */
-    public function controllerProvider(): array
+    public static function controllerProvider(): array
     {
         return [
             'S1 Rating with endorsement' => [

@@ -14,6 +14,11 @@
         @endforeach 
     </div>
 @endsection
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -90,9 +95,9 @@
                                             to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
                                         @elseif($activity->type == "MENTOR")
                                             @if($activity->new_data)
-                                                <span class="badge text-bg-light">{{ $activity->user->name }}</span> assigned as mentor
+                                                <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
                                             @elseif($activity->old_data)
-                                            <span class="badge text-bg-light">{{ $activity->user->name }}</span> removed as mentor
+                                            <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
                                             @endif
                                         @elseif($activity->type == "PAUSE")
                                             @if($activity->new_data)
@@ -158,10 +163,5 @@
 @endsection
 
 @section('js')
-<script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
-        $("body").tooltip({ selector: '[data-bs-toggle=tooltip]', delay: {"show": 150, "hide": 0} });
-    });
-</script>
+    @include('scripts.tooltips')
 @endsection

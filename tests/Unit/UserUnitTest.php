@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class UserUnitTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private $user;
 

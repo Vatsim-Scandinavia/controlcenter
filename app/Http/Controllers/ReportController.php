@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Feedback;
 use App\Models\Group;
 use App\Models\ManagementReport;
 use App\Models\Rating;
@@ -48,7 +49,7 @@ class ReportController extends Controller
     /**
      * Show the training statistics view
      *
-     * @param  int  $filterArea areaId to filter by
+     * @param  int  $filterArea  areaId to filter by
      * @return \Illuminate\View\View
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -72,7 +73,7 @@ class ReportController extends Controller
     /**
      * Show the training activities statistics view
      *
-     * @param  int  $filterArea areaId to filter by
+     * @param  int  $filterArea  areaId to filter by
      * @return \Illuminate\View\View
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -123,9 +124,21 @@ class ReportController extends Controller
     }
 
     /**
+     * Index received feedback
+     *
+     * @return \Illuminate\View\View
+     */
+    public function feedback()
+    {
+        $feedback = Feedback::all()->sortByDesc('created_at');
+
+        return view('reports.feedback', compact('feedback'));
+    }
+
+    /**
      * Return the statistics for the cards (in queue, in training, awaiting exam, completed this year) on top of the page
      *
-     * @param  int  $filterArea areaId to filter by
+     * @param  int  $filterArea  areaId to filter by
      * @return mixed
      */
     protected function getCardStats($filterArea)
@@ -160,7 +173,7 @@ class ReportController extends Controller
     /**
      * Return the statistics the total amount of requests per day
      *
-     * @param  int  $areaFilter areaId to filter by
+     * @param  int  $areaFilter  areaId to filter by
      * @return mixed
      */
     protected function getDailyRequestsStats($areaFilter)
@@ -207,7 +220,7 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
-     * @param  int  $areaFilter areaId to filter by
+     * @param  int  $areaFilter  areaId to filter by
      * @return mixed
      */
     protected function getBiAnnualRequestsStats($areaFilter)
@@ -434,7 +447,7 @@ class ReportController extends Controller
     /**
      * Return the new/completed request statistics for 6 months
      *
-     * @param  int  $areaFilter areaId to filter by
+     * @param  int  $areaFilter  areaId to filter by
      * @return mixed
      */
     protected function getQueueStats($areaFilter)

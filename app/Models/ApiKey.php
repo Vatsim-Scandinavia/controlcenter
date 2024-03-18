@@ -14,6 +14,6 @@ class ApiKey extends Model
     public $timestamps = false;
 
     public $fillable = [
-        'id', 'name', 'last_used_at', 'read_only',
+        'id', 'name', 'last_used_at', 'read_only', 'created_at',
     ];
 }

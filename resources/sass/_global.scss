@@ -15,6 +15,28 @@ p {
     }
 }
 
+.page-title{
+
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    h3{
+        margin-bottom: 1.5rem;
+    }
+
+    @include media-breakpoint-down(sm) {
+
+        h3{
+            margin-bottom: 0.5rem;
+            margin-right: 1.5rem;
+        }
+
+        div{
+            margin-bottom: 1.5rem;
+        }
+    }
+}
+
 form {
     input, select {
         border-color: $gray-400 !important;
@@ -49,14 +71,14 @@ dl.copyable{
     }
 
     dd:hover button, dd:hover a.link-btn, dt:hover a{
-        
+
         visibility: visible;
         color: $gray-400;
-    
+
         &:hover{
             color: $gray-500;
         }
-    
+
         &:active{
             color: $success;
         }
@@ -89,14 +111,14 @@ dl.copyable{
     width: 100%;
     height: 100vh;
 
-    background: url(/images/front.jpg);
+    background: url("../images/front.jpg");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-position: 50% 50%;
 
     .content {
-        width: 500px;
+        width: fit-content;
         margin: auto;
         text-align: center;
 
@@ -107,16 +129,20 @@ dl.copyable{
         }
 
         &-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
             font-size: 3rem;
             color: white;
-            line-height: 0;
 
             img {
                 height: 3rem;
-                margin-bottom: 0.625rem;
             }
 
             @include media-breakpoint-down(sm) {
+                flex-direction: column;
+                gap: 0.5rem;
                 font-size: 2rem;
             }
         }
@@ -126,6 +152,7 @@ dl.copyable{
             color: white;
 
             @include media-breakpoint-down(sm) {
+                margin-top: 0.5rem;
                 font-size: 1rem;
             }
         }
@@ -133,7 +160,7 @@ dl.copyable{
         a {
             margin-top: 1.25rem;
             padding-top: 0.375;
-            width: 72%;
+            width: 100%;
         }
     }
 
@@ -216,7 +243,11 @@ table{
     a {
         text-decoration: none;
 
-        &:hover{
+        &.dotted-underline{
+            text-decoration: dotted underline;
+        }
+
+        &:hover:not([role="button"]){
             text-decoration: underline;
         }
     }

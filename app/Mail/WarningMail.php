@@ -21,11 +21,11 @@ class WarningMail extends Mailable
      * Create a new message instance.
      *
      * @param  Endorsement  $endorsement
-     * @param  array  $textLines an array of markdown lines to add
-     * @param  string  $contactMail optional contact e-mail to put in footer
-     * @param  string  $actionUrl optinal action button url
-     * @param  string  $actionText optional action button text
-     * @param  string  $actionColor optional bootstrap button color override
+     * @param  array  $textLines  an array of markdown lines to add
+     * @param  string  $contactMail  optional contact e-mail to put in footer
+     * @param  string  $actionUrl  optinal action button url
+     * @param  string  $actionText  optional action button text
+     * @param  string  $actionColor  optional bootstrap button color override
      * @return void
      */
     public function __construct(string $mailSubject, User $user, array $textLines)

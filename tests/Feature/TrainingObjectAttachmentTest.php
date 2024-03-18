@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class TrainingObjectAttachmentTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     private $report;
 

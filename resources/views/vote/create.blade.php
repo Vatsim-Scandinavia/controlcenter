@@ -56,7 +56,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="check2" name="require_our_member" {{ old('require_our_member') ? "checked" : "" }}>
                         <label class="form-check-label" for="check2">
-                            Only VAT{{ Config::get('app.owner_short') }} members can vote
+                            Only {{ config('app.owner_name_short') }} members can vote
                         </label>
                     </div>
 
@@ -73,19 +73,13 @@
 
 @section('js')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Flatpickr -->
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
-    //Activate bootstrap tooltips
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var defaultDate = "{{ old('date') }}"
-
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
-
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input:visible').prop('readonly', false);
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate });
     })
 </script>
+
 @endsection

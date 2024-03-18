@@ -20,7 +20,7 @@ class TrainingReportNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param  TrainingReport  $report to reference
+     * @param  TrainingReport  $report  to reference
      * @param  string  $key
      */
     public function __construct(Training $training, TrainingReport $report)
@@ -53,7 +53,7 @@ class TrainingReportNotification extends Notification implements ShouldQueue
         ];
 
         return (new TrainingMail('Training Report', $this->training, $textLines, null, route('training.show', $this->training->id), 'Read Report'))
-            ->to($this->training->user->email, $this->training->user->name);
+            ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 
     /**

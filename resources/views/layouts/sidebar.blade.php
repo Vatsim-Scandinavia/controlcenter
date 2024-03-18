@@ -24,6 +24,18 @@
             <span>Dashboard</span></a>
         </li>
 
+        @can('update', [\App\Models\Task::class])
+            <li class="nav-item {{ Route::is('tasks') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('tasks') }}">
+                    <i class="fas fa-fw fa-list"></i>
+                    <span>Tasks</span>
+                    @if(\Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count())
+                        <span class="badge text-bg-danger">{{ \Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count() }}</span>
+                    @endif
+                </a>
+            </li>
+        @endcan
+
         @can('view', \App\Models\Booking::class)
             <li class="nav-item {{ Route::is('booking*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('booking') }}">
@@ -32,7 +44,7 @@
             </li>
         @endcan
 
-        @if(Setting::get('linkMoodle') != "")
+        @if(Setting::get('linkMoodle') && Setting::get('linkMoodle') != "")
             <li class="nav-item">
             <a class="nav-link" href="{{ Setting::get('linkMoodle') }}" target="_blank">
                 <i class="fas fa-graduation-cap"></i>
@@ -109,6 +121,21 @@
         @endif
 
         {{-- Nav Item - Pages Collapse Menu --}}
+        <li class="nav-item {{ Route::is('roster') ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRosters" aria-expanded="true" aria-controls="collapseRosters">
+                <i class="fas fa-fw fa-address-book"></i>
+                <span>ATC Roster</span>
+            </a>
+            <div id="collapseRosters" class="collapse" data-bs-parent="#sidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                @foreach(\App\Models\Area::all() as $area)
+                    <a class="collapse-item" href="{{ route('roster', $area->id) }}">{{ $area->name }}</a>
+                @endforeach
+                </div>
+            </div>
+        </li>
+
+        {{-- Nav Item - Pages Collapse Menu --}}
         <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
                 <i class="fas fa-fw fa-check-square"></i>
@@ -116,13 +143,15 @@
             </a>
             <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('endorsements.mascs') }}">Airports and Centers</a>
-                <a class="collapse-item" href="{{ route('endorsements.trainings') }}">Trainings</a>
-                <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiners</a>
+                <a class="collapse-item" href="{{ route('endorsements.mascs') }}">Facility</a>
+                <a class="collapse-item" href="{{ route('endorsements.solos') }}">Solo</a>
+                <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiner</a>
                 <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
                 </div>
             </div>
         </li>
+
+        
 
         @if (\Auth::user()->isModeratorOrAbove())
             {{-- Divider --}}
@@ -154,6 +183,8 @@
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
                     <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
                 @endcan
+
+                <a class="collapse-item" href="{{ route('reports.feedback') }}">Feedback</a>
                 
                 </div>
             </div>

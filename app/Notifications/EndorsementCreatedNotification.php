@@ -41,7 +41,7 @@ class EndorsementCreatedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : 'Forver';
+        $validTo = isset($this->endorsement->valid_to) ? $this->endorsement->valid_to->toEuropeanDateTime() : 'Forever';
 
         $textLines = [
             'A new **' . ucwords(strtolower((string) $this->endorsement->type)) . ' Endorsement** has been issued for your training, at following positions: *' . $this->endorsement->positions->pluck('callsign')->implode(', ') . '*',
@@ -49,7 +49,7 @@ class EndorsementCreatedNotification extends Notification implements ShouldQueue
         ];
 
         return (new EndorsementMail('Training Endorsement Issued', $this->endorsement, $textLines))
-            ->to($this->endorsement->user->email, $this->endorsement->user->name);
+            ->to($this->endorsement->user->notificationEmail, $this->endorsement->user->name);
     }
 
     /**

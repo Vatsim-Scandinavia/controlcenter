@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Exceptions\VatsimAPIException;
+use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Booking;
 use App\Models\Position;
@@ -28,14 +30,26 @@ class BookingController extends Controller
      */
     private function getBookablePositions(User $user)
     {
+        // Moderators and above can book any position
         if ($user->isModeratorOrAbove()) {
             return Position::all();
         }
+
+        // Users with a rating of S1 or above can book positions up to their rating
         $positions = new Collection();
-        if ($user->rating >= VatsimRating::S2->value || $user->hasActiveEndorsement('S1', true)) {
-            $positions = Position::where('rating', '<=', $user->rating)->get();
+
+        if ($user->rating >= VatsimRating::S1->value) {
+            if (Setting::get('atcActivityBasedOnTotalHours')) {
+                $positions = Position::where('rating', '<=', $user->rating)->get();
+            } else {
+
+                $activeAreas = $user->atcActivity->pluck('area_id');
+                $positionsInAreas = Position::whereIn('area_id', $activeAreas)->where('rating', '<=', $user->rating)->get();
+                $positions = $positions->merge($positionsInAreas);
+            }
         }
-        if ($user->getActiveTraining(1)) {
+
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
             $positions = $positions->merge(
                 $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)
             );
@@ -117,7 +131,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
         $booking->name = $user->name;
         $booking->user_id = $user->id;
 
@@ -149,13 +163,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -258,9 +269,9 @@ class BookingController extends Controller
 
             $booking->callsign = strtoupper($position);
 
-            $positionModel = Position::all()->firstWhere('callsign', strtoupper($position));
+            $positionModel = Position::firstWhere('callsign', $position);
             if (isset($positionModel)) {
-                $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($position))->id;
+                $booking->position_id = Position::firstWhere('callsign', $position)->id;
             } else {
                 return redirect(route('booking'))->withErrors('The position ' . $position . ' does not exist. The bulk booking stopped here, but previous positions in the list have been booked.')->withInput();
             }
@@ -380,7 +391,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
 
         $this->authorize('position', $booking);
 
@@ -413,13 +424,10 @@ class BookingController extends Controller
         $forcedTrainingTag = false;
         $bookingUser = User::find($booking->user_id);
 
-        if ($booking->position->rating == 2 && $bookingUser->rating == $booking->position->rating && ! $bookingUser->hasActiveEndorsement('S1', true)) {
+        if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(1) && $bookingUser->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
+        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -525,7 +533,7 @@ class BookingController extends Controller
         return redirect(route('booking'));
     }
 
-    private function getVatsimBookingUrl(string $type, int $id = null)
+    private function getVatsimBookingUrl(string $type, ?int $id = null)
     {
         if ($type == 'get' || $type == 'post') {
             $url = config('vatsim.booking_api_url') . '/booking';
@@ -538,7 +546,7 @@ class BookingController extends Controller
         return $url;
     }
 
-    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null)
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, ?array $data = null)
     {
         try {
             $headers = [

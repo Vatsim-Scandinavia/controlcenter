@@ -1,13 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'MA/SC Endorsements')
+@section('title', 'Facility Endorsements')
 @section('title-flex')
     <div>
         @if (\Auth::user()->isModeratorOrAbove())
-            <a href="{{ route('endorsements.create') }}" class="btn btn-success"><i class="fas fa-plus"></i> Add new endorsement</a>
+            <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
         @endif
     </div>
 @endsection
+
+@section('header')
+    @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
+@endsection
+
 @section('content')
 
 <div class="row">
@@ -15,7 +20,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Major Airport and Special Center Endorsements</h6> 
+                <h6 class="m-0 fw-bold text-white">Facility Endorsements</h6> 
             </div>        
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -45,8 +50,8 @@
                                             {{ $u->name }} ({{ $u->id }})
                                         @endcan
                                     </td>
-                                    <td class="text-center text-white {{ $u->active ? 'bg-success' : 'bg-danger' }}">
-                                        @if($u->active)
+                                    <td class="text-center text-white {{ $u->isAtcActive() ? 'bg-success' : 'bg-danger' }}">
+                                        @if($u->isAtcActive())
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @else
                                             <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>

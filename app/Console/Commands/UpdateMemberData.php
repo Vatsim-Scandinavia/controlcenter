@@ -20,7 +20,7 @@ class UpdateMemberData extends Command
      *
      * @var string
      */
-    protected $signature = 'update:member:data';
+    protected $signature = 'update:member:data {user?*}';
 
     /**
      * The console command description.
@@ -49,7 +49,13 @@ class UpdateMemberData extends Command
     public function handle()
     {
 
-        $users = User::query()->where('refresh_token', '!=', null)->get();
+        $optionalUserIdFilter = $this->argument('user');
+
+        if (! $optionalUserIdFilter) {
+            $users = User::query()->where('refresh_token', '!=', null)->get();
+        } else {
+            $users = User::findOrFail($optionalUserIdFilter);
+        }
 
         foreach ($users as $user) {
 
@@ -77,7 +83,7 @@ class UpdateMemberData extends Command
 
             $response = $this->oauthHelper->fetchUser($user);
 
-            if (collect($response)->isNotEmpty()) {
+            if ($response && collect($response)->isNotEmpty()) {
 
                 $user->email = OAuthController::getOAuthProperty(config('oauth.mapping_mail'), $response);
                 $user->first_name = OAuthController::getOAuthProperty(config('oauth.mapping_first_name'), $response);

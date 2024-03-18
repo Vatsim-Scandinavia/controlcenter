@@ -3,7 +3,7 @@
 @section('title', 'Create Endorsement')
 @section('content')
 
-<div class="row" id="application">
+<div class="row" id="giveEndorsements">
     <div class="col-xl-5 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -46,14 +46,14 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
                             <label class="form-check-label" for="endorsementTypeMASC">
-                                Airport/Center
+                                Facility
                             </label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeTraining" value="TRAINING" v-model="endorsementType" v-on:change="updateButtonText">
-                            <label class="form-check-label" for="endorsementTypeTraining">
-                                Training
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeSolo" value="SOLO" v-model="endorsementType" v-on:change="updateButtonText">
+                            <label class="form-check-label" for="endorsementTypeSolo">
+                                Solo
                             </label>
                         </div>
 
@@ -82,30 +82,11 @@
 
                     {{-- Info for MASC --}}
                     <div class="alert alert-info" style="display: none" role="alert" v-show="endorsementType == 'MASC'">
-                        <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training is marked completed with an passed examination.
-                    </div>
-
-                    {{-- Training Type --}} 
-                    <div v-show="endorsementType == 'TRAINING'" style="display: none">
-                        <label class="form-label">Type</label>
-                        <div class="mb-3">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeS1" value="S1" v-model="trainingType" v-on:change="updateButtonText">
-                                <label class="form-check-label" for="trainingTypeS1">
-                                    S1
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="trainingType" id="trainingTypeSolo" value="SOLO" v-model="trainingType" v-on:change="updateButtonText">
-                                <label class="form-check-label" for="trainingTypeSolo">
-                                    Solo
-                                </label>
-                            </div>
-                        </div>
+                        <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training are marked completed.
                     </div>
 
                     {{-- Expires --}}
-                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'SOLO'">
                         <label for="expire">Expires</label>
                         <input
                             id="expire"
@@ -113,26 +94,18 @@
                             type="text"
                             name="expires"
                             v-model="expire"
-                            :disabled="expireInf"
-                            :placeholder="expireInf && 'Never expires'" 
                             v-bind:class="{'is-invalid': (validationError && expire == null)}">
                         <span v-show="validationError && expire == null" class="text-danger">Fill out a valid expire date</span>
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" v-model="expireInf" name="expireInf" id="expireinf" value="true">
-                            <label class="form-check-label" for="expireinf">
-                                Infinte duration
-                            </label>
-                        </div>
                     </div>
 
                     {{-- Training Positions --}}
-                    <div class="mb-3" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType != null">
-                        <label class="form-label" for="positions">Positions <span class="text-muted">(comma-separated)</span></label>
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'SOLO'">
+                        <label class="form-label" for="positions">Positions</label>
                         <input 
                             id="positions"
                             class="form-control"
                             type="text"
-                            name="positions"
+                            name="position"
                             list="positionsList"
                             multiple="multiple"
                             v-model="positions"
@@ -147,18 +120,6 @@
                                 @endbrowser
                             @endforeach
                         </datalist>
-                        <div class="dropdown float-end">
-                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Template
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                @foreach($areas as $a)
-                                    @if($a->template_s1_positions)
-                                        <a class="dropdown-item" v-on:click="positions = '{{ $a->template_s1_positions }}'">{{ $a->name }}</a>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
                         <span v-show="validationError && positions == null" class="text-danger">Select at least one position</span>
                         <p v-show="validationError && errSoloPositionCount == true" class="text-danger">Solo Endorsement can only have one position.</p>
                     </div>
@@ -169,7 +130,7 @@
                         <select class="form-select" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
                             <option selected disabled>Select rating</option>
                             @foreach($ratingsMASC as $rating)
-                                <option value="{{ $rating->id }}">{{ $rating->name }}</option>
+                                <option value="{{ $rating->id }}">{{ $rating->endorsement_type }} {{ $rating->name }}</option>
                             @endforeach
                         </select>
                         <span v-show="validationError && ratingMASC == null" class="text-danger">Select at least one airport or center</span>
@@ -199,7 +160,7 @@
                     </div>
 
                     {{-- Training Checkbox --}}
-                    <div class="form-check" style="display: none" v-show="endorsementType == 'TRAINING' && trainingType == 'SOLO'">
+                    <div class="form-check" class="mt-5" style="display: none" v-show="endorsementType == 'SOLO'">
                         <input class="form-check-input" type="checkbox" id="soloChecked" v-model="soloChecked">
                         <label class="form-check-label" for="soloChecked">
                             {{ Setting::get('trainingSoloRequirement') }}
@@ -207,7 +168,7 @@
                         <p v-show="validationError && soloChecked == false" class="text-danger">Confirm that the requirements are filled</p>
                     </div>
 
-                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" v-on:click="submit" v-show="endorsementType != null && (endorsementType != 'TRAINING' || (endorsementType == 'TRAINING' && trainingType != null))" style="display: none">Create endorsement</button>
+                    <button type="submit" id="submit_btn" class="btn btn-success mt-4" v-on:click="submit" v-show="endorsementType != null && (endorsementType != 'TRAINING' || (endorsementType == 'SOLO'))" style="display: none">Create endorsement</button>
                 </form>
             </div>
         </div>
@@ -218,176 +179,118 @@
 @endsection
 
 @section('js')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+@vite('resources/js/vue.js')
 <script>
-    //Activate bootstrap tooltips and calendar
-    $(document).ready(function() {
 
-        $(".datepicker").flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('1 months')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
+    document.addEventListener("DOMContentLoaded", function () {
 
-        $('.flatpickr-input:visible').on('focus', function () {
-            $(this).blur();
-        });
-        $('.flatpickr-input').prop('readonly', false);
-
-    })
-
-    // Vue
-    const application = new Vue({
-        el: '#application',
-        data: {
-            endorsementType: null,
-            trainingType: null,
-            user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
-            expire: null,
-            expireInf: null,
-            positions: null,
-            ratingMASC: null,
-            ratingGRP: null,
-            ratingExaminate: null,
-            areas: [],
-            soloChecked: false,
-            validationError: false,
-            errSoloPositionCount: false,
-        },
-        methods:{
-            updateButtonText(){
-
-                var btn = document.getElementById("submit_btn");
-                var end = ""
-
-                const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
-
-                if(this.endorsementType == 'MASC'){
-                    end = "MA/SC"
-                } else if(this.endorsementType == 'TRAINING'){
-                    end = "Training"
-                    if(this.trainingType == 'S1'){
-                        end = "S1"
-                        // While at it, let's set calendar max date as well
-                        flatpickr.config.maxDate = moment().add(3, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
-                    } else if(this.trainingType == 'SOLO') {
-                        end = "Solo"
-                        // While at it, let's set calendar max date as well
-                        flatpickr.config.maxDate = moment().add(1, 'M').toDate()
-                        flatpickr.jumpToDate(moment().toDate())
-                    }
-                } else if(this.endorsementType == 'EXAMINER'){
-                    end = "Examiner"
-                } else if(this.endorsementType == 'VISITING'){
-                    end = "Visiting"
+        const giveEndorsements = createApp({
+            data() {
+                return {
+                    endorsementType: null,
+                    user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
+                    expire: null,
+                    positions: null,
+                    ratingMASC: null,
+                    ratingGRP: null,
+                    ratingExaminate: null,
+                    areas: [],
+                    soloChecked: false,
+                    validationError: false,
+                    errSoloPositionCount: false,
                 }
-
-                btn.innerText = "Create " + end + " Endorsement";
-
             },
-            validate(){
+            methods:{
+                updateButtonText(){
 
-                /*
-                    All -> User
+                    var btn = document.getElementById("submit_btn");
+                    var end = ""
 
-                    Airport/Center -> Single MA/SC Rating
-                    Training -> Type + Expire + Position (Multiple if S1)
-                    Examiner -> GRP Ratings + Areas
-                    Visitor -> Areas + Single GRP Rating
+                    const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
 
-                    Specials:
-                    Positions: Only 1 for Solo.
+                    if(this.endorsementType == 'MASC'){
+                        end = "MA/SC"
+                    } else if(this.endorsementType == 'SOLO'){
+                        end = "Solo"
+                    } else if(this.endorsementType == 'EXAMINER'){
+                        end = "Examiner"
+                    } else if(this.endorsementType == 'VISITING'){
+                        end = "Visiting"
+                    }
 
-                */
+                    btn.innerText = "Create " + end + " Endorsement";
 
-                var validated = true
+                },
+                validate(){
 
-                if(this.user == null) validated = false
+                    /*
+                        All -> User
 
-                if(this.endorsementType == 'MASC'){
+                        Airport/Center -> Single Facility Rating
+                        Training -> Type + Expire + Position (Multiple if S1)
+                        Examiner -> GRP Ratings + Areas
+                        Visitor -> Areas + Single GRP Rating
 
-                    if(this.ratingMASC == null) validated = false
+                        Specials:
+                        Positions: Only 1 for Solo.
 
-                } else if(this.endorsementType == 'TRAINING'){
+                    */
 
-                    if(this.expire == null && this.expireInf != true) validated = false
-                    if(this.positions == null) validated = false
-                    
-                    if(this.trainingType == 'SOLO'){
+                    var validated = true
+
+                    if(this.user == null) validated = false
+
+                    if(this.endorsementType == 'MASC'){
+
+                        if(this.ratingMASC == null) validated = false
+
+                    } else if(this.endorsementType == 'SOLO'){
+
+                        if(this.expire == null) validated = false
+                        if(this.positions == null) validated = false
+
                         if(this.soloChecked == false) validated = false
                         if(this.positions && this.positions.includes(',')) { 
                             validated = false
                             this.errSoloPositionCount = true 
                         }
+
+                    } else if(this.endorsementType == 'EXAMINER'){
+
+                        if(this.ratingGRP == null) validated = false
+                        if(this.areas.length == 0) validated = false
+
+                    } else if(this.endorsementType == 'VISITING'){
+
+                        if(this.ratingGRP == null) validated = false
+                        if(this.areas.length == 0) validated = false
+
                     }
 
-                } else if(this.endorsementType == 'EXAMINER'){
+                    return validated
+                },
+                submit(event) {
+                    event.preventDefault()
 
-                    if(this.ratingGRP == null) validated = false
-                    if(this.areas.length == 0) validated = false
-
-                } else if(this.endorsementType == 'VISITING'){
-
-                    if(this.ratingGRP == null) validated = false
-                    if(this.areas.length == 0) validated = false
-
-                }
-
-                return validated
-            },
-            submit(event) {
-                event.preventDefault()
-
-                if(this.validate()){
-                    $('#endorsementForm').submit()
-                } else {
-                    this.validationError = true
+                    if(this.validate()){
+                        document.getElementById('endorsementForm').submit()
+                    } else {
+                        this.validationError = true
+                    }
                 }
             }
-        }
 
+        }).mount('#giveEndorsements');
     });
 
 </script>
 
-<!-- Multiple select datalist from https://www.meziantou.net/html-multiple-selections-with-datalist.htm -->
+<!-- Flatpickr --> 
+@vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const separator = ',';
-        for (const input of document.getElementsByTagName("input")) {
-            if (!input.multiple) {
-                continue;
-            }
-            if (input.list instanceof HTMLDataListElement) {
-                const optionsValues = Array.from(input.list.options).map(opt => opt.value);
-                let valueCount = input.value.split(separator).length;
-                input.addEventListener("input", () => {
-                    const currentValueCount = input.value.split(separator).length;
-                    // Do not update list if the user doesn't add/remove a separator
-                    // Current value: "a, b, c"; New value: "a, b, cd" => Do not change the list
-                    // Current value: "a, b, c"; New value: "a, b, c," => Update the list
-                    // Current value: "a, b, c"; New value: "a, b" => Update the list
-                    if (valueCount !== currentValueCount) {
-                        const lsIndex = input.value.lastIndexOf(separator);
-                        const str = lsIndex !== -1 ? input.value.substr(0, lsIndex) + separator : "";
-                        filldatalist(input, optionsValues, str);
-                        valueCount = currentValueCount;
-                    }
-                });
-            }
-        }
-        function filldatalist(input, optionValues, optionPrefix) {
-            const list = input.list;
-            if (list && optionValues.length > 0) {
-                list.innerHTML = "";
-                const usedOptions = optionPrefix.split(separator).map(value => value.trim());
-                for (const optionsValue of optionValues) {
-                    if (usedOptions.indexOf(optionsValue) < 0) {
-                        const option = document.createElement("option");
-                        option.value = optionPrefix + optionsValue;
-                        list.append(option);
-                    }
-                }
-            }
-        }
-    });
+        document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", maxDate: "{!! date('Y-m-d', strtotime('30 days')) !!}", dateFormat: "d/m/Y", locale: {firstDayOfWeek: 1 } });
+    })
 </script>
+
 @endsection

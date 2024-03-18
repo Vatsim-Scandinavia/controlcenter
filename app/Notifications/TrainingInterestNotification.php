@@ -26,8 +26,8 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param  TrainingInterest  $interest reference to the interest model
-     * @param  bool|null  $reminder optional, default false, if this notification is a reminder
+     * @param  TrainingInterest  $interest  reference to the interest model
+     * @param  bool|null  $reminder  optional, default false, if this notification is a reminder
      * @param  string  $key
      */
     public function __construct(Training $training, TrainingInterest $interest, bool $reminder = false)
@@ -77,7 +77,7 @@ class TrainingInterestNotification extends Notification implements ShouldQueue
         $actionUrl = route('training.confirm.interest', ['training' => $this->training->id, 'key' => $this->interest->key]);
 
         return (new TrainingMail($this->subjectPrefix . 'Confirm Continued Training Interest', $this->training, $textLines, $contactMail, $actionUrl, 'Confirm Interest', 'success'))
-            ->to($this->training->user->email, $this->training->user->name);
+            ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 
     /**

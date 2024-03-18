@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
+use App\Facades\DivisionApi;
+use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Rating;
@@ -148,7 +152,7 @@ class TrainingController extends Controller
 
             foreach ($availableRatings as $ratingIndex => $rating) {
                 // If the rating is a MAE rating, or it's a VATSIM-rating allowed to bundle with MAEs. AND if the required vatsim rating to apply for the rating is S3 or below (so we don't bundle C1+ MAEs)
-                if (($rating->vatsim_rating == null || $rating->pivot->allow_bundling) && $rating->pivot->required_vatsim_rating <= 4) {
+                if ($rating->pivot->allow_bundling && $rating->pivot->required_vatsim_rating <= 4) {
                     $bundle['id'] = empty($bundle['id']) ? $rating->id : $bundle['id'] . '+' . $rating->id;
                     $bundle['name'] = empty($bundle['name']) ? $rating->name : $bundle['name'] . ' + ' . $rating->name;
                     if (! isset($bundle['hour_requirement']) || $rating->hour_requirement > $bundle['hour_requirement']) {
@@ -168,6 +172,7 @@ class TrainingController extends Controller
             // Inject the data into payload
             $payload[$area->id]['name'] = $area->name;
             $payload[$area->id]['data'] = $availableRatings;
+            $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->atc_active) ? true : false;
         }
 
         // Fetch user's ATC hours
@@ -191,10 +196,14 @@ class TrainingController extends Controller
             return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
         }
 
+        // Is activity in area required to apply for training?
+        $atcActiveRequired = $user->rating >= VatsimRating::S1->value && Setting::get('atcActivityBasedOnTotalHours') == false;
+
         // Return
         return view('training.apply', [
             'payload' => $payload,
             'atc_hours' => $vatsimStats,
+            'atcActiveRequired' => ($atcActiveRequired) ? 1 : 0,
             'motivation_required' => ($userVatsimRating <= 2) ? 1 : 0,
         ]);
     }
@@ -209,8 +218,12 @@ class TrainingController extends Controller
         $this->authorize('create', Training::class);
 
         $students = User::all();
-        $ratings = Area::with('ratings')->get()->toArray();
         $types = TrainingController::$types;
+
+        // Fetch all ratings and add C3 to all areas
+        $ratings = Area::with('ratings')->get()->each(function ($area) {
+            $area->ratings->push(Rating::where('name', 'C3')->first());
+        })->sortBy('name')->toArray();
 
         return view('training.create', compact('students', 'ratings', 'types', 'prefillUserId'));
     }
@@ -229,17 +242,33 @@ class TrainingController extends Controller
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
         }
 
+        // Only allow one training request at a time
+        if (isset($data['user_id'])) {
+            if (User::find($data['user_id'])->hasActiveTrainings(true)) {
+                return redirect()->back()->withErrors('The user already has an active training request.');
+            }
+        } elseif (Auth::user()->hasActiveTrainings(true)) {
+            return redirect()->back()->withErrors('You already have an active training request.');
+        }
+
         // Training_level comes from the application, ratings comes from the manual creation, we need to seperate those.
         if (isset($data['training_level'])) {
             $ratings = Rating::find(explode('+', $data['training_level']));
+
+            // Check if user is active in the area if required by setting
+            $atcActivityRequired = Auth::user()->rating >= VatsimRating::S1->value && Setting::get('atcActivityBasedOnTotalHours') == false;
+            $activeInArea = Auth::user()->atcActivity->firstWhere('area_id', $data['training_area']);
+            if ($atcActivityRequired && $activeInArea && ! $activeInArea->atc_active) {
+                return redirect()->back()->withErrors('You need to be active in the area to apply for training.');
+            }
 
             // Check if user fulfill rating hour requirement
             $vatsimStats = [];
             $client = new \GuzzleHttp\Client();
             if (App::environment('production')) {
-                $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . \Auth::id() . '/rating_times/');
+                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . \Auth::id() . '/stats');
             } else {
-                $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
             }
 
             if ($res->getStatusCode() == 200) {
@@ -265,12 +294,30 @@ class TrainingController extends Controller
             }
         } elseif (isset($data['ratings'])) {
             $ratings = Rating::find($data['ratings']);
+
+            // Missing fields? Return error
+            if (! isset($data['training_area']) || ! isset($data['type'])) {
+                return redirect()->back()->withErrors('One or more fields were missing');
+            }
+
+            // If it's a refresh training, force the training to refresh all endorsements in respective area or deny the creation
+            if ($data['type'] == 2 || $data['type'] == 5) {
+                // Ratings supplied in request
+                $appliedRatings = $ratings->pluck('name');
+                $validRefreshTraining = $this->validRefreshTraining($data['training_area'], $data['user_id'], $appliedRatings);
+
+                if (! $validRefreshTraining['success']) {
+                    return redirect()->back()->withErrors('A refresh/familiarisation training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
+                }
+            }
+
         } else {
             return redirect()->back()->withErrors('One or more ratings need to be selected to create training request.');
         }
 
         $training = Training::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
+            'created_by' => \Auth::id(),
             'area_id' => $data['training_area'],
             'motivation' => isset($data['motivation']) ? $data['motivation'] : '',
             'experience' => isset($data['experience']) ? $data['experience'] : null,
@@ -279,7 +326,7 @@ class TrainingController extends Controller
         ]);
 
         if (isset($data['comment'])) {
-            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: ' . $training->notes);
+            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: ' . $data['comment']);
         }
 
         if ($ratings->count() > 1) {
@@ -337,7 +384,12 @@ class TrainingController extends Controller
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at', 'DESC')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest'));
+        $relatedTasks = $training->tasks->sortByDesc('created_at');
+
+        $requestTypes = TaskController::getTypes();
+        $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
+
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees'));
     }
 
     /**
@@ -371,6 +423,16 @@ class TrainingController extends Controller
         // Lets remeber what it was before for showing the change in logs
         $preChangeRatings = $training->ratings;
         $preChangeType = $training->type;
+
+        // If it's a refresh training, validate the requested endorsements
+        if ($attributes['type'] == 2 || $attributes['type'] == 5) {
+            $appliedRatings = Rating::find($attributes['ratings'])->pluck('name');
+            $validRefreshTraining = $this->validRefreshTraining($training->area_id, $training->user_id, $appliedRatings);
+
+            if (! $validRefreshTraining['success']) {
+                return redirect()->back()->withErrors('A refresh/familiarisation training requires the student to refresh all of their active endorsements. Add these to the application and try again: ' . $validRefreshTraining['data']->implode(', '));
+            }
+        }
 
         // Detach all ratings connceed to training to save the new (or same) ones.
         $training->ratings()->detach();
@@ -424,6 +486,14 @@ class TrainingController extends Controller
 
         $attributes = $this->validateUpdateDetails();
         if (array_key_exists('status', $attributes)) {
+
+            // Don't allow re-opening a training if that causes student to have multiple trainings at the same time
+            if ($attributes['status'] >= 0 && $oldStatus < 0 && $training->user->hasActiveTrainings(true)) {
+                if ($training->user->hasActiveTrainings(true)) {
+                    return redirect($training->path())->withErrors('Training can not be reopened. The student already has an active training request.');
+                }
+            }
+
             $training->updateStatus($attributes['status']);
 
             if ($attributes['status'] != $oldStatus) {
@@ -461,7 +531,7 @@ class TrainingController extends Controller
             }
 
             unset($attributes['mentors']);
-        } elseif (Auth::user()->isModeratorOrAbove()) { // XXX This is really hack since we don't send this attribute when mentors submit
+        } else {
             // Detach all if no passed key, as that means the list is empty
 
             foreach ($training->mentors as $mentor) {
@@ -492,7 +562,7 @@ class TrainingController extends Controller
 
         // If training is closed, force to unpause
         if ((int) $training->status != $oldStatus) {
-            if ((int) $training->status < 0) {
+            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
                 $attributes['paused_at'] = null;
                 if (isset($training->paused_at)) {
                     TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
@@ -510,12 +580,12 @@ class TrainingController extends Controller
 
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if ((int) $training->status != $oldStatus) {
-            if ((int) $training->status < 0) {
+            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
                 // Detach all mentors
                 $training->mentors()->detach();
 
                 // If the training was completed and double checked with a passed exam result, store the relevant endorsements
-                if ((int) $training->status == -1 && TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()) {
+                if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
                             // Revoke the old endorsement if active
@@ -529,6 +599,12 @@ class TrainingController extends Controller
                                         break;
                                     }
                                 }
+                            }
+
+                            // All clear, let's start by attemping the insertion to the API
+                            $response = DivisionApi::assignTierEndorsement($training->user, $rating, Auth::id());
+                            if ($response && $response->failed()) {
+                                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
                             }
 
                             // Grant new endorsement
@@ -546,20 +622,20 @@ class TrainingController extends Controller
                 }
 
                 // If training is completed with a passed exam result, let's set the user to active
-                if ((int) $training->status == -1) {
+                if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
-                    if ($training->type <= 4) {
-                        $training->user->atc_active = true;
-                        $training->user->save();
-
+                    if (! Setting::get('atcActivityBasedOnTotalHours') || Setting::get('atcActivityBasedOnTotalHours') && $training->type <= 4) {
                         try {
-                            $activity = AtcActivity::findOrFail($training->user->id);
+                            $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
+                            $activity->atc_active = true;
                             $activity->start_of_grace_period = now();
                             $activity->save();
                         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                             AtcActivity::create([
                                 'user_id' => $training->user->id,
+                                'area_id' => $training->area->id,
                                 'hours' => 0,
+                                'atc_active' => true,
                                 'start_of_grace_period' => now(),
                             ]);
                         }
@@ -571,7 +647,7 @@ class TrainingController extends Controller
                 return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
             }
 
-            if ((int) $training->status == 1) {
+            if ((int) $training->status == TrainingStatus::PRE_TRAINING->value) {
                 $training->user->notify(new TrainingPreStatusNotification($training));
 
                 return redirect($training->path())->withSuccess('Training successfully updated. E-mail confirmation of pre-training sent to the student.');
@@ -644,6 +720,37 @@ class TrainingController extends Controller
         }
 
         return redirect()->to($training->path())->withErrors('We could not find a training interest confirmation for this training. Please contact our technical staff if this issue persists.');
+    }
+
+    /**
+     * Return if the refresh is correct. If not, returns descrepency rating names
+     */
+    protected function validRefreshTraining($areaId, $userId, $requestedRatings)
+    {
+        // Ratings applicable to area of request
+        $areaRatings = Rating::whereHas('areas', function ($query) use ($areaId) {
+            $query->where('area_id', $areaId);
+        })->whereNull('vatsim_rating')->get()->pluck('name');
+
+        // Ratings which user has today and needs to be refresh
+        $userRatings = User::find($userId)->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
+            return $endorsement->ratings->first()->name;
+        });
+
+        // Gather expected ratings for this user in given area
+        $expectedRatings = collect();
+        foreach ($userRatings as $userRating) {
+            if ($areaRatings->contains($userRating)) {
+                $expectedRatings->push($userRating);
+            }
+        }
+
+        $discrepancyRatings = $expectedRatings->diff($requestedRatings);
+        if ($discrepancyRatings->count() > 0) {
+            return ['success' => false, 'data' => $discrepancyRatings];
+        }
+
+        return ['success' => true];
     }
 
     /**

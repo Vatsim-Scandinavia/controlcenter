@@ -25,7 +25,7 @@ class FileController extends Controller
         $this->authorize('view', $file);
 
         if (Storage::exists($file->full_path)) {
-            return response()->file(Storage::path($file->full_path), ['Content-Disposition' => 'inline; filename="' . $file->name . '"', 'Content-Type' => Storage::mimeType($file->name)]);
+            return response()->file(Storage::path($file->full_path), ['Content-Disposition' => 'inline; filename="' . $file->name . '"', 'Content-Type' => Storage::mimeType($file->full_path)]);
         } else {
             return abort(404);
         }
@@ -93,7 +93,7 @@ class FileController extends Controller
      *
      * @return string
      */
-    public static function saveFile(UploadedFile $file, string $filename = null)
+    public static function saveFile(UploadedFile $file, ?string $filename = null)
     {
         $extension = $file->getClientOriginalExtension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));

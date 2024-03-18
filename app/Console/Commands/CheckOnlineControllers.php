@@ -44,9 +44,9 @@ class CheckOnlineControllers extends Command
         }
 
         // Fetch which first four characters from ICAOs should look for based on positions database
-        $areasRaw = DB::select(
-            DB::raw('SELECT DISTINCT LEFT(callsign, 4) as prefix FROM positions;')
-        );
+        $areasRaw = DB::table('positions')
+            ->select(DB::raw('DISTINCT LEFT(callsign, 4) as prefix'))
+            ->get();
 
         $areas = collect();
         foreach ($areasRaw as $a) {
@@ -58,16 +58,29 @@ class CheckOnlineControllers extends Command
         $this->info('Collecting online controllers...');
 
         // Fetch the latest URI to data feed
-        $dataUri = Http::get('https://status.vatsim.net/status.json')['data']['v3'][0];
-        $vatsimData = Http::get($dataUri)['controllers'];
+        $dataUri = Http::get('https://status.vatsim.net/status.json');
+        if (! isset($dataUri) || ! isset($dataUri['data']) || ! isset($dataUri['data']['v3']) || ! isset($dataUri['data']['v3'][0])) {
+            $this->info('No data URI found. Aborting.');
 
-        foreach ($vatsimData as $d) {
-            if (preg_match($areasRegex, $d['callsign'])) {
-                // Lets check this user
-                $this->info('Checking user ' . $d['cid']);
-                $user = User::find($d['cid']);
-                if (isset($user) && ! $user->isVisiting()) {
-                    if (! $user->active && ! $user->hasActiveTrainings(false) && ! $user->hasRecentlyCompletedTraining()) {
+            return;
+        }
+
+        $dataReturn = Http::get($dataUri['data']['v3'][0]);
+
+        if (isset($dataReturn) && isset($dataReturn['controllers'])) {
+            $vatsimData = $dataReturn['controllers'];
+
+            foreach ($vatsimData as $d) {
+
+                if (preg_match($areasRegex, $d['callsign'])) {
+
+                    // Lets check this user
+                    $this->info('Checking user ' . $d['cid']);
+                    $user = User::find($d['cid']);
+                    $position = Position::firstWhere('callsign', $d['callsign']);
+                    $area = (isset($position->area)) ? $position->area : null;
+
+                    if (isset($user) && ! $user->isAllowedToControlOnline($area)) {
                         if (! isset($user->last_inactivity_warning) || (isset($user->last_inactivity_warning) && Carbon::now()->gt(Carbon::parse($user->last_inactivity_warning)->addHours(6)))) {
                             // Send warning to user
                             $user->notify(new InactiveOnlineNotification($user));
@@ -76,17 +89,16 @@ class CheckOnlineControllers extends Command
                             $user->save();
 
                             // Send warning to all admins, and moderators in selected area
-                            $position = Position::where('callsign', $d['callsign'])->get()->first();
                             $sendToStaff = User::allWithGroup(1);
 
-                            if ($position) {
+                            if (isset($area)) {
                                 $moderators = User::allWithGroup(2);
                                 foreach ($moderators as $m) {
                                     if ($sendToStaff->where('id', $m->id)->count()) {
                                         continue;
                                     }
 
-                                    if ($m->isModerator(Area::find($position->area))) {
+                                    if ($m->isModerator($area)) {
                                         $sendToStaff->push($m);
                                     }
                                 }

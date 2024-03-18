@@ -14,7 +14,7 @@ class NotificationController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  int  $filterArea areaId to filter the index by
+     * @param  int  $filterArea  areaId to filter the index by
      * @return \Illuminate\View\View
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException

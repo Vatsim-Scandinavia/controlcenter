@@ -11,13 +11,19 @@ inputs:
 runs:
   using: composite
   steps:
+
+  - name: Set up PHP
+    uses: shivammathur/setup-php@v2
+    with:
+      php-version: '8.3.2'
+
   - name: Validate composer
     run: composer validate
     shell: bash
     working-directory: ./${{ inputs.path }}
 
   - name: Cache composer
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       path: ${{ inputs.path }}/vendor
       key: composer-v1-${{ inputs.path }}-${{ hashFiles(format('{0}/composer.lock', inputs.path))}}
@@ -29,7 +35,7 @@ runs:
 
   - name: Setup node
     if: inputs.setup-node == 'true'
-    uses: actions/setup-node@v3
+    uses: actions/setup-node@v4
     with:
       cache: 'npm'
       cache-dependency-path: ${{ inputs.path }}

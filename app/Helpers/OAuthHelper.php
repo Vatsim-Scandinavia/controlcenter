@@ -23,6 +23,7 @@ class OAuthHelper
         return new Client([
             'base_uri' => $this->baseUrl,
             'headers' => [
+                'Accept' => 'application/json',
                 'Content-type' => 'application/json',
             ],
         ]);
@@ -30,7 +31,6 @@ class OAuthHelper
 
     public function fetchUser(User $user)
     {
-
         try {
             $response = $this->client->get($this->baseUrl . '/api/user', [
                 'headers' => [
@@ -45,6 +45,8 @@ class OAuthHelper
             Log::critical($exception->getMessage());
         }
 
+        return false;
+
     }
 
     public function refreshToken(User $user)
@@ -54,8 +56,8 @@ class OAuthHelper
                 'form_params' => [
                     'grant_type' => 'refresh_token',
                     'refresh_token' => $user->refresh_token,
-                    'client_id' => env('VATSIM_OAUTH_CLIENT'),
-                    'client_secret' => env('VATSIM_OAUTH_SECRET'),
+                    'client_id' => config('oauth.id'),
+                    'client_secret' => config('oauth.secret'),
                     'scope' => implode(' ', config('oauth.scopes')),
                 ],
             ]);

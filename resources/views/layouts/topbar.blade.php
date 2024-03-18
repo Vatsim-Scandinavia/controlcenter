@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand bg-white topbar {{ (\Auth::user()->isModeratorOrAbove()) ? 'justify-content-between' : 'justify-content-end' }} mb-4 ps-4 pe-4 static-top shadow">
+<nav class="navbar navbar-expand bg-white topbar {{ (\Auth::user()->isModeratorOrAbove()) ? 'topbar-justify-moderator' : 'topbar-justify-user' }} mb-4 ps-4 pe-4 static-top shadow">
 
     <a class="sidebar-brand sidebar-brand-topbar align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
@@ -15,14 +15,14 @@
     </a>
 
     {{-- Topbar Desktop Search --}}
-    @if(\Auth::user()->isMentorOrAbove())
+    @if(\Auth::user()->isModeratorOrAbove())
         <form class="d-none d-md-inline-block my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
             <div class="input-group">
                 <div class="search input-group input-lg">
                     <div class="search-icon bg-light input-group-prepend">
                         <i class="fas fa-search fa-sm"></i>
                     </div>
-                    <input class="search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
+                    <input class="user-search search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
                 </div>
 
                 <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
@@ -36,7 +36,7 @@
     {{-- Topbar Navbar --}}
     <ul class="navbar-nav">
 
-        @if(\Auth::user()->isMentorOrAbove())
+        @if(\Auth::user()->isModeratorOrAbove())
 
             {{-- Search Dropdown (Visible Only XS) --}}
             <li class="nav-item dropdown no-arrow d-md-none">
@@ -50,7 +50,7 @@
                             <div class="search-icon bg-light input-group-prepend">
                                 <i class="fas fa-search fa-sm"></i>
                             </div>
-                            <input class="search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
+                            <input class="user-search search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
                         </div>
 
                         <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
@@ -94,8 +94,13 @@
         </li>
 
         <li class="nav-item dropdown d-lg-none">
-            <button class="nav-link" id="sidebar-button">
+            <button class="nav-link position-relative" id="sidebar-button">
                 <i class="fas fa-bars"></i>
+                @if(\Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count())
+                    <span class="position-absolute top-40 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                @endif
             </button>
         </li>        
 

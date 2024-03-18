@@ -14,9 +14,9 @@ class Training extends Model
 
     protected $table = 'trainings';
 
-    protected $dates = [
-        'started_at',
-        'closed_at',
+    protected $casts = [
+        'started_at' => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     /**
@@ -32,8 +32,8 @@ class Training extends Model
     /**
      * Update the status of the training. This method will make sure that when updating the status the training that the timestamps are also correctly updated.
      *
-     * @param  int  $newStatus the new status to set
-     * @param  bool  $expiredInterest optional bool this expired an interest request
+     * @param  int  $newStatus  the new status to set
+     * @param  bool  $expiredInterest  optional bool this expired an interest request
      * @return void
      */
     public function updateStatus(int $newStatus, bool $expiredInterest = false)
@@ -92,8 +92,13 @@ class Training extends Model
      *
      * @return string
      */
-    public function getInlineRatings()
+    public function getInlineRatings(bool $vatsimRatingOnly = false)
     {
+
+        if ($vatsimRatingOnly) {
+            return $this->ratings->where('vatsim_rating', true)->pluck('name')->implode(' + ');
+        }
+
         return $this->ratings->pluck('name')->implode(' + ');
     }
 
@@ -121,6 +126,32 @@ class Training extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Check if training holds any VATSIM GCAP rating
+     *
+     * @return bool
+     */
+    public function hasVatsimRatings()
+    {
+        foreach ($this->ratings as $rating) {
+            if ($rating->vatsim_rating != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get highest VATSIM GCAP rating
+     *
+     * @return Rating
+     */
+    public function getHighestVatsimRating()
+    {
+        return $this->ratings->where('vatsim_rating', true)->sortByDesc('vatsim_rating')->first();
     }
 
     /**
@@ -191,6 +222,16 @@ class Training extends Model
     public function activities()
     {
         return $this->hasMany(TrainingActivity::class);
+    }
+
+    /**
+     * Get the tasks related to the training
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'subject_training_id');
     }
 
     /**

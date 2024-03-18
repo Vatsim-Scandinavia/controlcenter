@@ -16,7 +16,7 @@ class TrainingActivityController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public static function create(int $trainingId, string $type, int $new_data = null, int $old_data = null, int $userId = null, string $comment = null)
+    public static function create(int $trainingId, string $type, ?int $new_data = null, ?int $old_data = null, ?int $userId = null, ?string $comment = null)
     {
         $activity = new TrainingActivity();
         $activity->training_id = $trainingId;
@@ -52,6 +52,10 @@ class TrainingActivityController extends Controller
             $activity = TrainingActivity::find($data['update_id']);
             if ($activity == null) {
                 return back()->withInput()->withErrors('Could not find comment to update.');
+            }
+
+            if ($activity->triggered_by_id != \Auth::user()->id) {
+                return back()->withInput()->withErrors('You are not allowed to update this comment.');
             }
 
             $activity->comment = $data['comment'];

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App;
+use App\Helpers\TrainingStatus;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -55,7 +56,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
         $booking->name = $user->name;
         $booking->user_id = $user->id;
         $booking->source = strtoupper($data['source']);
@@ -94,13 +95,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -187,7 +185,7 @@ class BookingController extends Controller
             $positions = Position::where('rating', '<=', $user->rating)->get();
         }
 
-        if ($user->getActiveTraining(1)) {
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
             $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->first()->vatsim_rating));
         }
 
@@ -223,7 +221,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::all()->firstWhere('callsign', strtoupper($data['position']))->id;
+        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
@@ -261,13 +259,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if ($booking->position->rating == 2 && $user->rating == $booking->position->rating && ! $user->hasActiveEndorsement('S1', true)) {
+        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
-            $booking->training = 1;
-            $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(1) && $user->getActiveTraining(1)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -365,7 +360,7 @@ class BookingController extends Controller
         ], 200);
     }
 
-    private function getVatsimBookingUrl(string $type, int $id = null)
+    private function getVatsimBookingUrl(string $type, ?int $id = null)
     {
         if ($type == 'get' || $type == 'post') {
             $url = config('vatsim.booking_api_url') . '/booking';
@@ -378,7 +373,7 @@ class BookingController extends Controller
         return $url;
     }
 
-    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, array $data = null)
+    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, ?array $data = null)
     {
         try {
             $headers = [

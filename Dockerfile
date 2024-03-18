@@ -1,5 +1,5 @@
 # Intermediate build container for front-end resources
-FROM docker.io/library/node:20.3.0-alpine as frontend
+FROM docker.io/library/node:21.7.1-alpine as frontend
 # Easy to prune intermediary containers
 LABEL stage=build
 
@@ -7,11 +7,11 @@ WORKDIR /app
 COPY ./ /app/
 
 RUN npm ci --omit dev && \
-    npm run prod
+    npm run build
 
 ####################################################################################################
 # Primary container
-FROM docker.io/library/php:8.1.10-apache-bullseye
+FROM docker.io/library/php:8.3.3-apache-bullseye
 
 # Default container port for the apache configuration
 EXPOSE 80 443
@@ -35,7 +35,7 @@ COPY ./container/configs/php.ini /usr/local/etc/php/php.ini
 
 
 # Install PHP extension(s)
-COPY --from=mlocati/php-extension-installer:2.1.30 /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=mlocati/php-extension-installer:2.2.3 /usr/bin/install-php-extensions /usr/local/bin/
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
@@ -51,7 +51,8 @@ COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
 WORKDIR /app
 
 RUN chmod -R 755 storage bootstrap/cache && \
-        composer install --no-dev --no-interaction --prefer-dist
+        composer install --no-dev --no-interaction --prefer-dist && \
+        mkdir -p /app/storage/app/public/files
 
 # Wrap around the default PHP entrypoint with a custom entrypoint
 COPY ./container/entrypoint.sh /usr/local/bin/controlcenter-entrypoint

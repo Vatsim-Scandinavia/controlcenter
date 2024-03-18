@@ -12,7 +12,9 @@ use App\Http\Controllers\MentorController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RosterController;
 use App\Http\Controllers\SweatbookController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TrainingActivityController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingExaminationController;
@@ -27,8 +29,8 @@ use App\Http\Controllers\VoteController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
@@ -47,7 +49,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth')->n
 //--------------------------------------------------------------------------
 // Sites behind authentication
 //--------------------------------------------------------------------------
-Route::middleware(['auth', 'activity'])->group(function () {
+Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     // Sidebar Navigation
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/content', [DashboardController::class, 'content'])->name('content');
@@ -60,7 +62,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
     // Endorsements
     Route::controller(EndorsementController::class)->group(function () {
         Route::get('/endorsements/mascs', 'indexMascs')->name('endorsements.mascs');
-        Route::get('/endorsements/trainings', 'indexTrainings')->name('endorsements.trainings');
+        Route::get('/endorsements/solos', 'indexSolos')->name('endorsements.solos');
         Route::get('/endorsements/examiners', 'indexExaminers')->name('endorsements.examiners');
         Route::get('/endorsements/visiting', 'indexVisitors')->name('endorsements.visiting');
         Route::get('/endorsements/create', 'create')->name('endorsements.create');
@@ -69,6 +71,9 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::get('/endorsements/{id}/delete', 'destroy')->name('endorsements.delete');
         Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
     });
+
+    // ATC Roster
+    Route::get('/roster/{area}', [RosterController::class, 'index'])->name('roster');
 
     // Users
     Route::controller(UserController::class)->group(function () {
@@ -92,6 +97,7 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::get('/reports/activities/{id}', 'activities')->name('reports.activities.area');
         Route::get('/reports/mentors', 'mentors')->name('reports.mentors');
         Route::get('/reports/access', 'access')->name('reports.access');
+        Route::get('/reports/feedback', 'feedback')->name('reports.feedback');
     });
 
     // Admin
@@ -186,5 +192,18 @@ Route::middleware(['auth', 'activity'])->group(function () {
         Route::post('/vote/store', 'store')->name('vote.store');
         Route::patch('/vote/{id}', 'update')->name('vote.update');
         Route::get('/vote/{id}', 'show')->name('vote.show');
+    });
+
+    Route::controller(FeedbackController::class)->group(function () {
+        Route::get('/feedback', 'create')->name('feedback');
+        Route::post('/feedback/store', 'store')->name('feedback.store');
+    });
+
+    Route::controller(TaskController::class)->group(function () {
+        Route::get('/tasks', 'index')->name('tasks');
+        Route::get('/tasks/{activeFilter}', 'index')->name('tasks.filtered');
+        Route::get('/tasks/complete/{id}', 'complete')->name('task.complete');
+        Route::get('/tasks/decline/{id}', 'decline')->name('task.decline');
+        Route::post('/task/store', 'store')->name('task.store');
     });
 });
