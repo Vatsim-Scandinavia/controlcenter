@@ -280,7 +280,7 @@
                 <div class="card-body d-flex flex-wrap gap-3">
 
                     @if($endorsements->count() == 0)
-                        <p class="mb-0">No registered endrosements</p>
+                        <p class="mb-0">No registered endorsements</p>
                     @endif
 
                     @foreach($endorsements as $endorsement)

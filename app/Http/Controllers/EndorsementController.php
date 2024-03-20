@@ -189,7 +189,7 @@ class EndorsementController extends Controller
                 $linkedToTraining = false;
             }
 
-            // Validate that this user has other endrosement of this type from before
+            // Validate that this user has other endorsements of this type from before
             if ($user->hasActiveEndorsement('SOLO')) {
                 return back()->withInput()->withErrors($user->name . ' has already an active solo endorsement. Revoke it first, to create a new one.');
             }
