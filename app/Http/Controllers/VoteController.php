@@ -124,6 +124,8 @@ class VoteController extends Controller
     {
         $vote = Vote::findOrFail($id);
 
+        $this->authorize('vote', [Vote::class, $vote]);
+
         if (! $this->isVoteValid($vote)) {
             return back()->withInput()->withErrors('You vote could not be registered. The vote deadline has passed.');
         }
