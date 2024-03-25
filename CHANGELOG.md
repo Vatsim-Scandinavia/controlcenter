@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.2.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.2...v5.2.3) (2024-03-25)
+
+
+### Bug Fixes
+
+* being able to submit multiple votes ([e7c8117](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e7c8117cd484ba1429459983689c9aee6e46280e))
+* typo in endorsements ([e9954bb](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e9954bb3a67f6cad13988ff7cf5ce585dbca1aa2))
+
 ## [5.2.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.1...v5.2.2) (2024-03-15)
 
 
