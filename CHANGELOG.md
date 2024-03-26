@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.2.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.3...v5.2.4) (2024-03-26)
+
+
+### Bug Fixes
+
+* booking api error messages ([4d25f28](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4d25f284f634fe9c6c45e0dcc30bac2ffd46ed37))
+* booking of positions with long callsign ([d04786e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d04786eb548f88c3081efd20b7b43ef6f66f0149))
+
 ## [5.2.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.2...v5.2.3) (2024-03-25)
 
 
