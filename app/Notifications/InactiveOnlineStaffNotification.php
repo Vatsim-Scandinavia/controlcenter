@@ -61,7 +61,7 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
         ];
 
         return (new StaffNoticeMail('Unauthorized network logon recorded', $textLines))
-            ->to($this->sendTo->pluck('email'));
+            ->to($this->sendTo->pluck('notificationEmail'));
     }
 
     /**

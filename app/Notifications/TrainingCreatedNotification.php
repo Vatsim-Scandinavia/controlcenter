@@ -69,7 +69,7 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
 
         return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
             ->to($this->training->user->notificationEmail, $this->training->user->name)
-            ->bcc($bcc->pluck('email'));
+            ->bcc($bcc->pluck('notificationEmail'));
     }
 
     /**
