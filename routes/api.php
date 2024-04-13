@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('/open/bookings', [App\Http\Controllers\API\BookingController::class, 'indexAnon'])->name('api.booking.index.anonymous');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

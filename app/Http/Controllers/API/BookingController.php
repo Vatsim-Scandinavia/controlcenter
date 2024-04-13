@@ -33,6 +33,18 @@ class BookingController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexAnon()
+    {
+        $bookings = Booking::select(['id', 'callsign', 'time_start', 'time_end', 'training', 'event', 'exam', 'created_at', 'updated_at'])->where('deleted', false)->get()->sortBy('time_start');
+
+        return response()->json(['data' => $bookings->values()], 200);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\Response
