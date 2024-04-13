@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.5...v5.3.0) (2024-04-13)
+
+
+### Features
+
+* open bookings api endpoint ([38bd8ae](https://github.com/Vatsim-Scandinavia/controlcenter/commit/38bd8ae87f4e343732719ad227116a795579eb79))
+
 ## [5.2.5](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.4...v5.2.5) (2024-04-09)
 
 
