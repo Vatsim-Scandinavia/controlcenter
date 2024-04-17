@@ -40,9 +40,12 @@ class SyncRoster extends Command
         $rosterResponse = DivisionApi::getRoster();
         if ($rosterResponse && $rosterResponse->successful()) {
             $json = $rosterResponse->json();
-            if (isset($json['data']) && isset($json['data']['controllers'])) {
 
-                $rosteredMembers = collect($json['data']['controllers']);
+            if (isset($json['data']) && isset($json['data']['roster_members'])) {
+                $rosteredMembers = array_map(function($cid) {
+                    return $cid['user_cid'];
+                }, $json['data']['roster_members']);
+
                 $activeMembers = User::getActiveAtcMembers()->pluck('id');
                 $visitingMembers = User::whereHas('endorsements', function ($query) {
                     $query->where('type', 'VISITING')->where('revoked', false)->where('expired', false);
