@@ -175,6 +175,12 @@ class EndorsementController extends Controller
             $expireInfinite = isset($data['expireInf']) ? true : false;
             $linkedToTraining = true;
 
+            // Validate the position
+            $position = Position::firstWhere('callsign', $data['position']);
+            if(! $position){
+                return back()->withInput()->withErrors('Position not found: '. strtoupper($data['position']));
+            }
+
             // Let's validate the expire date
             if (! $expireInfinite) {
                 $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
@@ -205,7 +211,7 @@ class EndorsementController extends Controller
             }
 
             // All clear, call the API to create the endorsement
-            $response = DivisionApi::assignSoloEndorsement($user, Position::firstWhere('callsign', $data['position']), Auth::id(), $expireDate);
+            $response = DivisionApi::assignSoloEndorsement($user, $position, Auth::id(), $expireDate);
             if ($response && $response->failed()) {
                 return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
             }
