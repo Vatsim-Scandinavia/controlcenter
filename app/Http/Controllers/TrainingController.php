@@ -685,6 +685,34 @@ class TrainingController extends Controller
         return redirect($training->path())->withSuccess('Training successfully closed.');
     }
 
+    /** 
+     * Mark specific resource as pre-training is completed in storage
+     * 
+     * @param Training
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function togglePreTrainingCompleted(Training $training){
+        $this->authorize('togglePreTrainingCompleted', $training);
+
+        // Fetch the user, states and update them
+        $user = Auth::user();
+        $state = $training->pre_training_completed;
+        $newState = !$state;
+        $newStateText = (($newState) ? 'completed' : 'not completed');
+
+        // Update the state in database
+        $training->pre_training_completed = $newState;
+        $training->save();
+
+        // Logging
+        ActivityLogController::warning('TRAINING', 'Student marked pre-training as completed ' . $training->id);
+        TrainingActivityController::create($training->id, 'PRETRAINING', $newState, $state, $user->id);
+
+        return redirect($training->path())->withSuccess('Pre-training marked as ' . $newStateText); 
+    }
+
     /**
      * Confirm the continued interest in the training
      *

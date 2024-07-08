@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Training;
 use App\Models\TrainingActivity;
+use Exception;
 use Illuminate\Http\Request;
 
 class TrainingActivityController extends Controller
 {
+
+    /* 
+    * A table over allowed activity types
+    */
+    public static $activityTypes = ['STATUS' => true, 'TYPE' => true, 'MENTOR' => true, 'PAUSE' => true, 'ENDORSEMENT' => true, 'COMMENT' => true, 'PRETRAINING' => true];
+
     /**
      * Store a newly created resource in storage.
      *
@@ -18,6 +25,14 @@ class TrainingActivityController extends Controller
      */
     public static function create(int $trainingId, string $type, ?int $new_data = null, ?int $old_data = null, ?int $userId = null, ?string $comment = null)
     {
+
+        // Check is this type is accepted
+        try{
+            TrainingActivityController::$activityTypes[$type];
+        } catch (\Exception $e) {
+            throw new \App\Exceptions\InvalidTrainingActivityType('The type ' . $type . ' is not supported.');
+        }
+
         $activity = new TrainingActivity();
         $activity->training_id = $trainingId;
         $activity->type = $type;
