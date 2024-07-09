@@ -177,8 +177,8 @@ class EndorsementController extends Controller
 
             // Validate the position
             $position = Position::firstWhere('callsign', $data['position']);
-            if(! $position){
-                return back()->withInput()->withErrors('Position not found: '. strtoupper($data['position']));
+            if (! $position) {
+                return back()->withInput()->withErrors('Position not found: ' . strtoupper($data['position']));
             }
 
             // Let's validate the expire date
