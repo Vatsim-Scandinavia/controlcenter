@@ -51,7 +51,10 @@
                             @foreach($openTrainings as $training)
                             <tr>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;
+                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>
+                                    @if($training->status == \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->pre_training_completed )
+                                        <i class="fas fa-check text-success"></i>
+                                    @endif
 
                                     @if($training->activities->where('type', 'COMMENT')->count())
 
