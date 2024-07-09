@@ -21,6 +21,9 @@ return new class extends Migration
 
         Schema::table('training_activity', function (Blueprint $table) {
             $table->dropColumn('type');
+        });
+
+        Schema::table('training_activity', function (Blueprint $table) {
             $table->renameColumn('type_new', 'type');
         });
     }
