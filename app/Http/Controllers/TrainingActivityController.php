@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Training;
 use App\Models\TrainingActivity;
-use Exception;
 use Illuminate\Http\Request;
 
 class TrainingActivityController extends Controller
 {
-
-    /* 
+    /*
     * A table over allowed activity types
     */
     public static $activityTypes = ['STATUS' => true, 'TYPE' => true, 'MENTOR' => true, 'PAUSE' => true, 'ENDORSEMENT' => true, 'COMMENT' => true, 'PRETRAINING' => true];
@@ -27,7 +25,7 @@ class TrainingActivityController extends Controller
     {
 
         // Check is this type is accepted
-        try{
+        try {
             TrainingActivityController::$activityTypes[$type];
         } catch (\Exception $e) {
             throw new \App\Exceptions\InvalidTrainingActivityType('The type ' . $type . ' is not supported.');

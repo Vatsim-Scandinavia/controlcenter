@@ -58,13 +58,14 @@ class TrainingPolicy
         return $user->is($training->user) && $training->status == TrainingStatus::IN_QUEUE->value;
     }
 
-    /** 
+    /**
      * Determine whether the user can mark their pre-training as completed.
-     * 
+     *
      * @return bool
      */
-    public function togglePreTrainingCompleted(User $user, Training $training){
-        return $training->status == TrainingStatus::PRE_TRAINING->value && 
+    public function togglePreTrainingCompleted(User $user, Training $training)
+    {
+        return $training->status == TrainingStatus::PRE_TRAINING->value &&
                 ($training->pre_training_completed == false || $user->isModeratorOrAbove($training->area));
     }
 
