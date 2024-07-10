@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\User;
+use App\Notifications\MentorExaminationNotification;
 use App\Notifications\TrainingExamNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -81,9 +82,12 @@ class TrainingExaminationController extends Controller
             $examination->update(['result' => $data['result']]);
         }
 
-        TrainingObjectAttachmentController::saveAttachments($request, $examination);
+        $attachmentId = TrainingObjectAttachmentController::saveAttachments($request, $examination);
+        $attachmentUrl = (isset($attachmentId[0])) ? route('training.object.attachment.show', ['attachment' => $attachmentId[0]]) : null;
 
+        // Notify
         $training->user->notify(new TrainingExamNotification($training, $examination));
+        $training->user->notify(new MentorExaminationNotification($training->mentors, $training->user, $examination, $attachmentUrl, 'View examination report'));
 
         // Create the upgrade task for the staff
         if (isset($data['request_task_user_id'])) {
