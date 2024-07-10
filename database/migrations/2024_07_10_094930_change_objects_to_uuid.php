@@ -25,14 +25,18 @@ return new class extends Migration
         });
 
         Schema::table('training_object_attachments', function (Blueprint $table) {
-            // Drop the old primary key and the old 'id' column
             $table->dropPrimary();
+        });
+
+        Schema::table('training_object_attachments', function (Blueprint $table) {
             $table->dropColumn('id');
+        });
 
-            // Rename the 'uuid' column to 'id'
+        Schema::table('training_object_attachments', function (Blueprint $table) {
             $table->renameColumn('uuid', 'id');
+        });
 
-            // Set the new 'id' column as the primary key
+        Schema::table('training_object_attachments', function (Blueprint $table) {
             $table->primary('id');
         });
     }
