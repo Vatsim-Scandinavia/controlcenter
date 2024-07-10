@@ -89,18 +89,15 @@ class BookingTest extends TestCase
             ],
             'S2 Rating' => [
                 VatsimRating::S2,
-                function () {
-                },
+                function () {},
             ],
             'S3 Rating' => [
                 VatsimRating::S3,
-                function () {
-                },
+                function () {},
             ],
             'C1 Rating' => [
                 VatsimRating::C1,
-                function () {
-                },
+                function () {},
             ],
         ];
     }
