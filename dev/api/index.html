@@ -1193,9 +1193,60 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-post-patch-and-delete-apibookings" class="md-nav__link">
+  <a href="#get-apibookings" class="md-nav__link">
     <span class="md-ellipsis">
-      GET, POST, PATCH and DELETE /api/bookings
+      GET /api/bookings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /api/bookings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-return-as-authenticated-with-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example return as authenticated with API key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-return-as-unauthenticated-without-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example return as unauthenticated without API key
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apibookingscreate" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST /api/bookings/create
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patch-apibookingsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      PATCH /api/bookings/{id}
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-apibookingsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      DELETE /api/bookings/{id}
     </span>
   </a>
   
@@ -1487,9 +1538,60 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-post-patch-and-delete-apibookings" class="md-nav__link">
+  <a href="#get-apibookings" class="md-nav__link">
     <span class="md-ellipsis">
-      GET, POST, PATCH and DELETE /api/bookings
+      GET /api/bookings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /api/bookings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-return-as-authenticated-with-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example return as authenticated with API key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-return-as-unauthenticated-without-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example return as unauthenticated without API key
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apibookingscreate" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST /api/bookings/create
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patch-apibookingsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      PATCH /api/bookings/{id}
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-apibookingsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      DELETE /api/bookings/{id}
     </span>
   </a>
   
@@ -1688,8 +1790,161 @@
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
-<h3 id="get-post-patch-and-delete-apibookings">GET, POST, PATCH and DELETE <code>/api/bookings</code><a class="headerlink" href="#get-post-patch-and-delete-apibookings" title="Permanent link">&para;</a></h3>
-<p>Will be documented one day.</p>
+<h3 id="get-apibookings">GET <code>/api/bookings</code><a class="headerlink" href="#get-apibookings" title="Permanent link">&para;</a></h3>
+<p>Returns an array of bookings.</p>
+<h4 id="example-return-as-authenticated-with-api-key">Example return as authenticated with API key<a class="headerlink" href="#example-return-as-authenticated-with-api-key" title="Permanent link">&para;</a></h4>
+<div class="language-json highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CC&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vatsim_booking&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;callsign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EKBI_TWR&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;position_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Web Two&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 12:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 13:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000002</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;exam&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;deleted&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-04T15:18:44.000000Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-04T15:18:44.000000Z&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CC&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vatsim_booking&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;callsign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EKCH_DEL&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;position_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Web Two&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 12:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 13:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000002</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;exam&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;deleted&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-13T20:23:36.000000Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-13T20:23:36.000000Z&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-return-as-unauthenticated-without-api-key">Example return as unauthenticated without API key<a class="headerlink" href="#example-return-as-unauthenticated-without-api-key" title="Permanent link">&para;</a></h4>
+<div class="language-json highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;callsign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EKBI_TWR&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 12:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 13:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;exam&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-04T15:18:44.000000Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-04T15:18:44.000000Z&quot;</span>
+<span class="p">},</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;callsign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EKCH_DEL&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_start&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 12:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time_end&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-15 13:00:00&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;training&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;exam&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-13T20:23:36.000000Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-13T20:23:36.000000Z&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="post-apibookingscreate">POST <code>/api/bookings/create</code><a class="headerlink" href="#post-apibookingscreate" title="Permanent link">&para;</a></h3>
+<p>Create a booking.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default value</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cid</td>
+<td>null</td>
+<td>User ID</td>
+</tr>
+<tr>
+<td>date</td>
+<td>null</td>
+<td>Date of the booking in <code>d/m/Y</code> format</td>
+</tr>
+<tr>
+<td>start_at</td>
+<td>null</td>
+<td>Start time of the booking in <code>24:00</code> format</td>
+</tr>
+<tr>
+<td>end_at</td>
+<td>null</td>
+<td>End time of the booking in <code>24:00</code> format</td>
+</tr>
+<tr>
+<td>position</td>
+<td>null</td>
+<td>Position callsign</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>null</td>
+<td>Tag of the booking, <code>1</code> for training, <code>2</code> for exam, <code>3</code> for event</td>
+</tr>
+<tr>
+<td>source</td>
+<td>null</td>
+<td>Source of the booking, <code>CC</code> for Control Center bookings</td>
+</tr>
+</tbody>
+</table>
+<h3 id="patch-apibookingsid">PATCH <code>/api/bookings/{id}</code><a class="headerlink" href="#patch-apibookingsid" title="Permanent link">&para;</a></h3>
+<p>Update a booking.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default value</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cid</td>
+<td>null</td>
+<td>User ID</td>
+</tr>
+<tr>
+<td>date</td>
+<td>null</td>
+<td>Date of the booking in <code>d/m/Y</code> format</td>
+</tr>
+<tr>
+<td>start_at</td>
+<td>null</td>
+<td>Start time of the booking in <code>24:00</code> format</td>
+</tr>
+<tr>
+<td>end_at</td>
+<td>null</td>
+<td>End time of the booking in <code>24:00</code> format</td>
+</tr>
+<tr>
+<td>position</td>
+<td>null</td>
+<td>Position callsign</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>null</td>
+<td>Tag of the booking</td>
+</tr>
+</tbody>
+</table>
+<h3 id="delete-apibookingsid">DELETE <code>/api/bookings/{id}</code><a class="headerlink" href="#delete-apibookingsid" title="Permanent link">&para;</a></h3>
+<p>Delete a booking</p>
 <h2 id="api-endpoints-deprecated">API Endpoints (deprecated)<a class="headerlink" href="#api-endpoints-deprecated" title="Permanent link">&para;</a></h2>
 <p>Older endpoints that will be replaced with the <code>api/users</code> endpoint. Do not use these if you're creating a new integration.</p>
 <ul>
