@@ -104,8 +104,102 @@ Parameters to add additional fields to the result
 }
 ```
 
-### GET, POST, PATCH and DELETE `/api/bookings`
-Will be documented one day.
+### GET `/api/bookings`
+Returns an array of bookings.
+
+#### Example return as authenticated with API key
+```json
+{
+    "id": 10,
+    "source": "CC",
+    "vatsim_booking": null,
+    "callsign": "EKBI_TWR",
+    "position_id": 4,
+    "name": "Web Two",
+    "time_start": "2024-02-15 12:00:00",
+    "time_end": "2024-02-15 13:00:00",
+    "user_id": 10000002,
+    "training": 1,
+    "event": 0,
+    "exam": 0,
+    "deleted": 0,
+    "created_at": "2024-02-04T15:18:44.000000Z",
+    "updated_at": "2024-02-04T15:18:44.000000Z"
+},
+{
+    "id": 11,
+    "source": "CC",
+    "vatsim_booking": null,
+    "callsign": "EKCH_DEL",
+    "position_id": 10,
+    "name": "Web Two",
+    "time_start": "2024-02-15 12:00:00",
+    "time_end": "2024-02-15 13:00:00",
+    "user_id": 10000002,
+    "training": 0,
+    "event": 0,
+    "exam": 0,
+    "deleted": 0,
+    "created_at": "2024-02-13T20:23:36.000000Z",
+    "updated_at": "2024-02-13T20:23:36.000000Z"
+}
+```
+
+#### Example return as unauthenticated without API key
+
+```json
+{
+    "id": 10,
+    "callsign": "EKBI_TWR",
+    "time_start": "2024-02-15 12:00:00",
+    "time_end": "2024-02-15 13:00:00",
+    "training": 1,
+    "event": 0,
+    "exam": 0,
+    "created_at": "2024-02-04T15:18:44.000000Z",
+    "updated_at": "2024-02-04T15:18:44.000000Z"
+},
+{
+    "id": 11,
+    "callsign": "EKCH_DEL",
+    "time_start": "2024-02-15 12:00:00",
+    "time_end": "2024-02-15 13:00:00",
+    "training": 0,
+    "event": 0,
+    "exam": 0,
+    "created_at": "2024-02-13T20:23:36.000000Z",
+    "updated_at": "2024-02-13T20:23:36.000000Z"
+}
+```
+
+### POST `/api/bookings/create`
+Create a booking.
+
+| Variable | Default value | Explanation |
+| ------- | --- | --- |
+| cid | null | User ID |
+| date | null | Date of the booking in `d/m/Y` format |
+| start_at | null | Start time of the booking in `24:00` format |
+| end_at | null | End time of the booking in `24:00` format |
+| position | null | Position callsign |
+| tag | null | Tag of the booking, `1` for training, `2` for exam, `3` for event |
+| source | null | Source of the booking, `CC` for Control Center bookings |
+
+### PATCH `/api/bookings/{id}`
+
+Update a booking.
+
+| Variable | Default value | Explanation |
+| ------- | --- | --- |
+| cid | null | User ID |
+| date | null | Date of the booking in `d/m/Y` format |
+| start_at | null | Start time of the booking in `24:00` format |
+| end_at | null | End time of the booking in `24:00` format |
+| position | null | Position callsign |
+| tag | null | Tag of the booking |
+
+### DELETE `/api/bookings/{id}`
+Delete a booking
 
 ## API Endpoints (deprecated)
 Older endpoints that will be replaced with the `api/users` endpoint. Do not use these if you're creating a new integration.
