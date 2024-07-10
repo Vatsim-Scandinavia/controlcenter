@@ -12,31 +12,31 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('training_object_attachments', function (Blueprint $table) {
-            // Add a new UUID column
-            $table->uuid('uuid')->first(); // Adding it as the first column for convenience
+            // Step 1: Add a new UUID column
+            $table->uuid('uuid')->first();
         });
 
-        // Assuming all your rows have unique IDs and you can iterate through them
-        // Populate the new uuid column with UUIDs
+        // Step 2: Populate the new uuid column with UUIDs
         DB::table('training_object_attachments')->get()->each(function ($item) {
             DB::table('training_object_attachments')
                 ->where('id', $item->id)
                 ->update(['uuid' => \Illuminate\Support\Str::uuid()]);
         });
 
+        // Step 3: Remove auto-increment from the 'id' column
         Schema::table('training_object_attachments', function (Blueprint $table) {
-            $table->dropPrimary();
+            $table->dropPrimary(['id']); // Drop the primary key
+            $table->unsignedBigInteger('id')->autoIncrement(false)->change(); // Remove auto-increment
         });
 
+        // Step 4: Drop the 'id' column
         Schema::table('training_object_attachments', function (Blueprint $table) {
             $table->dropColumn('id');
         });
 
+        // Step 5 & 6: Rename 'uuid' column to 'id' and set it as the primary key
         Schema::table('training_object_attachments', function (Blueprint $table) {
             $table->renameColumn('uuid', 'id');
-        });
-
-        Schema::table('training_object_attachments', function (Blueprint $table) {
             $table->primary('id');
         });
     }
