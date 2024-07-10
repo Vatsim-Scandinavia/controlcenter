@@ -21,9 +21,17 @@ class ApiToken
         $key = ApiKey::find($request->bearerToken());
 
         if ($key == null || ($args == 'edit' && $key->read_only == true)) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
+
+            // Exception for open routes
+            if ($request->getRequestUri() == '/api/bookings') {
+                $request->attributes->set('unauthenticated', true);
+
+                return $next($request);
+            } else {
+                return response()->json([
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
         }
 
         // Update last used

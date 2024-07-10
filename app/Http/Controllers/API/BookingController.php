@@ -25,21 +25,15 @@ class BookingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
+        $unauthenticatedRequest = $request->attributes->get('unauthenticated');
 
-        return response()->json(['data' => $bookings->values()], 200);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function indexAnon()
-    {
-        $bookings = Booking::select(['id', 'callsign', 'time_start', 'time_end', 'training', 'event', 'exam', 'created_at', 'updated_at'])->where('deleted', false)->get()->sortBy('time_start');
+        if ($unauthenticatedRequest) {
+            $bookings = Booking::select(['id', 'callsign', 'time_start', 'time_end', 'training', 'event', 'exam', 'created_at', 'updated_at'])->where('deleted', false)->get()->sortBy('time_start');
+        } else {
+            $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
+        }
 
         return response()->json(['data' => $bookings->values()], 200);
     }
