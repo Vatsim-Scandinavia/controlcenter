@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.3.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.3.0...v5.3.1) (2024-07-11)
+
+
+### Bug Fixes
+
+* table filters missing (dependency missing) ([cacc27b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cacc27bdcb5556fd7d96b7d0c1e54ddede44ff65)), closes [#937](https://github.com/Vatsim-Scandinavia/controlcenter/issues/937)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency phpunit/phpunit to v10.5.27 ([#936](https://github.com/Vatsim-Scandinavia/controlcenter/issues/936)) ([0e19c8e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0e19c8e512bb0bcc483726e8640793e91310922a))
+
 ## [5.3.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.2.5...v5.3.0) (2024-07-10)
 
 
