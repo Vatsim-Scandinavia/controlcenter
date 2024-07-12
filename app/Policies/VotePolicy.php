@@ -49,8 +49,13 @@ class VotePolicy
      */
     public function vote(User $user, Vote $vote)
     {
+
         if ($vote->closed) {
             return Response::deny('The vote closed and concluded at ' . Carbon::create($vote->end_at)->toEuropeanDateTime());
+        }
+
+        if ($vote->user->contains('id', $user->id)) {
+            return Response::deny('You have already voted.');
         }
 
         if ($vote->require_member) {

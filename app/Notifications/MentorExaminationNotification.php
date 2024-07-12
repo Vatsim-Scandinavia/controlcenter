@@ -2,36 +2,40 @@
 
 namespace App\Notifications;
 
-use App\Mail\StaffNoticeMail;
+use App\Mail\MentorNoticeMail;
 use App\Models\Endorsement;
-use Carbon\Carbon;
+use App\Models\TrainingExamination;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class InactiveOnlineStaffNotification extends Notification implements ShouldQueue
+class MentorExaminationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     private $sendTo;
 
-    private $user;
+    private User $user;
 
-    private $position;
+    private TrainingExamination $report;
 
-    private $logonTime;
+    private ?string $actionUrl;
+
+    private ?string $actionText;
 
     /**
      * Create a new notification instance.
      *
      * @param  Endorsement  $endorsement
      */
-    public function __construct($sendTo, $user, $position, $logonTime)
+    public function __construct($sendTo, User $user, TrainingExamination $report, ?string $actionUrl = null, ?string $actionText = null)
     {
         $this->sendTo = $sendTo;
         $this->user = $user;
-        $this->position = $position;
-        $this->logonTime = $logonTime;
+        $this->report = $report;
+        $this->actionUrl = $actionUrl;
+        $this->actionText = $actionText;
     }
 
     /**
@@ -54,13 +58,11 @@ class InactiveOnlineStaffNotification extends Notification implements ShouldQueu
     public function toMail($notifiable)
     {
         $textLines = [
-            $this->user->name . ' (' . $this->user->id . ') has been warned for logging on the network with an **inactive** ATC status.',
-            'Position: ' . $this->position,
-            'Logon time: ' . Carbon::parse($this->logonTime)->toEuropeanDateTime(),
-            'All admins and moderators in area in question has been notified.',
+            'Your student ' . $this->user->name . ' (' . $this->user->id . ') has been issued an examination report.',
+            'Result: **' . $this->report->result . '**',
         ];
 
-        return (new StaffNoticeMail('Unauthorized network logon recorded', $textLines))
+        return (new MentorNoticeMail('Your student\'s examination report', $textLines, $this->actionUrl, $this->actionText))
             ->to($this->sendTo->pluck('notificationEmail'));
     }
 

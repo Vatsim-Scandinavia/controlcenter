@@ -111,7 +111,7 @@
                 </div>        
                 <div class="card-body">
                     <h4>Hello (NAME),</h4>
-                    <p>It's your turn! You've been assigned a mentor for you training: (RATINGS) in (FIR).</p>
+                    <p>It's your turn! You've been assigned a mentor for your training: (RATINGS) in (FIR).</p>
                     <p>Your mentor is: (MENTOR NAME). You can contact them through the message system at forums or search them up on Discord.</p>
                     <p>If you do not contact your mentor within 7 days, your training request will be closed and you lose the place in the queue.</p>
 

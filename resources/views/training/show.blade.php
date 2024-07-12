@@ -4,7 +4,14 @@
 @section('title-flex')
     <div>
         @can('close', $training)
-            <a href="{{ route('training.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger"><i class="fas fa-xmark"></i> Close my training</a>
+            <a href="{{ route('training.action.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger"><i class="fas fa-xmark"></i> Close my training</a>
+        @endcan
+        @can('togglePreTrainingCompleted', $training)
+            @if($training->pre_training_completed)
+                <a href="{{ route('training.action.pretraining', $training->id) }}" onclick="return confirm('Are you sure you want to mark this pre-training as not completed?')" class="btn btn-primary"><i class="fas fa-xmark"></i> Mark pre-training as not completed</a>
+            @else
+                <a href="{{ route('training.action.pretraining', $training->id) }}" onclick="return confirm('Are you sure you want to mark this pre-training as completed?')" class="btn btn-success"><i class="fas fa-check"></i> Mark pre-training as completed</a>
+            @endif
         @endcan
     </div>
 @endsection
@@ -70,7 +77,14 @@
             <div class="card-body">
                 <dl class="copyable">
                     <dt>State</dt>
-                    <dd><i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}</dd>
+                    <dd>
+                        <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>
+                        @if($training->status == \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->pre_training_completed )
+                            <i class="fas fa-check text-success"></i>
+                        @endif
+                        {{ $statuses[$training->status]["text"] }}
+                        {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                    </dd>
 
                     <dt>Type</dt>
                     <dd><i class="{{ $types[$training->type]["icon"] }} text-primary"></i>&ensp;{{ $types[$training->type]["text"] }}</dd>
@@ -249,6 +263,8 @@
                                         <i class="fas fa-check-square"></i>
                                     @elseif($activity->type == "COMMENT")
                                         <i class="fas fa-comment"></i>
+                                    @elseif($activity->type == 'PRETRAINING')
+                                        <i class="fas fa-graduation-cap"></i>
                                     @endif
 
                                     @isset($activity->triggered_by_id)
@@ -324,6 +340,17 @@
                                         @if($activity->created_at != $activity->updated_at)
                                             <span class="text-muted">(edited)</span>
                                         @endif
+                                    @elseif($activity->type == "PRETRAINING")
+                                        Pre-training marked as
+                                        <span class="badge text-bg-light">
+                                            @if($activity->new_data)
+                                                <i class="fas fa-check"></i>
+                                                Completed
+                                            @else
+                                                <i class="fas fa-xmark"></i>
+                                                Not completed
+                                            @endif
+                                        </span>
                                     @endif
 
                                 </p>

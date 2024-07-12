@@ -17,7 +17,9 @@ class TrainingObjectAttachmentPolicy
      */
     public function view(User $user, TrainingObjectAttachment $attachment)
     {
-        return ($user->can('view', $attachment->object) && $attachment->hidden != true) || $user->isMentor();
+        $attachmentArea = $attachment->object->training->area;
+
+        return ($user->can('view', $attachment->object) && $attachment->hidden != true) || $user->isMentor($attachmentArea);
     }
 
     /**

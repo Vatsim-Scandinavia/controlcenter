@@ -79,6 +79,8 @@
                                             <i class="fas fa-check-square"></i>
                                         @elseif($activity->type == "COMMENT")
                                             <i class="fas fa-comment"></i>
+                                        @elseif($activity->type == 'PRETRAINING')
+                                            <i class="fas fa-graduation-cap"></i>
                                         @endif
 
                                         @if($activity->type == "STATUS")
@@ -141,6 +143,17 @@
                                             @if($activity->created_at != $activity->updated_at)
                                                 <span class="text-muted">(edited)</span>
                                             @endif
+                                        @elseif($activity->type == "PRETRAINING")
+                                            Pre-training marked as
+                                            <span class="badge text-bg-light">
+                                                @if($activity->new_data)
+                                                    <i class="fas fa-check"></i>
+                                                    Completed
+                                                @else
+                                                    <i class="fas fa-xmark"></i>
+                                                    Not completed
+                                                @endif
+                                            </span>
                                         @endif
 
                                     </td>

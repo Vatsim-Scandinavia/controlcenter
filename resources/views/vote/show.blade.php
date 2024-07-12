@@ -15,34 +15,27 @@
 
                 @can('vote', $vote)
 
-                    @if($vote->user()->where('user_id', \Auth::user()->id)->exists())
+                    <form action="{{ route('vote.update', $vote->id) }}" method="POST">
+                        @method('PATCH')
+                        @csrf
 
-                        <p><i class="fas fa-check"></i> You've already voted.</p>
+                        @foreach( $vote->option as $votefor )
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="vote" id="{{ $votefor->option }}" value="{{ $votefor->id }}">
+                                <label class="form-check-label" for="{{ $votefor->option }}">
+                                    {{ $votefor->option }}
+                                </label>
+                            </div>
+                        @endforeach
+                        @error('vote')
+                            <span class="text-danger">{{ $errors->first('vote') }}</span>
+                        @enderror
 
-                    @else
-                        <form action="{{ route('vote.update', $vote->id) }}" method="POST">
-                            @method('PATCH')
-                            @csrf
+                        <br>
+                        <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed.</p>
+                        <button type="submit" class="btn btn-success">Submit Vote</button>
 
-                            @foreach( $vote->option as $votefor )
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="vote" id="{{ $votefor->option }}" value="{{ $votefor->id }}">
-                                    <label class="form-check-label" for="{{ $votefor->option }}">
-                                        {{ $votefor->option }}
-                                    </label>
-                                </div>
-                            @endforeach
-                            @error('vote')
-                                <span class="text-danger">{{ $errors->first('vote') }}</span>
-                            @enderror
-
-                            <br>
-                            <p class="text-muted">Your vote is secret and can not be traced. The vote is final and cannot be changed.</p>
-                            <button type="submit" class="btn btn-success">Submit Vote</button>
-
-                        </form>
-
-                    @endif
+                    </form>
 
                 @else
                     <p class="text-danger">{{ Gate::inspect('vote', $vote)->message() }}</p>
