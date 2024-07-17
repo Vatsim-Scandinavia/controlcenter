@@ -61,7 +61,7 @@
                                         @php
                                             $notes = "";
                                             foreach($training->activities->where('type', 'COMMENT') as $a){
-                                                $notes .= $a->created_at->toEuropeanDate().': '.$a->comment.'&#013;';
+                                                $notes .= $a->created_at->toEuropeanDate().': '.htmlentities($a->comment).'&#013;';
                                             }
                                         @endphp
 
