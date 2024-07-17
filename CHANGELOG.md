@@ -1,5 +1,24 @@
 # Changelog
 
+## [5.3.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.3.1...v5.3.2) (2024-07-17)
+
+
+### Bug Fixes
+
+* ATC Roster table filtering displays "Visiting" option incorrectly ([6f83756](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6f83756006da8511887868b1afd8d9f28579b63e)), closes [#945](https://github.com/Vatsim-Scandinavia/controlcenter/issues/945)
+* closing paused trainings marked it as paused again ([b5d6130](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b5d61301e0a57875f3cf83b282d0ca756a71521c)), closes [#909](https://github.com/Vatsim-Scandinavia/controlcenter/issues/909)
+* eud core link visible for non-moderators ([7b866a7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/7b866a72fa32f0dd72b53bf213c1a95a28953ef5)), closes [#907](https://github.com/Vatsim-Scandinavia/controlcenter/issues/907)
+* html characters in comments breaking filters ([f0b4ac6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f0b4ac62313ed98a1a4f65c9110f3b38ae275956))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @fortawesome/fontawesome-free to v6.6.0 ([#944](https://github.com/Vatsim-Scandinavia/controlcenter/issues/944)) ([a0415db](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a0415db17b89e1baf9a5b31d0849d05f1314cab8))
+* **deps:** update dependency bootstrap-table to v1.23.1 ([#942](https://github.com/Vatsim-Scandinavia/controlcenter/issues/942)) ([af65787](https://github.com/Vatsim-Scandinavia/controlcenter/commit/af657870a574a44fc64c5b4c3b12269389267e13))
+* **deps:** update dependency sass to v1.77.8 ([#941](https://github.com/Vatsim-Scandinavia/controlcenter/issues/941)) ([562c33b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/562c33bcc7cd038cb0147ac244cba8f06fc9caf6))
+* **deps:** update dependency vite to v5.3.4 ([#943](https://github.com/Vatsim-Scandinavia/controlcenter/issues/943)) ([075ea9e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/075ea9e945dea9da55ec31a1c9a581858939ce88))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.2.19 ([#939](https://github.com/Vatsim-Scandinavia/controlcenter/issues/939)) ([b3ce55f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b3ce55f51314d3fe285994b07fe4d784ede384a3))
+
 ## [5.3.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.3.0...v5.3.1) (2024-07-11)
 
 
