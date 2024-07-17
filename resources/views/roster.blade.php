@@ -50,7 +50,7 @@
                                         @if($u->isAtcActive())
                                             <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
                                         @elseif($u->isVisiting())
-                                            <i class="far fa-check-circle"></i><span class="d-none">Visiting</span>
+                                            <i class="far fa-check-circle"></i>
                                             Visiting
                                         @else
                                             <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>
