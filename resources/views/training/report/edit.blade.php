@@ -115,6 +115,11 @@
 
                 <hr>
 
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i>
+                    Please save your report before uploading attachments to avoid losing your changes.
+                </div>
+
                 <form method="post" id="file-form" action="{{ route('training.object.attachment.store', ['trainingObjectType' => 'report', 'trainingObject' => $report->id]) }}" enctype="multipart/form-data">
                     @csrf
 
