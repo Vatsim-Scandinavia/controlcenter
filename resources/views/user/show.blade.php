@@ -24,7 +24,7 @@
                         {{ $user->id }}
                         <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
                         <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" title="VATSIM Stats" class="link-btn me-1"><i class="fas fa-chart-simple"></i></button></a>
-                        @if($user->division == 'EUD')
+                        @if($user->division == 'EUD' && Auth::user()->isModeratorOrAbove())
                             <a href="https://core.vateud.net/manage/controller/{{ $user->id }}/view" target="_blank" title="VATEUD Core Profile" class="link-btn"><i class="fa-solid fa-earth-europe"></i></button></a>
                         @endif
                     </dd>
