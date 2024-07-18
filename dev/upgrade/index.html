@@ -1205,6 +1205,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrading-to-600" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading to 6.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrading-to-v510" class="md-nav__link">
     <span class="md-ellipsis">
       Upgrading to v5.1.0
@@ -1396,6 +1405,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrading-to-600" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading to 6.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrading-to-v510" class="md-nav__link">
     <span class="md-ellipsis">
       Upgrading to v5.1.0
@@ -1443,6 +1461,16 @@ Remember to <a href="../setup/theme/">run the theme build</a> again if you have 
 <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
 php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
 </code></pre></div>
+<h2 id="upgrading-to-600">Upgrading to 6.0.0<a class="headerlink" href="#upgrading-to-600" title="Permanent link">&para;</a></h2>
+<p>This release contains breaking changes and requires you to backup your data before upgrading.</p>
+<ul>
+<li>To fix the incorrect setting of training tags on bookings, the <code>positions</code> has now a <code>required_facility_rating_id</code> column which replaces previous boolean <code>mae</code> column.<ul>
+<li>Note down your old mae values before you run the migration to avoid data loss.</li>
+<li>For normal <abbr title="Global Controller Administration Policy">GCAP</abbr> Rated positions (<abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr>-<abbr title="Enroute Controller (CTR, FSS, and below)">C1</abbr>) you don't need to do anything.</li>
+<li>For positions that require a facility endorsement (Tier 1, Tier 2 and Special Center), you need to fill the id of the row in your <code>ratings</code> table that corresponds to the facility rating.</li>
+</ul>
+</li>
+</ul>
 <h2 id="upgrading-to-v510">Upgrading to v5.1.0<a class="headerlink" href="#upgrading-to-v510" title="Permanent link">&para;</a></h2>
 <p>Please follow these steps if you wish to use the new VATEUD Core integration. May be skipped otherwise.</p>
 <ul>
