@@ -22,4 +22,9 @@ class Position extends Model
     {
         return $this->belongsToMany(Endorsement::class);
     }
+
+    public function requiredRating()
+    {
+        return $this->belongsTo(Rating::class, 'required_facility_rating_id');
+    }
 }

@@ -117,7 +117,7 @@ class Training extends Model
      *
      * @return bool
      */
-    public function isMaeTraining()
+    public function isFacilityTraining()
     {
         foreach ($this->ratings as $rating) {
             if ($rating->vatsim_rating == null) {
