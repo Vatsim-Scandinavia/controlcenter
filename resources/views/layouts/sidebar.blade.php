@@ -122,17 +122,31 @@
 
         {{-- Nav Item - Pages Collapse Menu --}}
         <li class="nav-item {{ Route::is('roster') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRosters" aria-expanded="true" aria-controls="collapseRosters">
-                <i class="fas fa-fw fa-address-book"></i>
-                <span>ATC Roster</span>
-            </a>
-            <div id="collapseRosters" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                @foreach(\App\Models\Area::all() as $area)
-                    <a class="collapse-item" href="{{ route('roster', $area->id) }}">{{ $area->name }}</a>
-                @endforeach
+
+            @php
+                $areas = \App\Models\Area::all();
+            @endphp
+
+            @if($areas->count() > 1)
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRosters" aria-expanded="true" aria-controls="collapseRosters">
+                    <i class="fas fa-fw fa-address-book"></i>
+                    <span>ATC Roster</span>
+                </a>
+
+                <div id="collapseRosters" class="collapse" data-bs-parent="#sidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                    @foreach($areas as $area)
+                        <a class="collapse-item" href="{{ route('roster', $area->id) }}">{{ $area->name }}</a>
+                    @endforeach
+                    </div>
                 </div>
-            </div>
+            @else
+                <a class="nav-link" href="{{ route('roster', $areas->first()->id) }}">
+                    <i class="fas fa-fw fa-address-book"></i>
+                    <span>ATC Roster</span>
+                </a>
+            @endif
+
         </li>
 
         {{-- Nav Item - Pages Collapse Menu --}}
