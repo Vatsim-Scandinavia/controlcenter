@@ -129,7 +129,7 @@ class ReportController extends Controller
             })->get();
         }
 
-        $mentors = $mentors->sortBy('name');
+        $mentors = $mentors->sortBy('name')->unique();
         $statuses = TrainingController::$statuses;
 
         return view('reports.mentors', compact('mentors', 'statuses'));

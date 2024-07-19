@@ -32,7 +32,7 @@
                             <tr>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Mentor ID</th>
                                 <th data-field="mentor" data-sortable="true" data-filter-control="input">Mentor</th>
-                                <th data-field="level" data-sortable="true" data-filter-control="select">Area</th>
+                                <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="false">Area</th>
                                 <th data-field="applied" data-sortable="false">Last training</th>
                                 <th data-field="teaching" data-sortable="true" data-filter-control="input">Teaching</th>
                             </tr>
