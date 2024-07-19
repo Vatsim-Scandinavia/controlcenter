@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TrainingExaminationsTest extends TestCase
@@ -36,7 +37,7 @@ class TrainingExaminationsTest extends TestCase
         $this->training->mentors()->attach($this->examination->examiner, ['expire_at' => now()->addMonths(12)]);
     }
 
-    /** @test */
+    #[Test]
     public function student_cant_access_examination_page()
     {
         $this->actingAs($this->training->user)->get(route('training.examination.create', ['training' => $this->training]))
@@ -44,7 +45,7 @@ class TrainingExaminationsTest extends TestCase
     }
 
     // TODO Fix this test as it's breaking now with the notifications
-    //    /** @test */
+    //    #[Test]
     //    public function examiner_can_store_examination()
     //    {
     //
@@ -65,7 +66,7 @@ class TrainingExaminationsTest extends TestCase
     //
     //    }
 
-    /** @test */
+    #[Test]
     public function student_cant_store_examination()
     {
         $data = $this->examination->getAttributes();
@@ -80,7 +81,7 @@ class TrainingExaminationsTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function student_cant_store_examination_even_though_they_are_an_examiner()
     {
         $data = $this->examination->getAttributes();
@@ -98,7 +99,7 @@ class TrainingExaminationsTest extends TestCase
         ]);
     }
 
-    //    /** @test */
+    //    #[Test]
     //    public function moderator_can_update_non_draft_examination()
     //    {
     //
@@ -117,7 +118,7 @@ class TrainingExaminationsTest extends TestCase
     //
     //    }
     //
-    //    /** @test */
+    //    #[Test]
     //    public function examiner_cant_update_non_draft_examination()
     //    {
     //
@@ -136,7 +137,7 @@ class TrainingExaminationsTest extends TestCase
     //
     //    }
     //
-    //    /** @test */
+    //    #[Test]
     //    public function examiner_can_update_draft_examination()
     //    {
     //
@@ -154,7 +155,7 @@ class TrainingExaminationsTest extends TestCase
     //        ]);
     //    }
 
-    /** @test */
+    #[Test]
     public function moderator_can_delete_training_examination()
     {
         $examination = TrainingExamination::factory()->create([
@@ -179,7 +180,7 @@ class TrainingExaminationsTest extends TestCase
         $this->assertDatabaseMissing('training_examinations', ['id' => $examination->id]);
     }
 
-    /** @test */
+    #[Test]
     public function mentor_cant_delete_training_examination()
     {
         $examination = TrainingExamination::factory()->create([

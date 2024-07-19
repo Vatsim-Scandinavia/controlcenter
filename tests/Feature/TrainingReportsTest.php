@@ -8,13 +8,14 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TrainingReportsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    #[Test]
     public function mentor_can_access_training_reports()
     {
         $training = Training::factory()->create([
@@ -37,7 +38,7 @@ class TrainingReportsTest extends TestCase
         $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->allowed());
     }
 
-    /** @test */
+    #[Test]
     public function trainee_can_access_training_reports()
     {
         $training = Training::factory()->create([
@@ -59,7 +60,7 @@ class TrainingReportsTest extends TestCase
         $this->actingAs($training->user)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->allowed());
     }
 
-    /** @test */
+    #[Test]
     public function a_regular_user_cant_access_training_reports()
     {
         $training = Training::factory()->create([
@@ -82,7 +83,7 @@ class TrainingReportsTest extends TestCase
         $this->actingAs($otherUser)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->denied());
     }
 
-    /** @test */
+    #[Test]
     public function trainee_cant_access_draft_training_report()
     {
         $training = Training::factory()->create([
@@ -104,7 +105,7 @@ class TrainingReportsTest extends TestCase
         $this->actingAs($report->training->user)->assertTrue(Gate::inspect('view', $report)->denied());
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_access_draft_training_report()
     {
         $training = Training::factory()->create([
@@ -128,7 +129,7 @@ class TrainingReportsTest extends TestCase
         $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
     }
 
-    //    /** @test */
+    //    #[Test]
     //    public function mentor_can_create_training_report()
     //    {
     //        $report = factory(\App\Models\TrainingReport::class)->make();
@@ -140,7 +141,7 @@ class TrainingReportsTest extends TestCase
     //        $this->assertDatabaseHas('training_reports', $report->getAttributes());
     //    }
 
-    /** @test */
+    #[Test]
     public function a_regular_user_cant_create_training_report()
     {
         $training = Training::factory()->create([
@@ -157,7 +158,7 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_update_a_training_report()
     {
         $training = Training::factory()->create([
@@ -179,7 +180,7 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseHas('training_reports', ['content' => $content]);
     }
 
-    /** @test */
+    #[Test]
     public function a_regular_user_cant_update_a_training_report()
     {
         $training = Training::factory()->create([
@@ -203,7 +204,7 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseMissing('training_reports', ['content' => $content]);
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_delete_a_training_report()
     {
         $training = Training::factory()->create([
@@ -232,7 +233,7 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
 
-    /** @test */
+    #[Test]
     public function another_mentor_cant_delete_training_report()
     {
         $training = Training::factory()->create([
@@ -251,7 +252,7 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseHas('training_reports', $report->getAttributes());
     }
 
-    /** @test */
+    #[Test]
     public function regular_user_cant_delete_training_report()
     {
         $training = Training::factory()->create([
@@ -269,7 +270,7 @@ class TrainingReportsTest extends TestCase
         $this->assertDatabaseHas(TrainingReport::class, $report->getAttributes());
     }
 
-    /** @test */
+    #[Test]
     public function another_moderator_can_delete_training_report()
     {
         $training = Training::factory()->create([
