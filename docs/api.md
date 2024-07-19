@@ -69,7 +69,7 @@ Parameters to add additional fields to the result
             "solo": null,
             "s1": null
         },
-        "masc": [
+        "facility": [
             {
                 "valid_from": "2023-09-16T20:53:00.000000Z",
                 "valid_to": null,

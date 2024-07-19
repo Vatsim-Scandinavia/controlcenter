@@ -182,7 +182,7 @@ class UserController extends Controller
             'visiting' => [],
             'examiner' => [],
             'solo' => [],
-            'position' => [],
+            'facility' => [],
         ];
 
         // Remembner adding the related rating/area to the query
