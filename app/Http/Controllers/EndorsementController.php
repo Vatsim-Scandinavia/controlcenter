@@ -13,27 +13,11 @@ use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class EndorsementController extends Controller
 {
-    /**
-     * Display a listing of the MA/SC Endorsements
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function indexMascs()
-    {
-        $users = User::whereHas('endorsements', function (Builder $query) {
-            $query->where('type', 'MASC')->where('revoked', false)->where('expired', false);
-        })->with('endorsements', 'endorsements.ratings', 'atcActivity')->get();
-        $ratings = Rating::whereNull('vatsim_rating')->get()->sortBy('name');
-
-        return view('endorsements.mascs', compact('users', 'ratings'));
-    }
-
     /**
      * Display a listing of the Solo endorsement
      *

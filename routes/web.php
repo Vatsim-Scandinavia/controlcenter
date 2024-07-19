@@ -61,7 +61,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     // Endorsements
     Route::controller(EndorsementController::class)->group(function () {
-        Route::get('/endorsements/mascs', 'indexMascs')->name('endorsements.mascs');
         Route::get('/endorsements/solos', 'indexSolos')->name('endorsements.solos');
         Route::get('/endorsements/examiners', 'indexExaminers')->name('endorsements.examiners');
         Route::get('/endorsements/visiting', 'indexVisitors')->name('endorsements.visiting');

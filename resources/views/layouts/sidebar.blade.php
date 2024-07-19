@@ -157,7 +157,6 @@
             </a>
             <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('endorsements.mascs') }}">Facility</a>
                 <a class="collapse-item" href="{{ route('endorsements.solos') }}">Solo</a>
                 <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiner</a>
                 <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
