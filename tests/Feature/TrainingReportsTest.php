@@ -24,7 +24,17 @@ class TrainingReportsTest extends TestCase
         $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
-        $this->actingAs($mentor)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'report_date' => now()->addYear(),
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit.',
+            'contentimprove' => null,
+            'position' => null,
+            'draft' => false,
+        ]);
+
+        $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->allowed());
     }
 
     /** @test */
@@ -33,7 +43,20 @@ class TrainingReportsTest extends TestCase
         $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $this->actingAs($training->user)->assertTrue(Gate::inspect('viewReports', $training)->allowed());
+
+        $mentor = User::factory()->create(['id' => 10000400]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'report_date' => now()->addYear(),
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit.',
+            'contentimprove' => null,
+            'position' => null,
+            'draft' => false,
+        ]);
+
+        $this->actingAs($training->user)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->allowed());
     }
 
     /** @test */
@@ -42,8 +65,21 @@ class TrainingReportsTest extends TestCase
         $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
+
+        $mentor = User::factory()->create(['id' => 10000400]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'report_date' => now()->addYear(),
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit.',
+            'contentimprove' => null,
+            'position' => null,
+            'draft' => false,
+        ]);
+
         $otherUser = User::factory()->create(['id' => 10000134]);
-        $this->actingAs($otherUser)->assertTrue(Gate::inspect('viewReports', $training)->denied());
+        $this->actingAs($otherUser)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->denied());
     }
 
     /** @test */
