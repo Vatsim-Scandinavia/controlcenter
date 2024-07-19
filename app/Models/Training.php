@@ -185,6 +185,16 @@ class Training extends Model
     }
 
     /**
+     * Get the training reports for the training.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function examinations()
+    {
+        return $this->hasMany(TrainingExamination::class);
+    }
+
+    /**
      * Get the ratings of the training
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
