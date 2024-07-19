@@ -14,7 +14,7 @@
         "graham-campbell/markdown": "^15.0",
         "guzzlehttp/guzzle": "^7.4.2",
         "hisorange/browser-detect": "^5.0",
-        "laravel/framework": "^10.0",
+        "laravel/framework": "^11.0",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.0",
         "league/commonmark": "^2.2",
