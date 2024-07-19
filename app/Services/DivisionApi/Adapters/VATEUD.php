@@ -291,6 +291,25 @@ class VATEUD implements DivisionApiContract
     }
 
     /**
+     * Return if the selected user has passed the theory exam for given rating.
+     *
+     * @return bool
+     */
+    public function userHasPassedTheoryExam(User $user, Rating $rating)
+    {
+        $exams = $this->getUserExams($user);
+        if ($exams && $exams->successful()) {
+            foreach ($exams->json()['data']['results'] as $exam) {
+                if ($exam['flag_exam_type'] == $rating->vatsim_rating - 1 && $exam['passed'] == true) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the roster
      *
      * @return \Illuminate\Http\Client\Response

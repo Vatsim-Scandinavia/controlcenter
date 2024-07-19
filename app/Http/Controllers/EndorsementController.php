@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Facades\DivisionApi;
+use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\Position;
@@ -168,12 +169,20 @@ class EndorsementController extends Controller
             $data = request()->validate([
                 'user' => 'required|numeric|exists:App\Models\User,id',
                 'expires' => 'sometimes|date_format:d/m/Y',
-                'expireInf' => 'sometimes',
                 'position' => 'required',
             ]);
             $user = User::find($data['user']);
-            $expireInfinite = isset($data['expireInf']) ? true : false;
-            $linkedToTraining = true;
+
+            // Check if user has active training
+            if (! $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
+                return back()->withInput()->withErrors($user->name . ' has no active training to link this endorsement to.');
+            }
+
+            // Validate if the user has passed the related exam
+            $highestTrainingRating = $user->getActiveTraining()->ratings->sortByDesc('vatsim_rating')->first();
+            if (! DivisionApi::userHasPassedTheoryExam($user, $highestTrainingRating)) {
+                return back()->withInput()->withErrors($user->name . ' has not passed the ' . $highestTrainingRating->name . ' theory exam. Solo endorsement can not be created.');
+            }
 
             // Validate the position
             $position = Position::firstWhere('callsign', $data['position']);
@@ -182,27 +191,17 @@ class EndorsementController extends Controller
             }
 
             // Let's validate the expire date
-            if (! $expireInfinite) {
-                $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
-                $expireDate->setTime(23, 59);
+            $expireDate = Carbon::createFromFormat('d/m/Y', $data['expires']);
+            $expireDate->setTime(23, 59);
 
-                $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
-                if (($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addDays(30)))) {
-                    return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
-                }
-            } else {
-                $expireDate = null;
-                $linkedToTraining = false;
+            $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
+            if (($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addDays(30)))) {
+                return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
             }
 
             // Validate that this user has other endorsements of this type from before
             if ($user->hasActiveEndorsement('SOLO')) {
                 return back()->withInput()->withErrors($user->name . ' has already an active solo endorsement. Revoke it first, to create a new one.');
-            }
-
-            // If it's not a infinite endorsement, it has to be tied to an existing training
-            if (! $expireInfinite && $user->trainings->where('status', '>=', 0)->count() == 0) {
-                return back()->withInput()->withErrors($user->name . ' has no active training to link this endorsement to.');
             }
 
             // Validate that solo only has one position and set expire time
@@ -231,9 +230,7 @@ class EndorsementController extends Controller
             ' ― Positions: ' . $data['position']);
 
             // Log this new endorsement to the user's active training
-            if ($linkedToTraining) {
-                TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
-            }
+            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
