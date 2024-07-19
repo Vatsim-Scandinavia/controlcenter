@@ -7,6 +7,7 @@ use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UserUnitTest extends TestCase
@@ -21,7 +22,7 @@ class UserUnitTest extends TestCase
         $this->user = User::factory()->create(['id' => 10000000]);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_have_a_first_name()
     {
         $name = $this->faker->firstName;
@@ -30,7 +31,7 @@ class UserUnitTest extends TestCase
         $this->assertEquals($name, $this->user->first_name);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_have_a_last_name()
     {
         $name = $this->faker->lastName;
@@ -39,7 +40,7 @@ class UserUnitTest extends TestCase
         $this->assertEquals($name, $this->user->last_name);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_have_full_name()
     {
         $firstName = $this->faker->firstName;
@@ -53,7 +54,7 @@ class UserUnitTest extends TestCase
         $this->assertEquals($name, $this->user->name);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_have_trainings_they_can_access()
     {
         $training = Training::factory()->create(['user_id' => $this->user->id]);
@@ -63,7 +64,7 @@ class UserUnitTest extends TestCase
             : $this->assertFalse($this->user->viewableModels('\App\Models\Training')->contains($training));
     }
 
-    /** @test */
+    #[Test]
     public function trainings_can_exist_with_out_user_being_able_to_see_them()
     {
         $otherUser = User::factory()->create(['id' => ($this->user->id + 1)]);
@@ -74,7 +75,7 @@ class UserUnitTest extends TestCase
             : $this->assertFalse($this->user->viewableModels('\App\Models\Training')->contains($training));
     }
 
-    /** @test */
+    #[Test]
     public function an_exception_is_thrown_if_a_policy_does_not_exist_for_class()
     {
         $this->expectException(PolicyMissingException::class);

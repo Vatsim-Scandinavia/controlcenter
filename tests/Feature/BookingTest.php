@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class BookingTest extends TestCase
@@ -51,9 +52,8 @@ class BookingTest extends TestCase
     /**
      * Validate that a controller can create a booking.
      * The data provider underneath is used by PHPUnit fill the arguments of the test.
-     *
-     * @dataProvider controllerProvider
      */
+    #[DataProvider('controllerProvider')]
     public function test_active_ratings_can_create_bookings(VatsimRating $rating, callable $setup): void
     {
         $controller = User::factory()->create([

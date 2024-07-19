@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FilesTest extends TestCase
@@ -26,7 +27,7 @@ class FilesTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_upload_a_pdf_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
@@ -39,7 +40,7 @@ class FilesTest extends TestCase
         Storage::disk('test')->assertExists($file->full_path);
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_upload_an_image_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
@@ -52,7 +53,7 @@ class FilesTest extends TestCase
         Storage::disk('test')->assertExists($file->full_path);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_see_a_file_they_uploaded()
     {
         $user = User::factory()->create(['id' => 10000001]);
@@ -68,7 +69,7 @@ class FilesTest extends TestCase
             ->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function regular_user_cant_upload_a_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
@@ -78,7 +79,7 @@ class FilesTest extends TestCase
             ->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function owner_can_delete_their_own_files()
     {
         $user = User::factory()->create(['id' => 10000001]);
@@ -93,7 +94,7 @@ class FilesTest extends TestCase
             ->assertSessionHas('success', 'File successfully deleted');
     }
 
-    /** @test */
+    #[Test]
     public function moderator_can_delete_another_users_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
@@ -109,7 +110,7 @@ class FilesTest extends TestCase
         $this->actingAs($moderator)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('success', 'File successfully deleted');
     }
 
-    /** @test */
+    #[Test]
     public function regular_user_cant_delete_another_users_file()
     {
         $user = \App\Models\User::factory()->create(['id' => 10000001]);

@@ -9,27 +9,25 @@
     "license": "MIT",
     "require": {
         "php": "^8.3.2",
-        "anlutro/l4-settings": "^1.1.1",
-        "doctrine/dbal": "^3.3.6",
-        "graham-campbell/markdown": "^15.0",
-        "guzzlehttp/guzzle": "^7.4.2",
+        "anlutro/l4-settings": "^1.4.1",
+        "graham-campbell/markdown": "^15.2",
+        "guzzlehttp/guzzle": "^7.9.0",
         "hisorange/browser-detect": "^5.0",
-        "laravel/framework": "^10.0",
-        "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.0",
-        "league/commonmark": "^2.2",
-        "league/oauth2-client": "^2.6.1",
-        "sentry/sentry-laravel": "^4.0",
-        "spatie/laravel-ignition": "^2.0",
-        "wildside/userstamps": "^2.2"
+        "laravel/framework": "^11.0",
+        "laravel/tinker": "^2.9",
+        "laravel/ui": "^4.5.2",
+        "league/commonmark": "^2.4",
+        "league/oauth2-client": "^2.7",
+        "sentry/sentry-laravel": "^4.3",
+        "spatie/laravel-ignition": "^2.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.6.6",
+        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.23.0",
         "laravel/pint": "^1.7",
-        "mockery/mockery": "^1.0",
-        "nunomaduro/collision": "^7.0",
-        "phpunit/phpunit": "^10"
+        "nunomaduro/collision": "^8.1",
+        "phpunit/phpunit": "^11",
+        "mockery/mockery": "^1.0"
     },
     "config": {
         "optimize-autoloader": true,
