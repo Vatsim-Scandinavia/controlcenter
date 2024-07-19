@@ -44,8 +44,8 @@
                     <label class="form-label">Endorsement</label>
                     <div class="mb-3">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeMASC" value="MASC" v-model="endorsementType" v-on:change="updateButtonText">
-                            <label class="form-check-label" for="endorsementTypeMASC">
+                            <input class="form-check-input" type="radio" name="endorsementType" id="endorsementTypeFacility" value="FACILITY" v-model="endorsementType" v-on:change="updateButtonText">
+                            <label class="form-check-label" for="endorsementTypeFacility">
                                 Facility
                             </label>
                         </div>
@@ -80,8 +80,8 @@
                         <hr>
                     </div>
 
-                    {{-- Info for MASC --}}
-                    <div class="alert alert-info" style="display: none" role="alert" v-show="endorsementType == 'MASC'">
+                    {{-- Info for FACILITY --}}
+                    <div class="alert alert-info" style="display: none" role="alert" v-show="endorsementType == 'FACILITY'">
                         <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training are marked completed.
                     </div>
 
@@ -124,16 +124,16 @@
                         <p v-show="validationError && errSoloPositionCount == true" class="text-danger">Solo Endorsement can only have one position.</p>
                     </div>
 
-                    {{-- MASC Ratings --}}
-                    <div class="mb-3" style="display: none" v-show="endorsementType == 'MASC'">
-                        <label class="form-label" for="ratingMASC">Rating</label>
-                        <select class="form-select" name="ratingMASC" id="ratingMASC" v-model="ratingMASC" v-bind:class="{'is-invalid': (validationError && ratingMASC == null)}">
+                    {{-- FACILITY Ratings --}}
+                    <div class="mb-3" style="display: none" v-show="endorsementType == 'FACILITY'">
+                        <label class="form-label" for="ratingFACILITY">Rating</label>
+                        <select class="form-select" name="ratingFACILITY" id="ratingFACILITY" v-model="ratingFACILITY" v-bind:class="{'is-invalid': (validationError && ratingFACILITY == null)}">
                             <option selected disabled>Select rating</option>
-                            @foreach($ratingsMASC as $rating)
+                            @foreach($ratingsFACILITY as $rating)
                                 <option value="{{ $rating->id }}">{{ $rating->endorsement_type }} {{ $rating->name }}</option>
                             @endforeach
                         </select>
-                        <span v-show="validationError && ratingMASC == null" class="text-danger">Select at least one airport or center</span>
+                        <span v-show="validationError && ratingFACILITY == null" class="text-danger">Select at least one airport or center</span>
                     </div>
 
                     {{-- Visiting Rating --}}
@@ -191,7 +191,7 @@
                     user: {{ isset($prefillUserId) ? $prefillUserId : "null" }},
                     expire: null,
                     positions: null,
-                    ratingMASC: null,
+                    ratingFACILITY: null,
                     ratingGRP: null,
                     ratingExaminate: null,
                     areas: [],
@@ -208,8 +208,8 @@
 
                     const flatpickr = document.getElementsByClassName('datepicker')[0]._flatpickr
 
-                    if(this.endorsementType == 'MASC'){
-                        end = "MA/SC"
+                    if(this.endorsementType == 'FACILITY'){
+                        end = "Facility"
                     } else if(this.endorsementType == 'SOLO'){
                         end = "Solo"
                     } else if(this.endorsementType == 'EXAMINER'){
@@ -240,9 +240,9 @@
 
                     if(this.user == null) validated = false
 
-                    if(this.endorsementType == 'MASC'){
+                    if(this.endorsementType == 'FACILITY'){
 
-                        if(this.ratingMASC == null) validated = false
+                        if(this.ratingFACILITY == null) validated = false
 
                     } else if(this.endorsementType == 'SOLO'){
 

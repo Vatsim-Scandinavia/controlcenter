@@ -359,13 +359,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Return if the user has specified MASC endorsement
+     * Return if the user has specified FACILITY endorsement
      *
      * @return bool
      */
     public function hasEndorsementRating(Rating $rating)
     {
-        foreach ($this->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $e) {
+        foreach ($this->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false) as $e) {
             foreach ($e->ratings as $r) {
                 if ($r->id == $rating->id) {
                     return true;

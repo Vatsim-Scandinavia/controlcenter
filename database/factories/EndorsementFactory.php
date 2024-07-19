@@ -25,7 +25,7 @@ class EndorsementFactory extends Factory
     {
         return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'type' => 'MASC',
+            'type' => 'FACILITY',
             'valid_from' => Carbon::now(),
         ];
     }

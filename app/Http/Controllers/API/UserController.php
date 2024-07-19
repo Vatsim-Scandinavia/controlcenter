@@ -105,7 +105,7 @@ class UserController extends Controller
         // Endorsements
         if ($paramIncludeEndorsements) {
             foreach ($returnUsers as $user) {
-                $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'MASC', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
+                $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
             }
         }
 
@@ -198,7 +198,7 @@ class UserController extends Controller
                 case 'SOLO':
                     array_push($returnData['solo'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
-                case 'MASC':
+                case 'FACILITY':
                     array_push($returnData['position'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
             }
@@ -240,7 +240,7 @@ class UserController extends Controller
             case 'SOLO':
                 $returnData['positions'] = $endorsement->positions->pluck('callsign');
                 break;
-            case 'MASC':
+            case 'FACILITY':
                 $returnData['rating'] = $endorsement->ratings->first()->name;
                 break;
         }

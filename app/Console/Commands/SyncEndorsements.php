@@ -85,7 +85,7 @@ class SyncEndorsements extends Command
                 $relevantUsers = $relevantActiveUsers->merge($relevantVisitingUsers);
 
                 // Endorsements stored in CC
-                $storedEndorsements = Endorsement::where('type', 'MASC')
+                $storedEndorsements = Endorsement::where('type', 'FACILITY')
                     ->where('revoked', false)
                     ->where('expired', false)
                     ->whereIn('user_id', $relevantUsers->pluck('id'))

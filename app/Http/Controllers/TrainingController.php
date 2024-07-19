@@ -590,7 +590,7 @@ class TrainingController extends Controller
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
                             // Revoke the old endorsement if active
-                            $oldEndorsement = $training->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false);
+                            $oldEndorsement = $training->user->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false);
                             foreach ($oldEndorsement as $oe) {
                                 foreach ($oe->ratings as $oer) {
                                     if ($oer->id == $rating->id) {
@@ -611,7 +611,7 @@ class TrainingController extends Controller
                             // Grant new endorsement
                             $endorsement = new \App\Models\Endorsement();
                             $endorsement->user_id = $training->user->id;
-                            $endorsement->type = 'MASC';
+                            $endorsement->type = 'FACILITY';
                             $endorsement->valid_from = now()->format('Y-m-d H:i:s');
                             $endorsement->valid_to = null;
                             $endorsement->issued_by = null;
@@ -763,7 +763,7 @@ class TrainingController extends Controller
         })->whereNull('vatsim_rating')->get()->pluck('name');
 
         // Ratings which user has today and needs to be refresh
-        $userRatings = User::find($userId)->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
+        $userRatings = User::find($userId)->endorsements->where('type', 'FACILITY')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
             return $endorsement->ratings->first()->name;
         });
 

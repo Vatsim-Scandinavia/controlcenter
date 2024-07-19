@@ -295,7 +295,7 @@
                                     <i class="fas fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Active"></i>
                                 @endif
 
-                                {{ ($endorsement->type == "MASC") ? 'Facility' : ucfirst(strtolower($endorsement->type)) }} Endorsement
+                                {{ ucfirst(strtolower($endorsement->type)) }} Endorsement
 
                                 @can('delete', [\App\Models\Endorsement::class, $endorsement])
                                     <a href="{{ route('endorsements.delete', $endorsement->id) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
@@ -314,7 +314,7 @@
                             </div>
                             <div class="card-body">
                                 <table class="table-card">
-                                    @if($endorsement->type == "MASC")
+                                    @if($endorsement->type == "FACILITY")
                                         <tr class="spacing">
                                             <th>Position</th>
                                             <td>{{ $endorsement->ratings->first()->endorsement_type }} {{ $endorsement->ratings->first()->name }}</td>

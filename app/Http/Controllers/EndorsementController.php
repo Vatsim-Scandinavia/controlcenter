@@ -90,10 +90,10 @@ class EndorsementController extends Controller
         }
         $positions = Position::all();
         $areas = Area::all();
-        $ratingsMASC = Rating::whereHas('areas')->whereNull('vatsim_rating')->get()->sortBy('name');
+        $ratingsFACILITY = Rating::whereHas('areas')->whereNull('vatsim_rating')->get()->sortBy('name');
         $ratingsGRP = Rating::where('vatsim_rating', '<=', 7)->get();
 
-        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsMASC', 'ratingsGRP', 'prefillUserId'));
+        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsFACILITY', 'ratingsGRP', 'prefillUserId'));
     }
 
     /**
@@ -110,27 +110,27 @@ class EndorsementController extends Controller
 
         $data = [];
 
-        if ($endorsementType == 'MASC') {
+        if ($endorsementType == 'FACILITY') {
             // Major Airport / Special Center endorsement
 
             $data = request()->validate([
                 'user' => 'required|numeric|exists:App\Models\User,id',
-                'ratingMASC' => 'required|exists:App\Models\Rating,id',
+                'ratingFACILITY' => 'required|exists:App\Models\Rating,id',
             ]);
             $user = User::find($data['user']);
 
             // Check if endoresement for this user already exists
-            $existingEndorsements = Endorsement::where('user_id', $user->id)->where('type', 'MASC')->where('revoked', false)->where('expired', false)->get();
+            $existingEndorsements = Endorsement::where('user_id', $user->id)->where('type', 'FACILITY')->where('revoked', false)->where('expired', false)->get();
             foreach ($existingEndorsements as $e) {
                 foreach ($e->ratings as $r) {
-                    if ($r->id == $data['ratingMASC']) {
-                        return back()->withInput()->withErrors(['ratingMASC' => $user->name . ' already has an endorsement for ' . $r->name]);
+                    if ($r->id == $data['ratingFACILITY']) {
+                        return back()->withInput()->withErrors(['ratingFACILITY' => $user->name . ' already has an endorsement for ' . $r->name]);
                     }
                 }
             }
 
             // All clear, let's start by attemping the insertion to the API
-            $rating = Rating::find($data['ratingMASC']);
+            $rating = Rating::find($data['ratingFACILITY']);
             $response = DivisionApi::assignTierEndorsement($user, $rating, Auth::id());
             if ($response && $response->failed()) {
                 return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
@@ -140,11 +140,11 @@ class EndorsementController extends Controller
             $endorsement = $this->createEndorsementModel($endorsementType, $user);
 
             // Add ratings
-            $endorsement->ratings()->save(Rating::find($data['ratingMASC']));
+            $endorsement->ratings()->save(Rating::find($data['ratingFACILITY']));
 
             ActivityLogController::warning('ENDORSEMENT', 'Created facility endorsement ' .
             ' ― User: ' . $endorsement->user_id .
-            ' ― Rating: ' . Rating::find($data['ratingMASC'])->name);
+            ' ― Rating: ' . Rating::find($data['ratingFACILITY'])->name);
 
             return redirect()->intended(route('user.show', $user->id))->withSuccess($user->name . "'s endorsement created");
         } elseif ($endorsementType == 'SOLO') {
@@ -308,7 +308,7 @@ class EndorsementController extends Controller
             if ($response && $response->failed()) {
                 return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
             }
-        } elseif ($endorsement->type == 'MASC') {
+        } elseif ($endorsement->type == 'FACILITY') {
             if (isset($endorsement->ratings->first()->endorsement_type)) {
                 $response = DivisionApi::revokeTierEndorsement($endorsement->ratings->first()->endorsement_type, $endorsement->user->id, $endorsement->ratings->first()->name);
                 if ($response && $response->failed()) {

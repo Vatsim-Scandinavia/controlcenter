@@ -63,10 +63,10 @@
                                                 <td class="text-center bg-success text-white">
                                                     <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
 
-                                                    {{-- Display the MASC endorsements connected to this area --}}
+                                                    {{-- Display the FACILITY endorsements connected to this area --}}
                                                     @foreach($endorsedArea->ratings->whereNull('vatsim_rating') as $areaRating)
-                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $mascEndorsement)
-                                                            @if($areaRating->id == $mascEndorsement->ratings->first()->id)
+                                                        @foreach($visitingEndorsement->user->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false) as $facilityEndorsement)
+                                                            @if($areaRating->id == $facilityEndorsement->ratings->first()->id)
                                                                 <small class="d-block">{{ $areaRating->name }}</small>
                                                             @endif
                                                         @endforeach
