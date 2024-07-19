@@ -41,11 +41,6 @@ class UserController extends Controller
             if ($response === false) {
                 return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM Core API. Check if your token is correct.');
             }
-        } elseif (config('vatsim.api_token')) {
-            $response = $this->fetchUsersFromVatsimApi();
-            if ($response === false) {
-                return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM API. Check if your token is correct.');
-            }
         } else {
             return view('user.index', compact('users'))->withErrors('Enable VATSIM Core API Integration to enable this feature.');
         }
@@ -474,28 +469,5 @@ class UserController extends Controller
         } while ($usersCount < $count);
 
         return $users;
-    }
-
-    /**
-     * Fetch users from VATSIM API
-     *
-     * @return \Illuminate\Http\Response|bool
-     */
-    private function fetchUsersFromVatsimApi()
-    {
-        $url = sprintf('https://api.vatsim.net/api/subdivisions/%s/members/', config('app.owner_code'));
-        $headers = [
-            'Authorization' => 'Token ' . config('vatsim.api_token'),
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ];
-
-        $response = Http::withHeaders($headers)->get($url);
-
-        if (! $response->successful()) {
-            return false;
-        }
-
-        return $response->json();
     }
 }
