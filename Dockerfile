@@ -11,7 +11,7 @@ RUN npm ci --omit dev && \
 
 ####################################################################################################
 # Primary container
-FROM docker.io/library/php:8.3.4-apache-bullseye
+FROM docker.io/library/php:8.3.9-apache-bookworm
 
 # Default container port for the apache configuration
 EXPOSE 80 443
@@ -39,7 +39,6 @@ COPY --from=mlocati/php-extension-installer:2.2.19 /usr/bin/install-php-extensio
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
-# TODO: Support additional PDOs on demand; consider SQLite & PgSQL
 RUN install-php-extensions pdo_mysql
 
 # Install composer
