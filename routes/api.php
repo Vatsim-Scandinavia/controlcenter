@@ -26,6 +26,6 @@ Route::group(['middleware' => ['api-token:edit']], function () {
 Route::group(['middleware' => ['api-token']], function () {
     Route::get('/bookings', [App\Http\Controllers\API\BookingController::class, 'index'])->name('api.booking.index');
     Route::get('/bookings/{booking}', [App\Http\Controllers\API\BookingController::class, 'show'])->name('api.booking.show');
-    
+
     Route::get('/users', [App\Http\Controllers\API\UserController::class, 'index'])->name('api.users.index');
 });
