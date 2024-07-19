@@ -24,9 +24,6 @@
                         <hr>
                         <h5 class="card-title"><i class="fas fa-chalkboard-teacher"></i>&nbsp;What should you expect from us?</h5>
                         <p class="card-text">You should expect that we will help you as best as we can to prepare you for your practical exam. You will be assigned to a mentor that will guide you on the way, and you should expect him to take you and your time seriously and to adapt the training to your level of competence.</p>
-                        <hr>
-                        <h5 class="card-title"><i class="fas fa-hourglass-start"></i>&nbsp;How long is the training queue?</h5>
-                        <p class="card-text">{{ Setting::get('trainingQueue') }}</p>
                     </div>
                 </div>
             </div>
@@ -82,6 +79,11 @@
                         @else
                             <p>Please read through the <a href="{{ Setting::get('trainingSOP') }}" target="_blank">policy for students</a> and accept the terms by continuing to the next step.</p>
                         @endif
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-hourglass"></i>&nbsp;
+                            <span>The waiting time in @{{ trainingAreaName }} is @{{ waitingTime }}</span>
+                        </div>
 
                         <a class="btn btn-success" href="#" v-on:click="next">I accept</a>
                     </div>
@@ -175,23 +177,30 @@
                     motivationRequired: {{ $motivation_required }},
                     atcActiveRequired: {{ $atcActiveRequired }},
                     atcActiveInArea: false,
+                    waitingTime: 'unknown',
+                    trainingArea: null,
+                    trainingAreaName: null
                 }
             },
             methods:{
                 next() {
                     if(this.validate(this.step)) this.step++;
+                    
+                    if(this.step == 2){
+                        this.waitingTime = payload[this.trainingArea].waitingTime
+                    }
                 },
                 validate(page){
                     var validated = true
 
                     if(page == 1){
-                        let trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
-                        let trainingAreaName = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.text;
+                        this.trainingArea = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.value;
+                        this.trainingAreaName = Array.from(document.getElementById('areaSelect').options).find(option => option.selected && !option.disabled)?.text;
                         let trainingLevel = Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value;
 
                         let requiredHours = document.getElementById('ratingSelect').options[document.getElementById('ratingSelect').selectedIndex].getAttribute('data-hour-requirement')
 
-                        if (trainingArea == null){
+                        if (this.trainingArea == null){
                             document.getElementById('areaSelect').classList.add('is-invalid')
                             this.errArea = true;
                             validated = false;
@@ -205,7 +214,7 @@
 
                         if(this.atcActiveRequired && this.atcActiveInArea === 'false'){
                             document.getElementById('areaSelect').classList.add('is-invalid')
-                            document.getElementById('errAreaActive').innerHTML = "You need to be an active controller in "+trainingAreaName+" to apply, contact local staff for help."
+                            document.getElementById('errAreaActive').innerHTML = "You need to be an active controller in "+this.trainingAreaName+" to apply, contact local staff for help."
                             this.errAreaActive = true;
                             validated = false;
                         } else if (requiredHours !== undefined && atcHours < requiredHours){

@@ -172,6 +172,7 @@ class TrainingController extends Controller
             // Inject the data into payload
             $payload[$area->id]['name'] = $area->name;
             $payload[$area->id]['data'] = $availableRatings;
+            $payload[$area->id]['waitingTime'] = $area->waiting_time ?? 'unknown';
             $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->atc_active) ? true : false;
         }
 

@@ -109,15 +109,6 @@
                             @enderror
 
                             <div class="mb-4">
-                                <label class="form-label" for="trainingQueue">Training queue length</label>
-                                <input type="text" class="form-control @error('trainingQueue') is-invalid @enderror" id="trainingQueue" placeholder="Write your text here, keep it short." name="trainingQueue" required value="{{ Setting::get("trainingQueue") }}">
-                                <small class="form-text">Text displayed in FAQ and e-mails. Keep it short.</small>
-                            </div>
-                            @error('trainingQueue')
-                                <span class="text-danger">{{ $errors->first('trainingQueue') }}</span>
-                            @enderror
-
-                            <div class="mb-4">
                                 <label class="form-label" for="atcActivityQualificationPeriod">Required Training Interval</label>
                                 <input type="number" class="form-control @error('trainingInterval') is-invalid @enderror" id="trainingInterval" name="trainingInterval" required value="{{ Setting::get("trainingInterval") }}">
                                 <small class="form-text">Input number of days required, used to mark stalled trainings</small>
