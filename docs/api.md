@@ -201,15 +201,6 @@ Update a booking.
 ### DELETE `/api/bookings/{id}`
 Delete a booking
 
-## API Endpoints (deprecated)
-Older endpoints that will be replaced with the `api/users` endpoint. Do not use these if you're creating a new integration.
-
-- GET users assigned roles and their area `/api/roles`
-- GET users holding Major Airport / Special Center endorsements `/api/endorsements/masc`
-- GET users holding Training endorsements `/api/endorsements/training/solo` & `/api/endorsements/training/s1`
-- GET users holding Examiner endorsements `/api/endorsements/examiner`
-- GET users holding Visiting endorsements `/api/endorsements/visiting`
-
 ## Authentication
 To create an API key use `php artisan create:apikey`, use the returned token as authentication bearer.
 
