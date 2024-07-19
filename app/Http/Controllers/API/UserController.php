@@ -199,7 +199,7 @@ class UserController extends Controller
                     array_push($returnData['solo'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
                 case 'FACILITY':
-                    array_push($returnData['position'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
+                    array_push($returnData['facility'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
             }
 
@@ -208,7 +208,7 @@ class UserController extends Controller
         empty($returnData['visiting']) ? $returnData['visiting'] = null : null;
         empty($returnData['examiner']) ? $returnData['examiner'] = null : null;
         empty($returnData['solo']) ? $returnData['solo'] = null : null;
-        empty($returnData['position']) ? $returnData['position'] = null : null;
+        empty($returnData['facility']) ? $returnData['facility'] = null : null;
 
         return $returnData;
 
