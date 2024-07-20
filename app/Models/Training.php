@@ -78,7 +78,7 @@ class Training extends Model
 
                 // If paused is unchecked but training is paused, sum up the length and unpause.
                 if (isset($this->paused_at)) {
-                    $this->paused_length = $this->paused_length + Carbon::create($this->paused_at)->diffInSeconds(Carbon::now());
+                    $this->paused_length = $this->paused_length + Carbon::create($this->paused_at)->diffInSeconds(Carbon::now(), true);
                     $this->update(['paused_at' => null, 'paused_length' => $this->paused_length]);
                 }
             }

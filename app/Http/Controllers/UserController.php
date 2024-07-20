@@ -138,7 +138,7 @@ class UserController extends Controller
                 $totalHours += $activity->hours;
 
                 if ($activity->start_of_grace_period) {
-                    $atcActivityHours[$area->id]['graced'] = $activity->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod', 12))->gt(now());
+                    $atcActivityHours[$area->id]['graced'] = $activity->start_of_grace_period->addMonths((int) Setting::get('atcActivityGracePeriod', 12))->gt(now());
                 } else {
                     $atcActivityHours[$area->id]['graced'] = false;
                 }

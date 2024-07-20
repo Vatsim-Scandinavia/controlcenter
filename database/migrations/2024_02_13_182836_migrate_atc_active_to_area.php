@@ -32,7 +32,7 @@ return new class extends Migration
             if ($activities && $activities->count() > 0) {
                 foreach ($activities as $activity) {
                     // Let's deem everyone with hours active, this will be most correct as they might get withdrawn active status later on nightly cron job triggering a notification.
-                    if ($activity->hours > 0 || $activity->start_of_grace_period != null && $activity->start_of_grace_period->addMonths(Setting::get('atcActivityGracePeriod'))->isFuture()) {
+                    if ($activity->hours > 0 || $activity->start_of_grace_period != null && $activity->start_of_grace_period->addMonths((int) Setting::get('atcActivityGracePeriod'))->isFuture()) {
                         $activity->atc_active = true;
                         $activity->save();
                     }
