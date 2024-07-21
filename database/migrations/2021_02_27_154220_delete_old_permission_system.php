@@ -15,15 +15,12 @@ class DeleteOldPermissionSystem extends Migration
     public function up()
     {
         $connection = $this->connection ?? DB::getDefaultConnection();
-        $prefix = config('database.connections.' . $connection . '.prefix_indexes')
-                    ? config('database.connections.' . $connection . '.prefix')
-                    : '';
         $driver = Schema::getConnection()->getDriverName();
 
         if ($driver != 'sqlite') {
-            Schema::table('users', function (Blueprint $table) use ($prefix) {
-                $table->dropForeign([$prefix . 'users_country_foreign']);
-                $table->dropForeign([$prefix . 'users_group_foreign']);
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropForeign(['users_country_foreign']);
+                $table->dropForeign(['users_group_foreign']);
                 $table->dropColumn(['country', 'group']);
             });
         } else {
