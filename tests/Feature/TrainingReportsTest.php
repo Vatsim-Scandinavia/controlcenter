@@ -129,17 +129,35 @@ class TrainingReportsTest extends TestCase
         $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
     }
 
-    //    #[Test]
-    //    public function mentor_can_create_training_report()
-    //    {
-    //        $report = factory(\App\Models\TrainingReport::class)->make();
-    //
-    //        $this->actingAs($report->training->mentors()->first())
-    //            ->post(route('training.report.store', ['training' => $report->training->id]), $report->getAttributes())
-    //            ->assertStatus(302);
-    //
-    //        $this->assertDatabaseHas('training_reports', $report->getAttributes());
-    //    }
+    /*
+    #[Test]
+    public function mentor_can_create_training_report()
+    {
+
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000042])->id,
+        ]);
+
+        $mentor = User::factory()->create(['id' => 10000080]);
+        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        $report = TrainingReport::factory()->make([
+            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
+            'contentimprove' => 'Nothing',
+            'position' => 'Sweatbox',
+            'draft' => false,
+            'report_date' => '21/07/2024'
+        ]);
+
+        $this->actingAs($mentor)
+            ->post(route('training.report.store', ['training' => $training->id]), $report->getAttributes())
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('training_reports', $report->getAttributes());
+    }
+    */
 
     #[Test]
     public function a_regular_user_cant_create_training_report()

@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class BookingTest extends TestCase
@@ -71,6 +72,28 @@ class BookingTest extends TestCase
         $setup($controller);
         $this->assertCreateBookingAvailable($controller);
         $this->createBooking($controller)->assertValid();
+    }
+
+    #[Test]
+    public function inactive_cant_book_positions(): void
+    {
+
+        $user = User::factory()->create(['id' => 10000001]);
+        $booking = Booking::factory()->create(['user_id' => $user->id]);
+
+        $this->actingAs($user)->followingRedirects()->postJson(route('booking.store', ['id' => $booking->id]), $booking->getAttributes())
+            ->assertStatus(403);
+    }
+
+    #[Test]
+    public function test_discord_bookings_can_not_be_deleted(): void
+    {
+
+        $user = User::factory()->create(['id' => 10000001]);
+        $booking = Booking::factory()->create(['user_id' => $user->id, 'source' => 'DISCORD']);
+
+        $this->actingAs($user)->followingRedirects()->get(route('booking.delete', ['id' => $booking->id]))
+            ->assertStatus(403);
     }
 
     /**
