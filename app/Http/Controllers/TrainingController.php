@@ -78,7 +78,7 @@ class TrainingController extends Controller
     {
         $this->authorize('viewActiveRequests', Training::class);
 
-        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'reports', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
+        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
