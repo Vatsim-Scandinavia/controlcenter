@@ -30,7 +30,7 @@ return new class extends Migration
                 $table->boolean('hidden')->default(false);
                 $table->timestamps();
             });
-            
+
         } else {
 
             /* MYSQL and other databases */
@@ -60,7 +60,7 @@ return new class extends Migration
             // Step 5: Rename the 'uuid' column to 'id'
             Schema::table('training_object_attachments', function (Blueprint $table) {
                 $table->renameColumn('uuid', 'id');
-            });        
+            });
         }
 
     }
