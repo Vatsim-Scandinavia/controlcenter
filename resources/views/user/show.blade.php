@@ -494,7 +494,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.flatpickr').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
                 onChange: function(selectedDates, dateStr, instance) {
-                    if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
+                    if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'? Student will be notified by e-mail.')){
                         window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
                     }
                 },
