@@ -6,6 +6,7 @@
         },
         "no_useless_concat_operator": true,
         "simple_to_complex_string_variable": true,
-        "nullable_type_declaration_for_default_null_value": true
+        "nullable_type_declaration_for_default_null_value": true,
+        "new_with_parentheses": false
     }
 }
