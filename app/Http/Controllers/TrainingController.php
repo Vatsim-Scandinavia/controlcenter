@@ -180,9 +180,9 @@ class TrainingController extends Controller
         $vatsimStats = [];
         $client = new \GuzzleHttp\Client();
         if (App::environment('production')) {
-            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . $user->id . '/rating_times/');
+            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/stats');
         } else {
-            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
         }
 
         if ($res->getStatusCode() == 200) {
