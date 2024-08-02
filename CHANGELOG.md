@@ -1,5 +1,75 @@
 # Changelog
 
+## [6.0.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.3.2...v6.0.0) (2024-08-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** The User API will now return facilities in "facility" array instead of "position" to match the recent rename.
+* Facility list is now removed in favour of the previously released ATC Roster.
+* Removed VATSIM API v1 support for member list. You must now hold a v2 key for this functionality.
+* ENV file fallbacks are deprecated and removed. Please make sure you no longer use APP_OWNER/APP_OWNER_SHORT variables.
+* Deprecated since CC v2.0.3 training policy functions are removed. Should not effect the average user.
+* The legacy API endpoints are now fully deprecated and removed. Users must move over the the new /api/user endpoint instead.
+* waiting times are now defined per area
+* Link position mae to endorsement instead of boolean
+
+### Features
+
+* Add information that shortening solo endorsement sends it email to student ([#965](https://github.com/Vatsim-Scandinavia/controlcenter/issues/965)) ([5a37319](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5a37319f4f38e633867d679b1b48be80071aa276))
+* Carbon v3 support ([5e2cb20](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5e2cb2056aea84560a603b95e8747d2befa8b717))
+* login as functionality for local env ([a47166b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a47166b7622801fa2cef4cce15b1ddbb20f110d6))
+* make atc roster single link in sidebar if only one area exists ([6eb3ee9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6eb3ee947578f74e3c62ec02ae9172eae20b581f)), closes [#906](https://github.com/Vatsim-Scandinavia/controlcenter/issues/906)
+* solo creation validates with divisionApi ([de3e478](https://github.com/Vatsim-Scandinavia/controlcenter/commit/de3e478ef542ff57d3d5c82a48b6a61b93771ab2)), closes [#908](https://github.com/Vatsim-Scandinavia/controlcenter/issues/908)
+* training activity report now includes reports ([b699d68](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b699d68348f7682a9d03b4664cc351e89615346e)), closes [#918](https://github.com/Vatsim-Scandinavia/controlcenter/issues/918)
+* upgrade to Laravel 11 ([#952](https://github.com/Vatsim-Scandinavia/controlcenter/issues/952)) ([f7efdba](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f7efdba7e9930b0887f65fe96bd8e9747cec9568)), closes [#914](https://github.com/Vatsim-Scandinavia/controlcenter/issues/914)
+* waiting times are now defined per area ([06a7d24](https://github.com/Vatsim-Scandinavia/controlcenter/commit/06a7d240ea6dd4a48a8797774dc65a93e30ece66)), closes [#919](https://github.com/Vatsim-Scandinavia/controlcenter/issues/919)
+
+
+### Bug Fixes
+
+* content loss warning when editing reports ([87bbcd8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/87bbcd8677564051718c52a887f6825740a497b5)), closes [#913](https://github.com/Vatsim-Scandinavia/controlcenter/issues/913)
+* double mentors in mentor report ([336492a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/336492a2250cafa478301dab922e467039a92e03))
+* inactivity warnings to observers on network ([5d4297d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5d4297d1f6bd4f0a1ebc519147af0682bf31169c)), closes [#910](https://github.com/Vatsim-Scandinavia/controlcenter/issues/910)
+* Link position mae to endorsement instead of boolean ([5b26a37](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5b26a372fe7d65bcaf538b87eafd444a2d6ecb50)), closes [#885](https://github.com/Vatsim-Scandinavia/controlcenter/issues/885)
+* made tasks quick add only show mods ([4017b73](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4017b736000c2518d2ab4268cfe02d1894b999f5)), closes [#973](https://github.com/Vatsim-Scandinavia/controlcenter/issues/973)
+* mentor examination notification error if no mentors ([1cd3f08](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1cd3f086395e5d866d2c48b2a69fe46756160425))
+* moved application hour counter to VATSIM API v2 ([f515767](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f5157674592dc61f0e107e91dde395a1f54bf357))
+* passport causing log error each day ([ae037f7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ae037f788887e77c67f418bb64c0070e68e84262))
+* placeholder for task recepient ([4405fae](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4405faebf930f2f9d4b244bc69b3aa9c8fbb057d))
+* previous migrations acting up ([d860f20](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d860f2019d6e5e863eb96440ecdb2d69676a846d))
+* set 10mb as max upload size per file ([5b51584](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5b51584012640abf42b51cace700c38f5dadfd97))
+* task quickadd filter only on moderators+admins ([ef40a77](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ef40a77b7cce5743b9662a8ad8f82eaccc91cafe))
+
+
+### Miscellaneous Chores
+
+* **api:** user api facility return name change ([da58f00](https://github.com/Vatsim-Scandinavia/controlcenter/commit/da58f001f3bb248d7cabed2c89c014cf786f1b47))
+* **deps:** update dependency @vitejs/plugin-vue to v5.1.1 ([#966](https://github.com/Vatsim-Scandinavia/controlcenter/issues/966)) ([bd39e73](https://github.com/Vatsim-Scandinavia/controlcenter/commit/bd39e7385fc3ab179adc8e61638af4de4e8d0275))
+* **deps:** update dependency @vitejs/plugin-vue to v5.1.2 ([#976](https://github.com/Vatsim-Scandinavia/controlcenter/issues/976)) ([20285d4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/20285d4e8dff792d101283184e00ecd56240e638))
+* **deps:** update dependency bootstrap-table to v1.23.2 ([#971](https://github.com/Vatsim-Scandinavia/controlcenter/issues/971)) ([49cb75f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/49cb75f40f866bc8c5efb13eb3fe51b4aebb6be8))
+* **deps:** update dependency guzzlehttp/guzzle to v7.9.2 ([#950](https://github.com/Vatsim-Scandinavia/controlcenter/issues/950)) ([503221d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/503221dcf797e532a02ba6c0faed7cc2cddd4754))
+* **deps:** update dependency laravel/framework to v11.19.0 ([#967](https://github.com/Vatsim-Scandinavia/controlcenter/issues/967)) ([88c315e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/88c315e6c609e6440ce3215c417cfd80f2d58dd4))
+* **deps:** update dependency laravel/pint to v1.17.0 ([c77ad87](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c77ad87f404e19f7542643b188c8523e9c5d9ca7))
+* **deps:** update dependency laravel/pint to v1.17.1 ([#968](https://github.com/Vatsim-Scandinavia/controlcenter/issues/968)) ([e99b501](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e99b501b1e60d2de59a648a6efda580c956c84aa))
+* **deps:** update dependency league/commonmark to v2.5.1 ([#963](https://github.com/Vatsim-Scandinavia/controlcenter/issues/963)) ([e28a5bf](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e28a5bfadfa8c474ce284697f00d1fef126037ba))
+* **deps:** update dependency phpunit/phpunit to v11.2.9 ([#974](https://github.com/Vatsim-Scandinavia/controlcenter/issues/974)) ([4100e89](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4100e89486b27adb5bdcc0dff9b44ff80e46776f))
+* **deps:** update dependency phpunit/phpunit to v11.3.0 ([#978](https://github.com/Vatsim-Scandinavia/controlcenter/issues/978)) ([a709d4c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a709d4ce3463fa2e663abbb03e1c8c0cb07686be))
+* **deps:** update dependency vite to v5.3.5 ([#970](https://github.com/Vatsim-Scandinavia/controlcenter/issues/970)) ([0a630b0](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0a630b0ba3ad479c4afca2941dbae68bc9c4267a))
+* **deps:** update dependency vue to v3.4.35 ([#947](https://github.com/Vatsim-Scandinavia/controlcenter/issues/947)) ([19b0fae](https://github.com/Vatsim-Scandinavia/controlcenter/commit/19b0faeff381e461551f97edd5f55ba136dc2892))
+* **deps:** update docker.io/library/mysql docker tag to v9.0.1 ([#964](https://github.com/Vatsim-Scandinavia/controlcenter/issues/964)) ([efd4e56](https://github.com/Vatsim-Scandinavia/controlcenter/commit/efd4e568d486e1d858b93ea0d355117ea1056ccb))
+* **deps:** update docker.io/library/php docker tag to v8.3.10 ([#977](https://github.com/Vatsim-Scandinavia/controlcenter/issues/977)) ([aa8a6aa](https://github.com/Vatsim-Scandinavia/controlcenter/commit/aa8a6aaf06252fba8eb720444a34c03345d7aa09))
+* **deps:** update docker.io/library/redis docker tag to v7.4 ([#975](https://github.com/Vatsim-Scandinavia/controlcenter/issues/975)) ([55f1b2c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/55f1b2cc8ea105fe2cb0253488685023956c531a))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.3.2 ([#972](https://github.com/Vatsim-Scandinavia/controlcenter/issues/972)) ([2244709](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2244709a28258fc3626b5e52920a6d3943d56d56))
+* env owner fallbacks are deprecated ([ddd72db](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ddd72db0ac8a58da7b79e5f3fc016e27a90981ff))
+* facility list is removed ([dff7890](https://github.com/Vatsim-Scandinavia/controlcenter/commit/dff78902101b3b8c3173cf38d4971aa716a783e9))
+* fixed booking and examination tests ([1374672](https://github.com/Vatsim-Scandinavia/controlcenter/commit/137467200949724ae9ab19411d0ce8b4e0343a10))
+* removed deprecated API endpoints ([3240851](https://github.com/Vatsim-Scandinavia/controlcenter/commit/32408514184fc97078ed4f499a1760a8066dcadc))
+* removed deprecated training policy functions ([88e3a9c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/88e3a9cd62b6b49c6285f6e28e87f31eceb99556))
+* removed unused model in training.index ([8449303](https://github.com/Vatsim-Scandinavia/controlcenter/commit/8449303a799758eebbec7c869b8905ebf1f3c697))
+* removed VATSIM API v1 support ([d208de3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d208de36b066ffb8dbc8dea8d9a832f368ff41a0))
+* renamed MASC to FACILITY ([2d770c2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2d770c278042917377d38bc7832df2264252b90d))
+
 ## [5.3.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.3.1...v5.3.2) (2024-07-17)
 
 
