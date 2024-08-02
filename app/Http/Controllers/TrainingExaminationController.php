@@ -177,7 +177,7 @@ class TrainingExaminationController extends Controller
             'position' => 'required|exists:positions,callsign',
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
-            'files.*' => 'sometimes|file|mimes:pdf',
+            'files.*' => 'sometimes|file|mimes:pdf|max:10240',
             'request_task_user_id' => 'nullable|exists:users,id',
             'subject_training_rating_id' => 'nullable|exists:ratings,id',
         ]);

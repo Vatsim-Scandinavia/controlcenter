@@ -182,7 +182,7 @@ class TrainingReportController extends Controller
             'report_date' => 'required|date_format:d/m/Y',
             'position' => 'nullable',
             'draft' => 'sometimes',
-            'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
+            'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg|max:10240',
             'contentimprove' => 'sometimes|nullable|string',
         ]);
     }
