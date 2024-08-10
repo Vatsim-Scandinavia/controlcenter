@@ -23,7 +23,7 @@ class ApiToken
         if ($key == null || ($args == 'edit' && $key->read_only == true)) {
 
             // Exception for open routes
-            if ($request->getRequestUri() == '/api/bookings') {
+            if ($request->getRequestUri() == '/api/bookings' || $request->getRequestUri() == '/api/positions') {
                 $request->attributes->set('unauthenticated', true);
 
                 return $next($request);
