@@ -62,19 +62,19 @@ return [
 
         's3' => [
             'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
+            'key' => env('S3_ACCESS_KEY'),
+            'secret' => env('S3_SECRET_KEY'),
+            'region' => env('S3_REGION'),
+            'bucket' => env('S3_BUCKET'),
+            'url' => env('S3_URL'),
         ],
-        'vultr' => [
+        's3_external' => [
             'driver' => 's3',
-            'key' => env('VULTR_ACCESS_KEY'),
-            'secret' => env('VULTR_SECRET_KEY'),
-            'region' => env('VULTR_REGION'),
-            'bucket' => env('VULTR_BUCKET'),
-            'endpoint' => env('VULTR_ENDPOINT'),
+            'key' => env('S3_ACCESS_KEY'),
+            'secret' => env('S3_SECRET_KEY'),
+            'region' => env('S3_REGION'),
+            'bucket' => env('S3_BUCKET'),
+            'endpoint' => env('S3_ENDPOINT'),
         ],
 
     ],
