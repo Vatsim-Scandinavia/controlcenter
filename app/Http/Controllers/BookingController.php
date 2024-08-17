@@ -125,13 +125,14 @@ class BookingController extends Controller
 
         $user = Auth::user();
         $booking = new Booking();
+        $position = Position::firstWhere('callsign', $data['position']);
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
+        $booking->position_id = $position->id;
         $booking->name = $user->name;
         $booking->user_id = $user->id;
 
@@ -166,7 +167,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -384,6 +385,7 @@ class BookingController extends Controller
 
         $user = Auth::user();
         $booking = Booking::findOrFail($request->id);
+        $position = Position::firstWhere('callsign', $data['position']);
         $this->authorize('update', $booking);
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
@@ -391,7 +393,7 @@ class BookingController extends Controller
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
+        $booking->position_id = $position->id;
 
         $this->authorize('position', $booking);
 
@@ -427,7 +429,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $bookingUser->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $bookingUser->rating) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {

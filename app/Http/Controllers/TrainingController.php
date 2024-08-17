@@ -78,7 +78,7 @@ class TrainingController extends Controller
     {
         $this->authorize('viewActiveRequests', Training::class);
 
-        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'reports', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
+        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
@@ -172,6 +172,7 @@ class TrainingController extends Controller
             // Inject the data into payload
             $payload[$area->id]['name'] = $area->name;
             $payload[$area->id]['data'] = $availableRatings;
+            $payload[$area->id]['waitingTime'] = $area->waiting_time ?? 'unknown';
             $payload[$area->id]['atcActive'] = ($user->atcActivity->firstWhere('area_id', $area->id) && $user->atcActivity->firstWhere('area_id', $area->id)->atc_active) ? true : false;
         }
 
@@ -179,9 +180,9 @@ class TrainingController extends Controller
         $vatsimStats = [];
         $client = new \GuzzleHttp\Client();
         if (App::environment('production')) {
-            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . $user->id . '/rating_times/');
+            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/stats');
         } else {
-            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
         }
 
         if ($res->getStatusCode() == 200) {
@@ -542,7 +543,7 @@ class TrainingController extends Controller
         }
 
         // Update paused time for queue estimation
-        if (isset($attributes['paused_at'])) {
+        if (isset($attributes['paused_at']) && (int) $training->status >= TrainingStatus::IN_QUEUE->value) {
             if (! isset($training->paused_at)) {
                 $attributes['paused_at'] = Carbon::now();
                 TrainingActivityController::create($training->id, 'PAUSE', 1, null, Auth::user()->id);
@@ -552,7 +553,7 @@ class TrainingController extends Controller
         } else {
             // If paused is unchecked but training is paused, sum up the length and unpause.
             if (isset($training->paused_at)) {
-                $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now());
+                $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
                 $training->update(['paused_length' => $training->paused_length]);
                 TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
             }
@@ -589,7 +590,7 @@ class TrainingController extends Controller
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
                             // Revoke the old endorsement if active
-                            $oldEndorsement = $training->user->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false);
+                            $oldEndorsement = $training->user->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false);
                             foreach ($oldEndorsement as $oe) {
                                 foreach ($oe->ratings as $oer) {
                                     if ($oer->id == $rating->id) {
@@ -610,7 +611,7 @@ class TrainingController extends Controller
                             // Grant new endorsement
                             $endorsement = new \App\Models\Endorsement();
                             $endorsement->user_id = $training->user->id;
-                            $endorsement->type = 'MASC';
+                            $endorsement->type = 'FACILITY';
                             $endorsement->valid_from = now()->format('Y-m-d H:i:s');
                             $endorsement->valid_to = null;
                             $endorsement->issued_by = null;
@@ -762,7 +763,7 @@ class TrainingController extends Controller
         })->whereNull('vatsim_rating')->get()->pluck('name');
 
         // Ratings which user has today and needs to be refresh
-        $userRatings = User::find($userId)->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
+        $userRatings = User::find($userId)->endorsements->where('type', 'FACILITY')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
             return $endorsement->ratings->first()->name;
         });
 

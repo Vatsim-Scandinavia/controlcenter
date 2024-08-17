@@ -60,7 +60,7 @@
 
                                     @foreach($ratings as $r)
                                         @php $found = false; @endphp
-                                        @foreach($u->endorsements->where('type', 'MASC')->where('expired', false)->where('revoked', false) as $e)
+                                        @foreach($u->endorsements->where('type', 'FACILITY')->where('expired', false)->where('revoked', false) as $e)
                                             @if($e->ratings->first()->id == $r->id)
                                                 <td class="text-center bg-success text-white">
                                                     <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>

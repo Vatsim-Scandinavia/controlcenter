@@ -9,6 +9,8 @@ use App\Models\ManagementReport;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingActivity;
+use App\Models\TrainingExamination;
+use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -82,6 +84,7 @@ class ReportController extends Controller
     {
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
 
+        // Fetch TrainingActivity
         if ($filterArea) {
             $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->whereHas('training', function (Builder $q) use ($filterArea) {
                 $q->where('area_id', $filterArea);
@@ -90,12 +93,21 @@ class ReportController extends Controller
             $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->limit(100)->get();
         }
 
+        // Fetch TrainingReport and ExaminationReport from last activity to now
+        $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->get();
+        $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->get();
+
+        $entries = $trainingReports->merge($examinationReports);
+        $entries = $entries->merge($activities);
+        $entries = $entries->sortByDesc('created_at');
+
+        // Do the rest
         $statuses = TrainingController::$statuses;
 
         ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
         $areas = Area::all();
 
-        return view('reports.activities', compact('activities', 'statuses', 'filterName', 'areas'));
+        return view('reports.activities', compact('entries', 'statuses', 'filterName', 'areas'));
     }
 
     /**
@@ -117,7 +129,7 @@ class ReportController extends Controller
             })->get();
         }
 
-        $mentors = $mentors->sortBy('name');
+        $mentors = $mentors->sortBy('name')->unique();
         $statuses = TrainingController::$statuses;
 
         return view('reports.mentors', compact('mentors', 'statuses'));

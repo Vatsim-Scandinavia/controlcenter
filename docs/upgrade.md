@@ -16,6 +16,15 @@ php artisan migrate
 php artisan optimize:clear
 ```
 
+## Upgrading to 6.0.0
+
+This release contains breaking changes and requires you to backup your data before upgrading.
+
+- To fix the incorrect setting of training tags on bookings, the `positions` has now a `required_facility_rating_id` column which replaces previous boolean `mae` column.
+    - Note down your old mae values before you run the migration to avoid data loss.
+    - For normal GCAP Rated positions (S1-C1) you don't need to do anything.
+    - For positions that require a facility endorsement (Tier 1, Tier 2 and Special Center), you need to fill the id of the row in your `ratings` table that corresponds to the facility rating.
+
 ## Upgrading to v5.1.0
 
 Please follow these steps if you wish to use the new VATEUD Core integration. May be skipped otherwise.

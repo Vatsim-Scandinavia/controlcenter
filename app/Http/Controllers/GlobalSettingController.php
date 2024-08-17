@@ -42,7 +42,6 @@ class GlobalSettingController extends Controller
             'trainingSOP' => 'required|url',
             'trainingExamTemplate' => '',
             'trainingSubDivisions' => 'required',
-            'trainingQueue' => 'required|min:10|max:250',
             'trainingInterval' => 'required|integer|min:1',
             'trainingSoloRequirement' => 'required|max:200',
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
@@ -84,7 +83,6 @@ class GlobalSettingController extends Controller
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingExamTemplate', $trainingExamTemplate);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
-        Setting::set('trainingQueue', $data['trainingQueue']);
         Setting::set('trainingInterval', $data['trainingInterval']);
         Setting::set('trainingSoloRequirement', $data['trainingSoloRequirement']);
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);

@@ -42,16 +42,6 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can view the access table.
-     *
-     * @return bool
-     */
-    public function viewReports(User $user, User $model)
-    {
-        return $user->is($model) || $user->isModeratorOrAbove();
-    }
-
-    /**
      * Determine whether the user can update the model.
      *
      * @return bool

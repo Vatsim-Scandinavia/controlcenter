@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TrainingObjectAttachmentTest extends TestCase
@@ -51,7 +52,7 @@ class TrainingObjectAttachmentTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_upload_an_attachment()
     {
         $this->withoutExceptionHandling();
@@ -66,7 +67,7 @@ class TrainingObjectAttachmentTest extends TestCase
         Storage::disk('test')->assertExists($attachments->first()->file->full_path);
     }
 
-    /** @test */
+    #[Test]
     public function student_cant_upload_an_attachment()
     {
         $student = $this->user;
@@ -80,7 +81,7 @@ class TrainingObjectAttachmentTest extends TestCase
         $this->assertNull(File::find($id));
     }
 
-    /** @test */
+    #[Test]
     public function mentor_can_see_attachments()
     {
         $mentor = $this->report->author;
@@ -94,7 +95,7 @@ class TrainingObjectAttachmentTest extends TestCase
             ->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function student_can_see_not_hidden_attachment()
     {
         $student = $this->report->training->user;
@@ -112,24 +113,7 @@ class TrainingObjectAttachmentTest extends TestCase
             ->assertStatus(200);
     }
 
-    // TODO: Re-enable this test once hidden / not hidden has been fully implemented
-
-    //    /** @test */
-    //    public function student_cant_access_hidden_attachment()
-    //    {
-    //        $student = $this->report->training->user;
-    //        $file = UploadedFile::fake()->image($this->faker->word);
-    //
-    //        $id = $this->actingAs($this->report->user)
-    //            ->postJson(route('training.report.attachment.store', ['report' => $this->report, 'hidden' => true]), ['file' => $file])
-    //            ->decodeResponseJson('id')[0];
-    //
-    //        $this->actingAs($student)->followingRedirects()
-    //            ->get(route('training.report.attachment.show', ['attachment' => $id]))
-    //            ->assertStatus(403);
-    //    }
-
-    /** @test */
+    #[Test]
     public function mentor_can_access_hidden_attachment()
     {
         $mentor = $this->report->author;

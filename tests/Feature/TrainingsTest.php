@@ -6,13 +6,14 @@ use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    //    /** @test */
+    //    #[Test]
     //    public function user_can_create_a_training_request()
     //    {
     //        $this->withoutExceptionHandling();
@@ -33,7 +34,7 @@ class TrainingsTest extends TestCase
     //        $this->assertDatabaseHas('trainings', ['motivation' => $attributes['motivation']]);
     //    }
 
-    /** @test */
+    #[Test]
     public function guest_cant_create_training_request()
     {
         $attributes = [
@@ -49,7 +50,7 @@ class TrainingsTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    /** @test */
+    #[Test]
     public function moderator_can_update_training_request()
     {
         $moderator = User::factory()->create();
@@ -70,7 +71,7 @@ class TrainingsTest extends TestCase
         $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => $attributes['status']]);
     }
 
-    /** @test */
+    #[Test]
     public function a_regular_user_cant_update_a_training()
     {
         $training = Training::factory()->create([
@@ -86,7 +87,7 @@ class TrainingsTest extends TestCase
             ->assertStatus(403);
     }
 
-    //    /** @test */
+    //#[Test]
     public function moderator_can_update_the_trainings_status()
     {
         $training = Training::factory()->create([
@@ -131,7 +132,7 @@ class TrainingsTest extends TestCase
         ]);
     }
 
-    //    /** @test */
+    //    #[Test]
     //    public function a_mentor_can_be_added()
     //    {
     //        $training = factory(\App\Models\Training::class)->create();
@@ -147,7 +148,7 @@ class TrainingsTest extends TestCase
     //        $this->assertTrue($training->mentors->contains($mentor));
     //    }
 
-    //    /** @test */
+    //    #[Test]
     //    public function a_training_can_have_many_mentors_added()
     //    {
     //        $training = factory(\App\Models\Training::class)->create();
@@ -171,7 +172,7 @@ class TrainingsTest extends TestCase
     //
     //    }
 
-    /** @test */
+    #[Test]
     public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_area()
     {
         $training = Training::factory()->create([

@@ -24,7 +24,7 @@
                         {{ $user->id }}
                         <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
                         <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" title="VATSIM Stats" class="link-btn me-1"><i class="fas fa-chart-simple"></i></button></a>
-                        @if($user->division == 'EUD')
+                        @if($user->division == 'EUD' && Auth::user()->isModeratorOrAbove())
                             <a href="https://core.vateud.net/manage/controller/{{ $user->id }}/view" target="_blank" title="VATEUD Core Profile" class="link-btn"><i class="fa-solid fa-earth-europe"></i></button></a>
                         @endif
                     </dd>
@@ -295,7 +295,7 @@
                                     <i class="fas fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Active"></i>
                                 @endif
 
-                                {{ ($endorsement->type == "MASC") ? 'Facility' : ucfirst(strtolower($endorsement->type)) }} Endorsement
+                                {{ ucfirst(strtolower($endorsement->type)) }} Endorsement
 
                                 @can('delete', [\App\Models\Endorsement::class, $endorsement])
                                     <a href="{{ route('endorsements.delete', $endorsement->id) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
@@ -314,7 +314,7 @@
                             </div>
                             <div class="card-body">
                                 <table class="table-card">
-                                    @if($endorsement->type == "MASC")
+                                    @if($endorsement->type == "FACILITY")
                                         <tr class="spacing">
                                             <th>Position</th>
                                             <td>{{ $endorsement->ratings->first()->endorsement_type }} {{ $endorsement->ratings->first()->name }}</td>
@@ -494,7 +494,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.flatpickr').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "Y-m-d", locale: {firstDayOfWeek: 1 }, wrap: true, altInputClass: "hide",
                 onChange: function(selectedDates, dateStr, instance) {
-                    if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'?')){
+                    if(confirm('Are you sure you want to shorten this endorsement expire date to '+dateStr+'? Student will be notified by e-mail.')){
                         window.location.replace("/endorsements/shorten/"+instance.input.dataset.endorsementId+"/"+dateStr);
                     }
                 },

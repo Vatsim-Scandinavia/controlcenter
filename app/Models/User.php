@@ -359,13 +359,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Return if the user has specified MASC endorsement
+     * Return if the user has specified FACILITY endorsement
      *
      * @return bool
      */
     public function hasEndorsementRating(Rating $rating)
     {
-        foreach ($this->endorsements->where('type', 'MASC')->where('revoked', false)->where('expired', false) as $e) {
+        foreach ($this->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false) as $e) {
             foreach ($e->ratings as $r) {
                 if ($r->id == $rating->id) {
                     return true;
@@ -397,7 +397,7 @@ class User extends Authenticatable
     {
         $training = $this->trainings->where('status', -1)->where('closed_at', '>', Carbon::now()->subDays(7))->first();
 
-        if ($training == null || $training->isMaeTraining() || $training->type != 1) {
+        if ($training == null || $training->isFacilityTraining() || $training->type != 1) {
             return false;
         }
 

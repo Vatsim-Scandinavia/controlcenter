@@ -4,18 +4,19 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FrontpageTest extends TestCase
 {
-    /** @test **/
+    #[Test]
     public function user_can_load_front_page()
     {
         $response = $this->get('/');
         $response->assertStatus(200);
     }
 
-    /** @test **/
+    #[Test]
     public function user_gets_redirect_if_logged_in()
     {
         $user = User::factory()->make();
@@ -25,7 +26,7 @@ class FrontpageTest extends TestCase
         $response->assertRedirect('/dashboard');
     }
 
-    /** @test */
+    #[Test]
     public function user_cant_logout_if_not_logged_in()
     {
         $response = $this->get('/logout');

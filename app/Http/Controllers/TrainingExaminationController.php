@@ -85,9 +85,13 @@ class TrainingExaminationController extends Controller
         $attachmentId = TrainingObjectAttachmentController::saveAttachments($request, $examination);
         $attachmentUrl = (isset($attachmentId[0])) ? route('training.object.attachment.show', ['attachment' => $attachmentId[0]]) : null;
 
-        // Notify
+        // Notify the training user
         $training->user->notify(new TrainingExamNotification($training, $examination));
-        $training->user->notify(new MentorExaminationNotification($training->mentors, $training->user, $examination, $attachmentUrl, 'View examination report'));
+
+        // Notify mentors if there are any
+        if ($training->mentors->count() >= 1) {
+            $training->user->notify(new MentorExaminationNotification($training->mentors, $training->user, $examination, $attachmentUrl, 'View examination report'));
+        }
 
         // Create the upgrade task for the staff
         if (isset($data['request_task_user_id'])) {
@@ -173,7 +177,7 @@ class TrainingExaminationController extends Controller
             'position' => 'required|exists:positions,callsign',
             'result' => ['required', Rule::in(['FAILED', 'PASSED', 'INCOMPLETE', 'POSTPONED'])],
             'examination_date' => 'sometimes|date_format:d/m/Y',
-            'files.*' => 'sometimes|file|mimes:pdf',
+            'files.*' => 'sometimes|file|mimes:pdf|max:10240',
             'request_task_user_id' => 'nullable|exists:users,id',
             'subject_training_rating_id' => 'nullable|exists:ratings,id',
         ]);

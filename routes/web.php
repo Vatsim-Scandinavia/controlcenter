@@ -61,7 +61,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     // Endorsements
     Route::controller(EndorsementController::class)->group(function () {
-        Route::get('/endorsements/mascs', 'indexMascs')->name('endorsements.mascs');
         Route::get('/endorsements/solos', 'indexSolos')->name('endorsements.solos');
         Route::get('/endorsements/examiners', 'indexExaminers')->name('endorsements.examiners');
         Route::get('/endorsements/visiting', 'indexVisitors')->name('endorsements.visiting');
@@ -179,7 +178,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/booking/bulk', 'storeBulk')->name('booking.bulk.store');
         Route::get('/booking/{id}/delete', 'delete')->name('booking.delete');
         Route::get('/booking/{id}', 'show');
-        Route::post('/booking/store', 'store');
+        Route::post('/booking/store', 'store')->name('booking.store');
         Route::post('/booking/update', 'update');
     });
 

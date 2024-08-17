@@ -6,8 +6,6 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\Training;
-use App\Models\TrainingExamination;
-use App\Models\TrainingReport;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -140,42 +138,6 @@ class TrainingPolicy
     public function edit(User $user, Training $training)
     {
         return $user->isModeratorOrAbove($training->area);
-    }
-
-    /**
-     * Determines whether the user can access the training reports associated with the training
-     *
-     * @return bool
-     *
-     * @deprecated Since v2.0.3. Please use Training Report policy directly.
-     */
-    public function viewReports(User $user, Training $training)
-    {
-        return $user->can('viewAny', [TrainingReport::class, $training]);
-    }
-
-    /**
-     * Determines whether the user can create a training report for a given training
-     *
-     * @return bool
-     *
-     * @deprecated Since v2.0.3. Please use Training Report policy directly.
-     */
-    public function createReport(User $user, Training $training)
-    {
-        return $user->can('create', [TrainingReport::class, $training]);
-    }
-
-    /**
-     * Determine whether the user can create a training examination for a given training
-     *
-     * @return bool
-     *
-     * @deprecated Since v2.0.3. Please use Training Examination policy directly.
-     */
-    public function createExamination(User $user, Training $training)
-    {
-        return $user->can('create', [TrainingExamination::class, $training]);
     }
 
     public function viewActiveRequests(User $user)

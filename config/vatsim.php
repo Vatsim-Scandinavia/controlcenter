@@ -4,18 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | VATSIM API
-    |
-    | This is the configuration for the VATSIM API integration.
-    | This is used to configure the secrets.
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'api_token' => env('VATSIM_API_TOKEN', null),
-
-    /*
-    |--------------------------------------------------------------------------
     | VATSIM Core API
     |
     | This is the configuration for the VATSIM Core API integration.

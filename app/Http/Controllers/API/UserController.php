@@ -105,7 +105,7 @@ class UserController extends Controller
         // Endorsements
         if ($paramIncludeEndorsements) {
             foreach ($returnUsers as $user) {
-                $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'MASC', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
+                $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
             }
         }
 
@@ -182,7 +182,7 @@ class UserController extends Controller
             'visiting' => [],
             'examiner' => [],
             'solo' => [],
-            'position' => [],
+            'facility' => [],
         ];
 
         // Remembner adding the related rating/area to the query
@@ -198,8 +198,8 @@ class UserController extends Controller
                 case 'SOLO':
                     array_push($returnData['solo'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
-                case 'MASC':
-                    array_push($returnData['position'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
+                case 'FACILITY':
+                    array_push($returnData['facility'], $this->mapEndorsementDetails($endorsement, $endorsement->type));
                     break;
             }
 
@@ -208,7 +208,7 @@ class UserController extends Controller
         empty($returnData['visiting']) ? $returnData['visiting'] = null : null;
         empty($returnData['examiner']) ? $returnData['examiner'] = null : null;
         empty($returnData['solo']) ? $returnData['solo'] = null : null;
-        empty($returnData['position']) ? $returnData['position'] = null : null;
+        empty($returnData['facility']) ? $returnData['facility'] = null : null;
 
         return $returnData;
 
@@ -240,7 +240,7 @@ class UserController extends Controller
             case 'SOLO':
                 $returnData['positions'] = $endorsement->positions->pluck('callsign');
                 break;
-            case 'MASC':
+            case 'FACILITY':
                 $returnData['rating'] = $endorsement->ratings->first()->name;
                 break;
         }

@@ -29,7 +29,7 @@
                                 name="assignee_user_id"
                                 list="{{ Str::camel($requestType->getName()) }}UserList"
                                 autocomplete="off"
-                                placeholder=""
+                                placeholder="Write name here or quick add below"
                                 required
                             >
                             <datalist id="{{ Str::camel($requestType->getName()) }}UserList">

@@ -58,7 +58,7 @@ class UpdateQueueCalculation extends Command
                             $trainingCreated = $training->created_at;
 
                             // Calculate the difference in seconds with Carbon, then subtract the paused time if any.
-                            $waitingTime = $trainingCreated->diffInSeconds(Carbon::now());
+                            $waitingTime = $trainingCreated->diffInSeconds(Carbon::now(), true);
                             $waitingTime = $waitingTime - $training->paused_length;
 
                             // Inject this specific training's record into the average calculation

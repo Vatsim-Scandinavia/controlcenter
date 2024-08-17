@@ -72,7 +72,8 @@ class CheckOnlineControllers extends Command
 
             foreach ($vatsimData as $d) {
 
-                if (preg_match($areasRegex, $d['callsign'])) {
+                // If the callsign matches our prefxies, but also double check it's not an observer by verifying the facility
+                if (preg_match($areasRegex, $d['callsign']) && $d['facility'] != 0) {
 
                     // Lets check this user
                     $this->info('Checking user ' . $d['cid']);

@@ -57,12 +57,14 @@ class BookingController extends Controller
 
         $user = User::findorFail($request['cid']);
         $booking = new Booking();
+        $position = Position::firstWhere('callsign', $data['position']);
+
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
+        $booking->position_id = $position->id;
         $booking->name = $user->name;
         $booking->user_id = $user->id;
         $booking->source = strtoupper($data['source']);
@@ -104,7 +106,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -221,13 +223,14 @@ class BookingController extends Controller
         ]);
 
         $user = User::findorFail($data['cid']);
+        $position = Position::firstWhere('callsign', $data['position']);
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
 
         $booking->callsign = strtoupper($data['position']);
-        $booking->position_id = Position::firstWhere('callsign', $data['position'])->id;
+        $booking->position_id = $position->id;
 
         if ($booking->time_start === $booking->time_end) {
             return response()->json([
@@ -268,7 +271,7 @@ class BookingController extends Controller
         if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($booking->position->mae && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) && $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)->isMaeTraining() && $booking->position->rating == $user->rating) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {

@@ -28,7 +28,7 @@ return [
     |
     */
     /* x-release-please-start-version */
-    'version' => '5.3.1',
+    'version' => '5.3.2',
     /* x-release-please-end */
 
     /*
@@ -42,8 +42,7 @@ return [
     |
     */
 
-    'owner_name' => env('APP_OWNER_NAME', env('APP_OWNER', 'Subdivision Name')),
-    // APP_OWNER is deprecated, will be removed in next major version
+    'owner_name' => env('APP_OWNER_NAME', 'Subdivision name'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,8 +53,7 @@ return [
     |
     */
 
-    'owner_name_short' => env('APP_OWNER_NAME_SHORT', env('APP_OWNER_SHORT', 'SCA')),
-    // APP_OWNER_SHORT is deprecated, will be removed in next major version
+    'owner_name_short' => env('APP_OWNER_NAME_SHORT', 'UNKNOWN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +65,7 @@ return [
     |
     */
 
-    'owner_code' => env('APP_OWNER_CODE', env('APP_OWNER_SHORT', 'SCA')),
+    'owner_code' => env('APP_OWNER_CODE', 'UNK'),
 
     /*
     |--------------------------------------------------------------------------

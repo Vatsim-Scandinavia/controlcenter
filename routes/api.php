@@ -26,13 +26,7 @@ Route::group(['middleware' => ['api-token:edit']], function () {
 Route::group(['middleware' => ['api-token']], function () {
     Route::get('/bookings', [App\Http\Controllers\API\BookingController::class, 'index'])->name('api.booking.index');
     Route::get('/bookings/{booking}', [App\Http\Controllers\API\BookingController::class, 'show'])->name('api.booking.show');
-
-    Route::get('/roles', [App\Http\Controllers\API\RolesController::class, 'index'])->name('api.roles.index');
-
-    Route::get('/endorsements/visiting', [App\Http\Controllers\API\VisitingController::class, 'index'])->name('api.endorsement.visiting.index');
-    Route::get('/endorsements/examiner', [App\Http\Controllers\API\ExaminerController::class, 'index'])->name('api.endorsement.examiner.index');
-    Route::get('/endorsements/training/solo', [App\Http\Controllers\API\TrainingController::class, 'indexSolo'])->name('api.endorsement.training.solo.index');
-    Route::get('/endorsements/masc', [App\Http\Controllers\API\RatingController::class, 'index'])->name('api.endorsement.rating.index');
+    Route::get('/positions', [App\Http\Controllers\API\PositionController::class, 'index'])->name('api.positions.index');
 
     Route::get('/users', [App\Http\Controllers\API\UserController::class, 'index'])->name('api.users.index');
 });
