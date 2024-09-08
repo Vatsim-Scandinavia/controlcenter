@@ -86,7 +86,7 @@
     </div>
     
     <!-- ATC Hours card -->
-    <div class="col-xl-3 col-md-6 mb-4 d-none d-xl-block d-lg-block d-md-block">
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card {{ ($atcHours < Setting::get('atcActivityRequirement', 10)) ? 'border-left-danger' : 'border-left-success' }} shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
@@ -105,7 +105,7 @@
     
     
     <!-- Last training card -->
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4 d-none d-xl-block d-lg-block d-md-block">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
