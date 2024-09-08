@@ -1226,6 +1226,30 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get-apipositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET /api/positions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /api/positions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-return" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example return
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#post-apibookingscreate" class="md-nav__link">
     <span class="md-ellipsis">
       POST /api/bookings/create
@@ -1562,6 +1586,30 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get-apipositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET /api/positions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /api/positions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-return" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example return
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#post-apibookingscreate" class="md-nav__link">
     <span class="md-ellipsis">
       POST /api/bookings/create
@@ -1833,6 +1881,38 @@
 <span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-13T20:23:36.000000Z&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-02-13T20:23:36.000000Z&quot;</span>
 <span class="p">}</span>
+</code></pre></div>
+<h3 id="get-apipositions">GET <code>/api/positions</code><a class="headerlink" href="#get-apipositions" title="Permanent link">&para;</a></h3>
+<p>Return an array of positions. No authentication required.</p>
+<h4 id="example-return">Example return<a class="headerlink" href="#example-return" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code>{
+  &quot;data&quot;: [
+    {
+      &quot;callsign&quot;: &quot;EKAH_APP&quot;,
+      &quot;name&quot;: &quot;Aarhus Approach&quot;,
+      &quot;frequency&quot;: &quot;119.280&quot;
+    },
+    {
+      &quot;callsign&quot;: &quot;EKAH_TWR&quot;,
+      &quot;name&quot;: &quot;Aarhus Tower&quot;,
+      &quot;frequency&quot;: &quot;118.530&quot;
+    },
+    {
+      &quot;callsign&quot;: &quot;EKBI_APP&quot;,
+      &quot;name&quot;: &quot;Billund Approach&quot;,
+      &quot;frequency&quot;: &quot;127.580&quot;
+    },
+    {
+      &quot;callsign&quot;: &quot;EKBI_TWR&quot;,
+      &quot;name&quot;: &quot;Billund Tower&quot;,
+      &quot;frequency&quot;: &quot;119.005&quot;
+    },
+    {
+      &quot;callsign&quot;: &quot;EKBI_F_APP&quot;,
+      &quot;name&quot;: &quot;Billund Arrival&quot;,
+      &quot;frequency&quot;: &quot;119.250&quot;
+    }
+}
 </code></pre></div>
 <h3 id="post-apibookingscreate">POST <code>/api/bookings/create</code><a class="headerlink" href="#post-apibookingscreate" title="Permanent link">&para;</a></h3>
 <p>Create a booking.</p>
