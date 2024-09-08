@@ -172,6 +172,41 @@ Returns an array of bookings.
 }
 ```
 
+### GET `/api/positions`
+Return an array of positions. No authentication required.
+
+#### Example return
+```
+{
+  "data": [
+    {
+      "callsign": "EKAH_APP",
+      "name": "Aarhus Approach",
+      "frequency": "119.280"
+    },
+    {
+      "callsign": "EKAH_TWR",
+      "name": "Aarhus Tower",
+      "frequency": "118.530"
+    },
+    {
+      "callsign": "EKBI_APP",
+      "name": "Billund Approach",
+      "frequency": "127.580"
+    },
+    {
+      "callsign": "EKBI_TWR",
+      "name": "Billund Tower",
+      "frequency": "119.005"
+    },
+    {
+      "callsign": "EKBI_F_APP",
+      "name": "Billund Arrival",
+      "frequency": "119.250"
+    }
+}
+```
+
 ### POST `/api/bookings/create`
 Create a booking.
 
