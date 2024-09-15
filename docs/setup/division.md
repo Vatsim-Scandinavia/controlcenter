@@ -7,10 +7,10 @@ Here you find the diffrerent data tables which need to be edited to suit your su
 
 In `Areas` table, create one or more areas. This is something student select between when applying for trianing.
 
-| id | name | contact | template_newreq | template_newmentor | template_pretraining | feedback_url |
+| id | name | contact | waiting time | template_newreq | template_newmentor | template_pretraining | feedback_url |
 | ------- | --- | --- | --- |  --- |  --- | --- |
-| x | Name | Contact e-mail that will be displayed to students | Can be set in Notification Editor, set NULL | Same as last | Same as last | URL to feedback form shown in training completed email |
-| 1 | Norway | training-norway@vatsim-scandinavia.org | NULL | NULL | NULL | https://forms.gle/your-feedback-form |
+| x | Name | Contact e-mail that will be displayed to students | String that completes the sentence "Expected waiting time is ..."" | Can be set in Notification Editor, set NULL | Same as last | Same as last | URL to feedback form shown in training completed email |
+| 1 | Norway | training-norway@vatsim-scandinavia.org | "6-12 months" | NULL | NULL | NULL | https://forms.gle/your-feedback-form |
 
 ### Ratings
 
