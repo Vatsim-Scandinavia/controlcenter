@@ -89,19 +89,32 @@ class ReportController extends Controller
             $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->whereHas('training', function (Builder $q) use ($filterArea) {
                 $q->where('area_id', $filterArea);
             })->limit(100)->get();
+
+            // Fetch TrainingReport and ExaminationReport if activities exist
+            if($activities->count() > 0) {
+                $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->whereHas('training', function (Builder $q) use ($filterArea) {
+                    $q->where('area_id', $filterArea);
+                })->get();
+
+                $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->whereHas('training', function (Builder $q) use ($filterArea) {
+                    $q->where('area_id', $filterArea);
+                })->get();
+            }
         } else {
             $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->limit(100)->get();
+            $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->get();
+            $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->get();
         }
 
-        // Fetch TrainingReport and ExaminationReport from last activity to now
-        $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->get();
-        $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->get();
-
-        $entries = $trainingReports->merge($examinationReports);
-        $entries = $entries->merge($activities);
-        $entries = $entries->sortByDesc('created_at');
+        if(isset($trainingReports) && isset($examinationReports)) {
+            $entries = $trainingReports->merge($examinationReports);
+            $entries = $entries->merge($activities);
+        } else {
+            $entries = $activities;
+        }
 
         // Do the rest
+        $entries = $entries->sortByDesc('created_at');
         $statuses = TrainingController::$statuses;
 
         ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
