@@ -179,22 +179,34 @@ class TrainingController extends Controller
         // Fetch user's ATC hours
         $vatsimStats = [];
         $client = new \GuzzleHttp\Client();
-        if (App::environment('production')) {
-            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/stats');
-        } else {
-            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
-        }
 
-        if ($res->getStatusCode() == 200) {
-            $vatsimStats = json_decode($res->getBody(), true);
-
-            if (isset($vatsimStats[strtolower($user->rating_short)])) {
-                $vatsimStats = $vatsimStats[strtolower($user->rating_short)];
+        try{
+            if (App::environment('production')) {
+                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/stats');
             } else {
-                $vatsimStats = 0;
+                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/1830299/stats');
             }
-        } else {
-            return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+
+            // Process the data if we got a 200 OK
+            if ($res->getStatusCode() == 200) {
+                $vatsimStats = json_decode($res->getBody(), true);
+
+                if (isset($vatsimStats[strtolower($user->rating_short)])) {
+                    $vatsimStats = $vatsimStats[strtolower($user->rating_short)];
+                } else {
+                    $vatsimStats = 0;
+                }
+            } else {
+                return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+
+            // If the resource returns 404 and user is S1, it just means the user has no hours yet and can apply for training
+            if ($e->getResponse()->getStatusCode() == 404 && $user->rating == VatsimRating::OBS->value) {
+                $vatsimStats = 0;
+            } else {
+                return redirect()->back()->withErrors('An error occurred while fetching data from VATSIM. Please try again later.');
+            }
         }
 
         // Is activity in area required to apply for training?
