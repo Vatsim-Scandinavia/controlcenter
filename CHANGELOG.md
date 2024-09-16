@@ -1,5 +1,19 @@
 # Changelog
 
+## [6.0.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.0...v6.0.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* server errors for OBS trying to apply ([07ce9f5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/07ce9f548f607a6cb0c543276f94e16049eca754)), closes [#1012](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1012)
+* training reports in activity not filtering on area ([cb7ed6c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cb7ed6cb7f8337bd27ec6febdd1ca2b9f1535283)), closes [#1011](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1011)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency vue to v3.5.6 ([#1013](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1013)) ([e403052](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e403052bfe1c6e3e14bb48a8765bace2068b1638))
+* **docs:** added waiting_time to docs ([44b0bee](https://github.com/Vatsim-Scandinavia/controlcenter/commit/44b0bee34f875a5d3dfa18066e47d635bf9531d5))
+
 ## [6.0.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v5.3.2...v6.0.0) (2024-09-15)
 
 
