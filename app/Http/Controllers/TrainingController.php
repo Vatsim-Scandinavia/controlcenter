@@ -180,7 +180,7 @@ class TrainingController extends Controller
         $vatsimStats = [];
         $client = new \GuzzleHttp\Client();
 
-        try{
+        try {
             if (App::environment('production')) {
                 $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/stats');
             } else {

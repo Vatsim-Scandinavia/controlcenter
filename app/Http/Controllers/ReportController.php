@@ -91,7 +91,7 @@ class ReportController extends Controller
             })->limit(100)->get();
 
             // Fetch TrainingReport and ExaminationReport if activities exist
-            if($activities->count() > 0) {
+            if ($activities->count() > 0) {
                 $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->whereHas('training', function (Builder $q) use ($filterArea) {
                     $q->where('area_id', $filterArea);
                 })->get();
@@ -106,7 +106,7 @@ class ReportController extends Controller
             $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->get();
         }
 
-        if(isset($trainingReports) && isset($examinationReports)) {
+        if (isset($trainingReports) && isset($examinationReports)) {
             $entries = $trainingReports->merge($examinationReports);
             $entries = $entries->merge($activities);
         } else {
