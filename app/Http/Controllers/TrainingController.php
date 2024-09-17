@@ -184,7 +184,7 @@ class TrainingController extends Controller
             if (App::environment('production')) {
                 $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/stats');
             } else {
-                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/1830299/stats');
+                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
             }
 
             // Process the data if we got a 200 OK
@@ -278,22 +278,34 @@ class TrainingController extends Controller
             // Check if user fulfill rating hour requirement
             $vatsimStats = [];
             $client = new \GuzzleHttp\Client();
-            if (App::environment('production')) {
-                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . \Auth::id() . '/stats');
-            } else {
-                $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
-            }
 
-            if ($res->getStatusCode() == 200) {
-                $vatsimStats = json_decode($res->getBody(), true);
-
-                if (isset($vatsimStats[strtolower(\Auth::user()->rating_short)])) {
-                    $vatsimHours = $vatsimStats[strtolower(\Auth::user()->rating_short)];
+            try {
+                if (App::environment('production')) {
+                    $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . \Auth::id() . '/stats');
                 } else {
-                    $vatsimHours = 0;
+                    $res = $client->request('GET', 'https://api.vatsim.net/v2/members/819096/stats');
                 }
-            } else {
-                return redirect()->back()->withErrors('We were unable to submit the application for you due to missing data from VATSIM. Please try again later.');
+    
+                // Process the data if we got a 200 OK
+                if ($res->getStatusCode() == 200) {
+                    $vatsimStats = json_decode($res->getBody(), true);
+    
+                    if (isset($vatsimStats[strtolower(\Auth::user()->rating_short)])) {
+                        $vatsimHours = $vatsimStats[strtolower(\Auth::user()->rating_short)];
+                    } else {
+                        $vatsimHours = 0;
+                    }
+                } else {
+                    return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+                }
+            } catch (\GuzzleHttp\Exception\ClientException $e) {
+    
+                // If the resource returns 404 and user is S1, it just means the user has no hours yet and can apply for training
+                if ($e->getResponse()->getStatusCode() == 404 && \Auth::user()->rating == VatsimRating::OBS->value) {
+                    $vatsimHours = 0;
+                } else {
+                    return redirect()->back()->withErrors('An error occurred while fetching data from VATSIM. Please try again later.');
+                }
             }
 
             // Loop through the ratings applied for
