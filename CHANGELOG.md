@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.0.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.1...v6.0.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* server errors for OBS trying to apply ([3950aa2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3950aa29521eaa6e1db21eb27a314a5c5282521d))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency vite to v5.4.6 ([#1014](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1014)) ([41e9659](https://github.com/Vatsim-Scandinavia/controlcenter/commit/41e96590fc7878c0ad1c542c887d6d4e728d3cbc))
+
 ## [6.0.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.0...v6.0.1) (2024-09-16)
 
 
