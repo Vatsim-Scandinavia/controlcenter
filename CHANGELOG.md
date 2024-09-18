@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.0.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.2...v6.0.3) (2024-09-18)
+
+
+### Bug Fixes
+
+* VATEUD API exam types erroring user view ([f822629](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f822629974e690e671ba7f2c71880fe366128f17))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @vitejs/plugin-vue to v5.1.4 ([#1017](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1017)) ([0ed8f60](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0ed8f60e6c8eb32ef6f6225aebc326c33f826f08))
+* **deps:** update node.js to v22.9.0 ([#1018](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1018)) ([d1e7436](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d1e7436f73547a0d3699da2682be6fb8a5baffaf))
+
 ## [6.0.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.1...v6.0.2) (2024-09-17)
 
 
