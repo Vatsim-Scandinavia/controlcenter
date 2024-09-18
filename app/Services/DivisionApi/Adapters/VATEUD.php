@@ -290,6 +290,42 @@ class VATEUD implements DivisionApiContract
         return $this->callApi('/facility/user/' . $user->id . '/exams', 'GET');
     }
 
+    /** 
+     * Translate the rating type from the division
+     * 
+     * @return 
+     */
+    public function getUserExamRating(int $type){
+
+        $rating = 'Unknown';
+
+        switch($type){
+            case 1:
+                $rating = VatsimRating::from($type + 1)->name;
+                break;
+            case 2:
+                $rating = VatsimRating::from($type + 1)->name;
+                break;
+            case 3:
+                $rating = VatsimRating::from($type + 1)->name;
+                break;
+            case 4:
+                $rating = VatsimRating::from($type + 1)->name;
+                break;
+            case 8:
+                $rating = 'S2 Fast Track';
+                break;
+            case 9:
+                $rating = 'S3 Fast Track';
+                break;
+            case 10:
+                $rating = 'C1 Fast Track';
+                break;
+        }
+
+        return $rating;
+    }
+
     /**
      * Return if the selected user has passed the theory exam for given rating.
      *
