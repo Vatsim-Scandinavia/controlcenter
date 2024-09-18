@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Helpers\Vatsim;
-use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;

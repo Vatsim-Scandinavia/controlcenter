@@ -290,16 +290,15 @@ class VATEUD implements DivisionApiContract
         return $this->callApi('/facility/user/' . $user->id . '/exams', 'GET');
     }
 
-    /** 
+    /**
      * Translate the rating type from the division
-     * 
-     * @return 
      */
-    public function getUserExamRating(int $type){
+    public function getUserExamRating(int $type)
+    {
 
         $rating = 'Unknown';
 
-        switch($type){
+        switch ($type) {
             case 1:
                 $rating = VatsimRating::from($type + 1)->name;
                 break;
