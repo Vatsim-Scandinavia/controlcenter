@@ -96,12 +96,25 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-success">Submit Feedback</button>
-
+                    <button type="submit" class="btn btn-success" onclick="handleSubmit(event)">Submit Feedback
+                        <div class="submit-spinner spinner-border spinner-border-sm" role="status" style="display: none;">&nbsp;</div>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+@endsection
+
+@section('js')
+@vite('resources/js/vue.js')
+<script>
+    function handleSubmit(event) {
+        event.preventDefault();
+        document.querySelector('.submit-spinner').style.display = 'inherit';
+        event.target.disabled = true;
+        event.target.closest('form').submit();
+    }
+</script>
 @endsection
