@@ -1,5 +1,22 @@
 # Changelog
 
+## [6.0.5](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.4...v6.0.5) (2024-10-26)
+
+
+### Bug Fixes
+
+* training activities merge quirk ([c4747ce](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c4747ce60e9b6ba7d576e269e2cb4160fea87c6d))
+
+
+### Miscellaneous Chores
+
+* **deps:** dependency updates ([60f5670](https://github.com/Vatsim-Scandinavia/controlcenter/commit/60f56708c1fac3d23cc621a3dbd7caa39b55cba5))
+* **deps:** update docker.io/library/mysql docker tag to v9.1.0 ([#1047](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1047)) ([2e7fcfd](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2e7fcfd9810528dacb35adae0f61d61192796e92))
+* **deps:** update docker.io/library/php docker tag to v8.3.13 ([#1046](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1046)) ([8e3ae7b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/8e3ae7bbfb39d0e367eb358262c3bd62eeeced05))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.6.1 ([#1034](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1034)) ([efe8d0d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/efe8d0d3cc9d4bdddec26e028131212ef808c9d6))
+* **deps:** update node.js to v23 ([#1049](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1049)) ([ac6da68](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ac6da6812e469a1a30f720d363667bae6fedd9d4))
+* **deps:** Updated to node v23 in theme building ([80470b8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/80470b8238a1a5c4835893f6c41caf163845a8cf))
+
 ## [6.0.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.3...v6.0.4) (2024-09-28)
 
 
