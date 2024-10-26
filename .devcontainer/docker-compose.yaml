@@ -15,7 +15,7 @@ services:
 
   db:
     container_name: database
-    image: docker.io/library/mysql:9.0.1
+    image: docker.io/library/mysql:9.1.0
     ports:
       - 3306:3306
     environment:
