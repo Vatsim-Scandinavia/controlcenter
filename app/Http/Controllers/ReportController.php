@@ -109,9 +109,9 @@ class ReportController extends Controller
         if (isset($trainingReports) && isset($examinationReports)) {
             $entries = $trainingReports->concat($examinationReports);
             $entries = $entries->concat($activities);
-        } else if(isset($trainingReports)) {
+        } elseif (isset($trainingReports)) {
             $entries = $trainingReports->concat($activities);
-        } else if(isset($examinationReports)) {
+        } elseif (isset($examinationReports)) {
             $entries = $examinationReports->concat($activities);
         } else {
             $entries = $activities;
