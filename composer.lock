@@ -4583,16 +4583,16 @@
         },
         {
             "name": "spatie/laravel-login-link",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-login-link.git",
-                "reference": "1c87828ed3476e592224df145ea70f7f00c1658d"
+                "reference": "4190e11ea0b0a31483df23910bdd34b92359050a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-login-link/zipball/1c87828ed3476e592224df145ea70f7f00c1658d",
-                "reference": "1c87828ed3476e592224df145ea70f7f00c1658d",
+                "url": "https://api.github.com/repos/spatie/laravel-login-link/zipball/4190e11ea0b0a31483df23910bdd34b92359050a",
+                "reference": "4190e11ea0b0a31483df23910bdd34b92359050a",
                 "shasum": ""
             },
             "require": {
@@ -4642,9 +4642,9 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-login-link/tree/1.3.1"
+                "source": "https://github.com/spatie/laravel-login-link/tree/1.4.0"
             },
-            "time": "2024-08-07T06:40:57+00:00"
+            "time": "2024-11-07T15:18:12+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -9576,12 +9576,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.3.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
