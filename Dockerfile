@@ -1,5 +1,5 @@
 # Intermediate build container for front-end resources
-FROM docker.io/library/node:23.1.0-alpine as frontend
+FROM docker.io/library/node:23.1.0-alpine AS frontend
 # Easy to prune intermediary containers
 LABEL stage=build
 
@@ -39,7 +39,7 @@ COPY --from=mlocati/php-extension-installer:2.6.1 /usr/bin/install-php-extension
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
-RUN install-php-extensions pdo_mysql
+RUN install-php-extensions pdo_mysql opcache
 
 # Install composer
 COPY --from=docker.io/library/composer:latest /usr/bin/composer /usr/bin/composer

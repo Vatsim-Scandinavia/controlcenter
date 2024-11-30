@@ -22,6 +22,11 @@ If you need test data, you can also seed the database with `php artisan db:seed`
 
 If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder.
 
+### Caching
+This application uses the OPCache to cache the compiled PHP code. Default setting is for production which means that the cache is not cleared automatically. To clear the cache, you need to restart the container if you change a file.
+
+For development, consider turning `validate_timestamps` to `1` in the `php.ini` file to make sure that the cache is cleared automatically when a file is changed.
+
 ### Run unit tests
 
 #### First run
