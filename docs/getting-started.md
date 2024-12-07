@@ -35,7 +35,7 @@ The heart of our quick setup is the `docker-compose.yml` file. This little gem c
 version: '3.3'
 services:
   control-center:
-    image: ghcr.io/vatsim-scandinavia/control-center:v4
+    image: ghcr.io/vatsim-scandinavia/control-center:v6
     depends_on:
       db-ready:
         condition: service_completed_successfully
