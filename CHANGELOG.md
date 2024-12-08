@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.7](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.6...v6.0.7) (2024-12-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency chart.js to v4.4.7 ([#1075](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1075)) ([4c5089e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4c5089e328646711c8537eb902f4026bb8ff990f))
+* **deps:** update dependency laravel-vite-plugin to v1.1.1 ([#1078](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1078)) ([7156971](https://github.com/Vatsim-Scandinavia/controlcenter/commit/71569712154e73db30575d78e0d224fb47186563))
+* **deps:** update dependency league/commonmark to v2.6.0 ([#1082](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1082)) ([e3e9ae0](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e3e9ae0f958c8092d397593887c7124ca6a96fbf))
+* **deps:** update dependency phpunit/phpunit to v11.5.0 ([#1079](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1079)) ([d624f73](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d624f73326e2da92a7acaeba20ef46df4982ca8e))
+* **deps:** update dependency spatie/laravel-ignition to v2.9.0 ([#1076](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1076)) ([6f75354](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6f753541e543a83b250d679dbac45b39dfa79c4e))
+
 ## [6.0.6](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.5...v6.0.6) (2024-11-30)
 
 
