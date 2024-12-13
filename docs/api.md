@@ -43,7 +43,14 @@ Parameters to add additional fields to the result
     "region": "APAC",
     "division": "PAC",
     "subdivision": "SCA",
-    "atc_active": false,
+    "atc_active": true,
+    "atc_active_areas": {
+        "denmark": false,
+        "finland": true,
+        "iceland": false,
+        "norway": false,
+        "sweden": false
+    },
     "endorsements": {
         "visiting": [
             {
