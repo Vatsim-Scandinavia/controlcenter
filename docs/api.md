@@ -29,7 +29,7 @@ Parameters to add additional fields to the result
 | name | Include user's full name |
 | email | Include user's email |
 | divisions | Include user's region, division and subdivision |
-
+| activeAreas | Include user's ATC active status per area |
 
 #### Example return with all parameters
 

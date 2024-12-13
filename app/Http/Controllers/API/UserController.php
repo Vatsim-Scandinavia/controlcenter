@@ -33,6 +33,7 @@ class UserController extends Controller
         $paramIncludeName = (isset($parameters['include']) && in_array('name', $parameters['include'])) ?? false;
         $paramIncludeEmail = (isset($parameters['include']) && in_array('email', $parameters['include'])) ?? false;
         $paramIncludeDivisions = (isset($parameters['include']) && in_array('divisions', $parameters['include'])) ?? false;
+        $paramIncludeActiveAreas = (isset($parameters['include']) && in_array('activeAreas', $parameters['include'])) ?? false;
         $paramIncludeEndorsements = (isset($parameters['include']) && in_array('endorsements', $parameters['include'])) ?? false;
         $paramIncludeRoles = (isset($parameters['include']) && in_array('roles', $parameters['include'])) ?? false;
         $paramIncludeTraining = (isset($parameters['include']) && in_array('training', $parameters['include'])) ?? false;
@@ -136,7 +137,7 @@ class UserController extends Controller
         //
         // Return the final result
         //
-        $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeEmail, $paramIncludeDivisions, $paramIncludeEndorsements, $paramIncludeRoles, $paramIncludeTraining);
+        $returnUsers = $this->mapUsers($returnUsers, $paramIncludeName, $paramIncludeEmail, $paramIncludeDivisions, $paramIncludeActiveAreas, $paramIncludeEndorsements, $paramIncludeRoles, $paramIncludeTraining);
         $returnUsers = $returnUsers->sortBy('id')->values();
 
         return response()->json(['data' => $returnUsers], 200);
@@ -147,9 +148,9 @@ class UserController extends Controller
      *
      * @return Collection
      */
-    private function mapUsers(Collection $users, bool $includeName, bool $includeEmail, bool $includeDivisions, bool $includeEndorsements, bool $includeRoles, bool $includeTraining)
+    private function mapUsers(Collection $users, bool $includeName, bool $includeEmail, bool $includeDivisions, bool $includeActiveAreas, bool $includeEndorsements, bool $includeRoles, bool $includeTraining)
     {
-        return $users->map(function ($user) use ($includeName, $includeEmail, $includeDivisions, $includeEndorsements, $includeRoles, $includeTraining) {
+        return $users->map(function ($user) use ($includeName, $includeEmail, $includeDivisions, $includeActiveAreas, $includeEndorsements, $includeRoles, $includeTraining) {
 
             $returnData = [];
 
@@ -162,6 +163,12 @@ class UserController extends Controller
             ($includeDivisions) ? $returnData['division'] = $user->division : null;
             ($includeDivisions) ? $returnData['subdivision'] = $user->subdivision : null;
             $returnData['atc_active'] = $user->isAtcActive();
+            ($includeActiveAreas) ? $returnData['atc_active_areas'] =
+                $user->atc_active_areas = Area::all()->mapWithKeys(function ($area) use ($user) {
+                    $activity = $user->atcActivity->firstWhere('area_id', $area->id);
+
+                    return [strtolower($area->name) => $activity ? $activity->atc_active : false];
+                }) : null;
             ($includeEndorsements) ? $returnData['endorsements'] = $user->endorsements : null;
             ($includeRoles) ? $returnData['roles'] = $user->roles : null;
             ($includeTraining) ? $returnData['training'] = $user->training : null;
