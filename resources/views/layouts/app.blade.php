@@ -39,7 +39,7 @@
 
                     @if(Session::has('success') OR isset($success))
                         <div class="alert alert-success" role="alert">
-                            {!! Session::pull("success") !!}
+                            <i class="fas fa-lg fa-check-circle"></i>&nbsp;{!! Session::pull("success") !!}
                         </div>
                     @endif
 
