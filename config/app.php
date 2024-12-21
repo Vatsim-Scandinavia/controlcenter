@@ -73,7 +73,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Select the correct mode for Control Center logic
-    | Choose between "subdivision" (default) or "division" 
+    | Choose between "subdivision" (default) or "division"
     |
     */
 

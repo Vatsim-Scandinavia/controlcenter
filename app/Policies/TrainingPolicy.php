@@ -82,14 +82,14 @@ class TrainingPolicy
         }
 
         // Only users within our subdivision should be allowed to apply
-        if(config('app.mode') == 'subdivision'){
+        if (config('app.mode') == 'subdivision') {
             $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
             if (! in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
                 $subdiv = 'none';
                 if (isset($user->subdivision)) {
                     $subdiv = $user->subdivision;
                 }
-    
+
                 return Response::deny("You must join {$divisionName} to apply for training. You currently belong to " . $subdiv);
             }
         } else {
@@ -97,7 +97,6 @@ class TrainingPolicy
                 return Response::deny("You must join {$divisionName} division to apply for training. You currently belong to " . $user->division);
             }
         }
-        
 
         // Don't accept while user waits for rating upgrade or it's been less than 7 days
         if ($user->hasRecentlyCompletedTraining()) {

@@ -59,12 +59,12 @@ class VotePolicy
         }
 
         if ($vote->require_member) {
-            if(config('app.mode') == 'subdivision' && $user->subdivision != config('app.owner_code')) {
+            if (config('app.mode') == 'subdivision' && $user->subdivision != config('app.owner_code')) {
                 return Response::deny('Sorry, you do not qualify to participate in this vote. You must belong to ' . config('app.owner_name') . ' to vote.');
-            } else if(config('app.mode') == 'division' && $user->division != config('app.owner_code')){
+            } elseif (config('app.mode') == 'division' && $user->division != config('app.owner_code')) {
                 return Response::deny('Sorry, you do not qualify to participate in this vote. You must belong to ' . config('app.owner_name') . ' to vote.');
             }
-            
+
         }
 
         if ($vote->require_active) {

@@ -62,7 +62,7 @@ class DashboardController extends Controller
             (
                 (config('app.mode') == 'subdivision' && in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null)
                 || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
-            ) 
+            )
             && ! $user->hasActiveTrainings(true) && $user->rating > 1 && ! $user->isAtcActive() && ! $user->hasRecentlyCompletedTraining()
         );
         $completedTrainingMessage = $user->hasRecentlyCompletedTraining();

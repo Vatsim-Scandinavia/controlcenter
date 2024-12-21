@@ -45,10 +45,10 @@ class UpdateMemberDetails extends Command
     {
         $mentors = User::allWithGroup('3');
 
-        if(config('app.mode') == 'subdivision'){
+        if (config('app.mode') == 'subdivision') {
             $divisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
         } else {
-            $divisions = array(config('app.owner_code'));
+            $divisions = [config('app.owner_code')];
         }
 
         $this->info('Detaching mentors who no longer are in subdivision...');
@@ -58,7 +58,7 @@ class UpdateMemberDetails extends Command
         foreach ($mentors as $mentor) {
             if (config('app.mode') == 'subdivision' && in_array($mentor->subdivision, $divisions) || $mentor->isVisiting()) {
                 continue;
-            } else if(config('app.mode') == 'division' && $mentor->division == config('app.owner_code')) {
+            } elseif (config('app.mode') == 'division' && $mentor->division == config('app.owner_code')) {
                 continue;
             }
 
@@ -83,7 +83,7 @@ class UpdateMemberDetails extends Command
         foreach ($trainings as $training) {
             if (config('app.mode') == 'subdivision' && in_array($training->user->subdivision, $divisions)) {
                 continue;
-            } else if(config('app.mode') == 'division' && $training->user->division == config('app.owner_code')) {
+            } elseif (config('app.mode') == 'division' && $training->user->division == config('app.owner_code')) {
                 continue;
             }
 
