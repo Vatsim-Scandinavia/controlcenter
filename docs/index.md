@@ -45,7 +45,7 @@ hide:
 
     ---
 
-    Production installation for your own subdivision and get
+    Production installation for your own division and get
     running with a self-hosted instance
 
     [:octicons-arrow-right-24: Installation](installation.md)

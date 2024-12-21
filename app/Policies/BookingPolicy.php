@@ -79,7 +79,13 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user)
     {
-        return ($user->subdivision == config('app.owner_code') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
+        return (
+            (
+                (config('app.mode') == 'subdivision' && $user->subdivision == config('app.owner_code')) 
+                || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
+            )
+            && ($user->rating >= VatsimRating::S1->value || $user->isVisiting())
+        );
     }
 
     /**
@@ -89,7 +95,13 @@ class BookingPolicy
      */
     public function bookEventTag(User $user)
     {
-        return ($user->subdivision == config('app.owner_code') && $user->rating >= VatsimRating::S1->value) || $user->isVisiting();
+        return (
+            (
+                (config('app.mode') == 'subdivision' && $user->subdivision == config('app.owner_code')) 
+                || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
+            )
+            && ($user->rating >= VatsimRating::S1->value || $user->isVisiting())
+        );
     }
 
     /**
@@ -99,7 +111,13 @@ class BookingPolicy
      */
     public function bookExamTag(User $user)
     {
-        return ($user->subdivision == config('app.owner_code') && $user->rating >= VatsimRating::C1->value) || $user->isModerator();
+        return (
+            (
+                (config('app.mode') == 'subdivision' && $user->subdivision == config('app.owner_code')) 
+                || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
+            )
+            && ($user->rating >= VatsimRating::C1->value || $user->isModerator())
+        );
     }
 
     /**

@@ -19,7 +19,11 @@
                                     <th>Vatsim ID</th>
                                     <th>Current Rating</th>
                                     <th>Training Rating</th>
-                                    <th>Subdivision</th>
+                                    @if(config('app.mode') == 'subdivision')
+                                        <th>Subdivision</th>
+                                    @else
+                                        <th>Division</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,7 +39,13 @@
                                             @endif
                                         @endforeach
                                     </td>
-                                    <td>{{ $training->user->subdivision }}</td>
+                                    <td>
+                                        @if(config('app.mode') == 'subdivision')
+                                            {{ $training->user->subdivision }}
+                                        @else
+                                            {{ $training->user->division }}
+                                        @endif
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

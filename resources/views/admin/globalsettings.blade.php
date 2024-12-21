@@ -99,14 +99,16 @@
                                 <span class="text-danger">{{ $errors->first('trainingExamTemplate') }}</span>
                             @enderror
 
-                            <div class="mb-4">
-                                <label class="form-label" for="trainingSubDivisions">Subdivisions accepted for training</label>
-                                <input type="text" class="form-control @error('trainingSubDivisions') is-invalid @enderror" id="trainingSubDivisions" name="trainingSubDivisions" value="{{ Setting::get("trainingSubDivisions") }}">
-                                <small class="form-text">List subdivisions separated by comma, e.g. SCA, ITA</small>
-                            </div>
-                            @error('trainingSubDivisions')
-                                <span class="text-danger">{{ $errors->first('trainingSubDivisions') }}</span>
-                            @enderror
+                            @if(config('app.mode') == 'subdivision')
+                                <div class="mb-4">
+                                    <label class="form-label" for="trainingSubDivisions">Subdivisions accepted for training</label>
+                                    <input type="text" class="form-control @error('trainingSubDivisions') is-invalid @enderror" id="trainingSubDivisions" name="trainingSubDivisions" value="{{ Setting::get("trainingSubDivisions") }}">
+                                    <small class="form-text">List subdivisions separated by comma, e.g. SCA, ITA</small>
+                                </div>
+                                @error('trainingSubDivisions')
+                                    <span class="text-danger">{{ $errors->first('trainingSubDivisions') }}</span>
+                                @enderror
+                            @endif
 
                             <div class="mb-4">
                                 <label class="form-label" for="atcActivityQualificationPeriod">Required Training Interval</label>

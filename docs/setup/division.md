@@ -1,7 +1,7 @@
 
 ## Database
 
-Here you find the diffrerent data tables which need to be edited to suit your subdivision. Perform the changes in the same order as this document.
+Here you find the diffrerent data tables which need to be edited to suit your division. Perform the changes in the same order as this document.
 
 ### Areas
 

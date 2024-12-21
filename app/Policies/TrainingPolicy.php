@@ -74,7 +74,6 @@ class TrainingPolicy
      */
     public function apply(User $user)
     {
-        $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
         $divisionName = config('app.owner_name_short');
 
         // Global setting if trainings are enabled
@@ -83,14 +82,22 @@ class TrainingPolicy
         }
 
         // Only users within our subdivision should be allowed to apply
-        if (! in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
-            $subdiv = 'none';
-            if (isset($user->subdivision)) {
-                $subdiv = $user->subdivision;
+        if(config('app.mode') == 'subdivision'){
+            $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
+            if (! in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
+                $subdiv = 'none';
+                if (isset($user->subdivision)) {
+                    $subdiv = $user->subdivision;
+                }
+    
+                return Response::deny("You must join {$divisionName} to apply for training. You currently belong to " . $subdiv);
             }
-
-            return Response::deny("You must join {$divisionName} to apply for training. You currently belong to " . $subdiv);
+        } else {
+            if ($user->division != config('app.owner_code')) {
+                return Response::deny("You must join {$divisionName} division to apply for training. You currently belong to " . $user->division);
+            }
         }
+        
 
         // Don't accept while user waits for rating upgrade or it's been less than 7 days
         if ($user->hasRecentlyCompletedTraining()) {

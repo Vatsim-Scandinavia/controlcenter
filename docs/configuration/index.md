@@ -17,14 +17,15 @@ Tables with all the variables, default value and explanation. Override the envir
 
 Settings related to URLs, subdivision names and other core application settings.
 
-| Variable               | Default value      | Explanation                                                |
-|------------------------|--------------------|------------------------------------------------------------|
-| `APP_NAME`             | Control Center     | What you want to call the software                         |
-| `APP_OWNER_NAME`       | Subdivision Name   | Full name of your subdivision such as `VATSIM Scandinavia` |
-| `APP_OWNER_NAME_SHORT` | SCA                | Short name of choice for your vACC e.g. `VATSCA`/`ESTVACC` |
-| `APP_OWNER_CODE`       | SCA                | 3-4 letter name identifying your vACC within VATSIM APIs   |
-| `APP_URL`              | `http://localhost` | URL to your Control Center without slash at the end        |
-| `APP_ENV`              | production         | Environment of your Control Center                         |
+| Variable               | Default value      | Explanation                                                 |
+|------------------------|--------------------|-------------------------------------------------------------|
+| `APP_NAME`             | Control Center     | What you want to call the software                          |
+| `APP_OWNER_NAME`       | (sub)division Name | Full name of your (sub)division such as `VATSIM Scandinavia`|
+| `APP_OWNER_NAME_SHORT` | SCA                | Short name of choice for your vACC e.g. `VATSCA`/`ESTVACC`  |
+| `APP_OWNER_CODE`       | SCA                | 3-4 letter name identifying your vACC within VATSIM APIs    |
+| `APP_MODE`             | subdivision        | Select correct logic mode `subdivision` or `division`       |
+| `APP_URL`              | `http://localhost` | URL to your Control Center without slash at the end         |
+| `APP_ENV`              | production         | Environment of your Control Center                          |
 
 ### Database
 

@@ -273,7 +273,7 @@ Find your own VATSIM CID, and have it ready:
     php artisan user:makeadmin
     ```
 
-You'll be asked to provide a CID and an area that the user is an administrator in. Assuming you change the areas to ones of your own, selecting the first area means you won't need to repeat this process right after customising your subdivision's areas.
+You'll be asked to provide a CID and an area that the user is an administrator in. Assuming you change the areas to ones of your own, selecting the first area means you won't need to repeat this process right after customising your division's areas.
 
 
 ## Next steps

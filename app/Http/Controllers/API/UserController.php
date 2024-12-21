@@ -50,7 +50,7 @@ class UserController extends Controller
         //
 
         if ($paramIncludeAllUsers) {
-            $returnUsers = User::where('subdivision', config('app.owner_code'));
+            $returnUsers = User::where(config('app.mode'), config('app.owner_code'));
             if ($paramOnlyActive) {
                 $returnUsers = $returnUsers->whereHas('atcActivity', function ($query) {
                     $query->where('atc_active', true);
