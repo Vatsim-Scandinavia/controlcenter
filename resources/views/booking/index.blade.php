@@ -48,10 +48,21 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/booking/{{ $booking->id }}">{{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
-                                           <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
+                                        <a href="/booking/{{ $booking->id }}">
+                                            <i class="fas fa-pencil-alt w3-tiny" aria-hidden="true"></i>&nbsp;
+                                            @if(\Carbon\Carbon::create($booking->time_start)->isToday())
+                                                Today
+                                            @else
+                                                {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
+                                            @endif 
+                                        </a>
                                     @else
-                                        {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
+                                        @if(\Carbon\Carbon::create($booking->time_start)->isToday())
+                                            Today
+                                        @else
+                                            {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
+                                        @endif 
+                                        
                                         @if(Auth::user()->id == $booking->user_id || $user->isModeratorOrAbove())
 
                                             @if($booking->source == "DISCORD")
