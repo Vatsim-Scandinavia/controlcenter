@@ -65,11 +65,19 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
 
         $area = Area::find($this->training->area_id);
         $contactMail = $area->contact;
+        $readme = $area->readme_url;
         $feedback = $area->feedback_url;
+        
 
-        // If the training was completed and the area has a feedback URL, ask for feedback
-        if ($this->trainingStatus == TrainingStatus::COMPLETED->value && isset($feedback)) {
-            $textLines[] = 'Could we ask for a moment of your time to [share your thoughts and experiences about your training](' . $feedback . ')? Any insights you can provide would be greatly appreciated and will help us improve our training.';
+        // If the training was completed and the area has a readme or feedback url to be added.
+        if ($this->trainingStatus == TrainingStatus::COMPLETED->value){
+            if(isset($readme)){
+                $textLines[] = 'Please familiarise yourself with [these instructions](' . $readme . ') prior to your first connection with your new rating.';
+            }
+
+            if(isset($feedback)){
+                $textLines[] = 'Could we also ask for a moment of your time to [share your thoughts and experiences about your training](' . $feedback . ')? Any insights you can provide would be greatly appreciated and will help us improve our training.';
+            }
         }
 
         // Find staff who wants notification of new training request
