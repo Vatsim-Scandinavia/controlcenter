@@ -4,26 +4,28 @@ icon: material/file-code
 
 # Contributing
 
-Interested in hacking on Control Center? Adding a new, favourite feature? Say no more.
+Interested in contributing to Control Center? Adding a new, favourite feature? Say no more.
 
 ## Running the development environment { data-toc-label="Development environment" }
 
-To develop Control Center, we recommend running the docker container with the included `docker-compose.yaml` file inside `.devcontainer` folder.
-Note that the dev-container setup is a work in-progress, therefore we recommend using the Docker compose file. This also binds the whole application folder into the container so you can edit the files locally and they'll be updated in the container.
+This part will explain how to create a development instance of Control Center in a docker container. First you can choose between `docker-compose.dev.yaml` or `docker-compose.dev.full.yaml`. The difference is that the full version includes a MySQL database and Redis. Secondly both of the files bind the whole application to your project folder, so you can edit the files locally and they'll be updated in the container.
 
-### Setup inside container
+### Setup the container
 
-1. Run `composer install` to install all dependencies
-2. Run `npm install` to install all dependencies
-3. Run `npm run build` to compile the assets
-4. Run `php artisan migrate` to setup the database
+1. Run `docker compose -f yourchosenfile.yaml up -d` from your host system
+2. Wait a bit while the docker image is built for your system
+3. Enter your container and run `composer install ` to install all dependencies
+4. Install npm by running `bash container/install-npm.sh` as it's not included by default
+5. Run `npm install` to install all dependencies
+6. Run `npm run build` to compile the assets
+7. Run `php artisan migrate` to setup the database
 
 If you need test data, you can also seed the database with `php artisan db:seed`.
 
-If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder.
+If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
 
 ### Caching
-This application uses the OPCache to cache the compiled PHP code. Default setting is for production which means that the cache is not cleared automatically. To clear the cache, you need to restart the container if you change a file.
+This application uses the OPCache to cache the compiled PHP code. The default setting is for production use, which means that the cache is not cleared automatically. To clear the cache, you need to restart the container if you change a file.
 
 For development, change `validate_timestamps` to `1` in the `/usr/local/etc/php/php.ini` file to make sure that the cache is cleared automatically when a file is changed.
 
@@ -91,25 +93,6 @@ We name branches with `feat/name-here`, `fix/name-here` or `misc/name-here`, for
 * For more in-depth conventions which we try to follow, check out [Laravel best practices](https://github.com/alexeymezenin/laravel-best-practices/blob/master/README.md#contents)
 * We tab with 4 spaces for increased readability
 * The service language is UK English
-
-## Introduction to Laravel
-
-### Basics
-
-This project has a prerequisite that you're familiar with PHP and Object-oriented programming. If you're unfamiliar with Laravel, check out these resources:
-
-* [Laravel Documentation](https://laravel.com/docs)
-* [Free and high-quality Laravel 8 tutorial](https://laracasts.com/series/laravel-8-from-scratch)
-* [Laravel essentials in 45 min](https://www.youtube.com/watch?v=ubfxi21M1vQ)
-
-### Workspace
-
-Everyone has their own setup for workspace, but if you're new to Laravel and this project, check out our recommendations:
-
-1. Use [Visual Studio Code](https://code.visualstudio.com/) as editor.
-2. Install the [following plugins](https://medium.com/@rohan_krishna/how-to-setup-visual-studio-code-for-laravel-php-276643c3013c) in VS Code.
-3. Optionally install [this icon pack](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme) for some smooth icons.
-4. Learn tips and tricks for PHP and Laravel in VS Code in [these Laracasts](https://laracasts.com/series/visual-studio-code-for-php-developers/)
 
 ## Contributing to the documentation { data-toc-label="Documentation" }
 
