@@ -24,13 +24,13 @@ In addition, Control Center supports the creation of *Solo Endorsements* for the
 - S2
 - S3
 - C1
+- C3
 
 ## Not Applicable Ratings
 
 The following ratings are not supported in Control Center by default as they tend to have specific non-training related requirements, such as mentoring hours, controlling hours or other large contributions to the specific VATSIM division.
 
 - OBS
-- C3
 - I1
 - I3
 

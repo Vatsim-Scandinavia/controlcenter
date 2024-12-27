@@ -93,7 +93,7 @@ Settings related to reverse proxies in front of Control Center.
 
 | Variable | Default value | Explanation |
 | ------- | --- | --- |
-| `TRUSTED_PROXIES` | null | Comma-separated list of trusted proxy addresses or '*' for all |
+| `TRUSTED_PROXIES` | null | Comma-separated list of trusted proxy addresses or `*` for all |
 
 ## Configuring authentication with OAuth { data-toc-label="Configure authentication" }
 
