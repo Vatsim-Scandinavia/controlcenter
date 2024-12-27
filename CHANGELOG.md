@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.1.0...v6.1.1) (2024-12-27)
+
+
+### Bug Fixes
+
+* reverted bootstrap-table dep to fix cookie error ([c465f55](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c465f554d4adfa8377c8b1e7b5e0a858c3899534))
+
 ## [6.1.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.0.6...v6.1.0) (2024-12-27)
 
 
