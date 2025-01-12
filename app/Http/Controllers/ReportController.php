@@ -101,8 +101,9 @@ class ReportController extends Controller
                 })->get();
             }
         } else {
+            // The training reports will use updated_at so draft publishing date is correct.
             $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->limit(100)->get();
-            $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->get();
+            $trainingReports = TrainingReport::where('updated_at', '>=', $activities->last()->updated_at)->where('draft', false)->get();
             $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->get();
         }
 
