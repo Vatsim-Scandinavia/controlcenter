@@ -383,7 +383,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of user's settings
+     * Display a listing of user's reports
      *
      * @return \Illuminate\Http\Response
      */
