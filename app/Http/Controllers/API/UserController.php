@@ -51,7 +51,7 @@ class UserController extends Controller
         //
 
         if ($paramIncludeAllUsers) {
-            if(config('app.mode') == 'subdivision'){
+            if (config('app.mode') == 'subdivision') {
                 $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
                 $returnUsers = User::whereIn('subdivision', $subdivisions);
             } else {
