@@ -38,8 +38,14 @@
                     <dt class="pt-2">ATC Rating</dt>
                     <dd>{{ $user->rating_short }}</dd>
 
-                    <dt>Sub/Division</dt>
-                    <dd class="separator pb-3">{{ $user->subdivision }} / {{ $user->division }}</dd>
+                    
+                    @if(config('app.mode') == 'subdivision')
+                        <dt>Sub/Division</dt>
+                        <dd class="separator pb-3">{{ $user->division }} / {{ $user->subdivision }}</dd>
+                    @else
+                        <dt>Division</dt>
+                        <dd class="separator pb-3">{{ $user->division }}</dd>
+                    @endif
 
                     <dt class="pt-2">ATC Active</dt>
                     <dd>

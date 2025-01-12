@@ -12,5 +12,5 @@ If you'd like to change the division logo to your division's logo, you must put 
 
 | Variable | Default value | Explanation |
 | ------- | --- | --- |
-| APP_LOGO | vatsca.svg | The logo of your subdivision, located in `public/images/logos` |
-| APP_LOGO_MAIL | vatsca-email.png | The logo of your subdivision, located in `public/images/logos` |
+| APP_LOGO | vatsca.svg | The logo of your division, located in `public/images/logos` |
+| APP_LOGO_MAIL | vatsca-email.png | The logo of your division, located in `public/images/logos` |

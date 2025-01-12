@@ -51,8 +51,13 @@ class UserController extends Controller
         //
 
         if ($paramIncludeAllUsers) {
-            $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
-            $returnUsers = User::whereIn('subdivision', $subdivisions);
+            if(config('app.mode') == 'subdivision'){
+                $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
+                $returnUsers = User::whereIn('subdivision', $subdivisions);
+            } else {
+                $returnUsers = User::where('subdivision', config('app.owner_code'));
+            }
+
             if ($paramOnlyActive) {
                 $returnUsers = $returnUsers->whereHas('atcActivity', function ($query) {
                     $query->where('atc_active', true);

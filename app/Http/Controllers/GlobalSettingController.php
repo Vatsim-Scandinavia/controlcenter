@@ -41,7 +41,7 @@ class GlobalSettingController extends Controller
             'trainingEnabled' => '',
             'trainingSOP' => 'required|url',
             'trainingExamTemplate' => '',
-            'trainingSubDivisions' => 'required',
+            'trainingSubDivisions' => 'nullable',
             'trainingInterval' => 'required|integer|min:1',
             'trainingSoloRequirement' => 'required|max:200',
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
@@ -78,11 +78,12 @@ class GlobalSettingController extends Controller
         isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
         isset($data['feedbackForwardEmail']) ? $feedbackForwardEmail = $data['feedbackForwardEmail'] : $feedbackForwardEmail = false;
         isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
+        isset($data['trainingSubDivisions']) ? $trainingSubDivisions = $data['trainingSubDivisions'] : $trainingSubDivisions = false;
 
         Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingExamTemplate', $trainingExamTemplate);
-        Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
+        Setting::set('trainingSubDivisions', $trainingSubDivisions);
         Setting::set('trainingInterval', $data['trainingInterval']);
         Setting::set('trainingSoloRequirement', $data['trainingSoloRequirement']);
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);

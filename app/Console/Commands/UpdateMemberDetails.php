@@ -45,14 +45,20 @@ class UpdateMemberDetails extends Command
     {
         $mentors = User::allWithGroup('3');
 
-        $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
+        if (config('app.mode') == 'subdivision') {
+            $divisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
+        } else {
+            $divisions = [config('app.owner_code')];
+        }
 
         $this->info('Detaching mentors who no longer are in subdivision...');
         $count = 0;
 
         // Start the loop
         foreach ($mentors as $mentor) {
-            if (in_array($mentor->subdivision, $subdivisions) || $mentor->isVisiting()) {
+            if (config('app.mode') == 'subdivision' && in_array($mentor->subdivision, $divisions) || $mentor->isVisiting()) {
+                continue;
+            } elseif (config('app.mode') == 'division' && $mentor->division == config('app.owner_code')) {
                 continue;
             }
 
@@ -71,21 +77,23 @@ class UpdateMemberDetails extends Command
         // Get active trainings
         $trainings = Training::where('status', '>=', 0)->where('type', '!=', 5)->get();
 
-        $this->info('Closing trainings for those who left subdivision...');
+        $this->info('Closing trainings for those who left division...');
         $count = 0;
 
         foreach ($trainings as $training) {
-            if (in_array($training->user->subdivision, $subdivisions)) {
+            if (config('app.mode') == 'subdivision' && in_array($training->user->subdivision, $divisions)) {
+                continue;
+            } elseif (config('app.mode') == 'division' && $training->user->division == config('app.owner_code')) {
                 continue;
             }
 
             // Close the training
             $training->updateStatus(-4);
-            $training->closed_reason = 'The student has left or is no longer part of our subdivision.';
+            $training->closed_reason = 'The student has left or is no longer part of our division.';
             $training->save();
 
             // Notify student of closure
-            $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the subdivision.'));
+            $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the division.'));
 
             // Log the closure
             ActivityLogController::warning('TRAINING', 'Closed training request ' . $training->id . ' due to student leaving division');
@@ -95,14 +103,14 @@ class UpdateMemberDetails extends Command
 
         $this->info($count . ' trainings affected.');
 
-        // Make users who left subdivision inactive
-        $this->info('Making users who left subdivision inactive...');
+        // Make users who left division inactive
+        $this->info('Making users who left division inactive...');
         $count = 0;
 
-        $membersNotInSubdivision = User::whereNotIn('subdivision', $subdivisions)->get();
-        $activeMembersNotInSubdivision = User::getActiveAtcMembers($membersNotInSubdivision->pluck('id')->toArray());
+        $membersNotInDivision = User::whereNotIn(config('app.mode'), $divisions)->get();
+        $activeMembersNotInDivision = User::getActiveAtcMembers($membersNotInDivision->pluck('id')->toArray());
 
-        $activeMembersNotInSubdivision->each(function ($member) use (&$count) {
+        $activeMembersNotInDivision->each(function ($member) use (&$count) {
 
             // Set as ATC Inactive
             $atcActivitiesToSetAsInactive = $member->atcActivity->where('atc_active', true);

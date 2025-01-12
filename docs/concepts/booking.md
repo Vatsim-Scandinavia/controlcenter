@@ -30,7 +30,7 @@ Bookings can be created for any ATC position from the *Bookings* page.
 
 ### Viewing Bookings
 
-You can view all bookings in the subdivision, with various filters available for a customized overview.
+You can view all bookings in the division, with various filters available for a customized overview.
 Bookings can be filtered by member, position, date and FIR.
 
 ### Booking Restrictions
