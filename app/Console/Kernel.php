@@ -55,7 +55,7 @@ class Kernel extends ConsoleKernel
 
         // Daily fetch updated member data from OAuth provider
         $schedule->command('update:member:data')
-            ->daily();
+            ->dailyAt('04:00');
 
         // Automaticaly clean memebers and trainings no longer eligble
         $schedule->command('update:member:details')
