@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        //2022-07-25: Altered this migration to not use MODIFY as it's not supported in SQLITE for PHP TESTS. Deletes and re-creates instead.
+        // 2022-07-25: Altered this migration to not use MODIFY as it's not supported in SQLITE for PHP TESTS. Deletes and re-creates instead.
         Schema::table('activity_logs', function (Blueprint $table) {
             $table->dropColumn('category');
         });

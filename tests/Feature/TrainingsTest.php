@@ -87,7 +87,7 @@ class TrainingsTest extends TestCase
             ->assertStatus(403);
     }
 
-    //#[Test]
+    // #[Test]
     public function moderator_can_update_the_trainings_status()
     {
         $training = Training::factory()->create([
