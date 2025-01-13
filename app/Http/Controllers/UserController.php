@@ -95,7 +95,12 @@ class UserController extends Controller
     {
         $this->authorize('index', \Auth::user());
 
-        $users = User::with('endorsements')->get();
+        if (config('app.mode') == 'subdivision') {
+            $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
+            $users = User::whereNotIn('subdivision', $subdivisions)->get();
+        } else {
+            $users = User::whereNot('division', config('app.owner_code'))->get();
+        }
 
         return view('user.other', compact('users'));
     }
