@@ -39,8 +39,8 @@ In `area_rating` table, we define which ratings are available for which area for
 
 In `positions` table, we define which positions are possible to book their restrictions and connect examinations and training sessions to.
 
-| id | callsign | frequency | name | fir | area | rating | required_facility_rating_id |
+| id | callsign | name | frequency | fir | area | rating | required_facility_rating_id |
 | ------- | --- | --- | --- | --- | --- | --- | --- |
-| x | The callsign | Name of position showed when booking | optional frequency, not used inside CC for now | Used for filtering in bookings | id of area | vatsim rating id required to book position | rating id of the tiered rating required to book this position
+| x | The callsign | Name of position showed when booking | Optional frequency, only exposed in API | Used for filtering in bookings | id of area | vatsim rating id required to book position | rating id of the tiered rating required to book this position
 | 1 | ENBR_TWR | Flesland Tower | NULL | ENOR | 4 | 3 | NULL
 | 2 | ENGM_TWR | Gardermoen Tower | NULL | ENOR | 4 | 3 | 8
