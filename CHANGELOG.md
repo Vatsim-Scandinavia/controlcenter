@@ -1,5 +1,34 @@
 # Changelog
 
+## [6.2.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.1.1...v6.2.0) (2025-01-15)
+
+
+### Features
+
+* division support ([6c7155d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6c7155d6b718695d9f5383b61a19bd3d3c7842a3))
+
+
+### Bug Fixes
+
+* **api:** multiple subdiv config now returns all users ([5754ec2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5754ec277c5d8361290988a13a89fd5a295fabf5))
+* **docs:** Correct table header on division position table ([#1119](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1119)) ([e55f3d5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e55f3d52cd5ff832db9c53c7255c07ae5ccf62bf))
+* move VATSIM Auth daily call to morning ([af1d3ad](https://github.com/Vatsim-Scandinavia/controlcenter/commit/af1d3ad964f505fd999937047a45bbcf0cf5a049))
+* other user index logic ([f73b8e9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f73b8e9b76b821c0fb73b02ac741da96ff918e09))
+* report archive text alignment ([7b97c6b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/7b97c6b347a9b901f78463b0b1d2632b31c72ca9)), closes [#1107](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1107)
+* saving settings ([bb47e08](https://github.com/Vatsim-Scandinavia/controlcenter/commit/bb47e0889594c46e81fa7eb3b25154937e9ba80a))
+* training report drafts no longer create activity log ([fc815e6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fc815e6c8ba3b45e6c8a89984e6680c8869eb85f)), closes [#1113](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1113)
+
+
+### Miscellaneous Chores
+
+* **deps:** misc dependency updates ([58e08c6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/58e08c6ca3fc3560fa172749d0f5c53976ca20e0))
+* **deps:** pint & other dependency upgrades ([9c183f8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/9c183f81872f65b18b80e9378bbc453e77846dc6))
+* **deps:** update dependency core-js to v3.40.0 ([#1111](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1111)) ([ffa034e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ffa034e8f8a73c6e48e54a940203e08e95eaf49c))
+* **deps:** update dependency laravel/framework to v11.37.0 ([#1108](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1108)) ([759ac16](https://github.com/Vatsim-Scandinavia/controlcenter/commit/759ac1658190bcc82e3676fea5dd48976bcd10ac))
+* **deps:** update dependency league/commonmark to v2.6.1 ([#1104](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1104)) ([5aa63be](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5aa63bee1acf6b27449e67a13b076a8a446b00ce))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.7.12 ([#1110](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1110)) ([9160092](https://github.com/Vatsim-Scandinavia/controlcenter/commit/91600923e67adfedd6803ac0d65d894e3d651da4))
+* **deps:** update node.js to v23.6.0 ([#1112](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1112)) ([bcd6051](https://github.com/Vatsim-Scandinavia/controlcenter/commit/bcd6051c47f9a0aa035f04972171c21ddf92f154))
+
 ## [6.1.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.1.0...v6.1.1) (2024-12-27)
 
 
