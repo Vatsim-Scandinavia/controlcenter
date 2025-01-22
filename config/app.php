@@ -238,6 +238,7 @@ return [
 
         App\Providers\CarbonServiceProvider::class,
         App\Providers\DivisionApiServiceProvider::class,
+        App\Providers\SqlProvider::class,
 
     ])->toArray(),
 

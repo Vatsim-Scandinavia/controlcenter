@@ -577,7 +577,7 @@ class TrainingController extends Controller
         } else {
             // If paused is unchecked but training is paused, sum up the length and unpause.
             if (isset($training->paused_at)) {
-                $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
+                $training->paused_length = $training->paused_length + (int) Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
                 $training->update(['paused_length' => $training->paused_length]);
                 TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
             }
