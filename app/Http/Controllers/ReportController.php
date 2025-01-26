@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\Sql;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Group;
@@ -13,6 +12,7 @@ use App\Models\TrainingActivity;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Services\Sql\Sql;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
