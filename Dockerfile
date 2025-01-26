@@ -21,7 +21,7 @@ EXPOSE 80 443
 # - vim and nano for our egos
 # - ca-certificates for OAuth2
 RUN apt-get update && \
-    apt-get install -y git unzip vim nano ca-certificates && \
+    apt-get install -y git unzip vim nano ca-certificates libpq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     a2enmod rewrite ssl
@@ -39,7 +39,7 @@ COPY --from=mlocati/php-extension-installer:2.7.14 /usr/bin/install-php-extensio
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
-RUN install-php-extensions pdo_mysql libpq pdo_pgsql opcache
+RUN install-php-extensions pdo_mysql pdo_pgsql opcache
 
 # Install composer
 COPY --from=docker.io/library/composer:latest /usr/bin/composer /usr/bin/composer
