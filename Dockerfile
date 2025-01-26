@@ -21,7 +21,7 @@ EXPOSE 80 443
 # - vim and nano for our egos
 # - ca-certificates for OAuth2
 RUN apt-get update && \
-    apt-get install -y git unzip vim nano ca-certificates libpq && \
+    apt-get install -y git unzip vim nano ca-certificates libpq-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     a2enmod rewrite ssl
