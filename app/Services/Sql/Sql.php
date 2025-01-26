@@ -14,6 +14,7 @@ class Sql
     {
         $grammar = DB::getQueryGrammar();
         $escapedAlias = $grammar->wrap($alias);
+
         return "$query as $escapedAlias";
     }
 
@@ -25,6 +26,7 @@ class Sql
         } else {
             $sql = "DATE($column)";
         }
+
         return Sql::as($sql, $alias);
     }
 
@@ -36,6 +38,7 @@ class Sql
         } else {
             $sql = "MONTH($column)";
         }
+
         return SQL::as($sql, $alias);
     }
 }
