@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.0...v6.2.1) (2025-01-31)
+
+
+### Miscellaneous Chores
+
+* **docs:** updated division who use CC ([1e09449](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1e09449421139df4ba76fe050c33592858c87d12))
+
 ## [6.2.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.1.1...v6.2.0) (2025-01-26)
 
 
