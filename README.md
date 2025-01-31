@@ -9,14 +9,18 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 
 ➡️  **[Get started and learn more about Control Center 📖](https://docs.vatsca.org/controlcenter)**
 
-Seven subdivisions are currently using Control Center:
+11 divisions are currently using Control Center:
 - [VATSIM Scandinavia](https://vatsim-scandinavia.org)
 - [Czech vACC](https://www.vacc-cz.org/)
 - [Hellenic vACC](https://hvacc.org/)
 - [LATVIA vACC](https://lv-vacc.org/)
+- [Maghreb vACC](https://vatsim.ma/)
 - [Singapore vACC](https://sinvacc.org/)
 - [VATAdria](https://vatadria.com/)
+- [VATMEX](https://www.vatmex.com.mx/)
 - [Vietnam - Canbodia - Laos vACC](https://vclvacc.net/)
+- [Thailand vACC](https://vacc-tha.org/)
+- [VATSIM Italia](https://www.vatita.net/)
 
 ## Contributing, conventions and intro to Laravel
 
