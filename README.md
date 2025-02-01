@@ -13,7 +13,6 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 - [VATSIM Scandinavia](https://vatsim-scandinavia.org)
 - [Czech vACC](https://www.vacc-cz.org/)
 - [Hellenic vACC](https://hvacc.org/)
-- [LATVIA vACC](https://lv-vacc.org/)
 - [Maghreb vACC](https://vatsim.ma/)
 - [Singapore vACC](https://sinvacc.org/)
 - [VATAdria](https://vatadria.com/)
