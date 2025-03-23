@@ -35,9 +35,9 @@ class ManagementReportPolicy
     }
 
     /** Determine whether the user can see the feedback index
-     * 
+     *
      * @return bool
-    */
+     */
     public function viewFeedback(User $user)
     {
         return $user->isModeratorOrAbove();
