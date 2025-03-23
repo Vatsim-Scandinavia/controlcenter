@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7276d0493ad9d742a9a1ad8e642eed8d",
+    "content-hash": "8c92e94d1020af4a6fda75d03471bfe1",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -722,31 +722,31 @@
         },
         {
             "name": "graham-campbell/markdown",
-            "version": "v15.2.0",
+            "version": "v16.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Laravel-Markdown.git",
-                "reference": "d594fc197b9068de5e234a890be361807a1ab34f"
+                "reference": "040221ff01f167fbe53a047b0e9ac15cbb3b6d79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Markdown/zipball/d594fc197b9068de5e234a890be361807a1ab34f",
-                "reference": "d594fc197b9068de5e234a890be361807a1ab34f",
+                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Markdown/zipball/040221ff01f167fbe53a047b0e9ac15cbb3b6d79",
+                "reference": "040221ff01f167fbe53a047b0e9ac15cbb3b6d79",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^8.75 || ^9.0 || ^10.0 || ^11.0",
-                "illuminate/filesystem": "^8.75 || ^9.0 || ^10.0 || ^11.0",
-                "illuminate/support": "^8.75 || ^9.0 || ^10.0 || ^11.0",
-                "illuminate/view": "^8.75 || ^9.0 || ^10.0 || ^11.0",
-                "league/commonmark": "^2.4.2",
-                "php": "^7.4.15 || ^8.0.2"
+                "illuminate/contracts": "^10.44 || ^11.0 || ^12.0",
+                "illuminate/filesystem": "^10.44 || ^11.0 || ^12.0",
+                "illuminate/support": "^10.44 || ^11.0 || ^12.0",
+                "illuminate/view": "^10.44 || ^11.0 || ^12.0",
+                "league/commonmark": "^2.6.1",
+                "php": "^8.1"
             },
             "require-dev": {
-                "graham-campbell/analyzer": "^4.1",
-                "graham-campbell/testbench": "^6.1",
+                "graham-campbell/analyzer": "^5.0",
+                "graham-campbell/testbench": "^6.2",
                 "mockery/mockery": "^1.6.6",
-                "phpunit/phpunit": "^9.6.17 || ^10.5.13"
+                "phpunit/phpunit": "^10.5.45 || ^11.5.10"
             },
             "type": "library",
             "extra": {
@@ -786,7 +786,7 @@
             ],
             "support": {
                 "issues": "https://github.com/GrahamCampbell/Laravel-Markdown/issues",
-                "source": "https://github.com/GrahamCampbell/Laravel-Markdown/tree/v15.2.0"
+                "source": "https://github.com/GrahamCampbell/Laravel-Markdown/tree/v16.0.0"
             },
             "funding": [
                 {
@@ -798,7 +798,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-17T23:07:39+00:00"
+            "time": "2025-03-02T23:41:30+00:00"
         },
         {
             "name": "graham-campbell/result-type",
