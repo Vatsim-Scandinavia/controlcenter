@@ -11,7 +11,7 @@ class ManagementReportPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can access the training reports
      *
      * @return bool
      */
@@ -25,7 +25,7 @@ class ManagementReportPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user see the training report index
      *
      * @return bool
      */
@@ -34,8 +34,17 @@ class ManagementReportPolicy
         return $user->isModeratorOrAbove();
     }
 
+    /** Determine whether the user can see the feedback index
+     * 
+     * @return bool
+    */
+    public function viewFeedback(User $user)
+    {
+        return $user->isModeratorOrAbove();
+    }
+
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can see the access report
      *
      * @return bool
      */
