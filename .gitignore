@@ -25,6 +25,7 @@ yarn-error.log
 # phpunit and results
 *.phpunit.cache
 *.phpunit.result.cache
+coverage/*
 
 # mkdocs
 docs_site/
