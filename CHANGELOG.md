@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.2.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.1...v6.2.2) (2025-04-14)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency laravel/pint to v1.22.0 ([#1172](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1172)) ([d35c9b9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d35c9b98be0ea5e534745ace5ad401545ca13db0))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.7.31 ([#1170](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1170)) ([f63558a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f63558a9b336d352457d3002ebfe9ebe03dda62d))
+
 ## [6.2.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.0...v6.2.1) (2025-03-23)
 
 
