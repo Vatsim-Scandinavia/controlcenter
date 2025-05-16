@@ -1,6 +1,6 @@
 ## Control Center
 
-Training Management System created by [Daniel L.](https://github.com/blt950) (1352906) and others from Web Department at VATSIM Scandinavia. Running using `Laravel 11` in a pre-built Docker container.
+Training Management System created by [Daniel L.](https://github.com/blt950) (1352906) and others from Tech Department at VATSIM Scandinavia. Running using `Laravel 11` in a pre-built Docker container.
 
 📝 The project is open source and contains some restirctions. Read the [LICENSE](LICENSE) for details.\
 👁️ Remember to watch this repository to get notified of our patches and updates!
@@ -21,7 +21,7 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 - [Thailand vACC](https://vacc-tha.org/)
 - [VATSIM Italia](https://www.vatita.net/)
 
-## Contributing, conventions and intro to Laravel
+## Contributing
 
 Do you want to help us with improving Control Center? Curious about whether we use testing? Stylistic choices?
 
