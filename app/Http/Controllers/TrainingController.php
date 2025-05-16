@@ -609,7 +609,7 @@ class TrainingController extends Controller
                 // Detach all mentors
                 $training->mentors()->detach();
 
-                // If the training was completed and double checked with a passed exam result, store the relevant endorsements
+                // If the training was completed store the relevant endorsements
                 if ((int) $training->status == TrainingStatus::COMPLETED->value) {
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
@@ -646,24 +646,30 @@ class TrainingController extends Controller
                     }
                 }
 
-                // If training is completed with a passed exam result, let's set the user to active
+                // If training is completed, let's set the user to active
                 if ((int) $training->status == TrainingStatus::COMPLETED->value) {
-                    // If training is [Refresh, Transfer or Fast-track] or [Standard and exam is passed]
+                    // atcActivityBasedOnTotalHours is false OR true and type is not familiarisation
                     if (! Setting::get('atcActivityBasedOnTotalHours') || Setting::get('atcActivityBasedOnTotalHours') && $training->type <= 4) {
-                        try {
-                            $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
-                            $activity->atc_active = true;
-                            $activity->start_of_grace_period = now();
-                            $activity->save();
-                        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                            AtcActivity::create([
-                                'user_id' => $training->user->id,
-                                'area_id' => $training->area->id,
-                                'hours' => 0,
-                                'atc_active' => true,
-                                'start_of_grace_period' => now(),
-                            ]);
-                        }
+
+                        // Apply activity only if user belongs to accepted divisions.
+                        // Visitors should manually be granted visitor endorsement, hence not covered here.
+                        if($this->isUserInDivision($training->user)) {
+                            
+                            try {
+                                $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
+                                $activity->atc_active = true;
+                                $activity->start_of_grace_period = now();
+                                $activity->save();
+                            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                                AtcActivity::create([
+                                    'user_id' => $training->user->id,
+                                    'area_id' => $training->area->id,
+                                    'hours' => 0,
+                                    'atc_active' => true,
+                                    'start_of_grace_period' => now(),
+                                ]);
+                            }
+                        }                        
                     }
                 }
 
@@ -805,6 +811,21 @@ class TrainingController extends Controller
         }
 
         return ['success' => true];
+    }
+
+    /**
+     * Check if the user is from the same division as the training request
+     *
+     * @param $user
+     * @return bool
+     */
+    protected function isUserInDivision($user)
+    {
+        if (config('app.mode') === 'subdivision') {
+            return in_array($user->subdivision, array_map('trim', explode(',', Setting::get('trainingSubDivisions'))));
+        }
+
+        return $user->division === config('app.owner_code');
     }
 
     /**
