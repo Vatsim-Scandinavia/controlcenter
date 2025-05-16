@@ -59,7 +59,7 @@ class UpdateAtcHours extends Command
         $ratedMembers = User::getAssociatedActiveAtcMembers(! Setting::get('atcActivityAllowReactivation'), $optionalUserIdFilter);
         $members = User::whereIn('id', $ratedMembers->pluck('id'))->get();
 
-        $this->info('Found ' . $members->count() . ' members to update.');
+        $this->info('Found ' . $members->count() . ' members to update. This will take ' . round((($members->count() * 7) / 60), 1) . ' minutes to respect API throttle.');
 
         // Update member hours
         $this->updateMemberATCHours($members);
@@ -96,10 +96,12 @@ class UpdateAtcHours extends Command
 
             if ($response == null) {
                 Log::error('updateMemberATCHours: Failed to fetch GuzzleHttp Response, url: ' . $url);
+                sleep(7); // Delay to comply with API rate limit
 
                 continue;
             } elseif ($response->getStatusCode() >= 300) {
                 Log::warning('updateMemberATCHours: User ' . $member->id . ' fetch failed with code ' . $response->getStatusCode());
+                sleep(7); // Delay to comply with API rate limit
 
                 continue;
             }
@@ -108,11 +110,15 @@ class UpdateAtcHours extends Command
                 $parsedData = json_decode($response->getBody()->getContents(), false, JSON_THROW_ON_ERROR);
             } catch (\Exception $e) {
                 Log::error('updateMemberATCHours: Failed to parse JSON for member: ' . $member->id . ': ' . $e);
+                sleep(7); // Delay to comply with API rate limit
 
                 continue;
             }
 
             $this->updateHoursForMember($member, collect($parsedData->results), $divisionCallsignPrefixes);
+
+            // Add a delay with buffer to ensure we don't exceed 10 calls per minute.
+            sleep(7);
         }
     }
 
