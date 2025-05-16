@@ -63,7 +63,7 @@ class Kernel extends ConsoleKernel
 
         // Update ATC hours and active status
         $schedule->command('update:atc:status')
-            ->dailyAt('06:00');
+            ->dailyAt('01:00');
 
         // Send our training interest e-mails
         $schedule->command('send:traininginterest')
