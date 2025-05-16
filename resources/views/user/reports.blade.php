@@ -15,7 +15,7 @@
                 <div class="accordion" id="reportAccordion">
                     @if ($reportsAndExams->count() == 0)
                         <div class="card-text text-primary p-3">
-                            No training reports yet.
+                            No training reports yet or you don't have permission to view them.
                         </div>
                     @else
 
