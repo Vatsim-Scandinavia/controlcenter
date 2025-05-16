@@ -97,7 +97,7 @@
 
                 var query = parseInt(document.querySelector('.user-search').value);
                 if(Number.isInteger(query)){
-                    location.assign("{{ route('user.show', '') }}/" + query); 
+                    location.assign("{{ route('user.show', '" + query + "') }}"); 
                 }
 
             });
