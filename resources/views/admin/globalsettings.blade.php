@@ -208,8 +208,8 @@
                             Allow automatic re-activation of inactive controllers
                         </label>
                         <small class="form-text d-block">
-                            Enabled: Allow a controller to collect enough hours as inactive to automatically become active<br>
-                            Disabled: Only a training marked as completed will reactivate a controller as ATC Active
+                            Enabled: Allow a controller to collect enough hours as inactive to automatically become active. <i>NOTE: Longer cron runs required, may take hours to update ATC hours.</i><br>
+                            Disabled: Only completed training reactivates ATC Active.
                         </small>
                     </div>
                     <div class="form-check mt-3">

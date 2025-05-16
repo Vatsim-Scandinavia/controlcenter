@@ -653,8 +653,8 @@ class TrainingController extends Controller
 
                         // Apply activity only if user belongs to accepted divisions.
                         // Visitors should manually be granted visitor endorsement, hence not covered here.
-                        if($this->isUserInDivision($training->user)) {
-                            
+                        if ($this->isUserInDivision($training->user)) {
+
                             try {
                                 $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
                                 $activity->atc_active = true;
@@ -669,7 +669,7 @@ class TrainingController extends Controller
                                     'start_of_grace_period' => now(),
                                 ]);
                             }
-                        }                        
+                        }
                     }
                 }
 
@@ -816,7 +816,6 @@ class TrainingController extends Controller
     /**
      * Check if the user is from the same division as the training request
      *
-     * @param $user
      * @return bool
      */
     protected function isUserInDivision($user)

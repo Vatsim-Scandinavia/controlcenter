@@ -5,7 +5,6 @@ namespace App\Models;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
-use App\Helpers\VatsimRating;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -243,23 +242,33 @@ class User extends Authenticatable
     }
 
     /**
-     * Fetch members with a rating that are in our subdivision
+     * Fetch members that are active as ATC and associated with the division.
      *
      * @return EloquentCollection<User>
      */
-    public static function getRatedMembers(array $userIds = [])
+    public static function getAssociatedActiveAtcMembers(bool $onlyCheckActiveControllers = true, array $userIds = [])
     {
-        // Return S1+ users who are VATSCA members
+        // Return S1+ users who are VATSCA members and active as ATC
         if (! empty($userIds)) {
-            return User::whereIn('id', $userIds)
-                ->where('rating', '>=', VatsimRating::S1)
-                ->where(config('app.mode'), config('app.owner_code'))
-                ->get();
+            $query = User::whereIn('id', $userIds)
+                ->where(config('app.mode'), config('app.owner_code'));
+
+            if ($onlyCheckActiveControllers) {
+                $query->whereHas('atcActivity', function ($query) {
+                    $query->where('atc_active', true);
+                });
+            }
+
+            return $query->get();
         } else {
-            return User::where([
-                ['rating', '>=', VatsimRating::S1],
-                [config('app.mode'), '=', config('app.owner_code')],
-            ])->get();
+            $query = User::where(config('app.mode'), config('app.owner_code'));
+            if ($onlyCheckActiveControllers) {
+                $query->whereHas('atcActivity', function ($query) {
+                    $query->where('atc_active', true);
+                });
+            }
+
+            return $query->get();
         }
     }
 
