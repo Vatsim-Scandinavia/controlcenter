@@ -45,9 +45,12 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+
+        $waitingTime = !empty($this->training->area->waiting_time) ? $this->training->area->waiting_time : 'unknown';
+
         $textLines = [
             'We hereby confirm that we have received your training request for ' . $this->training->getInlineRatings() . ' in ' . Area::find($this->training->area_id)->name . '.',
-            'The request is now in queue. Expected waiting time is ' . $this->training->area->waiting_time ?? 'unknown',
+            'The request is now in queue. Expected waiting time is ' . $waitingTime . '.',
             'We will periodically ask you to confirm your continued interest for your application with us, it\'s your responsibility to check your email for these requests and reply within the deadline.',
         ];
 
