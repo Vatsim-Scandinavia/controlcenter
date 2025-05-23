@@ -1,5 +1,19 @@
 # Changelog
 
+## [6.2.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.2...v6.2.3) (2025-05-23)
+
+
+### Bug Fixes
+
+* mentor can't see all of own reports ([b26f0b3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b26f0b34b1bf14fb9524c4836d1944e7e75d493a)), closes [#1196](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1196)
+* quick search enter shortcut ([79affe5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/79affe5fbb3834e96c72eee3d25477024279ed8e))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency laravel/framework to v12.15.0 ([#1194](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1194)) ([d844787](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d8447879a71832d5ecd4a79502cabb3a674502f5))
+* **deps:** update dependency phpunit/phpunit to v11.5.21 ([#1195](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1195)) ([0441c2b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0441c2b89b48c641618e90fcea199d274b9e6bfe))
+
 ## [6.2.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.1...v6.2.2) (2025-05-16)
 
 
