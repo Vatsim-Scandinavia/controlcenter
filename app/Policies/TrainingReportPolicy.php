@@ -34,7 +34,7 @@ class TrainingReportPolicy
     public function view(User $user, TrainingReport $trainingReport)
     {
         return $trainingReport->training->mentors->contains($user) || // If the user is a mentor of the training
-                $trainingReport->author = $user || // If the user is the author of the report
+                $trainingReport->author == $user || // If the user is the author of the report
                 $user->isAdmin() ||
                 $user->isModerator($trainingReport->training->area) ||
                 ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
