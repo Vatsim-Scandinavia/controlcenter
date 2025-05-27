@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.2.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.3...v6.2.4) (2025-05-27)
+
+
+### Bug Fixes
+
+* mentors couldn't see all their reports ([e888e62](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e888e623c745b897aa7fcc57571c0aa67bfae6bd))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency vue to v3.5.15 ([#1197](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1197)) ([946fbce](https://github.com/Vatsim-Scandinavia/controlcenter/commit/946fbcea0aef04a2ffb7a29281821d121511e0be))
+
 ## [6.2.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.2...v6.2.3) (2025-05-23)
 
 
