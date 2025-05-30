@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.2.5](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.4...v6.2.5) (2025-05-30)
+
+
+### Bug Fixes
+
+* reports not working due to month overflow ([41481ab](https://github.com/Vatsim-Scandinavia/controlcenter/commit/41481abdbf3cce9ac95d5e9e13413af8d9552895))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency laravel/framework to v12.16.0 ([#1199](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1199)) ([3a11340](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3a113406ab7e7fd7436be688b21984c82fdf5ca3))
+* **deps:** update dependency vue to v3.5.16 ([#1200](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1200)) ([78925f4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/78925f441a71676feefb86abd4be565b5ca13299))
+
 ## [6.2.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.3...v6.2.4) (2025-05-27)
 
 
