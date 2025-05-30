@@ -259,13 +259,13 @@ class ReportController extends Controller
     protected function getBiAnnualRequestsStats($areaFilter)
     {
         $monthTranslator = [
-            (int) Carbon::now()->format('m') => 6,
-            (int) Carbon::now()->subMonths(1)->format('m') => 5,
-            (int) Carbon::now()->subMonths(2)->format('m') => 4,
-            (int) Carbon::now()->subMonths(3)->format('m') => 3,
-            (int) Carbon::now()->subMonths(4)->format('m') => 2,
-            (int) Carbon::now()->subMonths(5)->format('m') => 1,
-            (int) Carbon::now()->subMonths(6)->format('m') => 0,
+            (int) Carbon::now()->startOfMonth()->format('m') => 6,
+            (int) Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->format('m') => 5,
+            (int) Carbon::now()->subMonthsNoOverflow(2)->startOfMonth()->format('m') => 4,
+            (int) Carbon::now()->subMonthsNoOverflow(3)->startOfMonth()->format('m') => 3,
+            (int) Carbon::now()->subMonthsNoOverflow(4)->startOfMonth()->format('m') => 2,
+            (int) Carbon::now()->subMonthsNoOverflow(5)->startOfMonth()->format('m') => 1,
+            (int) Carbon::now()->subMonthsNoOverflow(6)->startOfMonth()->format('m') => 0,
         ];
 
         $newRequests = [];
