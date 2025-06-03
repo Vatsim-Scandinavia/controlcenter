@@ -5,7 +5,7 @@ description = "Default template for PDM package"
 authors = [
     {name = "Thor K. Høgås", email = "thor@roht.no"},
 ]
-requires-python = "==3.10.*"
+requires-python = ">=3.13"
 readme = "README.md"
 license = {text = "GPL3"}
 dependencies = [
@@ -17,10 +17,8 @@ dependencies = [
     "mkdocs-git-committers-plugin-2>=2.2.2",
 ]
 
-
 [tool.pdm]
-package-type = "application"
-
+distribution = false
 [tool.pdm.scripts]
 "docs:serve" = { cmd = "mike serve", help = "View local documentation" }
 "docs:build" = { cmd = "mike deploy --ignore-remote-status dev", help = "Build local documentation" }
