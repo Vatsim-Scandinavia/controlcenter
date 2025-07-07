@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.6](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.5...v6.2.6) (2025-07-07)
+
+
+### Bug Fixes
+
+* api/users returning null when division mode is on ([#1222](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1222)) ([ffc23d4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ffc23d4f3172b817632ec37ec5e8327a4b35968f))
+
 ## [6.2.5](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.2.4...v6.2.5) (2025-06-22)
 
 
