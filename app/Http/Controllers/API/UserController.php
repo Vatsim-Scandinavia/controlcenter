@@ -55,7 +55,7 @@ class UserController extends Controller
                 $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
                 $returnUsers = User::whereIn('subdivision', $subdivisions);
             } else {
-                $returnUsers = User::where('subdivision', config('app.owner_code'));
+                $returnUsers = User::where('division', config('app.owner_code'));
             }
 
             if ($paramOnlyActive) {
