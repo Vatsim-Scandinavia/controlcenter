@@ -246,7 +246,6 @@ class ReportController extends Controller
             array_push($payload, $load);
         }
 
-        //        dd($payload);
         return $payload;
     }
 
@@ -286,7 +285,7 @@ class ReportController extends Controller
                     ->select(DB::raw(Sql::as('count(trainings.id)', 'count')), DB::raw(Sql::month('trainings.created_at', 'month')))
                     ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                     ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                    ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('rating_id', $rating->id)
                     ->where('area_id', $areaFilter)
                     ->groupBy('month')
@@ -302,7 +301,7 @@ class ReportController extends Controller
                     ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                     ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                     ->where('status', -1)
-                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('closed_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('rating_id', $rating->id)
                     ->where('area_id', $areaFilter)
                     ->groupBy('month')
@@ -318,7 +317,7 @@ class ReportController extends Controller
                     ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                     ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                     ->where('status', -2)
-                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('closed_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('rating_id', $rating->id)
                     ->where('area_id', $areaFilter)
                     ->groupBy('month')
@@ -343,7 +342,7 @@ class ReportController extends Controller
                 })
                 ->whereIn('trainings.type', [1, 4])
                 ->where('result', 'PASSED')
-                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->where('examination_date', '>=', now()->subMonths(6)->startOfMonth())
                 ->where('area_id', $areaFilter)
                 ->groupBy('month')
                 ->get();
@@ -366,7 +365,7 @@ class ReportController extends Controller
                 })
                 ->whereIn('trainings.type', [1, 4])
                 ->where('result', 'FAILED')
-                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->where('examination_date', '>=', now()->subMonths(6)->startOfMonth())
                 ->where('area_id', $areaFilter)
                 ->groupBy('month')
                 ->get();
@@ -388,7 +387,7 @@ class ReportController extends Controller
                     ->select(DB::raw(Sql::as('count(trainings.id)', 'count')), DB::raw(Sql::month('trainings.created_at', 'month')))
                     ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                     ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                    ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('rating_id', $rating->id)
                     ->groupBy('month')
                     ->get();
@@ -403,7 +402,7 @@ class ReportController extends Controller
                     ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                     ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                     ->where('status', -1)
-                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('closed_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('rating_id', $rating->id)
                     ->groupBy('month')
                     ->get();
@@ -418,7 +417,7 @@ class ReportController extends Controller
                     ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
                     ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
                     ->where('status', -2)
-                    ->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                    ->where('closed_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('rating_id', $rating->id)
                     ->groupBy('month')
                     ->get();
@@ -442,7 +441,7 @@ class ReportController extends Controller
                 })
                 ->whereIn('trainings.type', [1, 4])
                 ->where('result', 'PASSED')
-                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->where('examination_date', '>=', now()->subMonths(6)->startOfMonth())
                 ->groupBy('month')
                 ->get();
 
@@ -464,7 +463,7 @@ class ReportController extends Controller
                 })
                 ->whereIn('trainings.type', [1, 4])
                 ->where('result', 'FAILED')
-                ->where('examination_date', '>=', date('Y-m-d H:i:s', strtotime('-6 months')))
+                ->where('examination_date', '>=', now()->subMonths(6)->startOfMonth())
                 ->groupBy('month')
                 ->get();
 
