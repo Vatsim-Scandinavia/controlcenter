@@ -17,7 +17,7 @@
         "core-js": "^3.37.1",
         "easymde": "^2.18.0",
         "flatpickr": "^4.6.13",
-        "laravel-vite-plugin": "^1.0.0",
+        "laravel-vite-plugin": "^2.0.0",
         "moment": "^2.29.1",
         "sass": "1.89.2",
         "vite": "^6.0.0",
