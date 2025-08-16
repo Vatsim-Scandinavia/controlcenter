@@ -53,7 +53,7 @@
                             <i class="far fa-circle-check text-success"></i>
                             Visiting
                         @else
-                            <i class="fas fa-circle-{{ $user->isAtcActive() ? 'check' : 'xmark' }} text-{{ $user->isAtcActive() ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
+                            <i class="fas fa-circle-{{ $user->isAtcActive() ? 'check' : 'xmark' }} text-{{ $user->isAtcActive() ? 'success' : 'danger' }}"></i> {{ ($totalHours >= 10) ? round($totalHours) : round($totalHours, 1) }} hours
                         @endif
                     </dd>
 
@@ -69,7 +69,7 @@
                                 @endif
                             @endif
 
-                            {{ $area->name }}: {{ round($atcActivityHours[$area->id]["hours"]) }}h
+                            {{ $area->name }}: {{ ($atcActivityHours[$area->id]["hours"] >= 10) ? round($atcActivityHours[$area->id]["hours"]) : round($atcActivityHours[$area->id]["hours"], 1) }}h
                             {!! ($atcActivityHours[$area->id]["graced"]) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
                         </dd>
                     @endforeach
