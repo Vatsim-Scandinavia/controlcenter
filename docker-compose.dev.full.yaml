@@ -10,7 +10,7 @@ services:
     volumes:
       - ./:/app
   db:
-    image: docker.io/library/mariadb:11
+    image: docker.io/library/mariadb:12
     ports:
       - 3306:3306
     environment:
