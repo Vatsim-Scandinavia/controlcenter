@@ -17,7 +17,7 @@ services:
       MARIADB_DATABASE: controlcenter
       MARIADB_ROOT_PASSWORD: root
   redis:
-    image: docker.io/library/redis:8.0-alpine
+    image: docker.io/library/redis:8.2-alpine
     restart: always
     ports:
       - 6379:6379
