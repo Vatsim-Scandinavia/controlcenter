@@ -50,8 +50,14 @@ class AtcSoonInactiveNotification extends Notification implements ShouldQueue
     {
 
         $textLines = [
-            'We would like to notify you that your ATC active status in ' . $this->area->name . ' is about to expire. You have ' . round($this->atcHours, 1) . ' online hours out of the required ' . Setting::get('atcActivityRequirement') . ' hours.',
-            'Start controlling again on the network to avoid losing your status and potentially waiting for a long time for refresh training.',
+            'We would like to notify you that your ATC active status in ' . $this->area->name . ' is about to expire.',
+            '**' . sprintf(
+                'We require a minimum of %s hours in a period of %s months. You currently have %.1f online hours.',
+                Setting::get('atcActivityRequirement'),
+                Setting::get('atcActivityQualificationPeriod'),
+                $this->atcHours
+            ) . '**',
+            'Please continue controlling on the network to maintain your ATC active status and avoid a long wait for refresher training.',
         ];
 
         return (new WarningMail('ATC Inactivity Reminder', $this->user, $textLines))
