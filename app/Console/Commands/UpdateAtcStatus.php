@@ -43,6 +43,11 @@ class UpdateAtcStatus extends Command
             Artisan::call('sync:endorsements');
         }
 
+        // Send ATC inactivity reminder
+        if (Setting::get('atcActivityInactivityReminder') > 0) {
+            Artisan::call('send:atcinactivityreminder');
+        }
+
         return Command::SUCCESS;
     }
 }
