@@ -173,7 +173,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="mb-4">
+                                <label class="form-label" for="atcActivityInactivityReminder">Inactivity Reminder</label>
+                                <input type="text" class="form-control @error('atcActivityInactivityReminder') is-invalid @enderror" id="atcActivityInactivityReminder" maxlength="2" name="atcActivityInactivityReminder" required value="{{ Setting::get("atcActivityInactivityReminder") }}">
+                                <small class="form-text">Under the set amount of hours, send an ATC inactivity reminder. Set 0 to disable.</small>
+                            </div>
+                            @error('atcActivityInactivityReminder')
+                                <span class="text-danger">{{ $errors->first('atcActivityInactivityReminder') }}</span>
+                            @enderror
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="mb-4">
                                 <label class="form-label" for="atcActivityContact">Inactivity Warning Contact</label>
                                 <input type="text" class="form-control @error('atcActivityContact') is-invalid @enderror" id="atcActivityContact" placeholder="e.g. Training Director" maxlength="40" name="atcActivityContact" required value="{{ Setting::get("atcActivityContact") }}">

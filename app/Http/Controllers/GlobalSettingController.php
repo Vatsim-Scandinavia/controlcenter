@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use Illuminate\Http\Request;
+use App\Rules\InactivityReminderHours;
 
 /**
  * This controller controls the global, app-specific and toggleble settings, such as if trainings are enabled.
@@ -47,6 +48,7 @@ class GlobalSettingController extends Controller
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
+            'atcActivityInactivityReminder' => ['required', 'integer', new InactivityReminderHours()],
             'atcActivityContact' => 'max:40',
             'atcActivityBasedOnTotalHours' => '',
             'atcActivityNotifyInactive' => '',
@@ -89,6 +91,7 @@ class GlobalSettingController extends Controller
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
+        Setting::set('atcActivityInactivityReminder', $data['atcActivityInactivityReminder']);
         Setting::set('atcActivityContact', $data['atcActivityContact']);
         Setting::set('atcActivityBasedOnTotalHours', $atcActivityBasedOnTotalHours);
         Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
