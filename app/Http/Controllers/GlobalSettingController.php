@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use Illuminate\Http\Request;
 use App\Rules\InactivityReminderHours;
+use Illuminate\Http\Request;
 
 /**
  * This controller controls the global, app-specific and toggleble settings, such as if trainings are enabled.

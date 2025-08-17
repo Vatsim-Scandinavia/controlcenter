@@ -14,7 +14,9 @@ class AtcSoonInactiveNotification extends Notification implements ShouldQueue
     use Queueable;
 
     private $user;
+
     private $area;
+
     private $atcHours;
 
     /**

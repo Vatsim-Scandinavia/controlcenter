@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AtcActivity;
-use Illuminate\Console\Command;
-use App\Models\User;
-use App\Notifications\AtcSoonInactiveNotification;
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Models\AtcActivity;
+use App\Notifications\AtcSoonInactiveNotification;
+use Illuminate\Console\Command;
 
 class SendAtcInactivityReminder extends Command
 {
@@ -31,6 +30,7 @@ class SendAtcInactivityReminder extends Command
     {
         if (Setting::get('atcActivityInactivityReminder') == 0) {
             $this->info('ATC inactivity reminder is disabled.');
+
             return;
         }
 
@@ -39,7 +39,7 @@ class SendAtcInactivityReminder extends Command
             ->get();
 
         foreach ($atcActivities as $atcActivity) {
-            if($atcActivity->atc_active == true && $atcActivity->hours < 20){
+            if ($atcActivity->atc_active == true && $atcActivity->hours < 20) {
                 $atcActivity->user->notify(new AtcSoonInactiveNotification($atcActivity->user, $atcActivity->area, $atcActivity->hours));
 
                 $atcActivity->last_inactivity_warning = now();

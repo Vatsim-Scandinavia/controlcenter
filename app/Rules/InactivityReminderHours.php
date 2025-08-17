@@ -2,9 +2,9 @@
 
 namespace App\Rules;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use anlutro\LaravelSettings\Facade as Setting;
 
 class InactivityReminderHours implements ValidationRule
 {
