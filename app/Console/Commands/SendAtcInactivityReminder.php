@@ -39,7 +39,7 @@ class SendAtcInactivityReminder extends Command
             ->get();
 
         foreach ($atcActivities as $atcActivity) {
-            if ($atcActivity->atc_active == true && $atcActivity->hours < 20) {
+            if ($atcActivity->atc_active == true && $atcActivity->hours < Setting::get('atcActivityInactivityReminder')) {
                 $atcActivity->user->notify(new AtcSoonInactiveNotification($atcActivity->user, $atcActivity->area, $atcActivity->hours));
 
                 $atcActivity->last_inactivity_warning = now();
