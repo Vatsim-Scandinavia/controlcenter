@@ -144,12 +144,23 @@ class TrainingReportController extends Controller
 
         $report->update($data);
 
+            // Handle inline image uploads
+            $inlineImageUrls = [];
+            if ($request->hasFile('inline_images')) {
+                foreach ($request->file('inline_images') as $image) {
+                    if ($image->isValid()) {
+                        $path = $image->store('public/reports/images');
+                        $inlineImageUrls[] = asset(str_replace('public/', 'storage/', $path));
+                    }
+                }
+            }
+
         // Notify student of new training request if it's not a draft anymore
         if ($oldDraftStatus == true && $report->draft == false && $report->training->user->setting_notify_newreport) {
             $report->training->user->notify(new TrainingReportNotification($report->training, $report));
         }
 
-        return redirect()->intended(route('training.show', $report->training->id))->withSuccess('Training report successfully updated');
+        return redirect()->intended(route('training.show', $report->training->id))->with(['success' => 'Training report successfully updated', 'inlineImageUrls' => $inlineImageUrls]);
     }
 
     /**
@@ -182,6 +193,7 @@ class TrainingReportController extends Controller
             'position' => 'nullable',
             'draft' => 'sometimes',
             'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg|max:10240',
+            'inline_images.*' => 'sometimes|file|mimes:png,jpg,jpeg,gif|max:10240',
             'contentimprove' => 'sometimes|nullable|string',
         ]);
     }

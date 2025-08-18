@@ -62,7 +62,17 @@
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
                         @enderror
+                            <div class="mt-2 alert alert-info">
+                                <strong>Tip:</strong> To embed an image inline, use Markdown syntax: <code>![](image_url)</code>.<br>
+                                Upload an image below and copy its URL to use here.
+                            </div>
                     </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="image-upload">Upload image for inline embedding</label>
+                            <input type="file" name="inline_images[]" id="image-upload" class="form-control" accept=".png,.jpg,.jpeg,.gif" multiple>
+                            <small class="form-text text-muted">After saving, you will see the image URLs to embed in your report.</small>
+                        </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="contentimprove">Areas to improve</label>
