@@ -93,7 +93,7 @@ class ReportController extends Controller
 
             // Fetch TrainingReport and ExaminationReport if activities exist
             if ($activities->count() > 0) {
-                $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->whereHas('training', function (Builder $q) use ($filterArea) {
+                $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->where('draft', false)->whereHas('training', function (Builder $q) use ($filterArea) {
                     $q->where('area_id', $filterArea);
                 })->get();
 
