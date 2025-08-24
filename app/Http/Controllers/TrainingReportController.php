@@ -40,7 +40,7 @@ class TrainingReportController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create(Training $training)
+    public function create(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingReport::class, $training]);
         if ($training->status < TrainingStatus::PRE_TRAINING->value) {
@@ -48,6 +48,9 @@ class TrainingReportController extends Controller
         }
 
         $positions = Position::all();
+        
+        // Keep the onetimekey for another request
+        $request->session()->reflash();
 
         return view('training.report.create', compact('training', 'positions'));
     }

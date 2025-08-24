@@ -42,6 +42,9 @@ class TrainingExaminationController extends Controller
         $taskRecipients = collect(Group::admins()->merge(Group::moderators()));
         $taskPopularAssignees = TaskController::getPopularAssignees($training->area);
 
+        // Keep the onetimekey for another request
+        $request->session()->reflash();
+
         return view('training.exam.create', compact('training', 'positions', 'taskRecipients', 'taskPopularAssignees'));
     }
 

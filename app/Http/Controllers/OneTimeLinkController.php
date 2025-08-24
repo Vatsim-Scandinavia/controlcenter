@@ -56,8 +56,6 @@ class OneTimeLinkController extends Controller
     {
         $link = OneTimeLink::where('key', $key)->get()->first();
 
-        session()->put('onetimekey', $key);
-
         // We can't find a link that matches the key provided
         if ($link == null) {
             return abort(404);
@@ -72,6 +70,7 @@ class OneTimeLinkController extends Controller
         }
 
         // Do the redirect
+        session()->flash('onetimekey', $key);
         return redirect()->to($link->getRelatedLink());
     }
 }
