@@ -71,6 +71,7 @@ class OneTimeLinkController extends Controller
 
         // Do the redirect
         session()->flash('onetimekey', $key);
+
         return redirect()->to($link->getRelatedLink());
     }
 }

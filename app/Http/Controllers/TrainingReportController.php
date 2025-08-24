@@ -48,7 +48,7 @@ class TrainingReportController extends Controller
         }
 
         $positions = Position::all();
-        
+
         // Keep the onetimekey for another request
         $request->session()->reflash();
 
