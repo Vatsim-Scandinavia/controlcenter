@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.3.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.1...v6.3.2) (2025-08-24)
+
+
+### Bug Fixes
+
+* drafts appearing in area filtered training activities ([6065143](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6065143ecdd9a72fcc42fcd3e044f006be067050)), closes [#1113](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1113)
+* drafts disappearing when OTL still in session ([21f5ef5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/21f5ef50bd609334bed998a8505b344b8074a251))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency core-js to v3.45.1 ([#1251](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1251)) ([c36797f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c36797ff03f87ccb124791d4b9446920c12b37c5))
+* **deps:** update dependency guzzlehttp/guzzle to v7.10.0 ([#1253](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1253)) ([61ca417](https://github.com/Vatsim-Scandinavia/controlcenter/commit/61ca417f72837dac1caa41da1c75791336aa14d0))
+* **deps:** update dependency laravel/framework to v12.25.0 ([#1248](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1248)) ([06562cb](https://github.com/Vatsim-Scandinavia/controlcenter/commit/06562cb26814118907daf0c8ea1e23404c715bcb))
+* **deps:** update dependency phpunit/phpunit to v11.5.34 ([#1250](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1250)) ([893d475](https://github.com/Vatsim-Scandinavia/controlcenter/commit/893d475c7ddc504fc916ff5c63cd093ae75e3cb8))
+* **deps:** update dependency vite to v7.1.3 ([#1249](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1249)) ([e097973](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e09797399c03aebdc97978245bedc706c0bfc123))
+* **deps:** update dependency vue to v3.5.19 ([#1252](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1252)) ([3436915](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3436915b7996a4b206d0270a90310102b8b0f19d))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.9.5 ([#1247](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1247)) ([df41455](https://github.com/Vatsim-Scandinavia/controlcenter/commit/df414551fe68c89a6b449259d5d11711ab58c6f3))
+
 ## [6.3.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.0...v6.3.1) (2025-08-17)
 
 
