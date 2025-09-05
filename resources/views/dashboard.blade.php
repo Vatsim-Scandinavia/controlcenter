@@ -317,7 +317,7 @@
                         <br>
                         
                         <b><i class="fas fa-chevron-right"></i> How long is the queue?</b>
-                        {{ \Auth::user()->getActiveTraining()->area->waiting_time ?? 'Unknown waiting time' }}
+                        {{ \Auth::user()->getActiveTraining()->area->waiting_time ?? 'See application page or training confirmation email for details.' }}
                     </p>
                 </div>
                 @endif
