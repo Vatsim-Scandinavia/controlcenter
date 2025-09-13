@@ -88,7 +88,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label class="form-label">Your feedback (English only)</label>
+                            <label class="form-label">Your feedback <small class="form-text">(English only)</small></label>
                             <textarea class="form-control" name="feedback" rows="5">{{ old('feedback') }}</textarea>
                             @error('feedback')
                                 <span class="text-danger">{{ $errors->first('feedback') }}</span>
