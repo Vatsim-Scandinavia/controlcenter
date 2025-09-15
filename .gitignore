@@ -29,3 +29,6 @@ coverage/*
 
 # mkdocs
 docs_site/
+
+# php type generation
+_ide_helper_models.php

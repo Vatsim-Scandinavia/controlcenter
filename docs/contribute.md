@@ -24,7 +24,16 @@ If you need test data, you can also seed the database with `php artisan db:seed`
 
 If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
 
+### Tooling
+
+If you'd like better editor integration, you can generate helper definitions for Laravel.
+
+```sh
+php artisan ide-helper:generate
+```
+
 ### Caching
+
 This application uses the OPCache to cache the compiled PHP code. The default setting is for production use, which means that the cache is not cleared automatically. To clear the cache, you need to restart the container if you change a file.
 
 For development, change `validate_timestamps` to `1` in the `/usr/local/etc/php/php.ini` file to make sure that the cache is cleared automatically when a file is changed.
