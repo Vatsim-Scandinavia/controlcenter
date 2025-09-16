@@ -1,0 +1,46 @@
+# # mise config files are hierarchical. mise will find all of the config files
+# # in all parent directories and merge them together.
+# See https://mise.jdx.dev/ for more information
+
+[env]
+NODE_ENV = "development"
+
+# Load Laraval variables from the .env file, or any above, too
+mise.file = ["../.env", ".env"]
+
+# Expose vendored PHP scripts to the PATH
+mise.path = "./vendor/bin"
+
+[tasks.dev]
+description = "Start frontend and backend development servers"
+depends = ["dev:backend", "dev:frontend"]
+
+[tasks."dev:backend"]
+description = "Start the backend development server"
+run = "php artisan serve --port {{option(name='port', default='8081')}}"
+
+[tasks."dev:frontend"]
+description = "Start the frontend development server"
+run = "npm run dev"
+depends = ["deps:npm"]
+
+[tasks."deps:npm"]
+description = "Install frontend (Node.js) dependencies"
+run = "npm install"
+
+[tasks."deps:composer"]
+description = "Install backend (PHP) dependencies"
+run = "composer install && sleep 0.5"
+sources = ["composer.json"]
+outputs = ["composer.lock"]
+
+[tasks."backend:tests"]
+description = "Run backend tests"
+run = "php artisan test"
+depends = ["deps:composer"]
+
+[tasks."frontend:build"]
+description = "Build frontend assets"
+run = "npm run build"
+depends = ["deps:npm"]
+sources = ["package.json"]
