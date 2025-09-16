@@ -221,6 +221,7 @@
                 @endif
 
                 @if (\Auth::user()->isModeratorOrAbove())
+                    <a class="collapse-item" href="{{ route('positions.index') }}">Positions</a>
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endif
                 </div>
