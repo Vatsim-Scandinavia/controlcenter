@@ -2,3 +2,13 @@
 // Bootstrap Table
 @import "bootstrap-table/dist/bootstrap-table.css";
 @import "bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.css";
+
+/* Override the no-filter-control because it's too large with the table padding */
+.no-filter-control {
+    height: 0 !important;
+}
+
+/* Change the vertical align for bootstrap-table to avoid no-filter-control issues */
+.bootstrap-table .fixed-table-container .table thead th {
+    vertical-align: top;
+}
