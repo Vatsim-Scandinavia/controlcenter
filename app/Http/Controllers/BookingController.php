@@ -164,7 +164,7 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating > $user->rating) && ! $user->isModeratorOrAbove()) {
+        if (($booking->position->rating->value > $user->rating) && ! $user->isModeratorOrAbove()) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
