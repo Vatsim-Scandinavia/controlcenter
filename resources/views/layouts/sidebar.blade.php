@@ -218,6 +218,7 @@
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
+                    <a class="collapse-item" href="{{ route('positions.index') }}">Positions</a>
                 @endif
 
                 @if (\Auth::user()->isModeratorOrAbove())

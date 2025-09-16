@@ -8,6 +8,15 @@ class Position extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = [
+        'callsign',
+        'name',
+        'frequency',
+        'fir',
+        'rating',
+        'area_id',
+    ];
+
     public function bookings()
     {
         return $this->belongsToMany(Booking::class, 'id', 'position_id');
