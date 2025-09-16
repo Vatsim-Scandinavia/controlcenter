@@ -118,6 +118,8 @@ nav:
           # - Exams: concepts/exams.md
           - Mentoring: concepts/mentors.md
           - Ratings: concepts/ratings.md
+          - Positions: concepts/positions.md
+          - Permissions and Groups: concepts/permissions.md
   - Reference:
       - Activity: activity.md
       - Contribute: contribute.md
