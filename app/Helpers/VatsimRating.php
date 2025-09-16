@@ -19,4 +19,12 @@ enum VatsimRating: int
     case I3 = 10;
     case SUP = 11;
     case ADM = 12;
+
+    public const NOT_POSITION_RATINGS = [
+        self::INA,
+        self::SUS,
+        self::OBS,
+        self::SUP,
+        self::ADM,
+    ];
 }

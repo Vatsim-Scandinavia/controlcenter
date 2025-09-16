@@ -10,7 +10,9 @@
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 fw-bold text-white">Positions</h6>
-                    <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#create-position-modal">Create Position</a>
+                    @if ($canCreate)
+                        <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#create-position-modal">Create Position</a>
+                    @endif
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered">
@@ -35,10 +37,12 @@
                                     <td>{{ $position->rating }}</td>
                                     <td>{{ $position->area->name }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#edit-position-modal-{{ $position->id }}">Edit</a>
-                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete-position-modal" data-bs-position-id="{{ $position->id }}" data-bs-position-callsign="{{ $position->callsign }}" data-bs-action="{{ route('positions.destroy', $position) }}">
-                                            Delete
-                                        </button>
+                                        @if ($position->editable)
+                                            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#edit-position-modal-{{ $position->id }}">Edit</a>
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete-position-modal" data-bs-position-id="{{ $position->id }}" data-bs-position-callsign="{{ $position->callsign }}" data-bs-action="{{ route('positions.destroy', $position) }}">
+                                                Delete
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
