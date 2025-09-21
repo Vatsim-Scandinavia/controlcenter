@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(GroupSeeder::class);
+
         // Create the default dev accounts corresponding to VATSIM Connect
         for ($i = 1; $i <= 11; $i++) {
             $name_first = 'Web';
