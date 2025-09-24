@@ -19,6 +19,7 @@ This part will explain how to create a development instance of Control Center in
 5. Run `npm install` to install all dependencies
 6. Run `npm run build` to compile the assets
 7. Run `php artisan migrate` to setup the database
+8. *Optionally* run `php artisan seed` to seed the database with test data
 
 If you need test data, you can also seed the database with `php artisan db:seed`.
 
