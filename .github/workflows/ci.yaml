@@ -5,6 +5,9 @@ on:
   push:
     paths-ignore:
       - "**.md"
+  pull_request:
+    paths-ignore:
+      - "**.md"
 
 env:
   IMAGE_NAME: vatsim-scandinavia/control-center
@@ -42,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: "{{defaultContext}}:."
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ env.TARGET_PLATFORMS }}
