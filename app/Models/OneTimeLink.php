@@ -77,4 +77,25 @@ class OneTimeLink extends Model
                 break;
         }
     }
+
+    /**
+     * Get the one time link from session for a given training
+     */
+    public static function getFromSession(?Training $training = null): ?OneTimeLink
+    {
+        $key = session()->get('onetimekey');
+
+        if ($key === null) {
+            return null;
+        }
+
+        if ($training === null) {
+            return static::where([['key', '=', $key]])->first();
+        }
+
+        return static::where([
+            ['training_id', '=', $training->id],
+            ['key', '=', $key],
+        ])->first();
+    }
 }

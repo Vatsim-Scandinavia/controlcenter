@@ -15,10 +15,8 @@ class TrainingReportPolicy
 
     /**
      * Determine whether the user can view any of the reports related to a training
-     *
-     * @return bool
      */
-    public function viewAny(User $user, Training $training)
+    public function viewAny(User $user, Training $training): bool
     {
         return $training->mentors->contains($user) ||
                 $user->is($training->user) ||
@@ -28,10 +26,8 @@ class TrainingReportPolicy
 
     /**
      * Determine whether the user can view the training report.
-     *
-     * @return bool
      */
-    public function view(User $user, TrainingReport $trainingReport)
+    public function view(User $user, TrainingReport $trainingReport): bool
     {
         return $trainingReport->training->mentors->contains($user) || // If the user is a mentor of the training
                 $trainingReport->author->is($user) || // If the user is the author of the report
@@ -42,25 +38,43 @@ class TrainingReportPolicy
 
     /**
      * Determine whether the user can create training reports.
-     *
-     * @return bool
      */
-    public function create(User $user, Training $training)
+    public function create(User $user, Training $training): bool
     {
-        if (($link = $this->getOneTimeLink($training)) != null) {
-            return $user->isModerator($link->training->area) || $user->isMentor($link->training->area);
+        // If the user is the student, they cannot create a report
+        if ($user->is($training->user)) {
+            return false;
         }
 
-        // Check if mentor is mentoring area, not filling their own training and the training is in progress
-        return $user->isModerator($training->area) || ($training->mentors->contains($user) && $user->isNot($training->user));
+        // Training mentors and area moderators can create a report
+        if ($user->isModerator($training->area) || $training->mentors->contains($user)) {
+            return true;
+        }
+
+        // Otherwise, let's see if a one-time link is used
+        if (($link = OneTimeLink::getFromSession($training)) != null) {
+            return $user->isMentor($link->training->area);
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether it's allowed to create a draft of the training report
+     */
+    public function createDraft(User $user, Training $training): bool
+    {
+        if (OneTimeLink::getFromSession($training) != null) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Determine whether the user can update the training report.
-     *
-     * @return bool
      */
-    public function update(User $user, TrainingReport $trainingReport)
+    public function update(User $user, TrainingReport $trainingReport): bool
     {
         return $trainingReport->training->mentors->contains($user) ||
                 $user->isAdmin() ||
@@ -69,34 +83,11 @@ class TrainingReportPolicy
 
     /**
      * Determine whether the user can delete the training report.
-     *
-     * @return Illuminate\Auth\Access\Response
      */
-    public function delete(User $user, TrainingReport $trainingReport)
+    public function delete(User $user, TrainingReport $trainingReport): Response
     {
         return ($user->isAdmin() || $user->isModerator($trainingReport->training->area) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->area)))
             ? Response::allow()
             : Response::deny('Only moderators and the author of the training report can delete it.');
-    }
-
-    /**
-     * Get the one time link from a session given a training
-     *
-     * @return null
-     */
-    private function getOneTimeLink($training)
-    {
-        $link = null;
-
-        $key = session()->get('onetimekey');
-
-        if ($key != null) {
-            $link = OneTimeLink::where([
-                ['training_id', '=', $training->id],
-                ['key', '=', $key],
-            ])->get()->first();
-        }
-
-        return $link;
     }
 }

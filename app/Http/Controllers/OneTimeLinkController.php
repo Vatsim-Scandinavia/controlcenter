@@ -64,13 +64,8 @@ class OneTimeLinkController extends Controller
         // Authorize that the user can access the link
         $this->authorize('access', [\App\Models\OneTimeLink::class, $link]);
 
-        // Check if the link has expired
-        if ($link->expires_at < now()) {
-            return abort(400, 'The one time link provided has expired');
-        }
-
-        // Do the redirect
-        session()->flash('onetimekey', $key);
+        // Do the redirect once we insert the one-time key into the session
+        $request->session()->put('onetimekey', $key);
 
         return redirect()->to($link->getRelatedLink());
     }

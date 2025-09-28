@@ -42,9 +42,6 @@ class TrainingExaminationController extends Controller
         $taskRecipients = collect(Group::admins()->merge(Group::moderators()));
         $taskPopularAssignees = TaskController::getPopularAssignees($training->area);
 
-        // Keep the onetimekey for another request
-        $request->session()->reflash();
-
         return view('training.exam.create', compact('training', 'positions', 'taskRecipients', 'taskPopularAssignees'));
     }
 
@@ -118,13 +115,11 @@ class TrainingExaminationController extends Controller
 
         }
 
-        // Redirect based on if request was made by OTL or other means
-        if (($key = session()->get('onetimekey')) != null) {
+        // If OTL was used, remove the link and session variable
+        if (($key = OneTimeLink::getFromSession()) != null) {
             // Remove the link
-            OneTimeLink::where('key', $key)->delete();
+            $key->delete();
             session()->pull('onetimekey');
-
-            return redirect('dashboard')->withSuccess('Examination successfully added');
         }
 
         if ($request->expectsJson()) {
@@ -134,7 +129,12 @@ class TrainingExaminationController extends Controller
             ]);
         }
 
-        return redirect(route('training.show', $training->id))->withSuccess('Examination successfully added');
+        $redirectTarget = route('dashboard');
+        if ($request->user()->can('view', $training)) {
+            $redirectTarget = route('training.show', $training->id);
+        }
+
+        return redirect($redirectTarget)->withSuccess('Examination successfully added');
     }
 
     /**
