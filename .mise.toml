@@ -34,6 +34,10 @@ run = "composer install && sleep 0.5"
 sources = ["composer.json"]
 outputs = ["composer.lock"]
 
+[tasks.tests]
+description = "Run tests"
+depends = ["backend:tests"]
+
 [tasks."backend:tests"]
 description = "Run backend tests"
 run = "php artisan test"
