@@ -11,9 +11,19 @@ mise.file = ["../.env", ".env"]
 # Expose vendored PHP scripts to the PATH
 mise.path = "./vendor/bin"
 
+[tasks.format]
+# TODO: add missing formatting for front-end
+description = "Run formatting"
+depends = ["deps:composer"]
+run = "composer exec pint"
+
 [tasks.dev]
 description = "Start frontend and backend development servers"
 depends = ["dev:backend", "dev:frontend"]
+
+[tasks.tests]
+description = "Run tests"
+depends = ["backend:tests"]
 
 [tasks."dev:backend"]
 description = "Start the backend development server"
@@ -30,13 +40,9 @@ run = "npm install"
 
 [tasks."deps:composer"]
 description = "Install backend (PHP) dependencies"
-run = "composer install && sleep 0.5"
+run = "composer install && sleep 0.2 && touch .composer-installed"
 sources = ["composer.json"]
-outputs = ["composer.lock"]
-
-[tasks.tests]
-description = "Run tests"
-depends = ["backend:tests"]
+outputs = ["composer.lock", ".composer-installed"]
 
 [tasks."backend:tests"]
 description = "Run backend tests"
