@@ -1302,6 +1302,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tooling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#caching" class="md-nav__link">
     <span class="md-ellipsis">
       Caching
@@ -1707,6 +1716,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tooling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#caching" class="md-nav__link">
     <span class="md-ellipsis">
       Caching
@@ -1868,9 +1886,14 @@
 <li>Run <code>npm install</code> to install all dependencies</li>
 <li>Run <code>npm run build</code> to compile the assets</li>
 <li>Run <code>php artisan migrate</code> to setup the database</li>
+<li><em>Optionally</em> run <code>php artisan seed</code> to seed the database with test data</li>
 </ol>
 <p>If you need test data, you can also seed the database with <code>php artisan db:seed</code>.</p>
 <p>If you encounter permissions errors you might want to <code>chown -R www-data:www-data /app</code> and <code>chmod -R o+w /app</code> to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.</p>
+<h3 id="tooling">Tooling<a class="headerlink" href="#tooling" title="Permanent link">&para;</a></h3>
+<p>If you'd like better editor integration, you can generate helper definitions for Laravel.</p>
+<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>ide-helper:generate
+</code></pre></div>
 <h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
 <p>This application uses the OPCache to cache the compiled PHP code. The default setting is for production use, which means that the cache is not cleared automatically. To clear the cache, you need to restart the container if you change a file.</p>
 <p>For development, change <code>validate_timestamps</code> to <code>1</code> in the <code>/usr/local/etc/php/php.ini</code> file to make sure that the cache is cleared automatically when a file is changed.</p>
@@ -1974,7 +1997,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 7, 2025 11:04:12 UTC">September 7, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 29, 2025 20:11:55 UTC">September 29, 2025</span>
   </span>
 
     
@@ -1984,7 +2007,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 7, 2025 11:04:12 UTC">September 7, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 29, 2025 20:11:55 UTC">September 29, 2025</span>
   </span>
 
     
@@ -2002,11 +2025,6 @@ They'll be better off on the specific page in question.
     
     <nav>
       
-        <a href="https://github.com/blt950" class="md-author" title="@blt950">
-          
-          <img src="https://avatars.githubusercontent.com/u/2505044?v=4&size=72" alt="blt950">
-        </a>
-      
         <a href="https://github.com/thor" class="md-author" title="@thor">
           
           <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
@@ -2015,6 +2033,11 @@ They'll be better off on the specific page in question.
         <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
           
           <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
+        </a>
+      
+        <a href="https://github.com/blt950" class="md-author" title="@blt950">
+          
+          <img src="https://avatars.githubusercontent.com/u/2505044?v=4&size=72" alt="blt950">
         </a>
       
       
