@@ -167,7 +167,12 @@ class User extends Authenticatable
         return $this->hasMany(Feedback::class, 'reference_user_id');
     }
 
-    public function getNotificationEmailAttribute()
+    public function getPersonalNotificationEmailAttribute()
+    {
+        return $this->email;
+    }
+
+    public function getWorkNotificationEmailAttribute()
     {
         if ($this->setting_workmail_address) {
             return $this->setting_workmail_address;

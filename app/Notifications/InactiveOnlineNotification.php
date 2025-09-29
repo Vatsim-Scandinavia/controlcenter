@@ -51,7 +51,7 @@ class InactiveOnlineNotification extends Notification implements ShouldQueue
         ];
 
         return (new WarningMail('Unauthorized network logon', $this->user, $textLines))
-            ->to($this->user->notificationEmail, $this->user->name);
+            ->to($this->user->personalNotificationEmail, $this->user->name);
     }
 
     /**

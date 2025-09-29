@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Position;
 use App\Models\TrainingReport;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TrainingReportFactory extends Factory
@@ -25,6 +26,7 @@ class TrainingReportFactory extends Factory
         $date = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
 
         return [
+            'written_by_id' => User::factory(),
             'report_date' => $date->format('Y-M-d'),
             'content' => $this->faker->paragraph(),
             'contentimprove' => $this->faker->paragraph(),
