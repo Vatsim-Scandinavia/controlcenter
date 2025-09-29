@@ -84,7 +84,7 @@
 
                     <hr>
 
-                    @if(session()->get('onetimekey') == null)
+                    @can('create-draft', [\App\Models\TrainingReport::class, $training])
                         <div class="mb-3 form-check">
                             <input type="checkbox" value="1" class="form-check-input @error('draft') is-invalid @enderror" name="draft" id="draftCheck">
                             <label class="form-check-label" name="draft" for="draftCheck">Save as draft</label>
@@ -92,7 +92,11 @@
                                 <span class="text-danger">{{ $errors->first('draft') }}</span>
                             @enderror
                         </div>
-                    @endif
+                    @else
+                        <div class="mb-3">
+                            <span class="text-secondary">You cannot create a draft of this training report.</span>
+                        </div>
+                    @endcan
 
                     <button type="submit" id="training-submit-btn" class="btn btn-success">Save report</button>
                 </form>

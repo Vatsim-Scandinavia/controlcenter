@@ -7,6 +7,7 @@ use App\Models\OneTimeLink;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class OneTimeLinkPolicy
 {
@@ -30,10 +31,18 @@ class OneTimeLinkPolicy
     /**
      * Determine whether the user can access the link
      *
-     * @return bool
+     * @todo Either eliminate or simplify the policy, as the checks here partially duplicate the checks in the TrainingReportPolicy and TrainingExaminationPolicy.
      */
-    public function access(User $user, OneTimeLink $link)
+    public function access(User $user, OneTimeLink $link): Response
     {
-        return ($link->reportType() && $user->isMentor()) || ($link->examinationType() && $user->isExaminer());
+
+        // Check if the link has expired
+        if ($link->expires_at < now()) {
+            return Response::denyAsNotFound('The one-time link provided has expired');
+        }
+
+        return ($link->reportType() && $user->isMentor()) || ($link->examinationType() && $user->isExaminer())
+            ? Response::allow()
+            : Response::deny('You are not allowed to access the one-time link');
     }
 }

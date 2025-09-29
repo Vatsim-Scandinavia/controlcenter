@@ -35,7 +35,7 @@ class TrainingExaminationPolicy
         }
 
         // If one-time link is used
-        if (($link = $this->getOneTimeLink($training)) != null) {
+        if (($link = OneTimeLink::getFromSession($training)) != null) {
             return $user->isExaminer($link->training->area) && $user->isNot($training->user);
         }
 
@@ -66,26 +66,5 @@ class TrainingExaminationPolicy
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
         return $user->isModeratorOrAbove($trainingExamination->training->area) || $user->isAdmin();
-    }
-
-    /**
-     * Get the one time link from a session given a training
-     *
-     * @return null
-     */
-    private function getOneTimeLink($training)
-    {
-        $link = null;
-
-        $key = session()->get('onetimekey');
-
-        if ($key != null) {
-            $link = OneTimeLink::where([
-                ['training_id', '=', $training->id],
-                ['key', '=', $key],
-            ])->get()->first();
-        }
-
-        return $link;
     }
 }

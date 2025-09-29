@@ -49,9 +49,6 @@ class TrainingReportController extends Controller
 
         $positions = Position::all();
 
-        // Keep the onetimekey for another request
-        $request->session()->reflash();
-
         return view('training.report.create', compact('training', 'positions'));
     }
 
@@ -89,9 +86,8 @@ class TrainingReportController extends Controller
             $training->user->notify(new TrainingReportNotification($training, $report));
         }
 
-        if (($key = session()->get('onetimekey')) != null) {
-            // Remove the link
-            OneTimeLink::where('key', $key)->delete();
+        if (($key = OneTimeLink::getFromSession($training)) != null) {
+            $key->delete();
             session()->pull('onetimekey');
 
             return redirect(route('user.reports', Auth::user()))->withSuccess('Report successfully created');
