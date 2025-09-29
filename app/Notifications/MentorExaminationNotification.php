@@ -63,7 +63,7 @@ class MentorExaminationNotification extends Notification implements ShouldQueue
         ];
 
         return (new MentorNoticeMail('Your student\'s examination report', $textLines, $this->actionUrl, $this->actionText))
-            ->to($this->sendTo->pluck('notificationEmail'));
+            ->to($this->sendTo->pluck('workNotificationEmail'));
     }
 
     /**

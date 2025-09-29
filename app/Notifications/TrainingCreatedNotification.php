@@ -71,8 +71,8 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
         $contactMail = $area->contact;
 
         return (new TrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->notificationEmail, $this->training->user->name)
-            ->bcc($bcc->pluck('notificationEmail'));
+            ->to($this->training->user->personalNotificationEmail, $this->training->user->name)
+            ->bcc($bcc->pluck('workNotificationEmail'));
     }
 
     /**

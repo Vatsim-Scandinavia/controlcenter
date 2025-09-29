@@ -63,10 +63,10 @@ class TrainingCustomNotification extends Notification implements ShouldQueue
         // Only add CTA and Url if they are set
         if ($this->url && $this->cta) {
             return (new TrainingMail($this->title, $this->training, $this->messageLines, $contactMail, $this->url, $this->cta))
-                ->to($this->training->user->notificationEmail, $this->training->user->name);
+                ->to($this->training->user->personalNotificationEmail, $this->training->user->name);
         } else {
             return (new TrainingMail($this->title, $this->training, $this->messageLines, $contactMail))
-                ->to($this->training->user->notificationEmail, $this->training->user->name);
+                ->to($this->training->user->personalNotificationEmail, $this->training->user->name);
         }
     }
 

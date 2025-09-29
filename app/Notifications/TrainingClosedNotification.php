@@ -89,8 +89,8 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         }
 
         return (new TrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))
-            ->to($this->training->user->notificationEmail, $this->training->user->name)
-            ->bcc($bcc->pluck('notificationEmail'));
+            ->to($this->training->user->personalNotificationEmail, $this->training->user->name)
+            ->bcc($bcc->pluck('workNotificationEmail'));
     }
 
     /**

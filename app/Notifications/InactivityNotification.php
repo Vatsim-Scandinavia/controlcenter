@@ -69,7 +69,7 @@ class InactivityNotification extends Notification implements ShouldQueue
         ];
 
         return (new WarningMail('You are now inactive', $this->user, $textLines))
-            ->to($this->user->notificationEmail, $this->user->name);
+            ->to($this->user->personalNotificationEmail, $this->user->name);
     }
 
     /**

@@ -67,7 +67,7 @@ class FeedbackNotification extends Notification implements ShouldQueue
 
         return (new StaffNoticeMail('Feedback submited', $textLines))
             ->to($feedbackForward)
-            ->replyTo($this->feedback->submitter->notificationEmail, $this->feedback->submitter->name);
+            ->replyTo($this->feedback->submitter->personalNotificationEmail, $this->feedback->submitter->name);
     }
 
     /**

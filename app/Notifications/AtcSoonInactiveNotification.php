@@ -63,7 +63,7 @@ class AtcSoonInactiveNotification extends Notification implements ShouldQueue
         ];
 
         return (new WarningMail('ATC Inactivity Reminder', $this->user, $textLines))
-            ->to($this->user->notificationEmail, $this->user->name);
+            ->to($this->user->personalNotificationEmail, $this->user->name);
     }
 
     /**
