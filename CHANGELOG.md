@@ -1,5 +1,23 @@
 # Changelog
 
+## [6.3.5](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.3...v6.3.5) (2025-09-29)
+
+
+### Bug Fixes
+
+* **dev:** add local ide-helper ([a8010df](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a8010dfa8bfe329fa85dd58feb6bc2881878adac))
+* **feedback:** changed wording to request English only ([e83b698](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e83b69831946803bd98bac2c5ec97cb683fe366d))
+* **training:** persist one-time links and improve redirection ([#1302](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1302)) ([008b921](https://github.com/Vatsim-Scandinavia/controlcenter/commit/008b921f8044ce91fe1c8615d1b2e390af252691))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency phpunit/phpunit to v11.5.41 ([#1282](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1282)) ([c4a42d8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c4a42d8a272aefb2522eedb36dad6469e7df1b6c))
+* **deps:** update dependency sentry/sentry-laravel to v4.16.0 ([#1280](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1280)) ([e4e063b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e4e063b9f62191c3f20fef11c5046501346b4ad5))
+* **deps:** update dependency vite to v7.1.5 [security] ([#1276](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1276)) ([f517519](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f51751925468de6cf535fba0c59020a9114f985e))
+* **deps:** update dependency vite to v7.1.7 ([#1292](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1292)) ([7a274d1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/7a274d1dd24189cfa985de82b7d1407c3a020d1e))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.9.8 ([#1286](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1286)) ([28540b9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/28540b9b9d74e11ddaee9189c2725d97aa9a7cdd))
+
 ## [6.3.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.2...v6.3.3) (2025-09-05)
 
 
