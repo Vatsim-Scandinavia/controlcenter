@@ -7,7 +7,6 @@
 
 * **dev:** add local ide-helper ([a8010df](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a8010dfa8bfe329fa85dd58feb6bc2881878adac))
 * **feedback:** changed wording to request English only ([e83b698](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e83b69831946803bd98bac2c5ec97cb683fe366d))
-* **feedback:** changed wording to request English only ([08e365d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/08e365d95160eb76362ce574f6cbb3e45ea75e36))
 * **training:** persist one-time links and improve redirection ([#1302](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1302)) ([008b921](https://github.com/Vatsim-Scandinavia/controlcenter/commit/008b921f8044ce91fe1c8615d1b2e390af252691))
 
 
