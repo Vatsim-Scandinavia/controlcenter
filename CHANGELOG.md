@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.6](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.5...v6.3.6) (2025-09-29)
+
+
+### Bug Fixes
+
+* split personal notifications from work notifications ([#1303](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1303)) ([03ebb96](https://github.com/Vatsim-Scandinavia/controlcenter/commit/03ebb9695076e46f4a9bf7cd3ab4ced82a84babe))
+
 ## [6.3.5](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.3...v6.3.5) (2025-09-29)
 
 
