@@ -477,7 +477,7 @@
                             @foreach($reportsAndExams as $reportModel)
                                 @if(is_a($reportModel, '\App\Models\TrainingReport'))
 
-                                    @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isMentorOrAbove())
+                                    @can('view', $reportModel)
 
                                         @php
                                             $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
@@ -537,7 +537,7 @@
                                             </div>
                                         </div>
 
-                                    @endif
+                                    @endcan
 
 
                                 @else
