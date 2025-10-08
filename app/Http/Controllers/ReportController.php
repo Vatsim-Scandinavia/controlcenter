@@ -341,6 +341,7 @@ class ReportController extends Controller
                     )
                     ->where('tr.created_at', '>=', now()->subMonths(6)->startOfMonth())
                     ->where('t.area_id', $areaFilter)
+                    ->where('rt.rating_id', $rating->id)
                     ->groupBy('t.id', DB::raw('MONTH(tr.created_at)'), 'rt.rating_id');
 
                 $query = DB::table(DB::raw("({$subquery->toSql()}) as training_reports_per_month"))
@@ -470,6 +471,7 @@ class ReportController extends Controller
                         DB::raw('COUNT(tr.id) as report_count')
                     )
                     ->where('tr.created_at', '>=', now()->subMonths(6)->startOfMonth())
+                    ->where('rt.rating_id', $rating->id)
                     ->groupBy('t.id', DB::raw('MONTH(tr.created_at)'), 'rt.rating_id');
 
                 $query = DB::table(DB::raw("({$subquery->toSql()}) as training_reports_per_month"))
