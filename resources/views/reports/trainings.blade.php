@@ -331,7 +331,7 @@
                 label: 'C3',
                 backgroundColor: 'rgb(150, 200, 100)',
                 data: newRequestsData["C3"]
-                }, {
+            }, {
                 label: 'MAE ENGM TWR',
                 backgroundColor: 'rgb(25, 25, 25)',
                 data: newRequestsData["MAE ENGM TWR"],
@@ -637,16 +637,15 @@
             'C3': 'rgb(150, 200, 100)'
         };
 
-        Object.keys(newRequestsData).forEach(function(rating) {
-            var dataArray = monthNumbers.map(function(m) {
-                return parseFloat(newRequestsData[rating][m] ?? 0); // 0 if missing
-            });
+        Object.keys(newRequestsData).forEach(function (rating) {
+            var values = newRequestsData[rating].map(v => parseFloat(v) || 0);
 
-            if (colors[rating]) {
+            // If data has exactly 7 elements, use it directly
+            if (values.length === 7 && colors[rating]) {
                 datasets.push({
                     label: rating,
                     backgroundColor: colors[rating],
-                    data: dataArray
+                    data: values
                 });
             }
         });
