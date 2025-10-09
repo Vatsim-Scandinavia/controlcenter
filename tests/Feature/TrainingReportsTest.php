@@ -39,6 +39,47 @@ class TrainingReportsTest extends TestCase
     }
 
     #[Test]
+    public function mentor_cant_access_own_trainee_draft_training_report()
+    {
+        $traineeMentor = User::factory()->create();
+        $training = Training::factory()->create([
+            'user_id' => $traineeMentor->id,
+        ]);
+        $mentor = User::factory()->create();
+        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $traineeMentor->groups()->attach(2, ['area_id' => $training->area->id]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'draft' => true,
+        ]);
+
+        $this->actingAs($traineeMentor)->assertTrue(Gate::inspect('view', $report)->denied());
+    }
+
+    #[Test]
+    public function moderator_cant_access_own_trainee_draft_training_report()
+    {
+        $traineeModerator = User::factory()->create();
+        $training = Training::factory()->create([
+            'user_id' => $traineeModerator->id,
+        ]);
+        $mentor = User::factory()->create();
+        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $traineeModerator->groups()->attach(2, ['area_id' => $training->area->id]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'draft' => true,
+        ]);
+
+        $this->actingAs($traineeModerator)->assertTrue(Gate::inspect('view', $report)->allowed());
+        $this->actingAs($traineeModerator)->assertTrue(Gate::inspect('view', $report)->denied());
+    }
+
+    #[Test]
     public function trainee_can_access_training_reports()
     {
         $training = Training::factory()->create([
