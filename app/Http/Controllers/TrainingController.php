@@ -22,6 +22,7 @@ use App\Notifications\TrainingPreStatusNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Controller for all trainings
@@ -387,6 +388,7 @@ class TrainingController extends Controller
         $reports = TrainingReport::where('training_id', $training->id)->get();
 
         $reportsAndExams = collect($reports)->merge($examinations);
+        $reportsAndExams = $reportsAndExams->filter(fn ($item) => Gate::allows('view', $item));
         $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
             // Define the correct date to sort by model type is report or exam
             is_a($a, '\App\Models\TrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);

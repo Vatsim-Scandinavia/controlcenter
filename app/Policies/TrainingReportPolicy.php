@@ -32,10 +32,10 @@ class TrainingReportPolicy
         $isTrainee = $user->is($trainingReport->training->user);
 
         return (
-                // Mentors can see all, but not drafts of their own training
-                $trainingReport->training->mentors->contains($user)
-                && !($isTrainee && $trainingReport->draft)
-            )
+            // Mentors can see all, but not drafts of their own training
+            $trainingReport->training->mentors->contains($user)
+            && ! ($isTrainee && $trainingReport->draft)
+        )
             || $trainingReport->author->is($user) // If the user is the author of the report
             || $user->isAdmin()
             || $user->isModerator($trainingReport->training->area)
