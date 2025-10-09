@@ -29,11 +29,17 @@ class TrainingReportPolicy
      */
     public function view(User $user, TrainingReport $trainingReport): bool
     {
-        return $trainingReport->training->mentors->contains($user) || // If the user is a mentor of the training
-                $trainingReport->author->is($user) || // If the user is the author of the report
-                $user->isAdmin() ||
-                $user->isModerator($trainingReport->training->area) ||
-                ($user->is($trainingReport->training->user) && ! $trainingReport->draft);
+        $isTrainee = $user->is($trainingReport->training->user);
+
+        return (
+            // Mentors can see all, but not drafts of their own training
+            $trainingReport->training->mentors->contains($user)
+            && ! ($isTrainee && $trainingReport->draft)
+        )
+            || $trainingReport->author->is($user) // If the user is the author of the report
+            || $user->isAdmin()
+            || $user->isModerator($trainingReport->training->area)
+            || ($isTrainee && ! $trainingReport->draft);
     }
 
     /**

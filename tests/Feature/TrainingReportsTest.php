@@ -106,6 +106,27 @@ class TrainingReportsTest extends TestCase
     }
 
     #[Test]
+    public function mentor_trainee_cant_access_draft_training_report_for_their_training()
+    {
+        $traineeMentor = User::factory()->create();
+        $mentor = User::factory()->create();
+        $training = Training::factory()->create([
+            'user_id' => $traineeMentor->id,
+        ]);
+        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $traineeMentor->groups()->attach(3, ['area_id' => $training->area->id]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'draft' => true,
+        ]);
+
+        $this->actingAs($report->training->user)->assertTrue(Gate::inspect('view', $report)->denied());
+        $this->actingAs($traineeMentor)->assertTrue(Gate::inspect('view', $report)->denied());
+    }
+
+    #[Test]
     public function mentor_can_access_draft_training_report()
     {
         $training = Training::factory()->create([
