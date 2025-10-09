@@ -3,6 +3,7 @@ name: Linting
 
 on:
   push:
+  pull_request_target:
 
 jobs:
   lint-formatting:
