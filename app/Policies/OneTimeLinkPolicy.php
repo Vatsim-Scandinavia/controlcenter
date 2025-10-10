@@ -41,7 +41,7 @@ class OneTimeLinkPolicy
             return Response::denyAsNotFound('The one-time link provided has expired');
         }
 
-        return ($link->reportType() && $user->isMentor()) || ($link->examinationType() && $user->isExaminer())
+        return ($link->reportType() && $user->isMentor()) || ($link->reportType() && $user->isBuddy()) || ($link->examinationType() && $user->isExaminer())
             ? Response::allow()
             : Response::deny('You are not allowed to access the one-time link');
     }

@@ -458,6 +458,48 @@ class User extends Authenticatable
         })->exists();
     }
 
+        /**
+     * Return if user is a buddy
+     *
+     * @return bool
+     */
+    public function isBuddy(?Area $area = null)
+    {
+        if ($area == null) {
+            return $this->groups->where('id', 4)->isNotEmpty();
+        }
+
+        // Check if user is buddy in the specified area
+        foreach ($this->groups->where('id', 4) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return if user is a mentor or above
+     *
+     * @return bool
+     */
+    public function isBuddyOrAbove(?Area $area = null)
+    {
+        if ($area == null) {
+            return $this->groups->where('id', '<=', 4)->isNotEmpty();
+        }
+
+        // Check if user is buddy or above in the specified area
+        foreach ($this->groups->where('id', '<=', 4) as $group) {
+            if ($group->pivot->area_id == $area->id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Return if user is a mentor
      *

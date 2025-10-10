@@ -336,4 +336,49 @@ class TrainingReportsTest extends TestCase
 
         $this->assertDatabaseMissing('training_reports', $report->getAttributes());
     }
+
+    #[Test]
+    public function buddy_can_use_one_time_link_in_their_area()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000102])->id,
+        ]);
+
+        $buddy = User::factory()->create(['id' => 10000103]);
+        $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
+
+        // Create a one-time link for the training report
+        $oneTimeLink = \App\Models\OneTimeLink::create([
+            'training_id' => $training->id,
+            'training_object_type' => \App\Models\OneTimeLink::TRAINING_REPORT_TYPE,
+            'key' => sha1($training->id . now()),
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        // Test that the buddy can access the one-time link
+        $response = $this->actingAs($buddy)
+            ->get(route('training.onetimelink.redirect', ['key' => $oneTimeLink->key]));
+
+        $response->assertRedirect(route('training.report.create', ['training' => $training]));
+        $this->assertEquals($oneTimeLink->key, session()->get('onetimekey'));
+
+        // Test that the buddy can create a training report using the one-time link
+        $reportData = [
+            'report_date' => now()->format('d/m/Y'),
+            'content' => 'Training report written by buddy via one-time link.',
+            'contentimprove' => 'Areas for improvement noted.',
+            'position' => 'EKCH_A_TWR',
+            'draft' => false,
+        ];
+
+        $response = $this->actingAs($buddy)
+            ->post(route('training.report.store', ['training' => $training]), $reportData);
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('training_reports', [
+            'training_id' => $training->id,
+            'written_by_id' => $buddy->id,
+            'content' => 'Training report written by buddy via one-time link.',
+        ]);
+    }
 }
