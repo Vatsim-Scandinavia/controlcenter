@@ -159,6 +159,22 @@ class TrainingExaminationsTest extends TestCase
     }
 
     #[Test]
+    public function buddy_cant_delete_training_examination()
+    {
+
+        $examination = TrainingExamination::create($this->examination->getAttributes());
+
+        $buddy = User::factory()->create();
+        $buddy->groups()->attach(4, ['area_id' => $this->training->area->id]);
+
+        $this->actingAs($buddy)->followingRedirects()
+            ->get(route('training.examination.delete', ['examination' => $examination]))
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('training_examinations', ['id' => $examination->id]);
+    }
+
+    #[Test]
     public function examiner_can_store_examination()
     {
         $data = $this->examination->getAttributes();
