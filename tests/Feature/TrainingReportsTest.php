@@ -381,4 +381,94 @@ class TrainingReportsTest extends TestCase
             'content' => 'Training report written by buddy via one-time link.',
         ]);
     }
+
+    #[Test]
+    public function buddy_cant_see_reports_created_by_others()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000104])->id,
+        ]);
+
+        // Create a mentor who writes a report
+        $mentor = User::factory()->create(['id' => 10000105]);
+        $mentor->groups()->attach(3, ['area_id' => $training->area->id]); // Attach mentor group (id 3)
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
+
+        // Create a buddy in the same area
+        $buddy = User::factory()->create(['id' => 10000106]);
+        $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
+
+        // Create a training report written by the mentor
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'report_date' => now()->addDay(),
+            'content' => 'This is a training report written by a mentor.',
+            'contentimprove' => null,
+            'position' => 'EKCH_A_TWR',
+            'draft' => false,
+        ]);
+
+        // Test that the buddy cannot view the report created by the mentor
+        $this->actingAs($buddy)->assertTrue(Gate::inspect('view', $report)->denied());
+    }
+
+    #[Test]
+    public function buddy_cant_delete_training_reports()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000107])->id,
+        ]);
+
+        // Create a mentor who writes a report
+        $mentor = User::factory()->create(['id' => 10000108]);
+        $mentor->groups()->attach(3, ['area_id' => $training->area->id]); // Attach mentor group (id 3)
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
+
+        // Create a buddy in the same area
+        $buddy = User::factory()->create(['id' => 10000109]);
+        $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
+
+        // Create a training report written by the mentor
+        $reportByMentor = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'report_date' => now()->addDay(),
+            'content' => 'This is a training report written by a mentor.',
+            'contentimprove' => null,
+            'position' => 'EKCH_A_TWR',
+            'draft' => false,
+        ]);
+
+        // Create a training report written by the buddy themselves (via one-time link)
+        $reportByBuddy = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $buddy->id,
+            'report_date' => now()->addDays(2),
+            'content' => 'This is a training report written by a buddy.',
+            'contentimprove' => null,
+            'position' => 'EKCH_A_TWR',
+            'draft' => false,
+        ]);
+
+        // Test that the buddy cannot delete a report created by a mentor
+        $this->actingAs($buddy)->assertTrue(Gate::inspect('delete', $reportByMentor)->denied());
+
+        // Test that the buddy cannot delete their own report either (buddies don't have delete permissions)
+        $this->actingAs($buddy)->assertTrue(Gate::inspect('delete', $reportByBuddy)->denied());
+
+        // Verify via HTTP request that buddy gets 403 when trying to delete mentor's report
+        $this->actingAs($buddy)
+            ->get(route('training.report.delete', ['report' => $reportByMentor->id]))
+            ->assertStatus(403);
+
+        // Verify via HTTP request that buddy gets 403 when trying to delete their own report
+        $this->actingAs($buddy)
+            ->get(route('training.report.delete', ['report' => $reportByBuddy->id]))
+            ->assertStatus(403);
+
+        // Ensure reports still exist in database
+        $this->assertDatabaseHas('training_reports', ['id' => $reportByMentor->id]);
+        $this->assertDatabaseHas('training_reports', ['id' => $reportByBuddy->id]);
+    }
 }
