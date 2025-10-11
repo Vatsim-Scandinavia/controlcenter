@@ -1,36 +1,222 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Console\Commands;
 
+use anlutro\LaravelSettings\Facade as Setting;
+use App;
+use App\Helpers\Vatsim;
 use App\Models\Area;
-use App\Models\Rating;
+use App\Models\AtcActivity;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
-class RosterController extends Controller
+class UpdateAtcHours extends Command
 {
+    private $base_api_url = 'https://api.vatsim.net/api/ratings/';
+
+    private $qualificationPeriod; // Period to sum up by. In months.
+
     /**
-     * Display a listing of the resource.
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    public function index($areaId)
+    protected $signature = 'update:atc:hours {user?*}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Updates the ATC hours for eligible members';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
+        parent::__construct();
+    }
 
-        $area = Area::find($areaId);
-        $users = User::allActiveInArea($area);
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        // Fetch settings
+        $this->qualificationPeriod = Setting::get('atcActivityQualificationPeriod', 12);
+        $this->info('Starting ATC update...');
 
-        $visitingUsers = User::whereHas('endorsements', function ($query) use ($areaId) {
-            $query->where('type', 'VISITING')->where('revoked', false)->whereHas('areas', function ($query) use ($areaId) {
-                $query->where('area_id', $areaId);
-            });
-        })->get();
+        // Fetch members
+        $optionalUserIdFilter = $this->argument('user');
+        $ratedMembers = User::getAssociatedActiveAtcMembers(! Setting::get('atcActivityAllowReactivation'), $optionalUserIdFilter);
+        $members = User::whereIn('id', $ratedMembers->pluck('id'))->get();
 
-        $users = $users->merge($visitingUsers);
+        $this->info('Found ' . $members->count() . ' members to update. This will take ' . round((($members->count() * 7) / 60), 1) . ' minutes to respect API throttle.');
 
-        // Get ratings that are not VATSIM ratings which belong to the area
-        $ratings = Rating::whereHas('areas', function (Builder $query) use ($areaId) {
-            $query->where('area_id', $areaId);
-        })->whereNull('vatsim_rating')->get()->sortBy('name');
+        // Update member hours
+        $this->updateMemberATCHours($members);
+    }
 
-        return view('roster', compact('users', 'ratings', 'area'));
+    /**
+     * Update ATC active hours in database
+     *
+     * @param  Collection<User>  $members
+     * @return null
+     */
+    private function updateMemberATCHours(Collection $members)
+    {
+        $this->info('Fetching seen ATC positions...');
+
+        // Get callsigns per area
+        $divisionCallsignPrefixes = collect();
+        foreach (Area::all() as $area) {
+            $divisionCallsignPrefixes[$area->id] = $area->positions->pluck('callsign')->map(function ($callsign) {
+                return substr($callsign, 0, 4);
+            })->unique();
+        }
+
+        $this->info('Updating member ATC hours...');
+
+        foreach ($members as $member) {
+            $client = new \GuzzleHttp\Client();
+            if (App::environment('production')) {
+                $url = $this->getQueryString($member->id);
+            } else {
+                $url = 'https://api.vatsim.net/api/ratings/1352906/atcsessions/?start=2021-12-30';
+            }
+            $response = $this->makeHttpGetRequest($client, $url);
+
+            if ($response == null) {
+                Log::error('updateMemberATCHours: Failed to fetch GuzzleHttp Response, url: ' . $url);
+                sleep(7); // Delay to comply with API rate limit
+
+                continue;
+            } elseif ($response->getStatusCode() >= 300) {
+                Log::warning('updateMemberATCHours: User ' . $member->id . ' fetch failed with code ' . $response->getStatusCode());
+                sleep(7); // Delay to comply with API rate limit
+
+                continue;
+            }
+
+            try {
+                $parsedData = json_decode($response->getBody()->getContents(), false, JSON_THROW_ON_ERROR);
+            } catch (\Exception $e) {
+                Log::error('updateMemberATCHours: Failed to parse JSON for member: ' . $member->id . ': ' . $e);
+                sleep(7); // Delay to comply with API rate limit
+
+                continue;
+            }
+
+            $this->updateHoursForMember($member, collect($parsedData->results), $divisionCallsignPrefixes);
+
+            // Add a delay with buffer to ensure we don't exceed 10 calls per minute.
+            sleep(7);
+        }
+    }
+
+    /**
+     * Check if active members should keep their active status
+     *
+     * @param  Collection<string>  $divisionCallsignPrefixes
+     * @return null
+     */
+    private function updateHoursForMember(User $member, Collection $sessions, Collection $divisionCallsignPrefixes)
+    {
+        $this->info('Updating ATC hours for member: ' . $member->id);
+
+        $periodStart = Carbon::now()->subMonths(12);
+
+        foreach (Area::all() as $area) {
+            $sessionsLast12Months = $sessions
+                ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]))
+                ->filter(fn ($session) => Carbon::parse($session->start) >= $periodStart);
+
+            $hoursLast12Months = $sessions
+                ->map(function ($session) {
+                    return floatval($session->minutes_on_callsign);
+                })
+                ->sum()
+                / 60;
+
+            $hoursActiveInArea = $sessions
+                ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]))
+                ->map(function ($session) {
+                    return floatval($session->minutes_on_callsign);
+                })
+                ->sum()
+                / 60;
+
+            $lastConnection = $sessionsLast12Months
+                ->sortByDesc(fn ($session) => Carbon::parse($session->start))
+                ->first()?->start ?? null;
+
+            if (! App::environment('production')) {
+                $this->info('Updating ATC hours for member: ' . $member->id . ' in area: ' . $area->id . ' to: ' . $hoursActiveInArea . ' hours');
+            }
+
+            // Update in database or create if not found
+            try {
+                $activity = AtcActivity::where('user_id', $member->id)->where('area_id', $area->id)->firstOrFail();
+                $activity->hours = $hoursActiveInArea;
+                $activity->last_online = $lastConnection;
+                $activity->last12Months = $hoursLast12Months;
+                $activity->save();
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                if ($hoursActiveInArea > 0) {
+                    AtcActivity::create([
+                        'user_id' => $member->id,
+                        'area_id' => $area->id,
+                        'hours' => $hoursActiveInArea,
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Make HTTP GET request
+     *
+     * @return \Psr\Http\Message\ResponseInterface|null
+     */
+    private function makeHttpGetRequest(\GuzzleHttp\Client $client, string $url)
+    {
+        try {
+            $response = $client->get($url);
+        } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
+            Log::error(
+                'Hit exception while updating atc_active. URL was: ' . $url .
+                    '. HTTP status code was: ' . $exception->getCode() .
+                    "\n" .
+                    $exception->getTraceAsString()
+            );
+        }
+
+        if (isset($response)) {
+            return $response;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the query string for the http call
+     *
+     * @return string
+     */
+    private function getQueryString(int $user_id)
+    {
+        $query_string = $this->base_api_url . $user_id;
+        $query_string .= '/atcsessions/';
+        $query_string .= '?start=' . Carbon::now()->subMonths($this->qualificationPeriod)->format('Y-m-d');
+
+        return $query_string;
     }
 }

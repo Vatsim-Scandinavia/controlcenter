@@ -132,7 +132,20 @@ class UpdateAtcHours extends Command
     {
         $this->info('Updating ATC hours for member: ' . $member->id);
 
+        $periodStart = Carbon::now()->subMonths(12);
+
         foreach (Area::all() as $area) {
+            $sessionsLast12Months = $sessions
+                ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]))
+                ->filter(fn ($session) => Carbon::parse($session->start) >= $periodStart);
+
+            $hoursLast12Months = $sessions
+                ->map(function ($session) {
+                    return floatval($session->minutes_on_callsign);
+                })
+                ->sum()
+                / 60;
+
             $hoursActiveInArea = $sessions
                 ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]))
                 ->map(function ($session) {
@@ -140,6 +153,10 @@ class UpdateAtcHours extends Command
                 })
                 ->sum()
                 / 60;
+
+            $lastConnection = $sessionsLast12Months
+                ->sortByDesc(fn ($session) => Carbon::parse($session->start))
+                ->first()?->start ?? null;
 
             if (! App::environment('production')) {
                 $this->info('Updating ATC hours for member: ' . $member->id . ' in area: ' . $area->id . ' to: ' . $hoursActiveInArea . ' hours');
@@ -149,6 +166,8 @@ class UpdateAtcHours extends Command
             try {
                 $activity = AtcActivity::where('user_id', $member->id)->where('area_id', $area->id)->firstOrFail();
                 $activity->hours = $hoursActiveInArea;
+                $activity->last_online = $lastConnection;
+                $activity->last12Months = $hoursLast12Months;
                 $activity->save();
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 if ($hoursActiveInArea > 0) {
