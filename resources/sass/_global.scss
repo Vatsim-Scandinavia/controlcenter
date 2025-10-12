@@ -1,4 +1,48 @@
 // Global component styles
+/* Theme variable mappings for runtime theming */
+:root, [data-bs-theme="light"] {
+    --text: #040316;
+    --background: #f1f2f4;
+    --background-50: #dee0e2;
+    --primary: #199dbe;
+    --secondary: #1a4860;
+    --accent: #d7e9fe;
+
+    /* Map to Bootstrap variables so components inherit the theme */
+    --bs-body-color: var(--text);
+    --bs-body-color-rgb: 4, 3, 22;
+    --bs-body-bg: var(--background);
+    --bs-body-bg-rgb: 241, 242, 244;
+    --bs-emphasis-color: var(--text);
+    --bs-emphasis-color-rgb: 4, 3, 22;
+    --bs-primary: var(--primary);
+    --bs-secondary: var(--secondary);
+    --bs-border-color: rgba(var(--bs-body-color-rgb), .12);
+    --bs-border-color-translucent: rgba(var(--bs-body-color-rgb), .08);
+    --bs-muted: rgba(var(--bs-body-color-rgb), .6);
+}
+
+[data-bs-theme="dark"] {
+    --text: #eae9fc;
+    --background: #0b0c0e;
+    --background-50: #16171a;
+    --primary: #41c5e6;
+    --secondary: #1a4860;
+    --accent: #011328;
+
+    /* Map to Bootstrap variables for dark theme */
+    --bs-body-color: var(--text);
+    --bs-body-color-rgb: 234, 233, 252;
+    --bs-body-bg: var(--background);
+    --bs-body-bg-rgb: 11, 12, 14;
+    --bs-emphasis-color: var(--text);
+    --bs-emphasis-color-rgb: 234, 233, 252;
+    --bs-primary: var(--primary);
+    --bs-secondary: var(--secondary);
+    --bs-border-color: rgba(var(--bs-body-color-rgb), .12);
+    --bs-border-color-translucent: rgba(var(--bs-body-color-rgb), .03);
+    
+}
 
 html {
     position: relative;
@@ -90,7 +134,7 @@ dl.copyable{
 #wrapper {
     display: flex;
     #content-wrapper {
-        background-color: $gray-100;
+        background-color: var(--background-50);
         width: 100%;
         overflow-x: hidden;
         #content {
@@ -201,13 +245,17 @@ dl.copyable{
         }
     }
 
+
+
+body {
+    color: var(--text);
+    background-color: var(--background);
+}
+
     tr {
         color: $gray-800;
     }
 
-    td {
-        color: $gray-900;
-    }
 }
 
 // Lets tweak a bit the style of bootstrap-table plugin
@@ -273,6 +321,14 @@ table{
     }
 }
 
+.card-header {
+    background-color: var(--background-50) !important;
+}
+
+.CodeMirror {
+    background-color: var(--background-50) !important;
+    color: var(--text) !important;
+}
 // Tweaks to the pagination of bootstrap-table plugin, fixes padding issues and more
 .fixed-table-pagination {
     padding-left: 1rem;

@@ -23,7 +23,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="date" data-sortable="true" data-sorter="tableSortDates" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false" data-filter-order-by="desc">Time</th>
                                 <th data-field="type" data-sortable="false" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Type</th>

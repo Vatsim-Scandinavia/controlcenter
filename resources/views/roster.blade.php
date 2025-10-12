@@ -25,7 +25,7 @@
                         data-sort-reset="true"
                         data-sort-select-options="true"
                         >
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>

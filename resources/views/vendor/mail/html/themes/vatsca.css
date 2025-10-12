@@ -192,7 +192,7 @@ ul li {
 }
 
 .table td {
-    color: #74787e;
+    color: var(--text) !important;
     font-size: 15px;
     line-height: 18px;
     padding: 10px 0;
@@ -299,3 +299,17 @@ ul li {
 .break-all {
     word-break: break-all;
 }
+
+/* Dark-mode / inverted emails: provide lighter striping for tables */
+@media (prefers-color-scheme: dark) {
+    .table tr:nth-of-type(odd) {
+        background-color: rgba(255,255,255,0.03);
+    }
+    .table tr:nth-of-type(even) {
+        background-color: rgba(255,255,255,0.02);
+    }
+    .table th {
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+}
+

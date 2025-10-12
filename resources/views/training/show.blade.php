@@ -382,7 +382,7 @@
                 </h6>
             </div>
             <div class="card-body p-0">
-                <div class="card bg-light mb-3">
+                <div class="card mb-3" style="background-color: var(--background);">
                     <div class="card-body">
 
                         @if($training->english_only_training)
@@ -622,7 +622,7 @@
                 @else
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="table-light">
+                            <thead >
                                 <tr>
                                     <th>Interest sent</th>
                                     <th>Confirmation Deadline</th>
@@ -675,7 +675,7 @@
                 @else
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="table-light">
+                            <thead >
                                 <tr>
                                     <th>Task</th>
                                     <th>Creator</th>

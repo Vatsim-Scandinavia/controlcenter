@@ -29,7 +29,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="state" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">State</th>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>

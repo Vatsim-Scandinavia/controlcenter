@@ -23,7 +23,7 @@
                         data-page-size="15"
                         data-page-list=[10,15,25,50]
                         data-sort-reset="true">
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="state" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">State</th>
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>

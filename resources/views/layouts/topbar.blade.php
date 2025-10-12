@@ -1,4 +1,6 @@
-<nav class="navbar navbar-expand bg-white topbar {{ (\Auth::user()->isModeratorOrAbove()) ? 'topbar-justify-moderator' : 'topbar-justify-user' }} mb-4 ps-4 pe-4 static-top shadow">
+<nav class="navbar navbar-expand topbar {{ (\Auth::user()->isModeratorOrAbove()) ? 'topbar-justify-moderator' : 'topbar-justify-user' }} mb-4 ps-4 pe-4 static-top shadow" style="background-color: var(--background-50)">
+
+    {{-- Sidebar Toggle (Topbar) --}}
 
     <a class="sidebar-brand sidebar-brand-topbar align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
@@ -19,10 +21,10 @@
         <form class="d-none d-md-inline-block my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
             <div class="input-group">
                 <div class="search input-group input-lg">
-                    <div class="search-icon bg-light input-group-prepend">
-                        <i class="fas fa-search fa-sm"></i>
+                    <div class="search-icon input-group-prepend" style="background-color: var(--background-50)">
+                        <i class="fas fa-search fa-sm " style="color: var(--text)"></i>
                     </div>
-                    <input class="user-search search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
+                    <input class="user-search search-input form-control border-0 small" type="text" name="search" placeholder="Search for user" style="background-color: var(--background-50)">
                 </div>
 
                 <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
@@ -47,10 +49,10 @@
                 <div class="dropdown-menu dropdown-menu-end p-3 shadow" aria-labelledby="searchDropdown">
                     <form class="w-100 navbar-search" id="user-search-form-mobile">
                         <div class="search input-group input-lg">
-                            <div class="search-icon bg-light input-group-prepend">
+                            <div class="search-icon input-group-prepend" style="background-color: var(--background-50)">
                                 <i class="fas fa-search fa-sm"></i>
                             </div>
-                            <input class="user-search search-input form-control bg-light border-0 small" type="text" name="search" placeholder="Search for user">
+                            <input class="user-search search-input form-control border-0 small" type="text" name="search" placeholder="Search for user" style="background-color: var(--background-50)">
                         </div>
 
                         <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>

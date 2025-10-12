@@ -117,7 +117,7 @@
                 @else
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="table-light">
+                            <thead >
                                 <tr>
                                     <th data-sortable="true" data-filter-control="select">Teaches</th>
                                     <th data-sortable="true" data-filter-control="input">Expires</th>
@@ -158,7 +158,7 @@
                         @else
                             <div class="table-responsive">
                                 <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                                    <thead class="table-light">
+                                    <thead >
                                         <tr>
                                             <th>State</th>
                                             <th>Level</th>
@@ -228,7 +228,7 @@
                         @else
                             <div class="table-responsive">
                                 <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                                    <thead class="table-light">
+                                    <thead >
                                         <tr>
                                             <th>Exam</th>
                                             <th>Created</th>

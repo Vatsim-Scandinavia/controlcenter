@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" @auth data-bs-theme="{{ Auth::user()->prefers_theme ?? 'light' }}" @endauth>
     <head>
         @include('layouts.header')
     </head>
@@ -31,7 +31,7 @@
                 @if(!Route::is('front'))
 
                     <div class="page-title d-flex justify-content-between">
-                        <h3 class="text-gray-800">
+                        <h3 style="color: var(--text)">
                             @yield('title', 'Page Title')
                         </h3>
                         @yield('title-flex')

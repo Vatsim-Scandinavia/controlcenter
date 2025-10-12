@@ -85,7 +85,7 @@
                 <span>Requests</span>
             </a>
             <div id="collapseReq" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
+                <div class="py-2 collapse-inner rounded" style="background: var(--background-50)">
                 <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
                 <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
                 </div>
@@ -111,7 +111,7 @@
                     <span>Users</span>
                 </a>
                 <div id="collapseMem" class="collapse" data-bs-parent=".sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
+                    <div class="py-2 collapse-inner rounded" style="background: var(--background-50)">
                     <a class="collapse-item" href="{{ route('users') }}">Member Overview</a>
                     <a class="collapse-item" href="{{ route('users.other') }}">Other Users</a>
                     </div>
@@ -134,7 +134,7 @@
                 </a>
 
                 <div id="collapseRosters" class="collapse" data-bs-parent="#sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
+                    <div class="py-2 collapse-inner rounded" style="background: var(--background-50)">
                     @foreach($areas as $area)
                         <a class="collapse-item" href="{{ route('roster', $area->id) }}">{{ $area->name }}</a>
                     @endforeach
@@ -156,7 +156,7 @@
                 <span>Endorsements</span>
             </a>
             <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
+                <div class="py-2 collapse-inner rounded" style="background: var(--background-50)">
                 <a class="collapse-item" href="{{ route('endorsements.solos') }}">Solo</a>
                 <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiner</a>
                 <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
@@ -177,7 +177,7 @@
                 <span>Reports</span>
             </a>
             <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
+                <div class="py-2 collapse-inner rounded" style="background: var(--background-50)">
                 
                 @if(\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
@@ -213,7 +213,7 @@
                 <span>Administration</span>
             </a>
             <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
+                <div class="py-2 collapse-inner rounded" style="background: var(--background-50)">
                 @if (\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>

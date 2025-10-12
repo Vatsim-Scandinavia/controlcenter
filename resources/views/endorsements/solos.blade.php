@@ -31,7 +31,7 @@
                         data-filter-control="true"
                         data-sort-reset="true"
                         >
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="student" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="status" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Status</th>

@@ -6,7 +6,7 @@
 
     padding: 0 1.0rem;
     position: relative;
-    background-color: $primary;
+    background-color: var(--secondary);
 
     &-button {
         color: $primary;
@@ -108,15 +108,15 @@
                     padding: 0.5rem 1rem;
                     margin: 0 0.5rem;
                     display: block;
-                    color: $gray-900;
+                    color: var(--text);
                     text-decoration: none;
                     border-radius: $border-radius;
                     white-space: nowrap;
                     &:hover {
-                        background-color: $gray-200;
+                        background-color: var(--secondary);
                     }
                     &:active {
-                        background-color: $gray-300;
+                        background-color: var(--secondary);
                     }
                 }
             }

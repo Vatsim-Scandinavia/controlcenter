@@ -28,7 +28,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="received" data-sortable="true">Received</th>
                                 <th data-field="submitter" data-sortable="true" data-filter-control="input">Submitter</th>

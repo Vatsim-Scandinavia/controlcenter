@@ -14,7 +14,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="table-light">
+                            <thead >
                                 <tr>
                                     <th>Vatsim ID</th>
                                     <th>Current Rating</th>

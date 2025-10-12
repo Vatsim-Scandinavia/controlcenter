@@ -31,7 +31,7 @@
                         data-filter-control="true"
                         data-sort-reset="true"
                         >
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="student" class="w-25" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>

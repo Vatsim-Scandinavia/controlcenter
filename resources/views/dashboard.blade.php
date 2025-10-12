@@ -56,7 +56,7 @@
                 <div class="row g-0 align-items-center">
                     <div class="col me-2">
                         <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Current Rating</div>
-                        <div class="h5 mb-0 fw-bold text-gray-800">{{ $data['rating'] }} ({{ $data['rating_short'] }})</div>
+                        <div class="h5 mb-0 fw-bold" style="color: var(--text)">{{ $data['rating'] }} ({{ $data['rating_short'] }})</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-id-badge fa-2x text-gray-300"></i>
@@ -73,7 +73,7 @@
                 <div class="row g-0 align-items-center">
                     <div class="col me-2">
                         <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Your associated division</div>
-                        <div class="h5 mb-0 fw-bold text-gray-800">
+                        <div class="h5 mb-0 fw-bold" style="color: var(--text)">
                             @if(config('app.mode') == 'subdivision')
                                 {{ $data['division'] }}/{{ $data['subdivision'] }}
                             @else
@@ -96,7 +96,7 @@
                 <div class="row g-0 align-items-center">
                     <div class="col me-2">
                         <div class="fs-sm fw-bold text-success text-uppercase mb-1">ATC Hours (Last {{ Setting::get("atcActivityQualificationPeriod") }} months)</div>
-                        <div class="h5 mb-0 fw-bold text-gray-800">{{ $atcHours ? round($atcHours).' hours of '.Setting::get("atcActivityRequirement").' required' : 'N/A' }}</div>
+                        <div class="h5 mb-0 fw-bold" style="color: var(--text)">{{ $atcHours ? round($atcHours).' hours of '.Setting::get("atcActivityRequirement").' required' : 'N/A' }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -117,7 +117,7 @@
                         <div class="fs-sm fw-bold text-info text-uppercase mb-1">My last training</div>
                         <div class="row g-0 align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $data['report'] != null ? $data['report']->report_date->toEuropeanDate() : "-" }}</div>
+                                <div class="h5 mb-0 me-3 fw-bold" style="color: var(--text)">{{ $data['report'] != null ? $data['report']->report_date->toEuropeanDate() : "-" }}</div>
                             </div>
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                 @else
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>Student</th>
                                 <th>Level</th>
@@ -221,7 +221,7 @@
                 @else
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th>Level</th>
                                 <th>Area</th>

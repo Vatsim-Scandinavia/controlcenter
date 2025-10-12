@@ -82,6 +82,19 @@
                                 
                             @endif
 
+                            <hr>
+                            <h5>Theme</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3">Theme</div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="prefers_theme" name="prefers_theme" value="dark" {{ ($user->prefers_theme ?? 'light') === 'dark' ? 'checked' : '' }}>
+                                    <label class="form-check-label ms-2" for="prefers_theme">
+                                        <span id="theme-label">{{ ($user->prefers_theme ?? 'light') === 'dark' ? 'Dark' : 'Light' }}</span>
+                                    </label>
+                                </div>
+                                <div class="ms-3" id="theme-icon">🌞</div>
+                            </div>
+
                             <button class="btn btn-success mt-3" type="submit">Save</button>
                         </form>
                     </div>
@@ -91,4 +104,38 @@
     </div>
 
 </div>
+@endsection
+
+@section('js')
+<script>
+    (function(){
+        const pref = '{{ $user->prefers_theme ?? 'light' }}';
+        const root = document.documentElement;
+        const checkbox = document.getElementById('prefers_theme');
+        const label = document.getElementById('theme-label');
+        const icon = document.getElementById('theme-icon');
+
+        function applyTheme(value) {
+            root.setAttribute('data-bs-theme', value);
+            if (value === 'dark') {
+                label.textContent = 'Dark';
+                icon.textContent = '🌙';
+                checkbox.checked = true;
+            } else {
+                label.textContent = 'Light';
+                icon.textContent = '🌞';
+                checkbox.checked = false;
+            }
+        }
+
+        applyTheme(pref);
+
+        if (checkbox) {
+            checkbox.addEventListener('change', function(e){
+                const val = e.target.checked ? 'dark' : 'light';
+                applyTheme(val);
+            });
+        }
+    })();
+</script>
 @endsection

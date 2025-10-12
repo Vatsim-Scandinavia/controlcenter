@@ -360,6 +360,7 @@ class UserController extends Controller
             'setting_notify_newexamreport' => '',
             'setting_notify_tasks' => '',
             'setting_workmail_address' => 'nullable|email|max:64|regex:/(.*)' . Setting::get('linkDomain') . '$/i',
+            'prefers_theme' => 'nullable|in:light,dark'
         ]);
 
         isset($data['setting_notify_newreport']) ? $setting_notify_newreport = true : $setting_notify_newreport = false;
@@ -380,6 +381,13 @@ class UserController extends Controller
         } elseif ($user->setting_workmail_address && ! isset($data['setting_workmail_address'])) {
             $user->setting_workmail_address = null;
             $user->setting_workmail_expire = null;
+        }
+
+        if (isset($data['prefers_theme'])) {
+            $user->prefers_theme = $data['prefers_theme'];
+        } else {
+            // Checkbox unchecked -> light
+            $user->prefers_theme = 'light';
         }
 
         $user->save();

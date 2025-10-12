@@ -187,7 +187,7 @@
             </div>
             <div class="card-body p-0">
                 <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
-                    <thead class="table-light">
+                    <thead >
                         <tr>
                             <th>Rating</th>
                             <th>Waiting time average low — high</th>

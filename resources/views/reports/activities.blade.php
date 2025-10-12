@@ -41,7 +41,7 @@
                         data-pagination="true"
                         data-filter-control="true"
                         data-sort-reset="true">
-                        <thead class="table-light">
+                        <thead >
                             <tr>
                                 <th data-field="id" data-sortable="false" data-filter-control="input">Training</th>
                                 <th data-field="who" data-sortable="false" data-filter-control="input">Who</th>
