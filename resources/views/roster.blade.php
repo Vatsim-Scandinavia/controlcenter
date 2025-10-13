@@ -48,7 +48,7 @@
                                         @endcan
                                     </td>
                                     <td>{{ $u->last_online ? \Carbon\Carbon::parse($u->last_online)->diffForHumans() : 'N/A' }}</td>
-                                    <td>{{ round($u->last12Months) }} h</td>
+                                    <td>{{ round($u->last_12_months) }} h</td>
                                     <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
                                     <td class="text-center text-white {{ $u->isAtcActive() || $u->isVisiting() ? 'bg-success' : 'bg-danger' }}">
                                         @if($u->isAtcActive())
