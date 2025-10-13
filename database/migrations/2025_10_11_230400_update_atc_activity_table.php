@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('atc_activities', function (Blueprint $table) {
             $table->timestamp('last_online')->nullable();
-            $table->double('last12Months')->default(0);
+            $table->double('last_12_months')->default(0);
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('atc_activities', function (Blueprint $table) {
             $table->dropColumn('last_online');
-            $table->dropColumn('last12Months');
+            $table->dropColumn('last_12_months');
         });
     }
 };

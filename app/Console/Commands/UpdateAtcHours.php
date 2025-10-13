@@ -167,7 +167,7 @@ class UpdateAtcHours extends Command
                 $activity = AtcActivity::where('user_id', $member->id)->where('area_id', $area->id)->firstOrFail();
                 $activity->hours = $hoursActiveInArea;
                 $activity->last_online = $lastConnection;
-                $activity->last12Months = $hoursLast12Months;
+                $activity->last_12_months = $hoursLast12Months;
                 $activity->save();
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 if ($hoursActiveInArea > 0) {
