@@ -39,7 +39,7 @@ COPY --from=mlocati/php-extension-installer:2.9.11 /usr/bin/install-php-extensio
 # These are the extensions we depend on:
 # $ composer check -f json 2>/dev/null | jq '.[] | select(.name | startswith("ext-")) | .name | sub("ext-"; "")' -r
 # Currently, this seems to only be pdo_mysql.
-RUN install-php-extensions pdo_mysql pdo_pgsql opcache
+RUN install-php-extensions pdo_mysql pdo_pgsql opcache gd
 
 # Install composer
 COPY --from=docker.io/library/composer:latest /usr/bin/composer /usr/bin/composer
