@@ -344,7 +344,7 @@ class TrainingReportsTest extends TestCase
             'user_id' => User::factory()->create)->id,
         ]);
 
-        $buddy = User::factory()->create(['id' => 10000103]);
+        $buddy = User::factory()->create();
         $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a one-time link for the training report
