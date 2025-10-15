@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+const GROUP_ADMINISTRATOR = 1;
+const GROUP_MODERATOR = 2;
+const GROUP_MENTOR = 3;
+const GROUP_BUDDY = 4;
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -466,11 +471,11 @@ class User extends Authenticatable
     public function isBuddy(?Area $area = null)
     {
         if ($area == null) {
-            return $this->groups->where('id', 4)->isNotEmpty();
+            return $this->groups->where('id', GROUP_BUDDY)->isNotEmpty();
         }
 
         // Check if user is buddy in the specified area
-        foreach ($this->groups->where('id', 4) as $group) {
+        foreach ($this->groups->where('id', GROUP_BUDDY) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -487,11 +492,11 @@ class User extends Authenticatable
     public function isBuddyOrAbove(?Area $area = null)
     {
         if ($area == null) {
-            return $this->groups->where('id', '<=', 4)->isNotEmpty();
+            return $this->groups->where('id', '<=', GROUP_BUDDY)->isNotEmpty();
         }
 
         // Check if user is buddy or above in the specified area
-        foreach ($this->groups->where('id', '<=', 4) as $group) {
+        foreach ($this->groups->where('id', '<=', GROUP_BUDDY) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -508,11 +513,11 @@ class User extends Authenticatable
     public function isMentor(?Area $area = null)
     {
         if ($area == null) {
-            return $this->groups->where('id', 3)->isNotEmpty();
+            return $this->groups->where('id', GROUP_MENTOR)->isNotEmpty();
         }
 
         // Check if user is mentor in the specified area
-        foreach ($this->groups->where('id', 3) as $group) {
+        foreach ($this->groups->where('id', GROUP_MENTOR) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -529,11 +534,11 @@ class User extends Authenticatable
     public function isMentorOrAbove(?Area $area = null)
     {
         if ($area == null) {
-            return $this->groups->where('id', '<=', 3)->isNotEmpty();
+            return $this->groups->where('id', '<=', GROUP_MENTOR)->isNotEmpty();
         }
 
         // Check if user is mentor or above in the specified area
-        foreach ($this->groups->where('id', '<=', 3) as $group) {
+        foreach ($this->groups->where('id', '<=', GROUP_MENTOR) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -550,11 +555,11 @@ class User extends Authenticatable
     public function isModerator(?Area $area = null)
     {
         if ($area == null) {
-            return $this->groups->where('id', 2)->isNotEmpty();
+            return $this->groups->where('id', GROUP_MODERATOR)->isNotEmpty();
         }
 
         // Check if user is moderator in the specified area
-        foreach ($this->groups->where('id', 2) as $group) {
+        foreach ($this->groups->where('id', GROUP_MODERATOR) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -571,7 +576,7 @@ class User extends Authenticatable
     public function isModeratorOrAbove(?Area $area = null)
     {
         if ($area == null) {
-            return $this->groups->where('id', '<=', 2)->isNotEmpty();
+            return $this->groups->where('id', '<=', GROUP_MODERATOR)->isNotEmpty();
         }
 
         if ($this->isAdmin()) {
@@ -579,7 +584,7 @@ class User extends Authenticatable
         }
 
         // Check if user is moderator or above in the specified area
-        foreach ($this->groups->where('id', '<=', 2) as $group) {
+        foreach ($this->groups->where('id', '<=', GROUP_MODERATOR) as $group) {
             if ($group->pivot->area_id == $area->id) {
                 return true;
             }
@@ -595,6 +600,6 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        return $this->groups->contains('id', 1);
+        return $this->groups->contains('id', GROUP_ADMINISTRATOR);
     }
 }
