@@ -10,6 +10,16 @@ if [ ! -f "$SELF_SIGNED_KEY" ] || [ ! -f "$SELF_SIGNED_CERT" ]; then
     openssl req -x509 -nodes -days 358000 -newkey rsa:2048 -keyout "$SELF_SIGNED_KEY" -out "$SELF_SIGNED_CERT" -subj "/O=Your vACC/CN=Control Center"
 fi
 
+# Check if composer modules are installed
+if [ ! -d "$CONTROL_CENTER_ROOT/vendor" ] || [ ! -f "$CONTROL_CENTER_ROOT/vendor/autoload.php" ]; then
+    echo "################################################################################"
+    echo "INFO: Composer vendor directory not found or incomplete"
+    echo "INFO: Installing composer dependencies..."
+    echo "################################################################################"
+    composer install --no-dev --optimize-autoloader
+    echo "INFO: Composer dependencies installed successfully"
+fi
+
 if [ -z "$APP_KEY" ] && [ ! -f "$CONTROL_CENTER_ROOT/.env" ]; then
     echo "################################################################################"
     echo "WARNING: You need to follow the configuration guide for Control Center"
