@@ -341,7 +341,7 @@ class TrainingReportsTest extends TestCase
     public function buddy_can_use_one_time_link_in_their_area()
     {
         $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000102])->id,
+            'user_id' => User::factory()->create)->id,
         ]);
 
         $buddy = User::factory()->create(['id' => 10000103]);
