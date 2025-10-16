@@ -59,7 +59,7 @@ class TrainingReportPolicy
 
         // Otherwise, let's see if a one-time link is used
         if (($link = OneTimeLink::getFromSession($training)) != null) {
-            return $user->isMentor($link->training->area);
+            return $user->isMentor($link->training->area) || $user->isBuddy($link->training->area);
         }
 
         return false;
