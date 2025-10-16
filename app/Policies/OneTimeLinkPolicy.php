@@ -42,7 +42,7 @@ class OneTimeLinkPolicy
         }
 
         return ($link->reportType() && ($user->isMentor() || $user->isBuddy())
-            || ($link->examinationType() && $user->isExaminer())
+            || ($link->examinationType() && $user->isExaminer()))
             ? Response::allow()
             : Response::deny('You are not allowed to access the one-time link');
     }
