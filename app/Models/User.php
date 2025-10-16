@@ -463,7 +463,7 @@ class User extends Authenticatable
         })->exists();
     }
 
-        /**
+    /**
      * Return if user is a buddy
      *
      * @return bool

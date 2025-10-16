@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\User;
-use App\Models\User\GROUP_BUDDY;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
