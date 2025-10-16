@@ -8,6 +8,10 @@ on:
       - docs/*
     tags:
       - '**'
+  pull_request:
+    paths:
+      - "**.md"
+      - docs/mkdocs.yml
 
 env:
   COLUMNS: 150
@@ -41,6 +45,7 @@ jobs:
   publish:
     needs: [lint]
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     timeout-minutes: 30
     concurrency:
       group: ${{ github.workflow }}
