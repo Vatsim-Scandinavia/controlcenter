@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.4.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.7...v6.4.0) (2025-10-16)
+
+
+### Features
+
+* add support for buddies ([#1316](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1316)) ([36e00ba](https://github.com/Vatsim-Scandinavia/controlcenter/commit/36e00bae7a956d90e8a760c66906360002faf626))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/setup-node action to v6 ([#1321](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1321)) ([75007e3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/75007e36727f5c15d3c37c4e9da6f91663a650d8))
+* **deps:** update dependency chart.js to v4.5.1 ([#1320](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1320)) ([224e17f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/224e17fbd46278f582a860cb72b9eec8fed66acf))
+* **deps:** update dependency core-js to v3.46.0 ([#1313](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1313)) ([80cd01e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/80cd01e840fea74fe39569adae16251cdbbded22))
+* **deps:** update dependency laravel/framework to v12.33.0 ([#1308](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1308)) ([0e584ef](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0e584ef2d064a2b7fbea8ccca62ed4c6515a1a51))
+* **deps:** update dependency laravel/framework to v12.34.0 ([#1324](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1324)) ([62577f5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/62577f53ac267116657e02301aba5865bf16f8ab))
+* **deps:** update dependency sentry/sentry-laravel to v4.17.0 ([#1325](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1325)) ([f6b23b6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f6b23b685992ac91300e6479738e3e109b77563c))
+* **deps:** update dependency vite to v7.1.10 ([#1323](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1323)) ([fd80c45](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fd80c45ca7daee2a42b7e7c56b11bb38c182cf82))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.9.13 ([#1311](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1311)) ([9344303](https://github.com/Vatsim-Scandinavia/controlcenter/commit/93443032469b7013ed3e0ac44d0ba7c82922dd40))
+
 ## [6.3.7](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.6...v6.3.7) (2025-10-09)
 
 
