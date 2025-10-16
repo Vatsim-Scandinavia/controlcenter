@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Models\User\GROUP_BUDDY;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
@@ -341,7 +342,7 @@ class TrainingReportsTest extends TestCase
     public function buddy_can_use_one_time_link_in_their_area()
     {
         $training = Training::factory()->create([
-            'user_id' => User::factory()->create)->id,
+            'user_id' => User::factory()->create()->id,
         ]);
 
         $buddy = User::factory()->create();
@@ -386,16 +387,16 @@ class TrainingReportsTest extends TestCase
     public function buddy_cant_see_reports_created_by_others()
     {
         $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000104])->id,
+            'user_id' => User::factory()->create()->id,
         ]);
 
         // Create a mentor who writes a report
-        $mentor = User::factory()->create(['id' => 10000105]);
+        $mentor = User::factory()->create();
         $mentor->groups()->attach(3, ['area_id' => $training->area->id]); // Attach mentor group (id 3)
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
         // Create a buddy in the same area
-        $buddy = User::factory()->create(['id' => 10000106]);
+        $buddy = User::factory()->create();
         $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a training report written by the mentor
@@ -417,16 +418,16 @@ class TrainingReportsTest extends TestCase
     public function buddy_cant_delete_training_reports()
     {
         $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000107])->id,
+            'user_id' => User::factory()->create()->id,
         ]);
 
         // Create a mentor who writes a report
-        $mentor = User::factory()->create(['id' => 10000108]);
+        $mentor = User::factory()->create();
         $mentor->groups()->attach(3, ['area_id' => $training->area->id]); // Attach mentor group (id 3)
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
         // Create a buddy in the same area
-        $buddy = User::factory()->create(['id' => 10000109]);
+        $buddy = User::factory()->create();
         $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a training report written by the mentor
