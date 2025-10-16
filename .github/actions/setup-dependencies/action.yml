@@ -35,7 +35,7 @@ runs:
 
   - name: Setup node
     if: inputs.setup-node == 'true'
-    uses: actions/setup-node@v5
+    uses: actions/setup-node@v6
     with:
       cache: 'npm'
       cache-dependency-path: ${{ inputs.path }}
