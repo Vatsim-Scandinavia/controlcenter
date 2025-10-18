@@ -21,6 +21,7 @@ public/images/logos/*
 public/js/*
 resources/sass/_env.scss
 yarn-error.log
+storage/.container-setup-complete
 
 # phpunit and results
 *.phpunit.cache

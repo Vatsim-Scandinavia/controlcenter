@@ -20,11 +20,15 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            - './container/init-dev.sh:/usr/local/bin/init-dev.sh'
         networks:
             - sail
         depends_on:
-            - redis
-            - mysql
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        entrypoint: ["bash", "/usr/local/bin/init-dev.sh"]
     redis:
         image: 'redis:alpine'
         ports:
@@ -65,8 +69,6 @@ networks:
         driver: bridge
 volumes:
     sail-redis:
-        driver: local
-    sail-mariadb:
         driver: local
     sail-mysql:
         driver: local
