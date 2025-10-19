@@ -340,8 +340,9 @@ class UserController extends Controller
     public function settings()
     {
         $user = Auth::user();
+        $themes = config('themes.options', []);
 
-        return view('usersettings', compact('user'));
+        return view('usersettings', compact('user', 'themes'));
     }
 
     /**
@@ -353,6 +354,11 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
+        $availableThemes = array_keys(config('themes.options', []));
+        $themeValidationRule = empty($availableThemes)
+            ? 'nullable|string'
+            : 'required|string|in:' . implode(',', $availableThemes);
+
         $data = $request->validate([
             'setting_notify_newreport' => '',
             'setting_notify_newreq' => '',
@@ -360,6 +366,7 @@ class UserController extends Controller
             'setting_notify_newexamreport' => '',
             'setting_notify_tasks' => '',
             'setting_workmail_address' => 'nullable|email|max:64|regex:/(.*)' . Setting::get('linkDomain') . '$/i',
+            'setting_theme' => $themeValidationRule,
         ]);
 
         isset($data['setting_notify_newreport']) ? $setting_notify_newreport = true : $setting_notify_newreport = false;
@@ -380,6 +387,10 @@ class UserController extends Controller
         } elseif ($user->setting_workmail_address && ! isset($data['setting_workmail_address'])) {
             $user->setting_workmail_address = null;
             $user->setting_workmail_expire = null;
+        }
+
+        if (array_key_exists('setting_theme', $data)) {
+            $user->setting_theme = $data['setting_theme'] ?? config('themes.default', 'light');
         }
 
         $user->save();

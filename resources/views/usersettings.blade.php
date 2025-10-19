@@ -33,6 +33,25 @@
                                 @endif
                             </div>
 
+                            @if(!empty($themes))
+                                <div class="mb-3 mt-4">
+                                    <label class="form-label" for="setting_theme">Theme</label>
+                                    <select class="form-select @error('setting_theme') is-invalid @enderror" id="setting_theme" name="setting_theme">
+                                        @foreach($themes as $themeKey => $themeConfig)
+                                            <option value="{{ $themeKey }}" {{ $user->resolved_theme === $themeKey ? 'selected' : '' }}>
+                                                {{ $themeConfig['label'] ?? ucfirst($themeKey) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="form-text text-muted">
+                                        Choose how the Control Center interface should look. Additional themes can be registered by your administrators.
+                                    </small>
+                                    @error('setting_theme')
+                                        <span class="text-danger">{{ $errors->first('setting_theme') }}</span>
+                                    @enderror
+                                </div>
+                            @endif
+
                             @if($user->isMentorOrAbove())
                                 <hr>
 

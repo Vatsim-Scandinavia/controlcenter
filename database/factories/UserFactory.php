@@ -58,6 +58,7 @@ class UserFactory extends Factory
             'setting_notify_newreq' => false,
             'setting_notify_closedreq' => false,
             'setting_notify_newexamreport' => false,
+            'setting_theme' => config('themes.default', 'light'),
         ];
     }
 }

@@ -5,7 +5,13 @@
         @include('layouts.header')
     </head>
 
-    <body>
+    @php
+        $defaultTheme = config('themes.default', 'light');
+        $activeTheme = auth()->check() ? auth()->user()->resolved_theme : $defaultTheme;
+        $themeClass = 'theme-' . \Illuminate\Support\Str::slug($activeTheme);
+    @endphp
+
+    <body class="{{ $themeClass }}" data-theme="{{ $activeTheme }}">
 
     {{-- Page Wrapper --}}
     <div id="wrapper">

@@ -21,7 +21,13 @@
 <link rel="shortcut icon" href="/images/favicon/favicon.ico">
 <meta name="msapplication-TileColor" content="#2b5797">
 <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
+@php
+    $headerDefaultTheme = config('themes.default', 'light');
+    $headerActiveTheme = auth()->check() ? auth()->user()->resolved_theme : $headerDefaultTheme;
+    $headerThemeConfig = config('themes.options.' . $headerActiveTheme, []);
+    $metaThemeColor = $headerThemeConfig['meta_color'] ?? '#ffffff';
+@endphp
+<meta name="theme-color" content="{{ $metaThemeColor }}">
 <meta name="robots" content="noindex">
 
 {{-- Page specific header elements --}}

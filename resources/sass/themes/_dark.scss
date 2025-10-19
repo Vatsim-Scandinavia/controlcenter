@@ -1,0 +1,290 @@
+$dark-body-bg: #011328 !default;
+$dark-surface: #152235 !default;
+$dark-surface-alt: #1b2c41 !default;
+$dark-border: #23374d !default;
+$dark-input-bg: #0b1622 !default;
+$dark-text: #e2e8f0 !default;
+$dark-text-muted: #94a3b8 !default;
+
+body.theme-dark {
+    color-scheme: dark;
+    background-color: $dark-body-bg;
+    color: $dark-text;
+
+    a {
+        color: lighten($primary, 10%);
+
+        &:hover {
+            color: lighten($primary, 18%);
+        }
+    }
+    .text-gray-800 {
+        color: $dark-text !important;
+    }
+
+    .search-input {
+        color: $dark-text !important;
+    }
+
+    #wrapper,
+    #content-wrapper {
+        background-color: transparent;
+    }
+
+    #content-wrapper {
+        background-color: $dark-body-bg !important;
+    }
+
+    .page-title h3,
+    .page-title .btn {
+        color: inherit;
+    }
+
+    .card {
+        background-color: $dark-surface;
+        color: $dark-text;
+        border-color: $dark-border;
+        box-shadow: 0 0.15rem 1.35rem rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header,
+    .card-footer {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+        color: inherit;
+    }
+
+    hr {
+        border-color: $dark-border;
+    }
+
+    .sidebar {
+        background-color: darken($primary, 18%);
+
+        .sidebar-divider {
+            background: rgba($dark-text, 0.1);
+        }
+
+        .sidebar-heading {
+            color: rgba($dark-text, 0.65);
+        }
+
+        .sidebar-brand {
+            color: $dark-text;
+
+            &-icon svg {
+                fill: $dark-text;
+            }
+        }
+
+        .nav-item {
+            .nav-link {
+                color: rgba($dark-text, 0.75);
+
+                i {
+                    color: rgba($dark-text, 0.55);
+                }
+
+                &:hover,
+                &:focus {
+                    color: $dark-text;
+
+                    i {
+                        color: $dark-text;
+                    }
+                }
+            }
+
+            &.active .nav-link {
+                color: $dark-text;
+                font-weight: bold;
+
+                i {
+                    color: $dark-text;
+                }
+            }
+
+            .collapse-inner {
+                background-color: transparent;
+                box-shadow: none;
+
+                .collapse-item {
+                    color: $dark-text;
+                    background-color: transparent;
+
+                    &:hover {
+                        background-color: rgba($white, 0.06);
+                    }
+
+                    &:active {
+                        background-color: rgba($white, 0.1);
+                    }
+                }
+            }
+        }
+    }
+
+    .topbar {
+        background-color: $dark-surface !important;
+        border-bottom: 1px solid $dark-border;
+        box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.35);
+
+        .sidebar-brand-text {
+            color: $dark-text;
+        }
+
+        .navbar-search .search-input,
+        .navbar-search .search-icon {
+            background-color: $dark-input-bg;
+            color: $dark-text;
+        }
+
+        .navbar-search .search-input {
+            border-color: $dark-border;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba($dark-text, 0.75);
+
+            &:hover {
+                color: $dark-text;
+            }
+        }
+
+        .dropdown-menu {
+            background-color: $dark-surface-alt;
+            border-color: $dark-border;
+        }
+    }
+
+    .bg-white,
+    .bg-light {
+        background-color: $dark-surface !important;
+    }
+
+    .dropdown-menu {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+
+        .dropdown-item {
+            color: $dark-text;
+
+            &:hover {
+                background-color: rgba($white, 0.06);
+                color: $dark-text;
+            }
+        }
+    }
+
+    .form-control,
+    .form-select,
+    .form-check-input {
+        background-color: $dark-input-bg;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    .form-check-input:focus {
+        background-color: lighten($dark-input-bg, 4%);
+        border-color: lighten($primary, 8%);
+        color: $dark-text;
+        box-shadow: none;
+    }
+
+    .form-check-label,
+    .form-label,
+    label {
+        color: $dark-text;
+    }
+
+    .form-text,
+    .text-muted {
+        color: $dark-text-muted !important;
+    }
+
+    .input-group-text {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .table {
+        color: $dark-text;
+
+        thead th {
+            background-color: $dark-surface-alt;
+            border-color: $dark-border;
+            color: inherit;
+        }
+
+        tbody td {
+            color: $dark-text;
+            border-color: $dark-border;
+        }
+        tbody th {
+            border-color: $dark-border;
+        }
+
+
+        --bs-table-striped-bg: rgba($white, 0.03);
+        --bs-table-hover-bg: rgba($white, 0.06);
+        --bs-table-active-bg: rgba($white, 0.08);
+
+        &.table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: $dark-surface;
+            border-color: lighten($dark-border, 6%);
+            color: $dark-text;
+        }
+        &.table-striped > tbody > tr:nth-of-type(even) > * {
+            background-color: $dark-surface-alt;
+            border-color: lighten($dark-border, 6%);
+            color: $dark-text;
+        }
+    }
+
+        .list-group-item {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .modal-content {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .alert {
+        color: $dark-text !important;
+        border-color: rgba($white, 0.1);
+    }
+
+    .text-primary {
+        color: lighten($primary, 12%) !important;
+    }
+
+    .badge.bg-light {
+        color: $dark-text;
+        background-color: rgba($white, 0.08) !important;
+    }
+    .alert-warning {
+        --bs-alert-bg: #aea38f !important;
+    }
+    .alert-primary {
+        --bs-alert-bg: #a2a8ac !important;
+    }
+    .alert-info {
+        --bs-alert-bg: #a9b9bd !important;
+    }
+    .alert-success {
+        --bs-alert-bg: #abb2af !important;
+    }
+    .alert-danger {
+        --bs-alert-bg: #b9aaaa !important;
+    }
+    .table>:not(caption)>*>* {
+        background-color: $dark-surface;
+    }
+}

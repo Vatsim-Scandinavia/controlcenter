@@ -186,6 +186,20 @@ class User extends Authenticatable
         return $this->email;
     }
 
+    public function getResolvedThemeAttribute(): string
+    {
+        $availableThemes = array_keys(config('themes.options', []));
+        $defaultTheme = config('themes.default', 'light');
+
+        $theme = $this->setting_theme ?: $defaultTheme;
+
+        if (empty($availableThemes)) {
+            return $theme;
+        }
+
+        return in_array($theme, $availableThemes, true) ? $theme : $defaultTheme;
+    }
+
     /**
      * Check if the user is active as ATC
      *
