@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.0...v6.4.1) (2025-10-19)
+
+
+### Bug Fixes
+
+* Area moderators not able to assign buddies. ([#1327](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1327)) ([d312872](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d3128723e24b2dde9cc1f9d0cacf77463558dd7a))
+
 ## [6.4.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.3.7...v6.4.0) (2025-10-16)
 
 
