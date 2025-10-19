@@ -73,6 +73,6 @@ class UserPolicy
         // Only Admin can set examinators.
         return
             $this->update($user, $model) &&
-            (($user->isAdmin() && $requstedGroup->id >= 2) || ($user->isModerator($requestedArea) && $requstedGroup->id == 3));
+            (($user->isAdmin() && $requstedGroup->id >= 2) || ($user->isModerator($requestedArea) && $requstedGroup->id >= 3));
     }
 }
