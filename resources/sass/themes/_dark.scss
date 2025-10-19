@@ -7,15 +7,18 @@ $dark-text: #e2e8f0 !default;
 $dark-text-muted: #94a3b8 !default;
 
 body.theme-dark {
+
+    --bs-danger: #cd6e6e !important;
+    --bs-danger-rgb: 205, 110, 110;
     color-scheme: dark;
     background-color: $dark-body-bg;
     color: $dark-text;
 
     a {
-        color: lighten($primary, 10%);
+        color: #86b3e5;
 
         &:hover {
-            color: lighten($primary, 18%);
+            color: lighten(#86b3e5, 18%);
         }
     }
     .text-gray-800 {
@@ -216,7 +219,7 @@ body.theme-dark {
         thead th {
             background-color: $dark-surface-alt;
             border-color: $dark-border;
-            color: inherit;
+            color: $dark-text;
         }
 
         tbody td {
@@ -225,6 +228,7 @@ body.theme-dark {
         }
         tbody th {
             border-color: $dark-border;
+            color: $dark-text;
         }
 
 
@@ -271,9 +275,13 @@ body.theme-dark {
     }
     .alert-warning {
         --bs-alert-bg: #aea38f !important;
+        color: #121922 !important;
+        a {
+            color: #113051 !important;
+        }
     }
     .alert-primary {
-        --bs-alert-bg: #a2a8ac !important;
+        --bs-alert-bg: #293b5a !important;
     }
     .alert-info {
         --bs-alert-bg: #a9b9bd !important;
@@ -283,8 +291,15 @@ body.theme-dark {
     }
     .alert-danger {
         --bs-alert-bg: #b9aaaa !important;
+        a {
+            color: #113051 !important;
+        }
     }
     .table>:not(caption)>*>* {
         background-color: $dark-surface;
     }
+}
+.pagination {
+    --bs-pagination-bg: $dark-surface-alt !important;
+    --bs-pagination-border-color: $dark-body-bg !important;
 }
