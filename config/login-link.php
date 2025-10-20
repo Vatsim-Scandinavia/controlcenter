@@ -18,6 +18,7 @@ return [
         '127.0.0.1',
         '*.test',
         'vatsca.local',
+        '*.ngrok-free.app'
     ],
 
     /*
