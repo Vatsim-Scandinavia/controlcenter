@@ -261,7 +261,6 @@ body.theme-dark {
     }
 
     .alert {
-        color: $dark-text !important;
         border-color: rgba($white, 0.1);
     }
 
@@ -282,12 +281,22 @@ body.theme-dark {
     }
     .alert-primary {
         --bs-alert-bg: #293b5a !important;
+        color: #fff !important;
+        a {
+            color: $dark-text-muted !important;
+        }
     }
     .alert-info {
         --bs-alert-bg: #a9b9bd !important;
+        a {
+            color: #113051 !important;
+        }
     }
     .alert-success {
         --bs-alert-bg: #abb2af !important;
+        a {
+            color: #113051 !important;
+        }
     }
     .alert-danger {
         --bs-alert-bg: #b9aaaa !important;
@@ -302,4 +311,10 @@ body.theme-dark {
 .pagination {
     --bs-pagination-bg: $dark-surface-alt !important;
     --bs-pagination-border-color: $dark-body-bg !important;
+}
+.input-group {
+    .border {
+        border-color: $dark-border !important;
+        color: $dark-text !important;
+    }
 }
