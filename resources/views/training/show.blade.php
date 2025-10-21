@@ -375,6 +375,83 @@
             </div>
         </div>
 
+        @if($soloEndorsementSummary)
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Solo Endorsements
+                </h6>
+            </div>
+            @php
+                $soloCollapseId = 'soloEndorsementDetails-' . $training->id;
+            @endphp
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        Solo days remaining:
+                        <span class="{{ $soloEndorsementSummary['left'] === 0 ? 'text-danger' : 'text-success' }}">{{ $soloEndorsementSummary['left'] }}</span>
+                        of {{ $soloEndorsementSummary['total'] }}
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $soloCollapseId }}" aria-expanded="{{ $soloEndorsementCollapsed ? 'false' : 'true' }}" aria-controls="{{ $soloCollapseId }}" data-solo-collapse-toggle>
+                        <span data-solo-toggle-text>{{ $soloEndorsementCollapsed ? 'Show details' : 'Hide details' }}</span>
+                        <i class="fas {{ $soloEndorsementCollapsed ? 'fa-chevron-down' : 'fa-chevron-up' }}" data-solo-toggle-icon></i>
+                    </button>
+                </div>
+                <div id="{{ $soloCollapseId }}" class="collapse solo-endorsement-collapse {{ $soloEndorsementCollapsed ? '' : 'show' }}">
+                    <div class="mt-3">
+                        <div class="text-muted mb-2">
+                            Days granted: {{ $soloEndorsementSummary['used'] }}
+                        </div>
+                        <div class="progress mb-3" role="progressbar" aria-valuemin="0" aria-valuemax="{{ $soloEndorsementSummary['total'] }}" aria-valuenow="{{ $soloEndorsementSummary['used'] }}">
+                            <div class="progress-bar {{ $soloEndorsementSummary['percentage_used'] >= 100 ? 'bg-danger' : 'bg-primary' }}" style="width: {{ $soloEndorsementSummary['percentage_used'] }}%;"></div>
+                        </div>
+                        <small class="text-muted d-block mb-3">{{ $soloEndorsementSummary['percentage_used'] }}% of the allowable {{ $soloEndorsementSummary['total'] }} days used.</small>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm table-leftpadded mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Granted</th>
+                                        <th>Expires</th>
+                                        <th>Days Granted</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($soloEndorsements as $soloEndorsement)
+                                        @php
+                                            $soloDays = ($soloEndorsement->valid_from && $soloEndorsement->valid_to) ? $soloEndorsement->valid_from->diffInDays($soloEndorsement->valid_to) : null;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ optional($soloEndorsement->valid_from)->toEuropeanDateTime() }}</td>
+                                            <td>
+                                                @if($soloEndorsement->valid_to)
+                                                    {{ $soloEndorsement->valid_to->toEuropeanDateTime() }}
+                                                @else
+                                                    —
+                                                @endif
+                                            </td>
+                                            <td>{{ $soloDays ?? '—' }}</td>
+                                            <td>
+                                                @if($soloEndorsement->revoked)
+                                                    <span class="badge bg-danger">Revoked</span>
+                                                @elseif($soloEndorsement->expired || ($soloEndorsement->valid_to && $soloEndorsement->valid_to->isPast()))
+                                                    <span class="badge bg-warning text-dark">Expired</span>
+                                                @else
+                                                    <span class="badge bg-success">Active</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
@@ -828,6 +905,9 @@
             // Add minus icon for collapse element which is open by default
             var showCollapses = document.querySelectorAll(".collapse.show");
             showCollapses.forEach(function(collapse) {
+                if (collapse.classList.contains('solo-endorsement-collapse')) {
+                    return;
+                }
                 var cardHeader = collapse.previousElementSibling;
                 var icon = cardHeader.querySelector(".fas");
                 if (icon) {
@@ -839,6 +919,9 @@
             // Toggle plus minus icon on show hide of collapse element
             var collapses = document.querySelectorAll(".collapse");
             collapses.forEach(function(collapse) {
+                if (collapse.classList.contains('solo-endorsement-collapse')) {
+                    return;
+                }
                 collapse.addEventListener('show.bs.collapse', function() {
                     var cardHeader = collapse.previousElementSibling;
                     var icon = cardHeader.querySelector(".fas");
@@ -855,6 +938,43 @@
                         icon.classList.remove("fa-chevron-down");
                         icon.classList.add("fa-chevron-right");
                     }
+                });
+            });
+
+            document.querySelectorAll('[data-solo-collapse-toggle]').forEach(function(button) {
+                var targetSelector = button.getAttribute('data-bs-target');
+                if (! targetSelector) {
+                    return;
+                }
+
+                var target = document.querySelector(targetSelector);
+                if (! target) {
+                    return;
+                }
+
+                var updateToggleState = function(isExpanded) {
+                    button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+
+                    var text = button.querySelector('[data-solo-toggle-text]');
+                    if (text) {
+                        text.textContent = isExpanded ? 'Hide details' : 'Show details';
+                    }
+
+                    var icon = button.querySelector('[data-solo-toggle-icon]');
+                    if (icon) {
+                        icon.classList.remove('fa-chevron-up', 'fa-chevron-down', 'fa-chevron-right');
+                        icon.classList.add(isExpanded ? 'fa-chevron-up' : 'fa-chevron-down');
+                    }
+                };
+
+                updateToggleState(target.classList.contains('show'));
+
+                target.addEventListener('show.bs.collapse', function () {
+                    updateToggleState(true);
+                });
+
+                target.addEventListener('hide.bs.collapse', function () {
+                    updateToggleState(false);
                 });
             });
 

@@ -9,6 +9,7 @@ use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
+use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingExamination;
@@ -29,6 +30,8 @@ use Illuminate\Support\Facades\Gate;
  */
 class TrainingController extends Controller
 {
+    private const SOLO_ENDORSEMENT_MAX_DAYS = 60;
+
     /**
      * A list of possible statuses
      */
@@ -408,6 +411,51 @@ class TrainingController extends Controller
         $experiences = TrainingController::$experiences;
         $activities = $training->activities->sortByDesc('created_at');
 
+        $soloEndorsementSummary = null;
+        $soloEndorsements = collect();
+        $soloEndorsementIds = $activities->where('type', 'ENDORSEMENT')
+            ->pluck('new_data')
+            ->filter()
+            ->unique();
+
+        $soloEndorsementsQuery = Endorsement::where('type', 'SOLO')
+            ->where('user_id', $training->user_id)
+            ->orderByDesc('valid_from');
+
+        if ($soloEndorsementIds->isNotEmpty()) {
+            $soloEndorsementsQuery->whereIn('id', $soloEndorsementIds);
+        } elseif ($training->created_at) {
+            $soloEndorsementsQuery->where(function ($query) use ($training) {
+                $query->whereNull('valid_from')
+                    ->orWhere('valid_from', '>=', $training->created_at);
+            });
+        }
+
+        $soloEndorsements = $soloEndorsementsQuery->get();
+
+        $soloEndorsementCollapsed = false;
+
+        if ($soloEndorsements->isNotEmpty()) {
+            $soloDaysUsed = $soloEndorsements->reduce(function (int $carry, Endorsement $endorsement) {
+                if (! $endorsement->valid_from || ! $endorsement->valid_to) {
+                    return $carry;
+                }
+
+                return $carry + $endorsement->valid_from->diffInDays($endorsement->valid_to);
+            }, 0);
+
+            $percentageUsed = (int) min(100, round(($soloDaysUsed / max(self::SOLO_ENDORSEMENT_MAX_DAYS, 1)) * 100));
+
+            $soloEndorsementSummary = [
+                'used' => $soloDaysUsed,
+                'left' => max(self::SOLO_ENDORSEMENT_MAX_DAYS - $soloDaysUsed, 0),
+                'total' => self::SOLO_ENDORSEMENT_MAX_DAYS,
+                'percentage_used' => $percentageUsed,
+            ];
+
+            $soloEndorsementCollapsed = $soloEndorsementSummary['left'] === 0 || $soloEndorsementSummary['percentage_used'] >= 100 || $training->status < 0;
+        }
+
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at', 'DESC')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();
 
@@ -416,7 +464,7 @@ class TrainingController extends Controller
         $requestTypes = TaskController::getTypes();
         $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'statuses', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'soloEndorsements', 'soloEndorsementSummary', 'soloEndorsementCollapsed'));
     }
 
     /**
