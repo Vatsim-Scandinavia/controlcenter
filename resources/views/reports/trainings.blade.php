@@ -11,7 +11,7 @@
             @if(\Auth::user()->isModeratorOrAbove($area))
                 <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
             @endif
-        @endforeach 
+        @endforeach
     </div>
 @endsection
 @section('content')
@@ -114,7 +114,7 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
                     Training requests last 12 months
-                </h6> 
+                </h6>
             </div>
             <div class="card-body">
                 <canvas id="trainingChart"></canvas>
@@ -131,7 +131,7 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
                     New requests last 6 months
-                </h6> 
+                </h6>
             </div>
             <div class="card-body">
                 <canvas id="newTrainingRequests"></canvas>
@@ -144,7 +144,7 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
                     Completed requests last 6 months
-                </h6> 
+                </h6>
             </div>
             <div class="card-body">
                 <canvas id="completedTrainingRequests"></canvas>
@@ -157,7 +157,7 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
                     Closed requests last 6 months
-                </h6> 
+                </h6>
             </div>
             <div class="card-body">
                 <canvas id="closedTrainingRequests"></canvas>
@@ -170,10 +170,23 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
                     Passed and failed exams last 6 months
-                </h6> 
+                </h6>
             </div>
             <div class="card-body">
                 <canvas id="TrainingPassFailRate"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Training sessions per rating last 6 months
+                </h6>
+            </div>
+            <div class="card-body">
+                 <canvas id="sessionsPerRating"></canvas>
             </div>
         </div>
     </div>
@@ -183,7 +196,7 @@
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
                     Estimated queue lengths
-                </h6> 
+                </h6>
             </div>
             <div class="card-body p-0">
                 <table class="table table-striped table-sm table-hover table-leftpadded mb-0" width="100%" cellspacing="0">
@@ -214,6 +227,8 @@
 
 @section('js')
 @vite('resources/js/chart.js')
+
+
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -223,8 +238,8 @@
         ctx.canvas.width = 1000;
         ctx.canvas.height = 200;
 
-        var requestData = {!! json_encode($totalRequests) !!} 
-        
+        var requestData = {!! json_encode($totalRequests) !!}
+
         var color = Chart.helpers.color;
         var cfg = {
             type: 'line',
@@ -253,7 +268,7 @@
                         type: 'time',
                         time: {
                             unit: 'month',
-                            tooltipFormat:'DD/MM/YYYY', 
+                            tooltipFormat:'DD/MM/YYYY',
                         },
                         ticks: {
                             major: {
@@ -421,7 +436,7 @@
                 label: 'C3',
                 backgroundColor: 'rgb(150, 200, 100)',
                 data: completedRequestsData["C3"]
-            }, {
+                }, {
                 label: 'MAE ENGM TWR',
                 backgroundColor: 'rgb(25, 25, 25)',
                 data: completedRequestsData["MAE ENGM TWR"],
@@ -527,7 +542,7 @@
                 label: 'C3',
                 backgroundColor: 'rgb(150, 200, 100)',
                 data: closedRequestsData["C3"]
-            }, {
+                }, {
                 label: 'MAE ENGM TWR',
                 backgroundColor: 'rgb(25, 25, 25)',
                 data: closedRequestsData["MAE ENGM TWR"],
@@ -591,6 +606,64 @@
                             stepSize: 1
                         }
                     }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Original object from PHP
+        var newRequestsData = {!! json_encode($sessionsPerRating) !!};
+
+        // Build labels for last 7 months
+        var monthLabels = [];
+        var monthNumbers = [];
+        for (var i = 6; i >= 0; i--) {
+            var m = moment().subtract(i, "month");
+            monthLabels.push(m.format('MMMM'));
+            monthNumbers.push(m.month() + 1); // moment months are 0-based
+        }
+
+        // Convert the object to arrays per dataset
+        var datasets = [];
+        var colors = {
+            'S1': 'rgb(250, 150, 150)',
+            'S2': 'rgb(200, 100, 100)',
+            'S3': 'rgb(100, 100, 200)',
+            'C1': 'rgb(100, 200, 100)',
+            'C3': 'rgb(150, 200, 100)'
+        };
+
+        Object.keys(newRequestsData).forEach(function (rating) {
+            var values = newRequestsData[rating].map(v => parseFloat(v) || 0);
+
+            // If data has exactly 7 elements, use it directly
+            if (values.length === 7 && colors[rating]) {
+                datasets.push({
+                    label: rating,
+                    backgroundColor: colors[rating],
+                    data: values
+                });
+            }
+        });
+
+        var barChartData = {
+            labels: monthLabels,
+            datasets: datasets
+        };
+
+        var mix = document.getElementById("sessionsPerRating").getContext('2d');
+        new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, ticks: { stepSize: 1 } }
                 }
             }
         });

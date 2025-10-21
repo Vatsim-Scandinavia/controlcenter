@@ -63,14 +63,14 @@ class ReportController extends Controller
         // Get stats
         $cardStats = $this->getCardStats($filterArea);
         $totalRequests = $this->getDailyRequestsStats($filterArea);
-        [$newRequests, $completedRequests, $closedRequests, $passFailRequests] = $this->getBiAnnualRequestsStats($filterArea);
+        [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $sessionsPerRating] = $this->getBiAnnualRequestsStats($filterArea);
         $queues = $this->getQueueStats($filterArea);
 
         // Send it to the view
         ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
         $areas = Area::all();
 
-        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'queues'));
+        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'queues', 'sessionsPerRating'));
     }
 
     /**
@@ -271,6 +271,7 @@ class ReportController extends Controller
         $completedRequests = [];
         $closedRequests = [];
         $passFailRequests = [];
+        $sessionsPerRating = [];
 
         if ($areaFilter) {
             foreach (Rating::all() as $rating) {
@@ -279,6 +280,7 @@ class ReportController extends Controller
                 $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                 $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                 $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $sessionsPerRating[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
                 // New requests
                 $query = DB::table('trainings')
@@ -325,6 +327,37 @@ class ReportController extends Controller
 
                 foreach ($query as $entry) {
                     $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                }
+
+                // Training reports per rating
+                $subquery = DB::table('trainings as t')
+                    ->join('training_reports as tr', 't.id', '=', 'tr.training_id')
+                    ->join('rating_training as rt', 't.id', '=', 'rt.training_id')
+                    ->select(
+                        't.id as training_id',
+                        DB::raw('MONTH(tr.created_at) as month'),
+                        'rt.rating_id',
+                        DB::raw('COUNT(tr.id) as report_count')
+                    )
+                    ->where('tr.created_at', '>=', now()->subMonths(6)->startOfMonth())
+                    ->where('t.area_id', $areaFilter)
+                    ->where('rt.rating_id', $rating->id)
+                    ->groupBy('t.id', DB::raw('MONTH(tr.created_at)'), 'rt.rating_id');
+
+                $query = DB::table(DB::raw("({$subquery->toSql()}) as training_reports_per_month"))
+                    ->mergeBindings($subquery)
+                    ->select(
+                        'month',
+                        'rating_id',
+                        DB::raw('ROUND(AVG(report_count), 2) as avg_reports_per_training')
+                    )
+                    ->groupBy('month', 'rating_id')
+                    ->orderBy('month')
+                    ->orderBy('rating_id')
+                    ->get();
+
+                foreach ($query as $entry) {
+                    $sessionsPerRating[$rating->name][$monthTranslator[$entry->month]] = $entry->avg_reports_per_training;
                 }
             }
 
@@ -381,6 +414,7 @@ class ReportController extends Controller
                 $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                 $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
                 $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
+                $sessionsPerRating[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
 
                 // New requests
                 $query = DB::table('trainings')
@@ -424,6 +458,36 @@ class ReportController extends Controller
 
                 foreach ($query as $entry) {
                     $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
+                }
+
+                // Training reports per rating
+                $subquery = DB::table('trainings as t')
+                    ->join('training_reports as tr', 't.id', '=', 'tr.training_id')
+                    ->join('rating_training as rt', 't.id', '=', 'rt.training_id')
+                    ->select(
+                        't.id as training_id',
+                        DB::raw('MONTH(tr.created_at) as month'),
+                        'rt.rating_id',
+                        DB::raw('COUNT(tr.id) as report_count')
+                    )
+                    ->where('tr.created_at', '>=', now()->subMonths(6)->startOfMonth())
+                    ->where('rt.rating_id', $rating->id)
+                    ->groupBy('t.id', DB::raw('MONTH(tr.created_at)'), 'rt.rating_id');
+
+                $query = DB::table(DB::raw("({$subquery->toSql()}) as training_reports_per_month"))
+                    ->mergeBindings($subquery)
+                    ->select(
+                        'month',
+                        'rating_id',
+                        DB::raw('ROUND(AVG(report_count), 2) as avg_reports_per_training')
+                    )
+                    ->groupBy('month', 'rating_id')
+                    ->orderBy('month')
+                    ->orderBy('rating_id')
+                    ->get();
+
+                foreach ($query as $entry) {
+                    $sessionsPerRating[$rating->name][$monthTranslator[$entry->month]] = $entry->avg_reports_per_training;
                 }
             }
 
@@ -473,7 +537,7 @@ class ReportController extends Controller
 
         }
 
-        return [$newRequests, $completedRequests, $closedRequests, $passFailRequests];
+        return [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $sessionsPerRating];
     }
 
     /**
