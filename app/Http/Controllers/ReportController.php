@@ -419,7 +419,7 @@ class ReportController extends Controller
             }
         } else {
             $divideRating = [];
-            foreach (Area::all() as $area) {
+            foreach (Area::with('ratings')->get() as $area) {
                 // Loop through the ratings of this area to get queue length
                 foreach ($area->ratings as $rating) {
                     // Only calculate if queue length is defined
