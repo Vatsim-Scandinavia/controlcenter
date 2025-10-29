@@ -34,15 +34,7 @@ class ReportController extends Controller
     {
         $this->authorize('viewAccessReport', ManagementReport::class);
 
-        $availableUsers = User::all();
-
-        // Cherrypick those with access roles
-        $users = collect();
-        foreach ($availableUsers as $user) {
-            if ($user->groups()->count()) {
-                $users->push($user);
-            }
-        }
+        $users = User::has('groups')->get();
 
         $areas = Area::all();
 
