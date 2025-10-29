@@ -52,17 +52,29 @@ class ReportController extends Controller
     public function trainings(false|int $filterArea = false)
     {
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
-        // Get stats
-        $cardStats = $this->getCardStats($filterArea);
-        $totalRequests = $this->getDailyRequestsStats($filterArea);
-        [$newRequests, $completedRequests, $closedRequests, $passFailRequests] = $this->getBiAnnualRequestsStats($filterArea);
-        $queues = $this->getQueueStats($filterArea);
 
-        // Send it to the view
-        ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
         $areas = Area::all();
+        $filterName = 'All Areas';
+        if ($filterArea) {
+            $area = $areas->find($filterArea);
+            if ($area) {
+                $filterName = $area->name;
+            }
+        }
 
-        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'queues'));
+        [$newRequests, $completedRequests, $closedRequests, $passFailRequests] = $this->getBiAnnualRequestsStats($filterArea);
+
+        return view('reports.trainings', [
+            'filterName' => $filterName,
+            'areas' => $areas,
+            'cardStats' => $this->getCardStats($filterArea),
+            'totalRequests' => $this->getDailyRequestsStats($filterArea),
+            'newRequests' => $newRequests,
+            'completedRequests' => $completedRequests,
+            'closedRequests' => $closedRequests,
+            'passFailRequests' => $passFailRequests,
+            'queues' => $this->getQueueStats($filterArea),
+        ]);
     }
 
     /**
@@ -106,10 +118,15 @@ class ReportController extends Controller
         $entries = $entries->concat($activities)->sortByDesc('created_at');
         $statuses = TrainingController::$statuses;
 
-        $filterName = $filterArea ? Area::find($filterArea)->name : 'All Areas';
         $areas = Area::all();
+        $filterName = $filterArea ? $areas->find($filterArea)->name : 'All Areas';
 
-        return view('reports.activities', compact('entries', 'statuses', 'filterName', 'areas'));
+        return view('reports.activities', [
+            'entries' => $entries,
+            'statuses' => $statuses,
+            'filterName' => $filterName,
+            'areas' => $areas,
+        ]);
     }
 
     /**
@@ -167,13 +184,13 @@ class ReportController extends Controller
             $query->where('area_id', $filterArea);
         }
 
-        $stats = $query->selectRaw("
+        $stats = $query->selectRaw('
                 COUNT(CASE WHEN status = 0 THEN 1 END) as waiting,
                 COUNT(CASE WHEN status IN (1, 2) THEN 1 END) as training,
                 COUNT(CASE WHEN status = 3 THEN 1 END) as exam,
                 COUNT(CASE WHEN status = -1 AND closed_at >= ? THEN 1 END) as completed,
                 COUNT(CASE WHEN status = -2 AND closed_at >= ? THEN 1 END) as closed
-            ", [$firstDayOfYear, $firstDayOfYear])
+            ', [$firstDayOfYear, $firstDayOfYear])
             ->first();
 
         return [
@@ -319,32 +336,24 @@ class ReportController extends Controller
         }
 
         // Remove series that have all 0 values across all charts.
-        $nonZeroSeries = [];
-        $charts = [$newRequests, $completedRequests, $closedRequests];
-        foreach ($charts as $chart) {
-            foreach ($chart as $seriesName => $seriesData) {
-                if (! in_array($seriesName, $nonZeroSeries) && array_sum($seriesData) > 0) {
-                    $nonZeroSeries[] = $seriesName;
-                }
-            }
-        }
+        $nonZeroSeriesNames = collect($newRequests)->keys()->filter(
+            fn ($series) => array_sum($newRequests[$series]) > 0
+                || array_sum($completedRequests[$series]) > 0
+                || array_sum($closedRequests[$series]) > 0
+        );
 
-        $filterAllSeries = function ($chart) use ($nonZeroSeries) {
-            return array_filter($chart, fn ($seriesName) => in_array($seriesName, $nonZeroSeries), ARRAY_FILTER_USE_KEY);
-        };
+        $filter = fn ($chart) => collect($chart)->only($nonZeroSeriesNames)->all();
 
         return [
-            $filterAllSeries($newRequests),
-            $filterAllSeries($completedRequests),
-            $filterAllSeries($closedRequests),
+            $filter($newRequests),
+            $filter($completedRequests),
+            $filter($closedRequests),
             $passFailRequests,
         ];
     }
 
     /**
      * Get the month translator for the bi-annual statistics.
-     *
-     * @return array
      */
     protected function getBiAnnualMonthTranslator(): array
     {
