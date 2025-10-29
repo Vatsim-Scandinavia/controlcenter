@@ -241,154 +241,105 @@ class ReportController extends Controller
      */
     protected function getBiAnnualRequestsStats(false|int $areaFilter)
     {
-        $monthTranslator = [
-            (int) Carbon::now()->startOfMonth()->format('m') => 6,
-            (int) Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->format('m') => 5,
-            (int) Carbon::now()->subMonthsNoOverflow(2)->startOfMonth()->format('m') => 4,
-            (int) Carbon::now()->subMonthsNoOverflow(3)->startOfMonth()->format('m') => 3,
-            (int) Carbon::now()->subMonthsNoOverflow(4)->startOfMonth()->format('m') => 2,
-            (int) Carbon::now()->subMonthsNoOverflow(5)->startOfMonth()->format('m') => 1,
-            (int) Carbon::now()->subMonthsNoOverflow(6)->startOfMonth()->format('m') => 0,
-        ];
+        $monthTranslator = $this->getBiAnnualMonthTranslator();
+        $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
 
+        // Initialize arrays for each rating
+        $ratings = Rating::all();
         $newRequests = [];
         $completedRequests = [];
         $closedRequests = [];
-        $passFailRequests = [];
-
-        foreach (Rating::all() as $rating) {
-            $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-            $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-            $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-            $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-            $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-
-            // New requests
-            $query = DB::table('trainings')
-                ->select(DB::raw(Sql::as('count(trainings.id)', 'count')), DB::raw(Sql::month('trainings.created_at', 'month')))
-                ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
-                ->where('rating_id', $rating->id);
-
-            if ($areaFilter) {
-                $query->where('area_id', $areaFilter);
-            }
-
-            $query = $query->groupBy('month')->get();
-
-            foreach ($query as $entry) {
-                $newRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-            }
-
-            // Completed requests
-            $query = DB::table('trainings')
-                ->select(DB::raw(Sql::as('count(trainings.id)', 'count')), DB::raw(Sql::month('trainings.closed_at', 'month')))
-                ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                ->where('status', -1)
-                ->where('closed_at', '>=', now()->subMonths(6)->startOfMonth())
-                ->where('rating_id', $rating->id);
-
-            if ($areaFilter) {
-                $query->where('area_id', $areaFilter);
-            }
-
-            $query = $query->groupBy('month')->get();
-
-            foreach ($query as $entry) {
-                $completedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-            }
-
-            // Closed requests
-            $query = DB::table('trainings')
-                ->select(DB::raw(Sql::as('count(trainings.id)', 'count')), DB::raw(Sql::month('trainings.closed_at', 'month')))
-                ->join('rating_training', 'trainings.id', '=', 'rating_training.training_id')
-                ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
-                ->where('status', -2)
-                ->where('closed_at', '>=', now()->subMonths(6)->startOfMonth())
-                ->where('rating_id', $rating->id);
-
-            if ($areaFilter) {
-                $query->where('area_id', $areaFilter);
-            }
-
-            $query = $query->groupBy('month')->get();
-
-            foreach ($query as $entry) {
-                $closedRequests[$rating->name][$monthTranslator[$entry->month]] = $entry->count;
-            }
+        foreach ($ratings as $rating) {
+            $newRequests[$rating->name] = array_fill(0, 7, 0);
+            $completedRequests[$rating->name] = array_fill(0, 7, 0);
+            $closedRequests[$rating->name] = array_fill(0, 7, 0);
         }
 
-        // Passed trainings
-        $query = DB::table('training_examinations')
-            ->select(DB::raw(Sql::as('count(training_examinations.id)', 'count')), DB::raw(Sql::month('training_examinations.examination_date', 'month')))
-            ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('rating_training')
-                    ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                    ->whereColumn('rating_training.training_id', 'trainings.id')
-                    ->where('ratings.vatsim_rating', '>=', 3)
-                    ->whereNotNull('ratings.vatsim_rating');
-            })
-            ->whereIn('trainings.type', [1, 4])
-            ->where('result', 'PASSED')
-            ->where('examination_date', '>=', now()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->get();
+        // Fetch and process training data in a single query
+        $trainingsQuery = Training::with('ratings')
+            ->where(function ($query) use ($sixMonthsAgo) {
+                $query->where('created_at', '>=', $sixMonthsAgo)
+                    ->orWhere(function ($subQuery) use ($sixMonthsAgo) {
+                        $subQuery->whereIn('status', [-1, -2])
+                            ->where('closed_at', '>=', $sixMonthsAgo);
+                    });
+            });
 
-        foreach ($query as $entry) {
-            $passFailRequests['Passed'][$monthTranslator[$entry->month]] = $entry->count;
+        if ($areaFilter) {
+            $trainingsQuery->where('area_id', $areaFilter);
         }
 
-        // Failed trainings
-        $query = DB::table('training_examinations')
-            ->select(DB::raw(Sql::as('count(training_examinations.id)', 'count')), DB::raw(Sql::month('training_examinations.examination_date', 'month')))
-            ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('rating_training')
-                    ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                    ->whereColumn('rating_training.training_id', 'trainings.id')
-                    ->where('ratings.vatsim_rating', '>=', 3)
-                    ->whereNotNull('ratings.vatsim_rating');
-            })
-            ->whereIn('trainings.type', [1, 4])
-            ->where('result', 'FAILED')
-            ->where('examination_date', '>=', now()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->get();
+        foreach ($trainingsQuery->cursor() as $training) {
+            foreach ($training->ratings as $rating) {
+                if (! isset($newRequests[$rating->name])) {
+                    continue;
+                }
 
-        foreach ($query as $entry) {
-            $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
-        }
+                // New requests
+                if ($training->created_at >= $sixMonthsAgo) {
+                    $month = $monthTranslator[(int) $training->created_at->format('m')] ?? null;
+                    if ($month !== null) {
+                        $newRequests[$rating->name][$month]++;
+                    }
+                }
 
-        // Remove series that all 0 values across all charts.
-        $nonZeroSeries = [];
-
-        $charts = [$newRequests, $completedRequests, $closedRequests];
-        foreach ($charts as $chart) {
-            foreach ($chart as $seriesName => $seriesData) {
-                if (! in_array($seriesName, $nonZeroSeries)) {
-                    foreach ($seriesData as $dataPoint) {
-                        if ($dataPoint > 0) {
-                            $nonZeroSeries[] = $seriesName;
-                            break;
+                // Completed and closed requests
+                if ($training->closed_at >= $sixMonthsAgo) {
+                    $month = $monthTranslator[(int) $training->closed_at->format('m')] ?? null;
+                    if ($month !== null) {
+                        if ($training->status == -1) {
+                            $completedRequests[$rating->name][$month]++;
+                        } elseif ($training->status == -2) {
+                            $closedRequests[$rating->name][$month]++;
                         }
                     }
                 }
             }
         }
 
-        $filterAllSeries = function ($chart) use ($nonZeroSeries) {
+        // Fetch and process examination data
+        $passFailRequests = ['Passed' => array_fill(0, 7, 0), 'Failed' => array_fill(0, 7, 0)];
+        $examinationsQuery = DB::table('training_examinations')
+            ->select(DB::raw('count(training_examinations.id) as count'), DB::raw(Sql::month('training_examinations.examination_date', 'month')), 'result')
+            ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('rating_training')
+                    ->join('ratings', 'ratings.id', 'rating_training.rating_id')
+                    ->whereColumn('rating_training.training_id', 'trainings.id')
+                    ->where('ratings.vatsim_rating', '>=', 3)
+                    ->whereNotNull('ratings.vatsim_rating');
+            })
+            ->whereIn('trainings.type', [1, 4])
+            ->whereIn('result', ['PASSED', 'FAILED'])
+            ->where('examination_date', '>=', $sixMonthsAgo)
+            ->groupBy('month', 'result');
+
+        if ($areaFilter) {
+            $examinationsQuery->where('trainings.area_id', $areaFilter);
+        }
+
+        $examinations = $examinationsQuery->get();
+
+        foreach ($examinations as $entry) {
+            if (isset($monthTranslator[$entry->month])) {
+                $passFailRequests[$entry->result][$monthTranslator[$entry->month]] = $entry->count;
+            }
+        }
+
+        // Remove series that have all 0 values across all charts.
+        $nonZeroSeries = [];
+        $charts = [$newRequests, $completedRequests, $closedRequests];
+        foreach ($charts as $chart) {
             foreach ($chart as $seriesName => $seriesData) {
-                if (! in_array($seriesName, $nonZeroSeries)) {
-                    unset($chart[$seriesName]);
+                if (! in_array($seriesName, $nonZeroSeries) && array_sum($seriesData) > 0) {
+                    $nonZeroSeries[] = $seriesName;
                 }
             }
+        }
 
-            return $chart;
+        $filterAllSeries = function ($chart) use ($nonZeroSeries) {
+            return array_filter($chart, fn ($seriesName) => in_array($seriesName, $nonZeroSeries), ARRAY_FILTER_USE_KEY);
         };
 
         return [
@@ -397,6 +348,21 @@ class ReportController extends Controller
             $filterAllSeries($closedRequests),
             $passFailRequests,
         ];
+    }
+
+    /**
+     * Get the month translator for the bi-annual statistics.
+     *
+     * @return array
+     */
+    protected function getBiAnnualMonthTranslator(): array
+    {
+        $translator = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $translator[(int) now()->subMonthsNoOverflow($i)->startOfMonth()->format('m')] = 6 - $i;
+        }
+
+        return $translator;
     }
 
     /**
