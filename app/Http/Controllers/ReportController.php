@@ -373,9 +373,10 @@ class ReportController extends Controller
      */
     protected function getQueueStats(false|int $areaFilter)
     {
-        $payload = [];
         if ($areaFilter) {
-            foreach (Area::find($areaFilter)->ratings as $rating) {
+            $area = Area::with('ratings')->find($areaFilter);
+            $payload = [];
+            foreach ($area->ratings as $rating) {
                 if ($rating->pivot->queue_length_low && $rating->pivot->queue_length_high) {
                     $payload[$rating->name] = [
                         $rating->pivot->queue_length_low,
@@ -383,35 +384,21 @@ class ReportController extends Controller
                     ];
                 }
             }
-        } else {
-            $divideRating = [];
-            foreach (Area::with('ratings')->get() as $area) {
-                // Loop through the ratings of this area to get queue length
-                foreach ($area->ratings as $rating) {
-                    // Only calculate if queue length is defined
-                    if ($rating->pivot->queue_length_low && $rating->pivot->queue_length_high) {
-                        if (isset($payload[$rating->name])) {
-                            $payload[$rating->name][0] = $payload[$rating->name][0] + $rating->pivot->queue_length_low;
-                            $payload[$rating->name][1] = $payload[$rating->name][1] + $rating->pivot->queue_length_high;
-                            $divideRating[$rating->name]++;
-                        } else {
-                            $payload[$rating->name] = [
-                                $rating->pivot->queue_length_low,
-                                $rating->pivot->queue_length_high,
-                            ];
-                            $divideRating[$rating->name] = 1;
-                        }
-                    }
-                }
-            }
 
-            // Divide the queue length appropriately to get an average across areas
-            foreach ($payload as $queue => $value) {
-                $payload[$queue][0] = $value[0] / $divideRating[$queue];
-                $payload[$queue][1] = $value[1] / $divideRating[$queue];
-            }
+            return $payload;
         }
 
-        return $payload;
+        return Rating::query()
+            ->join('area_rating', 'ratings.id', '=', 'area_rating.rating_id')
+            ->whereNotNull('area_rating.queue_length_low')
+            ->whereNotNull('area_rating.queue_length_high')
+            ->where('area_rating.queue_length_low', '>', 0)
+            ->where('area_rating.queue_length_high', '>', 0)
+            ->select('ratings.name', DB::raw('AVG(area_rating.queue_length_low) as avg_low'), DB::raw('AVG(area_rating.queue_length_high) as avg_high'))
+            ->groupBy('ratings.name')
+            ->get()
+            ->keyBy('name')
+            ->map(fn ($row) => [$row->avg_low, $row->avg_high])
+            ->all();
     }
 }
