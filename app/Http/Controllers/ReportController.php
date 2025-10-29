@@ -77,45 +77,36 @@ class ReportController extends Controller
     {
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
 
-        // Fetch TrainingActivity
-        if ($filterArea) {
-            $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->whereHas('training', function (Builder $q) use ($filterArea) {
-                $q->where('area_id', $filterArea);
-            })->limit(100)->get();
+        $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')
+            ->when($filterArea, function (Builder $query, $filterArea) {
+                $query->whereHas('training', fn (Builder $q) => $q->where('area_id', $filterArea));
+            })
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get();
 
-            // Fetch TrainingReport and ExaminationReport if activities exist
-            if ($activities->count() > 0) {
-                $trainingReports = TrainingReport::where('created_at', '>=', $activities->last()->created_at)->where('draft', false)->whereHas('training', function (Builder $q) use ($filterArea) {
-                    $q->where('area_id', $filterArea);
-                })->get();
+        $entries = collect();
+        if ($activities->isNotEmpty()) {
+            $trainingReports = TrainingReport::where('draft', false)
+                ->when($filterArea, function (Builder $query, $filterArea) {
+                    $query->whereHas('training', fn (Builder $q) => $q->where('area_id', $filterArea));
+                })
+                ->where($filterArea ? 'created_at' : 'updated_at', '>=', $filterArea ? $activities->last()->created_at : $activities->last()->updated_at)
+                ->get();
 
-                $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->whereHas('training', function (Builder $q) use ($filterArea) {
-                    $q->where('area_id', $filterArea);
-                })->get();
-            }
-        } else {
-            // The training reports will use updated_at so draft publishing date is correct.
-            $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')->orderByDesc('created_at')->limit(100)->get();
-            $trainingReports = TrainingReport::where('updated_at', '>=', $activities->last()->updated_at)->where('draft', false)->get();
-            $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)->get();
+            $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)
+                ->when($filterArea, function (Builder $query, $filterArea) {
+                    $query->whereHas('training', fn (Builder $q) => $q->where('area_id', $filterArea));
+                })
+                ->get();
+
+            $entries = $entries->concat($trainingReports)->concat($examinationReports);
         }
 
-        if (isset($trainingReports) && isset($examinationReports)) {
-            $entries = $trainingReports->concat($examinationReports);
-            $entries = $entries->concat($activities);
-        } elseif (isset($trainingReports)) {
-            $entries = $trainingReports->concat($activities);
-        } elseif (isset($examinationReports)) {
-            $entries = $examinationReports->concat($activities);
-        } else {
-            $entries = $activities;
-        }
-
-        // Do the rest
-        $entries = $entries->sortByDesc('created_at');
+        $entries = $entries->concat($activities)->sortByDesc('created_at');
         $statuses = TrainingController::$statuses;
 
-        ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
+        $filterName = $filterArea ? Area::find($filterArea)->name : 'All Areas';
         $areas = Area::all();
 
         return view('reports.activities', compact('entries', 'statuses', 'filterName', 'areas'));
