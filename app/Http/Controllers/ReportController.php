@@ -155,7 +155,7 @@ class ReportController extends Controller
     {
         $this->authorize('viewFeedback', ManagementReport::class);
 
-        $feedback = Feedback::all()->sortByDesc('created_at');
+        $feedback = Feedback::latest()->get();
 
         return view('reports.feedback', compact('feedback'));
     }
