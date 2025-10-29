@@ -168,31 +168,30 @@ class ReportController extends Controller
      */
     protected function getCardStats($filterArea)
     {
-        $payload = [
-            'waiting' => 0,
-            'training' => 0,
-            'exam' => 0,
-            'completed' => 0,
-            'closed' => 0,
-        ];
+        $firstDayOfYear = now()->startOfYear();
+
+        $query = Training::query();
 
         if ($filterArea) {
-            $payload['waiting'] = Area::find($filterArea)->trainings->where('status', 0)->count();
-            $payload['training'] = Area::find($filterArea)->trainings->whereIn('status', [1, 2])->count();
-            $payload['exam'] = Area::find($filterArea)->trainings->where('status', 3)->count();
-            $payload['completed'] = Area::find($filterArea)->trainings->where('status', -1)->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('first day of january this year')))->count();
-            $payload['closed'] = Area::find($filterArea)->trainings->where('status', -2)->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('first day of january this year')))->count();
-        } else {
-            foreach (Area::all() as $area) {
-                $payload['waiting'] = $payload['waiting'] + $area->trainings->where('status', 0)->count();
-                $payload['training'] = $payload['training'] + $area->trainings->whereIn('status', [1, 2])->count();
-                $payload['exam'] = $payload['exam'] + $area->trainings->where('status', 3)->count();
-                $payload['completed'] = $payload['completed'] + $area->trainings->where('status', -1)->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('first day of january this year')))->count();
-                $payload['closed'] = $payload['closed'] + $area->trainings->where('status', -2)->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('first day of january this year')))->count();
-            }
+            $query->where('area_id', $filterArea);
         }
 
-        return $payload;
+        $stats = $query->selectRaw("
+                COUNT(CASE WHEN status = 0 THEN 1 END) as waiting,
+                COUNT(CASE WHEN status IN (1, 2) THEN 1 END) as training,
+                COUNT(CASE WHEN status = 3 THEN 1 END) as exam,
+                COUNT(CASE WHEN status = -1 AND closed_at >= ? THEN 1 END) as completed,
+                COUNT(CASE WHEN status = -2 AND closed_at >= ? THEN 1 END) as closed
+            ", [$firstDayOfYear, $firstDayOfYear])
+            ->first();
+
+        return [
+            'waiting' => $stats->waiting,
+            'training' => $stats->training,
+            'exam' => $stats->exam,
+            'completed' => $stats->completed,
+            'closed' => $stats->closed,
+        ];
     }
 
     /**
