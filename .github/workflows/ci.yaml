@@ -77,3 +77,5 @@ jobs:
     - name: Execute unit and feature tests via PHPUnit
       run: ./vendor/bin/phpunit --color=always --testdox
       working-directory: ./controlcenter
+      env:
+        DB_CONNECTION: sqlite-testing
