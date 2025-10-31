@@ -3,6 +3,7 @@
 namespace App\Services\Sql;
 
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
+use Illuminate\Database\Query\Grammars\SQLiteGrammar;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -35,6 +36,8 @@ class Sql
         $grammar = DB::getQueryGrammar();
         if ($grammar instanceof PostgresGrammar) {
             $sql = "EXTRACT(MONTH FROM $column)";
+        } elseif ($grammar instanceof SQLiteGrammar) {
+            $sql = "strftime('%m', $column)";
         } else {
             $sql = "MONTH($column)";
         }
