@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    # Level 9 is the highest level
+    level: 3
+    # Where are our files? They're right in app/
+    paths:
+        - app/
+
