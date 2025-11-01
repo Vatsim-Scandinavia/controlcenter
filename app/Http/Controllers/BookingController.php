@@ -138,8 +138,8 @@ class BookingController extends Controller
 
         $this->authorize('position', $booking);
 
-        if ($booking->time_start === $booking->time_end) {
-            return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+        if ($booking->time_start->eq($booking->time_end)) {
+            return back()->withErrors(['duration' => 'Booking needs to have a valid duration!'])->withInput();
         }
         if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
             $booking->time_end->addDay();
@@ -282,8 +282,8 @@ class BookingController extends Controller
 
             $this->authorize('position', $booking);
 
-            if ($booking->time_start === $booking->time_end) {
-                return back()->withErrors('Booking needs to have a valid duration!')->withInput();
+            if ($booking->time_start->eq($booking->time_end)) {
+                return back()->withErrors(['duration' => 'Booking needs to have a valid duration!'])->withInput();
             }
             if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
                 $booking->time_end->addDay();
@@ -397,7 +397,7 @@ class BookingController extends Controller
 
         $this->authorize('position', $booking);
 
-        if ($booking->time_start === $booking->time_end) {
+        if ($booking->time_start->eq($booking->time_end)) {
             return back()->withErrors('Booking needs to have a valid duration!')->withInput();
         }
         if ($booking->time_start->diffInMinutes($booking->time_end, false) < 0) {
