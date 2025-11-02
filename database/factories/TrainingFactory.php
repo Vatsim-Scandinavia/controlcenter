@@ -22,21 +22,24 @@ class TrainingFactory extends Factory
      */
     public function definition()
     {
-        $status = $this->faker->numberBetween(0, 3);
+        $status = $this->faker->numberBetween(-4, 3);
         $started_at = null;
         $closed_at = null;
 
         if ($status > 1) {
             $started_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
         }
+        if ($status < 0) {
+            $closed_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
+        }
 
         return [
             'user_id' => User::inRandomOrder()->first()->id,
             'status' => $status,
-            'area_id' => 1,
+            'area_id' => $this->faker->numberBetween(1, 5),
             'motivation' => $this->faker->paragraph(15, false),
             'english_only_training' => false,
-            'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 years'),
+            'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 months'),
             'updated_at' => \Carbon\Carbon::now(),
             'type' => $this->faker->numberBetween(1, 5),
             'experience' => $this->faker->numberBetween(1, 5),

@@ -21,7 +21,7 @@ class TrainingExaminationFactory extends Factory
      */
     public function definition()
     {
-        $date = $this->faker->dateTimeBetween($startDate = 'now', $endDate = '+ 1 years');
+        $date = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
 
         return [
             'examination_date' => $date,
