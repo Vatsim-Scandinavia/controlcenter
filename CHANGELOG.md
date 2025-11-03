@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.2...v6.4.3) (2025-11-03)
+
+
+### Bug Fixes
+
+* **reports:** passed and failed exams overview ([#1347](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1347)) ([09b26ae](https://github.com/Vatsim-Scandinavia/controlcenter/commit/09b26aece33ec4d5c55f86473952f8a38a960fb7))
+
 ## [6.4.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.1...v6.4.2) (2025-11-01)
 
 
