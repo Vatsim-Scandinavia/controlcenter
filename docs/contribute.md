@@ -8,22 +8,16 @@ Interested in contributing to Control Center? Adding a new, favourite feature? S
 
 ## Running the development environment { data-toc-label="Development environment" }
 
-This part will explain how to create a development instance of Control Center in a docker container. First you can choose between `docker-compose.dev.yaml` or `docker-compose.dev.full.yaml`. The difference is that the full version includes a MySQL database and Redis. Secondly both of the files bind the whole application to your project folder, so you can edit the files locally and they'll be updated in the container.
+This part will explain how to create a development instance of Control Center in a docker container. Our development container is base on [Laravel Sail](https://github.com/laravel/sail) tailored for Control Center. It mounts the files from the project folder into the container meaning files update locally also are updated inside the container.
 
 ### Setup the container
 
-1. Run `docker compose -f yourchosenfile.yaml up -d` from your host system
-2. Wait a bit while the docker image is built for your system
-3. Enter your container and run `composer install ` to install all dependencies
-4. Install npm by running `bash container/install-npm.sh` as it's not included by default
-5. Run `npm install` to install all dependencies
-6. Run `npm run build` to compile the assets
-7. Run `php artisan migrate` to setup the database
-8. *Optionally* run `php artisan seed` to seed the database with test data
-
-If you need test data, you can also seed the database with `php artisan db:seed`.
+Run `docker compose -f docker-compose.dev.yaml up -d` in the terminal. This will create the neccesary containers (Web, MySQL, Redis), a bridge network and volumes as needed. If using Docker Desktop on Windows it's recommended to run the command(s) through the WSL terminal. Eg. Ubuntu, Debian etc. Database will automatically be migrated and seeded with data on first run.
 
 If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
+
+#### Resetting the containers
+Scripts are run during creation of the development containers. But to prevent these from throwing errors a file called `storage/.container-setup-complete` is created. If you should need to have the initialization to run delete the file and restart the container stack. Now it will run through the initialization process again.
 
 ### Tooling
 
