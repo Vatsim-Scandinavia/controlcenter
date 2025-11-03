@@ -455,11 +455,11 @@
             datasets: [{
                 label: 'Failed',
                 backgroundColor: 'rgb(200, 100, 100)',
-                data: passFailRequestsData["Failed"]
+                data: passFailRequestsData["FAILED"]
             }, {
                 label: 'Passed',
                 backgroundColor: 'rgb(100, 200, 100)',
-                data: passFailRequestsData["Passed"]
+                data: passFailRequestsData["PASSED"]
             }]
 
         };

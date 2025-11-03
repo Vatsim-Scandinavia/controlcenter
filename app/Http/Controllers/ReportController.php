@@ -306,7 +306,7 @@ class ReportController extends Controller
         }
 
         // Fetch and process examination data
-        $passFailRequests = ['Passed' => array_fill(0, 7, 0), 'Failed' => array_fill(0, 7, 0)];
+        $passFailRequests = ['PASSED' => array_fill(0, 7, 0), 'FAILED' => array_fill(0, 7, 0)];
         $examinationsQuery = DB::table('training_examinations')
             ->select(DB::raw('count(training_examinations.id) as count'), DB::raw(Sql::month('training_examinations.examination_date', 'month')), 'result')
             ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
