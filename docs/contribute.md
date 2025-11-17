@@ -12,7 +12,7 @@ This part will explain how to create a development instance of Control Center in
 
 ### Setup the container
 
-Run `docker compose -f docker-compose.dev.yaml up -d` in the terminal. This will create the neccesary containers (Web, MySQL, Redis), a bridge network and volumes as needed. If using Docker Desktop on Windows it's recommended to run the command(s) through the WSL terminal. Eg. Ubuntu, Debian etc. Database will automatically be migrated and seeded with data on first run.
+Run `docker compose -f docker-compose.dev.yaml up -d` in the terminal. This will create the necessary containers (Web, MySQL, Redis), a bridge network, and volumes as needed. If using Docker Desktop on Windows, it's recommended to run the command(s) through the WSL terminal (e.g., Ubuntu, Debian, etc.). On the first run, the database will be automatically migrated and seeded with data.
 
 If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
 
