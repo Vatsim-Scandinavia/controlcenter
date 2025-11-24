@@ -17,6 +17,7 @@ Run `docker compose -f docker-compose.dev.yaml up -d` in the terminal. This will
 If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
 
 #### Resetting the containers
+
 Scripts are run during creation of the development containers. But to prevent these from throwing errors a file called `storage/.container-setup-complete` is created. If you should need to have the initialization to run delete the file and restart the container stack. Now it will run through the initialization process again.
 
 ### Tooling
