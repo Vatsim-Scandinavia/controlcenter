@@ -8,17 +8,22 @@ Interested in contributing to Control Center? Adding a new, favourite feature? S
 
 ## Running the development environment { data-toc-label="Development environment" }
 
-This part will explain how to create a development instance of Control Center in a docker container. Our development container is base on [Laravel Sail](https://github.com/laravel/sail) tailored for Control Center. It mounts the files from the project folder into the container meaning files update locally also are updated inside the container.
+This part will explain how to create a development instance of Control Center in a docker container. Our development container is based on [Laravel Sail](https://github.com/laravel/sail) tailored for Control Center. It run a Docker Devcontainer which mounts the project inside the container. The container is built to be run on a Linux distro or using Docker Desktop with WSL2 on Windows.
 
 ### Setup the container
 
-Run `docker compose -f docker-compose.dev.yaml up -d` in the terminal. This will create the necessary containers (Web, MySQL, Redis), a bridge network, and volumes as needed. If using Docker Desktop on Windows, it's recommended to run the command(s) through the WSL terminal (e.g., Ubuntu, Debian, etc.). On the first run, the database will be automatically migrated and seeded with data.
+Clone the repository to a location locally if on Linux or if on Windows clone it using `git clone https://github.com/Vatsim-Scandinavia/controlcenter.git` inside your WSL terminal.
 
-If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
+When the repository has been cloned you need to create your `.env` file which will contain the configuration for your local enviorment. We recommend copying and renaming `.env.example` and modify it to your liking.
+
+Once the environment has been configured you can start the development environment using `./vendor/bin/sail up`. This creates the neccesary containers to run Control Center locally. Once these are started it's recommended to run `./vendor/bin/sail ./init-dev.sh` to run the initial setup such as downloading/building NPM assets, running database migration etc. These commands may also be run manually inside the container if preffered.
+
+!!! Tip
+    If using Visual Code as your editor you may also use the extension [Remote Explorer](https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer) to run the development enviorment.
 
 #### Resetting the containers
 
-Scripts are run during creation of the development containers. But to prevent these from throwing errors a file called `storage/.container-setup-complete` is created. If you should need to have the initialization to run delete the file and restart the container stack. Now it will run through the initialization process again.
+Should you find the need to start over. Then you can re-run the `init-dev.sh` script which will redo the initial setup once again.
 
 ### Tooling
 
