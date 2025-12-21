@@ -30,6 +30,15 @@ fi
 
 # Now run the actual sail command
 if [ -f "./vendor/bin/sail" ]; then
+    # For development, use the dev compose file by default if no SAIL_FILES is specified
+    if [ -z "$SAIL_FILES" ]; then
+        if [ -f "./docker-compose.dev.yaml" ]; then
+            export SAIL_FILES="docker-compose.dev.yaml"
+            echo "Using development configuration: docker-compose.dev.yaml"
+        else
+            echo "Development compose file not found, using default configuration"
+        fi
+    fi
     exec "./vendor/bin/sail" "$@"
 else
     echo "Laravel Sail not found. Please ensure laravel/sail is in your composer.json"
