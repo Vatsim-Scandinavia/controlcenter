@@ -16,7 +16,7 @@ Clone the repository to a location locally if on Linux or if on Windows clone it
 
 When the repository has been cloned you need to create your `.env` file which will contain the configuration for your local enviorment. We recommend copying and renaming `.env.example` and modify it to your liking.
 
-Once the environment has been configured you can start the development environment using `./vendor/bin/sail up`. This creates the neccesary containers to run Control Center locally. Once these are started it's recommended to run `./vendor/bin/sail ./init-dev.sh` to run the initial setup such as downloading/building NPM assets, running database migration etc. These commands may also be run manually inside the container if preffered.
+Once the environment has been configured you can start the development environment using `./sail up`. This creates the neccesary containers to run Control Center locally. Once these are started it's recommended to run `./sail ./init-dev.sh` to run the initial setup such as downloading/building NPM assets, running database migration etc. These commands may also be run manually inside the container if preffered.
 
 !!! Tip
     If using Visual Code as your editor you may also use the extension [Remote Explorer](https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer) to run the development enviorment.
@@ -30,7 +30,7 @@ Should you find the need to start over. Then you can re-run the `init-dev.sh` sc
 If you'd like better editor integration, you can generate helper definitions for Laravel.
 
 ```sh
-php artisan ide-helper:generate
+./sail artisan ide-helper:generate
 ```
 
 ### Caching
@@ -44,20 +44,20 @@ For development, change `validate_timestamps` to `1` in the `/usr/local/etc/php/
 #### First run
 
 On first run you might need to setup the testing sqlite database first.
-Run the command `php artisan migrate --database sqlite-testing` to setup the database.
+Run the command `./sail artisan migrate --database sqlite-testing` to setup the database.
 
 #### Test
 
 To run the PHP unit tests use:
 
 ```sh
-php artisan test
+./sail artisan test
 ```
 
 To create new tests, you can use the helper, which by default creates feature tests rather than unit tests:
 
 ```sh
-php artisan make:test
+./sail artisan make:test
 ```
 
 The tests run with the local SQLite test database, not your development database.
@@ -72,7 +72,7 @@ They help you keep formatting consistent and avoid mistakes that'll be caught by
 
 ### Run formatting
 
-To run the formatting script that ensures consistent Laravel PHP code use `./vendor/bin/pint`.
+To run the formatting script that ensures consistent Laravel PHP code use `./sail pint`.
 
 ## Conventions
 
