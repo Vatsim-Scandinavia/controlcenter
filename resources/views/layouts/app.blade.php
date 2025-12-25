@@ -1,8 +1,32 @@
 
 <!DOCTYPE html>
-<html lang="en" data-theme-preference="{{ Auth::check() ? (Auth::user()->theme_preference ?? 'system') : 'system' }}">
+@php
+    $themePreference = Auth::check() ? (Auth::user()->theme_preference ?? 'system') : 'system';
+    // For explicit preferences, set theme server-side. For 'system', let JavaScript handle it.
+    $initialTheme = ($themePreference === 'dark' || $themePreference === 'light') ? $themePreference : 'light';
+@endphp
+<html lang="en" data-theme-preference="{{ $themePreference }}" data-theme="{{ $initialTheme }}">
     <head>
         @include('layouts.header')
+        <script>
+            // Apply theme immediately before page renders to prevent FOUC
+            (function() {
+                const html = document.documentElement;
+                const preference = html.getAttribute('data-theme-preference') || 'system';
+                let theme = 'light';
+                
+                if (preference === 'dark') {
+                    theme = 'dark';
+                } else if (preference === 'system') {
+                    // Check system preference
+                    const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    theme = systemPrefersDark ? 'dark' : 'light';
+                }
+                
+                // Apply theme immediately
+                html.setAttribute('data-theme', theme);
+            })();
+        </script>
     </head>
 
     <body>

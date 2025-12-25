@@ -130,3 +130,6 @@ $envBorderRadius: $light-border-radius;
     --bs-box-shadow-sm: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.4);
 }
 
+.sidebar-brand {
+    color: var(--bs-body-color) !important;
+}

@@ -296,7 +296,7 @@ dl.copyable{
                     border-color: var(--bs-border-color) !important;
                     
                     a {
-                        color: var(--theme-tertiary) !important;
+                        color: var(--theme-info) !important;
                         
                         &:hover {
                             color: var(--theme-tertiary) !important;
@@ -322,6 +322,9 @@ dl.copyable{
         th, td {
             border-color: var(--bs-border-color) !important;
             color: var(--bs-body-color) !important;
+            a {
+                color: var(--theme-info) !important;
+            }
         }
         
         // Override .table-light class specifically

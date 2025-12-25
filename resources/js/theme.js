@@ -12,28 +12,34 @@ class ThemeManager {
 
     /**
      * Initialize theme on page load
-     * Priority: System preference (fastest) -> Backend preference -> localStorage
+     * Priority: Server-side setting (fastest, prevents FOUC) -> Backend preference -> System preference -> localStorage
      */
     init() {
-        // Step 1: Immediately apply system preference for instant theme
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        this.applyTheme(systemPrefersDark ? 'dark' : 'light');
+        // Step 1: Check if theme is already set server-side (prevents FOUC)
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme) {
+            this.currentTheme = currentTheme;
+        }
 
         // Step 2: Check for user preference from backend (injected via meta tag or data attribute)
         const userPreference = this.getUserPreference();
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         if (userPreference) {
             this.themePreference = userPreference;
             
             if (userPreference === 'system') {
-                // Keep system preference
+                // Use system preference
                 this.currentTheme = systemPrefersDark ? 'dark' : 'light';
             } else {
                 // Apply explicit user preference
                 this.currentTheme = userPreference;
             }
             
-            this.applyTheme(this.currentTheme);
+            // Only apply if different from server-side setting to avoid flash
+            if (this.currentTheme !== currentTheme) {
+                this.applyTheme(this.currentTheme);
+            }
         } else {
             // Fallback to localStorage if backend data not available
             const storedPreference = localStorage.getItem('theme_preference');
@@ -44,7 +50,13 @@ class ThemeManager {
                 } else {
                     this.currentTheme = storedPreference;
                 }
-                this.applyTheme(this.currentTheme);
+                // Only apply if different from server-side setting
+                if (this.currentTheme !== currentTheme) {
+                    this.applyTheme(this.currentTheme);
+                }
+            } else if (!currentTheme) {
+                // No server-side theme, no preference - use system
+                this.applyTheme(systemPrefersDark ? 'dark' : 'light');
             }
         }
 
