@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme-preference="{{ Auth::check() ? (Auth::user()->theme_preference ?? 'system') : 'system' }}">
     <head>
         @include('layouts.header')
     </head>

@@ -217,6 +217,37 @@
             background-color: $gray-300;
             text-decoration: none;
         }
+    }
+}
 
+// Dark theme overrides for topbar
+[data-theme="dark"] {
+    .topbar {
+        .dropdown-list {
+            .dropdown-item {
+                &:active {
+                    background-color: var(--bs-gray-200) !important;
+                    color: var(--bs-body-color) !important;
+                }
+                
+                .status-indicator {
+                    background-color: var(--bs-gray-300) !important;
+                    border-color: var(--bs-body-color) !important;
+                }
+            }
+        }
+    }
+    
+    .search-results {
+        background-color: var(--bs-gray-100) !important;
+        border-top-color: var(--theme-primary) !important;
+        
+        a {
+            color: var(--theme-info) !important;
+            
+            &:hover {
+                background-color: var(--bs-gray-200) !important;
+            }
+        }
     }
 }

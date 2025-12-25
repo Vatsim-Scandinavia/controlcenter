@@ -19,3 +19,52 @@
 .bg-lightorange {
     background-color: #fff6e9;
 }
+
+// Dark theme overrides
+[data-theme="dark"] {
+    // Override white backgrounds - high specificity to override Bootstrap
+    .bg-white,
+    nav.bg-white,
+    .navbar.bg-white,
+    .topbar.bg-white {
+        background-color: var(--bs-gray-100) !important;
+    }
+    
+    // Override Bootstrap bg-light utility
+    .bg-light {
+        background-color: var(--bs-gray-100) !important;
+    }
+    
+    .bg-lightorange {
+        background-color: #3a2d1a !important;
+    }
+    
+    // Override gray backgrounds for dark theme using CSS variables
+    .bg-gray-100 {
+        background-color: var(--bs-gray-100) !important;
+    }
+    .bg-gray-200 {
+        background-color: var(--bs-gray-200) !important;
+    }
+    .bg-gray-300 {
+        background-color: var(--bs-gray-300) !important;
+    }
+    .bg-gray-400 {
+        background-color: var(--bs-gray-400) !important;
+    }
+    .bg-gray-500 {
+        background-color: var(--bs-gray-500) !important;
+    }
+    .bg-gray-600 {
+        background-color: var(--bs-gray-600) !important;
+    }
+    .bg-gray-700 {
+        background-color: var(--bs-gray-700) !important;
+    }
+    .bg-gray-800 {
+        background-color: var(--bs-gray-800) !important;
+    }
+    .bg-gray-900 {
+        background-color: var(--bs-gray-900) !important;
+    }
+}

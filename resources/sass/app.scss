@@ -13,6 +13,9 @@
 // Variables
 @import "variables";
 
+// Theme (must be before Bootstrap to allow overrides)
+@import "theme";
+
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 

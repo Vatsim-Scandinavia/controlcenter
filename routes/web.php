@@ -82,6 +82,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/settings', 'settings')->name('user.settings');
         Route::post('/settings', 'settings_update')->name('user.settings.store');
         Route::get('/settings/extendworkmail', 'extendWorkmail')->name('user.settings.extendworkmail');
+        Route::post('/settings/theme', 'updateThemePreference')->name('user.settings.theme');
 
         // Internal user search
         Route::get('/user/search/find', 'search')->name('user.search');

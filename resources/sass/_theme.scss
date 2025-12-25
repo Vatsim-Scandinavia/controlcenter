@@ -1,0 +1,132 @@
+// Theme switching using CSS custom properties
+// This file defines CSS variables for both light and dark themes
+
+// Store light theme variables before importing dark (which will override them)
+$light-primary: $envColorPrimary;
+$light-secondary: $envColorSecondary;
+$light-tertiary: $envColorTertiary;
+$light-info: $envColorInfo;
+$light-success: $envColorSuccess;
+$light-warning: $envColorWarning;
+$light-danger: $envColorDanger;
+$light-border-radius: $envBorderRadius;
+
+// Import dark theme variables (this will override the $envColor* variables)
+@import "env-dark";
+
+// Store dark theme variables
+$dark-primary: $envColorPrimary;
+$dark-secondary: $envColorSecondary;
+$dark-tertiary: $envColorTertiary;
+$dark-info: $envColorInfo;
+$dark-success: $envColorSuccess;
+$dark-warning: $envColorWarning;
+$dark-danger: $envColorDanger;
+$dark-border-radius: $envBorderRadius;
+
+// Restore light theme variables for Bootstrap
+$envColorPrimary: $light-primary;
+$envColorSecondary: $light-secondary;
+$envColorTertiary: $light-tertiary;
+$envColorInfo: $light-info;
+$envColorSuccess: $light-success;
+$envColorWarning: $light-warning;
+$envColorDanger: $light-danger;
+$envBorderRadius: $light-border-radius;
+
+:root {
+    // Light theme (default) - using stored light theme variables
+    --theme-primary: #{$light-primary};
+    --theme-secondary: #{$light-secondary};
+    --theme-tertiary: #{$light-tertiary};
+    --theme-info: #{$light-info};
+    --theme-success: #{$light-success};
+    --theme-warning: #{$light-warning};
+    --theme-danger: #{$light-danger};
+    --theme-border-radius: #{$light-border-radius};
+}
+
+// Set dark theme variables on :root with data-theme attribute for maximum specificity
+:root[data-theme="dark"],
+[data-theme="dark"] {
+    // Dark theme - using stored dark theme variables
+    --theme-primary: #{$dark-primary};
+    --theme-secondary: #{$dark-secondary};
+    --theme-tertiary: #{$dark-tertiary};
+    --theme-info: #{$dark-info};
+    --theme-success: #{$dark-success};
+    --theme-warning: #{$dark-warning};
+    --theme-danger: #{$dark-danger};
+    --theme-border-radius: #{$dark-border-radius};
+    
+    // Custom theme background variable (not overridden by Bootstrap)
+    --theme-body-bg: #1a1a1a;
+    
+    // Override Bootstrap CSS variables for dark theme
+    // Using :root[data-theme="dark"] ensures this takes precedence over Bootstrap's :root definition
+    --bs-body-bg: #1a1a1a;
+    --bs-body-color: #e0e0e0;
+    --bs-emphasis-color: #fff;
+    --bs-secondary-color: rgba(224, 224, 224, 0.75);
+    --bs-secondary-bg: #2d2d2d;
+    --bs-tertiary-color: rgba(224, 224, 224, 0.5);
+    --bs-tertiary-bg: #242424;
+    
+    // Gray scale
+    --bs-gray-100: #2d2d2d;
+    --bs-gray-200: #3a3a3a;
+    --bs-gray-300: #4a4a4a;
+    --bs-gray-400: #5a5a5a;
+    --bs-gray-500: #6a6a6a;
+    --bs-gray-600: #7a7a7a;
+    --bs-gray-700: #8a8a8a;
+    --bs-gray-800: #9a9a9a;
+    --bs-gray-900: #aaaaaa;
+    
+    // Bootstrap color variables
+    --bs-primary: #{$dark-primary};
+    --bs-secondary: #{$dark-secondary};
+    --bs-success: #{$dark-success};
+    --bs-info: #{$dark-info};
+    --bs-warning: #{$dark-warning};
+    --bs-danger: #{$dark-danger};
+    
+    // Card backgrounds
+    --bs-card-bg: #242424;
+    --bs-card-cap-bg: #2d2d2d;
+    --bs-card-border-color: #3a3a3a;
+    
+    // Input backgrounds
+    --bs-input-bg: #2d2d2d;
+    --bs-input-border-color: #4a4a4a;
+    --bs-input-color: #e0e0e0;
+    --bs-input-focus-bg: #2d2d2d;
+    --bs-input-focus-border-color: #{$dark-primary};
+    --bs-input-focus-color: #e0e0e0;
+    
+    // Dropdown backgrounds
+    --bs-dropdown-bg: #2d2d2d;
+    --bs-dropdown-border-color: #4a4a4a;
+    --bs-dropdown-link-color: #e0e0e0;
+    --bs-dropdown-link-hover-bg: #3a3a3a;
+    --bs-dropdown-link-hover-color: #fff;
+    
+    // Navbar backgrounds
+    --bs-navbar-bg: #1f1f1f;
+    
+    // Border colors
+    --bs-border-color: #3a3a3a;
+    --bs-border-color-translucent: rgba(58, 58, 58, 0.175);
+    
+    // Link colors
+    --bs-link-color: #{$dark-primary};
+    --bs-link-hover-color: #{$dark-info};
+    
+    // Code
+    --bs-code-color: #{$dark-info};
+    
+    // Shadows
+    --bs-box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.5);
+    --bs-box-shadow-sm: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.4);
+}
+

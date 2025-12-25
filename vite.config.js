@@ -9,7 +9,8 @@ export default ({ mode }) => {
     // Process the environment variables and generate a SCSS baseline for theming
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
 
-    const scssContent = `
+    // Generate light theme variables
+    const scssLightContent = `
         // Do not change this file, it will be overwritten!
         // Theming variables generated from .env while building front-end
         $envColorPrimary: ${process.env.VITE_THEME_PRIMARY || '#1a475f'};
@@ -22,7 +23,22 @@ export default ({ mode }) => {
         $envBorderRadius: ${process.env.VITE_THEME_BORDER_RADIUS || '2px'};
     `.replace(/^\s+/gm, '');
     
-    fs.writeFileSync(__dirname + '/resources/sass/_env.scss', scssContent);
+    // Generate dark theme variables
+    const scssDarkContent = `
+        // Do not change this file, it will be overwritten!
+        // Dark theme variables generated from .env while building front-end
+        $envColorPrimary: ${process.env.VITE_THEME_DARK_PRIMARY || '#1a475f'};
+        $envColorSecondary: ${process.env.VITE_THEME_DARK_SECONDARY || '#6b6d6e'};
+        $envColorTertiary: ${process.env.VITE_THEME_DARK_TERTIARY || '#e0e0e0'};
+        $envColorInfo: ${process.env.VITE_THEME_DARK_INFO || '#5bc0de'};
+        $envColorSuccess: ${process.env.VITE_THEME_DARK_SUCCESS || '#5cb85c'};
+        $envColorWarning: ${process.env.VITE_THEME_DARK_WARNING || '#f0ad4e'};
+        $envColorDanger: ${process.env.VITE_THEME_DARK_DANGER || '#d9534f'};
+        $envBorderRadius: ${process.env.VITE_THEME_BORDER_RADIUS || '2px'};
+    `.replace(/^\s+/gm, '');
+    
+    fs.writeFileSync(__dirname + '/resources/sass/_env.scss', scssLightContent);
+    fs.writeFileSync(__dirname + '/resources/sass/_env-dark.scss', scssDarkContent);
 
     // Return the Vite configuration
     return defineConfig({
@@ -32,6 +48,7 @@ export default ({ mode }) => {
                 input: [
                     "/resources/sass/app.scss",
                     "/resources/js/app.js",
+                    "/resources/js/theme.js",
                     "/resources/js/vue.js",
                     "/resources/js/easymde.js",
                     "/resources/sass/easymde.scss",

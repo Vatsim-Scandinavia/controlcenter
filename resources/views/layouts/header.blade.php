@@ -4,6 +4,9 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+@auth
+<meta name="theme-preference" content="{{ Auth::user()->theme_preference ?? 'system' }}">
+@endauth
 
 <title>@yield('title', 'Home') | {{ config('app.name') }}</title>
 

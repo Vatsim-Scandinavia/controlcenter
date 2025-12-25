@@ -195,6 +195,29 @@
     }
 }
 
+// Dark theme sidebar overrides
+[data-theme="dark"] {
+    .sidebar {
+        background-color: var(--theme-primary);
+        
+        .collapse-inner {
+            background-color: var(--bs-gray-100) !important;
+            
+            .collapse-item {
+                color: var(--bs-body-color) !important;
+                
+                &:hover {
+                    background-color: var(--bs-gray-200) !important;
+                }
+                
+                &:active {
+                    background-color: var(--bs-gray-300) !important;
+                }
+            }
+        }
+    }
+}
+
 @include media-breakpoint-down(lg) { 
     .sidebar {
         width: 100vw;

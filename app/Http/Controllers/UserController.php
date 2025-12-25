@@ -360,6 +360,7 @@ class UserController extends Controller
             'setting_notify_newexamreport' => '',
             'setting_notify_tasks' => '',
             'setting_workmail_address' => 'nullable|email|max:64|regex:/(.*)' . Setting::get('linkDomain') . '$/i',
+            'theme_preference' => 'nullable|in:light,dark,system',
         ]);
 
         isset($data['setting_notify_newreport']) ? $setting_notify_newreport = true : $setting_notify_newreport = false;
@@ -380,6 +381,10 @@ class UserController extends Controller
         } elseif ($user->setting_workmail_address && ! isset($data['setting_workmail_address'])) {
             $user->setting_workmail_address = null;
             $user->setting_workmail_expire = null;
+        }
+
+        if (isset($data['theme_preference'])) {
+            $user->theme_preference = $data['theme_preference'];
         }
 
         $user->save();
@@ -434,6 +439,25 @@ class UserController extends Controller
         } else {
             return redirect()->intended(route('user.settings'))->withErrors('Workmail is not due to expire');
         }
+    }
+
+    /**
+     * Update theme preference via AJAX
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateThemePreference(Request $request)
+    {
+        $user = Auth::user();
+
+        $data = $request->validate([
+            'theme_preference' => 'required|in:light,dark,system',
+        ]);
+
+        $user->theme_preference = $data['theme_preference'];
+        $user->save();
+
+        return response()->json(['success' => true, 'theme_preference' => $user->theme_preference]);
     }
 
     /**

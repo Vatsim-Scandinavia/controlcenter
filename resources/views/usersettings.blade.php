@@ -80,6 +80,30 @@
                                     @enderror
                                 </div>
                                 
+                                <div class="mb-3 mt-4">
+                                    <label class="form-label" for="theme_preference">Theme</label>
+                                    <select class="form-control" id="theme_preference" name="theme_preference">
+                                        <option value="system" {{ ($user->theme_preference ?? 'system') === 'system' ? 'selected' : '' }}>System (follows browser preference)</option>
+                                        <option value="light" {{ ($user->theme_preference ?? 'system') === 'light' ? 'selected' : '' }}>Light</option>
+                                        <option value="dark" {{ ($user->theme_preference ?? 'system') === 'dark' ? 'selected' : '' }}>Dark</option>
+                                    </select>
+                                    <small class="form-text text-muted">Choose your preferred theme. This preference will sync across all your devices.</small>
+                                </div>
+                                
+                            @else
+                            
+                            <hr>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="theme_preference">Theme</label>
+                                <select class="form-control" id="theme_preference" name="theme_preference">
+                                    <option value="system" {{ ($user->theme_preference ?? 'system') === 'system' ? 'selected' : '' }}>System (follows browser preference)</option>
+                                    <option value="light" {{ ($user->theme_preference ?? 'system') === 'light' ? 'selected' : '' }}>Light</option>
+                                    <option value="dark" {{ ($user->theme_preference ?? 'system') === 'dark' ? 'selected' : '' }}>Dark</option>
+                                </select>
+                                <small class="form-text text-muted">Choose your preferred theme. This preference will sync across all your devices.</small>
+                            </div>
+                            
                             @endif
 
                             <button class="btn btn-success mt-3" type="submit">Save</button>
@@ -91,4 +115,20 @@
     </div>
 
 </div>
+
+@section('js')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const themeSelect = document.getElementById('theme_preference');
+    
+    if (themeSelect && window.themeManager) {
+        // Update theme immediately when dropdown changes (before form submission)
+        themeSelect.addEventListener('change', function() {
+            const selectedTheme = this.value;
+            window.themeManager.setThemePreference(selectedTheme);
+        });
+    }
+});
+</script>
+@endsection
 @endsection

@@ -3,10 +3,12 @@
 html {
     position: relative;
     min-height: 100%;
+    background-color: $gray-100;
 }
 
 body {
     height: 100%;
+    background-color: $gray-100;
 }
 
 p {
@@ -95,6 +97,573 @@ dl.copyable{
         overflow-x: hidden;
         #content {
             flex: 1 0 auto;
+        }
+    }
+}
+
+// Dark theme overrides
+// This must come after Bootstrap to override Bootstrap's CSS variable definitions
+:root[data-theme="dark"],
+[data-theme="dark"] {
+    // Force override Bootstrap's CSS variables (must come after Bootstrap import)
+    --bs-body-bg: #1a1a1a;
+    --bs-card-cap-bg: #2d2d2d;
+    
+    // Base colors - apply to html and body
+    html {
+        background-color: #1a1a1a !important;
+    }
+    
+    body {
+        background-color: #1a1a1a !important;
+        color: var(--bs-body-color) !important;
+    }
+    
+    // Override all Bootstrap default white backgrounds with high specificity
+    .bg-white,
+    nav.bg-white,
+    .navbar.bg-white,
+    .topbar.bg-white,
+    .card.bg-white,
+    div.bg-white,
+    section.bg-white,
+    [class*="bg-white"] {
+        background-color: var(--bs-gray-100) !important;
+    }
+    
+    // Override Bootstrap bg-light utility everywhere
+    .bg-light,
+    .form-control.bg-light,
+    .search-icon.bg-light,
+    .search-results.bg-light,
+    .input-group-text.bg-light,
+    [class*="bg-light"] {
+        background-color: var(--bs-gray-100) !important;
+    }
+    
+    // Ensure all containers and wrappers have dark backgrounds
+    .container,
+    .container-fluid {
+        background-color: transparent !important;
+    }
+    
+    #wrapper {
+        #content-wrapper {
+            background-color: #1a1a1a !important;
+            
+            #content {
+                background-color: #1a1a1a !important;
+                
+                .container-fluid {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+    
+    // Topbar - override bg-white class
+    .topbar.bg-white,
+    .topbar {
+        background-color: var(--bs-navbar-bg) !important;
+        border-color: var(--bs-border-color) !important;
+        
+        .navbar-nav .nav-link {
+            color: var(--bs-body-color) !important;
+        }
+        
+        .dropdown-menu {
+            background-color: var(--bs-dropdown-bg) !important;
+            border-color: var(--bs-dropdown-border-color) !important;
+            
+            .dropdown-item {
+                color: var(--bs-dropdown-link-color) !important;
+                
+                &:hover {
+                    background-color: var(--bs-dropdown-link-hover-bg) !important;
+                    color: var(--bs-dropdown-link-hover-color) !important;
+                }
+            }
+        }
+        
+        // Search inputs
+        .bg-light {
+            background-color: var(--bs-input-bg) !important;
+        }
+        
+        .form-control.bg-light {
+            background-color: var(--bs-input-bg) !important;
+            color: var(--bs-input-color) !important;
+        }
+        
+        .search-icon.bg-light {
+            background-color: var(--bs-input-bg) !important;
+        }
+    }
+    
+    // Cards - override any white backgrounds with maximum specificity
+    .card,
+    .card.bg-white,
+    .card.shadow,
+    .card.shadow-sm,
+    .card.shadow-lg,
+    div.card {
+        background-color: var(--bs-card-bg) !important;
+        border: none !important;
+        color: var(--bs-body-color) !important;
+    }
+    
+    .card-header {
+        background-color: #2d2d2d !important;
+        border-bottom: none !important;
+        color: var(--bs-body-color) !important;
+        
+        &.bg-primary {
+            background-color: var(--theme-primary) !important;
+        }
+    }
+    
+    .card-body {
+        background-color: var(--bs-card-bg) !important;
+        color: var(--bs-body-color) !important;
+    }
+    
+    // Border left utilities (used in dashboard cards)
+    .border-left-primary {
+        border-left-color: var(--theme-primary) !important;
+    }
+    
+    .border-left-success {
+        border-left-color: var(--theme-success) !important;
+    }
+    
+    .border-left-danger {
+        border-left-color: var(--theme-danger) !important;
+    }
+    
+    .border-left-info {
+        border-left-color: var(--theme-info) !important;
+    }
+    
+    .border-left-warning {
+        border-left-color: var(--theme-warning) !important;
+    }
+    
+    // Forms
+    form {
+        input, select, textarea {
+            background-color: var(--bs-input-bg);
+            border-color: var(--bs-input-border-color);
+            color: var(--bs-input-color);
+            
+            &:focus {
+                background-color: var(--bs-input-focus-bg);
+                border-color: var(--bs-input-focus-border-color);
+                color: var(--bs-input-focus-color);
+            }
+            
+            &:disabled {
+                background-color: var(--bs-navbar-bg);
+                opacity: 0.6;
+            }
+        }
+        
+        .form-label {
+            color: var(--bs-body-color);
+        }
+        
+        .form-text {
+            color: var(--bs-gray-900);
+        }
+        
+        .form-check-label {
+            color: var(--bs-body-color);
+        }
+    }
+    
+    // Tables
+    .table {
+        color: var(--bs-body-color) !important;
+        background-color: transparent !important;
+        
+        thead {
+            &.table-light {
+                background-color: var(--bs-gray-100) !important;
+                color: var(--bs-body-color) !important;
+                
+                th {
+                    background-color: var(--bs-gray-100) !important;
+                    color: var(--bs-body-color) !important;
+                    border-color: var(--bs-border-color) !important;
+                    
+                    a {
+                        color: var(--theme-tertiary) !important;
+                        
+                        &:hover {
+                            color: var(--theme-tertiary) !important;
+                        }
+                    }
+                }
+            }
+        }
+        
+        tbody {
+            background-color: transparent !important;
+            
+            tr {
+                color: var(--bs-body-color) !important;
+                background-color: transparent !important;
+                
+                &:hover {
+                    background-color: var(--bs-gray-100) !important;
+                }
+            }
+        }
+        
+        th, td {
+            border-color: var(--bs-border-color) !important;
+            color: var(--bs-body-color) !important;
+        }
+        
+        // Override .table-light class specifically
+        &.table-light {
+            th {
+                background-color: var(--bs-gray-100) !important;
+                color: var(--bs-body-color) !important;
+                border-color: var(--bs-border-color) !important;
+                
+                a {
+                    color: #dfebeb !important;
+                    
+                    &:hover {
+                        color: #dfebeb !important;
+                    }
+                }
+            }
+        }
+        
+        &.table-striped {
+            tbody tr:nth-of-type(odd) {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+    }
+    
+    // Page title
+    .page-title {
+        h3 {
+            color: var(--bs-body-color);
+        }
+    }
+    
+    // Text colors
+    .text-gray-800 {
+        color: var(--bs-body-color) !important;
+    }
+    
+    .text-primary {
+        color: var(--theme-primary) !important;
+    }
+    
+    // Links
+    a {
+        color: var(--theme-primary);
+        
+        &:hover {
+            color: var(--theme-info);
+        }
+    }
+    
+    // Small text elements
+    .small,
+    small {
+        color: var(--bs-gray-900) !important;
+    }
+    
+    // Input groups
+    .input-group {
+        .input-group-prepend,
+        .input-group-append {
+            .input-group-text {
+                background-color: var(--bs-input-bg) !important;
+                border-color: var(--bs-input-border-color) !important;
+                color: var(--bs-input-color) !important;
+            }
+        }
+    }
+    
+    // Alerts
+    .alert {
+        &.alert-success {
+            background-color: rgba(92, 184, 92, 0.2);
+            border-color: var(--theme-success);
+            color: var(--bs-body-color);
+        }
+        
+        &.alert-danger {
+            background-color: rgba(217, 83, 79, 0.2);
+            border-color: var(--theme-danger);
+            color: var(--bs-body-color);
+        }
+        
+        &.alert-warning {
+            background-color: rgba(240, 173, 78, 0.2);
+            border-color: var(--theme-warning);
+            color: var(--bs-body-color);
+        }
+        
+        &.alert-info {
+            background-color: rgba(91, 192, 222, 0.2);
+            border-color: var(--theme-info);
+            color: var(--bs-body-color);
+        }
+    }
+    
+    // Sidebar - handled in navs/_sidebar.scss, but ensure collapse items are styled
+    .collapse-inner {
+        background-color: var(--bs-gray-100) !important;
+        
+        .collapse-item {
+            color: var(--bs-body-color) !important;
+            
+            &:hover {
+                background-color: var(--bs-gray-200) !important;
+            }
+        }
+    }
+    
+    // Dropdowns
+    .dropdown-menu {
+        background-color: var(--bs-dropdown-bg);
+        border-color: var(--bs-dropdown-border-color);
+        
+        .dropdown-item {
+            color: var(--bs-dropdown-link-color);
+            
+            &:hover, &:focus {
+                background-color: var(--bs-dropdown-link-hover-bg);
+                color: var(--bs-dropdown-link-hover-color);
+            }
+        }
+        
+        .dropdown-divider {
+            border-top-color: var(--bs-gray-300);
+        }
+    }
+    
+    // Search inputs - override bg-light classes
+    .navbar-search {
+        .form-control,
+        .form-control.bg-light {
+            background-color: var(--bs-input-bg) !important;
+            border-color: var(--bs-input-border-color) !important;
+            color: var(--bs-input-color) !important;
+        }
+        
+        .search-results,
+        .search-results.bg-light,
+        .search-results.shadow-sm {
+            background-color: var(--bs-dropdown-bg) !important;
+            border-color: var(--bs-dropdown-border-color) !important;
+        }
+        
+        .search-icon,
+        .search-icon.bg-light {
+            background-color: var(--bs-input-bg) !important;
+        }
+    }
+    
+    // Copyable elements
+    dl.copyable {
+        dt {
+            color: var(--bs-gray-900);
+        }
+        
+        dd {
+            color: var(--bs-body-color);
+        }
+    }
+    
+    // Separator
+    dl dd.separator {
+        border-bottom-color: var(--theme-primary);
+    }
+    
+    // Buttons
+    .btn {
+        &.btn-light {
+            background-color: var(--bs-gray-100);
+            border-color: var(--bs-gray-300);
+            color: var(--bs-body-color);
+            
+            &:hover {
+                background-color: var(--bs-gray-200);
+                border-color: var(--bs-gray-400);
+            }
+        }
+    }
+    
+    // Badges
+    .badge {
+        &.text-bg-danger {
+            background-color: var(--theme-danger) !important;
+        }
+    }
+    
+    // Pagination
+    .fixed-table-pagination {
+        div.float-left.pagination-detail > span.page-list > span > button {
+            color: var(--bs-body-color) !important;
+            background-color: var(--bs-gray-100) !important;
+            border-color: var(--bs-gray-300) !important;
+        }
+    }
+    
+    // Timeline
+    .timeline {
+        li {
+            border-left-color: var(--theme-primary);
+            
+            &:before {
+                background: var(--bs-gray-100) !important;
+                border-color: var(--theme-primary) !important;
+            }
+        }
+        
+        .time {
+            color: var(--bs-gray-900);
+        }
+        
+        p {
+            color: var(--bs-body-color);
+        }
+    }
+    
+    // Link tooltip
+    .link-tooltip {
+        background-image: linear-gradient(90deg, #294661 33%, var(--bs-body-color) 0) !important;
+    }
+    
+    // Front cover (keep white text as it's on background image)
+    // White text is intentional for contrast on background image, no override needed
+    
+    // Text muted
+    .text-muted {
+        color: var(--bs-gray-900) !important;
+    }
+    
+    // Small text
+    small, .small {
+        color: var(--bs-gray-900);
+    }
+    
+    // Tooltips
+    .tooltip {
+        .tooltip-inner {
+            background-color: var(--bs-gray-100);
+            color: var(--bs-body-color);
+        }
+        
+        .tooltip-arrow::before {
+            border-top-color: var(--bs-gray-100);
+            border-bottom-color: var(--bs-gray-100);
+            border-left-color: var(--bs-gray-100);
+            border-right-color: var(--bs-gray-100);
+        }
+    }
+    
+    // Modals
+    .modal {
+        .modal-content {
+            background-color: var(--bs-tertiary-bg);
+            border-color: var(--bs-border-color);
+            color: var(--bs-body-color);
+        }
+        
+        .modal-header {
+            background-color: var(--bs-gray-100);
+            border-bottom-color: var(--bs-border-color);
+            color: var(--bs-body-color);
+        }
+        
+        .modal-body {
+            background-color: var(--bs-tertiary-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .modal-footer {
+            background-color: var(--bs-tertiary-bg);
+            border-top-color: var(--bs-border-color);
+        }
+        
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+    }
+    
+    // Popovers
+    .popover {
+        background-color: var(--bs-gray-100);
+        border-color: var(--bs-gray-300);
+        color: var(--bs-body-color);
+        
+        .popover-header {
+            background-color: var(--bs-gray-200);
+            border-bottom-color: var(--bs-gray-300);
+            color: var(--bs-body-color);
+        }
+        
+        .popover-body {
+            color: var(--bs-body-color);
+        }
+        
+        .popover-arrow::before {
+            border-top-color: var(--bs-gray-300);
+            border-bottom-color: var(--bs-gray-300);
+            border-left-color: var(--bs-gray-300);
+            border-right-color: var(--bs-gray-300);
+        }
+    }
+    
+    // Accordion
+    .accordion {
+        .accordion-item {
+            background-color: var(--bs-tertiary-bg);
+            border-color: var(--bs-border-color);
+        }
+        
+        .accordion-header {
+            .accordion-button {
+                background-color: var(--bs-gray-100);
+                color: var(--bs-body-color);
+                
+                &:not(.collapsed) {
+                    background-color: var(--bs-gray-200);
+                    color: var(--bs-emphasis-color);
+                }
+            }
+        }
+        
+        .accordion-body {
+            background-color: var(--bs-tertiary-bg);
+            color: var(--bs-body-color);
+        }
+    }
+    
+    // List group
+    .list-group {
+        .list-group-item {
+            background-color: var(--bs-tertiary-bg);
+            border-color: var(--bs-border-color);
+            color: var(--bs-body-color);
+            
+            &:hover {
+                background-color: var(--bs-gray-100);
+            }
+            
+            &.active {
+                background-color: var(--theme-primary);
+                border-color: var(--theme-primary);
+            }
         }
     }
 }
@@ -207,6 +776,35 @@ dl.copyable{
 
     td {
         color: $gray-900;
+    }
+}
+
+// Dark theme overrides for base table styles
+[data-theme="dark"] {
+    .table {
+        tr {
+            color: var(--bs-body-color) !important;
+        }
+        
+        td {
+            color: var(--bs-body-color) !important;
+        }
+        
+        .table-light {
+            th {
+                background-color: var(--bs-gray-100) !important;
+                color: var(--bs-body-color) !important;
+                border-color: var(--bs-border-color) !important;
+                
+                a {
+                    color: #dfebeb !important;
+                    
+                    &:hover {
+                        color: #dfebeb !important;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -345,7 +943,7 @@ table{
             content: '';
             width: 15px;
             height: 15px;
-            background: white;
+            background: $white;
             border: 1px solid $primary;
             border-radius: 50%;
             position: absolute;
@@ -370,4 +968,30 @@ table{
     margin-left: 8px;
     margin-bottom: 3px;
     vertical-align: middle;
+}
+
+.flatpickr-calendar {
+    background-color: var(--bs-gray-100) !important;
+}
+
+.flatpickr-current-month {
+    color: #fff !important;
+}
+
+.flatpickr-weekday {
+    color: #eee !important;
+}
+
+.flatpickr-day {
+    color: #eee !important;
+}
+
+.flatpickr-day.in-range {
+    background-color: var(--bs-gray-100) !important;
+    color: #eee !important;
+}
+
+.flatpickr-day.selected {
+    background-color: var(--theme-primary) !important;
+    color: #fff !important;
 }

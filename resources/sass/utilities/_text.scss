@@ -51,3 +51,47 @@ blockquote{
     color: $gray-900;
     font-style: italic;
 }
+
+// Dark theme overrides for text utilities
+[data-theme="dark"] {
+    .text-gray-100 {
+        color: var(--bs-gray-100) !important;
+    }
+    
+    .text-gray-200 {
+        color: var(--bs-gray-200) !important;
+    }
+    
+    .text-gray-300 {
+        color: var(--bs-gray-300) !important;
+    }
+    
+    .text-gray-400 {
+        color: var(--bs-gray-400) !important;
+    }
+    
+    .text-gray-500 {
+        color: var(--bs-gray-500) !important;
+    }
+    
+    .text-gray-600 {
+        color: var(--bs-gray-600) !important;
+    }
+    
+    .text-gray-700 {
+        color: var(--bs-gray-700) !important;
+    }
+    
+    .text-gray-800 {
+        color: var(--bs-gray-800) !important;
+    }
+    
+    .text-gray-900 {
+        color: var(--bs-gray-900) !important;
+    }
+    
+    blockquote {
+        color: var(--bs-gray-900) !important;
+        border-left-color: var(--bs-gray-500) !important;
+    }
+}

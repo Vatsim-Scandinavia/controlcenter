@@ -4,6 +4,7 @@
 
 import * as bootstrap from 'bootstrap'
 import moment from 'moment';
+import './theme.js';
 
 /**
  * Insert global variables
