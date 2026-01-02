@@ -1324,6 +1324,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Setup the container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resetting-the-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resetting the containers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1738,6 +1753,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Setup the container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resetting-the-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resetting the containers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1901,23 +1931,20 @@
 <h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
 <p>Interested in contributing to Control Center? Adding a new, favourite feature? Say no more.</p>
 <h2 id="running-the-development-environment">Running the development environment<a class="headerlink" href="#running-the-development-environment" title="Permanent link">&para;</a></h2>
-<p>This part will explain how to create a development instance of Control Center in a docker container. First you can choose between <code>docker-compose.dev.yaml</code> or <code>docker-compose.dev.full.yaml</code>. The difference is that the full version includes a MySQL database and Redis. Secondly both of the files bind the whole application to your project folder, so you can edit the files locally and they'll be updated in the container.</p>
+<p>This part will explain how to create a development instance of Control Center in a docker container. Our development container is based on <a href="https://github.com/laravel/sail">Laravel Sail</a> tailored for Control Center. It run a Docker Devcontainer which mounts the project inside the container. The container is built to be run on a Linux distro or using Docker Desktop with WSL2 on Windows.</p>
 <h3 id="setup-the-container">Setup the container<a class="headerlink" href="#setup-the-container" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Run <code>docker compose -f yourchosenfile.yaml up -d</code> from your host system</li>
-<li>Wait a bit while the docker image is built for your system</li>
-<li>Enter your container and run <code>composer install</code> to install all dependencies</li>
-<li>Install npm by running <code>bash container/install-npm.sh</code> as it's not included by default</li>
-<li>Run <code>npm install</code> to install all dependencies</li>
-<li>Run <code>npm run build</code> to compile the assets</li>
-<li>Run <code>php artisan migrate</code> to setup the database</li>
-<li><em>Optionally</em> run <code>php artisan seed</code> to seed the database with test data</li>
-</ol>
-<p>If you need test data, you can also seed the database with <code>php artisan db:seed</code>.</p>
-<p>If you encounter permissions errors you might want to <code>chown -R www-data:www-data /app</code> and <code>chmod -R o+w /app</code> to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.</p>
+<p>Clone the repository to a location locally if on Linux or if on Windows clone it using <code>git clone https://github.com/Vatsim-Scandinavia/controlcenter.git</code> inside your WSL terminal.</p>
+<p>When the repository has been cloned you need to create your <code>.env</code> file which will contain the configuration for your local environment. We recommend copying and renaming <code>.env.example</code> and modify it to your liking.</p>
+<p>Once the environment has been configured you can start the development environment using <code>./sail up</code>. This creates the neccesary containers to run Control Center locally. Once these are started it's recommended to run <code>./sail bash ./init-dev.sh</code> to run the initial setup such as downloading/building NPM assets, running database migration etc. These commands may also be run manually inside the container if preffered.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If using Visual Code as your editor you may also use the extension <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer">Remote Explorer</a> to run the development environment.</p>
+</div>
+<h4 id="resetting-the-containers">Resetting the containers<a class="headerlink" href="#resetting-the-containers" title="Permanent link">&para;</a></h4>
+<p>Should you find the need to start over. Then you can re-run the <code>init-dev.sh</code> script which will redo the initial setup once again.</p>
 <h3 id="tooling">Tooling<a class="headerlink" href="#tooling" title="Permanent link">&para;</a></h3>
 <p>If you'd like better editor integration, you can generate helper definitions for Laravel.</p>
-<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>ide-helper:generate
+<div class="language-sh highlight"><pre><span></span><code>./sail<span class="w"> </span>artisan<span class="w"> </span>ide-helper:generate
 </code></pre></div>
 <h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
 <p>This application uses the OPCache to cache the compiled PHP code. The default setting is for production use, which means that the cache is not cleared automatically. To clear the cache, you need to restart the container if you change a file.</p>
@@ -1925,13 +1952,13 @@
 <h3 id="run-unit-tests">Run unit tests<a class="headerlink" href="#run-unit-tests" title="Permanent link">&para;</a></h3>
 <h4 id="first-run">First run<a class="headerlink" href="#first-run" title="Permanent link">&para;</a></h4>
 <p>On first run you might need to setup the testing sqlite database first.
-Run the command <code>php artisan migrate --database sqlite-testing</code> to setup the database.</p>
+Run the command <code>./sail artisan migrate --database sqlite-testing</code> to setup the database.</p>
 <h4 id="test">Test<a class="headerlink" href="#test" title="Permanent link">&para;</a></h4>
 <p>To run the PHP unit tests use:</p>
-<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span><span class="nb">test</span>
+<div class="language-sh highlight"><pre><span></span><code>./sail<span class="w"> </span>artisan<span class="w"> </span><span class="nb">test</span>
 </code></pre></div>
 <p>To create new tests, you can use the helper, which by default creates feature tests rather than unit tests:</p>
-<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:test
+<div class="language-sh highlight"><pre><span></span><code>./sail<span class="w"> </span>artisan<span class="w"> </span>make:test
 </code></pre></div>
 <p>The tests run with the local SQLite test database, not your development database.</p>
 <h4 id="quicker-feedback-during-development">Quicker feedback during development<a class="headerlink" href="#quicker-feedback-during-development" title="Permanent link">&para;</a></h4>
@@ -1942,7 +1969,7 @@ They help you keep formatting consistent and avoid mistakes that'll be caught by
 <p>This isn't required, but recommended to get an improved feedback loop while developing.</p>
 </div>
 <h3 id="run-formatting">Run formatting<a class="headerlink" href="#run-formatting" title="Permanent link">&para;</a></h3>
-<p>To run the formatting script that ensures consistent Laravel PHP code use <code>./vendor/bin/pint</code>.</p>
+<p>To run the formatting script that ensures consistent Laravel PHP code use <code>./sail pint</code>.</p>
 <h2 id="conventions">Conventions<a class="headerlink" href="#conventions" title="Permanent link">&para;</a></h2>
 <p>Contributions are much appreciated to help everyone evolve this service with fixes and functionalities. We recommend you to fork this repository here on GitHub so you can easily create pull requests back to the main project.</p>
 <p>To keep a collaborative project in the same style and understandable, it's important to follow some conventions:</p>
@@ -2022,7 +2049,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2025 05:26:19 UTC">November 3, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 2, 2026 12:52:59 UTC">January 2, 2026</span>
   </span>
 
     
@@ -2032,7 +2059,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2025 05:26:19 UTC">November 3, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 2, 2026 12:52:59 UTC">January 2, 2026</span>
   </span>
 
     
@@ -2050,14 +2077,19 @@ They'll be better off on the specific page in question.
     
     <nav>
       
-        <a href="https://github.com/thor" class="md-author" title="@thor">
+        <a href="https://github.com/Dunkstormen" class="md-author" title="@Dunkstormen">
           
-          <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
+          <img src="https://avatars.githubusercontent.com/u/7177605?v=4&size=72" alt="Dunkstormen">
         </a>
       
         <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
           
           <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
+        </a>
+      
+        <a href="https://github.com/thor" class="md-author" title="@thor">
+          
+          <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
         </a>
       
         <a href="https://github.com/blt950" class="md-author" title="@blt950">
@@ -2066,6 +2098,12 @@ They'll be better off on the specific page in question.
         </a>
       
       
+      
+        
+          <a href="https://github.com/vatsim-scandinavia/controlcenter/blob/main/docs/contribute.md" class="md-author md-author--more">
+            +1
+          </a>
+        
       
     </nav>
   </span>
