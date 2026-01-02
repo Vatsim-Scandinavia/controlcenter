@@ -8,29 +8,29 @@ Interested in contributing to Control Center? Adding a new, favourite feature? S
 
 ## Running the development environment { data-toc-label="Development environment" }
 
-This part will explain how to create a development instance of Control Center in a docker container. First you can choose between `docker-compose.dev.yaml` or `docker-compose.dev.full.yaml`. The difference is that the full version includes a MySQL database and Redis. Secondly both of the files bind the whole application to your project folder, so you can edit the files locally and they'll be updated in the container.
+This part will explain how to create a development instance of Control Center in a docker container. Our development container is based on [Laravel Sail](https://github.com/laravel/sail) tailored for Control Center. It run a Docker Devcontainer which mounts the project inside the container. The container is built to be run on a Linux distro or using Docker Desktop with WSL2 on Windows.
 
 ### Setup the container
 
-1. Run `docker compose -f yourchosenfile.yaml up -d` from your host system
-2. Wait a bit while the docker image is built for your system
-3. Enter your container and run `composer install ` to install all dependencies
-4. Install npm by running `bash container/install-npm.sh` as it's not included by default
-5. Run `npm install` to install all dependencies
-6. Run `npm run build` to compile the assets
-7. Run `php artisan migrate` to setup the database
-8. *Optionally* run `php artisan seed` to seed the database with test data
+Clone the repository to a location locally if on Linux or if on Windows clone it using `git clone https://github.com/Vatsim-Scandinavia/controlcenter.git` inside your WSL terminal.
 
-If you need test data, you can also seed the database with `php artisan db:seed`.
+When the repository has been cloned you need to create your `.env` file which will contain the configuration for your local environment. We recommend copying and renaming `.env.example` and modify it to your liking.
 
-If you encounter permissions errors you might want to `chown -R www-data:www-data /app` and `chmod -R o+w /app` to ensure the webserver can write to the storage folder. We recommend doing all file changes inside the container to minimize permission issues.
+Once the environment has been configured you can start the development environment using `./sail up`. This creates the neccesary containers to run Control Center locally. Once these are started it's recommended to run `./sail bash ./init-dev.sh` to run the initial setup such as downloading/building NPM assets, running database migration etc. These commands may also be run manually inside the container if preffered.
+
+!!! Tip
+    If using Visual Code as your editor you may also use the extension [Remote Explorer](https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer) to run the development environment.
+
+#### Resetting the containers
+
+Should you find the need to start over. Then you can re-run the `init-dev.sh` script which will redo the initial setup once again.
 
 ### Tooling
 
 If you'd like better editor integration, you can generate helper definitions for Laravel.
 
 ```sh
-php artisan ide-helper:generate
+./sail artisan ide-helper:generate
 ```
 
 ### Caching
@@ -44,20 +44,20 @@ For development, change `validate_timestamps` to `1` in the `/usr/local/etc/php/
 #### First run
 
 On first run you might need to setup the testing sqlite database first.
-Run the command `php artisan migrate --database sqlite-testing` to setup the database.
+Run the command `./sail artisan migrate --database sqlite-testing` to setup the database.
 
 #### Test
 
 To run the PHP unit tests use:
 
 ```sh
-php artisan test
+./sail artisan test
 ```
 
 To create new tests, you can use the helper, which by default creates feature tests rather than unit tests:
 
 ```sh
-php artisan make:test
+./sail artisan make:test
 ```
 
 The tests run with the local SQLite test database, not your development database.
@@ -72,7 +72,7 @@ They help you keep formatting consistent and avoid mistakes that'll be caught by
 
 ### Run formatting
 
-To run the formatting script that ensures consistent Laravel PHP code use `./vendor/bin/pint`.
+To run the formatting script that ensures consistent Laravel PHP code use `./sail pint`.
 
 ## Conventions
 
