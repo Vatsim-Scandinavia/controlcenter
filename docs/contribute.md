@@ -14,12 +14,12 @@ This part will explain how to create a development instance of Control Center in
 
 Clone the repository to a location locally if on Linux or if on Windows clone it using `git clone https://github.com/Vatsim-Scandinavia/controlcenter.git` inside your WSL terminal.
 
-When the repository has been cloned you need to create your `.env` file which will contain the configuration for your local enviorment. We recommend copying and renaming `.env.example` and modify it to your liking.
+When the repository has been cloned you need to create your `.env` file which will contain the configuration for your local environment. We recommend copying and renaming `.env.example` and modify it to your liking.
 
 Once the environment has been configured you can start the development environment using `./sail up`. This creates the neccesary containers to run Control Center locally. Once these are started it's recommended to run `./sail bash ./init-dev.sh` to run the initial setup such as downloading/building NPM assets, running database migration etc. These commands may also be run manually inside the container if preffered.
 
 !!! Tip
-    If using Visual Code as your editor you may also use the extension [Remote Explorer](https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer) to run the development enviorment.
+    If using Visual Code as your editor you may also use the extension [Remote Explorer](https://marketplace.visualstudio.com/items?itemName=ms-vscode.remote-explorer) to run the development environment.
 
 #### Resetting the containers
 
