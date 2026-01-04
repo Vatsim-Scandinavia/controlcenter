@@ -7,6 +7,7 @@ use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Training;
 use App\Models\TrainingReport;
+use App\Models\TrainingReportTemplate;
 use App\Notifications\TrainingReportNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -48,8 +49,26 @@ class TrainingReportController extends Controller
         }
 
         $positions = Position::all();
+        
+        // Get available templates for this training's area (non-draft only)
+        // Templates without assigned areas are available for all areas
+        // Templates with assigned areas are only available for those specific areas
+        $templates = TrainingReportTemplate::where('draft', false)
+            ->where(function ($query) use ($training) {
+                // Templates with no areas assigned (available for all)
+                $query->whereDoesntHave('areas');
+                
+                // If training has an area, also include templates assigned to that area
+                if ($training->area_id) {
+                    $query->orWhereHas('areas', function ($q) use ($training) {
+                        $q->where('areas.id', $training->area_id);
+                    });
+                }
+            })
+            ->orderBy('name')
+            ->get();
 
-        return view('training.report.create', compact('training', 'positions'));
+        return view('training.report.create', compact('training', 'positions', 'templates'));
     }
 
     /**

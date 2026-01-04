@@ -40,4 +40,9 @@ class Area extends Model
     {
         return $this->hasMany(Position::class);
     }
+
+    public function trainingReportTemplates()
+    {
+        return $this->belongsToMany(TrainingReportTemplate::class, 'training_report_template_area');
+    }
 }
