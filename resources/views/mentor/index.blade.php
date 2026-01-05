@@ -31,7 +31,7 @@
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
                                 <th data-field="type" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Type</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
-                                <th data-field="lastreport" data-sortable="true" data-filter-control="input">Last Report</th>
+                                <th data-field="lastreport" data-sortable="true" data-sorter="tableSortDates" data-filter-control="input" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">Last Report</th>
                                 <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                             </tr>
                         </thead>
@@ -83,6 +83,9 @@
                                             $trainingIntervalExceeded = $reportDate->diffInDays() >= Setting::get('trainingInterval');
                                         @endphp
 
+                                        {{-- Hidden real date for bootstrap-table sorting (see tableSortDates in global scripts) --}}
+                                        <span class="visually-hidden">{{ $reportDate->toEuropeanDate() }}</span>
+
                                         <span title="{{ $reportDate->toEuropeanDate() }}">
                                             @if($reportDate->isToday())
                                             <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
@@ -97,6 +100,8 @@
                                         </span>
 
                                     @else
+                                        {{-- Hidden fallback date so "No report yet" is sortable too --}}
+                                        <span class="visually-hidden">01/01/1970</span>
                                         No report yet
                                     @endif
                                 </td>
