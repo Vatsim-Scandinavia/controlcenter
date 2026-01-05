@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.4.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.2...v6.4.3) (2026-01-05)
+
+
+### Features
+
+* New development environment/container. ([#1345](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1345)) ([68341e5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/68341e5edf2f1f6e63b06f7ae69a824b8c82a2dc))
+
+
+### Bug Fixes
+
+* 1359 ([#1364](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1364)) ([f2535f4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f2535f4720dd419125d27c41ca3dbecad3610aff))
+* **reports:** passed and failed exams overview ([#1347](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1347)) ([09b26ae](https://github.com/Vatsim-Scandinavia/controlcenter/commit/09b26aece33ec4d5c55f86473952f8a38a960fb7))
+
 ## [6.4.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.1...v6.4.2) (2025-11-01)
 
 
