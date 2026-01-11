@@ -32,22 +32,21 @@
 
     /**
      * Initialize theme on page load
+     * Note: Inline script in header has already set initial data-theme to prevent FOUC
+     * This function reconciles and sets up dynamic behavior
      */
     function initializeTheme() {
-        // Priority 1: Check localStorage for immediate preference
-        let storedPreference = localStorage.getItem(THEME_STORAGE_KEY);
-        
-        // Priority 2: Check server-side preference from data attribute
-        if (!storedPreference) {
-            storedPreference = document.documentElement.getAttribute('data-user-theme') || 'system';
-        }
+        // Get stored preference
+        let storedPreference = localStorage.getItem(THEME_STORAGE_KEY) ||
+                              document.documentElement.getAttribute('data-user-theme') || 
+                              'system';
 
-        // Apply the effective theme
+        // Store the preference for consistency
+        localStorage.setItem(THEME_STORAGE_KEY, storedPreference);
+
+        // Apply theme (inline script has already done initial set, this ensures correctness)
         const effectiveTheme = getEffectiveTheme(storedPreference);
         applyTheme(effectiveTheme);
-
-        // Store the preference for next time
-        localStorage.setItem(THEME_STORAGE_KEY, storedPreference);
     }
 
     /**

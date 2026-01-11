@@ -13,10 +13,9 @@
     --color-warning: #ffb347;
     --color-danger: #e57373;
     
-    // Base Colors
-    --color-white: #1e1e1e;
-    --color-black: #ffffff;
-    --color-snow: #2a2a2a;
+    // Note: --color-white and --color-black are NOT overridden in dark theme
+    // They remain literal white (#fff) and black (#000) for consistency
+    // Use --bg-* and --color-text-* variables for themed surfaces instead
     
     // Named Colors (adjusted for dark mode)
     --color-darkblue: #e8eaed;
@@ -58,6 +57,9 @@
     --bg-topbar: #2a2a2a;
     --bg-light: #333333;
     --bg-dark: #0a0a0a;
+    
+    // Special Colors (context-specific, always same in all themes)
+    --color-sidebar-text: #fff;  // Sidebar is always dark, text always white
     
     // Border
     --border-color: #3d3d3d;

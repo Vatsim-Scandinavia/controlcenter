@@ -28,8 +28,8 @@
         margin: 0;
 
         color: var(--color-primary);
-        background: var(--color-white);
-        border-radius: 2px;
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
 
         display: none;
 
@@ -48,7 +48,7 @@
         text-transform: uppercase;
         letter-spacing: 0.05rem;
         z-index: 1;
-        color: #fff;
+        color: var(--color-sidebar-text);
 
         &-icon {
             img, svg {
@@ -64,7 +64,7 @@
             text-align: left;
             line-height: 1.125rem;
             display: inline;
-            color: #fff !important;
+            color: var(--color-sidebar-text) !important;
         }
 
         &-topbar{
@@ -111,7 +111,7 @@
                     display: block;
                     color: var(--color-gray-900);
                     text-decoration: none;
-                    border-radius: 2px;
+                    border-radius: var(--border-radius);
                     white-space: nowrap;
                     &:hover {
                         background-color: var(--color-gray-200);
@@ -133,9 +133,9 @@
             &:active,
             &:focus,
             &:hover {
-                color: #fff;
+                color: var(--color-sidebar-text);
                 i {
-                    color: #fff;
+                    color: var(--color-sidebar-text);
                 }
             }
 
@@ -170,10 +170,10 @@
 
         &.active {
             .nav-link {
-                color: #fff;
+                color: var(--color-sidebar-text);
                 font-weight: bold;
                 i {
-                    color: #fff;
+                    color: var(--color-sidebar-text);
                 }
             }
         }

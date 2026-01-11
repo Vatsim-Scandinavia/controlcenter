@@ -14,10 +14,9 @@
     --color-warning: #ff9800;
     --color-danger: #b63f3f;
     
-    // Base Colors
+    // Base Colors (literal colors, not theme-dependent)
     --color-white: #fff;
     --color-black: #000;
-    --color-snow: #dfebeb;
     
     // Named Colors
     --color-darkblue: #011328;
@@ -59,6 +58,9 @@
     --bg-topbar: #fff;
     --bg-light: #f8f9fc;
     --bg-dark: #3a3b45;
+    
+    // Special Colors (context-specific, always same in all themes)
+    --color-sidebar-text: #fff;  // Sidebar is always dark, text always white
     
     // Border
     --border-color: #e3e6f0;

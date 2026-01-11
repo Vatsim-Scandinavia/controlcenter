@@ -2,7 +2,7 @@
     padding: 0.15rem 0.45rem;
     font-size: 0.775rem;
     line-height: 1rem;
-    border-radius: 2px;
+    border-radius: var(--border-radius);
 }
 
 .accordion button{

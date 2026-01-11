@@ -59,7 +59,7 @@
             border: 1px solid var(--color-primary);
             padding-top: 0.75rem;
             padding-bottom: 0.75rem;
-            color: var(--color-white);
+            color: #fff;
         }
         .dropdown-item {
             white-space: normal;
@@ -86,7 +86,7 @@
                     position: absolute;
                     bottom: 0;
                     right: 0;
-                    border: 0.125rem solid var(--color-white);
+                    border: 0.125rem solid var(--bg-card);
                 }
             }
 
