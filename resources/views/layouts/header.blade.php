@@ -7,7 +7,27 @@
 
 <title>@yield('title', 'Home') | {{ config('app.name') }}</title>
 
-@vite(['resources/sass/app.scss'])
+{{-- Inline theme script to prevent flash of wrong theme --}}
+<script>
+(function() {
+    function getEffectiveTheme(preference) {
+        if (preference === 'system') {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        return preference;
+    }
+    
+    var storedPreference = localStorage.getItem('user_theme_preference');
+    if (!storedPreference) {
+        storedPreference = document.documentElement.getAttribute('data-user-theme') || 'system';
+    }
+    
+    var effectiveTheme = getEffectiveTheme(storedPreference);
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
+})();
+</script>
+
+@vite(['resources/js/theme.js', 'resources/sass/app.scss'])
 
 {{-- Custom fonts --}} 
 <link href="https://fonts.googleapis.com/css?family=Roboto:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">

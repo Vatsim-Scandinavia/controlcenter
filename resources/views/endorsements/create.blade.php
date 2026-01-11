@@ -85,6 +85,38 @@
                         <i class="fas fa-info-circle"></i>&nbsp;Please note that Airport and Center endorsements are automatically granted when training are marked completed.
                     </div>
 
+                    {{-- Solo Days Tracking --}}
+                    <div id="soloDaysInfo" class="alert alert-primary" style="display: none" role="alert" v-show="endorsementType == 'SOLO' && soloDaysStats != null">
+                        <h6 class="alert-heading mb-3"><strong>Solo Endorsements</strong></h6>
+                        <div class="mb-2">
+                            <strong>Solo days remaining: @{{ soloDaysStats.remaining_days }} of @{{ soloDaysStats.max_days }}</strong>
+                        </div>
+                        <div class="mb-2">
+                            Days granted: @{{ soloDaysStats.total_days }}
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar" 
+                                 v-bind:class="{
+                                     'bg-primary': soloDaysStats.remaining_days > 20, 
+                                     'bg-warning': soloDaysStats.remaining_days > 10 && soloDaysStats.remaining_days <= 20,
+                                     'bg-danger': soloDaysStats.remaining_days <= 10
+                                 }"
+                                 role="progressbar" 
+                                 v-bind:style="'width: ' + ((soloDaysStats.total_days / soloDaysStats.max_days) * 100) + '%;'" 
+                                 v-bind:aria-valuenow="soloDaysStats.total_days" 
+                                 aria-valuemin="0" 
+                                 v-bind:aria-valuemax="soloDaysStats.max_days">
+                                @{{ soloDaysStats.total_days }}/@{{ soloDaysStats.max_days }} days
+                            </div>
+                        </div>
+                        <div class="mt-2" v-show="soloDaysStats.remaining_days <= 10">
+                            <i class="fas fa-exclamation-triangle" v-bind:class="{'text-warning': soloDaysStats.remaining_days > 0, 'text-danger': soloDaysStats.remaining_days <= 0}"></i>
+                            <small v-bind:class="{'text-warning': soloDaysStats.remaining_days > 0, 'text-danger': soloDaysStats.remaining_days <= 0}">
+                                @{{ soloDaysStats.remaining_days > 0 ? 'Low solo days remaining!' : 'Solo day limit reached!' }}
+                            </small>
+                        </div>
+                    </div>
+
                     {{-- Expires --}}
                     <div class="mb-3" style="display: none" v-show="endorsementType == 'SOLO'">
                         <label for="expire">Expires</label>
@@ -198,9 +230,29 @@
                     soloChecked: false,
                     validationError: false,
                     errSoloPositionCount: false,
+                    soloDaysStats: {!! isset($soloDaysStats) && $soloDaysStats ? json_encode($soloDaysStats) : 'null' !!},
+                }
+            },
+            watch: {
+                user(newUser) {
+                    if (newUser) {
+                        this.fetchSoloDaysStats(newUser);
+                    }
                 }
             },
             methods:{
+                fetchSoloDaysStats(userId) {
+                    fetch(`{{ route('endorsements.solo.stats', ['userId' => '__USER_ID__']) }}`.replace('__USER_ID__', userId))
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.error) {
+                                this.soloDaysStats = data;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching solo days stats:', error);
+                        });
+                },
                 updateButtonText(){
 
                     var btn = document.getElementById("submit_btn");

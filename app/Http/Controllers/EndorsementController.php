@@ -93,7 +93,16 @@ class EndorsementController extends Controller
         $ratingsFACILITY = Rating::whereHas('areas')->whereNull('vatsim_rating')->get()->sortBy('name');
         $ratingsGRP = Rating::where('vatsim_rating', '<=', 7)->get();
 
-        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsFACILITY', 'ratingsGRP', 'prefillUserId'));
+        // Get solo days stats if user is prefilled
+        $soloDaysStats = null;
+        if ($prefillUserId) {
+            $user = User::find($prefillUserId);
+            if ($user) {
+                $soloDaysStats = $user->getSoloDaysStats();
+            }
+        }
+
+        return view('endorsements.create', compact('users', 'positions', 'areas', 'ratingsFACILITY', 'ratingsGRP', 'prefillUserId', 'soloDaysStats'));
     }
 
     /**
@@ -181,6 +190,13 @@ class EndorsementController extends Controller
             $dateExpires = Carbon::createFromFormat('d/m/Y', $data['expires'])->startOfDay();
             if (($dateExpires->lessThan(Carbon::today()) || $dateExpires->greaterThan(Carbon::today()->addDays(30)))) {
                 return back()->withInput()->withErrors(['expires' => 'Solo endorsements must expire within 30 days from today']);
+            }
+
+            // Validate that the user hasn't exceeded the 60-day solo limit
+            $soloDaysStats = $user->getSoloDaysStats();
+            $requestedDays = Carbon::now()->diffInDays($dateExpires);
+            if ($requestedDays > $soloDaysStats['remaining_days']) {
+                return back()->withInput()->withErrors(['expires' => 'Cannot issue ' . $requestedDays . ' days. Only ' . $soloDaysStats['remaining_days'] . ' solo days remaining out of ' . $soloDaysStats['max_days'] . ' total.']);
             }
 
             // Validate that this user has other endorsements of this type from before
@@ -370,6 +386,22 @@ class EndorsementController extends Controller
         $endorsement->user->notify(new EndorsementModifiedNotification($endorsement));
 
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s " . $endorsement->type . ' endorsement shortened to ' . Carbon::parse($date)->toEuropeanDateTime() . '. E-mail sent to student.');
+    }
+
+    /**
+     * Get solo days statistics for a user (AJAX endpoint)
+     *
+     * @param  int  $userId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSoloDaysStats($userId)
+    {
+        $user = User::find($userId);
+        if (! $user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        return response()->json($user->getSoloDaysStats());
     }
 
     /**

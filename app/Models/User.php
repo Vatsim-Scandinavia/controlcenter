@@ -407,6 +407,33 @@ class User extends Authenticatable
     }
 
     /**
+     * Calculate total solo endorsement days granted for this user
+     *
+     * @return array with 'total_days', 'remaining_days', and 'max_days'
+     */
+    public function getSoloDaysStats()
+    {
+        $maxDays = 60;
+        $soloEndorsements = $this->endorsements()->where('type', 'SOLO')->get();
+        
+        $totalDays = 0;
+        foreach ($soloEndorsements as $endorsement) {
+            if ($endorsement->valid_from && $endorsement->valid_to) {
+                $days = $endorsement->valid_from->diffInDays($endorsement->valid_to);
+                $totalDays += $days;
+            }
+        }
+        
+        $remainingDays = max(0, $maxDays - $totalDays);
+        
+        return [
+            'total_days' => $totalDays,
+            'remaining_days' => $remainingDays,
+            'max_days' => $maxDays,
+        ];
+    }
+
+    /**
      * Return if the user has recently finished a training
      *
      * @param  string  $type

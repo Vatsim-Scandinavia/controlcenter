@@ -69,6 +69,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/endorsements/store', 'store')->name('endorsements.store');
         Route::get('/endorsements/{id}/delete', 'destroy')->name('endorsements.delete');
         Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
+        Route::get('/endorsements/solo-days-stats/{userId}', 'getSoloDaysStats')->name('endorsements.solo.stats');
     });
 
     // ATC Roster

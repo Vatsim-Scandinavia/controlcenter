@@ -10,11 +10,18 @@
 @use '@fortawesome/fontawesome-free/scss/regular.scss' as fa-regular;
 @use '@fortawesome/fontawesome-free/scss/brands.scss' as fa-brands;
 
+// Theme CSS Variables
+@import "themes/light";
+@import "themes/dark";
+
 // Variables
 @import "variables";
 
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
+
+// Apply CSS variables to override Bootstrap
+@import "theme-overrides";
 
 // Import app scss
 @import "global.scss";

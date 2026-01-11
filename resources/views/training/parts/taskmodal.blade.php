@@ -19,6 +19,37 @@
                         @endif
                     </div>
 
+                    {{-- Solo Days Tracking for Solo Endorsement requests --}}
+                    @if($requestType->getName() == 'Solo Endorsement')
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading mb-3"><strong>Solo Endorsements</strong></h6>
+                            <div class="mb-2">
+                                <strong>Solo days remaining: {{ $soloDaysStats['remaining_days'] }} of {{ $soloDaysStats['max_days'] }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                Days granted: {{ $soloDaysStats['total_days'] }}
+                            </div>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-{{ $soloDaysStats['remaining_days'] > 20 ? 'primary' : ($soloDaysStats['remaining_days'] > 10 ? 'warning' : 'danger') }}" 
+                                     role="progressbar" 
+                                     style="width: {{ ($soloDaysStats['total_days'] / $soloDaysStats['max_days']) * 100 }}%;" 
+                                     aria-valuenow="{{ $soloDaysStats['total_days'] }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="{{ $soloDaysStats['max_days'] }}">
+                                    {{ $soloDaysStats['total_days'] }}/{{ $soloDaysStats['max_days'] }} days
+                                </div>
+                            </div>
+                            @if($soloDaysStats['remaining_days'] <= 10)
+                                <div class="mt-2">
+                                    <i class="fas fa-exclamation-triangle text-{{ $soloDaysStats['remaining_days'] > 0 ? 'warning' : 'danger' }}"></i>
+                                    <small class="text-{{ $soloDaysStats['remaining_days'] > 0 ? 'warning' : 'danger' }}">
+                                        {{ $soloDaysStats['remaining_days'] > 0 ? 'Low solo days remaining!' : 'Solo day limit reached!' }}
+                                    </small>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     <div class="mt-3">
                         <label class="form-label" for="user">Send request to</label>
                         <div class="mt-1">
