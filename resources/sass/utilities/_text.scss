@@ -46,8 +46,8 @@
 
 blockquote{
     padding-left: 0.625rem;
-    border-left: 3px solid grey;
+    border-left: 3px solid var(--color-gray-600);
     
-    color: $gray-900;
+    color: var(--color-gray-900);
     font-style: italic;
 }

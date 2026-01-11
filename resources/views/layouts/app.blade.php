@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-user-theme="{{ Auth::check() ? Auth::user()->setting_theme ?? 'system' : 'system' }}">
     <head>
         @include('layouts.header')
     </head>

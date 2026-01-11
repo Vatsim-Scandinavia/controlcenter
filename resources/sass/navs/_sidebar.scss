@@ -6,10 +6,10 @@
 
     padding: 0 1.0rem;
     position: relative;
-    background-color: $primary;
+    background-color: var(--bg-sidebar);
 
     &-button {
-        color: $primary;
+        color: var(--color-primary);
 
         border: 0;
         margin: 0 1rem;
@@ -27,9 +27,9 @@
         border: 0;
         margin: 0;
 
-        color: $primary;
-        background: $white;
-        border-radius: $border-radius;
+        color: var(--color-primary);
+        background: var(--color-white);
+        border-radius: 2px;
 
         display: none;
 
@@ -48,7 +48,7 @@
         text-transform: uppercase;
         letter-spacing: 0.05rem;
         z-index: 1;
-        color: $white;
+        color: #fff;
 
         &-icon {
             img, svg {
@@ -56,7 +56,7 @@
                 width: 2em;
             }
             svg {
-                fill: $primary;
+                fill: var(--color-primary);
             }
         }
         &-text {
@@ -64,6 +64,7 @@
             text-align: left;
             line-height: 1.125rem;
             display: inline;
+            color: #fff !important;
         }
 
         &-topbar{
@@ -76,13 +77,13 @@
         padding: 0;
         font-weight: 800;
         font-size: 0.65rem;
-        color: fade-out($white, 0.6);
+        color: rgba(255, 255, 255, 0.4);
         @extend .text-uppercase;
     }
 
     &-divider {
         height: 1px;
-        background: fade-out($white, 0.85);
+        background: rgba(255, 255, 255, 0.15);
         margin: 0 0 1rem;
     }
 
@@ -108,15 +109,15 @@
                     padding: 0.5rem 1rem;
                     margin: 0 0.5rem;
                     display: block;
-                    color: $gray-900;
+                    color: var(--color-gray-900);
                     text-decoration: none;
-                    border-radius: $border-radius;
+                    border-radius: 2px;
                     white-space: nowrap;
                     &:hover {
-                        background-color: $gray-200;
+                        background-color: var(--color-gray-200);
                     }
                     &:active {
-                        background-color: $gray-300;
+                        background-color: var(--color-gray-300);
                     }
                 }
             }
@@ -127,19 +128,19 @@
             text-align: left;
             padding: 0.75rem 0;
 
-            color: fade-out($white, 0.2);
+            color: rgba(255, 255, 255, 0.8);
  
             &:active,
             &:focus,
             &:hover {
-                color: $white;
+                color: #fff;
                 i {
-                    color: $white;
+                    color: #fff;
                 }
             }
 
             i {
-                color: fade-out($white, 0.7);
+                color: rgba(255, 255, 255, 0.3);
                 font-size: 0.85rem;
                 margin-right: 0.25rem;
             }
@@ -158,7 +159,7 @@
                     font-weight: 900;
                     content: "\f107";
                     font-family: "Font Awesome 7 Free";
-                    color: fade-out($white, 0.5);
+                    color: rgba(255, 255, 255, 0.5);
                 }
                 &.collapsed::after {
                     content: "\f105";
@@ -169,13 +170,18 @@
 
         &.active {
             .nav-link {
-                color: $white;
+                color: #fff;
                 font-weight: bold;
                 i {
-                    color: $white;
+                    color: #fff;
                 }
             }
         }
+    }
+
+    // Collapse inner items (dropdown menus in sidebar)
+    .collapse-inner {
+        background-color: var(--bg-card);
     }
 
     img.logo {

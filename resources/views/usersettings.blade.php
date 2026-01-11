@@ -17,6 +17,20 @@
                             @csrf
 
                             <p><b>To change email or password, log into <a href="https://my.vatsim.net/" target="_blank">myVATSIM</a>.</b></p>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="setting_theme">Theme Preference</label>
+                                <select class="form-control" id="setting_theme" name="setting_theme">
+                                    <option value="system" {{ $user->setting_theme == 'system' ? 'selected' : '' }}>System Default</option>
+                                    <option value="light" {{ $user->setting_theme == 'light' ? 'selected' : '' }}>Light</option>
+                                    <option value="dark" {{ $user->setting_theme == 'dark' ? 'selected' : '' }}>Dark</option>
+                                </select>
+                                <small class="form-text text-muted">Choose your preferred theme or let the system decide based on your device settings.</small>
+                            </div>
+
+                            <hr>
+
+                            <h5>Notifications</h5>
                         
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="check0" name="setting_notify_newreport" {{ $user->setting_notify_newreport ? "checked" : "" }}>
