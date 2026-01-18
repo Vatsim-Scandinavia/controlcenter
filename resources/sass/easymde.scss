@@ -1,3 +1,166 @@
 
 // Imports
 @import "easymde/dist/easymde.min.css";
+
+// EasyMDE Theme Overrides
+.EasyMDEContainer {
+    background-color: var(--bg-card);
+    
+    .CodeMirror {
+        background-color: var(--bg-card);
+        color: var(--color-text-primary);
+        border-color: var(--border-color);
+    }
+    
+    .CodeMirror-gutters {
+        background-color: var(--bg-card-header);
+        border-right-color: var(--border-color);
+    }
+    
+    .CodeMirror-linenumber {
+        color: var(--color-text-muted);
+    }
+    
+    .CodeMirror-cursor {
+        border-left-color: var(--color-text-primary);
+    }
+    
+    .CodeMirror-selected {
+        background-color: var(--color-gray-200);
+    }
+    
+    .cm-s-easymde {
+        .cm-header {
+            color: var(--color-primary);
+        }
+        
+        .cm-quote {
+            color: var(--color-success);
+        }
+        
+        .cm-link {
+            color: var(--color-info);
+        }
+        
+        .cm-url {
+            color: var(--color-info);
+        }
+        
+        .cm-string {
+            color: var(--color-text-primary);
+        }
+        
+        .cm-comment {
+            color: var(--color-text-muted);
+        }
+        
+        .cm-tag {
+            color: var(--color-danger);
+        }
+        
+        .cm-keyword {
+            color: var(--color-warning);
+        }
+    }
+}
+
+// EasyMDE Toolbar
+.editor-toolbar {
+    background-color: var(--bg-card-header);
+    border-color: var(--border-color);
+    
+    &.fullscreen {
+        background-color: var(--bg-card-header);
+    }
+    
+    a {
+        color: var(--color-text-primary) !important;
+        
+        &:hover,
+        &.active {
+            background-color: var(--color-gray-200);
+            border-color: var(--border-color);
+        }
+    }
+    
+    i.separator {
+        border-left-color: var(--border-color);
+        border-right-color: var(--border-color);
+    }
+    
+    &::before,
+    &::after {
+        background: linear-gradient(
+            to right,
+            var(--bg-card-header) 0%,
+            transparent 100%
+        );
+    }
+}
+
+// EasyMDE Status Bar
+.editor-statusbar {
+    color: var(--color-text-muted);
+    border-top-color: var(--border-color);
+}
+
+// EasyMDE Preview
+.editor-preview,
+.editor-preview-side {
+    background-color: var(--bg-card);
+    
+    pre {
+        background-color: var(--bg-card-header);
+        border-color: var(--border-color);
+        color: var(--color-text-primary);
+    }
+    
+    code {
+        background-color: var(--bg-card-header);
+        color: var(--color-danger);
+    }
+    
+    table {
+        border-color: var(--border-color);
+        
+        thead {
+            background-color: var(--bg-card-header);
+        }
+        
+        th,
+        td {
+            border-color: var(--border-color);
+            color: var(--color-text-primary);
+        }
+    }
+    
+    blockquote {
+        border-left-color: var(--color-gray-400);
+        color: var(--color-text-secondary);
+    }
+    
+    hr {
+        border-color: var(--border-color);
+    }
+}
+
+// Fullscreen mode
+.CodeMirror-fullscreen,
+.editor-toolbar.fullscreen,
+.editor-preview-side {
+    background-color: var(--bg-body);
+}
+
+.editor-preview-active-side {
+    border-left-color: var(--border-color);
+}
+
+// Selection and search
+.CodeMirror-matchingbracket {
+    color: var(--color-success) !important;
+}
+
+.CodeMirror-searching {
+    background-color: var(--color-warning);
+    color: #000;
+}

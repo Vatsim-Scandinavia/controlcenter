@@ -360,6 +360,7 @@ class UserController extends Controller
             'setting_notify_newexamreport' => '',
             'setting_notify_tasks' => '',
             'setting_workmail_address' => 'nullable|email|max:64|regex:/(.*)' . Setting::get('linkDomain') . '$/i',
+            'setting_theme' => 'required|in:light,dark,system',
         ]);
 
         isset($data['setting_notify_newreport']) ? $setting_notify_newreport = true : $setting_notify_newreport = false;
@@ -373,6 +374,7 @@ class UserController extends Controller
         $user->setting_notify_closedreq = $setting_notify_closedreq;
         $user->setting_notify_newexamreport = $setting_notify_newexamreport;
         $user->setting_notify_tasks = $setting_notify_tasks;
+        $user->setting_theme = $data['setting_theme'];
 
         if (! $user->setting_workmail_address && isset($data['setting_workmail_address'])) {
             $user->setting_workmail_address = $data['setting_workmail_address'];
