@@ -17,6 +17,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+const TEST_USER_TRAINING_AREA = 1;
+
 class BookingTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
@@ -66,7 +68,7 @@ class BookingTest extends TestCase
 
         $controller->atcActivity()->create([
             'user_id' => $controller->id,
-            'area_id' => 1,
+            'area_id' => TEST_USER_TRAINING_AREA,
             'hours' => 100,
             'atc_active' => true,
         ]);
@@ -127,7 +129,7 @@ class BookingTest extends TestCase
                 function ($user) {
                     Training::factory()
                         ->has(Rating::factory(['vatsim_rating' => VatsimRating::S2]))
-                        ->create(['user_id' => $user->id, 'type' => 1, 'status' => 2]);
+                        ->create(['user_id' => $user->id, 'type' => 1, 'status' => 2, 'area_id' => TEST_USER_TRAINING_AREA]);
                 },
             ],
             'S2 Rating' => [
@@ -139,7 +141,7 @@ class BookingTest extends TestCase
                 function ($user) {
                     Training::factory()
                         ->has(Rating::factory(['vatsim_rating' => VatsimRating::S3]))
-                        ->create(['user_id' => $user->id, 'type' => 1, 'status' => 2]);
+                        ->create(['user_id' => $user->id, 'type' => 1, 'status' => 2, 'area_id' => TEST_USER_TRAINING_AREA]);
                 },
             ],
             'S3 Rating' => [
@@ -151,7 +153,7 @@ class BookingTest extends TestCase
                 function ($user) {
                     Training::factory()
                         ->has(Rating::factory(['vatsim_rating' => VatsimRating::C1]))
-                        ->create(['user_id' => $user->id, 'type' => 1, 'status' => 2]);
+                        ->create(['user_id' => $user->id, 'type' => 1, 'status' => 2, 'area_id' => TEST_USER_TRAINING_AREA]);
                 },
             ],
             'C1 Rating' => [

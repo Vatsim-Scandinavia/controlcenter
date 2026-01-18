@@ -177,12 +177,12 @@ class TrainingsTest extends TestCase
     {
         $training = Training::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
+            'area_id' => 1,
         ]);
         $moderator = User::factory()->create();
         $moderator->groups()->attach(2, ['area_id' => $training->area->id]);
         $mentor = User::factory()->create();
 
-        // We hardcoded area id to 1 in the factory so anything other than 1 will work - let's pick 2 lol.
         $mentor->groups()->attach(3, ['area_id' => 2]);
 
         $this->actingAs($moderator)
