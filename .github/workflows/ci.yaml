@@ -53,29 +53,33 @@ jobs:
   test-app:
     name: Control Center Test Suite
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [8.3, 8.4, 8.5]
     steps:
-    - name: Checkout Control Center
-      uses: actions/checkout@v5
-      with:
-        path: controlcenter
+      - name: Checkout Control Center
+        uses: actions/checkout@v5
+        with:
+          path: controlcenter
 
-    - name: Setup dependencies for Control Center
-      uses: ./controlcenter/.github/actions/setup-dependencies
-      with:
-        path: controlcenter
-        setup-node: true
+      - name: Setup dependencies for Control Center
+        uses: ./controlcenter/.github/actions/setup-dependencies
+        with:
+          path: controlcenter
+          php-version: ${{ matrix.php-version }}
+          setup-node: true
 
-    - name: Setup Control Center
-      uses: ./controlcenter/.github/actions/setup-project
-      with:
-        path: controlcenter
-        setup-node: true
-        seed-database: true
-      env:
-        DB_CONNECTION: sqlite-testing
+      - name: Setup Control Center
+        uses: ./controlcenter/.github/actions/setup-project
+        with:
+          path: controlcenter
+          setup-node: true
+          seed-database: true
+        env:
+          DB_CONNECTION: sqlite-testing
 
-    - name: Execute unit and feature tests via PHPUnit
-      run: ./vendor/bin/phpunit --color=always --testdox
-      working-directory: ./controlcenter
-      env:
-        DB_CONNECTION: sqlite-testing
+      - name: Execute unit and feature tests via PHPUnit
+        run: ./vendor/bin/phpunit --color=always --testdox
+        working-directory: ./controlcenter
+        env:
+          DB_CONNECTION: sqlite-testing
