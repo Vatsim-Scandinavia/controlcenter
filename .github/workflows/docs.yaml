@@ -25,7 +25,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: pdm-project/setup-pdm@v4
         with:
@@ -56,12 +56,12 @@ jobs:
       DOCS_DEVELOPMENT_ALIAS: dev
     steps:
       - name: checkout docs-site
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.DOCS_BRANCH }}
 
       - name: checkout current branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: pdm-project/setup-pdm@v4
         with:
