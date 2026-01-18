@@ -13,7 +13,9 @@ use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
+use Faker;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Lottery;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +24,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker\Factory::create();
+
         // Create the default dev accounts corresponding to VATSIM Connect
         for ($i = 1; $i <= 11; $i++) {
             $name_first = 'Web';
@@ -122,7 +126,7 @@ class DatabaseSeeder extends Seeder
             $training->ratings()->attach(Rating::where('vatsim_rating', '>', 1)->inRandomOrder()->first());
 
             // Give all non-queued trainings a mentor
-            if ($training->status > TrainingStatus::IN_QUEUE->value) {
+            if ($training->status != TrainingStatus::IN_QUEUE->value) {
                 $training->mentors()->attach(
                     User::whereHas('groups', function ($query) {
                         $query->where('id', 3);
@@ -136,7 +140,8 @@ class DatabaseSeeder extends Seeder
             }
 
             // Give all exam awaiting trainings a solo endorsement
-            if ($training->status == TrainingStatus::AWAITING_EXAM->value) {
+            if ($training->status == TrainingStatus::AWAITING_EXAM->value
+                || $training->status == TrainingStatus::COMPLETED->value) {
                 if (! Endorsement::where('user_id', $training->user_id)->exists()) {
                     $soloEndorsement = Endorsement::factory()->create([
                         'user_id' => $training->user_id,
@@ -149,12 +154,18 @@ class DatabaseSeeder extends Seeder
                 }
 
                 // And some a exam result
-                if ($i % 7 == 0) {
-                    TrainingExamination::factory()->create([
+                Lottery::odds(3, 1)
+                    ->winner(fn () => TrainingExamination::factory()->create([
                         'training_id' => $training->id,
-                        'examiner_id' => User::where('id', '!=', $training->user_id)->inRandomOrder()->first(),
-                    ]);
-                }
+                        'examiner_id' => User::where('id', '!=', $training->user_id)
+                            ->inRandomOrder()->first(),
+                        'created_at' => $faker->dateTimeBetween(
+                            $startDate = $training->started_at,
+                            $endDate = 'now'),
+                        'position_id' => Position::inRandomOrder()->first()->id,
+                    ])
+                    )
+                    ->choose();
             }
         }
     }
