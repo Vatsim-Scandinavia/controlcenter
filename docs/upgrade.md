@@ -16,6 +16,37 @@ php artisan migrate
 php artisan optimize:clear
 ```
 
+## Upgrading to 7.0.0
+
+This release contains breaking changes to the theme system.
+
+### Theme System Migration
+
+The theme system has been completely redesigned to support light/dark themes and user preferences.
+
+#### Breaking Changes
+
+1. **Environment Variables Removed**: All `VITE_THEME_*` color variables have been removed from `.env` file
+2. **Theme Files**: Themes are now defined in separate SCSS files under `resources/sass/themes/`
+3. **User Preference**: Theme selection is now a per-user setting stored in the database
+
+#### Migration Steps
+
+1. **Remove old environment variables** from your `.env` file:
+   - Remove any `VITE_THEME_*` color variables (these are no longer used)
+
+3. **Edit** theme files directly in `resources/sass/themes/*.scss`
+
+4. **Rebuild** frontend assets: `npm run build`
+
+5. **Run** migration: `php artisan migrate`
+
+6. **Clear** browser cache and test
+
+7. **Run the database migration**:
+   php artisan migrate
+   
+
 ## Upgrading to 6.0.0
 
 This release contains breaking changes and requires you to backup your data before upgrading.

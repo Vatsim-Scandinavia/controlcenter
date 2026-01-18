@@ -7,7 +7,6 @@ Control Center supports multiple visual themes to suit your preferences and envi
 ### Step 1: Go to Settings
 1. Click your name in the top-right corner
 2. Select **Settings** from the dropdown menu
-3. Or navigate directly to `/settings`
 
 ### Step 2: Choose Your Theme
 Find the "Theme Preference" dropdown and select:

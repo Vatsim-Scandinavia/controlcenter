@@ -33,13 +33,10 @@ Automatically switches between light and dark based on:
 - No page reload required when system theme changes
 
 ## Customizing Theme Colors
-
-!!! info "Changed in v3.x"
-    Theme customization now works differently. The old `VITE_THEME_*` environment variables are no longer used.
-
 To customize the colors for your division, edit the theme files directly:
 
 ### Light Theme Colors
+
 Edit: `resources/sass/themes/_light.scss`
 
 ```scss
@@ -55,6 +52,7 @@ Edit: `resources/sass/themes/_light.scss`
 ```
 
 ### Dark Theme Colors
+
 Edit: `resources/sass/themes/_dark.scss`
 
 ```scss
@@ -78,37 +76,6 @@ For Docker deployments:
 docker exec -it control-center npm run build
 ```
 
-!!! tip "Creating Custom Themes"
-    Want to create additional themes (e.g., "high contrast", "sepia")? 
-    See the developer documentation in `THEME_CREATING_NEW_THEMES.md` for detailed instructions.
-
-## Theme Features
-
-### Instant Switching
-- Themes switch instantly without page reload
-- No flash of unstyled content
-- Smooth transition between themes
-
-### Persistent Across Sessions
-- Theme choice saved to database
-- Remembered across devices (for logged-in users)
-- LocalStorage backup for immediate loading
-
-### System Integration
-- Detects operating system theme preference
-- Automatically switches when OS theme changes
-- CSS media query based (`prefers-color-scheme`)
-
-### Comprehensive Coverage
-All UI components are themed:
-- Navigation and sidebar
-- Forms and inputs
-- Tables and data displays
-- Modals and dialogs
-- Alerts and notifications
-- Buttons and badges
-- Code editors (EasyMDE)
-
 ## Technical Details
 
 ### For Developers
@@ -118,41 +85,10 @@ The theme system uses CSS variables for dynamic switching:
 - **Theme definitions**: `resources/sass/themes/*.scss`
 - **Bootstrap overrides**: `resources/sass/_theme-overrides.scss`
 - **JavaScript**: `resources/js/theme.js`
-- **Controller**: `app/Http/Controllers/UserController.php`
 
 See the root-level `THEME_*.md` files for comprehensive developer documentation.
 
-### Browser Support
-
-Modern browsers with CSS Custom Properties support:
-- Chrome/Edge 88+
-- Firefox 85+
-- Safari 14+
-- Opera 74+
-
 Older browsers (like IE11) will fall back to the default light theme without switching capability.
-
-## Migration from Old Theme System
-
-If you were using the old `VITE_THEME_*` environment variables:
-
-1. **Remove** old environment variables from `.env`:
-   - `VITE_THEME_PRIMARY`
-   - `VITE_THEME_SECONDARY`
-   - `VITE_THEME_TERTIARY`
-   - `VITE_THEME_INFO`
-   - `VITE_THEME_SUCCESS`
-   - `VITE_THEME_WARNING`
-   - `VITE_THEME_DANGER`
-   - `VITE_THEME_BORDER_RADIUS`
-
-2. **Edit** theme files directly (see "Customizing Theme Colors" above)
-
-3. **Rebuild** frontend assets: `npm run build`
-
-4. **Run** migration: `php artisan migrate`
-
-5. **Clear** browser cache and test
 
 ## Troubleshooting
 
@@ -166,13 +102,7 @@ If you were using the old `VITE_THEME_*` environment variables:
 - Rebuild assets after changes
 - Check CSS variables in browser DevTools
 
-### Flash of wrong theme on load
-- This should not happen; inline script prevents it
-- Check `resources/views/layouts/header.blade.php` has the theme script
-- Clear browser localStorage
-
 ## Further Reading
 
-- [Creating Custom Themes](../../THEME_CREATING_NEW_THEMES.md) - Developer guide
-- [Theme Architecture](../../THEME_ARCHITECTURE_CLEAN.md) - Technical details
+
 - [Custom Container](./custom.md) - Persistent customizations
