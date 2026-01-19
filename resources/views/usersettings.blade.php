@@ -8,7 +8,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-primary">Settings</h6> 
+                <h6 class="m-0 fw-bold text-tertiary">Settings</h6>
             </div>
             <div class="card-body">
                 <div class="row">
