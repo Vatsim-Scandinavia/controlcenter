@@ -20,9 +20,6 @@
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
-// Apply CSS variables to override Bootstrap
-@import "theme-overrides";
-
 // Import app scss
 @import "global.scss";
 @import "utilities.scss";
@@ -32,3 +29,5 @@
 @import "navs.scss";
 @import "buttons.scss";
 
+// Apply CSS variables to override Bootstrap
+@import "theme-overrides";
