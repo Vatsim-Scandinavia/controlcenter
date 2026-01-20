@@ -7,7 +7,27 @@
 
 <title>@yield('title', 'Home') | {{ config('app.name') }}</title>
 
-@vite(['resources/sass/app.scss'])
+{{-- Inline theme script to prevent flash of wrong theme --}}
+{{-- Only applies explicit (non-system) preferences synchronously. All other logic in theme.js --}}
+<script>
+(function() {
+    var storedPreference = localStorage.getItem('user_theme_preference') || 
+                          document.documentElement.getAttribute('data-user-theme') || 
+                          'system';
+    
+    // Only apply non-system preferences to avoid FOUC
+    // System preference detection is handled by theme.js after load
+    if (storedPreference === 'light' || storedPreference === 'dark') {
+        document.documentElement.setAttribute('data-theme', storedPreference);
+    } else {
+        // For 'system', detect but let theme.js handle the watching
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    }
+})();
+</script>
+
+@vite(['resources/js/theme.js', 'resources/sass/app.scss'])
 
 {{-- Custom fonts --}} 
 <link href="https://fonts.googleapis.com/css?family=Roboto:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
