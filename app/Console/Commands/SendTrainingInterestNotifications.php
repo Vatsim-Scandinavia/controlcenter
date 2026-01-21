@@ -74,6 +74,9 @@ class SendTrainingInterestNotifications extends Command
 
                     $oldStatus = $training->status;
 
+                    // Detach mentors before closing the training
+                    $training->mentors()->detach();
+
                     // Update the training
                     // Note: The training interest is set to expire through updateStatus()
                     $training->updateStatus(-4, true);
