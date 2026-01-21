@@ -1005,6 +1005,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-themes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Themes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1388,6 +1411,63 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrading-to-700" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading to 7.0.0
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrading to 7.0.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theme-system-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Theme System Migration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Theme System Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Breaking Changes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-custom-theme-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      For Custom Theme Users
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrading-to-600" class="md-nav__link">
     <span class="md-ellipsis">
       Upgrading to 6.0.0
@@ -1599,6 +1679,63 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrading-to-700" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrading to 7.0.0
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrading to 7.0.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theme-system-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Theme System Migration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Theme System Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Breaking Changes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-custom-theme-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      For Custom Theme Users
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrading-to-600" class="md-nav__link">
     <span class="md-ellipsis">
       Upgrading to 6.0.0
@@ -1656,6 +1793,53 @@ Remember to <a href="../setup/theme/">run the theme build</a> again if you have 
 <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
 php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
 </code></pre></div>
+<h2 id="upgrading-to-700">Upgrading to 7.0.0<a class="headerlink" href="#upgrading-to-700" title="Permanent link">&para;</a></h2>
+<p>This release contains breaking changes to the theme system.</p>
+<h3 id="theme-system-migration">Theme System Migration<a class="headerlink" href="#theme-system-migration" title="Permanent link">&para;</a></h3>
+<p>The theme system has been completely redesigned to support light/dark themes and user preferences.</p>
+<h4 id="breaking-changes">Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Environment Variables Removed</strong>: All <code>VITE_THEME_*</code> color variables have been removed from <code>.env</code> file</li>
+<li><strong>Theme Files</strong>: Themes are now defined in separate SCSS files under <code>resources/sass/themes/</code></li>
+<li><strong>User Preference</strong>: Theme selection is now a per-user setting stored in the database</li>
+</ol>
+<h4 id="migration-steps">Migration Steps<a class="headerlink" href="#migration-steps" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Remove old environment variables</strong> from your <code>.env</code> file:</li>
+<li>
+<p>Remove any <code>VITE_THEME_*</code> color variables (these are no longer used)</p>
+</li>
+<li>
+<p><strong>Run the database migration</strong>:
+   <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
+</code></pre></div>
+   This adds the <code>setting_theme</code> column to the <code>users</code> table.</p>
+</li>
+<li>
+<p><strong>Rebuild frontend assets</strong>:
+   <div class="language-sh highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Clear caches</strong>:
+   <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Clear browser cache</strong> and test the new theme system</p>
+</li>
+</ol>
+<h4 id="for-custom-theme-users">For Custom Theme Users<a class="headerlink" href="#for-custom-theme-users" title="Permanent link">&para;</a></h4>
+<p>If you had customized colors in your <code>.env</code> file:</p>
+<ol>
+<li>Create a custom theme file in <code>resources/sass/themes/_custom.scss</code></li>
+<li>Copy the structure from <code>_light.scss</code> or <code>_dark.scss</code></li>
+<li>Update your color variables to match your previous customizations</li>
+<li>Import your theme in <code>resources/sass/app.scss</code></li>
+<li>See <a href="../user-themes/">User Theme Guide</a> and <a href="../setup/theme/">Theme Setup</a> for detailed instructions</li>
+</ol>
+<p>For detailed information on using themes as an end-user, see the <a href="../user-themes/">User Theme Guide</a>.<br />
+For customizing themes as an operator, see <a href="../setup/theme/">Theme Setup</a></p>
 <h2 id="upgrading-to-600">Upgrading to 6.0.0<a class="headerlink" href="#upgrading-to-600" title="Permanent link">&para;</a></h2>
 <p>This release contains breaking changes and requires you to backup your data before upgrading.</p>
 <ul>
@@ -1710,7 +1894,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 19, 2026 11:49:52 UTC">January 19, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 21, 2026 13:17:54 UTC">January 21, 2026</span>
   </span>
 
     
@@ -1720,7 +1904,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 19, 2026 11:49:52 UTC">January 19, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 21, 2026 13:17:54 UTC">January 21, 2026</span>
   </span>
 
     
@@ -1738,6 +1922,16 @@ They'll be better off on the specific page in question.
     
     <nav>
       
+        <a href="https://github.com/bjerrecs" class="md-author" title="@bjerrecs">
+          
+          <img src="https://avatars.githubusercontent.com/u/32055984?v=4&size=72" alt="bjerrecs">
+        </a>
+      
+        <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
+          
+          <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
+        </a>
+      
         <a href="https://github.com/blt950" class="md-author" title="@blt950">
           
           <img src="https://avatars.githubusercontent.com/u/2505044?v=4&size=72" alt="blt950">
@@ -1746,11 +1940,6 @@ They'll be better off on the specific page in question.
         <a href="https://github.com/thor" class="md-author" title="@thor">
           
           <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
-        </a>
-      
-        <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
-          
-          <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
         </a>
       
       
