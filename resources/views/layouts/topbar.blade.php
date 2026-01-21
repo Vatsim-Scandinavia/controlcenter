@@ -11,7 +11,7 @@
             </svg>
         </div>
 
-        <div class="sidebar-brand-text mx-3 text-primary">{{ config('app.name') }}</div>
+        <div class="sidebar-brand-text mx-3" style="color: var(--color-body);">{{ config('app.name') }}</div>
     </a>
 
     {{-- Topbar Desktop Search --}}

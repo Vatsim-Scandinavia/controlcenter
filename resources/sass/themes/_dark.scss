@@ -9,7 +9,7 @@
     
     // Status Colors (slightly brighter for visibility)
     --color-info: #1a475f;
-    --color-success: #5dbd9a;
+    --color-success: #40896e;
     --color-warning: #ffb347;
     --color-danger: #e57373;
     
@@ -50,11 +50,11 @@
     --color-text-dark: #f5f5f5;
     
     // Background Colors
-    --bg-body: #1e1e1e;
+    --bg-body: #1b2128;
     --bg-card: #2a2a2a;
     --bg-card-header: #333333;
     --bg-sidebar: #0f1419;
-    --bg-topbar: #2a2a2a;
+    --bg-topbar: #101419;
     --bg-light: #333333;
     --bg-dark: #0a0a0a;
     
@@ -72,5 +72,21 @@
     // Link Colors
     --link-color: #4a9cc5;
     --link-hover-color: #6bb6d9;
+
+    .btn-link {
+        --bs-btn-color: #4a9cc5;
+        &:hover { 
+            --bs-btn-hover-color: #6bb6d9;
+        }
+    }
+
+    .bg-lightorange {
+        background-color: #5a4320;
+    }
+    
+    .btn-light {
+        --bs-btn-bg: #1c2128;
+        --bs-btn-color: #fff;
+    }
 }
 
