@@ -111,6 +111,7 @@ nav:
           - Training: concepts/training.md
           - Bookings: concepts/booking.md
           - Buddies: concepts/buddies.md
+          - Themes: user-themes.md
       - Mentors:
           - Tasks: concepts/tasks.md
       - Division:

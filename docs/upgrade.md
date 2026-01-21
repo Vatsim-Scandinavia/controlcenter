@@ -35,16 +35,36 @@ The theme system has been completely redesigned to support light/dark themes and
 1. **Remove old environment variables** from your `.env` file:
    - Remove any `VITE_THEME_*` color variables (these are no longer used)
 
-3. **Edit** theme files directly in `resources/sass/themes/*.scss`
-
-4. **Rebuild** frontend assets: `npm run build`
-
-5. **Run** migration: `php artisan migrate`
-
-6. **Clear** browser cache and test
-
-7. **Run the database migration**:
+2. **Run the database migration**:
+   ```sh
    php artisan migrate
+   ```
+   This adds the `setting_theme` column to the `users` table.
+
+3. **Rebuild frontend assets**:
+   ```sh
+   npm run build
+   ```
+
+4. **Clear caches**:
+   ```sh
+   php artisan optimize:clear
+   ```
+
+5. **Clear browser cache** and test the new theme system
+
+#### For Custom Theme Users
+
+If you had customized colors in your `.env` file:
+
+1. Create a custom theme file in `resources/sass/themes/_custom.scss`
+2. Copy the structure from `_light.scss` or `_dark.scss`
+3. Update your color variables to match your previous customizations
+4. Import your theme in `resources/sass/app.scss`
+5. See [User Theme Guide](user-themes.md) and [Theme Setup](setup/theme.md) for detailed instructions
+
+For detailed information on using themes as an end-user, see the [User Theme Guide](user-themes.md).  
+For customizing themes as an operator, see [Theme Setup](setup/theme.md)
    
 
 ## Upgrading to 6.0.0
