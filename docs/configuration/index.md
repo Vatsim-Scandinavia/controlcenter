@@ -44,7 +44,7 @@ Settings related to configuring the database connection.
 | `DB_PASSWORD` | root | Database password |
 | `DB_TABLE_PREFIX` | null | Database table prefix |
 
-### Authentication (VATSIM/Handover)
+### Authentication
 
 !!! important
     The authentication settings must be valid to get access to Control Center.
@@ -96,7 +96,7 @@ Settings related to reverse proxies in front of Control Center.
 | ------- | --- | --- |
 | `TRUSTED_PROXIES` | null | Comma-separated list of trusted proxy addresses or `*` for all |
 
-## Configuring authentication with OAuth { data-toc-label="Configure authentication" }
+## Configuring authentication with OAuth { #authentication data-toc-label="Configure authentication" }
 
 Control Center supports both VATSIM Connect, [Handover](https://github.com/Vatsim-Scandinavia/handover) and other OAuth providers to authenticate and fetch user data. If you're looking for a centrailised login system check out our [Handover](https://github.com/Vatsim-Scandinavia/handover) service, or use VATSIM Connect.
 

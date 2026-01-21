@@ -109,11 +109,11 @@ Every part of the application respects your theme:
 ## Screenshots
 
 ### Light Theme
-![Light Theme](../_assets/theme-light.png)
+![Light Theme](_assets/theme_light.png)
 *Clean and professional appearance for daytime use*
 
 ### Dark Theme
-![Dark Theme](../_assets/theme-dark.png)
+![Dark Theme](_assets/theme_dark.png)
 *Easy on the eyes for evening sessions*
 
 ## Tips & Tricks
