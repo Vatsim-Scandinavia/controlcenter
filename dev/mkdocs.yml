@@ -119,6 +119,7 @@ nav:
           - Mentoring: concepts/mentors.md
           - Ratings: concepts/ratings.md
   - Reference:
+      - Activity: activity.md
       - Contribute: contribute.md
       - API: api.md
       - Background jobs: background-jobs.md

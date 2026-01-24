@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#synchronization-logic" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -283,7 +288,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../contribute/" class="md-tabs__link">
+        <a href="../../activity/" class="md-tabs__link">
           
   
   
@@ -1265,6 +1270,31 @@
   
   
     <li class="md-nav__item">
+      <a href="../../activity/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h2.79l4.31-8.21 1.18 8.96 3.22-4.09L17.83 13H21v2h-4l-2.33-2.33-4.75 6.06-.98-7.42L7 15H3z"/></svg>
+  
+  <span class="md-ellipsis">
+    Activity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../contribute/" class="md-nav__link">
         
   
@@ -1450,6 +1480,19 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    VATEUD Core
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1461,6 +1504,58 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#synchronization-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Synchronization Logic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Synchronization Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#roster-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roster Sync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#endorsement-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endorsement Sync
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1540,6 +1635,47 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#synchronization-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Synchronization Logic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Synchronization Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#roster-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roster Sync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#endorsement-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endorsement Sync
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1576,12 +1712,44 @@
 <li>Theory test requests (via Tasks)</li>
 </ul>
 <div class="admonition info">
-<p class="admonition-title">Info</p>
+<p class="admonition-title">The Source of Truth</p>
 <p>Control Center works as the source of truth, so it's important that existing data in VATEUD Core is in sync prior to enabling this integration. Sync all your members, endorsements and such within the VATEUD Core portal manually. </p>
 </div>
 <div class="admonition tip">
-<p class="admonition-title">Activate in settings</p>
-<p>Remember turning on the Division API setting in Administration &gt; Settings</p>
+<p class="admonition-title">Activate in Settings</p>
+<p>Remember to enable the <em>Division API</em> setting in <em><em>Administration</em> &gt; *Settings</em></p>
+</div>
+<h2 id="synchronization-logic">Synchronization Logic<a class="headerlink" href="#synchronization-logic" title="Permanent link">&para;</a></h2>
+<p>The integration performs automatic synchronization to ensure the VATEUD roster matches your local Control Center database. It is important to understand when and why data is added or removed.</p>
+<h3 id="roster-sync">Roster Sync<a class="headerlink" href="#roster-sync" title="Permanent link">&para;</a></h3>
+<p>This job ensures the list of controllers on the VATEUD roster matches your <strong>Active</strong> members.</p>
+<ul>
+<li><strong>Adds</strong>:<ul>
+<li><strong>Active Home Members</strong>: Users with <code>atc_active = true</code>.</li>
+<li><strong>Visiting Members</strong>: Users with a valid, non-expired <code>VISITING</code> endorsement.</li>
+</ul>
+</li>
+<li><strong>Removes</strong>:<ul>
+<li><strong>Inactive Members</strong>: Home members who have failed to meet activity requirements (<code>atc_active = false</code>).</li>
+<li><strong>Expired Visitors</strong>: Visiting members whose endorsement has expired or been revoked.</li>
+<li><strong>Transfers</strong>: Members who have left the subdivision.</li>
+</ul>
+</li>
+</ul>
+<h3 id="endorsement-sync">Endorsement Sync<a class="headerlink" href="#endorsement-sync" title="Permanent link">&para;</a></h3>
+<p>This job manages <em>Tier 1</em> (T1) and <em>Tier 2</em> (T2) facility endorsements.</p>
+<ul>
+<li><strong>Syncs</strong>: Only checks endorsements for users who are currently <strong>Active</strong> or valid <strong>Visitors</strong>.</li>
+<li><strong>Removes</strong>: Endorsements are removed from the VATEUD API if:<ul>
+<li>The user becomes <strong>Inactive</strong> (even if they still hold the endorsement locally).</li>
+<li>The endorsement is <strong>revoked</strong> or <strong>expired</strong> in Control Center.</li>
+<li>The user loses their <strong>Visiting</strong> status.</li>
+</ul>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Activity is Key</p>
+<p>If a controller goes inactive locally (due to lack of hours), they will be <strong>removed</strong> from the VATEUD roster and their endorsements will be stripped from the API during the next sync. Ensure your members maintain their <a href="../../activity/"><abbr title="Air Traffic Controller">ATC</abbr> Activity</a> or have a valid Grace Period.</p>
 </div>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
@@ -1615,7 +1783,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 24, 2026 01:01:40 UTC">January 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 24, 2026 02:59:16 UTC">January 24, 2026</span>
   </span>
 
     
@@ -1625,7 +1793,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 24, 2026 01:01:40 UTC">January 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 24, 2026 02:59:16 UTC">January 24, 2026</span>
   </span>
 
     
@@ -1643,14 +1811,19 @@ They'll be better off on the specific page in question.
     
     <nav>
       
-        <a href="https://github.com/blt950" class="md-author" title="@blt950">
+        <a href="https://github.com/thor" class="md-author" title="@thor">
           
-          <img src="https://avatars.githubusercontent.com/u/2505044?v=4&size=72" alt="blt950">
+          <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
         </a>
       
         <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
           
           <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
+        </a>
+      
+        <a href="https://github.com/blt950" class="md-author" title="@blt950">
+          
+          <img src="https://avatars.githubusercontent.com/u/2505044?v=4&size=72" alt="blt950">
         </a>
       
       
