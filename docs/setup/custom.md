@@ -21,14 +21,14 @@ FROM ghcr.io/vatsim-scandinavia/control-center:latest
 
 ### Custom Theme
 
-You can customise the theme by [setting environment variables and running `/container/theme/build.sh`](./theme.md):
+You can customise the theme by [copying your modified theme files and running `/container/theme/build.sh`](./theme.md):
 
 ```Dockerfile title="Custom theme in Control Center"
 FROM ghcr.io/vatsim-scandinavia/control-center:latest
 
-# Add any relevant theming environment variables here
-ENV VITE_THEME_PRIMARY="#222222"
-# ...
+# Copy your custom theme files
+COPY _light.scss /app/resources/sass/themes/_light.scss
+COPY _dark.scss /app/resources/sass/themes/_dark.scss
 
 # Make the theme build script executable and run it
 RUN chmod +x container/theme/build.sh && container/theme/build.sh
