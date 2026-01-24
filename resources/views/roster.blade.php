@@ -29,7 +29,7 @@
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="lastOnline" data-sortable="false" data-filter-strict-search="false">Online</th>
-                                <th data-field="hoursLast12Months" data-sortable="true" data-filter-strict-search="false">Last 12 months</th>
+                                <th data-field="hoursInPeriod" data-sortable="true" data-filter-strict-search="false">Last {{ $qualificationPeriod }} months</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
                                 <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 @foreach($ratings as $r)
@@ -48,7 +48,7 @@
                                         @endcan
                                     </td>
                                     <td>{{ $u->last_online ? \Carbon\Carbon::parse($u->last_online)->diffForHumans() : 'N/A' }}</td>
-                                    <td>{{ round($u->last_12_months) }} h</td>
+                                    <td>{{ round($u->hours_in_period) }} h</td>
                                     <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
                                     <td class="text-center text-white {{ $u->isAtcActive() || $u->isVisiting() ? 'bg-success' : 'bg-danger' }}">
                                         @if($u->isAtcActive())

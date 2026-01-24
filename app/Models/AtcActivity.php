@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AtcActivity extends Model
 {
-    protected $fillable = ['user_id', 'area_id', 'hours', 'start_of_grace_period', 'atc_active', 'last_online', 'last_12_months'];
+    protected $fillable = ['user_id', 'area_id', 'hours', 'start_of_grace_period', 'atc_active', 'last_online', 'hours_in_period'];
 
     protected $casts = [
         'created_at' => 'datetime',

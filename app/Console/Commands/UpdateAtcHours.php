@@ -86,7 +86,7 @@ class UpdateAtcHours extends Command
         $this->info('Updating member ATC hours...');
 
         foreach ($members as $member) {
-            $client = new \GuzzleHttp\Client();
+            $client = app(\GuzzleHttp\Client::class);
             if (App::environment('production')) {
                 $url = $this->getQueryString($member->id);
             } else {
@@ -132,29 +132,30 @@ class UpdateAtcHours extends Command
     {
         $this->info('Updating ATC hours for member: ' . $member->id);
 
-        $periodStart = Carbon::now()->subMonths(12);
+        $periodStart = Carbon::now()->subMonths($this->qualificationPeriod);
 
         foreach (Area::all() as $area) {
-            $sessionsLast12Months = $sessions
-                ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]))
+            $sessionsInArea = $sessions
+                ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]));
+
+            $sessionsInPeriod = $sessionsInArea
                 ->filter(fn ($session) => Carbon::parse($session->start) >= $periodStart);
 
-            $hoursLast12Months = $sessions
+            $hoursInPeriod = $sessionsInPeriod
                 ->map(function ($session) {
                     return floatval($session->minutes_on_callsign);
                 })
                 ->sum()
                 / 60;
 
-            $hoursActiveInArea = $sessions
-                ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]))
+            $hoursActiveInArea = $sessionsInArea
                 ->map(function ($session) {
                     return floatval($session->minutes_on_callsign);
                 })
                 ->sum()
                 / 60;
 
-            $lastConnection = $sessionsLast12Months
+            $lastConnection = $sessionsInPeriod
                 ->sortByDesc(fn ($session) => Carbon::parse($session->start))
                 ->first()?->start ?? null;
 
@@ -167,7 +168,7 @@ class UpdateAtcHours extends Command
                 $activity = AtcActivity::where('user_id', $member->id)->where('area_id', $area->id)->firstOrFail();
                 $activity->hours = $hoursActiveInArea;
                 $activity->last_online = $lastConnection;
-                $activity->last_12_months = $hoursLast12Months;
+                $activity->hours_in_period = $hoursInPeriod;
                 $activity->save();
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 if ($hoursActiveInArea > 0) {
