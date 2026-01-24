@@ -87,6 +87,9 @@ class UpdateMemberDetails extends Command
                 continue;
             }
 
+            // Detach mentors before closing the training
+            $training->mentors()->detach();
+
             // Close the training
             $training->updateStatus(-4);
             $training->closed_reason = 'The student has left or is no longer part of our division.';
