@@ -13,7 +13,7 @@ We provide a integration for the VATSIM Europe Division (VATEUD). This calls the
     Control Center works as the source of truth, so it's important that existing data in VATEUD Core is in sync prior to enabling this integration. Sync all your members, endorsements and such within the VATEUD Core portal manually. 
 
 !!! tip "Activate in Settings"
-    Remember to enable the *Division API* setting in **Administration* > *Settings*
+    Remember to enable the *Division API* feature in *Administration* > *Settings*.
 
 ## Synchronization Logic
 
