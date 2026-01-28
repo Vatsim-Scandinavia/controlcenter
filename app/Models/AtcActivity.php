@@ -14,6 +14,8 @@ class AtcActivity extends Model
         'atc_active' => 'boolean',
         'last_online' => 'datetime',
         'start_of_grace_period' => 'datetime',
+        'hours' => 'double',
+        'hours_in_period' => 'double',
     ];
 
     public function user()
