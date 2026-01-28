@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use App\Exceptions\PolicyMissingException;
+use App\Models\Area;
+use App\Models\AtcActivity;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -81,5 +83,27 @@ class UserUnitTest extends TestCase
         $this->expectException(PolicyMissingException::class);
 
         $this->user->viewableModels('\App\Test');
+    }
+
+    #[Test]
+    public function all_active_in_area_returns_users_with_activity_data()
+    {
+        $area = Area::factory()->create();
+        $activity = AtcActivity::create([
+            'user_id' => $this->user->id,
+            'area_id' => $area->id,
+            'hours' => 10,
+            'hours_in_period' => 5.5,
+            'last_online' => now(),
+            'atc_active' => true,
+        ]);
+
+        $users = User::allActiveInArea($area);
+
+        $this->assertTrue($users->contains($this->user));
+
+        $retrievedUser = $users->find($this->user->id);
+        $this->assertEquals(5.5, $retrievedUser->hours_in_period);
+        $this->assertNotNull($retrievedUser->last_online);
     }
 }

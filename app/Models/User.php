@@ -78,22 +78,25 @@ class User extends Authenticatable
      */
     public static function allActiveInArea(Area $area)
     {
+        $query = User::join('atc_activities', 'users.id', '=', 'atc_activities.user_id')
+            ->where('atc_activities.area_id', $area->id)
+            ->where('atc_activities.atc_active', true)
+            ->select('users.*', 'atc_activities.last_online', 'atc_activities.hours_in_period', 'atc_activities.hours', 'atc_activities.start_of_grace_period')
+            ->with(['endorsements']);
+
         if (Setting::get('atcActivityBasedOnTotalHours')) {
-            return User::whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
-                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
-                        ->orWhere('hours', '>=', 0);
-                });
-            })->with(['endorsements', 'atcActivity'])->get();
+            $query->where(function ($query) {
+                $query->where('atc_activities.start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                    ->orWhere('atc_activities.hours', '>=', 0);
+            });
         } else {
-            return User::whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
-                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
-                        ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
-                });
-            })->with(['endorsements', 'atcActivity'])->get();
+            $query->where(function ($query) {
+                $query->where('atc_activities.start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
+                    ->orWhere('atc_activities.hours', '>=', Setting::get('atcActivityRequirement', 10));
+            });
         }
 
+        return $query->get();
     }
 
     public function endorsements()
