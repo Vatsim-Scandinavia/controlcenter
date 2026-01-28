@@ -363,6 +363,14 @@
                                 <span class="text-danger">{{ $errors->first('feedbackForwardEmail') }}</span>
                             @enderror
 
+                            <div class="form-check mb-4">
+                                <input class="form-check-input @error('feedbackLimitToAreas') is-invalid @enderror" type="checkbox" id="checkFeedbackLimitToAreas" name="feedbackLimitToAreas" {{ Setting::get('feedbackLimitToAreas') ? "checked" : "" }}>
+                                <label class="form-check-label" for="checkFeedbackLimitToAreas">
+                                    Limit feedback visibility to moderators' assigned areas
+                                </label>
+                                <small class="form-text d-block">When enabled, moderators can only view feedback related to their assigned areas. <br />Administrators always see all feedback regardless of this setting.</small>
+                            </div>
+
                         </div>
                     </div>
                 </div>
