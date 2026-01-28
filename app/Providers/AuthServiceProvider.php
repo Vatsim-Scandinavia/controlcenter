@@ -14,6 +14,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'anlutro\LaravelSettings\Facade' => 'App\Policies\SettingPolicy',
         'Illuminate\Notifications\Notification' => 'App\Policies\NotificationPolicy',
+        \App\Models\TrainingReportTemplate::class => \App\Policies\TrainingReportTemplatePolicy::class,
     ];
 
     /**
