@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
 use App\Models\Rating;
 use App\Models\User;
@@ -17,6 +18,7 @@ class RosterController extends Controller
 
         $area = Area::find($areaId);
         $users = User::allActiveInArea($area);
+        $qualificationPeriod = Setting::get('atcActivityQualificationPeriod', 12);
 
         $visitingUsers = User::whereHas('endorsements', function ($query) use ($areaId) {
             $query->where('type', 'VISITING')->where('revoked', false)->whereHas('areas', function ($query) use ($areaId) {
@@ -31,6 +33,6 @@ class RosterController extends Controller
             $query->where('area_id', $areaId);
         })->whereNull('vatsim_rating')->get()->sortBy('name');
 
-        return view('roster', compact('users', 'ratings', 'area'));
+        return view('roster', compact('users', 'ratings', 'area', 'qualificationPeriod'));
     }
 }
