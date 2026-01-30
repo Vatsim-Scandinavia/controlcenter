@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Helpers\FactoryHelper;
 use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Models\Endorsement;
 use App\Models\Feedback;
 use App\Models\Position;
@@ -99,7 +100,7 @@ class DatabaseSeeder extends Seeder
                 'last_name' => $name_last,
                 'rating' => $rating_id,
                 'rating_short' => FactoryHelper::shortRating($rating_id),
-                'rating_long' => FactoryHelper::longRating($rating_id),
+                'rating_long' => FactoryHelper::longRating(VatsimRating::from($rating_id)),
                 'region' => 'EMEA',
                 'division' => 'EUD',
                 'subdivision' => 'SCA',

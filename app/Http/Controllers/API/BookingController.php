@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App;
 use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Position;
@@ -106,7 +107,7 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating > $user->rating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
+        if ($booking->position->rating->isGreaterThan($user->rating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
@@ -192,12 +193,18 @@ class BookingController extends Controller
     {
         $user = User::findorFail($booking->user_id);
         $positions = new Collection();
-        if ($user->rating >= 3) {
+        if ($user->rating->isGreaterThanOrEqual(VatsimRating::S2)) {
             $positions = Position::where('rating', '<=', $user->rating)->get();
         }
 
-        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
-            $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->first()->vatsim_rating));
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING)) {
+            $training = $user->getActiveTraining(TrainingStatus::PRE_TRAINING);
+            $highestRating = $training->getHighestVatsimRating()?->vatsim_rating;
+            $positions = $positions->merge(
+                $training->area->positions->filter(
+                    fn (Position $position) => $highestRating !== null && $position->rating->isLessThanOrEqual($highestRating)
+                )
+            );
         }
 
         if ($user->hasPermission('bookings.bypass-restrictions')) {
@@ -271,7 +278,7 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating > $user->rating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
+        if ($booking->position->rating->isGreaterThan($user->rating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bookings.bypass-restrictions')) {

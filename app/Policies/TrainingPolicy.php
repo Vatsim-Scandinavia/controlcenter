@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\Training;
 use App\Models\User;
@@ -53,7 +54,7 @@ class TrainingPolicy
      */
     public function close(User $user, Training $training)
     {
-        return $user->is($training->user) && $training->status == TrainingStatus::IN_QUEUE->value;
+        return $user->is($training->user) && $training->status === TrainingStatus::IN_QUEUE;
     }
 
     /**
@@ -63,7 +64,7 @@ class TrainingPolicy
      */
     public function togglePreTrainingCompleted(User $user, Training $training)
     {
-        return $training->status == TrainingStatus::PRE_TRAINING->value &&
+        return $training->status === TrainingStatus::PRE_TRAINING &&
                 ($training->pre_training_completed == false || $user->hasPermission('training.update', $training->area));
     }
 
@@ -104,7 +105,7 @@ class TrainingPolicy
         }
 
         // Not active users are forced to ask for a manual creation of refresh
-        if (! $user->hasActiveTrainings(true) && $user->rating > 1 && ! $user->isAtcActive()) {
+        if (! $user->hasActiveTrainings(true) && $user->rating->isGreaterThan(VatsimRating::OBS) && ! $user->isAtcActive()) {
             return Response::deny("Your ATC rating is inactive in {$divisionName}");
         }
 

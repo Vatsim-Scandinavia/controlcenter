@@ -2,19 +2,59 @@
 
 namespace Tests\Feature;
 
+use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
+use App\Models\AtcActivity;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TrainingsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+
+    private Training $training;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+    }
+
+    #[Test]
+    public function student_can_close_their_in_queue_training(): void
+    {
+        Notification::fake();
+        $this->training->update(['status' => TrainingStatus::IN_QUEUE->value]);
+
+        $response = $this->actingAs($this->training->user)
+            ->get(route('training.action.close', $this->training));
+
+        $response->assertRedirect();
+        $this->training->refresh();
+        $this->assertEquals(TrainingStatus::CLOSED_BY_STUDENT, $this->training->status);
+    }
+
+    #[Test]
+    public function student_cannot_close_active_training(): void
+    {
+        $this->training->update(['status' => TrainingStatus::ACTIVE_TRAINING->value]);
+
+        $response = $this->actingAs($this->training->user)
+            ->get(route('training.action.close', $this->training));
+
+        $response->assertForbidden();
+    }
 
     //    #[Test]
     //    public function user_can_create_a_training_request()
@@ -61,6 +101,26 @@ class TrainingsTest extends TestCase
             ->assertSeeText('Rating Upgrade')
             ->assertSeeText('Theoretical Exam Access')
             ->assertSee('for <b>TST-S2</b> rating', false);
+    }
+
+    #[Test]
+    public function get_highest_vatsim_rating_returns_rating_with_highest_vatsim_rating(): void
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+
+        // Attach two ratings with different VATSIM ratings to the training
+        $ratingS1 = Rating::factory()->create(['vatsim_rating' => VatsimRating::S1->value]);
+        $ratingS2 = Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value]);
+
+        $training->ratings()->attach([$ratingS1->id, $ratingS2->id]);
+        $training->load('ratings'); // Reload relation
+
+        $highest = $training->getHighestVatsimRating();
+
+        $this->assertNotNull($highest);
+        $this->assertEquals(VatsimRating::S2, $highest->vatsim_rating);
     }
 
     #[Test]
@@ -240,5 +300,73 @@ class TrainingsTest extends TestCase
             ->assertStatus(302);
 
         $this->assertNotTrue($training->mentors->contains($mentor));
+    }
+
+    #[Test]
+    public function obs_user_gets_zero_vatsim_hours_on_api_404(): void
+    {
+        Http::fake([
+            'api.vatsim.net/*' => Http::response([], 404),
+        ]);
+
+        Setting::set('trainingEnabled', true);
+        Setting::set('trainingSubDivisions', 'SCA');
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $obsUser = User::factory()->create([
+            'rating' => VatsimRating::OBS->value,
+            'division' => config('app.owner_code'),
+            'subdivision' => 'SCA',
+        ]);
+
+        $response = $this->actingAs($obsUser)->get(route('training.apply'));
+
+        // With the fix, the page loads without an error redirect
+        $response->assertSuccessful();
+    }
+
+    #[Test]
+    public function apply_page_shows_available_ratings_for_s1_user(): void
+    {
+        Http::fake([
+            'api.vatsim.net/*' => Http::response(['s1' => 10], 200),
+        ]);
+
+        Setting::set('trainingEnabled', true);
+        Setting::set('trainingSubDivisions', 'SCA');
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $area = Area::factory()->create();
+        $rating = Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value]);
+
+        // Attach to area with required_vatsim_rating = S1 (value 2) so an S1 user qualifies
+        $area->ratings()->attach($rating->id, [
+            'required_vatsim_rating' => VatsimRating::S1->value,
+            'allow_bundling' => false,
+            'hour_requirement' => 0,
+            'queue_length_low' => 0,
+            'queue_length_high' => 0,
+        ]);
+
+        $s1User = User::factory()->create([
+            'rating' => VatsimRating::S1->value,
+            'division' => config('app.owner_code'),
+            'subdivision' => 'SCA',
+        ]);
+
+        // S1 user needs to be ATC active to pass TrainingPolicy (S1 > OBS triggers the check)
+        AtcActivity::create([
+            'user_id' => $s1User->id,
+            'area_id' => $area->id,
+            'atc_active' => true,
+            'hours' => 0,
+            'hours_in_period' => 0,
+        ]);
+
+        $response = $this->actingAs($s1User)->get(route('training.apply'));
+
+        $response->assertSuccessful();
+        // The S2 rating should appear as available for the S1 user
+        $response->assertSee($rating->name);
     }
 }

@@ -2,11 +2,14 @@
 
 namespace App\Helpers;
 
+use App\Traits\ComparableIntEnum;
+
 /**
  * Constants for VATSIM ratings.
  */
 enum VatsimRating: int
 {
+    use ComparableIntEnum;
     case INA = -1;
     case SUS = 0;
     case OBS = 1;

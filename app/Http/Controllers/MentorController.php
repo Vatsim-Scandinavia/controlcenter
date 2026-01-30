@@ -19,10 +19,9 @@ class MentorController extends Controller
     {
         $user = Auth::user();
         $trainings = $user->mentoringTrainings();
-        $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         if ($user->hasPermission('training.mentor-dashboard.view')) {
-            return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
+            return view('mentor.index', compact('trainings', 'user', 'types'));
         }
 
         abort(403);

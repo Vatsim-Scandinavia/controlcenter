@@ -160,7 +160,7 @@ class EndorsementController extends Controller
             $user = User::find($data['user']);
 
             // Check if user has active training
-            if (! $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
+            if (! $user->getActiveTraining(TrainingStatus::PRE_TRAINING)) {
                 return back()->withInput()->withErrors($user->name . ' has no active training to link this endorsement to.');
             }
 
@@ -216,7 +216,7 @@ class EndorsementController extends Controller
             ' ― Positions: ' . $data['position']);
 
             // Log this new endorsement to the user's active training
-            TrainingActivityController::create($user->trainings->where('status', '>=', 0)->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            TrainingActivityController::create($user->trainings->filter(fn ($training) => $training->status->isOpen())->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 

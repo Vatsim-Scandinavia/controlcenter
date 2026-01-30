@@ -43,11 +43,10 @@
                             </tr>
                         </thead>
                         <tbody>
-
                             @foreach($closedTrainings as $training)
                             <tr>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a> {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                    <i class="{{ $training->status->icon() }} text-{{ $training->status->color() }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $training->status->label() }}</a> {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>

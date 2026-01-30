@@ -14,6 +14,10 @@ class Position extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'rating' => VatsimRating::class,
+    ];
+
     /**
      * Record creates, updates and deletes to the activity log under the "sector"
      * category, with a human-readable description identifying the position.
@@ -37,10 +41,6 @@ class Position extends Model
         'area_id',
     ];
 
-    protected $casts = [
-        'rating' => VatsimRating::class,
-    ];
-
     public function bookings()
     {
         return $this->belongsToMany(Booking::class, 'id', 'position_id');
@@ -59,21 +59,5 @@ class Position extends Model
     public function requiredRating()
     {
         return $this->belongsTo(Rating::class, 'required_facility_rating_id');
-    }
-
-    /**
-     * Get the name of the VATSIM rating for this position
-     */
-    public function getRatingNameAttribute()
-    {
-        return $this->rating->name;
-    }
-
-    /**
-     * Check if the position has the given base rating
-     */
-    public function hasBaseRating(VatsimRating $rating): bool
-    {
-        return $this->rating === $rating;
     }
 }

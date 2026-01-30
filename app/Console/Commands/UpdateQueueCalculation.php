@@ -54,7 +54,7 @@ class UpdateQueueCalculation extends Command
                 foreach ($rating->trainings->where('area_id', $area->id)->whereNotNull('created_at')->whereNull('paused_at') as $training) {
                     // Include training with GRP ratings inside
                     if ($training->ratings->count() >= 1 && $training->ratings->first()->vatsim_rating) {
-                        if ($training->status == TrainingStatus::IN_QUEUE->value) {
+                        if ($training->status === TrainingStatus::IN_QUEUE) {
                             $trainingCreated = $training->created_at;
 
                             // Calculate the difference in seconds with Carbon, then subtract the paused time if any.

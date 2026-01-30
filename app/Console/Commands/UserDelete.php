@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\TrainingStatus;
 use App\Models\Training;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
@@ -40,10 +41,10 @@ class UserDelete extends Command
     private function closeUserTrainings($user)
     {
 
-        $trainings = Training::where('user_id', $user->id)->where('status', '>=', 0)->get();
+        $trainings = Training::where('user_id', $user->id)->where('status', '>=', TrainingStatus::IN_QUEUE)->get();
         foreach ($trainings as $training) {
             // Training should be closed
-            $training->updateStatus(-4);
+            $training->updateStatus(TrainingStatus::CLOSED_BY_SYSTEM);
 
             // Detach mentors
             foreach ($training->mentors as $mentor) {
@@ -53,7 +54,7 @@ class UserDelete extends Command
             // Notify the student
             $training->closed_reason = 'Closed due to data deletion request.';
             $training->save();
-            $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
+            $training->user->notify(new TrainingClosedNotification($training, TrainingStatus::CLOSED_BY_SYSTEM, 'Closed due to data deletion request.'));
         }
     }
 

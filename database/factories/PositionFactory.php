@@ -31,7 +31,7 @@ class PositionFactory extends Factory
                 $this->faker->randomElement([0, 5, 10, 15, 25, 30, 35, 40, 50, 55, 60, 65, 75, 80, 85, 90])
             ),
             'fir' => strtoupper($this->faker->lexify('????')),
-            'rating' => $this->faker->randomElement(VatsimRating::getControllerRatings()),
+            'rating' => $this->faker->randomElement(VatsimRating::CONTROLLER_RATINGS),
             'area_id' => Area::factory(),
         ];
     }

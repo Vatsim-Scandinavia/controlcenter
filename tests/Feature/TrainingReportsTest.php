@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\OneTimeLink;
 use App\Models\Training;
@@ -298,6 +299,20 @@ class TrainingReportsTest extends TestCase
 
         $this->assertDatabaseHas('training_reports', ['id' => $report->id]);
         $this->assertDatabaseHas('training_reports', ['id' => $ownReport->id]);
+    }
+
+    #[Test]
+    public function create_report_returns_error_for_queued_training(): void
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+            'status' => TrainingStatus::IN_QUEUE->value,
+        ]);
+        $mentor = $this->makeMentor($training);
+
+        $this->actingAs($mentor)
+            ->get(route('training.report.create', $training))
+            ->assertSessionHasErrors();
     }
 
     #[Test]

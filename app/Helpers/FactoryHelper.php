@@ -134,22 +134,20 @@ class FactoryHelper
         return $region['id'];
     }
 
-    public static function longRating(int $rating)
+    public static function longRating(VatsimRating $rating)
     {
         switch ($rating) {
-            case 0: return 'Suspended';
-            case 1: return 'Pilot/Observer';
-            case 2: return 'Tower Trainee';
-            case 3: return 'Tower Controller';
-            case 4: return 'TMA Controller';
-            case 5: return 'Enroute Controller';
-            case 6: return 'Senior Controller';
-            case 7: return 'Senior Controller';
-            case 8: return 'Instructor';
-            case 9: return 'Senior Instructor';
-            case 10: return 'Senior Instructor';
-            case 11: return 'Supervisor';
-            case 12: return 'Administrator';
+            case VatsimRating::SUS: return 'Suspended';
+            case VatsimRating::OBS: return 'Pilot/Observer';
+            case VatsimRating::S1: return 'Tower Trainee';
+            case VatsimRating::S2: return 'Tower Controller';
+            case VatsimRating::S3: return 'TMA Controller';
+            case VatsimRating::C1: return 'Enroute Controller';
+            case VatsimRating::C3: return 'Senior Controller';
+            case VatsimRating::I1: return 'Instructor';
+            case VatsimRating::I3: return 'Senior Instructor';
+            case VatsimRating::SUP: return 'Supervisor';
+            case VatsimRating::ADM: return 'Administrator';
             default: return 'Inactive';
         }
     }

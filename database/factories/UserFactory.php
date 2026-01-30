@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Helpers\FactoryHelper;
+use App\Helpers\VatsimRating;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -39,7 +40,7 @@ class UserFactory extends Factory
 
         // users rating id
 
-        $rating = $this->faker->numberBetween(1, 12);
+        $rating = $this->faker->randomElement(VatsimRating::CONTROLLER_RATINGS);
 
         return [
             'first_name' => fake()->firstName(),
@@ -47,7 +48,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
 
             'rating' => $rating,
-            'rating_short' => FactoryHelper::shortRating($rating),
+            'rating_short' => $rating->name,
             'rating_long' => FactoryHelper::longRating($rating),
 
             'region' => $region,

@@ -47,19 +47,22 @@ class BookingService
         // Users with a rating of S1 or above can book positions up to their rating
         $positions = new Collection();
 
-        if ($user->rating >= VatsimRating::S1->value) {
+        if ($user->rating->isGreaterThanOrEqual(VatsimRating::S1)) {
             if (Setting::get('atcActivityBasedOnTotalHours')) {
-                $positions = Position::where('rating', '<=', $user->rating)->get();
+                $positions = Position::where('rating', '<=', $user->rating->value)->get();
             } else {
                 $activeAreas = $user->atcActivity->pluck('area_id');
-                $positionsInAreas = Position::whereIn('area_id', $activeAreas)->where('rating', '<=', $user->rating)->get();
+                $positionsInAreas = Position::whereIn('area_id', $activeAreas)->where('rating', '<=', $user->rating->value)->get();
                 $positions = $positions->merge($positionsInAreas);
             }
         }
 
-        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
+        if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING)) {
+            $highestRating = $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating;
             $positions = $positions->merge(
-                $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating)
+                $user->getActiveTraining()->area->positions->filter(
+                    fn (Position $position) => $highestRating !== null && $position->rating->isLessThanOrEqual($highestRating)
+                )
             );
         }
 
@@ -145,7 +148,7 @@ class BookingService
             return false;
         }
 
-        if ($booking->position->rating->value > $bookingUser->rating) {
+        if ($booking->position->rating->isGreaterThan($bookingUser->rating)) {
             return true;
         }
 

@@ -51,8 +51,8 @@
                             @foreach($openTrainings as $training)
                             <tr>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>
-                                    @if($training->status == \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->pre_training_completed )
+                                    <i class="{{ $training->status->icon() }} text-{{ $training->status->color() }}"></i>
+                                    @if($training->status === \App\Helpers\TrainingStatus::PRE_TRAINING && $training->pre_training_completed)
                                         <i class="fas fa-check text-success"></i>
                                     @endif
 
@@ -73,11 +73,11 @@
                                             data-bs-placement="right" 
                                             title="{{ str_replace(["\r\n", "\r", "\n"], '&#013;', $notes) }}"
                                             >
-                                            {{ $statuses[$training->status]["text"] }}
+                                            {{ $training->status->label() }}
                                         </a>
                                     @else
                                         <a href="/training/{{ $training->id }}">
-                                            {{ $statuses[$training->status]["text"] }}
+                                            {{ $training->status->label() }}
                                         </a>
                                     @endif
                                     
