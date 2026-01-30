@@ -16,7 +16,7 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 - [Singapore vACC](https://sinvacc.org/)
 - [VATAdria](https://vatadria.com/)
 - [VATMEX](https://www.vatmex.com.mx/)
-- [Vietnam - Canbodia - Laos vACC](https://vclvacc.net/)
+- [Vietnam - Cambodia - Laos vACC](https://vclvacc.net/)
 - [Thailand vACC](https://vacc-tha.org/)
 - [VATSIM Italia](https://www.vatita.net/)
 - [VATPHIL](https://vatphil.com/)
