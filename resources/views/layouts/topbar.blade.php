@@ -2,7 +2,7 @@
 
     <a class="sidebar-brand sidebar-brand-topbar align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
-            <img src="{{ asset('images/control-tower.svg') }}" alt="Control Tower" style="height: 40px; width: auto;">
+            <img src="{{ asset('images/control-tower.svg') }}" alt="Control Tower" class="brand-logo-img">
         </div>
 
         <div class="sidebar-brand-text mx-3" style="color: var(--color-body);">{{ config('app.name') }}</div>
