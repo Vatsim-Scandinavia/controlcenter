@@ -1,5 +1,39 @@
 # Changelog
 
+## [7.0.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.3...v7.0.0) (2026-02-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **themes:** vite theme variables no longer supported ([#1369](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1369))
+
+### Features
+
+* add qualification period activity and last online statistics to ATC roster ([#1393](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1393)) ([076b664](https://github.com/Vatsim-Scandinavia/controlcenter/commit/076b66469a6946ff03ee4c5de684e9b78e304178))
+* **themes:** dynamic theme support ([#1369](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1369)) ([64ca4e6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/64ca4e671726733a9eba19b1671e2706c92f1d35))
+* **themes:** experimental dark theme support ([#1369](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1369)) ([64ca4e6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/64ca4e671726733a9eba19b1671e2706c92f1d35))
+* **themes:** vite theme variables no longer supported ([#1369](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1369)) ([64ca4e6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/64ca4e671726733a9eba19b1671e2706c92f1d35))
+
+
+### Bug Fixes
+
+* **docs:** extraneous asterisk in 7ca5935c ([6b59055](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6b59055344cd26de3319c4ba4d73f41162336110))
+* remove outdated reference of VITE_THEME ([3c6b591](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3c6b591dd2a1be1fb784c82ed468c47a541f98f3))
+* **training:** removes mentors when training is closed automatically ([#1384](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1384)) ([c0ea3f2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c0ea3f2a61d22576e3a395474b5aec0a2192b8f7))
+
+
+### Miscellaneous Chores
+
+* **ci:** Resolve build error with new expi themes ([be55639](https://github.com/Vatsim-Scandinavia/controlcenter/commit/be556395dd465ebf2a2841ebfa3d4630401ea7cd))
+* **deps:** update dependency @vitejs/plugin-vue to v6.0.4 ([#1399](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1399)) ([3c1a97b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3c1a97b29133b264c255b3e46641681c3de8a1ca))
+* **deps:** update dependency barryvdh/laravel-debugbar to v3.16.5 ([#1389](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1389)) ([b1b45ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b1b45cab2ca2ca06fd84116ae34191f3f7a14284))
+* **deps:** update dependency core-js to v3.48.0 ([#1391](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1391)) ([be18397](https://github.com/Vatsim-Scandinavia/controlcenter/commit/be183974987da65555359a88b8f6587bb9826ce4))
+* **deps:** update dependency laravel-vite-plugin to v2.1.0 ([#1382](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1382)) ([8617091](https://github.com/Vatsim-Scandinavia/controlcenter/commit/861709129bf1962c741646657ad391425903fddd))
+* **deps:** update dependency phpunit/phpunit to v11.5.50 [security] ([#1395](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1395)) ([a49d5e6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a49d5e64cadd4517650e635c46b163b0f941294a))
+* **deps:** update dependency vue to v3.5.27 ([#1379](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1379)) ([1c2a6a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1c2a6a4a6879ecd02a63060f2e3a5bda5cbac494))
+* **deps:** update mysql docker tag to v8.4.8 ([#1390](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1390)) ([4708b74](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4708b74be2d285ab72ae19dfd0eae36ecb577c79))
+* Update Read-me ([#1397](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1397)) ([d20cf5c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d20cf5c3f78766c858c8685959cdfa2cc13ee947))
+
 ## [6.4.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.2...v6.4.3) (2026-01-19)
 
 
