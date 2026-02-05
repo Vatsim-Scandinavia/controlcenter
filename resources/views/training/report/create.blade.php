@@ -57,6 +57,27 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label" for="templateSelect">Template (Optional)</label>
+                        @if(isset($templates) && $templates->count() > 0)
+                            <select class="form-select @error('template_id') is-invalid @enderror" name="template_id" id="templateSelect">
+                                <option value="">-- Select a template --</option>
+                                @foreach($templates as $template)
+                                    <option value="{{ $template->id }}" data-content="{{ htmlspecialchars($template->content, ENT_QUOTES, 'UTF-8') }}" data-contentimprove="{{ htmlspecialchars($template->contentimprove ?? '', ENT_QUOTES, 'UTF-8') }}">{{ $template->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Select a template to pre-fill the report content.</small>
+                        @else
+                            <select class="form-select" name="template_id" id="templateSelect" disabled>
+                                <option value="">No templates available</option>
+                            </select>
+                            <small class="form-text text-muted">No published templates are available for this area. <a href="{{ route('admin.reporttemplates') }}">Create templates</a> in Administration.</small>
+                        @endif
+                        @error('template_id')
+                            <span class="text-danger">{{ $errors->first('template_id') }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label" for="contentBox">Report</label>
                         <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ old('content') }}</textarea>
                         @error('content')
@@ -139,6 +160,24 @@
                 link: ["[","](link)"],
             }
         });
+
+        // Handle template selection
+        var templateSelect = document.getElementById("templateSelect");
+        if (templateSelect) {
+            templateSelect.addEventListener("change", function() {
+                var selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value && selectedOption.dataset.content) {
+                    var currentContent = simplemde1.value();
+                    var currentContentImprove = simplemde2.value();
+                    var hasContent = currentContent || currentContentImprove;
+                    
+                    if (!hasContent || confirm("This will replace the current content. Continue?")) {
+                        simplemde1.value(selectedOption.dataset.content || '');
+                        simplemde2.value(selectedOption.dataset.contentimprove || '');
+                    }
+                }
+            });
+        }
 
         var submitClicked = false
         document.addEventListener("submit", function(event) {

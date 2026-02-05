@@ -20,6 +20,7 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingExaminationController;
 use App\Http\Controllers\TrainingObjectAttachmentController;
 use App\Http\Controllers\TrainingReportController;
+use App\Http\Controllers\TrainingReportTemplateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
 
@@ -106,6 +107,16 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/admin/templates/{id}', [NotificationController::class, 'index'])->name('admin.templates.area');
     Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
+    
+    // Report Templates
+    Route::controller(TrainingReportTemplateController::class)->group(function () {
+        Route::get('/admin/reporttemplates', 'index')->name('admin.reporttemplates');
+        Route::get('/admin/reporttemplates/create', 'create')->name('admin.reporttemplates.create');
+        Route::post('/admin/reporttemplates', 'store')->name('admin.reporttemplates.store');
+        Route::get('/admin/reporttemplates/{template}/edit', 'edit')->name('admin.reporttemplates.edit');
+        Route::patch('/admin/reporttemplates/{template}', 'update')->name('admin.reporttemplates.update');
+        Route::delete('/admin/reporttemplates/{template}', 'destroy')->name('admin.reporttemplates.destroy');
+    });
 
     // Training routes
     Route::controller(TrainingController::class)->group(function () {
