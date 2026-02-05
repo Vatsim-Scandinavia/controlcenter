@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Group;
@@ -163,7 +164,27 @@ class ReportController extends Controller
     {
         $this->authorize('viewFeedback', ManagementReport::class);
 
-        $feedback = Feedback::latest()->get();
+        $user = auth()->user();
+        $limitToAreas = Setting::get('feedbackLimitToAreas');
+
+        if ($limitToAreas && ! $user->isAdmin()) {
+            $userAreaIds = $user->groups()->pluck('area_id')->filter()->unique();
+
+            // Filter feedback where the reference position belongs to one of the user's areas
+            // OR where there is no reference position 
+            $feedback = Feedback::with(['referencePosition.area'])
+                ->where(function (Builder $query) use ($userAreaIds) {
+                    $query->whereHas('referencePosition', function (Builder $subQuery) use ($userAreaIds) {
+                        $subQuery->whereIn('area_id', $userAreaIds);
+                    })
+                    ->orWhereNull('reference_position_id');
+                })
+                ->latest()
+                ->get();
+        } else {
+            // Show all feedback
+            $feedback = Feedback::latest()->get();
+        }
 
         return view('reports.feedback', compact('feedback'));
     }
