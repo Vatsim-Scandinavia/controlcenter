@@ -11,11 +11,14 @@ use App\Models\Group;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Http\Requests\StatsimAtcSessionsRequest;
+use App\Services\StatsimService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Controller to handle user views
@@ -245,6 +248,25 @@ class UserController extends Controller
         }
 
         return response()->json(['data' => $vatsimStats], 200);
+    }
+
+    /**
+     * AJAX: Return ATC sessions from StatSim for user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fetchStatsimAtcSessions(StatsimAtcSessionsRequest $request)
+    {
+        $service = app(StatsimService::class);
+        $sessions = $service->getAtcSessions(
+            $request->validated()['vatsimId'],
+            $request->validated()['from'],
+            $request->validated()['to']
+        );
+
+        $transformed = $service->transformSessions($sessions);
+
+        return response()->json($transformed);
     }
 
     /**

@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Services;
+
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+class StatSimService
+{
+    protected string $baseUrl;
+    protected ?string $apiKey;
+
+    public function __construct()
+    {
+        $this->baseUrl = rtrim(config('vatsim.statsim_api_url', 'http://api.statsim.net/'), '/');
+        $this->apiKey = config('vatsim.statsim_api_key');
+    }
+
+    /**
+     * Fetch ATC sessions from StatSim API
+     *
+     * @param string $vatsimId
+     * @param string $from ISO 8601 date string
+     * @param string $to ISO 8601 date string
+     * @return array
+     */
+    public function getAtcSessions(string $vatsimId, string $from, string $to): array
+    {
+        $url = $this->baseUrl . '/api/Atcsessions/VatsimId';
+        
+        $headers = ['Accept' => 'application/json'];
+        if ($this->apiKey) {
+            $headers['X-API-Key'] = $this->apiKey;
+        } elseif (config('app.env') === 'production') {
+            Log::warning('StatSim API key not configured - API calls may fail');
+        }
+
+        try {
+            $response = Http::withHeaders($headers)
+                ->get($url, [
+                    'vatsimId' => $vatsimId,
+                    'from' => $from,
+                    'to' => $to,
+                ]);
+
+            if (!$response->successful()) {
+                Log::error('StatSim API error', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'vatsimId' => $vatsimId,
+                ]);
+                return [];
+            }
+
+            $sessions = $response->json();
+            return is_array($sessions) ? $sessions : [];
+        } catch (\Exception $e) {
+            Log::error('StatSim API exception', [
+                'message' => $e->getMessage(),
+                'vatsimId' => $vatsimId,
+            ]);
+            return [];
+        }
+    }
+
+    /**
+     * Transform StatSim API response to match old API format for backward compatibility
+     *
+     * @param array $sessions
+     * @return array
+     */
+    public function transformSessions(array $sessions): array
+    {
+        if (empty($sessions)) {
+            return [];
+        }
+
+        $transformed = [];
+        
+        foreach ($sessions as $session) {
+            if (!is_array($session)) {
+                continue;
+            }
+
+            $logonTime = $this->parseTimestamp($session['loggedOn'] ?? null);
+            if ($logonTime === null) {
+                continue;
+            }
+
+            $logoffTime = $this->parseTimestamp($session['loggedOff'] ?? null) ?? $logonTime;
+
+            $transformed[] = [
+                'callsign' => $session['callsign'] ?? '',
+                'logontime' => $logonTime,
+                'logofftime' => $logoffTime,
+            ];
+        }
+
+        return $transformed;
+    }
+
+    /**
+     * Parse ISO 8601 date string to Unix timestamp
+     *
+     * @param string|null $dateTime
+     * @return int|null
+     */
+    protected function parseTimestamp(?string $dateTime): ?int
+    {
+        if (!$dateTime) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($dateTime)->timestamp;
+        } catch (\Exception $e) {
+            // Fallback to strtotime for edge cases
+            $timestamp = strtotime($dateTime);
+            if ($timestamp === false) {
+                Log::warning('Failed to parse StatSim date', [
+                    'date' => $dateTime,
+                    'error' => $e->getMessage(),
+                ]);
+                return null;
+            }
+            return $timestamp;
+        }
+    }
+}

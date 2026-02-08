@@ -537,62 +537,80 @@
     <!-- Activity chart -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const chartElement = document.getElementById('activityChart');
+            if (!chartElement) return;
 
-            // Fetch activity data
-            fetch("https://statsim.net/atc/vatsimid/?vatsimid={{ $user->id }}&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
-                .then(response => response.json())
-                .then(data => {
-                    if(data && data.length > 0) {
+            // Calculate date range (11 months ago to now)
+            const fromDate = new Date();
+            fromDate.setMonth(fromDate.getMonth() - 11);
+            fromDate.setHours(0, 0, 0, 0);
+            
+            const toDate = new Date();
+            toDate.setHours(23, 59, 59, 999);
 
-                        // Process each connection and calculate hours
-                        data.forEach(function (connection) {
-                            connection.logontime = new Date(connection.logontime * 1000)
-                            connection.logofftime = new Date(connection.logofftime * 1000)
-                            connection.hours = parseFloat(((connection.logofftime - connection.logontime) / 1000 / 60 / 60).toFixed(1))
-                            connection.callsignSuffix = connection.callsign.split('_').pop()
-                        })
-
-                        // Create chart labels based on the last 11 months
-                        var activity = []
-
-                        for (var i = 11; i >= 0; i--) {
-                            activity[new Date(new Date().setMonth(new Date().getMonth() - i)).toLocaleString('default', { month: 'short' })] = 0
-                        }
-
-                        data.forEach(function (connection) {
-                            var month = connection.logontime.toLocaleString('default', { month: 'short' })
-                            activity[month] += connection.hours
-                        })
-
-                        // Define labels and chart data
-                        var chartLabels = Object.keys(activity)
-                        var chartData = Object.values(activity)
-                    
-                        // Create the chart
-                        var chart = new Chart(
-                            document.getElementById('activityChart'),
-                            {
-                                type: 'bar',
-                                data: {
-                                    labels: chartLabels,
-                                    datasets: [{
-                                        label: 'Hours online',
-                                        data: chartData,
-                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                        borderColor: 'rgb(54, 162, 235)',
-                                        borderWidth: 1
-                                    }]
-                                },
-                            }
-                        );
-                        
-                    } else {
-                        document.getElementById('activityChart').parentElement.innerHTML = '<p class="mb-0">No data available</p>'
+            const apiUrl = "{{ route('user.statsim.atc.sessions') }}?vatsimId={{ $user->id }}&from=" 
+                + encodeURIComponent(fromDate.toISOString()) 
+                + "&to=" 
+                + encodeURIComponent(toDate.toISOString());
+            
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json()
+                            .then(data => Promise.reject(new Error(data.error || `HTTP ${response.status}`)))
+                            .catch(() => Promise.reject(new Error(`HTTP ${response.status}`)));
                     }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle empty response - user has no ATC sessions
+                    if (!Array.isArray(data) || data.length === 0) {
+                        chartElement.parentElement.innerHTML = '<p class="mb-0">No ATC activity data available</p>';
+                        return;
+                    }
+
+                    // Process sessions and calculate hours
+                    const sessions = data.map(session => ({
+                        ...session,
+                        logontime: new Date(session.logontime * 1000),
+                        logofftime: new Date(session.logofftime * 1000),
+                        hours: (session.logofftime - session.logontime) / 3600,
+                    }));
+
+                    // Initialize activity object with last 12 months
+                    const activity = {};
+                    const now = new Date();
+                    for (let i = 11; i >= 0; i--) {
+                        const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        activity[month.toLocaleString('default', { month: 'short' })] = 0;
+                    }
+
+                    // Aggregate hours by month
+                    sessions.forEach(session => {
+                        const month = session.logontime.toLocaleString('default', { month: 'short' });
+                        if (activity[month] !== undefined) {
+                            activity[month] += session.hours;
+                        }
+                    });
+
+                    // Create chart
+                    new Chart(chartElement, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(activity),
+                            datasets: [{
+                                label: 'Hours online',
+                                data: Object.values(activity),
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgb(54, 162, 235)',
+                                borderWidth: 1
+                            }]
+                        },
+                    });
                 })
                 .catch(error => {
-                    console.error(error);
-                    alert('An error occurred while fetching STATSIM hours data.');
+                    console.error('StatSim API error:', error);
+                    chartElement.parentElement.innerHTML = '<p class="mb-0 text-danger">Failed to load activity data</p>';
                 });
         });
     </script>
