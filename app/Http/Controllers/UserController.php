@@ -259,9 +259,9 @@ class UserController extends Controller
     {
         try {
             $sessions = $service->getAtcSessions(
-                $request->validated()['vatsimId'],
-                $request->validated()['from'],
-                $request->validated()['to']
+                $request->input('vatsimId'),
+                $request->date('from'),
+                $request->date('to')
             );
 
             $transformed = $service->transformSessions($sessions);

@@ -20,7 +20,7 @@ class StatisticsSessionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'vatsimId' => 'required|string',
+            'vatsimId' => 'required|numeric',
             'from' => 'required|date',
             'to' => 'required|date|after_or_equal:from',
         ];

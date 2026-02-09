@@ -21,11 +21,8 @@ class StatisticsService
 
     /**
      * Fetch ATC sessions from statistics API
-     *
-     * @param  string  $from  ISO 8601 date string
-     * @param  string  $to  ISO 8601 date string
      */
-    public function getAtcSessions(string $vatsimId, string $from, string $to): array
+    public function getAtcSessions(string $vatsimId, \DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $url = $this->baseUrl . '/api/Atcsessions/VatsimId';
 
@@ -40,8 +37,8 @@ class StatisticsService
             $response = Http::withHeaders($headers)
                 ->get($url, [
                     'vatsimId' => $vatsimId,
-                    'from' => $from,
-                    'to' => $to,
+                    'from' => Carbon::instance($from)->setTimezone('UTC')->toIso8601String(),
+                    'to' => Carbon::instance($to)->setTimezone('UTC')->toIso8601String(),
                 ]);
 
             if (! $response->successful()) {
