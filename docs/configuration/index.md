@@ -72,8 +72,8 @@ Settings related to the [VATSIM integration](../integrations/vatsim.md).
 | `VATSIM_CORE_API_TOKEN`    | null                                  | API token (v2) to VATSIM Core API                                                                      |
 | `VATSIM_BOOKING_API_URL`   | `https://atc-bookings.vatsim.net/api` | URL to VATSIM ATC Bookings API                                                                         |
 | `VATSIM_BOOKING_API_TOKEN` | null                                  | API token to VATSIM ATC Bookings API                                                                   |
-| `STATSIM_API_URL`          | `https://api.statsim.net/`            | URL to StatSim's statistics API (ATC activity charts)                                                  |
-| `STATSIM_API_KEY`          | null                                  | API key for authenticating to StatSim's statistics API (ATC activity charts)                           |
+| `STATSIM_API_URL`          | `https://api.statsim.net/`            | URL to StatSim statistics API (used for ATC activity charts)                                           |
+| `STATSIM_API_KEY`          | null                                  | API key for StatSim statistics API authentication (required for ATC activity charts)                   |
 
 ### Mail
 

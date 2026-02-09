@@ -43,10 +43,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Statistics API Integration
+    | StatSim Statistics API Integration
     |--------------------------------------------------------------------------
     |
-    | This is the configuration for the statistics API integration.
+    | This is the configuration for the StatSim statistics API integration.
     | This is used to fetch ATC session data for activity charts.
     |--------------------------------------------------------------------------
     |
