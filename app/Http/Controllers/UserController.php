@@ -11,6 +11,7 @@ use App\Models\Group;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Exceptions\StatisticsApiException;
 use App\Http\Requests\StatisticsSessionsRequest;
 use App\Services\StatisticsService;
 use Carbon\Carbon;
@@ -255,18 +256,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function fetchStatisticsSessions(StatisticsSessionsRequest $request)
+    public function fetchStatisticsSessions(StatisticsSessionsRequest $request, StatisticsService $service)
     {
-        $service = app(StatisticsService::class);
-        $sessions = $service->getAtcSessions(
-            $request->validated()['vatsimId'],
-            $request->validated()['from'],
-            $request->validated()['to']
-        );
+        try {
+            $sessions = $service->getAtcSessions(
+                $request->validated()['vatsimId'],
+                $request->validated()['from'],
+                $request->validated()['to']
+            );
 
-        $transformed = $service->transformSessions($sessions);
+            $transformed = $service->transformSessions($sessions);
 
-        return response()->json($transformed);
+            return response()->json($transformed);
+        } catch (StatisticsApiException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'status' => $e->getHttpStatus() ?: 500,
+            ], $e->getHttpStatus() ?: 500);
+        }
     }
 
     /**

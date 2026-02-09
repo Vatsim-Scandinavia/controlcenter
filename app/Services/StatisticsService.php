@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\StatisticsApiException;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -50,17 +51,29 @@ class StatisticsService
                     'body' => $response->body(),
                     'vatsimId' => $vatsimId,
                 ]);
-                return [];
+
+                throw new StatisticsApiException(
+                    'Failed to load ATC activity data from Statistics API',
+                    $response->status()
+                );
             }
 
             $sessions = $response->json();
             return is_array($sessions) ? $sessions : [];
+        } catch (StatisticsApiException $e) {
+            // Re-throw our custom exception
+            throw $e;
         } catch (\Exception $e) {
             Log::error('Statistics API exception', [
                 'message' => $e->getMessage(),
                 'vatsimId' => $vatsimId,
             ]);
-            return [];
+
+            throw new StatisticsApiException(
+                'Failed to load ATC activity data from Statistics API',
+                0,
+                $e
+            );
         }
     }
 

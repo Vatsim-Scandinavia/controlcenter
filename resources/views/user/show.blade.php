@@ -557,12 +557,20 @@
                 .then(response => {
                     if (!response.ok) {
                         return response.json()
-                            .then(data => Promise.reject(new Error(data.error || `HTTP ${response.status}`)))
+                            .then(data => {
+                                // API returned an error (e.g., StatisticsApiException)
+                                throw new Error(data.error || `HTTP ${response.status}`);
+                            })
                             .catch(() => Promise.reject(new Error(`HTTP ${response.status}`)));
                     }
                     return response.json();
                 })
                 .then(data => {
+                    // Check if response contains an error (from StatisticsApiException)
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
                     // Handle empty response - user has no ATC sessions
                     if (!Array.isArray(data) || data.length === 0) {
                         chartElement.parentElement.innerHTML = '<p class="mb-0">No ATC activity data available</p>';
@@ -570,26 +578,34 @@
                     }
 
                     // Process sessions and calculate hours
-                    const sessions = data.map(session => ({
-                        ...session,
-                        logontime: new Date(session.logontime * 1000),
-                        logofftime: new Date(session.logofftime * 1000),
-                        hours: (session.logofftime - session.logontime) / 3600,
-                    }));
+                    const sessions = data.map(session => {
+                        const logonTime = new Date(session.logontime * 1000);
+                        const logoffTime = new Date(session.logofftime * 1000);
+                        // Calculate hours: difference is in milliseconds, convert to hours
+                        const hours = Number(((logoffTime - logonTime) / 3_600_000).toFixed(1));
+                        
+                        return {
+                            ...session,
+                            logontime: logonTime,
+                            logofftime: logoffTime,
+                            hours: hours,
+                        };
+                    });
 
-                    // Initialize activity object with last 12 months
+                    // Initialize activity object with last 12 months (include year to avoid cross-year collisions)
                     const activity = {};
                     const now = new Date();
                     for (let i = 11; i >= 0; i--) {
-                        const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                        activity[month.toLocaleString('default', { month: 'short' })] = 0;
+                        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        const monthKey = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+                        activity[monthKey] = 0;
                     }
 
                     // Aggregate hours by month
                     sessions.forEach(session => {
-                        const month = session.logontime.toLocaleString('default', { month: 'short' });
-                        if (activity[month] !== undefined) {
-                            activity[month] += session.hours;
+                        const monthKey = session.logontime.toLocaleString('default', { month: 'short', year: 'numeric' });
+                        if (activity[monthKey] !== undefined) {
+                            activity[monthKey] += session.hours;
                         }
                     });
 
