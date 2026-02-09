@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 class StatisticsService
 {
     protected string $baseUrl;
+
     protected ?string $apiKey;
 
     public function __construct()
@@ -21,15 +22,13 @@ class StatisticsService
     /**
      * Fetch ATC sessions from statistics API
      *
-     * @param string $vatsimId
-     * @param string $from ISO 8601 date string
-     * @param string $to ISO 8601 date string
-     * @return array
+     * @param  string  $from  ISO 8601 date string
+     * @param  string  $to  ISO 8601 date string
      */
     public function getAtcSessions(string $vatsimId, string $from, string $to): array
     {
         $url = $this->baseUrl . '/api/Atcsessions/VatsimId';
-        
+
         $headers = ['Accept' => 'application/json'];
         if ($this->apiKey) {
             $headers['X-API-Key'] = $this->apiKey;
@@ -45,7 +44,7 @@ class StatisticsService
                     'to' => $to,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Statistics API error', [
                     'status' => $response->status(),
                     'body' => $response->body(),
@@ -59,6 +58,7 @@ class StatisticsService
             }
 
             $sessions = $response->json();
+
             return is_array($sessions) ? $sessions : [];
         } catch (StatisticsApiException $e) {
             // Re-throw our custom exception
@@ -79,9 +79,6 @@ class StatisticsService
 
     /**
      * Transform statistics API response to match old API format for backward compatibility
-     *
-     * @param array $sessions
-     * @return array
      */
     public function transformSessions(array $sessions): array
     {
@@ -90,9 +87,9 @@ class StatisticsService
         }
 
         $transformed = [];
-        
+
         foreach ($sessions as $session) {
-            if (!is_array($session)) {
+            if (! is_array($session)) {
                 continue;
             }
 
@@ -115,13 +112,10 @@ class StatisticsService
 
     /**
      * Parse ISO 8601 date string to Unix timestamp
-     *
-     * @param string|null $dateTime
-     * @return int|null
      */
     protected function parseTimestamp(?string $dateTime): ?int
     {
-        if (!$dateTime) {
+        if (! $dateTime) {
             return null;
         }
 
@@ -135,8 +129,10 @@ class StatisticsService
                     'date' => $dateTime,
                     'error' => $e->getMessage(),
                 ]);
+
                 return null;
             }
+
             return $timestamp;
         }
     }
