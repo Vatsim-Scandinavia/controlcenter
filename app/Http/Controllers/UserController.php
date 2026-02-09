@@ -225,12 +225,8 @@ class UserController extends Controller
 
     /**
      * AJAX: Return ATC hours from VATSIM for user
-     *
-     * @return array
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function fetchVatsimHours(Request $request)
+    public function fetchVatsimHours(Request $request): \Illuminate\Http\JsonResponse
     {
         $cid = $request['cid'];
 
@@ -252,14 +248,12 @@ class UserController extends Controller
 
     /**
      * AJAX: Return ATC sessions from statistics API for user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function fetchStatisticsSessions(StatisticsSessionsRequest $request, StatisticsService $service)
+    public function fetchStatisticsSessions(StatisticsSessionsRequest $request, User $user, StatisticsService $service): \Illuminate\Http\JsonResponse
     {
         try {
             $sessions = $service->getAtcSessions(
-                $request->input('vatsimId'),
+                $user->id,
                 $request->date('from'),
                 $request->date('to')
             );

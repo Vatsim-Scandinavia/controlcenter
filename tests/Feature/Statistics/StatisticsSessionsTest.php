@@ -23,9 +23,9 @@ class StatisticsSessionsTest extends TestCase
     public function it_validates_required_fields(): void
     {
         $this->actingAs($this->user)
-            ->getJson(route('user.statistics.sessions'))
+            ->getJson(route('user.statistics.sessions', $this->user))
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['vatsimId', 'from', 'to']);
+            ->assertJsonValidationErrors(['from', 'to']);
     }
 
     #[Test]
@@ -33,7 +33,7 @@ class StatisticsSessionsTest extends TestCase
     {
         $this->actingAs($this->user)
             ->getJson(route('user.statistics.sessions', [
-                'vatsimId' => 123456,
+                'user' => $this->user,
                 'from' => 'not-a-date',
                 'to' => 'not-a-date',
             ]))
@@ -46,9 +46,9 @@ class StatisticsSessionsTest extends TestCase
     {
         $this->actingAs($this->user)
             ->getJson(route('user.statistics.sessions', [
-                'vatsimId' => 123456,
+                'user' => $this->user,
                 'from' => '2024-01-02',
-                'to' => '2024-01-01',
+                'to' => '2024-01-01', // Before 'from'
             ]))
             ->assertStatus(422)
             ->assertJsonValidationErrors(['to']);
@@ -57,7 +57,7 @@ class StatisticsSessionsTest extends TestCase
     #[Test]
     public function it_calls_service_with_normalized_dates(): void
     {
-        $vatsimId = '123456';
+        $vatsimId = (string) $this->user->id;
         $from = '2024-01-01T00:00:00';
         $to = '2024-01-02T00:00:00';
 
@@ -67,7 +67,7 @@ class StatisticsSessionsTest extends TestCase
                 ->once()
                 ->withArgs(function ($argId, $argFrom, $argTo) use ($vatsimId) {
                     // Verify ID matches
-                    if ($argId !== $vatsimId) {
+                    if ((string) $argId !== $vatsimId) {
                         return false;
                     }
 
@@ -76,9 +76,9 @@ class StatisticsSessionsTest extends TestCase
                         return false;
                     }
 
+                    // Verify values match (request helpers use application timezone, usually UTC in tests)
                     return true;
                 })
-                // Return empty array for simplicity
                 ->andReturn([]);
 
             $mock->shouldReceive('transformSessions')
@@ -88,10 +88,18 @@ class StatisticsSessionsTest extends TestCase
 
         $this->actingAs($this->user)
             ->getJson(route('user.statistics.sessions', [
-                'vatsimId' => $vatsimId,
+                'user' => $this->user,
                 'from' => $from,
                 'to' => $to,
             ]))
             ->assertStatus(200);
+    }
+
+    #[Test]
+    public function it_returns_404_for_non_existent_user(): void
+    {
+        $this->actingAs($this->user)
+            ->getJson(route('user.statistics.sessions', ['user' => 99999999]))
+            ->assertStatus(404);
     }
 }

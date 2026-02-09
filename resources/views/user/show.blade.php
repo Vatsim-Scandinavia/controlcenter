@@ -548,7 +548,7 @@
             const toDate = new Date();
             toDate.setHours(23, 59, 59, 999);
 
-            const apiUrl = "{{ route('user.statistics.sessions') }}?vatsimId={{ $user->id }}&from=" 
+            const apiUrl = "{{ route('user.statistics.sessions', $user) }}?from=" 
                 + encodeURIComponent(fromDate.toISOString()) 
                 + "&to=" 
                 + encodeURIComponent(toDate.toISOString());
