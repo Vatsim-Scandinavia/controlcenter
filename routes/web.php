@@ -86,6 +86,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         // Internal user search
         Route::get('/user/search/find', 'search')->name('user.search');
         Route::get('/user/search/vatsimhours', 'fetchVatsimHours')->name('user.vatsimhours');
+        Route::get('/user/search/statistics-sessions', 'fetchStatisticsSessions')->name('user.statistics.sessions');
     });
 
     // Reports

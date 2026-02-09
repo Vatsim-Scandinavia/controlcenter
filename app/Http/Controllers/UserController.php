@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Exceptions\StatisticsApiException;
 use App\Facades\DivisionApi;
 use App\Helpers\Vatsim;
+use App\Http\Requests\StatisticsSessionsRequest;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Services\StatisticsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -245,6 +248,31 @@ class UserController extends Controller
         }
 
         return response()->json(['data' => $vatsimStats], 200);
+    }
+
+    /**
+     * AJAX: Return ATC sessions from statistics API for user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fetchStatisticsSessions(StatisticsSessionsRequest $request, StatisticsService $service)
+    {
+        try {
+            $sessions = $service->getAtcSessions(
+                $request->validated()['vatsimId'],
+                $request->validated()['from'],
+                $request->validated()['to']
+            );
+
+            $transformed = $service->transformSessions($sessions);
+
+            return response()->json($transformed);
+        } catch (StatisticsApiException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'status' => $e->getHttpStatus() ?: 500,
+            ], $e->getHttpStatus() ?: 500);
+        }
     }
 
     /**
