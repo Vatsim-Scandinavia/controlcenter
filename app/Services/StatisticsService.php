@@ -6,19 +6,19 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class StatSimService
+class StatisticsService
 {
     protected string $baseUrl;
     protected ?string $apiKey;
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('vatsim.statsim_api_url', 'http://api.statsim.net/'), '/');
-        $this->apiKey = config('vatsim.statsim_api_key');
+        $this->baseUrl = rtrim(config('vatsim.stats_api_url', 'https://api.statsim.net/'), '/');
+        $this->apiKey = config('vatsim.stats_api_key');
     }
 
     /**
-     * Fetch ATC sessions from StatSim API
+     * Fetch ATC sessions from statistics API
      *
      * @param string $vatsimId
      * @param string $from ISO 8601 date string
@@ -33,7 +33,7 @@ class StatSimService
         if ($this->apiKey) {
             $headers['X-API-Key'] = $this->apiKey;
         } elseif (config('app.env') === 'production') {
-            Log::warning('StatSim API key not configured - API calls may fail');
+            Log::warning('Statistics API key not configured - API calls may fail');
         }
 
         try {
@@ -45,7 +45,7 @@ class StatSimService
                 ]);
 
             if (!$response->successful()) {
-                Log::error('StatSim API error', [
+                Log::error('Statistics API error', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                     'vatsimId' => $vatsimId,
@@ -56,7 +56,7 @@ class StatSimService
             $sessions = $response->json();
             return is_array($sessions) ? $sessions : [];
         } catch (\Exception $e) {
-            Log::error('StatSim API exception', [
+            Log::error('Statistics API exception', [
                 'message' => $e->getMessage(),
                 'vatsimId' => $vatsimId,
             ]);
@@ -65,7 +65,7 @@ class StatSimService
     }
 
     /**
-     * Transform StatSim API response to match old API format for backward compatibility
+     * Transform statistics API response to match old API format for backward compatibility
      *
      * @param array $sessions
      * @return array
@@ -118,7 +118,7 @@ class StatSimService
             // Fallback to strtotime for edge cases
             $timestamp = strtotime($dateTime);
             if ($timestamp === false) {
-                Log::warning('Failed to parse StatSim date', [
+                Log::warning('Failed to parse statistics date', [
                     'date' => $dateTime,
                     'error' => $e->getMessage(),
                 ]);

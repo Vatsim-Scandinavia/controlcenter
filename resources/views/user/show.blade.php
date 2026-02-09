@@ -548,7 +548,7 @@
             const toDate = new Date();
             toDate.setHours(23, 59, 59, 999);
 
-            const apiUrl = "{{ route('user.statsim.atc.sessions') }}?vatsimId={{ $user->id }}&from=" 
+            const apiUrl = "{{ route('user.statistics.sessions') }}?vatsimId={{ $user->id }}&from=" 
                 + encodeURIComponent(fromDate.toISOString()) 
                 + "&to=" 
                 + encodeURIComponent(toDate.toISOString());
@@ -609,7 +609,7 @@
                     });
                 })
                 .catch(error => {
-                    console.error('StatSim API error:', error);
+                    console.error('Statistics API error:', error);
                     chartElement.parentElement.innerHTML = '<p class="mb-0 text-danger">Failed to load activity data</p>';
                 });
         });

@@ -11,8 +11,8 @@ use App\Models\Group;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
-use App\Http\Requests\StatsimAtcSessionsRequest;
-use App\Services\StatsimService;
+use App\Http\Requests\StatisticsSessionsRequest;
+use App\Services\StatisticsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -251,13 +251,13 @@ class UserController extends Controller
     }
 
     /**
-     * AJAX: Return ATC sessions from StatSim for user
+     * AJAX: Return ATC sessions from statistics API for user
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function fetchStatsimAtcSessions(StatsimAtcSessionsRequest $request)
+    public function fetchStatisticsSessions(StatisticsSessionsRequest $request)
     {
-        $service = app(StatsimService::class);
+        $service = app(StatisticsService::class);
         $sessions = $service->getAtcSessions(
             $request->validated()['vatsimId'],
             $request->validated()['from'],

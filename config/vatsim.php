@@ -43,16 +43,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | StatSim API Integration
+    | Statistics API Integration
     |--------------------------------------------------------------------------
     |
-    | This is the configuration for the StatSim API integration.
+    | This is the configuration for the statistics API integration.
     | This is used to fetch ATC session data for activity charts.
     |--------------------------------------------------------------------------
     |
     */
 
-    'statsim_api_url' => env('STATSIM_API_URL', 'http://api.statsim.net/'),
-    'statsim_api_key' => env('STATSIM_API_KEY', null),
+    'stats_api_url' => env('STATS_API_URL', 'https://api.statsim.net/'),
+    'stats_api_key' => env('STATS_API_KEY', null),
 
 ];
