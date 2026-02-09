@@ -15,7 +15,7 @@ class StatisticsService
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('vatsim.stats_api_url', 'https://api.statsim.net/'), '/');
+        $this->baseUrl = rtrim(config('vatsim.stats_api_url'), '/');
         $this->apiKey = config('vatsim.stats_api_key');
     }
 
