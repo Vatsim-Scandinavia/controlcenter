@@ -117,7 +117,7 @@
                     </div>
                 </div>
             </li>
-            
+
         @endif
 
         {{-- Nav Item - Pages Collapse Menu --}}
@@ -164,7 +164,7 @@
             </div>
         </li>
 
-        
+
 
         @if (\Auth::user()->isModeratorOrAbove())
             {{-- Divider --}}
@@ -178,13 +178,13 @@
             </a>
             <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                
+
                 @if(\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
                 @elseif(\Auth::user()->isModerator())
                     <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
                 @endif
-                
+
                 @if(\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
                 @elseif(\Auth::user()->isModerator())
@@ -198,7 +198,7 @@
                 @endcan
 
                 <a class="collapse-item" href="{{ route('reports.feedback') }}">Feedback</a>
-                
+
                 </div>
             </div>
             </li>
@@ -207,7 +207,7 @@
         @if (\Auth::user()->isModeratorOrAbove())
 
             {{-- Nav Item - Utilities Collapse Menu --}}
-            <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
+            <li class="nav-item {{ Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Administration</span>
@@ -223,6 +223,9 @@
                 @if (\Auth::user()->isModeratorOrAbove())
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endif
+                @can('viewAny', App\Models\Position::class)
+                    <a class="collapse-item" href="{{ route('positions.index') }}">Positions</a>
+                @endcan
                 </div>
             </div>
             </li>
@@ -243,7 +246,7 @@
             <a href="{{ Setting::get('linkHome') }}" class="d-block"><img class="logo" src="{{ asset('images/logos/'.Config::get('app.logo')) }}"></a>
             <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version">Control Center v{{ config('app.version') }}</a>
         </div>
-        
+
     </ul>
 
 </nav>

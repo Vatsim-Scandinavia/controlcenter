@@ -8,6 +8,11 @@ class Group extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'permissions')->withPivot('area_id')->withTimestamps();

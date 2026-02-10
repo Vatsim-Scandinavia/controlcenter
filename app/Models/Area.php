@@ -38,6 +38,6 @@ class Area extends Model
 
     public function positions()
     {
-        return $this->hasMany(Position::class);
+        return $this->hasMany(Position::class)->with('area');
     }
 }
