@@ -2,10 +2,10 @@
 
     <a class="sidebar-brand sidebar-brand-topbar align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
-            <img src="{{ asset('images/control-tower.svg') }}" alt="Control Tower" class="brand-logo-img">
+            {!! file_get_contents(public_path('images/control-tower.svg')) !!}
         </div>
 
-        <div class="sidebar-brand-text mx-3" style="color: var(--color-body);">{{ config('app.name') }}</div>
+        <div class="sidebar-brand-text mx-3">{{ config('app.name') }}</div>
     </a>
 
     {{-- Topbar Desktop Search --}}
@@ -21,7 +21,7 @@
 
                 <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
                 <div class="search-results shadow-sm bg-light">
-                    
+
                 </div>
             </div>
         </form>
@@ -49,12 +49,12 @@
 
                         <div class="search-spinner spinner-border spinner-border-sm" role="status"></div>
                         <div class="search-results bg-light">
-                
+
                         </div>
                     </form>
                 </div>
             </li>
-            
+
         @endif
 
         <div class="topbar-divider d-none d-lg-block"></div>
@@ -96,7 +96,7 @@
                     </span>
                 @endif
             </button>
-        </li>        
+        </li>
 
     </ul>
 
