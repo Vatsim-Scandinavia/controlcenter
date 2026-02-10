@@ -44,7 +44,7 @@ class PositionRequest extends FormRequest
                 'integer',
                 Rule::in(VatsimRating::getPositionRatingValues()),
             ],
-            'area_id' => 'required|integer',
+            'area_id' => 'required|integer|exists:areas,id',
         ];
     }
 }
