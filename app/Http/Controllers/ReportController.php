@@ -53,6 +53,9 @@ class ReportController extends Controller
     {
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
 
+        $startDate = request()->filled('start_date') ? Carbon::parse(request()->input('start_date'))->startOfDay() : null;
+        $endDate = request()->filled('end_date') ? Carbon::parse(request()->input('end_date'))->endOfDay() : null;
+
         $areas = Area::all();
         $filterName = 'All Areas';
         if ($filterArea) {
@@ -62,18 +65,21 @@ class ReportController extends Controller
             }
         }
 
-        [$newRequests, $completedRequests, $closedRequests, $passFailRequests] = $this->getBiAnnualRequestsStats($filterArea);
+        [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $labels] = $this->getBiAnnualRequestsStats($filterArea, $startDate, $endDate);
 
         return view('reports.trainings', [
             'filterName' => $filterName,
             'areas' => $areas,
-            'cardStats' => $this->getCardStats($filterArea),
-            'totalRequests' => $this->getDailyRequestsStats($filterArea),
+            'cardStats' => $this->getCardStats($filterArea, $startDate, $endDate),
+            'totalRequests' => $this->getDailyRequestsStats($filterArea, $startDate, $endDate),
             'newRequests' => $newRequests,
             'completedRequests' => $completedRequests,
             'closedRequests' => $closedRequests,
             'passFailRequests' => $passFailRequests,
             'queues' => $this->getQueueStats($filterArea),
+            'labels' => $labels,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 
@@ -174,9 +180,10 @@ class ReportController extends Controller
      * @param  int  $filterArea  areaId to filter by
      * @return mixed
      */
-    protected function getCardStats($filterArea)
+    protected function getCardStats($filterArea, $startDate = null, $endDate = null)
     {
-        $firstDayOfYear = now()->startOfYear();
+        $start = $startDate ?? now()->startOfYear();
+        $end = $endDate ?? now()->endOfDay();
 
         $query = Training::query();
 
@@ -188,9 +195,9 @@ class ReportController extends Controller
                 COUNT(CASE WHEN status = 0 THEN 1 END) as waiting,
                 COUNT(CASE WHEN status IN (1, 2) THEN 1 END) as training,
                 COUNT(CASE WHEN status = 3 THEN 1 END) as exam,
-                COUNT(CASE WHEN status = -1 AND closed_at >= ? THEN 1 END) as completed,
-                COUNT(CASE WHEN status = -2 AND closed_at >= ? THEN 1 END) as closed
-            ', [$firstDayOfYear, $firstDayOfYear])
+                COUNT(CASE WHEN status = -1 AND closed_at >= ? AND closed_at <= ? THEN 1 END) as completed,
+                COUNT(CASE WHEN status = -2 AND closed_at >= ? AND closed_at <= ? THEN 1 END) as closed
+            ', [$start, $end, $start, $end])
             ->first();
 
         return [
@@ -208,11 +215,14 @@ class ReportController extends Controller
      * @param  false|int  $areaFilter  areaId to filter by
      * @return mixed
      */
-    protected function getDailyRequestsStats(false|int $areaFilter)
+    protected function getDailyRequestsStats(false|int $areaFilter, $startDate = null, $endDate = null)
     {
+        $start = $startDate ?? Carbon::now()->subYear(1);
+        $end = $endDate ?? Carbon::now()->endOfDay();
+
         // Create an arra with all dates last 12 months
         $dates = [];
-        foreach (CarbonPeriod::create(Carbon::now()->subYear(1), Carbon::now()) as $date) {
+        foreach (CarbonPeriod::create($start, $end) as $date) {
             $dates[$date->format('Y-m-d')] = ['x' => $date->format('Y-m-d'), 'y' => 0];
         }
 
@@ -221,7 +231,8 @@ class ReportController extends Controller
             DB::raw(Sql::as('count(id)', 'count')),
             DB::raw('DATE(created_at) as day'),
         ])->groupBy('day')
-            ->where('created_at', '>=', Carbon::now()->subYear(1));
+            ->where('created_at', '>=', $start)
+            ->where('created_at', '<=', $end);
 
         if ($areaFilter) {
             $data->where('area_id', $areaFilter);
@@ -229,7 +240,9 @@ class ReportController extends Controller
         $data = $data->get();
 
         foreach ($data as $entry) {
-            $dates[$entry->day]['y'] = $entry->count;
+            if (isset($dates[$entry->day])) {
+                $dates[$entry->day]['y'] = $entry->count;
+            }
         }
 
         // Strip the keys to match requirement of chart.js
@@ -247,10 +260,25 @@ class ReportController extends Controller
      * @param  false|int  $areaFilter  areaId to filter by
      * @return mixed
      */
-    protected function getBiAnnualRequestsStats(false|int $areaFilter)
+    protected function getBiAnnualRequestsStats(false|int $areaFilter, $startDate = null, $endDate = null)
     {
-        $monthTranslator = $this->getBiAnnualMonthTranslator();
-        $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
+        $start = $startDate ?? now()->subMonths(6)->startOfMonth();
+        $end = $endDate ?? now()->endOfDay();
+
+        // Initialize translator and labels
+        $monthTranslator = [];
+        $labels = [];
+        $index = 0;
+        // Group by month
+        $period = CarbonPeriod::create($start, '1 month', $end);
+
+        foreach ($period as $date) {
+            $key = $date->format('Y-m');
+            $monthTranslator[$key] = $index;
+            $labels[] = $date->format('F Y');
+            $index++;
+        }
+        $totalBuckets = count($labels);
 
         // Initialize arrays for each rating
         $ratings = Rating::all();
@@ -258,18 +286,18 @@ class ReportController extends Controller
         $completedRequests = [];
         $closedRequests = [];
         foreach ($ratings as $rating) {
-            $newRequests[$rating->name] = array_fill(0, 7, 0);
-            $completedRequests[$rating->name] = array_fill(0, 7, 0);
-            $closedRequests[$rating->name] = array_fill(0, 7, 0);
+            $newRequests[$rating->name] = array_fill(0, $totalBuckets, 0);
+            $completedRequests[$rating->name] = array_fill(0, $totalBuckets, 0);
+            $closedRequests[$rating->name] = array_fill(0, $totalBuckets, 0);
         }
 
         // Fetch and process training data in a single query
         $trainingsQuery = Training::with('ratings')
-            ->where(function ($query) use ($sixMonthsAgo) {
-                $query->where('created_at', '>=', $sixMonthsAgo)
-                    ->orWhere(function ($subQuery) use ($sixMonthsAgo) {
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('created_at', [$start, $end])
+                    ->orWhere(function ($subQuery) use ($start, $end) {
                         $subQuery->whereIn('status', [-1, -2])
-                            ->where('closed_at', '>=', $sixMonthsAgo);
+                            ->whereBetween('closed_at', [$start, $end]);
                     });
             });
 
@@ -284,21 +312,21 @@ class ReportController extends Controller
                 }
 
                 // New requests
-                if ($training->created_at >= $sixMonthsAgo) {
-                    $month = $monthTranslator[(int) $training->created_at->format('m')] ?? null;
-                    if ($month !== null) {
-                        $newRequests[$rating->name][$month]++;
+                if ($training->created_at >= $start && $training->created_at <= $end) {
+                    $key = $training->created_at->format('Y-m');
+                    if (isset($monthTranslator[$key])) {
+                        $newRequests[$rating->name][$monthTranslator[$key]]++;
                     }
                 }
 
                 // Completed and closed requests
-                if ($training->closed_at >= $sixMonthsAgo) {
-                    $month = $monthTranslator[(int) $training->closed_at->format('m')] ?? null;
-                    if ($month !== null) {
+                if ($training->closed_at && $training->closed_at >= $start && $training->closed_at <= $end) {
+                    $key = $training->closed_at->format('Y-m');
+                    if (isset($monthTranslator[$key])) {
                         if ($training->status == -1) {
-                            $completedRequests[$rating->name][$month]++;
+                            $completedRequests[$rating->name][$monthTranslator[$key]]++;
                         } elseif ($training->status == -2) {
-                            $closedRequests[$rating->name][$month]++;
+                            $closedRequests[$rating->name][$monthTranslator[$key]]++;
                         }
                     }
                 }
@@ -306,9 +334,9 @@ class ReportController extends Controller
         }
 
         // Fetch and process examination data
-        $passFailRequests = ['PASSED' => array_fill(0, 7, 0), 'FAILED' => array_fill(0, 7, 0)];
+        $passFailRequests = ['PASSED' => array_fill(0, $totalBuckets, 0), 'FAILED' => array_fill(0, $totalBuckets, 0)];
         $examinationsQuery = DB::table('training_examinations')
-            ->select(DB::raw('count(training_examinations.id) as count'), DB::raw(Sql::month('training_examinations.examination_date', 'month')), 'result')
+            ->select(DB::raw('count(training_examinations.id) as count'), DB::raw(Sql::date('training_examinations.examination_date', 'exam_date')), 'result')
             ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
             ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
@@ -320,8 +348,8 @@ class ReportController extends Controller
             })
             ->whereIn('trainings.type', [1, 4])
             ->whereIn('result', ['PASSED', 'FAILED'])
-            ->where('examination_date', '>=', $sixMonthsAgo)
-            ->groupBy('month', 'result');
+            ->whereBetween('examination_date', [$start, $end])
+            ->groupBy('exam_date', 'result');
 
         if ($areaFilter) {
             $examinationsQuery->where('trainings.area_id', $areaFilter);
@@ -330,8 +358,11 @@ class ReportController extends Controller
         $examinations = $examinationsQuery->get();
 
         foreach ($examinations as $entry) {
-            if (isset($monthTranslator[$entry->month])) {
-                $passFailRequests[$entry->result][$monthTranslator[$entry->month]] = $entry->count;
+            $date = Carbon::parse($entry->exam_date);
+            $key = $date->format('Y-m');
+
+            if (isset($monthTranslator[$key])) {
+                $passFailRequests[$entry->result][$monthTranslator[$key]] += $entry->count;
             }
         }
 
@@ -349,20 +380,8 @@ class ReportController extends Controller
             $filter($completedRequests),
             $filter($closedRequests),
             $passFailRequests,
+            $labels,
         ];
-    }
-
-    /**
-     * Get the month translator for the bi-annual statistics.
-     */
-    protected function getBiAnnualMonthTranslator(): array
-    {
-        $translator = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $translator[(int) now()->subMonthsNoOverflow($i)->startOfMonth()->format('m')] = 6 - $i;
-        }
-
-        return $translator;
     }
 
     /**
