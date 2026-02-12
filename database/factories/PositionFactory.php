@@ -25,7 +25,11 @@ class PositionFactory extends Factory
         return [
             'callsign' => strtoupper($this->faker->unique()->text(7)),
             'name' => $this->faker->word(),
-            'frequency' => sprintf('%.3f', $this->faker->randomFloat(3, 118, 136)),
+            'frequency' => sprintf(
+                '%03d.%03d',
+                $this->faker->numberBetween(118, 136),
+                $this->faker->randomElement([0, 5, 10, 15, 25, 30, 35, 40, 50, 55, 60, 65, 75, 80, 85, 90])
+            ),
             'fir' => strtoupper($this->faker->lexify('????')),
             'rating' => $this->faker->randomElement(VatsimRating::getControllerRatings()),
             'area_id' => Area::factory(),

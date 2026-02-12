@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Helpers\VatsimRating;
+use App\Rules\VhfAirbandFrequency;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -37,7 +38,7 @@ class PositionRequest extends FormRequest
         return [
             'callsign' => ['required', 'uppercase', Rule::unique('positions')->ignore($position)],
             'name' => 'required',
-            'frequency' => 'required|numeric|decimal:3|min:117.975|max:137.000',
+            'frequency' => ['required', new VhfAirbandFrequency],
             'fir' => 'required|size:4|uppercase',
             'rating' => [
                 'required',
