@@ -27,4 +27,14 @@ class Feedback extends Model
     {
         return $this->belongsTo(Position::class, 'reference_position_id');
     }
+
+    /**
+     * Get the area associated with this feedback through the reference position
+     *
+     * @return Area|null
+     */
+    public function getArea()
+    {
+        return $this->referencePosition?->area;
+    }
 }

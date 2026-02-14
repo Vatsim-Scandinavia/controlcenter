@@ -64,6 +64,7 @@ class GlobalSettingController extends Controller
             'divisionApiEnabled' => '',
             'feedbackEnabled' => '',
             'feedbackForwardEmail' => 'nullable|email',
+            'feedbackLimitToAreas' => '',
             'telemetryEnabled' => '',
         ]);
 
@@ -75,6 +76,7 @@ class GlobalSettingController extends Controller
         isset($data['atcActivityAllowInactiveControlling']) ? $atcActivityAllowInactiveControlling = true : $atcActivityAllowInactiveControlling = false;
         isset($data['divisionApiEnabled']) ? $divisionApiEnabled = true : $divisionApiEnabled = false;
         isset($data['feedbackEnabled']) ? $feedbackEnabled = true : $feedbackEnabled = false;
+        isset($data['feedbackLimitToAreas']) ? $feedbackLimitToAreas = true : $feedbackLimitToAreas = false;
 
         // The setting dependency doesn't support null values, so we need to set it to false if it's not set
         isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
@@ -107,6 +109,7 @@ class GlobalSettingController extends Controller
         Setting::set('divisionApiEnabled', $divisionApiEnabled);
         Setting::set('feedbackEnabled', $feedbackEnabled);
         Setting::set('feedbackForwardEmail', $feedbackForwardEmail);
+        Setting::set('feedbackLimitToAreas', $feedbackLimitToAreas);
         Setting::set('telemetryEnabled', $telemetryEnabled);
         Setting::save();
 
