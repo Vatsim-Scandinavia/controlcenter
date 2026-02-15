@@ -172,7 +172,7 @@
                                         @foreach($trainings as $training)
                                         <tr>
                                             <td>
-                                                <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                                <i class="{{ $statuses[$training->status->value]["icon"] }} text-{{ $statuses[$training->status->value]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status->value]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                             </td>
                                             <td>
                                                 @if ( is_iterable($ratings = $training->ratings->toArray()) )

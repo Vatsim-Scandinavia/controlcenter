@@ -53,7 +53,7 @@
                             @foreach($entries as $activity)
                                 <tr>
                                     <td>
-                                        <i class="{{ $statuses[$activity->training->status]["icon"] }} text-{{  $statuses[$activity->training->status]["color"] }}"></i>
+                                        <i class="{{ $statuses[$activity->training->status->value]["icon"] }} text-{{  $statuses[$activity->training->status->value]["color"] }}"></i>
                                         <a href="{{ route('training.show', $activity->training) }}">{{ $activity->training->user->name }}'s {{ $activity->training->getInlineRatings() }}</a>
                                     </td>
                                     <td>

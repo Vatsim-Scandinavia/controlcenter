@@ -70,7 +70,7 @@
                                         @foreach($mentor->teaches as $training)
                                             <div>
 
-                                                <i class="{{ $statuses[$training->status]["icon"] }} text-{{  $statuses[$training->status]["color"] }}"></i>
+                                                <i class="{{ $statuses[$training->status->value]["icon"] }} text-{{  $statuses[$training->status->value]["color"] }}"></i>
                                                 @isset($training->paused_at)
                                                     <i class="fas fa-pause"></i>
                                                 @endisset
@@ -84,13 +84,13 @@
                                                     @endphp
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $reportDate->toEuropeanDate() }}">
                                                         @if($reportDate->isToday())
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM && !$training->paused_at) ? 'text-danger' : '' }}">Today</span>
                                                         @elseif($reportDate->isYesterday())
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM && !$training->paused_at) ? 'text-danger' : '' }}">Yesterday</span>
                                                         @elseif($reportDate->diffInDays() <= 7)
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 1]) }}</span>
                                                         @else
-                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM->value && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
+                                                            <span class="{{ ($trainingIntervalExceeded && $training->status != \App\Helpers\TrainingStatus::AWAITING_EXAM && !$training->paused_at) ? 'text-danger' : '' }}">{{ $reportDate->diffForHumans(['parts' => 2]) }}</span>
                                                         @endif                                        
                                                     </span>
                                                 @else

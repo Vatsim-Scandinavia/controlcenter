@@ -174,7 +174,7 @@
                                 </td>
                                 <td>{{ $training->area->name }}</td>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                    <i class="{{ $statuses[$training->status->value]["icon"] }} text-{{ $statuses[$training->status->value]["color"] }}"></i>&ensp;{{ $statuses[$training->status->value]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td>
                                     @if($training->reports->count() > 0)
@@ -256,7 +256,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                    <i class="{{ $statuses[$training->status->value]["icon"] }} text-{{ $statuses[$training->status->value]["color"] }}"></i>&ensp;{{ $statuses[$training->status->value]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                             </tr>
                             @endforeach

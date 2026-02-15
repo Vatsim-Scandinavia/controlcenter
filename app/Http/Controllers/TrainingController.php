@@ -33,14 +33,14 @@ class TrainingController extends Controller
      * A list of possible statuses
      */
     public static $statuses = [
-        -4 => ['text' => 'Closed by system', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
-        -3 => ['text' => 'Closed by student', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
-        -2 => ['text' => 'Closed by staff', 'color' => 'danger', 'icon' => 'fas fa-ban', 'assignableByStaff' => true],
-        -1 => ['text' => 'Completed', 'color' => 'success', 'icon' => 'fas fa-check', 'assignableByStaff' => true],
-        0 => ['text' => 'In queue', 'color' => 'warning', 'icon' => 'fas fa-hourglass', 'assignableByStaff' => true],
-        1 => ['text' => 'Pre-training', 'color' => 'info', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
-        2 => ['text' => 'Active training', 'color' => 'success', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
-        3 => ['text' => 'Awaiting exam', 'color' => 'warning', 'icon' => 'fas fa-graduation-cap', 'assignableByStaff' => true],
+        TrainingStatus::CLOSED_BY_SYSTEM->value => ['text' => 'Closed by system', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
+        TrainingStatus::CLOSED_BY_STUDENT->value => ['text' => 'Closed by student', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
+        TrainingStatus::CLOSED_BY_STAFF->value => ['text' => 'Closed by staff', 'color' => 'danger', 'icon' => 'fas fa-ban', 'assignableByStaff' => true],
+        TrainingStatus::COMPLETED->value => ['text' => 'Completed', 'color' => 'success', 'icon' => 'fas fa-check', 'assignableByStaff' => true],
+        TrainingStatus::IN_QUEUE->value => ['text' => 'In queue', 'color' => 'warning', 'icon' => 'fas fa-hourglass', 'assignableByStaff' => true],
+        TrainingStatus::PRE_TRAINING->value => ['text' => 'Pre-training', 'color' => 'info', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
+        TrainingStatus::ACTIVE_TRAINING->value => ['text' => 'Active training', 'color' => 'success', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
+        TrainingStatus::AWAITING_EXAM->value => ['text' => 'Awaiting exam', 'color' => 'warning', 'icon' => 'fas fa-graduation-cap', 'assignableByStaff' => true],
     ];
 
     /**
@@ -79,12 +79,12 @@ class TrainingController extends Controller
     {
         $this->authorize('viewActiveRequests', Training::class);
 
-        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
+        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', TrainingStatus::IN_QUEUE->value]], ['area', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
 
-            return $b->status - $a->status;
+            return $b->status->value - $a->status->value;
         });
 
         $statuses = TrainingController::$statuses;
@@ -106,7 +106,7 @@ class TrainingController extends Controller
     {
         $this->authorize('viewHistoricRequests', Training::class);
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]], ['area', 'reports', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups'])->sortByDesc('closed_at');
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', TrainingStatus::IN_QUEUE->value]], ['area', 'reports', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups'])->sortByDesc('closed_at');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -515,7 +515,7 @@ class TrainingController extends Controller
         if (array_key_exists('status', $attributes)) {
 
             // Don't allow re-opening a training if that causes student to have multiple trainings at the same time
-            if ($attributes['status'] >= 0 && $oldStatus < 0 && $training->user->hasActiveTrainings(true)) {
+            if ($attributes['status'] >= 0 && $oldStatus->value < 0 && $training->user->hasActiveTrainings(true)) {
                 if ($training->user->hasActiveTrainings(true)) {
                     return redirect($training->path())->withErrors('Training can not be reopened. The student already has an active training request.');
                 }
@@ -523,11 +523,11 @@ class TrainingController extends Controller
 
             $training->updateStatus($attributes['status']);
 
-            if ($attributes['status'] != $oldStatus) {
-                if ($attributes['status'] == -2 || $attributes['status'] == -4) {
-                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id, $attributes['closed_reason']);
+            if ($attributes['status'] != $oldStatus->value) {
+                if ($attributes['status'] == TrainingStatus::CLOSED_BY_STAFF->value || $attributes['status'] == TrainingStatus::CLOSED_BY_SYSTEM->value) {
+                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus->value, Auth::user()->id, $attributes['closed_reason']);
                 } else {
-                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id);
+                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus->value, Auth::user()->id);
                 }
             }
         }
@@ -569,7 +569,7 @@ class TrainingController extends Controller
         }
 
         // Update paused time for queue estimation
-        if (isset($attributes['paused_at']) && (int) $training->status >= TrainingStatus::IN_QUEUE->value) {
+        if (isset($attributes['paused_at']) && (int) $training->status->value >= TrainingStatus::IN_QUEUE->value) {
             if (! isset($training->paused_at)) {
                 $attributes['paused_at'] = Carbon::now();
                 TrainingActivityController::create($training->id, 'PAUSE', 1, null, Auth::user()->id);
@@ -588,8 +588,8 @@ class TrainingController extends Controller
         }
 
         // If training is closed, force to unpause
-        if ((int) $training->status != $oldStatus) {
-            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
+        if ((int) $training->status->value != $oldStatus->value) {
+            if ((int) $training->status->value < TrainingStatus::IN_QUEUE->value) {
                 $attributes['paused_at'] = null;
                 if (isset($training->paused_at)) {
                     TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
@@ -601,18 +601,18 @@ class TrainingController extends Controller
         $training->update($attributes);
 
         ActivityLogController::warning('TRAINING', 'Updated training details ' . $training->id .
-        ' ― Old Status: ' . TrainingController::$statuses[$oldStatus]['text'] .
-        ' ― New Status: ' . TrainingController::$statuses[$training->status]['text'] .
+        ' ― Old Status: ' . TrainingController::$statuses[$oldStatus->value]['text'] .
+        ' ― New Status: ' . TrainingController::$statuses[$training->status->value]['text'] .
         ' ― Mentor: ' . $training->mentors->pluck('name'));
 
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
-        if ((int) $training->status != $oldStatus) {
-            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
+        if ((int) $training->status->value != $oldStatus->value) {
+            if ((int) $training->status->value < TrainingStatus::IN_QUEUE->value) {
                 // Detach all mentors
                 $training->mentors()->detach();
 
                 // If the training was completed store the relevant endorsements
-                if ((int) $training->status == TrainingStatus::COMPLETED->value) {
+                if ((int) $training->status->value == TrainingStatus::COMPLETED->value) {
                     foreach ($training->ratings as $rating) {
                         if ($rating->vatsim_rating == null) {
                             // Revoke the old endorsement if active
@@ -649,7 +649,7 @@ class TrainingController extends Controller
                 }
 
                 // If training is completed, let's set the user to active
-                if ((int) $training->status == TrainingStatus::COMPLETED->value) {
+                if ((int) $training->status->value == TrainingStatus::COMPLETED->value) {
                     // atcActivityBasedOnTotalHours is false OR true and type is not familiarisation
                     if (! Setting::get('atcActivityBasedOnTotalHours') || Setting::get('atcActivityBasedOnTotalHours') && $training->type <= 4) {
 
@@ -675,12 +675,12 @@ class TrainingController extends Controller
                     }
                 }
 
-                $training->user->notify(new TrainingClosedNotification($training, (int) $training->status, $training->closed_reason));
+                $training->user->notify(new TrainingClosedNotification($training, (int) $training->status->value, $training->closed_reason));
 
                 return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
             }
 
-            if ((int) $training->status == TrainingStatus::PRE_TRAINING->value) {
+            if ((int) $training->status->value == TrainingStatus::PRE_TRAINING->value) {
                 $training->user->notify(new TrainingPreStatusNotification($training));
 
                 return redirect($training->path())->withSuccess('Training successfully updated. E-mail confirmation of pre-training sent to the student.');
@@ -706,14 +706,14 @@ class TrainingController extends Controller
     {
         $this->authorize('close', $training);
         ActivityLogController::warning('TRAINING', 'Student closed training request ' . $training->id .
-        ' ― Status: ' . TrainingController::$statuses[$training->status]['text'] .
+        ' ― Status: ' . TrainingController::$statuses[$training->status->value]['text'] .
         ' ― Training type: ' . TrainingController::$types[$training->type]['text']);
-        TrainingActivityController::create($training->id, 'STATUS', -3, $training->status, $training->user->id);
+        TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::CLOSED_BY_STUDENT->value, $training->status->value, $training->user->id);
 
         $training->mentors()->detach();
-        $training->updateStatus(-3);
+        $training->updateStatus(TrainingStatus::CLOSED_BY_STUDENT->value);
 
-        $training->user->notify(new TrainingClosedNotification($training, (int) $training->status));
+        $training->user->notify(new TrainingClosedNotification($training, (int) $training->status->value));
 
         return redirect($training->path())->withSuccess('Training successfully closed.');
     }

@@ -17,7 +17,7 @@
 @endsection
 @section('content')
 
-@if($training->status < \App\Helpers\TrainingStatus::COMPLETED->value && $training->status != \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
+@if($training->status->value < \App\Helpers\TrainingStatus::COMPLETED->value && $training->status != \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT)
     <div class="alert alert-warning" role="alert">
         <b>Training is closed with reason: </b>
         @if(isset($training->closed_reason))
@@ -28,7 +28,7 @@
     </div>
 @endif
 
-@if($training->status == \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
+@if($training->status == \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT)
     <div class="alert alert-warning" role="alert">
         <b>Training closed by student</b>
     </div>
@@ -78,11 +78,11 @@
                 <dl class="copyable">
                     <dt>State</dt>
                     <dd>
-                        <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>
-                        @if($training->status == \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->pre_training_completed )
+                        <i class="{{ $statuses[$training->status->value]["icon"] }} text-{{ $statuses[$training->status->value]["color"] }}"></i>
+                        @if($training->status == \App\Helpers\TrainingStatus::PRE_TRAINING && $training->pre_training_completed )
                             <i class="fas fa-check text-success"></i>
                         @endif
-                        {{ $statuses[$training->status]["text"] }}
+                        {{ $statuses[$training->status->value]["text"] }}
                         {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                     </dd>
 
@@ -177,7 +177,7 @@
                             <select class="form-select" name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
                                 @foreach($statuses as $id => $data)
                                     @if($data["assignableByStaff"])
-                                        @if($id == $training->status)
+                                        @if($id == $training->status->value)
                                             <option value="{{ $id }}" selected>{{ $data["text"] }}</option>
                                         @else
                                             <option value="{{ $id }}">{{ $data["text"] }}</option>
@@ -419,7 +419,7 @@
         <div class="card shadow mb-4 ">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
 
-                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                @if($training->status->value >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status->value <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <h6 class="m-0 fw-bold text-white">
                 @else
                     <h6 class="m-0 mt-1 mb-2 fw-bold text-white">
@@ -430,7 +430,7 @@
                 @if(
                     \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_REPORT_TYPE]) ||
                     \Auth::user()->can('create', [\App\Models\OneTimeLink::class, $training, \App\Models\OneTimeLink::TRAINING_EXAMINATION_TYPE]) ||
-                    ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                    ($training->status->value >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status->value <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                 )
                     <div class="dropdown" style="display: inline;">
                         <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -439,7 +439,7 @@
                     
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\TrainingReport::class, $training])
-                                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
+                                @if($training->status->value >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
                                     <a class="dropdown-item" href="{{ route('training.report.create', ['training' => $training->id]) }}"><i class="fas fa-file"></i> Training Report</a>
                                 @endif
                             @else
@@ -447,7 +447,7 @@
                             @endcan
 
                             @can('create', [\App\Models\TrainingExamination::class, $training])
-                                @if($training->status == \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                                @if($training->status == \App\Helpers\TrainingStatus::AWAITING_EXAM)
                                     <a class="dropdown-item" href="{{ route('training.examination.create', ['training' => $training->id]) }}"><i class="fas fa-file"></i> Exam Report</a>
                                 @endif
                             @else

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Group;
@@ -185,11 +186,11 @@ class ReportController extends Controller
         }
 
         $stats = $query->selectRaw('
-                COUNT(CASE WHEN status = 0 THEN 1 END) as waiting,
-                COUNT(CASE WHEN status IN (1, 2) THEN 1 END) as training,
-                COUNT(CASE WHEN status = 3 THEN 1 END) as exam,
-                COUNT(CASE WHEN status = -1 AND closed_at >= ? THEN 1 END) as completed,
-                COUNT(CASE WHEN status = -2 AND closed_at >= ? THEN 1 END) as closed
+                COUNT(CASE WHEN status = ' . TrainingStatus::IN_QUEUE->value . ' THEN 1 END) as waiting,
+                COUNT(CASE WHEN status IN (' . TrainingStatus::PRE_TRAINING->value . ', ' . TrainingStatus::ACTIVE_TRAINING->value . ') THEN 1 END) as training,
+                COUNT(CASE WHEN status = ' . TrainingStatus::AWAITING_EXAM->value . ' THEN 1 END) as exam,
+                COUNT(CASE WHEN status = ' . TrainingStatus::COMPLETED->value . ' AND closed_at >= ? THEN 1 END) as completed,
+                COUNT(CASE WHEN status = ' . TrainingStatus::CLOSED_BY_STAFF->value . ' AND closed_at >= ? THEN 1 END) as closed
             ', [$firstDayOfYear, $firstDayOfYear])
             ->first();
 
@@ -268,7 +269,7 @@ class ReportController extends Controller
             ->where(function ($query) use ($sixMonthsAgo) {
                 $query->where('created_at', '>=', $sixMonthsAgo)
                     ->orWhere(function ($subQuery) use ($sixMonthsAgo) {
-                        $subQuery->whereIn('status', [-1, -2])
+                        $subQuery->whereIn('status', [TrainingStatus::COMPLETED->value, TrainingStatus::CLOSED_BY_STAFF->value])
                             ->where('closed_at', '>=', $sixMonthsAgo);
                     });
             });
@@ -295,9 +296,9 @@ class ReportController extends Controller
                 if ($training->closed_at >= $sixMonthsAgo) {
                     $month = $monthTranslator[(int) $training->closed_at->format('m')] ?? null;
                     if ($month !== null) {
-                        if ($training->status == -1) {
+                        if ($training->status == TrainingStatus::COMPLETED) {
                             $completedRequests[$rating->name][$month]++;
-                        } elseif ($training->status == -2) {
+                        } elseif ($training->status == TrainingStatus::CLOSED_BY_STAFF) {
                             $closedRequests[$rating->name][$month]++;
                         }
                     }

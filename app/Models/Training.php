@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\TrainingStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class Training extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'closed_at' => 'datetime',
+        'status' => TrainingStatus::class,
     ];
 
     /**
@@ -40,16 +42,16 @@ class Training extends Model
     {
         $oldStatus = $this->fresh()->status;
 
-        if ($newStatus != $oldStatus) {
+        if ($newStatus != $oldStatus->value) {
             // Training was put back in queue or closed
-            if ($newStatus == 0) {
+            if ($newStatus == TrainingStatus::IN_QUEUE->value) {
                 $this->update(['started_at' => null, 'closed_at' => null]);
             }
 
             // If training is as active or complete
-            if ($newStatus >= 1 || $newStatus == -1) {
+            if ($newStatus >= TrainingStatus::PRE_TRAINING->value || $newStatus == TrainingStatus::COMPLETED->value) {
                 // In case someone resurrects a closed training
-                if ($oldStatus < 0) {
+                if ($oldStatus->value < TrainingStatus::IN_QUEUE->value) {
                     $this->update(['closed_at' => null]);
                 }
 
@@ -66,7 +68,7 @@ class Training extends Model
             }
 
             // If training is completed or closed
-            if ($newStatus < 0) {
+            if ($newStatus < TrainingStatus::IN_QUEUE->value) {
                 $this->update(['closed_at' => now()]);
 
                 // Expire all related training interest models, as they will only cause problems if training is re-opened.
