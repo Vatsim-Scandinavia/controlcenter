@@ -72,22 +72,22 @@ Settings related to the [VATSIM integration](../integrations/vatsim.md).
 | `VATSIM_CORE_API_TOKEN`    | null                                  | API token (v2) to VATSIM Core API                                                                      |
 | `VATSIM_BOOKING_API_URL`   | `https://atc-bookings.vatsim.net/api` | URL to VATSIM ATC Bookings API                                                                         |
 | `VATSIM_BOOKING_API_TOKEN` | null                                  | API token to VATSIM ATC Bookings API                                                                   |
-| `STATS_API_URL`            | `https://api.statsim.net/`             | URL to statistics API (used for ATC activity charts)                                                  |
-| `STATS_API_KEY`            | null                                  | API key for statistics API authentication (required for ATC activity charts)                          |
+| `STATSIM_API_URL`          | `https://api.statsim.net/`            | URL to StatSim's statistics API (ATC activity charts)                                                  |
+| `STATSIM_API_KEY`          | null                                  | API key for authenticating to StatSim's statistics API (ATC activity charts)                           |
 
 ### Mail
 
 Settings related to mail notifications, an important aspect of [supporting training](../concepts/training.md).
 
-| Variable | Default value | Explanation |
-| ------- | --- | --- |
-| `MAIL_MAILER` | smtp | Mailer type |
-| `MAIL_HOST` | smtp.mailgun.org | Mail host |
-| `MAIL_PORT` | 587 | Mail port |
-| `MAIL_USERNAME` | null | Mail username |
-| `MAIL_PASSWORD` | null | Mail password |
-| `MAIL_ENCRYPTION` | null | Mail encryption |
-| `MAIL_FROM_NAME` | Control Center | Mail from name |
+| Variable            | Default value          | Explanation       |
+| --------            | -------------          | -----------       |
+| `MAIL_MAILER`       | smtp                   | Mailer type       |
+| `MAIL_HOST`         | smtp.mailgun.org       | Mail host         |
+| `MAIL_PORT`         | 587                    | Mail port         |
+| `MAIL_USERNAME`     | null                   | Mail username     |
+| `MAIL_PASSWORD`     | null                   | Mail password     |
+| `MAIL_ENCRYPTION`   | null                   | Mail encryption   |
+| `MAIL_FROM_NAME`    | Control Center         | Mail from name    |
 | `MAIL_FROM_ADDRESS` | `noreply@yourvacc.com` | Mail from address |
 
 ### Proxying
