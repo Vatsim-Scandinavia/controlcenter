@@ -351,18 +351,29 @@ class User extends Authenticatable
      */
     public function hasActiveTrainings(bool $includeWaiting, ?Area $area = null)
     {
+        $statuses = $includeWaiting ? [0, 1, 2, 3] : [1, 2, 3];
+
+        if ($this->relationLoaded('trainings')) {
+            $trainings = $this->trainings;
+            if ($area) {
+                $trainings = $trainings->where('area_id', $area->id);
+            }
+
+            return $trainings->whereIn('status', $statuses)->isNotEmpty();
+        }
+
         if ($includeWaiting) {
             if ($area == null) {
-                return count($this->trainings()->whereIn('status', [0, 1, 2, 3])->get()) > 0;
+                return $this->trainings()->whereIn('status', [0, 1, 2, 3])->exists();
             }
 
-            return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [0, 1, 2, 3])->get()) > 0;
+            return $this->trainings()->where('area_id', $area->id)->whereIn('status', [0, 1, 2, 3])->exists();
         } else {
             if ($area == null) {
-                return count($this->trainings()->whereIn('status', [1, 2, 3])->get()) > 0;
+                return $this->trainings()->whereIn('status', [1, 2, 3])->exists();
             }
 
-            return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [1, 2, 3])->get()) > 0;
+            return $this->trainings()->where('area_id', $area->id)->whereIn('status', [1, 2, 3])->exists();
         }
     }
 
