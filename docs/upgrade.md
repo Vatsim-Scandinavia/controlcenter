@@ -20,6 +20,13 @@ php artisan optimize:clear
 
 This release contains breaking changes to the theme system.
 
+### StatSim Activity Chart
+
+You might've noticed that the ATC activity numbers on users' profiles have started generating errors.
+This is due to a change in the StatSim API offering which we didn't get around to fixing before the API was deprecated and decomissioned. 
+
+The new API requires the use of a dedicated API key, which has a corresponding [required new environment variable for authenticating to StatSim](configuration/index.md#vatsim).
+
 ### Theme System Migration
 
 The theme system has been completely redesigned to support light/dark themes and user preferences.
@@ -65,7 +72,6 @@ If you had customized colors in your `.env` file:
 
 For detailed information on using themes as an end-user, see the [User Theme Guide](user-themes.md).  
 For customizing themes as an operator, see [Theme Setup](setup/theme.md)
-   
 
 ## Upgrading to 6.0.0
 
