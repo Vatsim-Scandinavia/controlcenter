@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'stats_api_url' => env('STATS_API_URL', 'https://api.statsim.net/'),
-    'stats_api_key' => env('STATS_API_KEY', null),
+    'statsim_api_url' => env('STATSIM_API_URL', 'https://api.statsim.net/'),
+    'statsim_api_key' => env('STATSIM_API_KEY', null),
 
 ];
