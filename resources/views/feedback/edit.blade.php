@@ -31,7 +31,7 @@
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <label class="form-label">Feedback Text</label>
-                            <textarea class="form-control" rows="5" disabled>{!! nl2br(e($feedback->feedback)) !!}</textarea>
+                            <textarea class="form-control" rows="5" disabled>{{ $feedback->feedback }}</textarea>
                         </div>
                     </div>
 
