@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Http\Controllers\ActivityLogController;
 use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
@@ -78,7 +77,6 @@ class FeedbackController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Feedback  $feedback
      * @return \Illuminate\Http\Response
      */
     public function edit(Feedback $feedback)
@@ -94,8 +92,6 @@ class FeedbackController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Feedback  $feedback
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Feedback $feedback)
@@ -118,8 +114,8 @@ class FeedbackController extends Controller
         $oldPositionId = $feedback->reference_position_id;
 
         // Get new values
-        $newPosition = isset($data['position']) && !empty($data['position']) ? Position::where('callsign', $data['position'])->first() : null;
-        $newController = isset($data['controller']) && !empty($data['controller']) ? User::find($data['controller']) : null;
+        $newPosition = isset($data['position']) && ! empty($data['position']) ? Position::where('callsign', $data['position'])->first() : null;
+        $newController = isset($data['controller']) && ! empty($data['controller']) ? User::find($data['controller']) : null;
         $newControllerId = $newController ? $newController->id : null;
         $newPositionId = $newPosition ? $newPosition->id : null;
 
@@ -130,7 +126,7 @@ class FeedbackController extends Controller
 
         // Build log message
         $changes = [];
-        
+
         if ($oldControllerId != $newControllerId) {
             $oldControllerText = $oldController ? $oldController->name . ' (' . $oldControllerId . ')' : 'N/A';
             $newControllerText = $newController ? $newController->name . ' (' . $newControllerId . ')' : 'N/A';
@@ -143,7 +139,7 @@ class FeedbackController extends Controller
             $changes[] = 'Position: ' . $oldPositionText . ' → ' . $newPositionText;
         }
 
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             try {
                 ActivityLogController::info('FEEDBACK', 'Updated feedback ' . $feedback->id . ' ― ' . implode(', ', $changes));
             } catch (\Exception $e) {

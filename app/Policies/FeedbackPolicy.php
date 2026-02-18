@@ -13,8 +13,6 @@ class FeedbackPolicy
     /**
      * Determine whether the user can update the feedback.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Feedback  $feedback
      * @return bool
      */
     public function update(User $user, Feedback $feedback)
