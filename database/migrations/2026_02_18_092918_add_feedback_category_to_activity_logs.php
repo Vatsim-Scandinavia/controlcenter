@@ -18,7 +18,9 @@ return new class extends Migration
         // Current enum (from 2022_05_15_095715_add_endorsement_log_type.php) is:
         // ['ACCESS', 'TRAINING', 'BOOKING', 'ENDORSEMENT', 'OTHER']
         if (Schema::hasTable('activity_logs')) {
-            $driver = Schema::getConnection()->getDriverName();
+            $connection = Schema::getConnection();
+            $driver = $connection->getDriverName();
+            $connectionName = $connection->getName();
 
             if ($driver === 'mysql') {
                 // MySQL: safely alter the enum in place without dropping the column
@@ -26,9 +28,8 @@ return new class extends Migration
                     ALTER TABLE activity_logs
                     MODIFY COLUMN category ENUM('ACCESS','TRAINING','BOOKING','ENDORSEMENT','FEEDBACK','OTHER') NULL
                 ");
-            } elseif (app()->environment('testing', 'local')) {
-                // SQLite (tests/local) and other drivers: fall back to drop & recreate,
-                // mirroring 2022_05_15_095715_add_endorsement_log_type.php behavior.
+            } elseif ($driver === 'sqlite' && $connectionName === 'sqlite-testing') {
+                // Test suite (sqlite-testing): drop & recreate, mirroring the 2022 migration pattern.
                 Schema::table('activity_logs', function (Blueprint $table) {
                     $table->dropColumn('category');
                 });
@@ -39,8 +40,8 @@ return new class extends Migration
                         ->after('type');
                 });
             } else {
-                // In any other non-MySQL, non-testing environment we fail loudly to avoid silent data loss.
-                throw new RuntimeException('add_feedback_category_to_activity_logs supports only MySQL outside testing/local.');
+                // Any other non-MySQL environment is not supported to avoid accidental data loss.
+                throw new RuntimeException('add_feedback_category_to_activity_logs supports only MySQL or sqlite-testing.');
             }
         }
     }
@@ -54,7 +55,9 @@ return new class extends Migration
     {
         // Revert enum back to the previous set without FEEDBACK.
         if (Schema::hasTable('activity_logs')) {
-            $driver = Schema::getConnection()->getDriverName();
+            $connection = Schema::getConnection();
+            $driver = $connection->getDriverName();
+            $connectionName = $connection->getName();
 
             if ($driver === 'mysql') {
                 // Remap any FEEDBACK entries to OTHER before shrinking the enum
@@ -68,8 +71,8 @@ return new class extends Migration
                     ALTER TABLE activity_logs
                     MODIFY COLUMN category ENUM('ACCESS','TRAINING','BOOKING','ENDORSEMENT','OTHER') NULL
                 ");
-            } elseif (app()->environment('testing', 'local')) {
-                // For sqlite tests/local, mirror the up() behavior with drop & recreate.
+            } elseif ($driver === 'sqlite' && $connectionName === 'sqlite-testing') {
+                // sqlite-testing rollback: mirror the up() behavior with drop & recreate.
                 Schema::table('activity_logs', function (Blueprint $table) {
                     $table->dropColumn('category');
                 });
@@ -80,7 +83,7 @@ return new class extends Migration
                         ->after('type');
                 });
             } else {
-                throw new RuntimeException('add_feedback_category_to_activity_logs down() supports only MySQL outside testing/local.');
+                throw new RuntimeException('add_feedback_category_to_activity_logs down() supports only MySQL or sqlite-testing.');
             }
         }
     }
