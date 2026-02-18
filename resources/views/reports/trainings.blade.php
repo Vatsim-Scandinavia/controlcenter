@@ -2,22 +2,54 @@
 
 @section('title', 'Training Statistics')
 @section('title-flex')
-    <div>
-        <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
-        @if(\Auth::user()->isAdmin())
-            <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.trainings') }}">All Areas</a>
-        @endif
-        @foreach($areas as $area)
-            @if(\Auth::user()->isModeratorOrAbove($area))
-                <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.training.area', $area->id) }}">{{ $area->name }}</a>
+    <div class="d-flex align-items-center flex-wrap gap-2">
+        <form method="GET" action="{{ url()->current() }}" class="d-flex align-items-center me-3">
+             <div class="input-group input-group-sm w-auto">
+                <span class="input-group-text"><i class="fas fa-calendar me-1"></i>Date</span>
+                <span class="input-group-text">From</span>
+                <input type="text" name="start_date" class="form-control datepicker" value="{{ $startDate ? $startDate->format('Y-m-d') : '' }}" placeholder="Start Date">
+                <span class="input-group-text">To</span>
+                <input type="text" name="end_date" class="form-control datepicker" value="{{ $endDate ? $endDate->format('Y-m-d') : '' }}" placeholder="End Date">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+                @if($startDate || $endDate)
+                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm"><i class="fas fa-times"></i></a>
+                @endif
+             </div>
+        </form>
+
+        <div class="input-group input-group-sm w-auto">
+            <span class="input-group-text"><i class="fas fa-filter me-1"></i>Filter</span>
+            @if(\Auth::user()->isAdmin())
+                <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.trainings', ['start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">All Areas</a>
             @endif
-        @endforeach
+            @foreach($areas as $area)
+                @if(\Auth::user()->isModeratorOrAbove($area))
+                    <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.training.area', ['id' => $area->id, 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">{{ $area->name }}</a>
+                @endif
+            @endforeach
+        </div>
     </div>
 @endsection
 @section('content')
 
-<div class="row">
+@if($startDate && $endDate && $startDate->greaterThanOrEqualTo($endDate))
+    <div class="row mt-3">
+        <div class="col-xl-12 col-md-12 mb-12">
+            <div class="card shadow mb-4">
+                <div class="card-body p-0">
+                    <div class="text-center pt-4 pb-4">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 5rem;"></i>
+                        <p class="pt-4 fs-5">
+                            Start date must be before end date
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@else
 
+<div class="row">
     <div class="col-xl-3 col-md-6 mb-4">
     <div class="card border-left-secondary shadow h-100 py-2">
         <div class="card-body">
@@ -71,7 +103,7 @@
             <div class="card-body">
             <div class="row g-0 align-items-center">
                 <div class="col me-2">
-                <div class="fs-sm fw-bold text-success text-uppercase mb-1">Completed this year</div>
+                <div class="fs-sm fw-bold text-success text-uppercase mb-1">Completed{{ $startDate ? '' : ' this year' }}</div>
                 <div class="row g-0 align-items-center">
                     <div class="col-auto">
                         <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $cardStats["completed"] }} requests</div>
@@ -91,7 +123,7 @@
             <div class="card-body">
             <div class="row g-0 align-items-center">
                 <div class="col me-2">
-                <div class="fs-sm fw-bold text-danger text-uppercase mb-1">Closed this year</div>
+                <div class="fs-sm fw-bold text-danger text-uppercase mb-1">Closed{{ $startDate ? '' : ' this year' }}</div>
                 <div class="row g-0 align-items-center">
                     <div class="col-auto">
                         <div class="h5 mb-0 me-3 fw-bold text-gray-800">{{ $cardStats["closed"] }} requests</div>
@@ -113,7 +145,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Training requests last 12 months
+                    Training requests{{ $startDate ? '' : ' last 12 months' }}
                 </h6>
             </div>
             <div class="card-body">
@@ -130,7 +162,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    New requests last 6 months
+                    New requests{{ $startDate ? '' : ' last 6 months' }}
                 </h6>
             </div>
             <div class="card-body">
@@ -143,7 +175,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Completed requests last 6 months
+                    Completed requests{{ $startDate ? '' : ' last 6 months' }}
                 </h6>
             </div>
             <div class="card-body">
@@ -156,7 +188,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Closed requests last 6 months
+                    Closed requests{{ $startDate ? '' : ' last 6 months' }}
                 </h6>
             </div>
             <div class="card-body">
@@ -169,7 +201,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Passed and failed exams last 6 months
+                    Passed and failed exams{{ $startDate ? '' : ' last 6 months' }}
                 </h6>
             </div>
             <div class="card-body">
@@ -209,11 +241,32 @@
     </div>
 </div>
 
+@endif
 
 @endsection
 
 @section('js')
-@vite('resources/js/chart.js')
+@vite(['resources/js/chart.js', 'resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
+<script>
+    function generateLegendLabelsWithTotal(chart) {
+        const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+        labels.forEach(label => {
+            const dataset = chart.data.datasets[label.datasetIndex];
+            const total = dataset.data.reduce((a, b) => a + b, 0);
+            label.text += ' (' + total + ')';
+        });
+        return labels;
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.datepicker').flatpickr({
+            disableMobile: true,
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+    });
+</script>
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -296,13 +349,7 @@
         }
 
         var barChartData = {
-            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                    moment().subtract(5, "month").startOf("month").format('MMMM'),
-                    moment().subtract(4, "month").startOf("month").format('MMMM'),
-                    moment().subtract(3, "month").startOf("month").format('MMMM'),
-                    moment().subtract(2, "month").startOf("month").format('MMMM'),
-                    moment().subtract(1, "month").startOf("month").format('MMMM'),
-                    moment().startOf("month").format('MMMM')],
+            labels: {!! json_encode($labels) !!},
             datasets: datasets
         };
 
@@ -312,6 +359,13 @@
             data: barChartData,
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            generateLabels: generateLegendLabelsWithTotal
+                        }
+                    }
+                },
                 scales: {
                     x: {
                         stacked: true,
@@ -348,13 +402,7 @@
         }
 
         var barChartData = {
-            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                    moment().subtract(5, "month").startOf("month").format('MMMM'),
-                    moment().subtract(4, "month").startOf("month").format('MMMM'),
-                    moment().subtract(3, "month").startOf("month").format('MMMM'),
-                    moment().subtract(2, "month").startOf("month").format('MMMM'),
-                    moment().subtract(1, "month").startOf("month").format('MMMM'),
-                    moment().startOf("month").format('MMMM')],
+            labels: {!! json_encode($labels) !!},
             datasets: datasets
         };
 
@@ -364,6 +412,13 @@
             data: barChartData,
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            generateLabels: generateLegendLabelsWithTotal
+                        }
+                    }
+                },
                 scales: {
                     x: {
                         stacked: true,
@@ -401,13 +456,7 @@
         }
 
         var barChartData = {
-            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                    moment().subtract(5, "month").startOf("month").format('MMMM'),
-                    moment().subtract(4, "month").startOf("month").format('MMMM'),
-                    moment().subtract(3, "month").startOf("month").format('MMMM'),
-                    moment().subtract(2, "month").startOf("month").format('MMMM'),
-                    moment().subtract(1, "month").startOf("month").format('MMMM'),
-                    moment().startOf("month").format('MMMM')],
+            labels: {!! json_encode($labels) !!},
             datasets: datasets
         };
 
@@ -417,6 +466,13 @@
             data: barChartData,
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            generateLabels: generateLegendLabelsWithTotal
+                        }
+                    }
+                },
                 scales: {
                     x: {
                         stacked: true,
@@ -441,17 +497,11 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
-        // Pass/fail rate for requests last 6 months
+        // Pass/fail rate for requests
         var passFailRequestsData = {!! json_encode($passFailRequests) !!}
 
         var barChartData = {
-            labels: [moment().subtract(6, "month").startOf("month").format('MMMM'),
-                    moment().subtract(5, "month").startOf("month").format('MMMM'),
-                    moment().subtract(4, "month").startOf("month").format('MMMM'),
-                    moment().subtract(3, "month").startOf("month").format('MMMM'),
-                    moment().subtract(2, "month").startOf("month").format('MMMM'),
-                    moment().subtract(1, "month").startOf("month").format('MMMM'),
-                    moment().startOf("month").format('MMMM')],
+            labels: {!! json_encode($labels) !!},
             datasets: [{
                 label: 'Failed',
                 backgroundColor: 'rgb(200, 100, 100)',
@@ -470,6 +520,13 @@
             data: barChartData,
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            generateLabels: generateLegendLabelsWithTotal
+                        }
+                    }
+                },
                 scales: {
                     x: {
                         stacked: true,
