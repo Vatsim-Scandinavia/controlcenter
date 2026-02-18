@@ -95,21 +95,6 @@ class FeedbackController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Feedback $feedback)
-    {
-        $this->authorize('update', $feedback);
-
-        $positions = Position::all();
-        $controllers = User::getActiveAtcMembers();
-
-        return view('feedback.edit', compact('feedback', 'positions', 'controllers'));
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @return \Illuminate\Http\RedirectResponse
