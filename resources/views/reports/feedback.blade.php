@@ -35,6 +35,9 @@
                                 <th data-field="controller" data-sortable="true" data-filter-control="select">Controller</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-field="feedback" data-sortable="false" data-filter-control="input">Feedback</th>
+                                @if(Auth::user()->isModeratorOrAbove())
+                                    <th data-field="actions" data-sortable="false">Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -59,6 +62,11 @@
                                     <td>
                                         {!! nl2br($f->feedback) !!}
                                     </td>
+                                    @if(Auth::user()->isModeratorOrAbove())
+                                        <td>
+                                            <a href="{{ route('feedback.edit', $f->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
