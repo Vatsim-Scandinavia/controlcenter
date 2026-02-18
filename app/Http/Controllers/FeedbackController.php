@@ -13,6 +13,29 @@ use Illuminate\Support\Facades\Log;
 class FeedbackController extends Controller
 {
     /**
+     * Get shared validation rules for controller/position.
+     */
+    protected function controllerPositionRules(array $extra = []): array
+    {
+        return array_merge([
+            'position' => 'nullable|exists:positions,callsign',
+            'controller' => 'nullable|numeric|exists:users,id',
+        ], $extra);
+    }
+
+    /**
+     * Get shared validation messages for controller/position.
+     */
+    protected function controllerPositionMessages(): array
+    {
+        return [
+            'controller.numeric' => 'The controller field must be a valid VATSIM CID (numeric).',
+            'controller.exists' => 'A controller with this CID was not found.',
+            'position.exists' => 'The position does not exist.',
+        ];
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -42,15 +65,12 @@ class FeedbackController extends Controller
             return redirect()->route('dashboard')->withErrors('Feedback is currently disabled.');
         }
 
-        $data = $request->validate([
-            'position' => 'nullable|exists:positions,callsign',
-            'controller' => 'nullable|numeric|exists:users,id',
-            'feedback' => 'required',
-        ], [
-            'controller.numeric' => 'The controller field must be a valid VATSIM CID (numeric).',
-            'controller.exists' => 'A controller with this CID was not found.',
-            'position.exists' => 'The position does not exist.',
-        ]);
+        $data = $request->validate(
+            $this->controllerPositionRules([
+                'feedback' => 'required',
+            ]),
+            $this->controllerPositionMessages()
+        );
 
         $position = isset($data['position']) ? Position::where('callsign', $data['position'])->get()->first() : null;
         $controller = isset($data['controller']) ? User::find($data['controller']) : null;
@@ -98,14 +118,10 @@ class FeedbackController extends Controller
     {
         $this->authorize('update', $feedback);
 
-        $data = $request->validate([
-            'position' => 'nullable|exists:positions,callsign',
-            'controller' => 'nullable|numeric|exists:users,id',
-        ], [
-            'controller.numeric' => 'The controller field must be a valid VATSIM CID (numeric).',
-            'controller.exists' => 'A controller with this CID was not found.',
-            'position.exists' => 'The position does not exist.',
-        ]);
+        $data = $request->validate(
+            $this->controllerPositionRules(),
+            $this->controllerPositionMessages()
+        );
 
         // Track old values for logging
         $oldController = $feedback->referenceUser;
