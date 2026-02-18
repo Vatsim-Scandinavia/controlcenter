@@ -6,6 +6,7 @@ use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\ManagementReport;
+use App\Models\Position;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingActivity;
@@ -271,7 +272,10 @@ class ReportController extends Controller
             })
             ->get();
 
-        return view('reports.feedback', compact('feedback'));
+        $positions = Position::all();
+        $controllers = User::getActiveAtcMembers();
+
+        return view('reports.feedback', compact('feedback', 'positions', 'controllers'));
     }
 
     /**
