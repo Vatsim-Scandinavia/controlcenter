@@ -9,3 +9,10 @@ tests
 .devcontainer
 # Don't care about docs either, they're online.
 docs
+# Don't care about no mise or nix files either, they're for development.
+.mise.toml
+flake.nix
+flake.lock
+# Don't care about these either, they're for local development.
+.direnv
+.envrc
