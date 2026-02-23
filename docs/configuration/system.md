@@ -275,16 +275,15 @@ Find your own VATSIM CID, and have it ready:
 
 You'll be asked to provide a CID and an area that the user is an administrator in. Assuming you change the areas to ones of your own, selecting the first area means you won't need to repeat this process right after customising your division's areas.
 
-
 ## Next steps
 
 You're done! You can now access *Administration* -> *Settings* from the navigation menu to change the essential division preferences.
 
 You have
 
-- :material-check: setup a database for CC
-- :material-check: secured your application instance
-- :material-check: secured your users sessions and data
-- :material-check: sorted scheduled tasks
-- :material-check: considered or added a reverse proxy
-- :material-check: a great starting-point to get your division on-board!
+- [x] setup a database for CC
+- [x] secured your application instance
+- [x] secured your users sessions and data
+- [x] sorted scheduled tasks
+- [x] considered or added a reverse proxy
+- [x] a great starting-point to get your division on-board!
