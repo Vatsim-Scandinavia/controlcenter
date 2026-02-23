@@ -48,6 +48,8 @@ theme:
     - content.code.copy
     # use fancy material tooltips in lieu of browser default
     - content.tooltips
+    # use fancy material tooltips for footnotes
+    - content.footnote.tooltips
     # get rid of annotations we don't care to see
     - announce.dismiss
     # tabs at the top from level 1 navigation
@@ -125,6 +127,7 @@ nav:
       - Contribute: contribute.md
       - API: api.md
       - Background jobs: background-jobs.md
+      - Environment variables: reference/environment-variables.md
       - Upgrading: upgrade.md
   - Integrations:
       # Insert discord.md and others here
@@ -156,6 +159,7 @@ markdown_extensions:
       check_paths: true
       base_path:
         - _includes
+        - .
       auto_append:
         - abbreviations.md
   - pymdownx.extra

@@ -961,6 +961,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Environment variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-vatsim-connect-or-handover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended: VATSIM Connect or Handover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-oauth-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom OAuth mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1701,6 +1729,36 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/environment-variables/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../upgrade/" class="md-nav__link">
         
   
@@ -1939,6 +1997,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Environment variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-vatsim-connect-or-handover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended: VATSIM Connect or Handover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-oauth-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom OAuth mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1967,20 +2053,54 @@
 
 
 <h1 id="configuring-authentication-with-oauth">Configuring authentication with OAuth<a class="headerlink" href="#configuring-authentication-with-oauth" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Only applies if you're not using Handover or <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect</p>
-<p>These settings do not apply if you're using Handover or <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect to authenticate your users.</p>
-</div>
 <p>Control Center supports both <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect, <a href="https://github.com/Vatsim-Scandinavia/handover">Handover</a> and other OAuth providers to authenticate and fetch user data.</p>
 <p>If you're looking for a centralised authentication service, check out our <a href="https://github.com/Vatsim-Scandinavia/handover">Handover</a> service, or use <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect.</p>
-<p>While support for <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect and Handover is configured by default, there are additional settings you need to configure for Control Center to work with other OAuth-based identity providers.</p>
 <div class="admonition tip">
 <p class="admonition-title">Use <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect or Handover if possible</p>
 <p>No explicit configuration is required for <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect or Handover.
 Consider using either <a href="../../configuration/#authentication"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> SSO or Handover for authentication</a> by utilising the standard configuration.</p>
 </div>
 <h2 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
-<p>If you want to use your own custom OAuth provider, you need to configure the following variables.</p>
+<p>These variables are shared with the <a href="../../reference/environment-variables/">Environment Variables reference</a>.</p>
+<h3 id="recommended-vatsim-connect-or-handover">Recommended: <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect or Handover<a class="headerlink" href="#recommended-vatsim-connect-or-handover" title="Permanent link">&para;</a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The authentication settings must be valid to get access to Control Center.</p>
+</div>
+<p>Settings related to configuring OAuth-based authentication adhering to the fields supported by <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> and <a href="../../integrations/handover/">Handover</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default value</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OAUTH_URL</code></td>
+<td><code>https://auth.vatsim.net</code></td>
+<td>OAuth URL of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr></td>
+</tr>
+<tr>
+<td><code>OAUTH_ID</code></td>
+<td>null</td>
+<td>OAuth ID of your subdivision</td>
+</tr>
+<tr>
+<td><code>OAUTH_SECRET</code></td>
+<td>null</td>
+<td>OAuth secret of your subdivision</td>
+</tr>
+</tbody>
+</table>
+<h3 id="custom-oauth-mapping">Custom OAuth mapping<a class="headerlink" href="#custom-oauth-mapping" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Only applies if you're not using Handover or <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect</p>
+<p>These settings do not apply if you're using Handover or <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect to authenticate your users.</p>
+</div>
+<p>If you want to use your own custom OAuth provider, you also need to configure mapping variables.</p>
+<p>When you use a custom OAuth provider, configure mapping variables so Control Center can map provider fields to expected <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr>-style attributes.</p>
 <table>
 <thead>
 <tr>
@@ -1991,52 +2111,52 @@ Consider using either <a href="../../configuration/#authentication"><abbr title=
 </thead>
 <tbody>
 <tr>
-<td>OAUTH_MAPPING_CID</td>
+<td><code>OAUTH_MAPPING_CID</code></td>
 <td>data-id</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> CID</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_EMAIL</td>
+<td><code>OAUTH_MAPPING_EMAIL</code></td>
 <td>data-email</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> e-mail</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_FIRSTNAME</td>
+<td><code>OAUTH_MAPPING_FIRSTNAME</code></td>
 <td>data-first_name</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> first name</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_LASTNAME</td>
+<td><code>OAUTH_MAPPING_LASTNAME</code></td>
 <td>data-last_name</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> last name</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_RATING</td>
+<td><code>OAUTH_MAPPING_RATING</code></td>
 <td>data-vatsim_details-controller_rating-id</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_RATING_SHORT</td>
+<td><code>OAUTH_MAPPING_RATING_SHORT</code></td>
 <td>data-vatsim_details-controller_rating-short</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating short</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_RATING_LONG</td>
+<td><code>OAUTH_MAPPING_RATING_LONG</code></td>
 <td>data-vatsim_details-controller_rating-long</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating long</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_REGION</td>
+<td><code>OAUTH_MAPPING_REGION</code></td>
 <td>data-vatsim_details-region</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> region</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_DIVISION</td>
+<td><code>OAUTH_MAPPING_DIVISION</code></td>
 <td>data-vatsim_details-division</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> division</td>
 </tr>
 <tr>
-<td>OAUTH_MAPPING_SUBDIVISION</td>
+<td><code>OAUTH_MAPPING_SUBDIVISION</code></td>
 <td>data-vatsim_details-subdivision</td>
 <td>OAuth mapping of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> subdivision</td>
 </tr>
@@ -2074,7 +2194,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 13:24:31 UTC">February 23, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 14:46:40 UTC">February 23, 2026</span>
   </span>
 
     
@@ -2084,7 +2204,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 13:24:31 UTC">February 23, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 14:46:40 UTC">February 23, 2026</span>
   </span>
 
     
@@ -2247,7 +2367,7 @@ They'll be better off on the specific page in question.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "content.footnote.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>

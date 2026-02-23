@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#database" class="md-skip">
+        <a href="#define-the-division" class="md-skip">
           Skip to content
         </a>
       
@@ -785,6 +785,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -828,6 +830,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Page contents">
   
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -1747,6 +1751,36 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/environment-variables/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../upgrade/" class="md-nav__link">
         
   
@@ -1967,6 +2001,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -2060,12 +2096,12 @@
   
 
 
-  <h1>Define the division</h1>
-
+<h1 id="define-the-division">Define the division<a class="headerlink" href="#define-the-division" title="Permanent link">&para;</a></h1>
+<p>Use this page when preparing division-specific data after installation.  Go through the changes in this order.</p>
 <h2 id="database">Database<a class="headerlink" href="#database" title="Permanent link">&para;</a></h2>
-<p>Here you find the diffrerent data tables which need to be edited to suit your division. Perform the changes in the same order as this document.</p>
+<p>The following changes must be made manually through the database.</p>
 <h3 id="areas">Areas<a class="headerlink" href="#areas" title="Permanent link">&para;</a></h3>
-<p>In <code>Areas</code> table, create one or more areas. This is something student select between when applying for trianing.</p>
+<p>In the <code>areas</code> table, create one or more areas. Members select these areas when applying for training.</p>
 <table>
 <thead>
 <tr>
@@ -2083,27 +2119,27 @@
 <tr>
 <td>x</td>
 <td>Name</td>
-<td>Contact e-mail that will be displayed to students</td>
-<td>String that completes the sentence "Expected waiting time is ...""</td>
-<td>Can be set in Notification Editor, set NULL</td>
-<td>Same as last</td>
-<td>Same as last</td>
-<td>URL to feedback form shown in training completed email</td>
+<td>Contact email shown to students</td>
+<td>String that completes "Expected waiting time is ..."</td>
+<td>Can be set in Notification Editor, set <code>NULL</code> here</td>
+<td>Same as previous</td>
+<td>Same as previous</td>
+<td>URL to feedback form shown in training completion emails</td>
 </tr>
 <tr>
 <td>1</td>
 <td>Norway</td>
-<td>training-norway@vatsim-scandinavia.org</td>
-<td>"6-12 months"</td>
+<td><a href="mailto:training-norway@vatsim-scandinavia.org">training-norway@vatsim-scandinavia.org</a></td>
+<td>6-12 months</td>
 <td>NULL</td>
 <td>NULL</td>
 <td>NULL</td>
-<td>https://forms.gle/your-feedback-form</td>
+<td><a href="https://forms.gle/your-feedback-form">Feedback form</a></td>
 </tr>
 </tbody>
 </table>
 <h3 id="ratings">Ratings<a class="headerlink" href="#ratings" title="Permanent link">&para;</a></h3>
-<p>In <code>Ratings</code> table, the default <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> ratings are present and if applicable, the endorsement ratings.</p>
+<p>In the <code>ratings</code> table, keep the default <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> ratings and add local endorsement ratings where needed.</p>
 <table>
 <thead>
 <tr>
@@ -2119,8 +2155,8 @@
 <td>x</td>
 <td>Rating Name</td>
 <td>Description</td>
-<td>The id of vatsim rating this represents, NULL if local endorsement</td>
-<td>NULL or <abbr title="Global Controller Administration Policy">GCAP</abbr> type: T1, T2 or SC</td>
+<td>ID of <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating this row represents, <code>NULL</code> if local endorsement</td>
+<td><code>NULL</code> or <abbr title="Global Controller Administration Policy">GCAP</abbr> type: <code>T1</code>, <code>T2</code>, <code>SC</code></td>
 </tr>
 <tr>
 <td>1</td>
@@ -2140,10 +2176,11 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Please do not remove the default <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> ratings (<abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr>-<abbr title="Senior Instructor (C1 with training responsibilities)">I3</abbr>), as they are used for the <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> integration.</p>
+<p>Do not remove the default <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> ratings (<code>S1</code>-<code>I3</code>), as they are used by <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> integrations.</p>
 </div>
 <h3 id="ratings-in-areas">Ratings in areas<a class="headerlink" href="#ratings-in-areas" title="Permanent link">&para;</a></h3>
-<p>In <code>area_rating</code> table, we define which ratings are available for which area for applications. If a rating is only applicable manually through a moderator there's no need to add it here.</p>
+<p>In the <code>area_rating</code> table, define which ratings can be requested in each area.
+If a rating is only granted manually by staff, you do not need to add it here.</p>
 <table>
 <thead>
 <tr>
@@ -2153,18 +2190,18 @@
 <th>allow_bundling</th>
 <th>hour_requirement</th>
 <th>queue_length_low</th>
-<th>queue_lenght_high</th>
+<th>queue_length_high</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>id of area</td>
-<td>id of rating</td>
-<td>Id of required vatsim rating to apply for the id of this rating in selected area</td>
-<td>NULL or 1 (true) if this vatsim rating can be bundled with a <abbr title="Global Ratings Policy (superseded by GCAP)">GRP</abbr> <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating</td>
-<td>NULL or number of hours required to apply for this rating</td>
-<td>Filled in by automation</td>
-<td>Filled in by automation</td>
+<td>ID of area</td>
+<td>ID of rating</td>
+<td>Required <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating ID to apply</td>
+<td><code>NULL</code> or <code>1</code> (<code>true</code>) if this rating can be bundled with a <abbr title="Global Ratings Policy (superseded by GCAP)">GRP</abbr> <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> rating</td>
+<td><code>NULL</code> or required hours to apply</td>
+<td>Filled automatically</td>
+<td>Filled automatically</td>
 </tr>
 <tr>
 <td>1</td>
@@ -2187,7 +2224,12 @@
 </tbody>
 </table>
 <h3 id="positions">Positions<a class="headerlink" href="#positions" title="Permanent link">&para;</a></h3>
-<p>In <code>positions</code> table, we define which positions are possible to book their restrictions and connect examinations and training sessions to.</p>
+<p>In the <code>positions</code> table, we define which positions are possible to book, their restrictions, and use these to connect examinations, bookings, and training sessions.</p>
+<p>Manage positions from the positions management page. See <a href="../../concepts/positions/">Positions</a> for access, workflow, and behavior.</p>
+<div class="admonition note">
+<p class="admonition-title">Only endorsements require manual database changes</p>
+<p>Position endorsements/tiers are not yet manageable in the UI and must still be handled manually in the database.</p>
+</div>
 <table>
 <thead>
 <tr>
@@ -2222,18 +2264,9 @@
 <td>3</td>
 <td>NULL</td>
 </tr>
-<tr>
-<td>2</td>
-<td>ENGM_TWR</td>
-<td>Gardermoen Tower</td>
-<td>NULL</td>
-<td>ENOR</td>
-<td>4</td>
-<td>3</td>
-<td>8</td>
-</tr>
 </tbody>
 </table>
+<p>| 2   | ENGM_TWR     | Gardermoen Tower                     | NULL                                    | ENOR                           | 4          | 3                                          | 8                                                             |</p>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
@@ -2266,7 +2299,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 13:24:31 UTC">February 23, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 14:46:40 UTC">February 23, 2026</span>
   </span>
 
     
@@ -2276,7 +2309,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 13:24:31 UTC">February 23, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 14:46:40 UTC">February 23, 2026</span>
   </span>
 
     
@@ -2294,9 +2327,9 @@ They'll be better off on the specific page in question.
     
     <nav>
       
-        <a href="https://github.com/Johnnei" class="md-author" title="@Johnnei">
+        <a href="https://github.com/thor" class="md-author" title="@thor">
           
-          <img src="https://avatars.githubusercontent.com/u/712852?v=4&size=72" alt="Johnnei">
+          <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
         </a>
       
         <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
@@ -2304,14 +2337,14 @@ They'll be better off on the specific page in question.
           <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
         </a>
       
+        <a href="https://github.com/Johnnei" class="md-author" title="@Johnnei">
+          
+          <img src="https://avatars.githubusercontent.com/u/712852?v=4&size=72" alt="Johnnei">
+        </a>
+      
         <a href="https://github.com/blt950" class="md-author" title="@blt950">
           
           <img src="https://avatars.githubusercontent.com/u/2505044?v=4&size=72" alt="blt950">
-        </a>
-      
-        <a href="https://github.com/thor" class="md-author" title="@thor">
-          
-          <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
         </a>
       
       
@@ -2444,7 +2477,7 @@ They'll be better off on the specific page in question.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.tooltips", "content.footnote.tooltips", "announce.dismiss", "navigation.tabs", "navigation.footer", "navigation.instant", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
