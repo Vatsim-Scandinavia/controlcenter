@@ -125,6 +125,7 @@ nav:
       - Contribute: contribute.md
       - API: api.md
       - Background jobs: background-jobs.md
+      - Environment variables: reference/environment-variables.md
       - Upgrading: upgrade.md
   - Integrations:
       # Insert discord.md and others here
@@ -156,6 +157,7 @@ markdown_extensions:
       check_paths: true
       base_path:
         - _includes
+        - .
       auto_append:
         - abbreviations.md
   - pymdownx.extra
