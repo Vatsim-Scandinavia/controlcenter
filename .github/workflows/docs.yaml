@@ -11,11 +11,11 @@ on:
   pull_request:
     paths:
       - "**.md"
-      - docs/mkdocs.yml
+      - docs/**
+      - .github/workflows/docs.yaml
 
 env:
   COLUMNS: 150
-  PDM_DEPS: 'urllib3<2'
 
 defaults:
   run:
@@ -27,9 +27,24 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: read pdm version from mise config
+        id: pdm_version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import pathlib
+          import tomllib
+
+          mise_config = tomllib.loads(pathlib.Path("../.mise.toml").read_text())
+          pdm_version = mise_config.get("tools", {}).get("pdm")
+          if not pdm_version:
+              raise SystemExit("Missing [tools].pdm in .mise.toml")
+          print(f"version={pdm_version}")
+          PY
+
       - uses: pdm-project/setup-pdm@v4
         with:
-          python-version: '3.11'
+          version: ${{ steps.pdm_version.outputs.version }}
+          python-version: '3.13'
           cache: true
           cache-dependency-path: docs/pdm.lock
 
@@ -63,9 +78,24 @@ jobs:
       - name: checkout current branch
         uses: actions/checkout@v6
 
+      - name: read pdm version from mise config
+        id: pdm_version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import pathlib
+          import tomllib
+
+          mise_config = tomllib.loads(pathlib.Path("../.mise.toml").read_text())
+          pdm_version = mise_config.get("tools", {}).get("pdm")
+          if not pdm_version:
+              raise SystemExit("Missing [tools].pdm in .mise.toml")
+          print(f"version={pdm_version}")
+          PY
+
       - uses: pdm-project/setup-pdm@v4
         with:
-          python-version: '3.11'
+          version: ${{ steps.pdm_version.outputs.version }}
+          python-version: '3.13'
           cache-dependency-path: docs/pdm.lock
 
       - name: install
@@ -92,7 +122,7 @@ jobs:
           "${{ env.DOCS_DEVELOPMENT_ALIAS }}" --push
         if: "!startsWith(github.ref, 'refs/tags/')"
 
-      - name: deploy latest documentation for v${{ steps.version.outputs.tag }}
+      - name: deploy latest documentation for v${{ steps.tag.outputs.minor }}
         run: >-
           pdm run mike deploy -b "${{ env.DOCS_BRANCH }}"
           "${{ steps.tag.outputs.minor }}" "${{ env.DOCS_LATEST_ALIAS }}" --update-aliases --push

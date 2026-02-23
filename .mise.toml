@@ -54,3 +54,6 @@ description = "Build frontend assets"
 run = "npm run build"
 depends = ["deps:npm"]
 sources = ["package.json"]
+
+[tools]
+pdm = "2.26.6"
