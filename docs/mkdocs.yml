@@ -48,6 +48,8 @@ theme:
     - content.code.copy
     # use fancy material tooltips in lieu of browser default
     - content.tooltips
+    # use fancy material tooltips for footnotes
+    - content.footnote.tooltips
     # get rid of annotations we don't care to see
     - announce.dismiss
     # tabs at the top from level 1 navigation
