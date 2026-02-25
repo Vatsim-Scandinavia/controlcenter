@@ -4,6 +4,14 @@ name: Release (pre-release-please)
 on:
   workflow_dispatch:
     inputs:
+      versioning_strategy:
+        description: "Versioning strategy"
+        required: true
+        default: "prerelease"
+        type: choice
+        options:
+          - prerelease
+          - default
       prerelease_type:
         description: "Prerelease identifier"
         required: true
@@ -38,8 +46,7 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-alpha.json
-          versioning-strategy: prerelease
-          # release-as: ${{ github.event.inputs.release_as }}
+          versioning-strategy: ${{ github.event.inputs.versioning_strategy }}
 
       - name: Run release-please (beta)
         if: ${{ github.event.inputs.prerelease_type == 'beta' }}
@@ -48,8 +55,7 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-beta.json
-          versioning-strategy: prerelease
-          release-as: ${{ github.event.inputs.release_as }}
+          versioning-strategy: ${{ github.event.inputs.versioning_strategy }}
 
       - name: Run release-please (rc)
         if: ${{ github.event.inputs.prerelease_type == 'rc' }}
@@ -58,5 +64,4 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-rc.json
-          versioning-strategy: prerelease
-          release-as: ${{ github.event.inputs.release_as }}
+          versioning-strategy: ${{ github.event.inputs.versioning_strategy }}
