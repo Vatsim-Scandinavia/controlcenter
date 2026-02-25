@@ -3,38 +3,16 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Http\Requests\StoreFeedbackRequest;
+use App\Http\Requests\UpdateFeedbackRequest;
 use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class FeedbackController extends Controller
 {
-    /**
-     * Get shared validation rules for controller/position.
-     */
-    protected function controllerPositionRules(array $extra = []): array
-    {
-        return array_merge([
-            'position' => 'nullable|exists:positions,callsign',
-            'controller' => 'nullable|numeric|exists:users,id',
-        ], $extra);
-    }
-
-    /**
-     * Get shared validation messages for controller/position.
-     */
-    protected function controllerPositionMessages(): array
-    {
-        return [
-            'controller.numeric' => 'The controller field must be a valid VATSIM CID (numeric).',
-            'controller.exists' => 'A controller with this CID was not found.',
-            'position.exists' => 'The position does not exist.',
-        ];
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -58,19 +36,14 @@ class FeedbackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreFeedbackRequest $request)
     {
 
         if (! Setting::get('feedbackEnabled')) {
             return redirect()->route('dashboard')->withErrors('Feedback is currently disabled.');
         }
 
-        $data = $request->validate(
-            $this->controllerPositionRules([
-                'feedback' => 'required',
-            ]),
-            $this->controllerPositionMessages()
-        );
+        $data = $request->validated();
 
         $position = isset($data['position']) ? Position::where('callsign', $data['position'])->get()->first() : null;
         $controller = isset($data['controller']) ? User::find($data['controller']) : null;
@@ -99,14 +72,11 @@ class FeedbackController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Feedback $feedback)
+    public function update(UpdateFeedbackRequest $request, Feedback $feedback)
     {
         $this->authorize('update', $feedback);
 
-        $data = $request->validate(
-            $this->controllerPositionRules(),
-            $this->controllerPositionMessages()
-        );
+        $data = $request->validated();
 
         // Track old values for logging
         $oldController = $feedback->referenceUser;
