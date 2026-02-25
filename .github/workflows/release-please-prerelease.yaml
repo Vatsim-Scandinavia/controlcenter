@@ -34,6 +34,7 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-alpha.json
+          versioning-strategy: prerelease
 
       - name: Run release-please (beta)
         if: ${{ github.event.inputs.prerelease_type == 'beta' }}
@@ -42,6 +43,7 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-beta.json
+          versioning-strategy: prerelease
 
       - name: Run release-please (rc)
         if: ${{ github.event.inputs.prerelease_type == 'rc' }}
@@ -50,3 +52,4 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-rc.json
+          versioning-strategy: prerelease
