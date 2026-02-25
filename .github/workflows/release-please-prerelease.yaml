@@ -39,7 +39,7 @@ jobs:
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-alpha.json
           versioning-strategy: prerelease
-          release-as: ${{ github.event.inputs.release_as }}
+          # release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (beta)
         if: ${{ github.event.inputs.prerelease_type == 'beta' }}
