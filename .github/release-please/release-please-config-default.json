@@ -7,6 +7,7 @@
   ],
   "packages": {
     ".": {
+      "always-update": true,
       "prerelease": true,
       "versioning": "default"
     }
