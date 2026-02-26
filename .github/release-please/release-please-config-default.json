@@ -1,0 +1,15 @@
+{
+  "release-type": "php",
+  "changelog-path": "CHANGELOG.md",
+  "draft": false,
+  "extra-files": [
+    "config/app.php"
+  ],
+  "packages": {
+    ".": {
+      "prerelease": true,
+      "versioning": "default"
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
