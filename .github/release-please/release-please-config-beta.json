@@ -9,7 +9,8 @@
     ".": {
       "always-update": true,
       "prerelease": true,
-      "prerelease-type": "beta"
+      "prerelease-type": "beta",
+      "versioning": "prerelease"
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
