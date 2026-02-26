@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.0.1-alpha](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha...v7.0.1-alpha) (2026-02-26)
+
+
+### Bug Fixes
+
+* **ci:** allow overriding versioning strategy ([cd0ac50](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cd0ac504026d9ecb5c419ac320f46e3ce65f9228))
+* see what happens now ([59bf958](https://github.com/Vatsim-Scandinavia/controlcenter/commit/59bf958323106f87a45edde7e402303a9e69c35d))
+
 ## [7.0.0-alpha](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v6.4.3...v7.0.0-alpha) (2026-02-25)
 
 
