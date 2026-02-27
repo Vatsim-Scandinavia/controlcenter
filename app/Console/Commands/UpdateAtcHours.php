@@ -180,6 +180,7 @@ class UpdateAtcHours extends Command
                         'user_id' => $member->id,
                         'area_id' => $area->id,
                         'hours' => $hoursActiveInArea,
+                        'last_online' => $lastConnection,
                     ]);
                 }
             }
