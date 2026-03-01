@@ -177,7 +177,32 @@ class UserController extends Controller
             $divisionExams = $divisionExams->sortByDesc('created_at');
         }
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours'));
+        // Fetch recent ATC sessions from VATSIM API
+        $recentAtcSessions = collect();
+        try {
+            $client = new \GuzzleHttp\Client();
+            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/atc', [
+                'query' => ['limit' => 20],
+            ]);
+            if ($res->getStatusCode() == 200) {
+                $data = json_decode($res->getBody(), true);
+                if (!empty($data['items'])) {
+                    foreach ($data['items'] as $item) {
+                        $conn = $item['connection_id'] ?? [];
+                        $recentAtcSessions->push([
+                            'callsign' => $conn['callsign'] ?? '—',
+                            'start' => $conn['start'] ?? null,
+                        ]);
+                    }
+                }
+            }
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // Leave $recentAtcSessions empty on failure
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            // Leave $recentAtcSessions empty on failure
+        }
+
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
     }
 
     /**
