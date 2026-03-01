@@ -163,9 +163,14 @@
                                 <tr>
                                     <td>{{ $session['callsign'] }}</td>
                                     <td>{{ $session['start'] ? Carbon\Carbon::parse($session['start'])->toEuropeanDate() : '—' }}</td>
-                                    <td>{{ $session['start'] ? Carbon\Carbon::parse($session['start'])->toEuropeanTime() : '—' }}</td>
+                                    <td>{{ $session['duration'] ?? '—' }}</td>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan="3" class="text-center">
+                                        <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" rel="noopener noreferrer">View additional sessions</a>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

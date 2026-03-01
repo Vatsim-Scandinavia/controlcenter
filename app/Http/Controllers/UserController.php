@@ -182,16 +182,30 @@ class UserController extends Controller
         try {
             $client = new \GuzzleHttp\Client();
             $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/atc', [
-                'query' => ['limit' => 20],
+                'query' => ['limit' => 10],
             ]);
             if ($res->getStatusCode() == 200) {
                 $data = json_decode($res->getBody(), true);
-                if (!empty($data['items'])) {
+                if (! empty($data['items'])) {
                     foreach ($data['items'] as $item) {
                         $conn = $item['connection_id'] ?? [];
+                        $start = $conn['start'] ?? null;
+                        $end = $conn['end'] ?? null;
+                        $duration = null;
+                        if ($start && $end) {
+                            $startCarbon = Carbon::parse($start);
+                            $endCarbon = Carbon::parse($end);
+                            $totalMinutes = $startCarbon->diffInMinutes($endCarbon);
+                            $hours = (int) floor($totalMinutes / 60);
+                            $minutes = $totalMinutes % 60;
+                            $duration = $hours > 0
+                                ? sprintf('%dh %02dm', $hours, $minutes)
+                                : sprintf('%dm', $minutes);
+                        }
                         $recentAtcSessions->push([
                             'callsign' => $conn['callsign'] ?? '—',
-                            'start' => $conn['start'] ?? null,
+                            'start' => $start,
+                            'duration' => $duration,
                         ]);
                     }
                 }
