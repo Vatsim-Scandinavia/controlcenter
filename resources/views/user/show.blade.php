@@ -162,7 +162,7 @@
                                 @foreach($recentAtcSessions as $session)
                                 <tr>
                                     <td>{{ $session['callsign'] }}</td>
-                                    <td>{{ $session['start'] ? Carbon\Carbon::parse($session['start'])->toEuropeanDate() : '—' }}</td>
+                                    <td>{{ ($session['callsign'] ?? '') !== '' ? $session['callsign'] : '—' }}</td>
                                     <td>{{ $session['duration'] ?? '—' }}</td>
                                 </tr>
                                 @endforeach
