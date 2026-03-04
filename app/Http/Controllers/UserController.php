@@ -115,7 +115,7 @@ class UserController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show(User $user)
+    public function show(User $user, StatisticsService $statisticsService)
     {
         $this->authorize('view', $user);
 
@@ -177,44 +177,19 @@ class UserController extends Controller
             $divisionExams = $divisionExams->sortByDesc('created_at');
         }
 
-        // Fetch recent ATC sessions from VATSIM API
-        $recentAtcSessions = collect();
-        try {
-            $client = new \GuzzleHttp\Client();
-            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $user->id . '/atc', [
-                'query' => ['limit' => 10],
-            ]);
-            if ($res->getStatusCode() == 200) {
-                $data = json_decode($res->getBody(), true);
-                if (! empty($data['items'])) {
-                    foreach ($data['items'] as $item) {
-                        $conn = $item['connection_id'] ?? [];
-                        $start = $conn['start'] ?? null;
-                        $end = $conn['end'] ?? null;
-                        $duration = null;
-                        if ($start && $end) {
-                            $startCarbon = Carbon::parse($start);
-                            $endCarbon = Carbon::parse($end);
-                            $totalMinutes = $startCarbon->diffInMinutes($endCarbon);
-                            $hours = (int) floor($totalMinutes / 60);
-                            $minutes = $totalMinutes % 60;
-                            $duration = $hours > 0
-                                ? sprintf('%dh %02dm', $hours, $minutes)
-                                : sprintf('%dm', $minutes);
-                        }
-                        $recentAtcSessions->push([
-                            'callsign' => $conn['callsign'] ?? '—',
-                            'start' => $start,
-                            'duration' => $duration,
-                        ]);
-                    }
-                }
-            }
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            // Leave $recentAtcSessions empty on failure
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            // Leave $recentAtcSessions empty on failure
-        }
+        // Fetch recent ATC sessions from StatSim via the StatisticsService.
+        // Use the same general window as the activity chart (last 12 months)
+        // and then narrow to a configurable \"recent\" period for the table.
+        $to = Carbon::now()->endOfDay();
+        $from = (clone $to)->subMonths(11)->startOfDay();
+
+        $recentAtcSessions = collect(
+            $statisticsService->getRecentSessionsSummary(
+                (string) $user->id,
+                $from,
+                $to
+            )
+        );
 
         return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
     }
@@ -291,7 +266,7 @@ class UserController extends Controller
     public function fetchStatisticsSessions(StatisticsSessionsRequest $request, User $user, StatisticsService $service): \Illuminate\Http\JsonResponse
     {
         try {
-            $sessions = $service->getAtcSessions(
+            $sessions = $service->getCachedAtcSessions(
                 $user->id,
                 $request->date('from'),
                 $request->date('to')
