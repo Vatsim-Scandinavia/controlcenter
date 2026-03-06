@@ -137,6 +137,47 @@
 
             </div>
         </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Recent Connections
+                </h6>
+            </div>
+            <div class="card-body {{ $recentAtcSessions->count() == 0 ? '' : 'p-0' }}">
+
+                @if($recentAtcSessions->count() == 0)
+                    <p class="mb-0">No recent ATC sessions</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th data-sortable="true">Callsign</th>
+                                    <th data-sortable="true">Date</th>
+                                    <th data-sortable="true">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($recentAtcSessions as $session)
+                                <tr>
+                                    <td>{{ $session['callsign'] }}</td>
+                                    <td>{{ ($session['callsign'] ?? '') !== '' ? $session['callsign'] : '—' }}</td>
+                                    <td>{{ $session['duration'] ?? '—' }}</td>
+                                </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="3" class="text-center">
+                                        <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" rel="noopener noreferrer">View additional sessions</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+            </div>
+        </div>
     </div>
 
     <div class="col-xl-9 col-md-8 col-sm-12 mb-12">

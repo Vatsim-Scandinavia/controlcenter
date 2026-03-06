@@ -115,7 +115,7 @@ class UserController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show(User $user)
+    public function show(User $user, StatisticsService $statisticsService)
     {
         $this->authorize('view', $user);
 
@@ -177,7 +177,21 @@ class UserController extends Controller
             $divisionExams = $divisionExams->sortByDesc('created_at');
         }
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours'));
+        // Fetch recent ATC sessions from StatSim via the StatisticsService.
+        // Use the same general window as the activity chart (last 12 months)
+        // and then narrow to a configurable \"recent\" period for the table.
+        $to = Carbon::now()->endOfDay();
+        $from = (clone $to)->subMonths(11)->startOfDay();
+
+        $recentAtcSessions = collect(
+            $statisticsService->getRecentSessionsSummary(
+                (string) $user->id,
+                $from,
+                $to
+            )
+        );
+
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
     }
 
     /**
@@ -252,7 +266,7 @@ class UserController extends Controller
     public function fetchStatisticsSessions(StatisticsSessionsRequest $request, User $user, StatisticsService $service): \Illuminate\Http\JsonResponse
     {
         try {
-            $sessions = $service->getAtcSessions(
+            $sessions = $service->getCachedAtcSessions(
                 $user->id,
                 $request->date('from'),
                 $request->date('to')

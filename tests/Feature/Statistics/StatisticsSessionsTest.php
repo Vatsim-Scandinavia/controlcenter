@@ -63,7 +63,7 @@ class StatisticsSessionsTest extends TestCase
 
         // Mock the service to ensure it receives the correct parameters
         $this->mock(StatisticsService::class, function (MockInterface $mock) use ($vatsimId) {
-            $mock->shouldReceive('getAtcSessions')
+            $mock->shouldReceive('getCachedAtcSessions')
                 ->once()
                 ->withArgs(function ($argId, $argFrom, $argTo) use ($vatsimId) {
                     // Verify ID matches

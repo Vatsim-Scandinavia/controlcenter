@@ -54,5 +54,8 @@ return [
 
     'statsim_api_url' => env('STATSIM_API_URL', 'https://api.statsim.net/'),
     'statsim_api_key' => env('STATSIM_API_KEY', null),
+    'statsim_cache_ttl_minutes' => env('STATSIM_CACHE_TTL_MINUTES', 30),
+    'recent_sessions_days' => env('STATSIM_RECENT_SESSIONS_DAYS', 30),
+    'recent_sessions_limit' => env('STATSIM_RECENT_SESSIONS_LIMIT', 10),
 
 ];
