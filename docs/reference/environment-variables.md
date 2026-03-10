@@ -83,13 +83,16 @@ When you use a custom OAuth provider, configure mapping variables so Control Cen
 
 Settings related to the [VATSIM integration](../integrations/vatsim.md).
 
-| Variable                   | Default value                         | Explanation                                                                          |
-| -------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
-| `VATSIM_CORE_API_TOKEN`    | null                                  | API token (v2) to VATSIM Core API                                                    |
-| `VATSIM_BOOKING_API_URL`   | `https://atc-bookings.vatsim.net/api` | URL to VATSIM ATC Bookings API                                                       |
-| `VATSIM_BOOKING_API_TOKEN` | null                                  | API token to VATSIM ATC Bookings API                                                 |
-| `STATSIM_API_URL`          | `https://api.statsim.net/`            | URL to StatSim statistics API (used for ATC activity charts)                         |
-| `STATSIM_API_KEY`          | null                                  | API key for StatSim statistics API authentication (required for ATC activity charts) |
+| Variable                        | Default value                         | Explanation                                                                                         |
+| ------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `VATSIM_CORE_API_TOKEN`         | null                                  | API token (v2) to VATSIM Core API                                                                   |
+| `VATSIM_BOOKING_API_URL`        | `https://atc-bookings.vatsim.net/api` | URL to VATSIM ATC Bookings API                                                                      |
+| `VATSIM_BOOKING_API_TOKEN`      | null                                  | API token to VATSIM ATC Bookings API                                                                |
+| `STATSIM_API_URL`               | `https://api.statsim.net/`            | URL to StatSim statistics API (used for ATC activity charts and recent ATC sessions)               |
+| `STATSIM_API_KEY`               | null                                  | API key for StatSim statistics API authentication (required for ATC activity charts and ATC tables) |
+| `STATSIM_CACHE_TTL_MINUTES`     | 30                                    | Cache TTL (in minutes) for StatSim ATC session responses (shared between charts and recent tables) |
+| `STATSIM_RECENT_SESSIONS_DAYS`  | 30                                    | Number of days back to include when building the \"Recent Connections\" ATC sessions table         |
+| `STATSIM_RECENT_SESSIONS_LIMIT` | 10                                    | Maximum number of recent ATC sessions shown in the \"Recent Connections\" table                    |
 <!-- --8<-- [end:env-vars-vatsim] -->
 
 ## Mail
