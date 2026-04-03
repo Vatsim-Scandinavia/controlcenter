@@ -190,6 +190,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user is associated with our organisation
+     */
+    public function isMember(): bool
+    {
+        return
+            (config('app.mode') == 'subdivision' && $this->subdivision == config('app.owner_code'))
+            || (config('app.mode') == 'division' && $this->division == config('app.owner_code'));
+    }
+
+    /**
      * Check if the user is active as ATC
      *
      * @return bool
