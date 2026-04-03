@@ -64,57 +64,41 @@ class BookingPolicy
 
     /**
      * Determine whether the user can add any tags
-     *
-     * @return bool
      */
-    public function bookTags(User $user)
+    public function bookTags(User $user): bool
     {
         return $this->bookTrainingTag($user) || $this->bookEventTag($user) || $this->bookExamTag($user);
     }
 
     /**
      * Determine whether the user can add training tag
-     *
-     * @return bool
      */
-    public function bookTrainingTag(User $user)
+    public function bookTrainingTag(User $user): bool
     {
-        return
-            (
-                (config('app.mode') == 'subdivision' && $user->subdivision == config('app.owner_code'))
-                || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
-            )
-            && ($user->rating >= VatsimRating::S1->value || $user->isVisiting());
+        if ($user->isModerator()) {
+            return true;
+        }
+
+        return $user->rating >= VatsimRating::S1->value && $user->hasActiveTrainings(includeWaiting: false);
+    }
+
+    /**
+     * Determine whether the user can add the event tag
+     */
+    public function bookEventTag(User $user): bool
+    {
+        return ($user->isMember() || $user->isVisiting()) && $user->rating >= VatsimRating::S1->value;
     }
 
     /**
      * Determine whether the user can add training tag
      *
-     * @return bool
+     * @todo consider whether the exam tags should be stricter as normal controllers shouldn't need to use them.
      */
-    public function bookEventTag(User $user)
+    public function bookExamTag(User $user): bool
     {
-        return
-            (
-                (config('app.mode') == 'subdivision' && $user->subdivision == config('app.owner_code'))
-                || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
-            )
-            && ($user->rating >= VatsimRating::S1->value || $user->isVisiting());
-    }
 
-    /**
-     * Determine whether the user can add training tag
-     *
-     * @return bool
-     */
-    public function bookExamTag(User $user)
-    {
-        return
-            (
-                (config('app.mode') == 'subdivision' && $user->subdivision == config('app.owner_code'))
-                || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
-            )
-            && ($user->rating >= VatsimRating::C1->value || $user->isModerator());
+        return $user->isMember() && ($user->rating >= VatsimRating::C1->value || $user->isModerator());
     }
 
     /**
