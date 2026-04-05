@@ -132,7 +132,7 @@ class TrainingExaminationsTest extends TestCase
         $examination = TrainingExamination::create($this->examination->getAttributes());
 
         $moderator = User::factory()->create();
-        $moderator->groups()->attach(2, ['area_id' => $this->training->area->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->training->area->id]);
 
         $this->actingAs($moderator)->followingRedirects()
             ->getJson(route('training.examination.delete', ['examination' => $examination]))
@@ -149,7 +149,7 @@ class TrainingExaminationsTest extends TestCase
         $examination = TrainingExamination::create($this->examination->getAttributes());
 
         $mentor = User::factory()->create();
-        $mentor->groups()->attach(3, ['area_id' => $this->training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $this->training->area->id]);
 
         $this->actingAs($mentor)->followingRedirects()
             ->get(route('training.examination.delete', ['examination' => $examination]))
@@ -165,7 +165,7 @@ class TrainingExaminationsTest extends TestCase
         $examination = TrainingExamination::create($this->examination->getAttributes());
 
         $buddy = User::factory()->create();
-        $buddy->groups()->attach(4, ['area_id' => $this->training->area->id]);
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $this->training->area->id]);
 
         $this->actingAs($buddy)->followingRedirects()
             ->get(route('training.examination.delete', ['examination' => $examination]))

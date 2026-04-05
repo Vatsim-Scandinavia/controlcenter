@@ -22,7 +22,7 @@ class TrainingPolicy
     public function view(User $user, Training $training)
     {
         return $training->mentors->contains($user) ||
-                $user->isModeratorOrAbove($training->area) ||
+                $user->hasPermission('update-training', $training->area) ||
                 $user->is($training->user);
     }
 
@@ -33,7 +33,7 @@ class TrainingPolicy
      */
     public function update(User $user, Training $training)
     {
-        return $user->isModeratorOrAbove($training->area);
+        return $user->hasPermission('update-training', $training->area);
     }
 
     /**
@@ -43,7 +43,7 @@ class TrainingPolicy
      */
     public function delete(User $user, Training $training)
     {
-        return $user->isModeratorOrAbove($training->area);
+        return $user->hasPermission('delete-training', $training->area);
     }
 
     /**
@@ -64,7 +64,7 @@ class TrainingPolicy
     public function togglePreTrainingCompleted(User $user, Training $training)
     {
         return $training->status == TrainingStatus::PRE_TRAINING->value &&
-                ($training->pre_training_completed == false || $user->isModeratorOrAbove($training->area));
+                ($training->pre_training_completed == false || $user->hasPermission('update-training', $training->area));
     }
 
     /**
@@ -118,7 +118,7 @@ class TrainingPolicy
      */
     public function create(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-management-reports');
     }
 
     /**
@@ -133,7 +133,7 @@ class TrainingPolicy
             return true;
         }
 
-        return $user->isModeratorOrAbove(Area::find($data['training_area']));
+        return $user->hasPermission('update-training', Area::find($data['training_area']));
     }
 
     /**
@@ -143,16 +143,16 @@ class TrainingPolicy
      */
     public function edit(User $user, Training $training)
     {
-        return $user->isModeratorOrAbove($training->area);
+        return $user->hasPermission('update-training', $training->area);
     }
 
     public function viewActiveRequests(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-management-reports');
     }
 
     public function viewHistoricRequests(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-management-reports');
     }
 }

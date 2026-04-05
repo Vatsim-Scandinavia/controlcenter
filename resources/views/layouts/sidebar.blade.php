@@ -52,7 +52,7 @@
             </li>
         @endif
 
-        @if (\Auth::user()->isMentorOrAbove())
+        @can('view-mentor-reports')
 
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
@@ -76,7 +76,7 @@
             </li>
 
         @endif
-        @if (\Auth::user()->isModeratorOrAbove())
+        @can('manage-users')
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
@@ -102,7 +102,7 @@
         Members
         </div>
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @can('manage-users')
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
@@ -166,7 +166,7 @@
 
 
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @can('view-management-reports')
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
 
@@ -179,16 +179,16 @@
             <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
 
-                @if(\Auth::user()->isAdmin())
+                @if(\Auth::user()->hasRole('admin'))
                     <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
-                @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
+                @elseif(\Auth::user()->hasRole('moderator'))
+                    <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->roleAssignments()->where('role', 'moderator')->get()->first()->area_id) }}">Trainings</a>
                 @endif
 
-                @if(\Auth::user()->isAdmin())
+                @if(\Auth::user()->hasRole('admin'))
                     <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
-                @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="{{ route('reports.activities.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Activities</a>
+                @elseif(\Auth::user()->hasRole('moderator'))
+                    <a class="collapse-item" href="{{ route('reports.activities.area', \Auth::user()->roleAssignments()->where('role', 'moderator')->get()->first()->area_id) }}">Activities</a>
                 @endif
 
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
@@ -204,7 +204,7 @@
             </li>
         @endif
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @can('manage-users')
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <li class="nav-item {{ Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview') ? 'active' : '' }}">
@@ -214,13 +214,13 @@
             </a>
             <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                @if (\Auth::user()->isAdmin())
+                @if (\Auth::user()->hasRole('admin'))
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
                 @endif
 
-                @if (\Auth::user()->isModeratorOrAbove())
+                @can('manage-users')
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endif
                 @can('viewAny', App\Models\Position::class)

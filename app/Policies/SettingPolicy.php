@@ -17,7 +17,7 @@ class SettingPolicy
      */
     public function index(User $user, Setting $setting)
     {
-        return $user->isAdmin();
+        return $user->hasRole('admin');
     }
 
     /**
@@ -27,6 +27,6 @@ class SettingPolicy
      */
     public function edit(User $user, Setting $setting)
     {
-        return $user->isAdmin();
+        return $user->hasRole('admin');
     }
 }

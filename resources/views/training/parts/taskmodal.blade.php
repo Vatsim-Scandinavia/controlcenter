@@ -33,7 +33,7 @@
                                 required
                             >
                             <datalist id="{{ Str::camel($requestType->getName()) }}UserList">
-                                @foreach(\App\Models\User::has('groups')->get() as $user)
+                                @foreach(\App\Models\User::has('roleAssignments')->get() as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </datalist>

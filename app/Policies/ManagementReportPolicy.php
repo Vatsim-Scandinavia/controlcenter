@@ -18,10 +18,10 @@ class ManagementReportPolicy
     public function accessTrainingReports(User $user, $filterArea)
     {
         if ($filterArea) {
-            return $user->isModeratorOrAbove(Area::find($filterArea));
+            return $user->hasPermission('view-management-reports', Area::find($filterArea));
         }
 
-        return $user->isAdmin();
+        return $user->hasPermission('view-management-reports');
     }
 
     /**
@@ -31,7 +31,7 @@ class ManagementReportPolicy
      */
     public function viewMentors(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-management-reports');
     }
 
     /** Determine whether the user can see the feedback index
@@ -40,7 +40,7 @@ class ManagementReportPolicy
      */
     public function viewFeedback(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-management-reports');
     }
 
     /**
@@ -50,6 +50,6 @@ class ManagementReportPolicy
      */
     public function viewAccessReport(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-management-reports');
     }
 }

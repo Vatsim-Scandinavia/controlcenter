@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Feedback;
-use App\Models\Group;
 use App\Models\ManagementReport;
 use App\Models\Rating;
 use App\Models\Training;
@@ -15,6 +14,7 @@ use App\Models\User;
 use App\Services\Sql\Sql;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -26,15 +26,13 @@ class ReportController extends Controller
     /**
      * Show the training statistics view
      *
-     * @return \Illuminate\View\View
-     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function access()
+    public function access(): View
     {
         $this->authorize('viewAccessReport', ManagementReport::class);
 
-        $users = User::has('groups')->get();
+        $users = User::has('roleAssignments')->get();
 
         $areas = Area::all();
 
@@ -45,11 +43,10 @@ class ReportController extends Controller
      * Show the training statistics view
      *
      * @param  false|int  $filterArea  areaId to filter by
-     * @return \Illuminate\View\View
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function trainings(false|int $filterArea = false)
+    public function trainings(false|int $filterArea = false): View
     {
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
 
@@ -181,11 +178,15 @@ class ReportController extends Controller
     {
         $this->authorize('viewMentors', ManagementReport::class);
 
-        if (auth()->user()->isAdmin()) {
-            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->get();
+        if (auth()->user()->hasRole('admin')) {
+            $mentors = User::whereHas('roleAssignments', function ($q) {
+                $q->where('role', 'mentor');
+            })->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->get();
         } else {
-            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->whereHas('groups', function (Builder $query) {
-                $query->whereIn('area_id', auth()->user()->groups()->pluck('area_id'));
+            $mentors = User::whereHas('roleAssignments', function ($q) {
+                $q->where('role', 'mentor');
+            })->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->whereHas('roleAssignments', function (Builder $query) {
+                $query->whereIn('area_id', auth()->user()->roleAssignments()->pluck('area_id'));
             })->get();
         }
 

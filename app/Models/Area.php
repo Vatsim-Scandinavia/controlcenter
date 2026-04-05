@@ -26,14 +26,14 @@ class Area extends Model
         return $this->belongsToMany(Rating::class)->withPivot('required_vatsim_rating', 'allow_bundling', 'hour_requirement', 'queue_length_low', 'queue_length_high');
     }
 
-    public function permissions()
+    public function roleUsers()
     {
-        return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'role_user')->withPivot('role')->withTimestamps();
     }
 
     public function mentors()
     {
-        return $this->belongsToMany(User::class, 'permissions')->withPivot('group_id')->withTimestamps()->where('group_id', 3);
+        return $this->belongsToMany(User::class, 'role_user')->withPivot('role')->withTimestamps()->wherePivot('role', 'mentor');
     }
 
     public function positions()

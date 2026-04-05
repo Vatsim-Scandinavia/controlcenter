@@ -24,7 +24,7 @@
                         {{ $user->id }}
                         <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
                         <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" title="VATSIM Stats" class="link-btn me-1"><i class="fas fa-chart-simple"></i></button></a>
-                        @if($user->division == 'EUD' && Auth::user()->isModeratorOrAbove())
+                        @if($user->division == 'EUD' && Auth::user()->hasRole(['admin', 'moderator']))
                             <a href="https://core.vateud.net/manage/controller/{{ $user->id }}/view" target="_blank" title="VATEUD Core Profile" class="link-btn"><i class="fa-solid fa-earth-europe"></i></button></a>
                         @endif
                     </dd>
@@ -83,7 +83,7 @@
                     <dt class="pt-2">Last login</dt>
                     <dd>{{ $user->last_login->toEuropeanDateTime() }}</dd>
 
-                    @if(\Auth::user()->isModeratorOrAbove())
+                    @if(\Auth::user()->hasRole(['admin', 'moderator']))
                         <dt class="pt-2">Last activity</dt>
                         <dd>{{ isset($user->last_activity) ? $user->last_activity->toEuropeanDateTime() : 'N/A' }}</dd>
                     @endif
@@ -488,8 +488,8 @@
                                 <thead>
                                     <tr>
                                         <th>Area</th>
-                                        @foreach($groups as $group)
-                                            <th class="text-center">{{ $group->name }} <i class="fas fa-question-circle text-gray-400" title="{{ $group->description }}"></i></th>
+                                        @foreach($groups as $roleKey => $roleData)
+                                            <th class="text-center">{{ $roleData['name'] }} <i class="fas fa-question-circle text-gray-400" title="{{ $roleData['description'] }}"></i></th>
                                         @endforeach
                                     </tr>
                                 </thead>
@@ -499,12 +499,12 @@
                                         <tr>
                                             <td>{{ $area->name }}</td>
 
-                                            @foreach($groups as $group)
+                                            @foreach($groups as $roleKey => $roleData)
 
-                                                @if (\Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed() && $group->id != 1)
-                                                    <td class="text-center"><input type="checkbox" name="{{ $area->id }}_{{ $group->name }}" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
+                                                @if (\Illuminate\Support\Facades\Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed() && $roleKey != 'admin')
+                                                    <td class="text-center"><input type="checkbox" name="{{ $area->id }}_{{ $roleKey }}" {{ $user->roleAssignments()->where('role', $roleKey)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
                                                 @else
-                                                    <td class="text-center"><input type="checkbox" {{ $user->groups()->where('group_id', $group->id)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
+                                                    <td class="text-center"><input type="checkbox" {{ $user->roleAssignments()->where('role', $roleKey)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
                                                 @endif
                                                 
                                             @endforeach

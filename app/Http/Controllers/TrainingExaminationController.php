@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Facades\DivisionApi;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
-use App\Models\Group;
 use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Task;
@@ -39,7 +38,9 @@ class TrainingExaminationController extends Controller
         }
 
         $positions = Position::all();
-        $taskRecipients = collect(Group::admins()->merge(Group::moderators()));
+        $taskRecipients = collect(User::whereHas('roleAssignments', function ($q) {
+            $q->whereIn('role', ['admin', 'moderator']);
+        })->get());
         $taskPopularAssignees = TaskController::getPopularAssignees($training->area);
 
         return view('training.exam.create', compact('training', 'positions', 'taskRecipients', 'taskPopularAssignees'));

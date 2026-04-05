@@ -17,7 +17,7 @@ class NotificationPolicy
      */
     public function viewTemplates(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasRole(['admin', 'moderator']);
     }
 
     /**
@@ -27,6 +27,6 @@ class NotificationPolicy
      */
     public function modifyAreaTemplate(User $user, Area $area)
     {
-        return $user->isAdmin() || $user->isModerator($area);
+        return $user->hasRole('admin') || $user->hasRole('moderator', $area);
     }
 }

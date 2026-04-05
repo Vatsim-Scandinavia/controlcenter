@@ -79,7 +79,7 @@ class TrainingController extends Controller
     {
         $this->authorize('viewActiveRequests', Training::class);
 
-        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups', 'user.atcActivity'])->sort(function ($a, $b) {
+        $openTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '>=', 0]], ['area', 'ratings', 'activities', 'mentors', 'user', 'user.atcActivity'])->sort(function ($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
@@ -106,7 +106,7 @@ class TrainingController extends Controller
     {
         $this->authorize('viewHistoricRequests', Training::class);
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]], ['area', 'reports', 'ratings', 'activities', 'mentors', 'user', 'user.groups', 'user.groups'])->sortByDesc('closed_at');
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\Training::class, [['status', '<', 0]], ['area', 'reports', 'ratings', 'activities', 'mentors', 'user', 'user.roleAssignments'])->sortByDesc('closed_at');
 
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
@@ -535,7 +535,7 @@ class TrainingController extends Controller
         $notifyOfNewMentor = false;
         if (array_key_exists('mentors', $attributes)) {
             foreach ((array) $attributes['mentors'] as $mentor) {
-                if (! $training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->isMentorOrAbove($training->area)) {
+                if (! $training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->hasRole(['admin', 'moderator', 'mentor'], $training->area)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
 
                     // Notify student of their new mentor

@@ -29,7 +29,7 @@ class TrainingActivityPolicy
     public function view(User $user, Training $training, string $type)
     {
         if ($type == 'COMMENT') {
-            return $training->mentors->contains($user) || $user->isModeratorOrAbove($training->area);
+            return $training->mentors->contains($user) || $user->hasRole(['admin', 'moderator'], $training->area);
         }
 
         return true;

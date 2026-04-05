@@ -22,7 +22,7 @@ class TrainingReportsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $mentor = User::factory()->create(['id' => 10000400]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
         $report = TrainingReport::factory()->create([
@@ -91,7 +91,7 @@ class TrainingReportsTest extends TestCase
         ]);
 
         $mentor = User::factory()->create(['id' => 10000159]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $report = TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -113,8 +113,8 @@ class TrainingReportsTest extends TestCase
         $training = Training::factory()->create([
             'user_id' => $traineeMentor->id,
         ]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
-        $traineeMentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
+        $traineeMentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $report = TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -134,7 +134,7 @@ class TrainingReportsTest extends TestCase
         ]);
 
         $mentor = User::factory()->create(['id' => 10000080]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $report = TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -160,7 +160,7 @@ class TrainingReportsTest extends TestCase
         ]);
 
         $mentor = User::factory()->create(['id' => 10000080]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
 
@@ -207,7 +207,7 @@ class TrainingReportsTest extends TestCase
             'training_id' => $training->id,
         ]);
         $mentor = User::factory()->create(['id' => 10000015]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
         $content = $this->faker->paragraph();
 
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
@@ -252,7 +252,7 @@ class TrainingReportsTest extends TestCase
         ]);
 
         $mentor = User::factory()->create(['id' => 10000500]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $report = TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -282,7 +282,7 @@ class TrainingReportsTest extends TestCase
             'training_id' => $training->id,
         ]);
         $otherMentor = User::factory()->create(['id' => 10000100]);
-        $otherMentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $otherMentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $this->actingAs($otherMentor)
             ->get(route('training.report.delete', ['report' => $report->id]))
@@ -317,7 +317,7 @@ class TrainingReportsTest extends TestCase
         ]);
 
         $mentor = User::factory()->create(['id' => 10000220]);
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $report = TrainingReport::factory()->create([
             'training_id' => $training->id,
@@ -329,7 +329,7 @@ class TrainingReportsTest extends TestCase
             'draft' => false,
         ]);
         $otherModerator = User::factory()->create(['id' => 10000101]);
-        $otherModerator->groups()->attach(1, ['area_id' => $training->area->id]);
+        $otherModerator->roleAssignments()->create(['role' => 'admin', 'area_id' => $training->area->id]);
 
         $this->actingAs($otherModerator)
             ->get(route('training.report.delete', ['report' => $report->id]));
@@ -345,7 +345,7 @@ class TrainingReportsTest extends TestCase
         ]);
 
         $buddy = User::factory()->create();
-        $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a one-time link for the training report
         $oneTimeLink = \App\Models\OneTimeLink::create([
@@ -391,12 +391,12 @@ class TrainingReportsTest extends TestCase
 
         // Create a mentor who writes a report
         $mentor = User::factory()->create();
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]); // Attach mentor group (id 3)
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]); // Attach mentor group (id 3)
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
         // Create a buddy in the same area
         $buddy = User::factory()->create();
-        $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a training report written by the mentor
         $report = TrainingReport::factory()->create([
@@ -422,12 +422,12 @@ class TrainingReportsTest extends TestCase
 
         // Create a mentor who writes a report
         $mentor = User::factory()->create();
-        $mentor->groups()->attach(3, ['area_id' => $training->area->id]); // Attach mentor group (id 3)
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]); // Attach mentor group (id 3)
         $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
 
         // Create a buddy in the same area
         $buddy = User::factory()->create();
-        $buddy->groups()->attach(4, ['area_id' => $training->area->id]); // Attach buddy group (id 4)
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a training report written by the mentor
         $reportByMentor = TrainingReport::factory()->create([

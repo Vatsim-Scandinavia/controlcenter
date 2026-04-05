@@ -10,11 +10,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-const GROUP_ADMINISTRATOR = 1;
-const GROUP_MODERATOR = 2;
-const GROUP_MENTOR = 3;
-const GROUP_BUDDY = 4;
-
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -47,26 +42,17 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Relationship of all permissions to this user
-     *
-     * @return Illuminate\Database\Eloquent\Collection|Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function groups()
+    public function roleAssignments()
     {
-        return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
+        return $this->hasMany(RoleAssignment::class);
     }
 
-    /**
-     * Find all users with queried group
-     *
-     * @param  int  $groupId  the id of the group to check for
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    public static function allWithGroup($groupId, $IneqSymbol = '=')
+    public static function allWithRole($roles)
     {
-        return User::whereHas('groups', function ($query) use ($groupId, $IneqSymbol) {
-            $query->where('id', $IneqSymbol, $groupId);
+        $roles = (array) $roles;
+
+        return User::whereHas('roleAssignments', function ($query) use ($roles) {
+            $query->whereIn('role', $roles);
         })->get();
     }
 
@@ -346,8 +332,8 @@ class User extends Authenticatable
      */
     public function getInlineMentoringAreas()
     {
-        $areas = Area::whereHas('permissions', function ($query) {
-            $query->where('user_id', $this->id);
+        $areas = Area::whereHas('mentors', function ($query) {
+            $query->where('users.id', $this->id);
         })->get();
 
         return $areas ? $areas->pluck('name')->implode(' & ') : ' - ';
@@ -487,143 +473,31 @@ class User extends Authenticatable
         })->exists();
     }
 
-    /**
-     * Return if user is a buddy
-     *
-     * @return bool
-     */
-    public function isBuddy(?Area $area = null)
+    public function hasPermission(string $permission, ?Area $area = null): bool
     {
-        if ($area == null) {
-            return $this->groups->where('id', GROUP_BUDDY)->isNotEmpty();
+        $allowedRoles = config("roles.matrix.{$permission}", []);
+        if (empty($allowedRoles)) {
+            return false;
         }
 
-        // Check if user is buddy in the specified area
-        foreach ($this->groups->where('id', GROUP_BUDDY) as $group) {
-            if ($group->pivot->area_id == $area->id) {
+        return $this->hasRole($allowedRoles, $area);
+    }
+
+    public function hasRole($roles, ?Area $area = null): bool
+    {
+        $roles = (array) $roles;
+
+        foreach ($this->roleAssignments->whereIn('role', $roles) as $assignment) {
+            // If no specific area is requested, just having the role anywhere is sufficient
+            if ($area === null) {
+                return true;
+            }
+            // If a specific area is requested, it must match or the role must be global
+            if ($assignment->area_id === null || $assignment->area_id == $area->id) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Return if user is a mentor or above
-     *
-     * @return bool
-     */
-    public function isBuddyOrAbove(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', '<=', GROUP_BUDDY)->isNotEmpty();
-        }
-
-        // Check if user is buddy or above in the specified area
-        foreach ($this->groups->where('id', '<=', GROUP_BUDDY) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Return if user is a mentor
-     *
-     * @return bool
-     */
-    public function isMentor(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', GROUP_MENTOR)->isNotEmpty();
-        }
-
-        // Check if user is mentor in the specified area
-        foreach ($this->groups->where('id', GROUP_MENTOR) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Return if user is a mentor or above
-     *
-     * @return bool
-     */
-    public function isMentorOrAbove(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', '<=', GROUP_MENTOR)->isNotEmpty();
-        }
-
-        // Check if user is mentor or above in the specified area
-        foreach ($this->groups->where('id', '<=', GROUP_MENTOR) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Return if user is a moderator
-     *
-     * @return bool
-     */
-    public function isModerator(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', GROUP_MODERATOR)->isNotEmpty();
-        }
-
-        // Check if user is moderator in the specified area
-        foreach ($this->groups->where('id', GROUP_MODERATOR) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Return if user is a moderator or above
-     *
-     * @return bool
-     */
-    public function isModeratorOrAbove(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', '<=', GROUP_MODERATOR)->isNotEmpty();
-        }
-
-        if ($this->isAdmin()) {
-            return true;
-        }
-
-        // Check if user is moderator or above in the specified area
-        foreach ($this->groups->where('id', '<=', GROUP_MODERATOR) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Return if user is an admin
-     *
-     * @return bool
-     */
-    public function isAdmin()
-    {
-        return $this->groups->contains('id', GROUP_ADMINISTRATOR);
     }
 }

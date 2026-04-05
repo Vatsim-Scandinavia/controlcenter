@@ -20,8 +20,8 @@ class TrainingReportPolicy
     {
         return $training->mentors->contains($user) ||
                 $user->is($training->user) ||
-                $user->isModeratorOrAbove($training->area) ||
-                $user->isAdmin();
+                $user->hasRole(['admin', 'moderator'], $training->area) ||
+                $user->hasRole('admin');
     }
 
     /**
@@ -37,8 +37,8 @@ class TrainingReportPolicy
             && ! ($isTrainee && $trainingReport->draft)
         )
             || $trainingReport->author->is($user) // If the user is the author of the report
-            || $user->isAdmin()
-            || $user->isModerator($trainingReport->training->area)
+            || $user->hasRole('admin')
+            || $user->hasRole('moderator', $trainingReport->training->area)
             || ($isTrainee && ! $trainingReport->draft);
     }
 
@@ -53,13 +53,13 @@ class TrainingReportPolicy
         }
 
         // Training mentors and area moderators can create a report
-        if ($user->isModerator($training->area) || $training->mentors->contains($user)) {
+        if ($user->hasRole('moderator', $training->area) || $training->mentors->contains($user)) {
             return true;
         }
 
         // Otherwise, let's see if a one-time link is used
         if (($link = OneTimeLink::getFromSession($training)) != null) {
-            return $user->isMentor($link->training->area) || $user->isBuddy($link->training->area);
+            return $user->hasRole('mentor', $link->training->area) || $user->hasRole('buddy', $link->training->area);
         }
 
         return false;
@@ -83,8 +83,8 @@ class TrainingReportPolicy
     public function update(User $user, TrainingReport $trainingReport): bool
     {
         return $trainingReport->training->mentors->contains($user) ||
-                $user->isAdmin() ||
-                $user->isModerator($trainingReport->training->area);
+                $user->hasRole('admin') ||
+                $user->hasRole('moderator', $trainingReport->training->area);
     }
 
     /**
@@ -92,7 +92,7 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport): Response
     {
-        return ($user->isAdmin() || $user->isModerator($trainingReport->training->area) || ($user->is($trainingReport->author) && $user->isMentor($trainingReport->training->area)))
+        return ($user->hasRole('admin') || $user->hasRole('moderator', $trainingReport->training->area) || ($user->is($trainingReport->author) && $user->hasRole('mentor', $trainingReport->training->area)))
             ? Response::allow()
             : Response::deny('Only moderators and the author of the training report can delete it.');
     }

@@ -90,16 +90,16 @@ class CheckOnlineControllers extends Command
                             $user->save();
 
                             // Send warning to all admins, and moderators in selected area
-                            $sendToStaff = User::allWithGroup(1);
+                            $sendToStaff = User::allWithRole('admin');
 
                             if (isset($area)) {
-                                $moderators = User::allWithGroup(2);
+                                $moderators = User::allWithRole('moderator');
                                 foreach ($moderators as $m) {
                                     if ($sendToStaff->where('id', $m->id)->count()) {
                                         continue;
                                     }
 
-                                    if ($m->isModerator($area)) {
+                                    if ($m->hasRole('moderator', $area)) {
                                         $sendToStaff->push($m);
                                     }
                                 }

@@ -47,7 +47,7 @@
                                 @endif
                             </div>
 
-                            @if($user->isMentorOrAbove())
+                            @if($user->hasRole(['admin', 'moderator', 'mentor']))
                                 <hr>
 
                                 <h5>Mentor Notifications</h5>
@@ -61,7 +61,7 @@
                                 
                             @endif
 
-                            @if($user->isModeratorOrAbove())
+                            @if($user->hasRole(['admin', 'moderator']))
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>

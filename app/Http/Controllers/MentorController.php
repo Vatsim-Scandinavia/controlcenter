@@ -20,7 +20,7 @@ class MentorController extends Controller
         $trainings = $user->mentoringTrainings();
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
-        if ($user->isMentorOrAbove()) {
+        if ($user->hasRole(['admin', 'moderator', 'mentor'])) {
             return view('mentor.index', compact('trainings', 'user', 'statuses', 'types'));
         }
 

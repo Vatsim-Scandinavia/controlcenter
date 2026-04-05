@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Area;
-use App\Models\Group;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -42,7 +41,7 @@ class UserMakeAdmin extends Command
                 $area = Area::where('name', $area)->first();
 
                 // Give the user permission to the area
-                $user->groups()->attach(Group::find(1), ['area_id' => $area->id]);
+                $user->roleAssignments()->create(['role' => 'admin', 'area_id' => $area->id]);
                 $this->info('User ' . $user->name . ' has been given admin permissions for ' . $area->name . '.');
 
                 return Command::SUCCESS;

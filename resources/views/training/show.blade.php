@@ -174,7 +174,7 @@
                             @endif
 
                             <label class="form-label" for="trainingStateSelect">Select training state</label>
-                            <select class="form-select" name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                            <select class="form-select" name="status" id="trainingStateSelect" @if(!Auth::user()->hasRole(['admin', 'moderator'])) disabled @endif>
                                 @foreach($statuses as $id => $data)
                                     @if($data["assignableByStaff"])
                                         @if($id == $training->status)
@@ -193,7 +193,7 @@
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                            <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->hasRole(['admin', 'moderator'])) disabled @endif>
                             <label class="form-check-label" for="check1">
                                 Paused
                                 @if(isset($training->paused_at))
@@ -204,7 +204,7 @@
 
                         <hr>
 
-                        @if (\Auth::user()->isModeratorOrAbove())
+                        @if (\Auth::user()->hasRole(['admin', 'moderator']))
                         <div class="mb-3">
                             <label class="form-label" for="assignMentors">Assigned mentors: <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
                             <select multiple class="form-select" name="mentors[]" id="assignMentors">

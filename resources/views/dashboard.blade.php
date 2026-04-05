@@ -135,7 +135,7 @@
     <!-- Area Chart -->
     <div class="col-xl-8 col-lg-7 ">
         
-        @if(\Auth::user()->isMentor())
+        @if(\Auth::user()->hasRole('mentor'))
         <div class="card shadow mb-4 d-none d-xl-block d-lg-block d-md-block">
             <!-- Card Header - Dropdown -->
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">

@@ -22,10 +22,10 @@ class OneTimeLinkPolicy
     {
         // Only allow examination link generation if the training is awaiting exam
         if ($type == OneTimeLink::TRAINING_EXAMINATION_TYPE) {
-            return $training->status == TrainingStatus::AWAITING_EXAM->value && ($training->mentors->contains($user) || $user->isModeratorOrAbove($training->area));
+            return $training->status == TrainingStatus::AWAITING_EXAM->value && ($training->mentors->contains($user) || $user->hasRole(['admin', 'moderator'], $training->area));
         }
 
-        return $training->mentors->contains($user) || $user->isModeratorOrAbove($training->area);
+        return $training->mentors->contains($user) || $user->hasRole(['admin', 'moderator'], $training->area);
     }
 
     /**
@@ -41,7 +41,7 @@ class OneTimeLinkPolicy
             return Response::denyAsNotFound('The one-time link provided has expired');
         }
 
-        return ($link->reportType() && ($user->isMentor() || $user->isBuddy())
+        return ($link->reportType() && ($user->hasRole('mentor') || $user->hasRole('buddy'))
             || ($link->examinationType() && $user->isExaminer()))
             ? Response::allow()
             : Response::deny('You are not allowed to access the one-time link');

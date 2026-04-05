@@ -6,7 +6,6 @@ use App\Contracts\DivisionApiContract;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\Endorsement;
-use App\Models\Group;
 use App\Models\Position;
 use App\Models\Rating;
 use App\Models\User;
@@ -82,7 +81,7 @@ class VATEUD implements DivisionApiContract
     public function removeMentor(User $user, int $requesterId)
     {
         // Only remove from API if this is the last area in CC.
-        $mentorAssignments = Group::mentors()->where('id', $user->id)->count();
+        $mentorAssignments = $user->roleAssignments()->where('role', 'mentor')->count();
         if ($mentorAssignments <= 1) {
             return $this->callApi('/facility/training/remove/' . $user->id . '/mentor', 'POST', [
                 'user_cid' => $requesterId,

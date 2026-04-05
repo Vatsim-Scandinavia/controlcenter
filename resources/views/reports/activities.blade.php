@@ -4,11 +4,11 @@
 @section('title-flex')
     <div>
         <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
-        @if(\Auth::user()->isAdmin())
+        @if(\Auth::user()->hasRole('admin'))
             <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities') }}">All Areas</a>
         @endif
         @foreach($areas as $area)
-            @if(\Auth::user()->isModeratorOrAbove($area))
+            @if(\Auth::user()->hasRole(['admin', 'moderator'], $area))
                 <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
             @endif
         @endforeach 

@@ -19,7 +19,7 @@ class TrainingExaminationPolicy
      */
     public function view(User $user, TrainingExamination $examination)
     {
-        return $user->isModeratorOrAbove() || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->isExaminer());
+        return $user->hasRole(['admin', 'moderator']) || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->isExaminer());
     }
 
     /**
@@ -30,7 +30,7 @@ class TrainingExaminationPolicy
     public function create(User $user, Training $training)
     {
 
-        if ($user->isAdmin()) {
+        if ($user->hasRole('admin')) {
             return true;
         }
 
@@ -51,11 +51,11 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
-        if ($user->isAdmin()) {
+        if ($user->hasRole('admin')) {
             return true;
         }
 
-        return $examination->draft ? ($user->isModeratorOrAbove($examination->training->area) || $user->isExaminer()) : $user->isModeratorOrAbove($examination->training->area);
+        return $examination->draft ? ($user->hasRole(['admin', 'moderator'], $examination->training->area) || $user->isExaminer()) : $user->hasRole(['admin', 'moderator'], $examination->training->area);
     }
 
     /**
@@ -65,6 +65,6 @@ class TrainingExaminationPolicy
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
-        return $user->isModeratorOrAbove($trainingExamination->training->area) || $user->isAdmin();
+        return $user->hasRole(['admin', 'moderator'], $trainingExamination->training->area) || $user->hasRole('admin');
     }
 }

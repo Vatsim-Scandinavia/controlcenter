@@ -80,10 +80,10 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         }
 
         // Find staff who wants notification of new training request
-        $bcc = User::allWithGroup(2, '<=')->where('setting_notify_closedreq', true);
+        $bcc = User::allWithRole(['admin', 'moderator'])->where('setting_notify_closedreq', true);
 
         foreach ($bcc as $key => $user) {
-            if (! $user->isModeratorOrAbove($this->training->area)) {
+            if (! $user->hasRole(['admin', 'moderator'], $this->training->area)) {
                 $bcc->pull($key);
             }
         }

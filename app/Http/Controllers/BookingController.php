@@ -31,7 +31,7 @@ class BookingController extends Controller
     private function getBookablePositions(User $user)
     {
         // Moderators and above can book any position
-        if ($user->isModeratorOrAbove()) {
+        if ($user->hasPermission('bypass-booking-restrictions')) {
             return Position::all();
         }
 
@@ -164,10 +164,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating->value > $user->rating) && ! $user->isModeratorOrAbove()) {
+        if (($booking->position->rating->value > $user->rating) && ! $user->hasPermission('bypass-booking-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bypass-booking-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -426,10 +426,10 @@ class BookingController extends Controller
         $forcedTrainingTag = false;
         $bookingUser = User::find($booking->user_id);
 
-        if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->isModeratorOrAbove()) {
+        if (($booking->position->rating > $bookingUser->rating) && ! $bookingUser->hasPermission('bypass-booking-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->isModeratorOrAbove()) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bypass-booking-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {

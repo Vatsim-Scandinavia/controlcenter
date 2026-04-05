@@ -16,6 +16,6 @@ class ActivityLogPolicy
      */
     public function index(User $user)
     {
-        return $user->isAdmin();
+        return $user->hasRole('admin');
     }
 }

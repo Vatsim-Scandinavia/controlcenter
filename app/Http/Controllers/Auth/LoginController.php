@@ -92,8 +92,9 @@ class LoginController extends Controller
         auth()->login($account, false);
 
         $authLevel = 'User';
-        if (\Auth::user()->groups->count() > 0) {
-            $authLevel = User::find(\Auth::user()->id)->groups->sortBy('id')->first()->name;
+        $firstRole = \Auth::user()->roleAssignments->first();
+        if ($firstRole) {
+            $authLevel = $firstRole->role;
             ActivityLogController::warning('ACCESS', 'Logged in with ' . $authLevel . ' access');
         } else {
             ActivityLogController::info('ACCESS', 'Logged in with ' . $authLevel . ' access');

@@ -19,11 +19,11 @@
 
         <div class="input-group input-group-sm w-auto">
             <span class="input-group-text"><i class="fas fa-filter me-1"></i>Filter</span>
-            @if(\Auth::user()->isAdmin())
+            @if(\Auth::user()->hasRole('admin'))
                 <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.trainings', ['start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">All Areas</a>
             @endif
             @foreach($areas as $area)
-                @if(\Auth::user()->isModeratorOrAbove($area))
+                @if(\Auth::user()->hasRole(['admin', 'moderator'], $area))
                     <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.training.area', ['id' => $area->id, 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">{{ $area->name }}</a>
                 @endif
             @endforeach

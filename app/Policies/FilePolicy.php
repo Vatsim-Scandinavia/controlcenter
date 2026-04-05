@@ -17,7 +17,7 @@ class FilePolicy
      */
     public function view(User $user, File $file)
     {
-        return $user->isModeratorOrAbove() ||
+        return $user->hasRole(['admin', 'moderator']) ||
                 $user->is($file->owner) ||
                 ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
     }
@@ -29,7 +29,7 @@ class FilePolicy
      */
     public function create(User $user)
     {
-        return $user->isMentorOrAbove();
+        return $user->hasRole(['admin', 'moderator', 'mentor']);
     }
 
     /**
@@ -39,7 +39,7 @@ class FilePolicy
      */
     public function update(User $user, File $file)
     {
-        return $user->isModeratorOrAbove() || $user->is($file->owner);
+        return $user->hasRole(['admin', 'moderator']) || $user->is($file->owner);
     }
 
     /**
@@ -49,6 +49,6 @@ class FilePolicy
      */
     public function delete(User $user, File $file)
     {
-        return $user->isModeratorOrAbove() || $user->is($file->owner);
+        return $user->hasRole(['admin', 'moderator']) || $user->is($file->owner);
     }
 }

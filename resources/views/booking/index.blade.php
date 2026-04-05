@@ -63,7 +63,7 @@
                                             {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
                                         @endif 
                                         
-                                        @if(Auth::user()->id == $booking->user_id || $user->isModeratorOrAbove())
+                                        @if(Auth::user()->id == $booking->user_id || $user->hasRole(['admin', 'moderator']))
 
                                             @if($booking->source == "DISCORD")
                                                 <i class="fab fa-discord text-primary" data-bs-toggle="tooltip" data-bs-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>

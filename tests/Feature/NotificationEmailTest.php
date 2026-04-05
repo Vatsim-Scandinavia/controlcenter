@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Area;
-use App\Models\Group;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingInterest;
@@ -28,8 +27,6 @@ class NotificationEmailTest extends TestCase
 
     protected User $user;
 
-    protected Group $moderatorGroup;
-
     protected Area $area;
 
     protected function setUp(): void
@@ -37,7 +34,6 @@ class NotificationEmailTest extends TestCase
         parent::setUp();
         Notification::fake();
 
-        $this->moderatorGroup = Group::firstOrCreate(['id' => 2], ['name' => 'Moderator']);
         $this->area = Area::factory()->create();
         $this->user = User::factory()->create([
             'email' => 'personal@example.com',
@@ -91,15 +87,15 @@ class NotificationEmailTest extends TestCase
             'setting_workmail_address' => 'staff.work@example.com',
             'setting_notify_newreq' => true,
         ]);
-        $staffReceivesBcc->groups()->attach($this->moderatorGroup, ['area_id' => $this->area->id]);
+        $staffReceivesBcc->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area->id]);
 
         // Staff member who should NOT receive BCC (wrong area)
         $staffWrongArea = User::factory()->create(['setting_notify_newreq' => true]);
-        $staffWrongArea->groups()->attach($this->moderatorGroup, ['area_id' => $anotherArea->id]);
+        $staffWrongArea->roleAssignments()->create(['role' => 'moderator', 'area_id' => $anotherArea->id]);
 
         // Staff member who should NOT receive BCC (notification setting disabled)
         $staffNoNotify = User::factory()->create(['setting_notify_newreq' => false]);
-        $staffNoNotify->groups()->attach($this->moderatorGroup, ['area_id' => $this->area->id]);
+        $staffNoNotify->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area->id]);
 
         $training = Training::factory()->for($this->user)->for($this->area)->create();
 

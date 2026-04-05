@@ -9,7 +9,6 @@ use App\Helpers\Vatsim;
 use App\Http\Requests\StatisticsSessionsRequest;
 use App\Models\Area;
 use App\Models\AtcActivity;
-use App\Models\Group;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
@@ -18,7 +17,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 /**
  * Controller to handle user views
@@ -119,7 +120,7 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
-        $groups = Group::all();
+        $groups = config('roles.roles');
         $areas = Area::all();
 
         if ($user == null) {
@@ -286,29 +287,27 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\Response
-     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): SymfonyResponse
     {
         $this->authorize('update', $user);
         $permissions = [];
 
         // Generate a list of possible validations
         foreach (Area::all() as $area) {
-            foreach (Group::all() as $group) {
+            foreach (config('roles.roles') as $roleKey => $role) {
                 // Don't list or allow admin rank to be set through this interface
-                if ($group->id == 1) {
+                if ($roleKey == 'admin') {
                     continue;
                 }
 
                 // Only process ranks the user is allowed to change
-                if (! \Illuminate\Support\Facades\Gate::inspect('updateGroup', [$user, $group, $area])->allowed()) {
+                if (! Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed()) {
                     continue;
                 }
 
-                $key = $area->id . '_' . $group->name;
+                $key = $area->id . '_' . $roleKey;
                 $permissions[$key] = '';
             }
         }
@@ -324,15 +323,15 @@ class UserController extends Controller
             $str = explode('_', $key);
 
             $area = Area::where('id', $str[0])->get()->first();
-            $group = Group::where('name', $str[1])->get()->first();
+            $roleKey = $str[1];
 
             // Check if permission is not set, and set it or other way around.
-            if ($user->groups()->where('area_id', $area->id)->where('group_id', $group->id)->get()->count() == 0) {
+            if ($user->roleAssignments()->where('area_id', $area->id)->where('role', $roleKey)->count() == 0) {
                 if ($value == true) {
-                    $this->authorize('updateGroup', [$user, $group, $area]);
+                    $this->authorize('updateRole', [$user, $roleKey, $area]);
 
                     // Call the division API to assign mentor
-                    if ($group->id == 3) {
+                    if ($roleKey == 'mentor') {
                         $response = DivisionApi::assignMentor($user, Auth::id());
                         if ($response && $response->failed()) {
                             return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
@@ -340,14 +339,14 @@ class UserController extends Controller
                     }
 
                     // Attach the new permission
-                    $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
+                    $user->roleAssignments()->create(['role' => $roleKey, 'area_id' => $area->id]);
                 }
             } else {
                 if ($value == false) {
-                    $this->authorize('updateGroup', [$user, $group, $area]);
+                    $this->authorize('updateRole', [$user, $roleKey, $area]);
 
                     // Call the division API to assign mentor
-                    if ($group->id == 3) {
+                    if ($roleKey == 'mentor') {
                         $response = DivisionApi::removeMentor($user, Auth::id());
                         if ($response && $response->failed()) {
                             return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
@@ -355,12 +354,12 @@ class UserController extends Controller
                     }
 
                     // Detach the permission
-                    $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
+                    $user->roleAssignments()->where('area_id', $area->id)->where('role', $roleKey)->delete();
                 }
             }
 
             // Check and detach trainings from mentor
-            if ($user->teaches()->where('area_id', $area->id)->count() > 0 && ! $user->isMentor() && $value == false) {
+            if ($user->teaches()->where('area_id', $area->id)->count() > 0 && ! $user->hasRole('mentor') && $value == false) {
                 $user->teaches()->detach($user->teaches->where('area_id', $area->id));
             }
         }

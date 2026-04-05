@@ -39,9 +39,9 @@
                                 <td><a href="{{ route('user.show', $user->id) }}">{{ $user->name }}</a></td>
                                 @foreach($areas as $area)
                                     <td>
-                                        @foreach($user->groups as $key => $group)
-                                            @if($group->pivot->area_id == $area->id)
-                                                {{ $group->name }}<br>
+                                        @foreach($user->roleAssignments as $assignment)
+                                            @if($assignment->area_id == $area->id || $assignment->area_id === null)
+                                                {{ ucfirst($assignment->role) }}<br>
                                             @endif
                                         @endforeach
                                     </td>

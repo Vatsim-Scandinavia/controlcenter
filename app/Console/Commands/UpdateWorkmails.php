@@ -44,7 +44,7 @@ class UpdateWorkmails extends Command
 
         // Check for users that no longer hold a moderator or admin rank
         foreach (User::whereNotNull('setting_workmail_address')->get() as $user) {
-            if ($user->groups()->count() == 0 || (! $user->isModerator() && ! $user->isAdmin())) {
+            if ($user->roleAssignments()->count() == 0 || (! $user->hasRole('moderator') && ! $user->hasRole('admin'))) {
                 $user->setting_workmail_address = null;
                 $user->setting_workmail_expire = null;
                 $user->save();

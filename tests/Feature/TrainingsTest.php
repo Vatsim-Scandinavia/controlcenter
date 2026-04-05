@@ -59,7 +59,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
 
-        $moderator->groups()->attach(2, ['area_id' => $training->area->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $training->area->id]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
 
@@ -78,7 +78,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $user = $training->user;
-        $user->groups()->attach(3, ['area_id' => $training->area->id]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
 
         $this->assertDatabaseHas('trainings', ['id' => $training->id]);
 
@@ -94,7 +94,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $moderator = User::factory()->create();
-        $moderator->groups()->attach(1, ['area_id' => $training->area->id]);
+        $moderator->roleAssignments()->create(['role' => 'admin', 'area_id' => $training->area->id]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
 
@@ -180,10 +180,10 @@ class TrainingsTest extends TestCase
             'area_id' => 1,
         ]);
         $moderator = User::factory()->create();
-        $moderator->groups()->attach(2, ['area_id' => $training->area->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $training->area->id]);
         $mentor = User::factory()->create();
 
-        $mentor->groups()->attach(3, ['area_id' => 2]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => 2]);
 
         $this->actingAs($moderator)
             ->patchJson(route('training.update.details', ['training' => $training]), ['mentors' => [$mentor->id]])

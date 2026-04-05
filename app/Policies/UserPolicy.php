@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Area;
-use App\Models\Group;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -18,7 +17,7 @@ class UserPolicy
      */
     public function index(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('manage-users');
     }
 
     /**
@@ -28,7 +27,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->is($model) || $user->isModeratorOrAbove() || $user->isTeaching($model);
+        return $user->is($model) || $user->hasPermission('manage-users') || $user->isTeaching($model);
     }
 
     /**
@@ -38,7 +37,7 @@ class UserPolicy
      */
     public function viewAccess(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('view-user-access');
     }
 
     /**
@@ -48,7 +47,7 @@ class UserPolicy
      */
     public function viewReports(User $user, User $model)
     {
-        return $user->is($model) || $user->isModeratorOrAbove();
+        return $user->is($model) || $user->hasPermission('view-management-reports');
     }
 
     /**
@@ -58,21 +57,25 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return $user->isModeratorOrAbove();
+        return $user->hasPermission('manage-users');
     }
 
-    /**
-     * Determine whether the user can update the model with that specific group
-     *
-     * @param  \App\Models\Group  $group
-     * @return bool
-     */
-    public function updateGroup(User $user, User $model, Group $requstedGroup, Area $requestedArea)
+    public function updateRole(User $user, User $model, string $requestedRole, Area $requestedArea)
     {
-        // Allow admins to set all ranks from Moderator and below, and moderators can only set new mentors.
-        // Only Admin can set examinators.
-        return
-            $this->update($user, $model) &&
-            (($user->isAdmin() && $requstedGroup->id >= 2) || ($user->isModerator($requestedArea) && $requstedGroup->id >= 3));
+        if (! $this->update($user, $model)) {
+            return false;
+        }
+
+        // Admins can set any role except admin (handled in controller)
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        // Moderators can only set mentors and buddies
+        if ($user->hasRole('moderator', $requestedArea)) {
+            return in_array($requestedRole, ['mentor', 'buddy']);
+        }
+
+        return false;
     }
 }

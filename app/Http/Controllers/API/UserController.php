@@ -43,7 +43,7 @@ class UserController extends Controller
         // Gather which data to include in queries for optimisation
         $queryInclude = [];
         ($paramIncludeEndorsements) ? array_push($queryInclude, 'endorsements', 'endorsements.areas', 'endorsements.ratings', 'endorsements.positions') : null;
-        ($paramIncludeRoles) ? array_push($queryInclude, 'groups') : null;
+        ($paramIncludeRoles) ? array_push($queryInclude, 'roleAssignments') : null;
         ($paramIncludeTraining) ? array_push($queryInclude, 'trainings', 'trainings.ratings', 'trainings.area') : null;
 
         //
@@ -81,7 +81,7 @@ class UserController extends Controller
         }
 
         if ($paramIncludeRoles) {
-            $roleUsers = User::whereHas('groups')->whereNotIn('id', $returnUsers->pluck('id'));
+            $roleUsers = User::whereHas('roleAssignments')->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
                 $roleUsers = $roleUsers->whereHas('atcActivity', function ($query) {
                     $query->where('atc_active', true);
@@ -123,10 +123,10 @@ class UserController extends Controller
                 $user->roles = collect();
 
                 foreach (Area::all() as $area) {
-                    $areaRoles = $user->groups->where('pivot.area_id', $area->id)->pluck('name');
+                    $areaRoles = $user->roleAssignments->where('area_id', $area->id)->pluck('role');
 
                     if ($areaRoles->count()) {
-                        $user->roles[$area->name] = ($user->groups->where('pivot.area_id', $area->id)->pluck('name'));
+                        $user->roles[$area->name] = $areaRoles;
                     } else {
                         $user->roles[$area->name] = null;
                     }

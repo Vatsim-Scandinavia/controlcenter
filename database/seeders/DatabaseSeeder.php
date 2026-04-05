@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Helpers\FactoryHelper;
 use App\Helpers\TrainingStatus;
 use App\Models\Endorsement;
-use App\Models\Group;
 use App\Models\Position;
 use App\Models\Rating;
 use App\Models\Training;

@@ -19,12 +19,12 @@ class PositionPolicy
 
     public function viewAny(User $user, ?Area $area = null): bool
     {
-        return $user->isModeratorOrAbove($area);
+        return $user->hasPermission('manage-positions', $area);
     }
 
     public function before(User $user): ?bool
     {
-        if ($user->isAdmin()) {
+        if ($user->hasRole('admin')) {
             return true;
         }
 

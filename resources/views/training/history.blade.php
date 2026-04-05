@@ -3,7 +3,7 @@
 @section('title', 'Closed Training Requests')
 @section('title-flex')
     <div>
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->hasRole(['admin', 'moderator']))
             <a href="{{ route('training.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new request</a>
         @endif
     </div>

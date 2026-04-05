@@ -17,7 +17,7 @@ class SweatbookPolicy
      */
     public function view(User $user)
     {
-        return $user->isMentorOrAbove();
+        return $user->hasRole(['admin', 'moderator', 'mentor']);
     }
 
     /**
@@ -27,7 +27,7 @@ class SweatbookPolicy
      */
     public function create(User $user)
     {
-        return $user->isMentorOrAbove();
+        return $user->hasRole(['admin', 'moderator', 'mentor']);
     }
 
     /**
@@ -37,6 +37,6 @@ class SweatbookPolicy
      */
     public function update(User $user, Sweatbook $booking)
     {
-        return $booking->user_id == $user->id || $user->isModeratorOrAbove();
+        return $booking->user_id == $user->id || $user->hasRole(['admin', 'moderator']);
     }
 }

@@ -43,7 +43,7 @@ class UpdateMemberDetails extends Command
      */
     public function handle()
     {
-        $mentors = User::allWithGroup('3');
+        $mentors = User::allWithRole('mentor');
 
         if (config('app.mode') == 'subdivision') {
             $divisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
@@ -65,8 +65,8 @@ class UpdateMemberDetails extends Command
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();
 
-            // Remove mentor permission groups
-            $mentor->groups()->detach();
+            // Remove training role assignments
+            $mentor->roleAssignments()->delete();
             $mentor->save();
 
             $count++;

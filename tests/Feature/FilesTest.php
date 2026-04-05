@@ -31,7 +31,7 @@ class FilesTest extends TestCase
     public function mentor_can_upload_a_pdf_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
-        $user->groups()->attach(3, ['area_id' => 1]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->create($this->faker->word . '.pdf', 2048, 'application/pdf');
 
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
@@ -44,7 +44,7 @@ class FilesTest extends TestCase
     public function mentor_can_upload_an_image_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
-        $user->groups()->attach(3, ['area_id' => 1]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
@@ -57,7 +57,7 @@ class FilesTest extends TestCase
     public function user_can_see_a_file_they_uploaded()
     {
         $user = User::factory()->create(['id' => 10000001]);
-        $user->groups()->attach(3, ['area_id' => 1]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
 
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
@@ -83,7 +83,7 @@ class FilesTest extends TestCase
     public function owner_can_delete_their_own_files()
     {
         $user = User::factory()->create(['id' => 10000001]);
-        $user->groups()->attach(3, ['area_id' => 1]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->json('file_id');
@@ -98,14 +98,14 @@ class FilesTest extends TestCase
     public function moderator_can_delete_another_users_file()
     {
         $user = User::factory()->create(['id' => 10000001]);
-        $user->groups()->attach(3, ['area_id' => 1]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->json('file_id');
         $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
 
         $moderator = User::factory()->create();
-        $moderator->groups()->attach(2, ['area_id' => 1]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => 1]);
 
         $this->actingAs($moderator)->delete(route('file.delete', ['file' => $file_id]))->assertRedirect()->assertSessionHas('success', 'File successfully deleted');
     }
@@ -114,7 +114,7 @@ class FilesTest extends TestCase
     public function regular_user_cant_delete_another_users_file()
     {
         $user = \App\Models\User::factory()->create(['id' => 10000001]);
-        $user->groups()->attach(3, ['area_id' => 1]);
+        $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->json('file_id');

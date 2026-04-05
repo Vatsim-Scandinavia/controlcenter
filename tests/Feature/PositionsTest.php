@@ -44,13 +44,13 @@ class PositionsTest extends TestCase
 
         // Create Users
         $this->admin = User::factory()->create();
-        $this->admin->groups()->attach(1, ['area_id' => $this->moderatorArea->id]);
+        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => $this->moderatorArea->id]);
 
         $this->moderator = User::factory()->create();
         $this->user = User::factory()->create();
 
         // Assign moderator to area 1
-        $this->moderator->groups()->attach(2, ['area_id' => $this->moderatorArea->id]);
+        $this->moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->moderatorArea->id]);
 
         // Create Position in area 1
         $this->existingPosition = Position::factory()->create(['area_id' => $this->moderatorArea->id]);
@@ -378,7 +378,7 @@ class PositionsTest extends TestCase
     public function moderator_of_one_area_cannot_see_positions_of_another_area()
     {
         $otherModerator = User::factory()->create();
-        $otherModerator->groups()->attach(2, ['area_id' => $this->area2->id]); // Moderator of Area 2
+        $otherModerator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area2->id]); // Moderator of Area 2
 
         // Case 1: Explicitly requesting Area 1 (moderatorArea) should be forbidden
         $response = $this->actingAs($otherModerator)->get(route('positions.index.area', $this->moderatorArea->id));

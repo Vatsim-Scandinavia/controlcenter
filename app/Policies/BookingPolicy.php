@@ -34,7 +34,7 @@ class BookingPolicy
             $user->isAtcActive() && $user->rating >= VatsimRating::S1->value
             || $user->hasActiveEndorsement('VISITING')
             || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
-            || $user->isModeratorOrAbove();
+            || $user->hasRole(['admin', 'moderator']);
     }
 
     /**
@@ -55,7 +55,7 @@ class BookingPolicy
         }
 
         // The booking is not Discord but the user is moderator or above
-        if ($booking->source != 'DISCORD' && $user->isModeratorOrAbove()) {
+        if ($booking->source != 'DISCORD' && $user->hasRole(['admin', 'moderator'])) {
             return Response::allow();
         }
 
@@ -75,7 +75,7 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user): bool
     {
-        if ($user->isModerator()) {
+        if ($user->hasRole('moderator')) {
             return true;
         }
 
@@ -98,7 +98,7 @@ class BookingPolicy
     public function bookExamTag(User $user): bool
     {
 
-        return $user->isMember() && ($user->rating >= VatsimRating::C1->value || $user->isModerator());
+        return $user->isMember() && ($user->rating >= VatsimRating::C1->value || $user->hasRole('moderator'));
     }
 
     /**
@@ -109,7 +109,7 @@ class BookingPolicy
     public function position(User $user, Booking $booking)
     {
         // TODO: Make it easier to read the order of checks
-        if (($booking->position->rating->value > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->isModerator()) {
+        if (($booking->position->rating->value > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->hasRole('moderator')) {
             if (
                 $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
                 ($user->getActiveTraining()->ratings()->first()->vatsim_rating >= $booking->position->rating->value || $user->getActiveTraining()->isFacilityTraining()) &&
