@@ -3,7 +3,13 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
-export default ({ mode }) => {
+// TODO: remove these warnings once the issue below has been resolved, e.g. bootstrap v5.5
+// https://github.com/twbs/bootstrap/issues/40962
+const BOOTSTRAP_DEPRECATIONS = [
+    'import', 'global-builtin', 'color-functions', 'mixed-decls'
+];
+
+export default () => {
 
     // Return the Vite configuration
     return defineConfig({
@@ -32,6 +38,13 @@ export default ({ mode }) => {
                 '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
                 '@': '/resources/js',
             },
+        },
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    silenceDeprecations: BOOTSTRAP_DEPRECATIONS
+                }
+            }
         },
     });
 }
