@@ -88,7 +88,7 @@ class DatabaseSeeder extends Seeder
                     break;
             }
 
-            User::factory()->create([
+            $user = User::factory()->create([
                 'id' => 10000000 + $i,
                 'email' => $email,
                 'first_name' => $name_first,
@@ -99,7 +99,20 @@ class DatabaseSeeder extends Seeder
                 'region' => 'EMEA',
                 'division' => 'EUD',
                 'subdivision' => 'SCA',
-            ])->groups()->attach(Group::find($group), ['area_id' => 1]);
+            ]);
+
+            if ($group !== null) {
+                $role = match ($group) {
+                    1 => 'admin',
+                    2 => 'moderator',
+                    3 => 'mentor',
+                    4 => 'buddy',
+                    default => null
+                };
+                if ($role) {
+                    $user->roleAssignments()->create(['role' => $role, 'area_id' => 1]);
+                }
+            }
         }
 
         // Create random Scandinavian users
@@ -127,8 +140,8 @@ class DatabaseSeeder extends Seeder
             // Give all non-queued trainings a mentor
             if ($training->status != TrainingStatus::IN_QUEUE->value) {
                 $training->mentors()->attach(
-                    User::whereHas('groups', function ($query) {
-                        $query->where('id', 3);
+                    User::whereHas('roleAssignments', function ($query) {
+                        $query->where('role', 'mentor');
                     })->inRandomOrder()->first(),
                     ['expire_at' => now()->addYears(5)]
                 );

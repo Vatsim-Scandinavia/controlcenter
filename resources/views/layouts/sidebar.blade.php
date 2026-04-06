@@ -181,14 +181,12 @@
 
                 @if(\Auth::user()->hasRole('admin'))
                     <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
-                @elseif(\Auth::user()->hasRole('moderator'))
-                    <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->roleAssignments()->where('role', 'moderator')->get()->first()->area_id) }}">Trainings</a>
-                @endif
-
-                @if(\Auth::user()->hasRole('admin'))
                     <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
                 @elseif(\Auth::user()->hasRole('moderator'))
-                    <a class="collapse-item" href="{{ route('reports.activities.area', \Auth::user()->roleAssignments()->where('role', 'moderator')->get()->first()->area_id) }}">Activities</a>
+                    @foreach(\Auth::user()->roleAssignments->where('role', 'moderator')->filter(fn($a) => $a->area_id) as $assignment)
+                        <a class="collapse-item" href="{{ route('reports.training.area', $assignment->area_id) }}">Trainings ({{ $assignment->area->name }})</a>
+                        <a class="collapse-item" href="{{ route('reports.activities.area', $assignment->area_id) }}">Activities ({{ $assignment->area->name }})</a>
+                    @endforeach
                 @endif
 
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
@@ -214,15 +212,15 @@
             </a>
             <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                @if (\Auth::user()->hasRole('admin'))
+                @can('view-system-health')
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
-                @endif
+                @endcan
 
                 @can('manage-users')
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
-                @endif
+                @endcan
                 @can('viewAny', App\Models\Position::class)
                     <a class="collapse-item" href="{{ route('positions.index') }}">Positions</a>
                 @endcan
