@@ -11,7 +11,7 @@ This is the most reliable way to make changes over time, as well as regularly sy
 ## Custom Image
 
 ```Dockerfile title="Custom derivation of Control Center"
-FROM ghcr.io/vatsim-scandinavia/control-center:latest
+FROM ghcr.io/vatsim-scandinavia/control-center:6.4.3
 
 # Make your customisations here
 ...
@@ -24,7 +24,7 @@ FROM ghcr.io/vatsim-scandinavia/control-center:latest
 You can customise the theme by [copying your modified theme files and running `/container/theme/build.sh`](./theme.md):
 
 ```Dockerfile title="Custom theme in Control Center"
-FROM ghcr.io/vatsim-scandinavia/control-center:latest
+FROM ghcr.io/vatsim-scandinavia/control-center:6.4.3
 
 # Copy your custom theme files
 COPY _light.scss /app/resources/sass/themes/_light.scss
