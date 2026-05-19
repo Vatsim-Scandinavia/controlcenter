@@ -58,11 +58,7 @@ class Training extends Model
                 }
 
                 // Expire all related training interest models, as we assume the student is contacted and interested if their training status changes positively.
-                $expired = 1;
-                if ($expiredInterest) {
-                    $expired = 2;
-                }
-                TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => $expired]);
+                TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => true]);
             }
 
             // If training is completed or closed
@@ -70,11 +66,7 @@ class Training extends Model
                 $this->update(['closed_at' => now()]);
 
                 // Expire all related training interest models, as they will only cause problems if training is re-opened.
-                $expired = 1;
-                if ($expiredInterest) {
-                    $expired = 2;
-                }
-                TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => $expired]);
+                TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => true]);
 
                 // If paused is unchecked but training is paused, sum up the length and unpause.
                 if (isset($this->paused_at)) {
