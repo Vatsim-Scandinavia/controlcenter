@@ -27,8 +27,12 @@ class EndorsementPolicy
      */
     public function create(User $user, $type = null)
     {
-        if ($type == 'VISITING' || $type == 'EXAMINER') {
-            return $user->hasPermission('manage-endorsements');
+        if ($type == 'VISITING') {
+            return $user->hasPermission('manage-visiting-endorsements');
+        }
+
+        if ($type == 'EXAMINER') {
+            return $user->hasPermission('manage-examiner-endorsements');
         }
 
         return $user->hasPermission('manage-endorsements');
@@ -47,8 +51,12 @@ class EndorsementPolicy
         }
 
         // Check if user got correct permissions
-        if ($endorsement->type == 'VISITING' || $endorsement->type == 'EXAMINER') {
-            return $user->hasPermission('manage-endorsements');
+        if ($endorsement->type == 'VISITING') {
+            return $user->hasPermission('manage-visiting-endorsements');
+        }
+
+        if ($endorsement->type == 'EXAMINER') {
+            return $user->hasPermission('manage-examiner-endorsements');
         }
 
         return $user->hasPermission('manage-endorsements');

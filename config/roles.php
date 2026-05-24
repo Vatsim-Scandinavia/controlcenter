@@ -61,6 +61,8 @@ return [
         // Infrastructure
         'manage-positions' => ['admin', 'moderator'],
         'manage-endorsements' => ['admin', 'moderator'],
+        'manage-visiting-endorsements' => ['admin'],
+        'manage-examiner-endorsements' => ['admin'],
 
         // Reports
         'view-management-reports' => ['admin', 'moderator'],
