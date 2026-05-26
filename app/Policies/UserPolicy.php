@@ -66,7 +66,6 @@ class UserPolicy
             return false;
         }
 
-        // Admins can set any role except admin (handled in controller)
         if ($user->hasRole('admin')) {
             return true;
         }

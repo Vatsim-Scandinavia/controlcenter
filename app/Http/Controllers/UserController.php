@@ -297,11 +297,6 @@ class UserController extends Controller
         // Generate a list of possible validations
         foreach (Area::all() as $area) {
             foreach (config('roles.roles') as $roleKey => $role) {
-                // Don't list or allow admin rank to be set through this interface
-                if ($roleKey == 'admin') {
-                    continue;
-                }
-
                 // Only process ranks the user is allowed to change
                 if (! Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed()) {
                     continue;

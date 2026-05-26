@@ -66,4 +66,66 @@ class UserRoleAssignmentTest extends TestCase
             'area_id' => $this->area->id,
         ]);
     }
+
+    public function test_global_row_is_visible_on_user_show_page(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->get(route('user.show', $this->target));
+
+        $response->assertOk();
+        $response->assertSee('Global');
+    }
+
+    public function test_global_admin_can_assign_admin_role_per_area(): void
+    {
+        $key = $this->area->id . '_admin';
+
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), [$key => 'on']);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'admin',
+            'area_id' => $this->area->id,
+        ]);
+    }
+
+    public function test_global_admin_can_revoke_admin_role_per_area(): void
+    {
+        $this->target->roleAssignments()->create([
+            'role' => 'admin',
+            'area_id' => $this->area->id,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), []);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'admin',
+            'area_id' => $this->area->id,
+        ]);
+    }
+
+    public function test_moderator_cannot_assign_admin_role_per_area(): void
+    {
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area->id]);
+
+        $key = $this->area->id . '_admin';
+
+        $response = $this->actingAs($moderator)
+            ->patch(route('user.update', $this->target), [$key => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'admin',
+            'area_id' => $this->area->id,
+        ]);
+    }
 }
