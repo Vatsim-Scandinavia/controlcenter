@@ -5,6 +5,7 @@ namespace App\Models;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
+use App\Support\AreaScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -481,6 +482,27 @@ class User extends Authenticatable
         }
 
         return $this->hasRole($allowedRoles, $area);
+    }
+
+    public function accessibleAreasForPermission(string $permission): AreaScope
+    {
+        $allowedRoles = config("roles.matrix.{$permission}", []);
+
+        if (empty($allowedRoles)) {
+            return AreaScope::forAreas(collect());
+        }
+
+        $assignments = $this->roleAssignments->whereIn('role', $allowedRoles);
+
+        if ($assignments->whereNull('area_id')->isNotEmpty()) {
+            return AreaScope::global();
+        }
+
+        $areaIds = $assignments->whereNotNull('area_id')->pluck('area_id');
+
+        return AreaScope::forAreas(
+            $areaIds->isEmpty() ? collect() : Area::whereIn('id', $areaIds)->get()
+        );
     }
 
     public function hasRole($roles, ?Area $area = null): bool

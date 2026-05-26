@@ -12,10 +12,13 @@ use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
 use App\Services\Sql\Sql;
+use App\Traits\ResolvesAreaScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -23,6 +26,8 @@ use Illuminate\Support\Facades\DB;
  */
 class ReportController extends Controller
 {
+    use ResolvesAreaScope;
+
     /**
      * Show the training statistics view
      *
@@ -46,7 +51,7 @@ class ReportController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function trainings(false|int $filterArea = false): View
+    public function trainings(false|int $filterArea = false): View|Response|RedirectResponse
     {
         if (! $filterArea) {
             if ($response = $this->resolveAreaScope(
@@ -137,7 +142,7 @@ class ReportController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function activities($filterArea = false)
+    public function activities($filterArea = false): View|Response|RedirectResponse
     {
         if (! $filterArea) {
             if ($response = $this->resolveAreaScope(

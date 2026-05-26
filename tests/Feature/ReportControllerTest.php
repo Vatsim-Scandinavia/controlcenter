@@ -20,7 +20,7 @@ class ReportControllerTest extends TestCase
         parent::setUp();
 
         $this->adminUser = User::factory()->create();
-        $this->adminUser->roleAssignments()->create(['role' => 'admin', 'area_id' => Area::factory()->create()->id]);
+        $this->adminUser->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
     }
 
     public static function reportRoutesProvider(): array

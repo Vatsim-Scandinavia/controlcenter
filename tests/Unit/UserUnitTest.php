@@ -106,4 +106,54 @@ class UserUnitTest extends TestCase
         $this->assertEquals(5.5, $retrievedUser->hours_in_period);
         $this->assertNotNull($retrievedUser->last_online);
     }
+
+    #[Test]
+    public function accessible_areas_returns_no_access_for_unknown_permission(): void
+    {
+        $scope = $this->user->accessibleAreasForPermission('non-existent-permission');
+
+        $this->assertFalse($scope->hasAccess());
+        $this->assertFalse($scope->isGlobal);
+    }
+
+    #[Test]
+    public function accessible_areas_returns_global_for_null_area_assignment(): void
+    {
+        $this->user->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+
+        $scope = $this->user->accessibleAreasForPermission('view-training-statistics');
+
+        $this->assertTrue($scope->isGlobal);
+        $this->assertTrue($scope->hasAccess());
+    }
+
+    #[Test]
+    public function accessible_areas_returns_single_area_for_single_area_assignment(): void
+    {
+        $area = Area::factory()->create();
+        $this->user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $scope = $this->user->accessibleAreasForPermission('view-training-statistics');
+
+        $this->assertFalse($scope->isGlobal);
+        $this->assertTrue($scope->hasAccess());
+        $this->assertCount(1, $scope->areas);
+        $this->assertTrue($scope->areas->contains('id', $area->id));
+    }
+
+    #[Test]
+    public function accessible_areas_returns_all_areas_for_multiple_area_assignments(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+        $this->user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area1->id]);
+        $this->user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area2->id]);
+
+        $scope = $this->user->accessibleAreasForPermission('view-training-statistics');
+
+        $this->assertFalse($scope->isGlobal);
+        $this->assertCount(2, $scope->areas);
+        $this->assertTrue($scope->areas->contains('id', $area1->id));
+        $this->assertTrue($scope->areas->contains('id', $area2->id));
+    }
 }
