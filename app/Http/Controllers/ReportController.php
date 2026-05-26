@@ -48,6 +48,20 @@ class ReportController extends Controller
      */
     public function trainings(false|int $filterArea = false): View
     {
+        if (! $filterArea) {
+            if ($response = $this->resolveAreaScope(
+                'view-training-statistics',
+                'reports.training.area',
+                'Training Statistics',
+            )) {
+                return $response;
+            }
+        }
+
+        if ($filterArea !== false && ! Area::where('id', $filterArea)->exists()) {
+            abort(404);
+        }
+
         $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
 
         $validated = request()->validate([
@@ -125,7 +139,21 @@ class ReportController extends Controller
      */
     public function activities($filterArea = false)
     {
-        $this->authorize('accessTrainingReports', [ManagementReport::class, $filterArea]);
+        if (! $filterArea) {
+            if ($response = $this->resolveAreaScope(
+                'view-training-activities',
+                'reports.activities.area',
+                'Training Activities',
+            )) {
+                return $response;
+            }
+        }
+
+        if ($filterArea !== false && ! Area::where('id', $filterArea)->exists()) {
+            abort(404);
+        }
+
+        $this->authorize('accessActivityReports', [ManagementReport::class, $filterArea]);
 
         $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')
             ->when($filterArea, function (Builder $query, $filterArea) {
@@ -157,7 +185,13 @@ class ReportController extends Controller
         $statuses = TrainingController::$statuses;
 
         $areas = Area::all();
-        $filterName = $filterArea ? $areas->find($filterArea)->name : 'All Areas';
+        $filterName = 'All Areas';
+        if ($filterArea) {
+            $area = $areas->find($filterArea);
+            if ($area) {
+                $filterName = $area->name;
+            }
+        }
 
         return view('reports.activities', [
             'entries' => $entries,

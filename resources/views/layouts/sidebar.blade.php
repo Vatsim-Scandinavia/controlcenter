@@ -171,7 +171,7 @@
             <div class="sidebar-divider"></div>
 
             {{-- Nav Item - Pages Collapse Menu --}}
-            <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
+            <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.training.area') || Route::is('reports.activities') || Route::is('reports.activities.area') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-clipboard-list"></i>
                 <span>Reports</span>
@@ -179,15 +179,12 @@
             <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
 
-                @if(\Auth::user()->hasRole('admin'))
-                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
-                    <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
-                @elseif(\Auth::user()->hasRole('moderator'))
-                    @foreach(\Auth::user()->roleAssignments->where('role', 'moderator')->filter(fn($a) => $a->area_id) as $assignment)
-                        <a class="collapse-item" href="{{ route('reports.training.area', $assignment->area_id) }}">Trainings ({{ $assignment->area->name }})</a>
-                        <a class="collapse-item" href="{{ route('reports.activities.area', $assignment->area_id) }}">Activities ({{ $assignment->area->name }})</a>
-                    @endforeach
-                @endif
+                @can('view-training-statistics')
+                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Training Statistics</a>
+                @endcan
+                @can('view-training-activities')
+                    <a class="collapse-item" href="{{ route('reports.activities') }}">Training Activities</a>
+                @endcan
 
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
 

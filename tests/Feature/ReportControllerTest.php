@@ -87,4 +87,100 @@ class ReportControllerTest extends TestCase
             return $mentors->contains($mentor1) && $mentors->contains($mentor2);
         });
     }
+
+    #[Test]
+    public function admin_sees_global_training_report(): void
+    {
+        $response = $this->actingAs($this->adminUser)->get(route('reports.trainings'));
+
+        $response->assertOk();
+        $response->assertViewIs('reports.trainings');
+    }
+
+    #[Test]
+    public function single_area_moderator_is_redirected_to_area_training_report(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.trainings'));
+
+        $response->assertRedirect(route('reports.training.area', $area->id));
+    }
+
+    #[Test]
+    public function multi_area_moderator_sees_area_picker_for_training_report(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area1->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area2->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.trainings'));
+
+        $response->assertOk();
+        $response->assertViewIs('partials.area-picker');
+        $response->assertViewHas('route', 'reports.training.area');
+        $response->assertViewHas('title', 'Training Statistics');
+    }
+
+    #[Test]
+    public function user_without_permission_gets_403_on_training_report(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('reports.trainings'));
+
+        $response->assertForbidden();
+    }
+
+    #[Test]
+    public function admin_sees_global_activities_report(): void
+    {
+        $response = $this->actingAs($this->adminUser)->get(route('reports.activities'));
+
+        $response->assertOk();
+        $response->assertViewIs('reports.activities');
+    }
+
+    #[Test]
+    public function single_area_moderator_is_redirected_to_area_activities_report(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.activities'));
+
+        $response->assertRedirect(route('reports.activities.area', $area->id));
+    }
+
+    #[Test]
+    public function multi_area_moderator_sees_area_picker_for_activities_report(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area1->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area2->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.activities'));
+
+        $response->assertOk();
+        $response->assertViewIs('partials.area-picker');
+        $response->assertViewHas('route', 'reports.activities.area');
+        $response->assertViewHas('title', 'Training Activities');
+    }
+
+    #[Test]
+    public function user_without_permission_gets_403_on_activities_report(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('reports.activities'));
+
+        $response->assertForbidden();
+    }
 }

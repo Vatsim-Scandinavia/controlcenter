@@ -18,10 +18,24 @@ class ManagementReportPolicy
     public function accessTrainingReports(User $user, $filterArea)
     {
         if ($filterArea) {
-            return $user->hasPermission('view-management-reports', Area::find($filterArea));
+            return $user->hasPermission('view-training-statistics', Area::find($filterArea));
         }
 
-        return $user->hasPermission('view-management-reports');
+        return $user->hasPermission('view-training-statistics');
+    }
+
+    /**
+     * Determine whether the user can access the training activities report
+     *
+     * @return bool
+     */
+    public function accessActivityReports(User $user, $filterArea)
+    {
+        if ($filterArea) {
+            return $user->hasPermission('view-training-activities', Area::find($filterArea));
+        }
+
+        return $user->hasPermission('view-training-activities');
     }
 
     /**

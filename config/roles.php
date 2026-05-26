@@ -66,11 +66,8 @@ return [
 
         // Reports
         'view-management-reports' => ['admin', 'moderator'],
-        'view-training-statistics' => ['admin', 'moderator'],
-        'view-training-reports' => ['admin', 'moderator'],
         'view-training-activities' => ['admin', 'moderator'],
         'view-training-statistics' => ['admin', 'moderator'],
-        'view-training-activities' => ['admin', 'moderator'],
         'view-mentor-reports' => ['admin', 'moderator', 'mentor'],
 
         // Bookings

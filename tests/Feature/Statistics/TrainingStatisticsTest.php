@@ -24,7 +24,7 @@ class TrainingStatisticsTest extends TestCase
         parent::setUp();
         $this->admin = User::factory()->create();
         $this->area = \App\Models\Area::factory()->create();
-        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => $this->area->id]);
+        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
     }
 
     #[Test]
