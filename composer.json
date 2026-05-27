@@ -18,6 +18,8 @@
         "laravel/ui": "^4.5.2",
         "league/commonmark": "^2.4",
         "league/oauth2-client": "^2.7",
+        "livewire/flux": "^2.14",
+        "livewire/livewire": "^4.3",
         "sentry/sentry-laravel": "^4.3",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-login-link": "^1.3"
