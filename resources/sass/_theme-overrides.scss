@@ -5,6 +5,8 @@
 body {
     color: var(--color-body);
     background-color: var(--bg-body);
+    --bs-border-color: var(--border-color);
+    --bs-border-color-translucent: var(--border-color);
 }
 
 // Override Bootstrap utility classes
