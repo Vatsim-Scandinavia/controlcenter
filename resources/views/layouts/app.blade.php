@@ -76,5 +76,7 @@
 
     @yield('js')
 
+    @livewireScripts
+    @fluxScripts
     </body>
 </html>
