@@ -8,7 +8,8 @@
   "packages": {
     ".": {
       "prerelease": true,
-      "prerelease-type": "rc"
+      "prerelease-type": "rc",
+      "versioning": "prerelease"
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
