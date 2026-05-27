@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             $email = 'auth.dev' . $i . '@vatsim.net';
 
             $rating_id = 1;
-            $group = null;
+            $role = null;
+            $global = false;
 
             switch ($i) {
                 case 1:
@@ -57,28 +58,30 @@ class DatabaseSeeder extends Seeder
                 case 6:
                     $name_last = 'Six';
                     $rating_id = 7;
+                    $role = 'mentor';
                     break;
                 case 7:
                     $name_last = 'Seven';
                     $rating_id = 8;
-                    $group = 3;
+                    $role = 'mentor';
                     break;
                 case 8:
                     $name_last = 'Eight';
                     $rating_id = 10;
-                    $group = 3;
+                    $role = 'moderator';
                     break;
                 case 9:
                     $name_last = 'Nine';
                     $rating_id = 11;
-                    $group = 2;
+                    $role = 'admin';
                     break;
                 case 10:
                     $name_first = 'Team';
                     $name_last = 'Web';
                     $rating_id = 12;
                     $email = 'noreply@vatsim.net';
-                    $group = 1;
+                    $role = 'admin';
+                    $global = true;
                     break;
                 case 11:
                     $name_first = 'Suspended';
@@ -101,17 +104,10 @@ class DatabaseSeeder extends Seeder
                 'subdivision' => 'SCA',
             ]);
 
-            if ($group !== null) {
-                $role = match ($group) {
-                    1 => 'admin',
-                    2 => 'moderator',
-                    3 => 'mentor',
-                    4 => 'buddy',
-                    default => null
-                };
-                if ($role) {
-                    $user->roleAssignments()->create(['role' => $role, 'area_id' => 1]);
-                }
+            if ($role !== null && $global) {
+                $user->roleAssignments()->create(['role' => $role, 'area_id' => null]);
+            } elseif ($role !== null) {
+                $user->roleAssignments()->create(['role' => $role, 'area_id' => 1]);
             }
         }
 
