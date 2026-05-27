@@ -5,6 +5,7 @@
   "extra-files": [
     "config/app.php"
   ],
+  "last-release-sha": "1d957c6db56ddf1f94d9582f6cfa5b0eb9297d97",
   "packages": {
     ".": {
       "prerelease": true,
