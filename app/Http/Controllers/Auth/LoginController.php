@@ -91,13 +91,11 @@ class LoginController extends Controller
         // Login the user and don't remember the session forever
         auth()->login($account, false);
 
-        $authLevel = 'User';
-        $firstRole = \Auth::user()->roleAssignments->first();
-        if ($firstRole) {
-            $authLevel = $firstRole->role;
-            ActivityLogController::warning('ACCESS', 'Logged in with ' . $authLevel . ' access');
+        $roles = \Auth::user()->roleAssignments->pluck('role')->unique();
+        if ($roles->isNotEmpty()) {
+            ActivityLogController::warning('ACCESS', 'Logged in with ' . $roles->join(', ') . ' access');
         } else {
-            ActivityLogController::info('ACCESS', 'Logged in with ' . $authLevel . ' access');
+            ActivityLogController::info('ACCESS', 'Logged in with User access');
         }
 
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
