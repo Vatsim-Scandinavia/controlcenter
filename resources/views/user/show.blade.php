@@ -488,7 +488,7 @@
                                 <thead>
                                     <tr>
                                         <th>Area</th>
-                                        @foreach($groups as $roleKey => $roleData)
+                                        @foreach($roles as $roleKey => $roleData)
                                             <th class="text-center">{{ $roleData['name'] }} <i class="fas fa-question-circle text-gray-400" title="{{ $roleData['description'] }}"></i></th>
                                         @endforeach
                                     </tr>
@@ -497,7 +497,7 @@
 
                                     <tr>
                                         <td><strong>Global</strong></td>
-                                        @foreach($groups as $roleKey => $roleData)
+                                        @foreach($roles as $roleKey => $roleData)
                                             <td class="text-center">
                                                 <input type="checkbox"
                                                        {{ $user->roleAssignments->where('role', $roleKey)->whereNull('area_id')->isNotEmpty() ? 'checked' : '' }}
@@ -510,7 +510,7 @@
                                         <tr>
                                             <td>{{ $area->name }}</td>
 
-                                            @foreach($groups as $roleKey => $roleData)
+                                            @foreach($roles as $roleKey => $roleData)
 
                                                 @if (\Illuminate\Support\Facades\Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed())
                                                     <td class="text-center"><input type="checkbox" name="{{ $area->id }}_{{ $roleKey }}" {{ $user->roleAssignments()->where('role', $roleKey)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>

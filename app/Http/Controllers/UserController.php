@@ -120,7 +120,7 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
-        $groups = config('roles.roles');
+        $roles = config('roles.roles');
         $areas = Area::all();
 
         if ($user == null) {
@@ -192,7 +192,7 @@ class UserController extends Controller
             )
         );
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
+        return view('user.show', compact('user', 'roles', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
     }
 
     /**
