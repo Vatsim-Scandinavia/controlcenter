@@ -288,6 +288,20 @@ textarea.form-control {
     color: var(--color-text-primary);
 }
 
+// Bootstrap list groups
+.list-group {
+    --bs-list-group-color: var(--color-text-primary);
+    --bs-list-group-bg: var(--bg-card);
+    --bs-list-group-border-color: var(--border-color);
+    --bs-list-group-action-color: var(--color-text-primary);
+    --bs-list-group-action-hover-color: var(--color-text-primary);
+    --bs-list-group-action-hover-bg: var(--color-gray-200);
+    --bs-list-group-action-active-color: var(--color-text-primary);
+    --bs-list-group-action-active-bg: var(--color-gray-300);
+    --bs-list-group-disabled-color: var(--color-text-muted);
+    --bs-list-group-disabled-bg: var(--bg-card);
+}
+
 // Bootstrap tables
 .table {
     --bs-table-bg: var(--bg-card);
