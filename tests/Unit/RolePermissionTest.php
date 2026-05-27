@@ -15,7 +15,6 @@ class RolePermissionTest extends TestCase
     {
         parent::setUp();
 
-        // Define our config purely for testing to ensure isolation
         config([
             'roles.matrix' => [
                 'view-training' => ['admin', 'moderator', 'mentor', 'buddy'],
@@ -26,10 +25,10 @@ class RolePermissionTest extends TestCase
                 'manage-area' => ['admin'],
             ],
             'roles.roles' => [
-                'admin' => ['name' => 'Admin', 'description' => 'A'],
-                'moderator' => ['name' => 'Mod', 'description' => 'M'],
-                'mentor' => ['name' => 'Mentor', 'description' => 'M'],
-                'buddy' => ['name' => 'Buddy', 'description' => 'B'],
+                'admin' => ['name' => 'Admin', 'description' => 'A', 'scope' => 'global'],
+                'moderator' => ['name' => 'Mod', 'description' => 'M', 'scope' => 'both'],
+                'mentor' => ['name' => 'Mentor', 'description' => 'M', 'scope' => 'area'],
+                'buddy' => ['name' => 'Buddy', 'description' => 'B', 'scope' => 'area'],
             ],
         ]);
     }

@@ -35,6 +35,32 @@ class RoleAssignment extends Model
         'area_id' => 'integer',
     ];
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        $validate = function (RoleAssignment $assignment) {
+            $scope = config("roles.roles.{$assignment->role}.scope");
+
+            if ($scope === null) {
+                throw new \InvalidArgumentException(
+                    "Role '{$assignment->role}' is not a recognised role."
+                );
+            }
+
+            // TODO: enforce global scope (admin must have area_id = null)
+
+            if ($scope === 'area' && $assignment->area_id === null) {
+                throw new \InvalidArgumentException(
+                    "Role '{$assignment->role}' requires an area assignment."
+                );
+            }
+        };
+
+        static::creating($validate);
+        static::updating($validate);
+    }
+
     /**
      * Get the user that owns the role assignment.
      */
