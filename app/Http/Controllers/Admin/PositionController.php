@@ -9,6 +9,7 @@ use App\Models\Area;
 use App\Models\Position;
 use App\Services\PositionService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PositionController extends Controller
@@ -41,25 +42,43 @@ class PositionController extends Controller
 
         $position = Position::create($request->validated());
 
-        return redirect()->route('positions.index.area', $position->area_id)->with('success', 'Position ' . $position->callsign . ' created successfully.');
+        return $this->redirectAfterMutation($request, $position->area_id)
+            ->with('success', 'Position ' . $position->callsign . ' created successfully.');
     }
 
     public function update(PositionRequest $request, Position $position)
     {
         $this->authorize('update', $position);
-        $validatedData = $request->validated();
-        $position->update($validatedData);
 
-        return redirect()->route('positions.index.area', $position->area_id)->with('success', 'Position ' . $position->callsign . ' updated successfully.');
+        $validated = $request->validated();
+
+        if ($validated['area_id'] !== $position->area_id) {
+            $this->authorize('create', new Position(['area_id' => $validated['area_id']]));
+        }
+
+        $position->update($validated);
+
+        return $this->redirectAfterMutation($request, $position->area_id)
+            ->with('success', 'Position ' . $position->callsign . ' updated successfully.');
     }
 
-    public function destroy(Position $position)
+    public function destroy(Request $request, Position $position)
     {
         $this->authorize('delete', $position);
 
         $areaId = $position->area_id;
         $position->delete();
 
-        return redirect()->route('positions.index.area', $areaId)->with('success', 'Position ' . $position->callsign . ' deleted successfully.');
+        return $this->redirectAfterMutation($request, $areaId)
+            ->with('success', 'Position ' . $position->callsign . ' deleted successfully.');
+    }
+
+    private function redirectAfterMutation(Request $request, int $areaId): RedirectResponse
+    {
+        $route = $request->user()->hasRole('admin')
+            ? route('positions.index.area', $areaId)
+            : route('positions.index');
+
+        return redirect($route);
     }
 }

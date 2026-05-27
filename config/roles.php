@@ -21,6 +21,11 @@ return [
             'description' => 'Area moderator',
             'scope' => 'both',
         ],
+        'nav-editor' => [
+            'name' => 'Navigational Editor',
+            'description' => 'Editor of navigational and operationally relevant sector data',
+            'scope' => 'area',
+        ],
         'mentor' => [
             'name' => 'Mentor',
             'description' => 'Training mentor',
@@ -58,8 +63,10 @@ return [
         'manage-users' => ['admin', 'moderator'],
         'view-user-access' => ['admin', 'moderator'],
 
-        // Infrastructure
-        'manage-positions' => ['admin', 'moderator'],
+        // Operations
+        'manage-positions' => ['admin', 'moderator', 'nav-editor'],
+
+        // Endorsements
         'manage-endorsements' => ['admin', 'moderator'],
         'manage-visiting-endorsements' => ['admin'],
         'manage-examiner-endorsements' => ['admin'],
