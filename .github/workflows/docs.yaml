@@ -109,7 +109,7 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: get major-minor tag for docs
-        if: "startsWith(github.ref, 'refs/tags/')"
+        if: "startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc')"
         id: tag
         run: |
           MINOR=$(echo "${{ github.ref_name }}" | sed -En 's/^v?(([0-9]+)\.([0-9]+))\.([0-9]+)$/\1/p')
@@ -126,4 +126,4 @@ jobs:
         run: >-
           pdm run mike deploy -b "${{ env.DOCS_BRANCH }}"
           "${{ steps.tag.outputs.minor }}" "${{ env.DOCS_LATEST_ALIAS }}" --update-aliases --push
-        if: "startsWith(github.ref, 'refs/tags/')"
+        if: "startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc')"
