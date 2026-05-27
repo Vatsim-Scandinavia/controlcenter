@@ -1,0 +1,4 @@
+@import "tailwindcss/utilities" prefix(tw-);
+@source "../views/livewire/**/*.blade.php";
+@source "../../app/Livewire/**/*.php";
+@import "../../vendor/livewire/flux/dist/flux.css";
