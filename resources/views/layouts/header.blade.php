@@ -27,7 +27,7 @@
 })();
 </script>
 
-@vite(['resources/js/theme.js', 'resources/sass/app.scss'])
+@vite(['resources/js/theme.js', 'resources/sass/app.scss', 'resources/css/flux.css'])
 
 @livewireStyles
 @fluxAppearance

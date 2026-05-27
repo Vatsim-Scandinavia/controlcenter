@@ -2,6 +2,7 @@
  * Imports
 */
 
+import Sortable from 'sortablejs';
 import * as bootstrap from 'bootstrap'
 import moment from 'moment';
 
@@ -9,6 +10,7 @@ import moment from 'moment';
  * Insert global variables
 */
 
+window.Sortable = Sortable;
 window.moment = moment;
 window.bootstrap = bootstrap;
 

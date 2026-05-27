@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
@@ -14,11 +15,13 @@ export default () => {
     // Return the Vite configuration
     return defineConfig({
         plugins: [
+            tailwindcss(),
             vue(),
             laravel({
                 input: [
                     "/resources/sass/app.scss",
                     "/resources/js/app.js",
+                    "/resources/css/flux.css",
                     "/resources/js/theme.js",
                     "/resources/js/vue.js",
                     "/resources/js/easymde.js",
