@@ -1,5 +1,27 @@
 # Changelog
 
+## [7.0.0-alpha.03](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.02...v7.0.0-alpha.03) (2026-05-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* transition to granular configuration-based roles and permissions
+
+### Features
+
+* add reusable area-picker for area-limited views ([022c6e8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/022c6e8b32b7ca7675b26eded9ac83bdbcd01e78))
+* **perms:** granular permissions for training reports and activities ([a130061](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a130061c69b71c445faf968c7a9650c634a6c198))
+* transition to granular configuration-based roles and permissions ([01e88d3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/01e88d3bfaf021b02f984abb4bd364e897f9a818))
+
+
+### Bug Fixes
+
+* **perms:** allow global admins to grant/revoke admin role via policy ([0c12ff6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0c12ff6ee51822dd1d762b34a42460f4f808e22c))
+* **perms:** push all roles to the activity log controller ([649ca31](https://github.com/Vatsim-Scandinavia/controlcenter/commit/649ca31fcdc45e01c6f03be2954fd0bc68b2aaa3))
+* **perms:** rename $groups to $roles in user controller and view ([a58476e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a58476e2b58fb4d67b9ca9301310664071819834))
+* **perms:** split VISITING and EXAMINER endorsements into dedicated permissions ([a4775bd](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a4775bdc7dc9aec857a0de1a5c757189be4f690b))
+* **perms:** support permissions and areas with Blade directive [@can](https://github.com/can)  ([ca5b5a3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ca5b5a3f6233cedc677b8d76fb4013bc6e74cc18))
+
 ## [7.0.0-alpha.02](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha...v7.0.0-alpha.02) (2026-05-27)
 
 
