@@ -121,13 +121,14 @@ nav:
           - Mentoring: concepts/mentors.md
           - Ratings: concepts/ratings.md
           - Positions: concepts/positions.md
-          - Permissions and Groups: concepts/permissions.md
+          - Roles and Permissions: concepts/permissions.md
   - Reference:
       - Activity: activity.md
       - Contribute: contribute.md
       - API: api.md
       - Background jobs: background-jobs.md
       - Environment variables: reference/environment-variables.md
+      - Roles and Permissions: reference/permissions.md
       - Upgrading: upgrade.md
   - Integrations:
       # Insert discord.md and others here

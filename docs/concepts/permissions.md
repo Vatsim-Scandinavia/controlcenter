@@ -2,36 +2,38 @@
 icon: material/shield-account
 ---
 
-# Permissions and Groups
+# Roles and Permissions
 
-Control Center uses a flexible system of groups and areas to manage user permissions. This allows for global and granular control over different parts.
+Control Center grants access through **roles**, **areas**, and a configurable **permission matrix**. This page covers how those pieces fit together; for the default roles, the shipped matrix, and how to customise them, see the [Roles and Permissions Reference](../reference/permissions.md).
 
-## Overview
+## The Three Layers
 
-Permissions are not assigned directly to users. Instead, users are assigned to one or more **groups**, and those groups are what grant permissions. For many administrative roles, these permissions are further scoped to a specific **area**.
+The system has three layers, intentionally separated so an operator can shift policy without changing code:
 
-## Key Concepts
+1. **Roles** describe what kind of contributor a user is — administrator, moderator, mentor, and so on. A role is an identifier you can assign to a user, optionally inside an area.
+2. **Permissions** describe individual capabilities — `manage-positions`, `view-management-reports`, and the like. They are not assigned to users directly; they are defined in a **matrix** that maps each permission to the roles that may exercise it.
+3. **Areas** scope a role assignment to part of the division (an ARTCC, a vACC, a sector group). The same user can hold the same role in several areas at once, in a single area, or globally.
 
-### Groups
+Both the role list and the matrix live in `config/roles.php`. Granting a role to a new permission, retiring a role, or introducing a new role is a configuration change, not a code change or migration.
 
-Groups are the primary way to define a set of permissions. The default groups in Control Center include:
+## How a Check Resolves
 
-- **Administrator**: Has unrestricted access to all features and all areas.
-- **Moderator**: Has administrative permissions, but they are typically restricted to one or more specific areas.
-- **Mentor**: Can manage training sessions, view student progress, and create tasks. Their permissions are also often scoped to an area.
-- **Member**: The default group for all users, granting basic access to user-facing features like booking ATC slots.
+Authorisation asks two questions when checking a permission:
 
-### Areas
+1. **Does the user hold a role that grants this permission?** The matrix is consulted to find which roles satisfy it.
+2. **Does at least one of those role assignments cover the relevant area?** If the action targets an area, the assignment must either be in that area or be a global one. Area-agnostic actions only need the role somewhere.
 
-Areas are used to represent organizational units within your division, such as an ARTCC, a vACC, or a specific region. By assigning moderators or mentors to a specific area, you limit their administrative powers to only the users and resources (like positions) within that area.
+The matrix is authoritative: a permission that is not listed grants no role — even `admin`. The familiar "administrators can do anything" behaviour is a **per-policy convention**, implemented as a `before` hook in individual policy classes (for example `PositionPolicy::before()` returns `true` when the user holds `admin`). Resources whose policies install that hook let admins through regardless of the matrix; gates and policies without it are bound strictly by it.
 
-## How it Works
+### Example
 
-When a user attempts to perform an action, the system checks two things:
+> A user holds `nav-editor` in Area A.
+>
+> - Editing a position in **Area A** — allowed: `manage-positions` includes `nav-editor`, and the assignment matches the position's area.
+> - Editing a position in **Area B** — denied: the role assignment does not cover Area B.
+> - Moving a position from **Area A to Area B** — denied unless the user also holds `nav-editor` (or another role granting `manage-positions`) in Area B.
 
-1. Is the user in a group that has permission for this action?
-2. If the action is area-specific (like editing a position), does the user's group membership apply to that area?
+## Next Steps
 
-For example, a user who is a **Moderator** for "Area A" can edit positions in "Area A", but cannot edit positions in "Area B" unless they are also a moderator for "Area B".
-
-System administrators are a special case, as their permissions bypass any area-specific checks.
+- The [Roles and Permissions Reference](../reference/permissions.md) lists every shipped role, the full default permission matrix, and the steps to customise them.
+- `config/roles.php` is the source of truth in the codebase.
