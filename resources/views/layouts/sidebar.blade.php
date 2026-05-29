@@ -199,7 +199,7 @@
             </li>
         @endif
 
-        @can('manage-users')
+        @if(auth()->user()->canAny(['view-system-health', 'manage-users']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <li class="nav-item {{ Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview') ? 'active' : '' }}">

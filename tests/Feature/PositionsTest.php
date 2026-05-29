@@ -18,11 +18,11 @@ class PositionsTest extends TestCase
 
     private User $admin;
 
-    private User $moderator;
+    private User $permittedUser;
 
     private User $user;
 
-    private Area $moderatorArea;
+    private Area $permittedArea;
 
     private Area $area2;
 
@@ -39,21 +39,21 @@ class PositionsTest extends TestCase
         // Assume that we've already got group 1 and 2
 
         // Create Areas
-        $this->moderatorArea = Area::factory()->create();
+        $this->permittedArea = Area::factory()->create();
         $this->area2 = Area::factory()->create();
 
         // Create Users
         $this->admin = User::factory()->create();
-        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => $this->moderatorArea->id]);
+        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => $this->permittedArea->id]);
 
-        $this->moderator = User::factory()->create();
+        $this->permittedUser = User::factory()->create();
         $this->user = User::factory()->create();
 
-        // Assign moderator to area 1
-        $this->moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->moderatorArea->id]);
+        // Assign navigational editor to area 1
+        $this->permittedUser->roleAssignments()->create(['role' => 'nav-editor', 'area_id' => $this->permittedArea->id]);
 
         // Create Position in area 1
-        $this->existingPosition = Position::factory()->create(['area_id' => $this->moderatorArea->id]);
+        $this->existingPosition = Position::factory()->create(['area_id' => $this->permittedArea->id]);
 
         // Create Position in area 2
         $this->existingPositionOther = Position::factory()->create(['area_id' => $this->area2->id]);
@@ -64,7 +64,7 @@ class PositionsTest extends TestCase
             'frequency' => '123.450',
             'fir' => 'TEST',
             'rating' => VatsimRating::S3->value,
-            'area_id' => $this->moderatorArea->id,
+            'area_id' => $this->permittedArea->id,
         ];
     }
 
@@ -108,24 +108,23 @@ class PositionsTest extends TestCase
     }
     // endregion
 
-    // region Moderator tests
+    // region Permitted user tests
     #[Test]
-    public function moderator_can_view_index()
+    public function permitted_user_can_view_index()
     {
-        $response = $this->actingAs($this->moderator)->get(route('positions.index'));
+        $response = $this->actingAs($this->permittedUser)->get(route('positions.index'));
         $response->assertOk();
         $response->assertViewHas('positions');
         $response->assertViewHas('ratings');
         $response->assertViewHas('areas', function ($areas) {
-            return $areas->contains($this->moderatorArea) && ! $areas->contains($this->area2);
+            return $areas->contains($this->permittedArea) && ! $areas->contains($this->area2);
         });
     }
 
     #[Test]
-    public function moderator_can_store_position_in_managed_area()
+    public function permitted_user_can_store_position_in_managed_area()
     {
-        $this->markTestIncomplete('sector moderator not implemented');
-        $this->actingAs($this->moderator)
+        $this->actingAs($this->permittedUser)
             ->post(route('positions.store'), $this->positionData)
             ->assertRedirect(route('positions.index'));
 
@@ -133,18 +132,17 @@ class PositionsTest extends TestCase
     }
 
     #[Test]
-    public function moderator_is_forbidden_to_store_position_in_unmanaged_area()
+    public function permitted_user_is_forbidden_to_store_position_in_unmanaged_area()
     {
         $data = array_merge($this->positionData, ['area_id' => $this->area2->id]);
-        $this->actingAs($this->moderator)->post(route('positions.store'), $data)->assertForbidden();
+        $this->actingAs($this->permittedUser)->post(route('positions.store'), $data)->assertForbidden();
     }
 
     #[Test]
-    public function moderator_can_update_position_in_managed_area()
+    public function permitted_user_can_update_position_in_managed_area()
     {
-        $this->markTestIncomplete('sector moderator not implemented');
         $data = array_merge($this->positionData, ['name' => 'Updated Name']);
-        $this->actingAs($this->moderator)
+        $this->actingAs($this->permittedUser)
             ->put(route('positions.update', $this->existingPosition), $data)
             ->assertRedirect(route('positions.index'));
 
@@ -152,18 +150,31 @@ class PositionsTest extends TestCase
     }
 
     #[Test]
-    public function moderator_is_forbidden_to_update_position_in_unmanaged_area()
+    public function permitted_user_is_forbidden_to_update_position_in_unmanaged_area()
     {
         $positionInArea2 = Position::factory()->create(['area_id' => $this->area2->id]);
         $data = array_merge($this->positionData, ['name' => 'Updated Name']);
-        $this->actingAs($this->moderator)->put(route('positions.update', $positionInArea2), $data)->assertForbidden();
+        $this->actingAs($this->permittedUser)->put(route('positions.update', $positionInArea2), $data)->assertForbidden();
     }
 
     #[Test]
-    public function moderator_can_destroy_position_in_managed_area()
+    public function permitted_user_is_forbidden_to_move_position_to_another_area()
     {
-        $this->markTestIncomplete('sector moderator not implemented');
-        $this->actingAs($this->moderator)
+        $data = array_merge($this->positionData, ['area_id' => $this->area2->id]);
+        $this->actingAs($this->permittedUser)
+            ->put(route('positions.update', $this->existingPosition), $data)
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('positions', [
+            'id' => $this->existingPosition->id,
+            'area_id' => $this->permittedArea->id,
+        ]);
+    }
+
+    #[Test]
+    public function permitted_user_can_destroy_position_in_managed_area()
+    {
+        $this->actingAs($this->permittedUser)
             ->delete(route('positions.destroy', $this->existingPosition))
             ->assertRedirect(route('positions.index'));
 
@@ -171,25 +182,25 @@ class PositionsTest extends TestCase
     }
 
     #[Test]
-    public function moderator_can_view_required_endorsement_in_modal()
+    public function permitted_user_can_view_required_endorsement_in_modal()
     {
         $rating = \App\Models\Rating::factory()->create(['name' => 'Test Endorsement']);
         Position::factory()->create([
-            'area_id' => $this->moderatorArea->id,
+            'area_id' => $this->permittedArea->id,
             'required_facility_rating_id' => $rating->id,
         ]);
 
-        $this->actingAs($this->moderator)
+        $this->actingAs($this->permittedUser)
             ->get(route('positions.index'))
             ->assertOk()
             ->assertSee($rating->name);
     }
 
     #[Test]
-    public function moderator_is_forbidden_to_destroy_position_in_unmanaged_area()
+    public function permitted_user_is_forbidden_to_destroy_position_in_unmanaged_area()
     {
         $positionInArea2 = Position::factory()->create(['area_id' => $this->area2->id]);
-        $this->actingAs($this->moderator)->delete(route('positions.destroy', $positionInArea2))->assertForbidden();
+        $this->actingAs($this->permittedUser)->delete(route('positions.destroy', $positionInArea2))->assertForbidden();
     }
     // endregion
 
@@ -380,8 +391,8 @@ class PositionsTest extends TestCase
         $otherModerator = User::factory()->create();
         $otherModerator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area2->id]); // Moderator of Area 2
 
-        // Case 1: Explicitly requesting Area 1 (moderatorArea) should be forbidden
-        $response = $this->actingAs($otherModerator)->get(route('positions.index.area', $this->moderatorArea->id));
+        // Case 1: Explicitly requesting Area 1 (permittedArea) should be forbidden
+        $response = $this->actingAs($otherModerator)->get(route('positions.index.area', $this->permittedArea->id));
         $response->assertForbidden();
 
         // Case 2: General Index should only show Area 2 positions
