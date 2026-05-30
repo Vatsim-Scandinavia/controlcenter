@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.0.0-alpha.04](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.03...v7.0.0-alpha.04) (2026-05-30)
+
+
+### Features
+
+* **feedback:** restrict correlated feedback to roles' area ([#1479](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1479)) ([de6ed14](https://github.com/Vatsim-Scandinavia/controlcenter/commit/de6ed1477c589ff5bfda2e02a5a4c5f61da43145))
+* **roles:** introduce navigation editor support ([#1476](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1476)) ([4885833](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4885833e102c278e679311a5f24acaab980b1b56))
+
 ## [7.0.0-alpha.03](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.02...v7.0.0-alpha.03) (2026-05-28)
 
 
