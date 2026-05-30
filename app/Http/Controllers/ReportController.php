@@ -238,13 +238,35 @@ class ReportController extends Controller
     /**
      * Index received feedback
      *
-     * @return \Illuminate\View\View
+     * @todo Convert or consider moving out of the ReportController, with slightly
+     *       cleaner separation of concerns.
+     * @todo Simplify & scope the permission names.
+     * @todo Attach controllers (reference users) to a set of areas based on their
+     *       activity, so that position-less feedback can be correlated to an area
+     *       via the controller for whom the feedback applies.
      */
-    public function feedback()
+    public function feedback(): View
     {
         $this->authorize('viewFeedback', ManagementReport::class);
 
-        $feedback = Feedback::latest()->get();
+        $user = auth()->user();
+        $correlatedScope = $user->accessibleAreasForPermission('view-correlated-feedback');
+        $canViewUncorrelated = $user->accessibleAreasForPermission('view-uncorrelated-feedback')->hasAccess();
+
+        $feedback = Feedback::with(['submitter', 'referenceUser', 'referencePosition.area'])
+            ->latest()
+            ->where(function ($q) use ($correlatedScope, $canViewUncorrelated) {
+                if ($correlatedScope->isGlobal) {
+                    $q->whereNotNull('reference_position_id');
+                } else {
+                    $q->whereHas('referencePosition', fn ($q) => $q->whereIn('area_id', $correlatedScope->areas->pluck('id')));
+                }
+
+                if ($canViewUncorrelated) {
+                    $q->orWhereNull('reference_position_id');
+                }
+            })
+            ->get();
 
         return view('reports.feedback', compact('feedback'));
     }

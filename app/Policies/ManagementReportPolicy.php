@@ -50,11 +50,10 @@ class ManagementReportPolicy
 
     /** Determine whether the user can see the feedback index
      *
-     * @return bool
      */
-    public function viewFeedback(User $user)
+    public function viewFeedback(User $user): bool
     {
-        return $user->hasPermission('view-management-reports');
+        return $user->accessibleAreasForPermission('view-correlated-feedback')->hasAccess();
     }
 
     /**

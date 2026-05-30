@@ -77,6 +77,10 @@ return [
         'view-training-statistics' => ['admin', 'moderator'],
         'view-mentor-reports' => ['admin', 'moderator', 'mentor'],
 
+        // Feedback
+        'view-correlated-feedback' => ['admin', 'moderator'],
+        'view-uncorrelated-feedback' => ['admin', 'moderator'],
+
         // Bookings
         'bypass-booking-restrictions' => ['admin', 'moderator', 'mentor'],
     ],

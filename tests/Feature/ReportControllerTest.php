@@ -183,4 +183,122 @@ class ReportControllerTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    #[Test]
+    public function area_moderator_can_access_feedback_page(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.feedback'));
+
+        $response->assertOk();
+    }
+
+    #[Test]
+    public function user_without_role_gets_403_on_feedback_page(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('reports.feedback'));
+
+        $response->assertForbidden();
+    }
+
+    #[Test]
+    public function admin_sees_all_feedback(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+
+        $position1 = \App\Models\Position::factory()->create(['area_id' => $area1->id]);
+        $position2 = \App\Models\Position::factory()->create(['area_id' => $area2->id]);
+
+        $feedbackArea1 = \App\Models\Feedback::factory()->create(['reference_position_id' => $position1->id]);
+        $feedbackArea2 = \App\Models\Feedback::factory()->create(['reference_position_id' => $position2->id]);
+        $feedbackUncorrelated = \App\Models\Feedback::factory()->uncorrelated()->create();
+
+        $response = $this->actingAs($this->adminUser)->get(route('reports.feedback'));
+
+        $response->assertOk();
+        $response->assertViewHas('feedback', function ($feedback) use ($feedbackArea1, $feedbackArea2, $feedbackUncorrelated) {
+            return $feedback->contains($feedbackArea1)
+                && $feedback->contains($feedbackArea2)
+                && $feedback->contains($feedbackUncorrelated);
+        });
+    }
+
+    #[Test]
+    public function moderator_sees_only_their_area_correlated_feedback(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area1->id]);
+
+        $position1 = \App\Models\Position::factory()->create(['area_id' => $area1->id]);
+        $position2 = \App\Models\Position::factory()->create(['area_id' => $area2->id]);
+
+        $feedbackInArea = \App\Models\Feedback::factory()->create(['reference_position_id' => $position1->id]);
+        $feedbackOtherArea = \App\Models\Feedback::factory()->create(['reference_position_id' => $position2->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.feedback'));
+
+        $response->assertOk();
+        $response->assertViewHas('feedback', function ($feedback) use ($feedbackInArea, $feedbackOtherArea) {
+            return $feedback->contains($feedbackInArea)
+                && ! $feedback->contains($feedbackOtherArea);
+        });
+    }
+
+    #[Test]
+    public function moderator_sees_uncorrelated_feedback(): void
+    {
+        $area = Area::factory()->create();
+
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $feedbackUncorrelated = \App\Models\Feedback::factory()->uncorrelated()->create();
+
+        $response = $this->actingAs($moderator)->get(route('reports.feedback'));
+
+        $response->assertOk();
+        $response->assertViewHas('feedback', fn ($feedback) => $feedback->contains($feedbackUncorrelated));
+    }
+
+    #[Test]
+    public function moderator_does_not_see_other_area_feedback(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area1->id]);
+
+        $position2 = \App\Models\Position::factory()->create(['area_id' => $area2->id]);
+        $feedbackOtherArea = \App\Models\Feedback::factory()->create(['reference_position_id' => $position2->id]);
+
+        $response = $this->actingAs($moderator)->get(route('reports.feedback'));
+
+        $response->assertOk();
+        $response->assertViewHas('feedback', fn ($feedback) => ! $feedback->contains($feedbackOtherArea));
+    }
+
+    #[Test]
+    public function feedback_page_shows_area_column(): void
+    {
+        $area = Area::factory()->create(['name' => 'Test Area']);
+        $position = \App\Models\Position::factory()->create(['area_id' => $area->id]);
+        \App\Models\Feedback::factory()->create(['reference_position_id' => $position->id]);
+        \App\Models\Feedback::factory()->uncorrelated()->create();
+
+        $response = $this->actingAs($this->adminUser)->get(route('reports.feedback'));
+
+        $response->assertOk();
+        $response->assertSee('Test Area');
+        $response->assertSee('Unknown');
+    }
 }
