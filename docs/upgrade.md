@@ -73,6 +73,32 @@ If you had customized colors in your `.env` file:
 For detailed information on using themes as an end-user, see the [User Theme Guide](user-themes.md).  
 For customizing themes as an operator, see [Theme Setup](setup/theme.md)
 
+### Permissions and Roles Refactor
+
+The permission and group system has been rebuilt around a configurable role matrix. See [Permissions and Roles](concepts/permissions.md) for the new model.
+
+#### Breaking Changes
+
+1. **Database tables replaced**: The `groups` and `permissions` tables are dropped. User assignments now live in a single `role_user` table that stores the role name as a string and an optional `area_id` (null for global roles).
+2. **Permissions are no longer stored in the database**: They are defined in `config/roles.php` as a *matrix* that maps each permission to the list of roles that hold it. Editing roles or permissions now means editing that file (and clearing config cache), not the database.
+3. **Admins are now strictly global**: Any `area_id` previously attached to an admin assignment is discarded by the migration. An admin assignment without a target area applies system-wide.
+4. **Custom groups are not migrated**: Only the four standard groups (Administrator, Moderator, Mentor, Buddy) are converted to roles. Any custom group rows you added directly to the `groups` or `permissions` tables will be dropped along with the tables. Note them down before upgrading and re-create them as roles in `config/roles.php` afterwards.
+5. **The `nav-editor` role is new in this version**: It ships in `config/roles.php` (see [Permissions and Roles](concepts/permissions.md)) but is not derived from any legacy group, so no users will be auto-assigned to it during the migration. Grant it explicitly to whoever needs to edit navigational data within an area.
+
+#### Migration Steps
+
+1. **Audit any custom groups** you may have added outside the four defaults; capture their members so you can re-grant access after the upgrade.
+2. **Run the database migration**:
+   ```sh
+   php artisan migrate
+   ```
+   This creates `role_user`, copies the four standard groups across, and drops the old tables.
+3. **Review `config/roles.php`** and adjust the matrix if your division wants different permissions per role, or wants to add roles beyond the defaults.
+4. **Clear caches**:
+   ```sh
+   php artisan optimize:clear
+   ```
+
 ## Upgrading to 6.0.0
 
 This release contains breaking changes and requires you to backup your data before upgrading.
