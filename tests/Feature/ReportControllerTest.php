@@ -299,6 +299,6 @@ class ReportControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Test Area');
-        $response->assertSee('Unknown');
+        $response->assertSee('N/A');
     }
 }
