@@ -34,6 +34,7 @@
                                 <th data-field="submitter" data-sortable="true" data-filter-control="input">Submitter</th>
                                 <th data-field="controller" data-sortable="true" data-filter-control="select">Controller</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
+                                <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="feedback" data-sortable="false" data-filter-control="input">Feedback</th>
                             </tr>
                         </thead>
@@ -56,6 +57,7 @@
                                             N/A
                                         @endisset
                                     </td>
+                                    <td>{{ $f->referencePosition?->area?->name ?? 'N/A' }}</td>
                                     <td>
                                         {!! nl2br($f->feedback) !!}
                                     </td>

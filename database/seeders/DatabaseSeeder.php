@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Helpers\FactoryHelper;
 use App\Helpers\TrainingStatus;
 use App\Models\Endorsement;
+use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\Rating;
 use App\Models\Training;
@@ -126,6 +127,28 @@ class DatabaseSeeder extends Seeder
             User::factory()->create([
                 'id' => 10000000 + $i,
             ]);
+        }
+
+        // Seed feedback entries with a mix of correlated and uncorrelated
+        $users = User::inRandomOrder()->limit(30)->get();
+        $positions = Position::inRandomOrder()->limit(10)->get();
+
+        for ($i = 0; $i < 20; $i++) {
+            $submitter = $users->random();
+            $referenceUser = $users->random();
+
+            if ($positions->isNotEmpty() && rand(0, 3) > 0) {
+                Feedback::factory()->create([
+                    'submitter_user_id' => $submitter->id,
+                    'reference_user_id' => $referenceUser->id,
+                    'reference_position_id' => $positions->random()->id,
+                ]);
+            } else {
+                Feedback::factory()->uncorrelated()->create([
+                    'submitter_user_id' => $submitter->id,
+                    'reference_user_id' => $referenceUser->id,
+                ]);
+            }
         }
 
         // Populate trainings and other of the Scandinavian users
