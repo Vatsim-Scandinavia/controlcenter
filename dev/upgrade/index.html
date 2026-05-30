@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://docs.vatsim-scandinavia.org/controlcenter/latest/upgrade/">
       
       
-        <link rel="prev" href="../reference/environment-variables/">
+        <link rel="prev" href="../reference/permissions/">
       
       
         <link rel="next" href="../integrations/handover/">
@@ -1420,7 +1420,7 @@
   <span class="md-ellipsis">
     
   
-    Permissions and Groups
+    Roles and Permissions
   
 
     
@@ -1660,6 +1660,36 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/permissions/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Roles and Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -1797,6 +1827,45 @@
     <span class="md-ellipsis">
       
         For Custom Theme Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions-and-roles-refactor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions and Roles Refactor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Permissions and Roles Refactor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-steps_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Steps
       
     </span>
   </a>
@@ -2132,6 +2201,45 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#permissions-and-roles-refactor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions and Roles Refactor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Permissions and Roles Refactor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-steps_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2251,6 +2359,28 @@ This is due to a change in the StatSim API offering which we didn't get around t
 </ol>
 <p>For detailed information on using themes as an end-user, see the <a href="../user-themes/">User Theme Guide</a>.<br />
 For customizing themes as an operator, see <a href="../setup/theme/">Theme Setup</a></p>
+<h3 id="permissions-and-roles-refactor">Permissions and Roles Refactor<a class="headerlink" href="#permissions-and-roles-refactor" title="Permanent link">&para;</a></h3>
+<p>The permission and group system has been rebuilt around a configurable role matrix. See <a href="../concepts/permissions/">Permissions and Roles</a> for the new model.</p>
+<h4 id="breaking-changes_1">Breaking Changes<a class="headerlink" href="#breaking-changes_1" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Database tables replaced</strong>: The <code>groups</code> and <code>permissions</code> tables are dropped. User assignments now live in a single <code>role_user</code> table that stores the role name as a string and an optional <code>area_id</code> (null for global roles).</li>
+<li><strong>Permissions are no longer stored in the database</strong>: They are defined in <code>config/roles.php</code> as a <em>matrix</em> that maps each permission to the list of roles that hold it. Editing roles or permissions now means editing that file (and clearing config cache), not the database.</li>
+<li><strong>Admins are now strictly global</strong>: Any <code>area_id</code> previously attached to an admin assignment is discarded by the migration. An admin assignment without a target area applies system-wide.</li>
+<li><strong>Custom groups are not migrated</strong>: Only the four standard groups (Administrator, Moderator, Mentor, Buddy) are converted to roles. Any custom group rows you added directly to the <code>groups</code> or <code>permissions</code> tables will be dropped along with the tables. Note them down before upgrading and re-create them as roles in <code>config/roles.php</code> afterwards.</li>
+<li><strong>The <code>nav-editor</code> role is new in this version</strong>: It ships in <code>config/roles.php</code> (see <a href="../concepts/permissions/">Permissions and Roles</a>) but is not derived from any legacy group, so no users will be auto-assigned to it during the migration. Grant it explicitly to whoever needs to edit navigational data within an area.</li>
+</ol>
+<h4 id="migration-steps_1">Migration Steps<a class="headerlink" href="#migration-steps_1" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Audit any custom groups</strong> you may have added outside the four defaults; capture their members so you can re-grant access after the upgrade.</li>
+<li><strong>Run the database migration</strong>:
+   <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
+</code></pre></div>
+   This creates <code>role_user</code>, copies the four standard groups across, and drops the old tables.</li>
+<li><strong>Review <code>config/roles.php</code></strong> and adjust the matrix if your division wants different permissions per role, or wants to add roles beyond the defaults.</li>
+<li><strong>Clear caches</strong>:
+   <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
+</code></pre></div></li>
+</ol>
 <h2 id="upgrading-to-600">Upgrading to 6.0.0<a class="headerlink" href="#upgrading-to-600" title="Permanent link">&para;</a></h2>
 <p>This release contains breaking changes and requires you to backup your data before upgrading.</p>
 <ul>
@@ -2305,7 +2435,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 29, 2026 23:40:09 UTC">May 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 30, 2026 00:02:05 UTC">May 30, 2026</span>
   </span>
 
     
@@ -2315,7 +2445,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 29, 2026 23:40:09 UTC">May 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 30, 2026 00:02:05 UTC">May 30, 2026</span>
   </span>
 
     
@@ -2384,7 +2514,7 @@ They'll be better off on the specific page in question.
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../reference/environment-variables/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Environment variables">
+          <a href="../reference/permissions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Roles and Permissions">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2394,7 +2524,7 @@ They'll be better off on the specific page in question.
                 Previous
               </span>
               <div class="md-ellipsis">
-                Environment variables
+                Roles and Permissions
               </div>
             </div>
           </a>

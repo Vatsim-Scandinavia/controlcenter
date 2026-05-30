@@ -10,11 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.vatsim-scandinavia.org/controlcenter/latest/integrations/vatsim-connect/">
+        <link rel="canonical" href="https://docs.vatsim-scandinavia.org/controlcenter/latest/reference/permissions/">
       
       
-        <link rel="prev" href="../vatsim/">
+        <link rel="prev" href="../environment-variables/">
       
+      
+        <link rel="next" href="../../upgrade/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>VATSIM Connect - Control Center Docs</title>
+        <title>Roles and Permissions - Control Center Docs</title>
       
     
     
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vatsim-connect" class="md-skip">
+        <a href="#roles-and-permissions-reference" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              VATSIM Connect
+              Roles and Permissions
             
           </span>
         </div>
@@ -284,10 +286,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../activity/" class="md-tabs__link">
           
   
@@ -304,13 +308,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../handover/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../integrations/handover/" class="md-tabs__link">
           
   
   
@@ -1451,26 +1453,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -1488,7 +1495,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1626,7 +1633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/environment-variables/" class="md-nav__link">
+      <a href="../environment-variables/" class="md-nav__link">
         
   
   
@@ -1653,10 +1660,39 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../reference/permissions/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Roles and Permissions
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1674,6 +1710,89 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Page contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#default-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Roles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default Roles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#role-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role Scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-permission-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Permission Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customising-roles-and-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customising Roles and Permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-the-role_user-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage: the role_user Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1720,31 +1839,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1762,7 +1876,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1780,7 +1894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../handover/" class="md-nav__link">
+      <a href="../../integrations/handover/" class="md-nav__link">
         
   
   
@@ -1808,7 +1922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vateud/" class="md-nav__link">
+      <a href="../../integrations/vateud/" class="md-nav__link">
         
   
   
@@ -1836,7 +1950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vatsim/" class="md-nav__link">
+      <a href="../../integrations/vatsim/" class="md-nav__link">
         
   
   
@@ -1861,19 +1975,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../integrations/vatsim-connect/" class="md-nav__link">
         
   
   
@@ -1889,7 +1994,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1924,6 +2028,75 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Page contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#default-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Roles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default Roles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#role-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role Scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-permission-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Permission Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customising-roles-and-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customising Roles and Permissions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-the-role_user-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage: the role_user Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1939,7 +2112,7 @@
 
 
   
-    <a href="https://github.com/vatsim-scandinavia/controlcenter/edit/main/docs/integrations/vatsim-connect.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/vatsim-scandinavia/controlcenter/edit/main/docs/reference/permissions.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1947,13 +2120,132 @@
   
 
 
-<h1 id="vatsim-connect"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect<a class="headerlink" href="#vatsim-connect" title="Permanent link">&para;</a></h1>
-<p><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect is an OAuth2-based identity provider that allows for <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr>-related sites to authenticate and fetch information about <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> members.</p>
-<div class="admonition tip">
-<p class="admonition-title">Use <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect with Control Center</p>
-<p>By default, we recommend using <a href="https://vatsim.dev/api/connect-api/"><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Connect</a> to authenticate users.
-See <a href="../../configuration/">the configuration manual</a> to get started.</p>
-</div>
+<h1 id="roles-and-permissions-reference">Roles and Permissions Reference<a class="headerlink" href="#roles-and-permissions-reference" title="Permanent link">&para;</a></h1>
+<p>The catalogue of roles, permissions, and configuration knobs that ship with Control Center. For the conceptual picture and a worked example, see <a href="../../concepts/permissions/">Roles and Permissions</a>.</p>
+<h2 id="default-roles">Default Roles<a class="headerlink" href="#default-roles" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Scope</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin</code></td>
+<td><code>global</code></td>
+<td>System-wide administrator. Bypasses area checks (via the per-policy <code>before</code> hook) and is expected to be listed against every permission you want unrestricted.</td>
+</tr>
+<tr>
+<td><code>moderator</code></td>
+<td><code>both</code></td>
+<td>Area moderator. Manages users, reports, positions, and endorsements within the assigned area, or system-wide if assigned globally.</td>
+</tr>
+<tr>
+<td><code>nav-editor</code></td>
+<td><code>area</code></td>
+<td>Navigational editor. May edit operationally relevant sector data such as positions within the assigned area.</td>
+</tr>
+<tr>
+<td><code>mentor</code></td>
+<td><code>area</code></td>
+<td>Training mentor. Can manage and view training within the assigned area.</td>
+</tr>
+<tr>
+<td><code>buddy</code></td>
+<td><code>area</code></td>
+<td>Training buddy. Limited training visibility within the assigned area.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="role-scope">Role Scope<a class="headerlink" href="#role-scope" title="Permanent link">&para;</a></h3>
+<p>The <code>scope</code> field on a role restricts where assignments are allowed:</p>
+<ul>
+<li><code>global</code> — only system-wide assignments (no <code>area_id</code>).</li>
+<li><code>area</code> — only area-scoped assignments (<code>area_id</code> required).</li>
+<li><code>both</code> — either; an area-less assignment behaves as system-wide.</li>
+</ul>
+<h2 id="default-permission-matrix">Default Permission Matrix<a class="headerlink" href="#default-permission-matrix" title="Permanent link">&para;</a></h2>
+<p>The matrix in <code>config/roles.php</code>:</p>
+<div class="language-php highlight"><pre><span></span><code><span class="x">&#39;matrix&#39; =&gt; [</span>
+<span class="x">    // Training</span>
+<span class="x">    &#39;view-training&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;, &#39;buddy&#39;],</span>
+<span class="x">    &#39;create-training&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;],</span>
+<span class="x">    &#39;update-training&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+<span class="x">    &#39;delete-training&#39; =&gt; [&#39;admin&#39;],</span>
+
+<span class="x">    // Area &amp; system</span>
+<span class="x">    &#39;manage-area&#39; =&gt; [&#39;admin&#39;],</span>
+<span class="x">    &#39;view-system-health&#39; =&gt; [&#39;admin&#39;],</span>
+
+<span class="x">    // Users &amp; access</span>
+<span class="x">    &#39;manage-users&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+<span class="x">    &#39;view-user-access&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+
+<span class="x">    // Operations</span>
+<span class="x">    &#39;manage-positions&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;nav-editor&#39;],</span>
+
+<span class="x">    // Endorsements</span>
+<span class="x">    &#39;manage-endorsements&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+<span class="x">    &#39;manage-visiting-endorsements&#39; =&gt; [&#39;admin&#39;],</span>
+<span class="x">    &#39;manage-examiner-endorsements&#39; =&gt; [&#39;admin&#39;],</span>
+
+<span class="x">    // Reports</span>
+<span class="x">    &#39;view-management-reports&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+<span class="x">    &#39;view-training-activities&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+<span class="x">    &#39;view-training-statistics&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
+<span class="x">    &#39;view-mentor-reports&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;],</span>
+
+<span class="x">    // Bookings</span>
+<span class="x">    &#39;bypass-booking-restrictions&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;],</span>
+<span class="x">],</span>
+</code></pre></div>
+<p>A permission that is not listed in the matrix grants no role — <code>admin</code> included. The "administrators can do anything" behaviour is a per-policy convention (a <code>before</code> hook), not a property of the matrix.</p>
+<h2 id="customising-roles-and-permissions">Customising Roles and Permissions<a class="headerlink" href="#customising-roles-and-permissions" title="Permanent link">&para;</a></h2>
+<p><code>config/roles.php</code> is the single source of truth.</p>
+<ul>
+<li><strong>Rewire</strong> an existing permission by changing the role list for that key in the <code>matrix</code> block. Example: drop <code>mentor</code> from <code>bypass-booking-restrictions</code> to tighten booking enforcement.</li>
+<li><strong>Add</strong> a new role by adding an entry under <code>roles</code> with a <code>name</code>, <code>description</code>, and <code>scope</code>, then add it to whichever permissions it should hold in the <code>matrix</code>.</li>
+<li><strong>Remove</strong> a role you don't use by deleting it from <code>roles</code>, dropping it from any permission lists in the <code>matrix</code>, and clearing its assignments from the <code>role_user</code> table.</li>
+</ul>
+<p>After changing the file, clear the config cache so the new mapping is picked up:</p>
+<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
+</code></pre></div>
+<h2 id="storage-the-role_user-table">Storage: the <code>role_user</code> Table<a class="headerlink" href="#storage-the-role_user-table" title="Permanent link">&para;</a></h2>
+<p>User role assignments live in the <code>role_user</code> table.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_id</code></td>
+<td>unsigned bigint</td>
+<td>The assignee.</td>
+</tr>
+<tr>
+<td><code>role</code></td>
+<td>string</td>
+<td>Must match a key in <code>config/roles.php</code> for the assignment to grant anything.</td>
+</tr>
+<tr>
+<td><code>area_id</code></td>
+<td>unsigned int (nullable)</td>
+<td><code>null</code> for global assignments.</td>
+</tr>
+<tr>
+<td><code>created_at</code>, <code>updated_at</code></td>
+<td>timestamps</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>A unique constraint covers <code>(user_id, role, area_id)</code>.</p>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
@@ -2024,11 +2316,6 @@ They'll be better off on the specific page in question.
           <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
         </a>
       
-        <a href="https://github.com/blt950" class="md-author" title="@blt950">
-          
-          <img src="https://avatars.githubusercontent.com/u/2505044?u=6d3a83913ae5689c601670b26643f39ec8d2c580&v=4&size=72" alt="Daniel">
-        </a>
-      
       
       
     </nav>
@@ -2060,7 +2347,7 @@ They'll be better off on the specific page in question.
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../vatsim/" class="md-footer__link md-footer__link--prev" aria-label="Previous: VATSIM">
+          <a href="../environment-variables/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Environment variables">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2070,11 +2357,27 @@ They'll be better off on the specific page in question.
                 Previous
               </span>
               <div class="md-ellipsis">
-                VATSIM
+                Environment variables
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../../upgrade/" class="md-footer__link md-footer__link--next" aria-label="Next: Upgrading">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Upgrading
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
         
       </nav>
     

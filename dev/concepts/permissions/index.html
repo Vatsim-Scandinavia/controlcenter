@@ -27,7 +27,7 @@
     
     
       
-        <title>Permissions and Groups - Control Center Docs</title>
+        <title>Roles and Permissions - Control Center Docs</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#permissions-and-groups" class="md-skip">
+        <a href="#roles-and-permissions" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Permissions and Groups
+              Roles and Permissions
             
           </span>
         </div>
@@ -1445,7 +1445,7 @@
   <span class="md-ellipsis">
     
   
-    Permissions and Groups
+    Roles and Permissions
   
 
     
@@ -1465,7 +1465,7 @@
   <span class="md-ellipsis">
     
   
-    Permissions and Groups
+    Roles and Permissions
   
 
     
@@ -1493,10 +1493,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#the-three-layers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        The Three Layers
       
     </span>
   </a>
@@ -1504,33 +1504,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-concepts" class="md-nav__link">
+  <a href="#how-a-check-resolves" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Concepts
+        How a Check Resolves
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Key Concepts">
+    <nav class="md-nav" aria-label="How a Check Resolves">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#groups" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Groups
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#areas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Areas
+        Example
       
     </span>
   </a>
@@ -1543,10 +1532,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
+  <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How it Works
+        Next Steps
       
     </span>
   </a>
@@ -1766,6 +1755,36 @@
     
   
     Environment variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/permissions/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Roles and Permissions
   
 
     
@@ -2016,10 +2035,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#the-three-layers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        The Three Layers
       
     </span>
   </a>
@@ -2027,33 +2046,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-concepts" class="md-nav__link">
+  <a href="#how-a-check-resolves" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Concepts
+        How a Check Resolves
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Key Concepts">
+    <nav class="md-nav" aria-label="How a Check Resolves">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#groups" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Groups
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#areas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Areas
+        Example
       
     </span>
   </a>
@@ -2066,10 +2074,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
+  <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How it Works
+        Next Steps
       
     </span>
   </a>
@@ -2101,29 +2109,37 @@
   
 
 
-<h1 id="permissions-and-groups">Permissions and Groups<a class="headerlink" href="#permissions-and-groups" title="Permanent link">&para;</a></h1>
-<p>Control Center uses a flexible system of groups and areas to manage user permissions. This allows for global and granular control over different parts.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>Permissions are not assigned directly to users. Instead, users are assigned to one or more <strong>groups</strong>, and those groups are what grant permissions. For many administrative roles, these permissions are further scoped to a specific <strong>area</strong>.</p>
-<h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">&para;</a></h2>
-<h3 id="groups">Groups<a class="headerlink" href="#groups" title="Permanent link">&para;</a></h3>
-<p>Groups are the primary way to define a set of permissions. The default groups in Control Center include:</p>
-<ul>
-<li><strong>Administrator</strong>: Has unrestricted access to all features and all areas.</li>
-<li><strong>Moderator</strong>: Has administrative permissions, but they are typically restricted to one or more specific areas.</li>
-<li><strong>Mentor</strong>: Can manage training sessions, view student progress, and create tasks. Their permissions are also often scoped to an area.</li>
-<li><strong>Member</strong>: The default group for all users, granting basic access to user-facing features like booking <abbr title="Air Traffic Controller">ATC</abbr> slots.</li>
-</ul>
-<h3 id="areas">Areas<a class="headerlink" href="#areas" title="Permanent link">&para;</a></h3>
-<p>Areas are used to represent organizational units within your division, such as an ARTCC, a <abbr title="Virtual Area Control Centre">vACC</abbr>, or a specific region. By assigning moderators or mentors to a specific area, you limit their administrative powers to only the users and resources (like positions) within that area.</p>
-<h2 id="how-it-works">How it Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
-<p>When a user attempts to perform an action, the system checks two things:</p>
+<h1 id="roles-and-permissions">Roles and Permissions<a class="headerlink" href="#roles-and-permissions" title="Permanent link">&para;</a></h1>
+<p>Control Center grants access through <strong>roles</strong>, <strong>areas</strong>, and a configurable <strong>permission matrix</strong>. This page covers how those pieces fit together; for the default roles, the shipped matrix, and how to customise them, see the <a href="../../reference/permissions/">Roles and Permissions Reference</a>.</p>
+<h2 id="the-three-layers">The Three Layers<a class="headerlink" href="#the-three-layers" title="Permanent link">&para;</a></h2>
+<p>The system has three layers, intentionally separated so an operator can shift policy without changing code:</p>
 <ol>
-<li>Is the user in a group that has permission for this action?</li>
-<li>If the action is area-specific (like editing a position), does the user's group membership apply to that area?</li>
+<li><strong>Roles</strong> describe what kind of contributor a user is — administrator, moderator, mentor, and so on. A role is an identifier you can assign to a user, optionally inside an area.</li>
+<li><strong>Permissions</strong> describe individual capabilities — <code>manage-positions</code>, <code>view-management-reports</code>, and the like. They are not assigned to users directly; they are defined in a <strong>matrix</strong> that maps each permission to the roles that may exercise it.</li>
+<li><strong>Areas</strong> scope a role assignment to part of the division (an ARTCC, a <abbr title="Virtual Area Control Centre">vACC</abbr>, a sector group). The same user can hold the same role in several areas at once, in a single area, or globally.</li>
 </ol>
-<p>For example, a user who is a <strong>Moderator</strong> for "Area A" can edit positions in "Area A", but cannot edit positions in "Area B" unless they are also a moderator for "Area B".</p>
-<p>System administrators are a special case, as their permissions bypass any area-specific checks.</p>
+<p>Both the role list and the matrix live in <code>config/roles.php</code>. Granting a role to a new permission, retiring a role, or introducing a new role is a configuration change, not a code change or migration.</p>
+<h2 id="how-a-check-resolves">How a Check Resolves<a class="headerlink" href="#how-a-check-resolves" title="Permanent link">&para;</a></h2>
+<p>Authorisation asks two questions when checking a permission:</p>
+<ol>
+<li><strong>Does the user hold a role that grants this permission?</strong> The matrix is consulted to find which roles satisfy it.</li>
+<li><strong>Does at least one of those role assignments cover the relevant area?</strong> If the action targets an area, the assignment must either be in that area or be a global one. Area-agnostic actions only need the role somewhere.</li>
+</ol>
+<p>The matrix is authoritative: a permission that is not listed grants no role — even <code>admin</code>. The familiar "administrators can do anything" behaviour is a <strong>per-policy convention</strong>, implemented as a <code>before</code> hook in individual policy classes (for example <code>PositionPolicy::before()</code> returns <code>true</code> when the user holds <code>admin</code>). Resources whose policies install that hook let admins through regardless of the matrix; gates and policies without it are bound strictly by it.</p>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>A user holds <code>nav-editor</code> in Area A.</p>
+<ul>
+<li>Editing a position in <strong>Area A</strong> — allowed: <code>manage-positions</code> includes <code>nav-editor</code>, and the assignment matches the position's area.</li>
+<li>Editing a position in <strong>Area B</strong> — denied: the role assignment does not cover Area B.</li>
+<li>Moving a position from <strong>Area A to Area B</strong> — denied unless the user also holds <code>nav-editor</code> (or another role granting <code>manage-positions</code>) in Area B.</li>
+</ul>
+</blockquote>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The <a href="../../reference/permissions/">Roles and Permissions Reference</a> lists every shipped role, the full default permission matrix, and the steps to customise them.</li>
+<li><code>config/roles.php</code> is the source of truth in the codebase.</li>
+</ul>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
 Don't add any words or abbreviations which are confusingly or rarely used.
@@ -2156,7 +2172,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 29, 2026 23:40:09 UTC">May 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 30, 2026 00:02:05 UTC">May 30, 2026</span>
   </span>
 
     
@@ -2166,7 +2182,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 29, 2026 23:40:09 UTC">May 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="May 30, 2026 00:02:05 UTC">May 30, 2026</span>
   </span>
 
     
