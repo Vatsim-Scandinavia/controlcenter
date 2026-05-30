@@ -9,6 +9,10 @@ on:
     paths-ignore:
       - "**.md"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 env:
   IMAGE_NAME: vatsim-scandinavia/control-center
   TARGET_PLATFORMS: linux/amd64,linux/arm64
