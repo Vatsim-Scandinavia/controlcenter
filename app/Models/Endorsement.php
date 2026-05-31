@@ -35,4 +35,14 @@ class Endorsement extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function issuedBy()
+    {
+        return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    public function revokedBy()
+    {
+        return $this->belongsTo(User::class, 'revoked_by');
+    }
 }

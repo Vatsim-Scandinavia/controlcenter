@@ -127,6 +127,16 @@ class UserController extends Controller
             return abort(404);
         }
 
+        $user->load([
+            'roleAssignments',
+            'trainings.ratings',
+            'endorsements.ratings',
+            'endorsements.positions',
+            'endorsements.areas',
+            'endorsements.issuedBy',
+            'endorsements.revokedBy',
+        ]);
+
         $trainings = $user->trainings;
         $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;

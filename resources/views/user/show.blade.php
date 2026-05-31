@@ -376,12 +376,12 @@
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
+                                            <td>{{ $endorsement->issuedBy?->name ?? 'System' }}</td>
                                         </tr>
                                         @if($endorsement->revoked)
                                             <tr>
                                                 <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
+                                                <td>{{ $endorsement->revokedBy?->name ?? 'System' }}</td>
                                             </tr>
                                         @endif                    
                                     @elseif($endorsement->type == 'SOLO')
@@ -399,12 +399,12 @@
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
+                                            <td>{{ $endorsement->issuedBy?->name ?? 'System' }}</td>
                                         </tr>
                                         @if($endorsement->revoked)
                                             <tr>
                                                 <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
+                                                <td>{{ $endorsement->revokedBy?->name ?? 'System' }}</td>
                                             </tr>
                                         @endif
                                     @elseif($endorsement->type == "VISITING")
@@ -426,12 +426,12 @@
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
+                                            <td>{{ $endorsement->issuedBy?->name ?? 'System' }}</td>
                                         </tr>
                                         @if($endorsement->revoked)
                                             <tr>
                                                 <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
+                                                <td>{{ $endorsement->revokedBy?->name ?? 'System' }}</td>
                                             </tr>
                                         @endif
                                     @elseif($endorsement->type == "EXAMINER")
@@ -453,12 +453,12 @@
                                         </tr>
                                         <tr>
                                             <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
+                                            <td>{{ $endorsement->issuedBy?->name ?? 'System' }}</td>
                                         </tr>
                                         @if($endorsement->revoked)
                                             <tr>
                                                 <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
+                                                <td>{{ $endorsement->revokedBy?->name ?? 'System' }}</td>
                                             </tr>
                                         @endif
                                     @endif
@@ -513,9 +513,9 @@
                                             @foreach($roles as $roleKey => $roleData)
 
                                                 @if (\Illuminate\Support\Facades\Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed())
-                                                    <td class="text-center"><input type="checkbox" name="{{ $area->id }}_{{ $roleKey }}" {{ $user->roleAssignments()->where('role', $roleKey)->where('area_id', $area->id)->count() ? "checked" : "" }}></td>
+                                                    <td class="text-center"><input type="checkbox" name="{{ $area->id }}_{{ $roleKey }}" {{ $user->roleAssignments->where('role', $roleKey)->where('area_id', $area->id)->isNotEmpty() ? "checked" : "" }}></td>
                                                 @else
-                                                    <td class="text-center"><input type="checkbox" {{ $user->roleAssignments()->where('role', $roleKey)->where('area_id', $area->id)->count() ? "checked" : "" }} disabled></td>
+                                                    <td class="text-center"><input type="checkbox" {{ $user->roleAssignments->where('role', $roleKey)->where('area_id', $area->id)->isNotEmpty() ? "checked" : "" }} disabled></td>
                                                 @endif
                                                 
                                             @endforeach
