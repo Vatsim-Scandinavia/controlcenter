@@ -28,6 +28,7 @@
         "fakerphp/faker": "^1.23.0",
         "fruitcake/laravel-debugbar": "^4.0",
         "larastan/larastan": "^3.0",
+        "laravel/boost": "^2.4",
         "laravel/pint": "^1.7",
         "laravel/sail": "^1.51",
         "mockery/mockery": "^1.0",

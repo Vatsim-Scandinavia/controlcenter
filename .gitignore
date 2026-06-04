@@ -38,3 +38,14 @@ docs_site/
 
 # php type generation
 _ide_helper_models.php
+
+# laravel/boost
+.mcp.json
+boost.json
+CLAUDE.md
+AGENTS.md
+junie/
+opencode.json
+.cursor/
+.claude/
+.agents/
