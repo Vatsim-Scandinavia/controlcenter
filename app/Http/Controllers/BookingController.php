@@ -11,10 +11,15 @@ use App\Models\Booking;
 use App\Models\Position;
 use App\Models\User;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 /**
  * Controller for handling bookings.
@@ -61,7 +66,7 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index(User $user)
     {
@@ -76,7 +81,7 @@ class BookingController extends Controller
     /**
      * Show creation of bulk bookings on booking
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function bulk()
     {
@@ -91,8 +96,8 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Booking  $booking
-     * @return \Illuminate\View\View
+     * @param  Booking  $booking
+     * @return View
      */
     public function show($id)
     {
@@ -107,9 +112,9 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
@@ -205,7 +210,7 @@ class BookingController extends Controller
         }
 
         if (App::environment('production')) {
-            $client = new \GuzzleHttp\Client();
+            $client = new Client();
             $url = $this->getVatsimBookingUrl('post');
 
             try {
@@ -242,9 +247,9 @@ class BookingController extends Controller
     /**
      * Store a newly created resource as a bulk
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function storeBulk(Request $request)
     {
@@ -337,7 +342,7 @@ class BookingController extends Controller
             }
 
             if (App::environment('production')) {
-                $client = new \GuzzleHttp\Client();
+                $client = new Client();
                 $url = $this->getVatsimBookingUrl('post');
 
                 try {
@@ -371,7 +376,7 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(Request $request)
     {
@@ -467,7 +472,7 @@ class BookingController extends Controller
         }
 
         if (App::environment('production')) {
-            $client = new \GuzzleHttp\Client();
+            $client = new Client();
             $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
 
             try {
@@ -504,8 +509,8 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Booking  $booking
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Booking  $booking
+     * @return RedirectResponse
      */
     public function delete($id)
     {
@@ -515,7 +520,7 @@ class BookingController extends Controller
         $booking->deleted = true;
 
         if (App::environment('production')) {
-            $client = new \GuzzleHttp\Client();
+            $client = new Client();
             $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
 
             try {
@@ -548,7 +553,7 @@ class BookingController extends Controller
         return $url;
     }
 
-    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, ?array $data = null)
+    private function makeHttpRequest(Client $client, string $url, string $type, ?array $data = null)
     {
         try {
             $headers = [
@@ -569,8 +574,8 @@ class BookingController extends Controller
             }
 
             return null;
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            throw new App\Exceptions\VatsimAPIException($e);
+        } catch (ClientException $e) {
+            throw new VatsimAPIException($e);
         }
     }
 }

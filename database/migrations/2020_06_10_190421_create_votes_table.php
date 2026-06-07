@@ -19,7 +19,7 @@ class CreateVotesTable extends Migration
             $table->boolean('require_active');
             $table->boolean('closed')->default(false);
             $table->timestamps();
-            $table->timestamp('end_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('end_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

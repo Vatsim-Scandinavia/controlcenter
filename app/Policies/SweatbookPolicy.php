@@ -35,7 +35,7 @@ class SweatbookPolicy
      *
      * @return bool
      */
-    public function update(User $user, Sweatbook $booking)
+    public function update(User $user, SweatBook $booking)
     {
         return $booking->user_id == $user->id || $user->hasRole(['admin', 'moderator']);
     }

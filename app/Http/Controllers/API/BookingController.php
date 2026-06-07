@@ -10,8 +10,11 @@ use App\Models\Booking;
 use App\Models\Position;
 use App\Models\User;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class BookingController extends Controller
 {
@@ -23,7 +26,7 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -41,7 +44,7 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -143,7 +146,7 @@ class BookingController extends Controller
         }
 
         if (App::environment('production')) {
-            $client = new \GuzzleHttp\Client();
+            $client = new Client();
 
             $url = $this->getVatsimBookingUrl('post');
             $response = $this->makeHttpRequest($client, $url, 'post', [
@@ -183,9 +186,9 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function show(booking $booking)
+    public function show(Booking $booking)
     {
         $user = User::findorFail($booking->user_id);
         $positions = new Collection();
@@ -209,9 +212,9 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function update(Request $request, booking $booking)
+    public function update(Request $request, Booking $booking)
     {
         $data = $request->validate([
             'cid' => 'required|integer',
@@ -308,7 +311,7 @@ class BookingController extends Controller
         }
 
         if (App::environment('production')) {
-            $client = new \GuzzleHttp\Client();
+            $client = new Client();
             $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
             $response = $this->makeHttpRequest($client, $url, 'put', [
                 'callsign' => (string) $booking->callsign,
@@ -347,12 +350,12 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(booking $booking)
+    public function destroy(Booking $booking)
     {
         $booking->deleted = true;
-        $client = new \GuzzleHttp\Client();
+        $client = new Client();
         $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
         $response = $this->makeHttpRequest($client, $url, 'delete');
 
@@ -382,7 +385,7 @@ class BookingController extends Controller
         return $url;
     }
 
-    private function makeHttpRequest(\GuzzleHttp\Client $client, string $url, string $type, ?array $data = null)
+    private function makeHttpRequest(Client $client, string $url, string $type, ?array $data = null)
     {
         try {
             $headers = [
@@ -400,7 +403,7 @@ class BookingController extends Controller
             } elseif ($type == 'delete') {
                 $response = $client->request('DELETE', $url, ['headers' => $headers]);
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             return response()->json([
                 'message' => 'VATSIM API error: ' . $e->getMessage(),
             ], 400);

@@ -4,16 +4,18 @@ namespace App\Http\Middleware;
 
 use App\Models\ApiKey;
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ApiToken
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param  Closure(Request): (Response|RedirectResponse)  $next
      * @param  mixed  $editRights
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     * @return Response|RedirectResponse
      */
     public function handle(Request $request, Closure $next, $args = '')
     {

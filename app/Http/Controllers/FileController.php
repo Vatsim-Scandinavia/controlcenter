@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -18,7 +21,7 @@ class FileController extends Controller
      *
      * @return mixed
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function get(Request $request, File $file)
     {
@@ -34,9 +37,9 @@ class FileController extends Controller
     /**
      * Store the file
      *
-     * @return false|\Illuminate\Http\RedirectResponse|string
+     * @return false|RedirectResponse|string
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
@@ -59,9 +62,9 @@ class FileController extends Controller
     /**
      * Delete the provided file
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function destroy(Request $request, File $file)
     {
@@ -79,7 +82,7 @@ class FileController extends Controller
      *
      * @return mixed
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     private function validateRequest()
     {

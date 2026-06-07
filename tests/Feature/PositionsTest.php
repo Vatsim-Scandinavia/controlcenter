@@ -6,6 +6,7 @@ use App\Helpers\VatsimRating;
 use App\Models\ActivityLog;
 use App\Models\Area;
 use App\Models\Position;
+use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -184,7 +185,7 @@ class PositionsTest extends TestCase
     #[Test]
     public function permitted_user_can_view_required_endorsement_in_modal()
     {
-        $rating = \App\Models\Rating::factory()->create(['name' => 'Test Endorsement']);
+        $rating = Rating::factory()->create(['name' => 'Test Endorsement']);
         Position::factory()->create([
             'area_id' => $this->permittedArea->id,
             'required_facility_rating_id' => $rating->id,

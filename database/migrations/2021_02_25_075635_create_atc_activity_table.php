@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateAtcActivityTable extends Migration
@@ -19,7 +20,7 @@ class CreateAtcActivityTable extends Migration
             $table->double('atc_hours');
             $table->string('favourite_position')->nullable()->default(null);
             $table->boolean('inside_grace_period')->default(false);
-            $table->timestamp('valid_until')->default(\Illuminate\Support\Facades\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('valid_until')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('CASCADE');

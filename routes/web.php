@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
@@ -107,8 +108,8 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/admin/templates/{id}', [NotificationController::class, 'index'])->name('admin.templates.area');
     Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
-    Route::resource('/admin/positions', App\Http\Controllers\Admin\PositionController::class)->except(['show']);
-    Route::get('/admin/positions/{area}', [App\Http\Controllers\Admin\PositionController::class, 'index'])->name('positions.index.area');
+    Route::resource('/admin/positions', PositionController::class)->except(['show']);
+    Route::get('/admin/positions/{area}', [PositionController::class, 'index'])->name('positions.index.area');
 
     // Training routes
     Route::controller(TrainingController::class)->group(function () {

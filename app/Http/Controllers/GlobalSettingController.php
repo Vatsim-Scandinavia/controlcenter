@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Rules\InactivityReminderHours;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 /**
  * This controller controls the global, app-specific and toggleble settings, such as if trainings are enabled.
@@ -15,9 +18,9 @@ class GlobalSettingController extends Controller
      * Display a listing of the resource.
      *
      * @param  anlutro\LaravelSettings\Facade  $setting
-     * @return \Illuminate\View\View
+     * @return View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index(Setting $setting)
     {
@@ -30,9 +33,9 @@ class GlobalSettingController extends Controller
      * Edit the requested resource
      *
      * @param  anlutro\LaravelSettings\Facade  $setting
-     * @return \Illuminate\Http\Response
+     * @return Response
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function edit(Request $request, Setting $setting)
     {

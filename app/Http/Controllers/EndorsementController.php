@@ -14,6 +14,7 @@ use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class EndorsementController extends Controller
@@ -21,7 +22,7 @@ class EndorsementController extends Controller
     /**
      * Display a listing of the Solo endorsement
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function indexSolos()
     {
@@ -52,7 +53,7 @@ class EndorsementController extends Controller
     /**
      * Display a listing of the users with examiner endorsements
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function indexExaminers()
     {
@@ -65,7 +66,7 @@ class EndorsementController extends Controller
     /**
      * Display a listing of the users with visiting endorsements
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function indexVisitors()
     {
@@ -78,7 +79,7 @@ class EndorsementController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create($prefillUserId = null)
     {
@@ -99,7 +100,7 @@ class EndorsementController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -290,8 +291,8 @@ class EndorsementController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Endorsement  $endorsement
-     * @return \Illuminate\Http\Response
+     * @param  Endorsement  $endorsement
+     * @return Response
      */
     public function destroy($endorsementId)
     {
@@ -340,8 +341,8 @@ class EndorsementController extends Controller
     /**
      * Shorten the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return Response
      */
     public function shorten($endorsementId, $date)
     {
@@ -377,7 +378,7 @@ class EndorsementController extends Controller
      *
      * @param  string  $endorsementType
      * @param  string  $valid_to
-     * @return \App\Models\Endorsement
+     * @return Endorsement
      */
     private function createEndorsementModel($endorsementType, User $user, $valid_to = null)
     {

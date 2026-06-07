@@ -9,9 +9,13 @@ use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\User;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 class UpdateAtcHours extends Command
 {
@@ -86,7 +90,7 @@ class UpdateAtcHours extends Command
         $this->info('Updating member ATC hours...');
 
         foreach ($members as $member) {
-            $client = app(\GuzzleHttp\Client::class);
+            $client = app(Client::class);
             if (App::environment('production')) {
                 $url = $this->getQueryString($member->id);
             } else {
@@ -170,7 +174,7 @@ class UpdateAtcHours extends Command
                 $activity->last_online = $lastConnection;
                 $activity->hours_in_period = $hoursInPeriod;
                 $activity->save();
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            } catch (ModelNotFoundException $e) {
                 if ($hoursActiveInArea > 0) {
                     AtcActivity::create([
                         'user_id' => $member->id,
@@ -185,13 +189,13 @@ class UpdateAtcHours extends Command
     /**
      * Make HTTP GET request
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      */
-    private function makeHttpGetRequest(\GuzzleHttp\Client $client, string $url)
+    private function makeHttpGetRequest(Client $client, string $url)
     {
         try {
             $response = $client->get($url);
-        } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
+        } catch (GuzzleException $exception) {
             Log::error(
                 'Hit exception while updating atc_active. URL was: ' . $url .
                     '. HTTP status code was: ' . $exception->getCode() .

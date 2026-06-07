@@ -14,11 +14,20 @@ use App\Models\TrainingReport;
 use App\Models\User;
 use App\Services\StatisticsService;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 /**
@@ -29,9 +38,9 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index()
     {
@@ -91,9 +100,9 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function indexOther()
     {
@@ -112,9 +121,9 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
+     * @return Application|Factory|View|void
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function show(User $user, StatisticsService $statisticsService)
     {
@@ -210,7 +219,7 @@ class UserController extends Controller
      *
      * @return array
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function search(Request $request)
     {
@@ -251,20 +260,20 @@ class UserController extends Controller
     /**
      * AJAX: Return ATC hours from VATSIM for user
      */
-    public function fetchVatsimHours(Request $request): \Illuminate\Http\JsonResponse
+    public function fetchVatsimHours(Request $request): JsonResponse
     {
         $cid = $request['cid'];
 
         $vatsimStats = [];
         try {
-            $client = new \GuzzleHttp\Client();
+            $client = new Client();
             $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $cid . '/stats');
             if ($res->getStatusCode() == 200) {
                 $vatsimStats = json_decode($res->getBody(), false);
             }
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
+        } catch (RequestException $e) {
             return response()->json(['data' => null], 404);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             return response()->json(['data' => null], 404);
         }
 
@@ -274,7 +283,7 @@ class UserController extends Controller
     /**
      * AJAX: Return ATC sessions from statistics API for user
      */
-    public function fetchStatisticsSessions(StatisticsSessionsRequest $request, User $user, StatisticsService $service): \Illuminate\Http\JsonResponse
+    public function fetchStatisticsSessions(StatisticsSessionsRequest $request, User $user, StatisticsService $service): JsonResponse
     {
         try {
             $sessions = $service->getCachedAtcSessions(
@@ -297,7 +306,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function update(Request $request, User $user): SymfonyResponse
     {
@@ -375,7 +384,7 @@ class UserController extends Controller
     /**
      * Display a listing of user's settings
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function settings()
     {
@@ -387,7 +396,7 @@ class UserController extends Controller
     /**
      * Update the user's settings to storage
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function settings_update(Request $request, User $user)
     {
@@ -432,7 +441,7 @@ class UserController extends Controller
     /**
      * Display a listing of user's reports
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function reports(Request $request, User $user)
     {
@@ -462,7 +471,7 @@ class UserController extends Controller
     /**
      * Renew 30 days on the workmail address
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function extendWorkmail()
     {
@@ -481,7 +490,7 @@ class UserController extends Controller
     /**
      * Fetch users from VATSIM Core API
      *
-     * @return \Illuminate\Http\Response|bool
+     * @return Response|bool
      */
     private function fetchUsersFromVatsimCoreApi()
     {

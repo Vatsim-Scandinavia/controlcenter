@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 /**
  * Controller for mentor's overview of their students, not the report.
@@ -12,7 +13,7 @@ class MentorController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {

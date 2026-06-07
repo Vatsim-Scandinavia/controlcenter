@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\BookingController;
+use App\Http\Controllers\API\PositionController;
+use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 
 /*
@@ -18,15 +21,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['api-token:edit']], function () {
-    Route::post('/bookings/create', [App\Http\Controllers\API\BookingController::class, 'store'])->name('api.booking.store');
-    Route::patch('/bookings/{booking}', [App\Http\Controllers\API\BookingController::class, 'update'])->name('api.booking.update');
-    Route::delete('/bookings/{booking}', [App\Http\Controllers\API\BookingController::class, 'destroy'])->name('api.booking.destroy');
+    Route::post('/bookings/create', [BookingController::class, 'store'])->name('api.booking.store');
+    Route::patch('/bookings/{booking}', [BookingController::class, 'update'])->name('api.booking.update');
+    Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('api.booking.destroy');
 });
 
 Route::group(['middleware' => ['api-token']], function () {
-    Route::get('/bookings', [App\Http\Controllers\API\BookingController::class, 'index'])->name('api.booking.index');
-    Route::get('/bookings/{booking}', [App\Http\Controllers\API\BookingController::class, 'show'])->name('api.booking.show');
-    Route::get('/positions', [App\Http\Controllers\API\PositionController::class, 'index'])->name('api.positions.index');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('api.booking.index');
+    Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('api.booking.show');
+    Route::get('/positions', [PositionController::class, 'index'])->name('api.positions.index');
 
-    Route::get('/users', [App\Http\Controllers\API\UserController::class, 'index'])->name('api.users.index');
+    Route::get('/users', [UserController::class, 'index'])->name('api.users.index');
 });

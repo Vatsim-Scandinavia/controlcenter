@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\TrainingObject;
 use App\Models\TrainingObjectAttachment;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -17,7 +20,7 @@ class TrainingObjectAttachmentController extends Controller
      *
      * @return false|string
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function store(Request $request, TrainingObject $trainingObject)
     {
@@ -43,9 +46,9 @@ class TrainingObjectAttachmentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function show(TrainingObjectAttachment $attachment)
     {
@@ -59,7 +62,7 @@ class TrainingObjectAttachmentController extends Controller
      *
      * @return false|string
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function destroy(Request $request, TrainingObjectAttachment $attachment)
     {

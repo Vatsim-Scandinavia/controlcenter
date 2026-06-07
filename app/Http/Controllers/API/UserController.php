@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TrainingController;
 use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\User;
@@ -272,9 +273,9 @@ class UserController extends Controller
         return $trainings->map(function ($training) {
             return [
                 'area' => $training->area->name,
-                'type' => \App\Http\Controllers\TrainingController::$types[$training->type]['text'],
+                'type' => TrainingController::$types[$training->type]['text'],
                 'status' => $training->status,
-                'status_description' => \App\Http\Controllers\TrainingController::$statuses[$training->status]['text'],
+                'status_description' => TrainingController::$statuses[$training->status]['text'],
                 'created_at' => $training->created_at,
                 'started_at' => $training->started_at,
                 'ratings' => $training->ratings->pluck('name'),

@@ -31,11 +31,11 @@ return new class extends Migration
     public function down()
     {
         Schema::table('votes', function (Blueprint $table) {
-            $table->timestamp('end_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('end_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
 
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 };

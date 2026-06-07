@@ -9,8 +9,15 @@ use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Notifications\TrainingReportNotification;
 use Carbon\Carbon;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 /**
  * Controller for handling training reports
@@ -20,9 +27,9 @@ class TrainingReportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index(Training $training)
     {
@@ -36,9 +43,9 @@ class TrainingReportController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function create(Request $request, Training $training)
     {
@@ -55,10 +62,10 @@ class TrainingReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws AuthorizationException
+     * @throws FileNotFoundException
      */
     public function store(Request $request, Training $training)
     {
@@ -99,7 +106,7 @@ class TrainingReportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(TrainingReport $trainingReport)
     {
@@ -109,9 +116,9 @@ class TrainingReportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function edit(TrainingReport $report)
     {
@@ -125,9 +132,9 @@ class TrainingReportController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function update(Request $request, TrainingReport $report)
     {
@@ -155,9 +162,9 @@ class TrainingReportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function destroy(TrainingReport $report)
     {

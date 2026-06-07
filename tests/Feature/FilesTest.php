@@ -113,14 +113,14 @@ class FilesTest extends TestCase
     #[Test]
     public function regular_user_cant_delete_another_users_file()
     {
-        $user = \App\Models\User::factory()->create(['id' => 10000001]);
+        $user = User::factory()->create(['id' => 10000001]);
         $user->roleAssignments()->create(['role' => 'mentor', 'area_id' => 1]);
         $file = UploadedFile::fake()->image($this->faker->word . '.jpg');
         $response = $this->actingAs($user)->postJson(route('file.store'), ['file' => $file]);
         $file_id = $response->json('file_id');
         $response->assertStatus(200)->assertJsonFragment(['message' => 'File successfully uploaded']);
 
-        $otherUser = \App\Models\User::factory()->create();
+        $otherUser = User::factory()->create();
 
         $this->actingAs($otherUser)->delete(route('file.delete', ['file' => $file_id]))->assertStatus(403)->assertSessionMissing('message');
     }

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vote;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 /**
  * Controller for the dashboard
@@ -29,7 +30,7 @@ class DashboardController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -76,7 +77,7 @@ class DashboardController extends Controller
 
         $studentTrainings = \Auth::user()->mentoringTrainings();
 
-        $cronJobError = (($user->hasPermission('view-system-health') && App::environment('production')) && (\Carbon\Carbon::parse(Setting::get('_lastCronRun', '2000-01-01')) <= \Carbon\Carbon::now()->subMinutes(5)));
+        $cronJobError = (($user->hasPermission('view-system-health') && App::environment('production')) && (Carbon::parse(Setting::get('_lastCronRun', '2000-01-01')) <= Carbon::now()->subMinutes(5)));
 
         $oudatedVersionWarning = $user->hasPermission('view-system-health') && Setting::get('_updateAvailable');
 
@@ -86,7 +87,7 @@ class DashboardController extends Controller
     /**
      * Show the training apply view
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function apply()
     {
@@ -96,7 +97,7 @@ class DashboardController extends Controller
     /**
      * Show member endorsements view
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function endorsements()
     {

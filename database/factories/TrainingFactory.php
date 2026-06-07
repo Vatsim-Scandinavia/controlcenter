@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Training;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TrainingFactory extends Factory
@@ -40,7 +41,7 @@ class TrainingFactory extends Factory
             'motivation' => $this->faker->paragraph(15, false),
             'english_only_training' => false,
             'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 months'),
-            'updated_at' => \Carbon\Carbon::now(),
+            'updated_at' => Carbon::now(),
             'type' => $this->faker->numberBetween(1, 5),
             'experience' => $this->faker->numberBetween(1, 5),
             'started_at' => $started_at,

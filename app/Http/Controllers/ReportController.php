@@ -15,6 +15,7 @@ use App\Services\Sql\Sql;
 use App\Traits\ResolvesAreaScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +32,7 @@ class ReportController extends Controller
     /**
      * Show the training statistics view
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function access(): View
     {
@@ -49,7 +50,7 @@ class ReportController extends Controller
      *
      * @param  false|int  $filterArea  areaId to filter by
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function trainings(false|int $filterArea = false): View|Response|RedirectResponse
     {
@@ -140,7 +141,7 @@ class ReportController extends Controller
      * @param  int  $filterArea  areaId to filter by
      * @return \Illuminate\View\View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function activities($filterArea = false): View|Response|RedirectResponse
     {
@@ -211,7 +212,7 @@ class ReportController extends Controller
      *
      * @return \Illuminate\View\View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function mentors()
     {

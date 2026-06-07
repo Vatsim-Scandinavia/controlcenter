@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
+use Illuminate\View\View;
 
 /**
  * This controller manages each FIR's notifications settings to append
@@ -15,9 +18,9 @@ class NotificationController extends Controller
      * Display a listing of the resource.
      *
      * @param  int  $filterArea  areaId to filter the index by
-     * @return \Illuminate\View\View
+     * @return View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index($filterArea = 1)
     {
@@ -36,9 +39,9 @@ class NotificationController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function update(Request $request)
     {

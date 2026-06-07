@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Area;
+use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,8 +44,8 @@ class TrainingsTest extends TestCase
             'englishOnly' => (int) $this->faker->boolean,
             'motivation' => $this->faker->realText(1500, 2),
             'comment' => '',
-            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1, 7))->id,
-            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1, 5))->id,
+            'training_level' => Rating::find($this->faker->numberBetween(1, 7))->id,
+            'training_area' => Area::find($this->faker->numberBetween(1, 5))->id,
         ];
 
         $response = $this->post('/training/store', $attributes);

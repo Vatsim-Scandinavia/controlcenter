@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\OneTimeLink;
 use App\Models\Training;
 use App\Models\TrainingObject;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,9 +19,9 @@ class OneTimeLinkController extends Controller
      * Store the one time link in the database
      *
      * @param  TrainingObject  $object
-     * @return \Illuminate\Http\RedirectResponse|string
+     * @return RedirectResponse|string
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function store(Request $request, Training $training)
     {
@@ -27,7 +29,7 @@ class OneTimeLinkController extends Controller
             'type' => ['required', 'string', Rule::in([OneTimeLink::TRAINING_REPORT_TYPE, OneTimeLink::TRAINING_EXAMINATION_TYPE])],
         ]);
 
-        $this->authorize('create', [\App\Models\OneTimeLink::class, $training, $data['type']]);
+        $this->authorize('create', [OneTimeLink::class, $training, $data['type']]);
 
         $key = sha1($training->id . now());
 
@@ -48,9 +50,9 @@ class OneTimeLinkController extends Controller
     /**
      * Redirect the user to the appropriate URL
      *
-     * @return \Illuminate\Http\RedirectResponse|void
+     * @return RedirectResponse|void
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function redirect(Request $request, string $key)
     {
@@ -62,7 +64,7 @@ class OneTimeLinkController extends Controller
         }
 
         // Authorize that the user can access the link
-        $this->authorize('access', [\App\Models\OneTimeLink::class, $link]);
+        $this->authorize('access', [OneTimeLink::class, $link]);
 
         // Do the redirect once we insert the one-time key into the session
         $request->session()->put('onetimekey', $key);

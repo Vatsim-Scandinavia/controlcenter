@@ -5,7 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Vote;
 use App\Models\VoteOption;
 use Carbon\Carbon;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 /**
  * Controller handling votes and results
@@ -15,9 +21,9 @@ class VoteController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     * @return Application|Factory|Response|View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index()
     {
@@ -30,9 +36,9 @@ class VoteController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     * @return Application|Factory|Response|View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function create()
     {
@@ -44,9 +50,9 @@ class VoteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return RedirectResponse|Response
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
@@ -104,7 +110,7 @@ class VoteController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id  voteId
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     * @return Application|Factory|Response|View
      */
     public function show($id)
     {
@@ -118,7 +124,7 @@ class VoteController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id  voteId
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {

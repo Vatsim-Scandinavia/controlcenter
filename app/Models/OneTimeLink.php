@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OneTimeLink extends Model
 {
@@ -21,7 +22,7 @@ class OneTimeLink extends Model
     /**
      * Get the training related to the one time link
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function training()
     {

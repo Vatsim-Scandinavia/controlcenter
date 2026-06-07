@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Statistics;
 
+use App\Models\Area;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingExamination;
@@ -23,7 +24,7 @@ class TrainingStatisticsTest extends TestCase
     {
         parent::setUp();
         $this->admin = User::factory()->create();
-        $this->area = \App\Models\Area::factory()->create();
+        $this->area = Area::factory()->create();
         $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
     }
 

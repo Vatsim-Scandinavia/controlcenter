@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\Extension\Table\TableExtension;
 
 /*
  * This file is part of Laravel Markdown.
@@ -45,9 +48,9 @@ return [
     */
 
     'extensions' => [
-        League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension::class,
-        League\CommonMark\Extension\Table\TableExtension::class,
-        League\CommonMark\Extension\GithubFlavoredMarkdownExtension::class,
+        CommonMarkCoreExtension::class,
+        TableExtension::class,
+        GithubFlavoredMarkdownExtension::class,
     ],
 
     /*

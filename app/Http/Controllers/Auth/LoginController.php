@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\OAuthController;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
@@ -32,7 +33,7 @@ class LoginController extends Controller
     /**
      * Login the user
      *
-     * @param  \Illuminate\Http\Request  $request  request to proccess
+     * @param  Request  $request  request to proccess
      * @return mixed
      */
     public function login(Request $request)
@@ -55,8 +56,8 @@ class LoginController extends Controller
     /**
      * Verify the login of the user's request before proceeding
      *
-     * @param  \Illuminate\Http\Request  $request  request to proccess
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request  $request  request to proccess
+     * @return RedirectResponse
      */
     protected function verifyLogin(Request $request)
     {
@@ -103,7 +104,7 @@ class LoginController extends Controller
      * Complete the login by creating or updating the existing account and last login timestamp
      *
      * @param  mixed  $token
-     * @return \App\Models\User User's account data
+     * @return User User's account data
      */
     protected function completeLogin(array $data, $token)
     {
@@ -136,7 +137,7 @@ class LoginController extends Controller
     /**
      * Log out he user and redirect to front page
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function logout()
     {

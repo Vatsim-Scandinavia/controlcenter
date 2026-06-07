@@ -2,6 +2,7 @@
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\AtcActivity;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +25,7 @@ return new class extends Migration
                 $activity = AtcActivity::where('user_id', $training->user_id)->where('area_id', $training->area_id)->firstOrFail();
                 $activity->start_of_grace_period = $training->closed_at;
                 $activity->save();
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            } catch (ModelNotFoundException $e) {
                 AtcActivity::create([
                     'user_id' => $training->user_id,
                     'area_id' => $training->area_id,

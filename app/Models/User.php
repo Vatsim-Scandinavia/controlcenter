@@ -114,7 +114,7 @@ class User extends Authenticatable
     /**
      * Check is this user is teaching the queried user
      *
-     * @param  \App\Models\User  $user  to check for
+     * @param  User  $user  to check for
      * @return bool
      */
     public function isTeaching(User $user)

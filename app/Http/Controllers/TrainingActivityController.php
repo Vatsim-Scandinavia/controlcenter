@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidTrainingActivityType;
 use App\Models\Training;
 use App\Models\TrainingActivity;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TrainingActivityController extends Controller
 {
@@ -16,10 +20,10 @@ class TrainingActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @param  Request  $request
+     * @return RedirectResponse|Response
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public static function create(int $trainingId, string $type, ?int $new_data = null, ?int $old_data = null, ?int $userId = null, ?string $comment = null)
     {
@@ -28,7 +32,7 @@ class TrainingActivityController extends Controller
         try {
             TrainingActivityController::$activityTypes[$type];
         } catch (\Exception $e) {
-            throw new \App\Exceptions\InvalidTrainingActivityType('The type ' . $type . ' is not supported.');
+            throw new InvalidTrainingActivityType('The type ' . $type . ' is not supported.');
         }
 
         $activity = new TrainingActivity();
@@ -46,9 +50,9 @@ class TrainingActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return RedirectResponse|Response
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function storeComment(Request $request)
     {

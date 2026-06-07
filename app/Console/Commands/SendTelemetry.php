@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Ramsey\Uuid\Uuid;
 
 class SendTelemetry extends Command
 {
@@ -29,7 +30,7 @@ class SendTelemetry extends Command
      */
     public function handle()
     {
-        $uuid = \Ramsey\Uuid\Uuid::uuid5('151323ad-e7d1-4ed0-9c49-18a5cde076d8', Config::get('app.key') . Config::get('app.url'));
+        $uuid = Uuid::uuid5('151323ad-e7d1-4ed0-9c49-18a5cde076d8', Config::get('app.key') . Config::get('app.url'));
 
         try {
             $req = Http::post('https://telemetry.vatsca.org/v1/', [

@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Endorsement;
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\TrainingExamination;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -39,13 +43,13 @@ class AlterEndorsementPivot extends Migration
         });
 
         // Re-create the MAE endorsements from pre-upgrade
-        $trainings = \App\Models\Training::where('status', -1)->get();
+        $trainings = Training::where('status', -1)->get();
 
         foreach ($trainings as $training) {
-            if (\App\Models\TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()) {
+            if (TrainingExamination::where('result', '=', 'PASSED')->where('training_id', $training->id)->exists()) {
                 foreach ($training->ratings as $rating) {
                     if ($rating->vatsim_rating == null) {
-                        $endorsement = new \App\Models\Endorsement();
+                        $endorsement = new Endorsement();
                         $endorsement->user_id = $training->user->id;
                         $endorsement->type = 'MASC';
                         if (isset($training->closed_at)) {
@@ -57,7 +61,7 @@ class AlterEndorsementPivot extends Migration
                         $endorsement->issued_by = null;
                         $endorsement->save();
 
-                        $endorsement->ratings()->save(\App\Models\Rating::find($rating->id));
+                        $endorsement->ratings()->save(Rating::find($rating->id));
                     }
                 }
             }

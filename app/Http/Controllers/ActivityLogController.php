@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\View\View;
 
 /**
  * This controller logs various activity and stores it in database for logging purposes.
@@ -87,9 +89,9 @@ class ActivityLogController extends Controller
      * Display a listing of the logs to the view.
      *
      * @param  anlutro\LaravelSettings\Facade  $setting
-     * @return \Illuminate\View\View
+     * @return View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index()
     {

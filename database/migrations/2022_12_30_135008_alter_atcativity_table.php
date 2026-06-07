@@ -2,6 +2,7 @@
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\AtcActivity;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -36,7 +37,7 @@ return new class extends Migration
                 $activity = AtcActivity::findOrFail($training->user_id);
                 $activity->start_of_grace_period = $training->closed_at;
                 $activity->save();
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            } catch (ModelNotFoundException $e) {
                 AtcActivity::create([
                     'user_id' => $training->user_id,
                     'hours' => 0,
@@ -65,7 +66,7 @@ return new class extends Migration
             $table->double('atc_hours');
             $table->string('favourite_position')->nullable()->default(null);
             $table->boolean('inside_grace_period')->default(false);
-            $table->timestamp('valid_until')->default(\Illuminate\Support\Facades\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('valid_until')->default(Illuminate\Support\Facades\DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('CASCADE');

@@ -5,6 +5,7 @@ namespace App\Rules;
 use App\Services\VhfAirbandCheckerService;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class VhfAirbandFrequency implements ValidationRule
 {
@@ -23,7 +24,7 @@ class VhfAirbandFrequency implements ValidationRule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

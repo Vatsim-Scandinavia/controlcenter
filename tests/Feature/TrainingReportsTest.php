@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\OneTimeLink;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\User;
@@ -348,9 +349,9 @@ class TrainingReportsTest extends TestCase
         $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
 
         // Create a one-time link for the training report
-        $oneTimeLink = \App\Models\OneTimeLink::create([
+        $oneTimeLink = OneTimeLink::create([
             'training_id' => $training->id,
-            'training_object_type' => \App\Models\OneTimeLink::TRAINING_REPORT_TYPE,
+            'training_object_type' => OneTimeLink::TRAINING_REPORT_TYPE,
             'key' => sha1($training->id . now()),
             'expires_at' => now()->addDays(7),
         ]);

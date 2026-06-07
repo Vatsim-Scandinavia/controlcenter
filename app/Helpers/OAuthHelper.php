@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 class OAuthHelper
 {
@@ -39,7 +40,7 @@ class OAuthHelper
             ]);
 
             return json_decode($response->getBody());
-        } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
+        } catch (OAuthServerException $exception) {
             return false;
         } catch (\Exception $exception) {
             Log::critical($exception->getMessage());
@@ -67,7 +68,7 @@ class OAuthHelper
             }
 
             return json_decode($response->getBody());
-        } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
+        } catch (OAuthServerException $exception) {
             return false;
         } catch (\Exception $exception) {
             Log::critical($exception->getMessage());

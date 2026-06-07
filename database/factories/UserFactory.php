@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Helpers\FactoryHelper;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
@@ -53,7 +54,7 @@ class UserFactory extends Factory
             'division' => $divisionId,
             'subdivision' => $subdivision,
 
-            'last_login' => \Carbon\Carbon::now(),
+            'last_login' => Carbon::now(),
             'setting_notify_newreport' => false,
             'setting_notify_newreq' => false,
             'setting_notify_closedreq' => false,
