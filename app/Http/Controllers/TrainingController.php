@@ -23,17 +23,17 @@ use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
 /**
@@ -127,7 +127,7 @@ class TrainingController extends Controller
      *
      * @throws AuthorizationException
      */
-    public function apply(): Factory|View
+    public function apply(): Factory|View|RedirectResponse
     {
         $this->authorize('apply', Training::class);
 
@@ -723,32 +723,28 @@ class TrainingController extends Controller
      * Fetch the user's ATC hours on their current rating from VATSIM.
      *
      * Returns the numeric hours on success, or a redirect response if the data could not be loaded.
-     *
-     * @return int|float|RedirectResponse
      */
-    protected function fetchVatsimHours(User $user)
+    protected function fetchVatsimHours(User $user): int|float|RedirectResponse
     {
         $memberId = App::environment('production') ? $user->id : 819096;
-        $client = new Client();
 
         try {
-            $res = $client->request('GET', 'https://api.vatsim.net/v2/members/' . $memberId . '/stats');
-
-            if ($res->getStatusCode() != 200) {
-                return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
-            }
-
-            $vatsimStats = json_decode($res->getBody(), true);
-
-            return $vatsimStats[strtolower($user->rating_short)] ?? 0;
-        } catch (ClientException $e) {
-            // If the resource returns 404 and user is an observer, it just means the user has no hours yet and can apply for training
-            if ($e->getResponse()->getStatusCode() == 404 && $user->rating == VatsimRating::OBS->value) {
-                return 0;
-            }
-
+            $response = Http::get('https://api.vatsim.net/v2/members/' . $memberId . '/stats');
+        } catch (ConnectionException $e) {
             return redirect()->back()->withErrors('An error occurred while fetching data from VATSIM. Please try again later.');
         }
+
+        if ($response->status() === 404 && $user->rating == VatsimRating::OBS->value) {
+            return 0;
+        }
+
+        if ($response->failed()) {
+            return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+        }
+
+        $vatsimStats = $response->json();
+
+        return $vatsimStats[strtolower($user->rating_short)] ?? 0;
     }
 
     /**
@@ -810,6 +806,7 @@ class TrainingController extends Controller
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
             'ratings' => 'sometimes|required',
+            'ratings.*' => 'integer|exists:ratings,id',
             'training_area' => 'sometimes|required',
             'status' => 'sometimes|required|integer',
             'type' => 'sometimes|integer',
@@ -827,6 +824,7 @@ class TrainingController extends Controller
             'type' => 'sometimes|required|integer',
             'englishOnly' => 'nullable',
             'ratings' => 'sometimes|required',
+            'ratings.*' => 'integer|exists:ratings,id',
         ]);
     }
 }
