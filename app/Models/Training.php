@@ -5,6 +5,9 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Training extends Model
 {
@@ -20,236 +23,194 @@ class Training extends Model
     ];
 
     /**
-     * Get the URL to the training page
-     *
-     * @return string
+     * Get the URL to the training page.
      */
-    public function path()
+    public function path(): string
     {
         return route('training.show', ['training' => $this->id]);
     }
 
     /**
-     * Update the status of the training. This method will make sure that when updating the status the training that the timestamps are also correctly updated.
+     * Update the status of the training, keeping the related timestamps consistent.
      *
      * @param  int  $newStatus  the new status to set
-     * @param  bool  $expiredInterest  optional bool this expired an interest request
-     * @return void
+     * @param  bool  $expiredInterest  whether this update expired an interest request
      */
-    public function updateStatus(int $newStatus, bool $expiredInterest = false)
+    public function updateStatus(int $newStatus, bool $expiredInterest = false): void
     {
         $oldStatus = $this->fresh()->status;
 
-        if ($newStatus != $oldStatus) {
-            // Training was put back in queue or closed
-            if ($newStatus == 0) {
-                $this->update(['started_at' => null, 'closed_at' => null]);
-            }
-
-            // If training is as active or complete
-            if ($newStatus >= 1 || $newStatus == -1) {
-                // In case someone resurrects a closed training
-                if ($oldStatus < 0) {
-                    $this->update(['closed_at' => null]);
-                }
-
-                if (! isset($this->started_at)) {
-                    $this->update(['started_at' => now()]);
-                }
-
-                // Expire all related training interest models, as we assume the student is contacted and interested if their training status changes positively.
-                $expired = 1;
-                if ($expiredInterest) {
-                    $expired = 2;
-                }
-                TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => $expired]);
-            }
-
-            // If training is completed or closed
-            if ($newStatus < 0) {
-                $this->update(['closed_at' => now()]);
-
-                // Expire all related training interest models, as they will only cause problems if training is re-opened.
-                $expired = 1;
-                if ($expiredInterest) {
-                    $expired = 2;
-                }
-                TrainingInterest::where([['training_id', $this->id], ['expired', false]])->update(['updated_at' => now(), 'expired' => $expired]);
-
-                // If paused is unchecked but training is paused, sum up the length and unpause.
-                if (isset($this->paused_at)) {
-                    $this->paused_length = $this->paused_length + (int) Carbon::create($this->paused_at)->diffInSeconds(Carbon::now(), true);
-                    $this->update(['paused_at' => null, 'paused_length' => $this->paused_length]);
-                }
-            }
-
-            $this->update(['status' => $newStatus]);
+        if ($newStatus == $oldStatus) {
+            return;
         }
+
+        // Training was put back in queue
+        if ($newStatus == 0) {
+            $this->update(['started_at' => null, 'closed_at' => null]);
+        }
+
+        // Training is active or completed
+        if ($newStatus >= 1 || $newStatus == -1) {
+            // In case someone resurrects a closed training
+            if ($oldStatus < 0) {
+                $this->update(['closed_at' => null]);
+            }
+
+            if (! isset($this->started_at)) {
+                $this->update(['started_at' => now()]);
+            }
+
+            $this->expireInterests($expiredInterest);
+        }
+
+        // Training is completed or closed
+        if ($newStatus < 0) {
+            $this->update(['closed_at' => now()]);
+
+            // Expire all related interests, as they only cause problems if the training is re-opened.
+            $this->expireInterests($expiredInterest);
+
+            // If the training is paused, sum up the length and unpause.
+            if (isset($this->paused_at)) {
+                $this->paused_length = $this->paused_length + (int) Carbon::create($this->paused_at)->diffInSeconds(Carbon::now(), true);
+                $this->update(['paused_at' => null, 'paused_length' => $this->paused_length]);
+            }
+        }
+
+        $this->update(['status' => $newStatus]);
     }
 
     /**
-     * Get a inline string of ratings associated with a training.
+     * Expire all active interests for this training.
      *
-     * @return string
+     * We assume the student is contacted and interested when their training status changes positively.
      */
-    public function getInlineRatings(bool $vatsimRatingOnly = false)
+    protected function expireInterests(bool $expiredInterest): void
     {
-
-        if ($vatsimRatingOnly) {
-            return $this->ratings->where('vatsim_rating', true)->pluck('name')->implode(' + ');
-        }
-
-        return $this->ratings->pluck('name')->implode(' + ');
+        TrainingInterest::where([['training_id', $this->id], ['expired', false]])
+            ->update(['updated_at' => now(), 'expired' => $expiredInterest ? 2 : 1]);
     }
 
     /**
-     * Get a inline string of ratings associated with a training.
-     *
-     * @return string
+     * Get an inline string of ratings associated with a training.
      */
-    public function getInlineMentors()
+    public function getInlineRatings(bool $vatsimRatingOnly = false): string
+    {
+        $ratings = $vatsimRatingOnly
+            ? $this->ratings->where('vatsim_rating', true)
+            : $this->ratings;
+
+        return $ratings->pluck('name')->implode(' + ');
+    }
+
+    /**
+     * Get an inline string of mentors associated with a training.
+     */
+    public function getInlineMentors(): string
     {
         return $this->mentors->pluck('name')->implode(' & ');
     }
 
     /**
-     * Check if training holds one or multiple MAE specific ratings
-     *
-     * @return bool
+     * Check if training holds one or multiple MAE specific ratings.
      */
-    public function isFacilityTraining()
+    public function isFacilityTraining(): bool
     {
-        foreach ($this->ratings as $rating) {
-            if ($rating->vatsim_rating == null) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->ratings->contains(fn ($rating) => $rating->vatsim_rating == null);
     }
 
     /**
-     * Check if training holds any VATSIM GCAP rating
-     *
-     * @return bool
+     * Check if training holds any VATSIM GCAP rating.
      */
-    public function hasVatsimRatings()
+    public function hasVatsimRatings(): bool
     {
-        foreach ($this->ratings as $rating) {
-            if ($rating->vatsim_rating != null) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->ratings->contains(fn ($rating) => $rating->vatsim_rating != null);
     }
 
     /**
-     * Get highest VATSIM GCAP rating
-     *
-     * @return Rating
+     * Get highest VATSIM GCAP rating.
      */
-    public function getHighestVatsimRating()
+    public function getHighestVatsimRating(): ?Rating
     {
         return $this->ratings->where('vatsim_rating', true)->sortByDesc('vatsim_rating')->first();
     }
 
     /**
      * Get the student.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Get the area of the training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Get the area of the training.
      */
-    public function area()
+    public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);
     }
 
     /**
      * Get the training reports for the training.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function reports()
+    public function reports(): HasMany
     {
         return $this->hasMany(TrainingReport::class);
     }
 
     /**
-     * Get the training reports for the training.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get the examinations for the training.
      */
-    public function examinations()
+    public function examinations(): HasMany
     {
         return $this->hasMany(TrainingExamination::class);
     }
 
     /**
-     * Get the ratings of the training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * Get the ratings of the training.
      */
-    public function ratings()
+    public function ratings(): BelongsToMany
     {
         return $this->belongsToMany(Rating::class);
     }
 
     /**
-     * Get the mentors for the training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * Get the mentors for the training.
      */
-    public function mentors()
+    public function mentors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'training_mentor')->withPivot('expire_at');
     }
 
     /**
-     * Get training interests of this training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get training interests of this training.
      */
-    public function interests()
+    public function interests(): HasMany
     {
         return $this->hasMany(TrainingInterest::class);
     }
 
     /**
-     * Get training activites log of this training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get training activities log of this training.
      */
-    public function activities()
+    public function activities(): HasMany
     {
         return $this->hasMany(TrainingActivity::class);
     }
 
     /**
-     * Get the tasks related to the training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get the tasks related to the training.
      */
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class, 'subject_training_id');
     }
 
     /**
-     * Get the one time link associated with the training
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get the one time links associated with the training.
      */
-    public function onetimelink()
+    public function onetimelink(): HasMany
     {
         return $this->hasMany(OneTimeLink::class);
     }
