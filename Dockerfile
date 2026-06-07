@@ -1,3 +1,11 @@
+# Intermediate build container for composer dependencies
+FROM docker.io/library/composer:latest AS composer
+
+WORKDIR /app
+COPY ./ /app/
+
+RUN composer install --no-dev --no-interaction --prefer-dist
+
 # Intermediate build container for front-end resources
 FROM docker.io/library/node:24.13.1-alpine AS frontend
 # Easy to prune intermediary containers
@@ -5,6 +13,7 @@ LABEL stage=build
 
 WORKDIR /app
 COPY ./ /app/
+COPY --from=composer /app/vendor/ /app/vendor/
 
 RUN npm ci --omit dev && \
     npm run build
