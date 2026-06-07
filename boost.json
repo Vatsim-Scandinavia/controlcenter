@@ -1,0 +1,22 @@
+{
+    "agents": [
+        "claude_code",
+        "opencode",
+        "cursor"
+    ],
+    "cloud": false,
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch": false,
+    "packages": [
+        "fruitcake/laravel-debugbar"
+    ],
+    "sail": false,
+    "skills": [
+        "laravel-best-practices",
+        "fluxui-development",
+        "livewire-development",
+        "tailwindcss-development",
+        "debug-using-debugbar"
+    ]
+}
