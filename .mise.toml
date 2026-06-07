@@ -27,7 +27,10 @@ depends = ["backend:tests"]
 
 [tasks."dev:backend"]
 description = "Start the backend development server"
-run = "php artisan serve --port {{option(name='port', default='8081')}}"
+usage = '''
+flag "-p --port <port>" help="Port to listen on for development server" default="8081"
+'''
+run = "php artisan serve --port ${usage_port?}"
 
 [tasks."dev:frontend"]
 description = "Start the frontend development server"
