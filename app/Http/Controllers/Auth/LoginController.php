@@ -6,7 +6,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OAuthController;
 use App\Models\User;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
@@ -17,8 +17,6 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
  */
 class LoginController extends Controller
 {
-    use AuthenticatesUsers;
-
     protected $provider;
 
     /**
@@ -126,7 +124,7 @@ class LoginController extends Controller
                 'access_token' => $token->getToken(),
                 'refresh_token' => $token->getRefreshToken(),
                 'token_expires' => $token->getExpires(),
-                'last_login' => \Carbon\Carbon::now(),
+                'last_login' => Carbon::now(),
             ]
         );
 

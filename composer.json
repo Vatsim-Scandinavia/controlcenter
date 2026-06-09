@@ -15,7 +15,6 @@
         "hisorange/browser-detect": "^5.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9",
-        "laravel/ui": "^4.5.2",
         "league/commonmark": "^2.4",
         "league/oauth2-client": "^2.7",
         "livewire/flux": "^2.14",
