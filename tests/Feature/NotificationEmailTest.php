@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\VatsimRating;
 use App\Models\Area;
+use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingInterest;
@@ -75,6 +77,27 @@ class NotificationEmailTest extends TestCase
             'training interest' => [TrainingInterestNotification::class, TrainingInterest::class],
             'training examination' => [TrainingExamNotification::class, TrainingExamination::class],
         ];
+    }
+
+    #[Test]
+    public function training_notification_lists_both_facility_and_vatsim_ratings(): void
+    {
+        $training = Training::factory()
+            ->has(Rating::factory(['vatsim_rating' => VatsimRating::S2, 'name' => 'TST-S2']))
+            ->for($this->user)->for($this->area)->create();
+        $training->ratings()->save(Rating::factory()->create(['vatsim_rating' => null, 'name' => 'TST-MAE']));
+
+        $this->user->notify(new TrainingCreatedNotification($training->fresh()));
+
+        Notification::assertSentTo(
+            $this->user,
+            TrainingCreatedNotification::class,
+            function ($notification, $channels, $notifiable) {
+                $this->assertStringContainsString('TST-S2 + TST-MAE', $notification->toMail($notifiable)->render());
+
+                return true;
+            }
+        );
     }
 
     #[Test]

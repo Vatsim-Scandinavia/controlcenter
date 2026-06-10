@@ -112,7 +112,7 @@ class BookingPolicy
         if (($booking->position->rating->value > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->hasRole('moderator')) {
             if (
                 $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
-                ($user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating >= $booking->position->rating->value || $user->getActiveTraining()->isFacilityTraining()) &&
+                $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating >= $booking->position->rating->value &&
                 $user->getActiveTraining()->area->id === $booking->position->area->id
             ) {
                 return true;

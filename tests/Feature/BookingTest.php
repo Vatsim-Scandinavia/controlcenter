@@ -103,12 +103,13 @@ class BookingTest extends TestCase
             'rating' => VatsimRating::S1->value,
         ]);
 
-        // Combined S1+S2 training: the lower rating is attached first so an
-        // unordered ratings query would return S1 instead of S2.
+        // Combined S1+S2+facility training: the lower rating is attached first
+        // so an unordered ratings query would return S1 instead of S2.
         $training = Training::factory()
             ->has(Rating::factory(['vatsim_rating' => VatsimRating::S1]))
             ->create(['user_id' => $student->id, 'type' => 1, 'status' => 2, 'area_id' => TEST_USER_TRAINING_AREA]);
         $training->ratings()->save(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2]));
+        $training->ratings()->save(Rating::factory()->create(['vatsim_rating' => null]));
 
         $position = Position::factory()->create([
             'rating' => VatsimRating::S2->value,
@@ -119,6 +120,38 @@ class BookingTest extends TestCase
 
         $this->assertCreateBookingAvailable($student, $position);
         $this->createBooking($student, $position)->assertValid();
+    }
+
+    #[Test]
+    public function student_with_facility_training_cannot_book_position_above_their_rating(): void
+    {
+        $student = User::factory()->create([
+            'rating' => VatsimRating::S1->value,
+        ]);
+
+        // Facility (MAE) training: no VATSIM rating attached
+        Training::factory()
+            ->has(Rating::factory(['vatsim_rating' => null]))
+            ->create(['user_id' => $student->id, 'type' => 1, 'status' => 2, 'area_id' => TEST_USER_TRAINING_AREA]);
+
+        $position = Position::factory()->create([
+            'rating' => VatsimRating::C1->value,
+            'callsign' => 'TEST_APP',
+            'name' => 'Test Approach',
+            'area_id' => TEST_USER_TRAINING_AREA,
+        ]);
+
+        $startDate = Carbon::tomorrow()->addHours(2);
+        $bookingRequest = [
+            'date' => $startDate->format('d/m/Y'),
+            'start_at' => $startDate->format('H:i'),
+            'end_at' => $startDate->copy()->addHours(2)->format('H:i'),
+            'position' => $position->callsign,
+        ];
+
+        $this->actingAs($student)->post(route('booking.store'), $bookingRequest)
+            ->assertStatus(403);
+        $this->assertNull(Booking::first());
     }
 
     #[Test]
