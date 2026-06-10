@@ -117,4 +117,92 @@ class RolePermissionTest extends TestCase
         $this->assertTrue($user->hasGlobalRole(['admin', 'moderator']));
         $this->assertFalse($user->hasGlobalRole('admin'));
     }
+
+    public function test_all_with_permission_scoped_to_area_includes_global_and_area_holders()
+    {
+        config(['roles.matrix.test-permission' => ['admin', 'moderator']]);
+
+        $area = Area::factory()->create();
+        $otherArea = Area::factory()->create();
+
+        $globalAdmin = User::factory()->create();
+        $globalAdmin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+
+        $areaModerator = User::factory()->create();
+        $areaModerator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $otherAreaModerator = User::factory()->create();
+        $otherAreaModerator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $otherArea->id]);
+
+        $areaMentor = User::factory()->create();
+        $areaMentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        $recipients = User::allWithPermission('test-permission', $area);
+
+        $this->assertTrue($recipients->contains($globalAdmin));
+        $this->assertTrue($recipients->contains($areaModerator));
+        $this->assertFalse($recipients->contains($otherAreaModerator));
+        $this->assertFalse($recipients->contains($areaMentor));
+    }
+
+    public function test_all_with_permission_without_area_includes_holders_anywhere()
+    {
+        config(['roles.matrix.test-permission' => ['admin', 'moderator']]);
+
+        $area = Area::factory()->create();
+
+        $globalAdmin = User::factory()->create();
+        $globalAdmin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+
+        $areaModerator = User::factory()->create();
+        $areaModerator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $areaMentor = User::factory()->create();
+        $areaMentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        $recipients = User::allWithPermission('test-permission');
+
+        $this->assertTrue($recipients->contains($globalAdmin));
+        $this->assertTrue($recipients->contains($areaModerator));
+        $this->assertFalse($recipients->contains($areaMentor));
+    }
+
+    public function test_all_with_permission_matches_has_permission_semantics()
+    {
+        config(['roles.matrix.test-permission' => ['moderator']]);
+
+        $area = Area::factory()->create();
+        $otherArea = Area::factory()->create();
+
+        $areaModerator = User::factory()->create();
+        $areaModerator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        foreach ([null, $area, $otherArea] as $queriedArea) {
+            $this->assertEquals(
+                $areaModerator->hasPermission('test-permission', $queriedArea),
+                User::allWithPermission('test-permission', $queriedArea)->contains($areaModerator)
+            );
+        }
+    }
+
+    public function test_all_with_permission_returns_no_users_for_unknown_permission()
+    {
+        $user = User::factory()->create();
+        $user->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+
+        $this->assertTrue(User::allWithPermission('does-not-exist')->isEmpty());
+    }
+
+    public function test_all_with_permission_returns_each_user_once_despite_multiple_assignments()
+    {
+        config(['roles.matrix.test-permission' => ['admin', 'moderator']]);
+
+        $area = Area::factory()->create();
+
+        $user = User::factory()->create();
+        $user->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+        $user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $this->assertCount(1, User::allWithPermission('test-permission', $area));
+    }
 }
