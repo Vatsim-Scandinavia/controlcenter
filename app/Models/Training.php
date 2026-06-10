@@ -97,7 +97,7 @@ class Training extends Model
     public function getInlineRatings(bool $vatsimRatingOnly = false): string
     {
         $ratings = $vatsimRatingOnly
-            ? $this->ratings->where('vatsim_rating', true)
+            ? $this->ratings->whereNotNull('vatsim_rating')
             : $this->ratings;
 
         return $ratings->pluck('name')->implode(' + ');
@@ -116,7 +116,7 @@ class Training extends Model
      */
     public function isFacilityTraining(): bool
     {
-        return $this->ratings->contains(fn ($rating) => $rating->vatsim_rating == null);
+        return $this->ratings->whereNull('vatsim_rating')->isNotEmpty();
     }
 
     /**
@@ -124,7 +124,7 @@ class Training extends Model
      */
     public function hasVatsimRatings(): bool
     {
-        return $this->ratings->contains(fn ($rating) => $rating->vatsim_rating != null);
+        return $this->ratings->whereNotNull('vatsim_rating')->isNotEmpty();
     }
 
     /**
@@ -132,7 +132,7 @@ class Training extends Model
      */
     public function getHighestVatsimRating(): ?Rating
     {
-        return $this->ratings->where('vatsim_rating', true)->sortByDesc('vatsim_rating')->first();
+        return $this->ratings->whereNotNull('vatsim_rating')->sortByDesc('vatsim_rating')->first();
     }
 
     /**

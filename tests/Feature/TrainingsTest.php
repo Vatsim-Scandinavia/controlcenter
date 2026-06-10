@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\Rating;
 use App\Models\Training;
@@ -35,6 +36,32 @@ class TrainingsTest extends TestCase
     //        $this->assertJson($this->postJson('/training/store', $attributes)->content());
     //        $this->assertDatabaseHas('trainings', ['motivation' => $attributes['motivation']]);
     //    }
+
+    #[Test]
+    public function training_page_only_offers_rating_tasks_for_vatsim_rating_trainings()
+    {
+        $moderator = User::factory()->create();
+
+        $facilityTraining = Training::factory()
+            ->has(Rating::factory(['vatsim_rating' => null]))
+            ->create(['user_id' => User::factory()->create()->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $facilityTraining->area->id]);
+
+        $this->actingAs($moderator)->get($facilityTraining->path())
+            ->assertSeeText('Custom Request')
+            ->assertDontSeeText('Rating Upgrade')
+            ->assertDontSeeText('Theoretical Exam Access');
+
+        $combinedTraining = Training::factory()
+            ->has(Rating::factory(['vatsim_rating' => VatsimRating::S2, 'name' => 'TST-S2']))
+            ->create(['user_id' => User::factory()->create()->id, 'area_id' => $facilityTraining->area_id]);
+        $combinedTraining->ratings()->save(Rating::factory()->create(['vatsim_rating' => null, 'name' => 'TST-MAE']));
+
+        $this->actingAs($moderator)->get($combinedTraining->path())
+            ->assertSeeText('Rating Upgrade')
+            ->assertSeeText('Theoretical Exam Access')
+            ->assertSee('for <b>TST-S2</b> rating', false);
+    }
 
     #[Test]
     public function guest_cant_create_training_request()
