@@ -56,7 +56,7 @@ class BookingController extends Controller
 
         if ($user->getActiveTraining(TrainingStatus::PRE_TRAINING->value)) {
             $positions = $positions->merge(
-                $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->ratings()->first()->vatsim_rating)
+                $user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating)
             );
         }
 
