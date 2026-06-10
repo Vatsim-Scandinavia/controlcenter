@@ -10,11 +10,17 @@ The catalogue of roles, permissions, and configuration knobs that ship with Cont
 
 | Role | Scope | Description |
 | --- | --- | --- |
-| `admin` | `global` | System-wide administrator. Bypasses area checks (via the per-policy `before` hook) and is expected to be listed against every permission you want unrestricted. |
+| `admin` | `global` | System-wide administrator. Assignable **only** via the `user:makeadmin` CLI command — never through the UI. Bypasses area checks (via the per-policy `before` hook) and is expected to be listed against every permission you want unrestricted. |
+| `director` | `both` | Director of an area, or of the whole organisation when assigned globally. Holds every admin permission except the system-level ones (`manage-area`, `view-system-health`). Only global admins and global directors may grant or revoke it. |
 | `moderator` | `both` | Area moderator. Manages users, reports, positions, and endorsements within the assigned area, or system-wide if assigned globally. |
 | `nav-editor` | `area` | Navigational editor. May edit operationally relevant sector data such as positions within the assigned area. |
 | `mentor` | `area` | Training mentor. Can manage and view training within the assigned area. |
 | `buddy` | `area` | Training buddy. Limited training visibility within the assigned area. |
+
+!!! note "Removing an admin"
+    There is currently no CLI command to revoke the `admin` role; removal requires
+    deleting the row from the `role_user` table directly.
+    <!-- TODO: replace with `user:removeadmin` once available. -->
 
 ### Role Scope
 
@@ -26,42 +32,9 @@ The `scope` field on a role restricts where assignments are allowed:
 
 ## Default Permission Matrix
 
-The matrix in `config/roles.php`:
-
-```php
-'matrix' => [
-    // Training
-    'view-training' => ['admin', 'moderator', 'mentor', 'buddy'],
-    'create-training' => ['admin', 'moderator', 'mentor'],
-    'update-training' => ['admin', 'moderator'],
-    'delete-training' => ['admin'],
-
-    // Area & system
-    'manage-area' => ['admin'],
-    'view-system-health' => ['admin'],
-
-    // Users & access
-    'manage-users' => ['admin', 'moderator'],
-    'view-user-access' => ['admin', 'moderator'],
-
-    // Operations
-    'manage-positions' => ['admin', 'moderator', 'nav-editor'],
-
-    // Endorsements
-    'manage-endorsements' => ['admin', 'moderator'],
-    'manage-visiting-endorsements' => ['admin'],
-    'manage-examiner-endorsements' => ['admin'],
-
-    // Reports
-    'view-management-reports' => ['admin', 'moderator'],
-    'view-training-activities' => ['admin', 'moderator'],
-    'view-training-statistics' => ['admin', 'moderator'],
-    'view-mentor-reports' => ['admin', 'moderator', 'mentor'],
-
-    // Bookings
-    'bypass-booking-restrictions' => ['admin', 'moderator', 'mentor'],
-],
-```
+??? abstract "Default matrix in `config/roles.php`"
+    The default permission-to-role mapping lives in the `matrix` block of
+    [`config/roles.php` on `main`](https://github.com/Vatsim-Scandinavia/controlcenter/blob/main/config/roles.php).
 
 A permission that is not listed in the matrix grants no role — `admin` included. The "administrators can do anything" behaviour is a per-policy convention (a `before` hook), not a property of the matrix.
 
