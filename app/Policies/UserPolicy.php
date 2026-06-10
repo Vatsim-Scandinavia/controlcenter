@@ -60,13 +60,42 @@ class UserPolicy
         return $user->hasPermission('manage-users');
     }
 
-    public function updateRole(User $user, User $model, string $requestedRole, Area $requestedArea)
+    /**
+     * Determine whether the user may grant or revoke the requested role
+     * for the model user. A null area means a global (area-less) assignment.
+     */
+    public function updateRole(User $user, User $model, string $requestedRole, ?Area $requestedArea): bool
     {
         if (! $this->update($user, $model)) {
             return false;
         }
 
+        // The admin role is managed exclusively through the user:makeadmin CLI command
+        if ($requestedRole === 'admin') {
+            return false;
+        }
+
+        // Global assignments require the role's scope to allow them
+        if ($requestedArea === null && ! in_array(config("roles.roles.{$requestedRole}.scope"), ['both', 'global'], true)) {
+            return false;
+        }
+
         if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        // Only global directors may grant or revoke the director role
+        if ($requestedRole === 'director') {
+            return $user->hasGlobalRole('director');
+        }
+
+        // Global assignments of the remaining roles also require a global director
+        if ($requestedArea === null) {
+            return $user->hasGlobalRole('director');
+        }
+
+        // Directors manage the remaining roles within their scope
+        if ($user->hasRole('director', $requestedArea)) {
             return true;
         }
 

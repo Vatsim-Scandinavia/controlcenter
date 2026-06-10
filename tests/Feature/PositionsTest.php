@@ -45,7 +45,7 @@ class PositionsTest extends TestCase
 
         // Create Users
         $this->admin = User::factory()->create();
-        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => $this->permittedArea->id]);
+        $this->admin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
 
         $this->permittedUser = User::factory()->create();
         $this->user = User::factory()->create();

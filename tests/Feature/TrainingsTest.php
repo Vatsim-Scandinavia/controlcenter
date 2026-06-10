@@ -123,7 +123,7 @@ class TrainingsTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $moderator = User::factory()->create();
-        $moderator->roleAssignments()->create(['role' => 'admin', 'area_id' => $training->area->id]);
+        $moderator->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
 
         $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
 

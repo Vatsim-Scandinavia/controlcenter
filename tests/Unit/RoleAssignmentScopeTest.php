@@ -76,6 +76,59 @@ class RoleAssignmentScopeTest extends TestCase
     }
 
     #[Test]
+    public function admin_cannot_be_assigned_to_an_area()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Role 'admin' is global and cannot be assigned to an area.");
+
+        $this->user->roleAssignments()->create(['role' => 'admin', 'area_id' => $this->area->id]);
+    }
+
+    #[Test]
+    public function director_can_be_assigned_to_a_specific_area()
+    {
+        $this->user->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
+
+        $this->assertDatabaseHas('role_user', ['role' => 'director', 'area_id' => $this->area->id]);
+    }
+
+    #[Test]
+    public function director_can_be_assigned_globally()
+    {
+        $this->user->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+
+        $this->assertDatabaseHas('role_user', ['role' => 'director', 'area_id' => null]);
+    }
+
+    #[Test]
+    public function global_role_cannot_be_assigned_to_an_area()
+    {
+        config(['roles.roles.system.scope' => 'global']);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Role 'system' is global and cannot be assigned to an area.");
+
+        $this->user->roleAssignments()->create(['role' => 'system', 'area_id' => $this->area->id]);
+    }
+
+    #[Test]
+    public function updating_global_role_to_an_area_throws()
+    {
+        config(['roles.roles.system.scope' => 'global']);
+
+        $assignment = RoleAssignment::create([
+            'user_id' => $this->user->id,
+            'role' => 'system',
+            'area_id' => null,
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Role 'system' is global and cannot be assigned to an area.");
+
+        $assignment->update(['area_id' => $this->area->id]);
+    }
+
+    #[Test]
     public function unknown_role_throws_on_create()
     {
         $this->expectException(\InvalidArgumentException::class);

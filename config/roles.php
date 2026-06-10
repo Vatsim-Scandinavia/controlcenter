@@ -13,8 +13,13 @@ return [
     'roles' => [
         'admin' => [
             'name' => 'Administrator',
-            'description' => 'System-wide administrator',
-            'scope' => 'global', // 'global', 'area', or 'both'
+            'description' => 'System-wide administrator, assignable only via the user:makeadmin CLI command',
+            'scope' => 'global',
+        ],
+        'director' => [
+            'name' => 'Director',
+            'description' => 'Director of an area or the whole organisation',
+            'scope' => 'both',
         ],
         'moderator' => [
             'name' => 'Moderator',
@@ -48,10 +53,10 @@ return [
     */
     'matrix' => [
         // Training permissions
-        'view-training' => ['admin', 'moderator', 'mentor', 'buddy'],
-        'create-training' => ['admin', 'moderator', 'mentor'],
-        'update-training' => ['admin', 'moderator'],
-        'delete-training' => ['admin'],
+        'view-training' => ['admin', 'director', 'moderator', 'mentor', 'buddy'],
+        'create-training' => ['admin', 'director', 'moderator', 'mentor'],
+        'update-training' => ['admin', 'director', 'moderator'],
+        'delete-training' => ['admin', 'director'],
 
         // Area management
         'manage-area' => ['admin'],
@@ -60,28 +65,28 @@ return [
         'view-system-health' => ['admin'],
 
         // Users & Access
-        'manage-users' => ['admin', 'moderator'],
-        'view-user-access' => ['admin', 'moderator'],
+        'manage-users' => ['admin', 'director', 'moderator'],
+        'view-user-access' => ['admin', 'director', 'moderator'],
 
         // Operations
-        'manage-positions' => ['admin', 'moderator', 'nav-editor'],
+        'manage-positions' => ['admin', 'director', 'moderator', 'nav-editor'],
 
         // Endorsements
-        'manage-endorsements' => ['admin', 'moderator'],
-        'manage-visiting-endorsements' => ['admin'],
-        'manage-examiner-endorsements' => ['admin'],
+        'manage-endorsements' => ['admin', 'director', 'moderator'],
+        'manage-visiting-endorsements' => ['admin', 'director'],
+        'manage-examiner-endorsements' => ['admin', 'director'],
 
         // Reports
-        'view-management-reports' => ['admin', 'moderator'],
-        'view-training-activities' => ['admin', 'moderator'],
-        'view-training-statistics' => ['admin', 'moderator'],
-        'view-mentor-reports' => ['admin', 'moderator', 'mentor'],
+        'view-management-reports' => ['admin', 'director', 'moderator'],
+        'view-training-activities' => ['admin', 'director', 'moderator'],
+        'view-training-statistics' => ['admin', 'director', 'moderator'],
+        'view-mentor-reports' => ['admin', 'director', 'moderator', 'mentor'],
 
         // Feedback
-        'view-correlated-feedback' => ['admin', 'moderator'],
-        'view-uncorrelated-feedback' => ['admin', 'moderator'],
+        'view-correlated-feedback' => ['admin', 'director', 'moderator'],
+        'view-uncorrelated-feedback' => ['admin', 'director', 'moderator'],
 
         // Bookings
-        'bypass-booking-restrictions' => ['admin', 'moderator', 'mentor'],
+        'bypass-booking-restrictions' => ['admin', 'director', 'moderator', 'mentor'],
     ],
 ];

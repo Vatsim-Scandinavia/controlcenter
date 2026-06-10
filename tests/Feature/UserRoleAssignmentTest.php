@@ -76,9 +76,9 @@ class UserRoleAssignmentTest extends TestCase
         $response->assertSee('Global');
     }
 
-    public function test_global_admin_can_assign_admin_role_per_area(): void
+    public function test_global_admin_can_assign_director_per_area(): void
     {
-        $key = $this->area->id . '_admin';
+        $key = $this->area->id . '_director';
 
         $response = $this->actingAs($this->admin)
             ->patch(route('user.update', $this->target), [$key => 'on']);
@@ -87,15 +87,15 @@ class UserRoleAssignmentTest extends TestCase
 
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
-            'role' => 'admin',
+            'role' => 'director',
             'area_id' => $this->area->id,
         ]);
     }
 
-    public function test_global_admin_can_revoke_admin_role_per_area(): void
+    public function test_global_admin_can_revoke_director_per_area(): void
     {
         $this->target->roleAssignments()->create([
-            'role' => 'admin',
+            'role' => 'director',
             'area_id' => $this->area->id,
         ]);
 
@@ -106,26 +106,200 @@ class UserRoleAssignmentTest extends TestCase
 
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
-            'role' => 'admin',
+            'role' => 'director',
             'area_id' => $this->area->id,
         ]);
     }
 
-    public function test_moderator_cannot_assign_admin_role_per_area(): void
+    public function test_admin_role_cannot_be_assigned_via_ui_even_by_global_admin(): void
     {
-        $moderator = User::factory()->create();
-        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area->id]);
-
         $key = $this->area->id . '_admin';
 
-        $response = $this->actingAs($moderator)
+        $response = $this->actingAs($this->admin)
             ->patch(route('user.update', $this->target), [$key => 'on']);
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
             'role' => 'admin',
+        ]);
+    }
+
+    public function test_admin_role_cannot_be_revoked_via_ui(): void
+    {
+        $this->target->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), []);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'admin',
+            'area_id' => null,
+        ]);
+    }
+
+    public function test_area_director_can_assign_moderator_in_their_area(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
+
+        $key = $this->area->id . '_moderator';
+
+        $response = $this->actingAs($director)
+            ->patch(route('user.update', $this->target), [$key => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'moderator',
             'area_id' => $this->area->id,
         ]);
+    }
+
+    public function test_area_director_cannot_assign_director(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
+
+        $key = $this->area->id . '_director';
+
+        $response = $this->actingAs($director)
+            ->patch(route('user.update', $this->target), [$key => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'director',
+        ]);
+    }
+
+    public function test_global_director_can_assign_director_per_area(): void
+    {
+        $globalDirector = User::factory()->create();
+        $globalDirector->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+
+        $key = $this->area->id . '_director';
+
+        $response = $this->actingAs($globalDirector)
+            ->patch(route('user.update', $this->target), [$key => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'director',
+            'area_id' => $this->area->id,
+        ]);
+    }
+
+    public function test_moderator_cannot_assign_director_or_admin(): void
+    {
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area->id]);
+
+        $response = $this->actingAs($moderator)
+            ->patch(route('user.update', $this->target), [
+                $this->area->id . '_director' => 'on',
+                $this->area->id . '_admin' => 'on',
+            ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', ['user_id' => $this->target->id, 'role' => 'director']);
+        $this->assertDatabaseMissing('role_user', ['user_id' => $this->target->id, 'role' => 'admin']);
+    }
+
+    public function test_global_admin_can_assign_global_moderator(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), ['global_moderator' => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'moderator',
+            'area_id' => null,
+        ]);
+    }
+
+    public function test_global_admin_can_revoke_global_moderator(): void
+    {
+        $this->target->roleAssignments()->create(['role' => 'moderator', 'area_id' => null]);
+
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), []);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'moderator',
+        ]);
+    }
+
+    public function test_global_mentor_key_is_ignored_due_to_area_scope(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), ['global_mentor' => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'mentor',
+        ]);
+    }
+
+    public function test_global_admin_key_is_ignored(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), ['global_admin' => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'admin',
+        ]);
+    }
+
+    public function test_global_director_can_assign_global_director(): void
+    {
+        $globalDirector = User::factory()->create();
+        $globalDirector->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+
+        $response = $this->actingAs($globalDirector)
+            ->patch(route('user.update', $this->target), ['global_director' => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'director',
+            'area_id' => null,
+        ]);
+    }
+
+    public function test_area_director_cannot_assign_global_roles(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
+
+        $response = $this->actingAs($director)
+            ->patch(route('user.update', $this->target), ['global_moderator' => 'on']);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'moderator',
+        ]);
+    }
+
+    public function test_global_row_renders_enabled_checkboxes_for_admin(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->get(route('user.show', $this->target));
+
+        $response->assertOk();
+        $response->assertSee('name="global_moderator"', false);
+        $response->assertSee('name="global_director"', false);
+        $response->assertDontSee('name="global_admin"', false);
+        $response->assertDontSee('name="global_mentor"', false);
     }
 }

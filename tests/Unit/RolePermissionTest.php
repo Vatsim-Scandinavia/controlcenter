@@ -95,4 +95,26 @@ class RolePermissionTest extends TestCase
         $this->assertTrue($user->hasRole(['admin', 'moderator'], $area));
         $this->assertFalse($user->hasRole(['admin', 'mentor'], $area));
     }
+
+    public function test_has_global_role_only_matches_area_less_assignments()
+    {
+        $user = User::factory()->create();
+        $area = Area::factory()->create();
+
+        $user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $this->assertFalse($user->hasGlobalRole('moderator'));
+        $this->assertTrue($user->hasRole('moderator'));
+    }
+
+    public function test_has_global_role_matches_global_assignments()
+    {
+        $user = User::factory()->create();
+
+        $user->roleAssignments()->create(['role' => 'moderator', 'area_id' => null]);
+
+        $this->assertTrue($user->hasGlobalRole('moderator'));
+        $this->assertTrue($user->hasGlobalRole(['admin', 'moderator']));
+        $this->assertFalse($user->hasGlobalRole('admin'));
+    }
 }

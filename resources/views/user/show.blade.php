@@ -498,11 +498,13 @@
                                     <tr>
                                         <td><strong>Global</strong></td>
                                         @foreach($roles as $roleKey => $roleData)
-                                            <td class="text-center">
-                                                <input type="checkbox"
-                                                       {{ $user->roleAssignments->where('role', $roleKey)->whereNull('area_id')->isNotEmpty() ? 'checked' : '' }}
-                                                       disabled>
-                                            </td>
+
+                                            @if (\Illuminate\Support\Facades\Gate::inspect('updateRole', [$user, $roleKey, null])->allowed())
+                                                <td class="text-center"><input type="checkbox" name="global_{{ $roleKey }}" {{ $user->roleAssignments->where('role', $roleKey)->whereNull('area_id')->isNotEmpty() ? 'checked' : '' }}></td>
+                                            @else
+                                                <td class="text-center"><input type="checkbox" {{ $user->roleAssignments->where('role', $roleKey)->whereNull('area_id')->isNotEmpty() ? 'checked' : '' }} disabled></td>
+                                            @endif
+
                                         @endforeach
                                     </tr>
 

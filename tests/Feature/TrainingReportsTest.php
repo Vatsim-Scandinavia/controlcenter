@@ -330,7 +330,7 @@ class TrainingReportsTest extends TestCase
             'draft' => false,
         ]);
         $otherModerator = User::factory()->create(['id' => 10000101]);
-        $otherModerator->roleAssignments()->create(['role' => 'admin', 'area_id' => $training->area->id]);
+        $otherModerator->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
 
         $this->actingAs($otherModerator)
             ->get(route('training.report.delete', ['report' => $report->id]));
