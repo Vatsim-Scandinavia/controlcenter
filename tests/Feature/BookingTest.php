@@ -97,6 +97,31 @@ class BookingTest extends TestCase
     }
 
     #[Test]
+    public function student_with_combined_training_can_book_position_for_highest_rating(): void
+    {
+        $student = User::factory()->create([
+            'rating' => VatsimRating::S1->value,
+        ]);
+
+        // Combined S1+S2 training: the lower rating is attached first so an
+        // unordered ratings query would return S1 instead of S2.
+        $training = Training::factory()
+            ->has(Rating::factory(['vatsim_rating' => VatsimRating::S1]))
+            ->create(['user_id' => $student->id, 'type' => 1, 'status' => 2, 'area_id' => TEST_USER_TRAINING_AREA]);
+        $training->ratings()->save(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2]));
+
+        $position = Position::factory()->create([
+            'rating' => VatsimRating::S2->value,
+            'callsign' => 'TEST_TWR',
+            'name' => 'Test Tower',
+            'area_id' => TEST_USER_TRAINING_AREA,
+        ]);
+
+        $this->assertCreateBookingAvailable($student, $position);
+        $this->createBooking($student, $position)->assertValid();
+    }
+
+    #[Test]
     public function controller_cannot_delete_discord_booking(): void
     {
         $user = User::factory()->create();
