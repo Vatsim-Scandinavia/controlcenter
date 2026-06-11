@@ -41,4 +41,26 @@ class FrontpageTest extends TestCase
         $response = $this->get('/logout');
         $response->assertRedirect('/login');
     }
+
+    #[Test]
+    public function test_director_sees_user_search_in_topbar(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+
+        $response = $this->actingAs($director)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('Search for user');
+    }
+
+    public function test_regular_user_does_not_see_user_search_in_topbar(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertDontSee('Search for user');
+    }
 }

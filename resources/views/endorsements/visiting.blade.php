@@ -3,9 +3,9 @@
 @section('title', 'Visiting')
 @section('title-flex')
     <div>
-        @if (\Auth::user()->hasRole(['admin', 'moderator']))
+        @can('manage-visiting-endorsements')
             <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
-        @endif
+        @endcan
     </div>
 @endsection
 
