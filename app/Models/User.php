@@ -522,4 +522,17 @@ class User extends Authenticatable
 
         return false;
     }
+
+    /**
+     * Check if the user holds any of the given roles as a global (area-less) assignment.
+     *
+     * @param  string|array<string>  $roles
+     */
+    public function hasGlobalRole($roles): bool
+    {
+        return $this->roleAssignments
+            ->whereIn('role', (array) $roles)
+            ->whereNull('area_id')
+            ->isNotEmpty();
+    }
 }

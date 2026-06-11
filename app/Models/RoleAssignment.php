@@ -48,7 +48,11 @@ class RoleAssignment extends Model
                 );
             }
 
-            // TODO: enforce global scope (admin must have area_id = null)
+            if ($scope === 'global' && $assignment->area_id !== null) {
+                throw new \InvalidArgumentException(
+                    "Role '{$assignment->role}' is global and cannot be assigned to an area."
+                );
+            }
 
             if ($scope === 'area' && $assignment->area_id === null) {
                 throw new \InvalidArgumentException(

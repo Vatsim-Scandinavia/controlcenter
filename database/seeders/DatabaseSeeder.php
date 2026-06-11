@@ -74,7 +74,7 @@ class DatabaseSeeder extends Seeder
                 case 9:
                     $name_last = 'Nine';
                     $rating_id = 11;
-                    $role = 'admin';
+                    $role = 'director';
                     break;
                 case 10:
                     $name_first = 'Team';

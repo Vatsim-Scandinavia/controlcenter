@@ -313,7 +313,8 @@ class UserController extends Controller
         $this->authorize('update', $user);
         $permissions = [];
 
-        // Generate a list of possible validations
+        // Generate a list of possible validations: one key per area/role cell,
+        // plus the global row (area-less assignments) keyed as global_{role}
         foreach (Area::all() as $area) {
             foreach (config('roles.roles') as $roleKey => $role) {
                 // Only process ranks the user is allowed to change
@@ -326,6 +327,14 @@ class UserController extends Controller
             }
         }
 
+        foreach (config('roles.roles') as $roleKey => $role) {
+            if (! Gate::inspect('updateRole', [$user, $roleKey, null])->allowed()) {
+                continue;
+            }
+
+            $permissions['global_' . $roleKey] = '';
+        }
+
         // Valiate and allow these fields, then loop through permissions to set the final data set
         $data = $request->validate($permissions);
         foreach ($permissions as $key => $value) {
@@ -334,13 +343,17 @@ class UserController extends Controller
 
         // Check and update the permissions
         foreach ($permissions as $key => $value) {
-            $str = explode('_', $key);
+            [$scopeKey, $roleKey] = explode('_', $key, 2);
+            $area = $scopeKey === 'global' ? null : Area::find($scopeKey);
 
-            $area = Area::where('id', $str[0])->get()->first();
-            $roleKey = $str[1];
+            $assignments = $user->roleAssignments()->where('role', $roleKey)->when(
+                $area === null,
+                fn ($query) => $query->whereNull('area_id'),
+                fn ($query) => $query->where('area_id', $area->id),
+            );
 
             // Check if permission is not set, and set it or other way around.
-            if ($user->roleAssignments()->where('area_id', $area->id)->where('role', $roleKey)->count() == 0) {
+            if ($assignments->count() == 0) {
                 if ($value == true) {
                     $this->authorize('updateRole', [$user, $roleKey, $area]);
 
@@ -353,7 +366,7 @@ class UserController extends Controller
                     }
 
                     // Attach the new permission
-                    $user->roleAssignments()->create(['role' => $roleKey, 'area_id' => $area->id]);
+                    $user->roleAssignments()->create(['role' => $roleKey, 'area_id' => $area?->id]);
                 }
             } else {
                 if ($value == false) {
@@ -368,12 +381,12 @@ class UserController extends Controller
                     }
 
                     // Detach the permission
-                    $user->roleAssignments()->where('area_id', $area->id)->where('role', $roleKey)->delete();
+                    $assignments->delete();
                 }
             }
 
             // Check and detach trainings from mentor
-            if ($user->teaches()->where('area_id', $area->id)->count() > 0 && ! $user->hasRole('mentor') && $value == false) {
+            if ($area !== null && $user->teaches()->where('area_id', $area->id)->count() > 0 && ! $user->hasRole('mentor') && $value == false) {
                 $user->teaches()->detach($user->teaches->where('area_id', $area->id));
             }
         }

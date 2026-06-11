@@ -61,7 +61,7 @@
                                 
                             @endif
 
-                            @if($user->hasRole(['admin', 'moderator']))
+                            @if($user->hasRole(['admin', 'director', 'moderator']))
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>
