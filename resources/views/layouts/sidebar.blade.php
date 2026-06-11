@@ -52,7 +52,7 @@
             </li>
         @endif
 
-        @can('view-mentor-reports')
+        @canany(['view-mentor-dashboard', 'use-sweatbook', 'view-management-reports'])
 
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
@@ -62,37 +62,41 @@
             Training
             </div>
 
-            <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('mentor') }}">
-                <i class="fas fa-fw fa-chalkboard-teacher"></i>
-                <span>My students</span></a>
-            </li>
+            @can('view-mentor-dashboard')
+                <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('mentor') }}">
+                    <i class="fas fa-fw fa-chalkboard-teacher"></i>
+                    <span>My students</span></a>
+                </li>
+            @endcan
 
-            <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('sweatbook') }}">
-                    <i class="fas fa-fw fa-calendar-alt"></i>
-                    <span>Sweatbox Calendar</span>
+            @can('use-sweatbook')
+                <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('sweatbook') }}">
+                        <i class="fas fa-fw fa-calendar-alt"></i>
+                        <span>Sweatbox Calendar</span>
+                    </a>
+                </li>
+            @endcan
+
+            @can('view-management-reports')
+
+                {{-- Nav Item - Pages Collapse Menu --}}
+                <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
+                    <i class="fas fa-fw fa-flag"></i>
+                    <span>Requests</span>
                 </a>
-            </li>
-
-        @endif
-        @can('manage-users')
-
-            {{-- Nav Item - Pages Collapse Menu --}}
-            <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
-                <i class="fas fa-fw fa-flag"></i>
-                <span>Requests</span>
-            </a>
-            <div id="collapseReq" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
-                <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
+                <div id="collapseReq" class="collapse" data-bs-parent="#sidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
+                    <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
+                    </div>
                 </div>
-            </div>
-            </li>
+                </li>
+            @endcan
 
-        @endif
+        @endcanany
 
         {{-- Divider --}}
         <div class="sidebar-divider"></div>

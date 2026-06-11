@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use PHPUnit\Framework\Attributes\Test;
@@ -62,5 +63,28 @@ class FrontpageTest extends TestCase
 
         $response->assertOk();
         $response->assertDontSee('Search for user');
+    }
+
+    public function test_mentor_sees_training_section_in_sidebar(): void
+    {
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => Area::factory()->create()->id]);
+
+        $response = $this->actingAs($mentor)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('My students');
+        $response->assertSee('Sweatbox Calendar');
+    }
+
+    public function test_regular_user_does_not_see_training_section_in_sidebar(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertDontSee('My students');
+        $response->assertDontSee('Sweatbox Calendar');
     }
 }

@@ -105,7 +105,6 @@ return [
         'view-management-reports' => ['admin', 'director', 'moderator'],
         'view-training-activities' => ['admin', 'director', 'moderator'],
         'view-training-statistics' => ['admin', 'director', 'moderator'],
-        'view-mentor-reports' => ['admin', 'director', 'moderator', 'mentor'],
 
         // Feedback
         'view-correlated-feedback' => ['admin', 'director', 'moderator'],
