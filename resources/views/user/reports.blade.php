@@ -22,7 +22,7 @@
                         @foreach($reportsAndExams as $reportModel)
                             @if(is_a($reportModel, '\App\Models\TrainingReport'))
 
-                                @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->hasRole(['admin', 'moderator', 'mentor']))
+                                @if(!$reportModel->draft || Auth::user()->can('view', $reportModel))
 
                                     @php
                                         $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();

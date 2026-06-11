@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Area;
 use App\Models\OneTimeLink;
 use App\Models\Training;
 use App\Models\TrainingReport;
@@ -471,5 +472,54 @@ class TrainingReportsTest extends TestCase
         // Ensure reports still exist in database
         $this->assertDatabaseHas('training_reports', ['id' => $reportByMentor->id]);
         $this->assertDatabaseHas('training_reports', ['id' => $reportByBuddy->id]);
+    }
+
+    #[Test]
+    public function test_director_can_view_update_and_delete_reports_in_their_area(): void
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+        $area = $training->area;
+
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'draft' => false,
+        ]);
+
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
+
+        $this->assertTrue($director->can('view', $report));
+        $this->assertTrue($director->can('update', $report));
+        $this->assertTrue($director->can('delete', $report));
+        $this->assertTrue($director->can('create', [TrainingReport::class, $training]));
+    }
+
+    #[Test]
+    public function test_director_of_other_area_cannot_update_report(): void
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'written_by_id' => $mentor->id,
+            'draft' => false,
+        ]);
+
+        $otherArea = Area::factory()->create();
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $otherArea->id]);
+
+        $this->assertFalse($director->can('update', $report));
     }
 }

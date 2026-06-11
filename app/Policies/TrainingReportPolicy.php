@@ -20,8 +20,7 @@ class TrainingReportPolicy
     {
         return $training->mentors->contains($user) ||
                 $user->is($training->user) ||
-                $user->hasRole(['admin', 'moderator'], $training->area) ||
-                $user->hasRole('admin');
+                $user->hasPermission('view-training-reports', $training->area);
     }
 
     /**
@@ -37,8 +36,7 @@ class TrainingReportPolicy
             && ! ($isTrainee && $trainingReport->draft)
         )
             || $trainingReport->author->is($user) // If the user is the author of the report
-            || $user->hasRole('admin')
-            || $user->hasRole('moderator', $trainingReport->training->area)
+            || $user->hasPermission('view-training-reports', $trainingReport->training->area)
             || ($isTrainee && ! $trainingReport->draft);
     }
 
@@ -52,14 +50,14 @@ class TrainingReportPolicy
             return false;
         }
 
-        // Training mentors and area moderators can create a report
-        if ($user->hasRole('moderator', $training->area) || $training->mentors->contains($user)) {
+        // Training mentors and report-managing staff can create a report
+        if ($user->hasPermission('create-training-reports', $training->area) || $training->mentors->contains($user)) {
             return true;
         }
 
         // Otherwise, let's see if a one-time link is used
         if (($link = OneTimeLink::getFromSession($training)) != null) {
-            return $user->hasRole('mentor', $link->training->area) || $user->hasRole('buddy', $link->training->area);
+            return $user->hasPermission('use-report-one-time-link', $link->training->area);
         }
 
         return false;
@@ -83,8 +81,7 @@ class TrainingReportPolicy
     public function update(User $user, TrainingReport $trainingReport): bool
     {
         return $trainingReport->training->mentors->contains($user) ||
-                $user->hasRole('admin') ||
-                $user->hasRole('moderator', $trainingReport->training->area);
+                $user->hasPermission('update-training-reports', $trainingReport->training->area);
     }
 
     /**
@@ -92,7 +89,7 @@ class TrainingReportPolicy
      */
     public function delete(User $user, TrainingReport $trainingReport): Response
     {
-        return ($user->hasRole('admin') || $user->hasRole('moderator', $trainingReport->training->area) || ($user->is($trainingReport->author) && $user->hasRole('mentor', $trainingReport->training->area)))
+        return ($user->hasPermission('delete-training-reports', $trainingReport->training->area) || ($user->is($trainingReport->author) && $user->hasRole('mentor', $trainingReport->training->area)))
             ? Response::allow()
             : Response::deny('Only moderators and the author of the training report can delete it.');
     }
