@@ -14,6 +14,7 @@ Settings related to URLs, subdivision names and other core application settings.
 | Variable               | Default value      | Explanation                                                  |
 | ---------------------- | ------------------ | ------------------------------------------------------------ |
 | `APP_NAME`             | Control Center     | What you want to call the software                           |
+| `APP_TAGLINE`          | Training Administration | Short description shown beneath the name on the front page |
 | `APP_OWNER_NAME`       | (sub)division Name | Full name of your (sub)division such as `VATSIM Scandinavia` |
 | `APP_OWNER_NAME_SHORT` | SCA                | Short name of choice for your vACC e.g. `VATSCA`/`ESTVACC`   |
 | `APP_OWNER_CODE`       | SCA                | 3-4 letter name identifying your vACC within VATSIM APIs     |

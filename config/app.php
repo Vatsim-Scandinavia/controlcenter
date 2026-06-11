@@ -26,6 +26,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Tagline
+    |--------------------------------------------------------------------------
+    |
+    | A short description of the application, displayed beneath the name on
+    | the front page. Customise it to describe your deployment.
+    |
+    */
+
+    'tagline' => env('APP_TAGLINE') ?: 'Training Administration',
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Version
     |--------------------------------------------------------------------------
     |
