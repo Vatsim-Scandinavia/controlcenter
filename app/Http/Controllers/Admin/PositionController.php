@@ -75,7 +75,7 @@ class PositionController extends Controller
 
     private function redirectAfterMutation(Request $request, int $areaId): RedirectResponse
     {
-        $route = $request->user()->hasRole('admin')
+        $route = $request->user()->accessibleAreasForPermission('manage-positions')->isGlobal
             ? route('positions.index.area', $areaId)
             : route('positions.index');
 

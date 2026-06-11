@@ -91,6 +91,17 @@ class ReportControllerTest extends TestCase
     }
 
     #[Test]
+    public function global_director_sees_mentor_report(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+
+        $response = $this->actingAs($director)->get(route('reports.mentors'));
+
+        $response->assertOk();
+    }
+
+    #[Test]
     public function admin_sees_global_training_report(): void
     {
         $response = $this->actingAs($this->adminUser)->get(route('reports.trainings'));

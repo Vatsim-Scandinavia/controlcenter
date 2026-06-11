@@ -218,17 +218,19 @@ class ReportController extends Controller
     {
         $this->authorize('viewMentors', ManagementReport::class);
 
-        if (auth()->user()->hasRole('admin')) {
-            $mentors = User::whereHas('roleAssignments', function ($q) {
-                $q->where('role', 'mentor');
-            })->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->get();
-        } else {
-            $mentors = User::whereHas('roleAssignments', function ($q) {
-                $q->where('role', 'mentor');
-            })->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->whereHas('roleAssignments', function (Builder $query) {
-                $query->whereIn('area_id', auth()->user()->roleAssignments()->pluck('area_id'));
-            })->get();
+        $scope = auth()->user()->accessibleAreasForPermission('view-management-reports');
+
+        $query = User::whereHas('roleAssignments', function ($q) {
+            $q->where('role', 'mentor');
+        })->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user');
+
+        if (! $scope->isGlobal) {
+            $query->whereHas('roleAssignments', function (Builder $areaQuery) use ($scope) {
+                $areaQuery->whereIn('area_id', $scope->areas->pluck('id'));
+            });
         }
+
+        $mentors = $query->get();
 
         $mentors = $mentors->sortBy('name')->unique();
         $statuses = TrainingController::$statuses;
