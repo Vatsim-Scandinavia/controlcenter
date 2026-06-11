@@ -47,7 +47,7 @@
                                 @endif
                             </div>
 
-                            @if($user->hasRole(['admin', 'moderator', 'mentor']))
+                            @can('manage-tasks')
                                 <hr>
 
                                 <h5>Mentor Notifications</h5>
@@ -58,8 +58,8 @@
                                         Send notification of new tasks
                                     </label>
                                 </div>
-                                
-                            @endif
+
+                            @endcan
 
                             @if($user->hasRole(['admin', 'director', 'moderator']))
                                 <hr>

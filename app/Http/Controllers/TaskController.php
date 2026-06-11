@@ -162,7 +162,7 @@ class TaskController extends Controller
 
         // Filter out users who no longer can receive tasks and end up with 3
         $users = $users->filter(function ($user) {
-            return $user->can('receive', Task::class) && $user->hasRole('moderator');
+            return $user->hasPermission('suggested-task-recipient');
         })->take(3);
 
         return $users;
