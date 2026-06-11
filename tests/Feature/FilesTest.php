@@ -124,4 +124,22 @@ class FilesTest extends TestCase
 
         $this->actingAs($otherUser)->delete(route('file.delete', ['file' => $file_id]))->assertStatus(403)->assertSessionMissing('message');
     }
+
+    #[Test]
+    public function test_director_has_full_file_access(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+        $file = File::create([
+            'id' => 'test-file-id',
+            'name' => 'test.jpg',
+            'path' => 'test.jpg',
+            'uploaded_by' => null,
+        ]);
+
+        $this->assertTrue($director->can('update', $file));
+        $this->assertTrue($director->can('delete', $file));
+        $this->assertTrue($director->can('view', $file));
+        $this->assertTrue($director->can('create', File::class));
+    }
 }
