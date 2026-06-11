@@ -11,13 +11,13 @@ class NotificationPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine if the user can modify notification templates
+     * Determine if the user can view notification templates
      *
      * @return bool
      */
     public function viewTemplates(User $user)
     {
-        return $user->hasRole(['admin', 'moderator']);
+        return $user->hasPermission('manage-notification-templates');
     }
 
     /**
@@ -27,6 +27,6 @@ class NotificationPolicy
      */
     public function modifyAreaTemplate(User $user, Area $area)
     {
-        return $user->hasRole('admin') || $user->hasRole('moderator', $area);
+        return $user->hasPermission('manage-notification-templates', $area);
     }
 }
