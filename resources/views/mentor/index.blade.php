@@ -42,13 +42,13 @@
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
-                                @if ($user->hasRole(['admin', 'moderator']))                            
+                                @can('manage-users')
                                     <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></td>
                                     <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
-                                @else 
+                                @else
                                     <td>{{ $training->user->id }}</td>
                                     <td>{{ $training->user->name }}</td>
-                                @endif
+                                @endcan
                                 <td>
                                     @if ( is_iterable($ratings = $training->ratings->toArray()) )
                                         @for( $i = 0; $i < sizeof($ratings); $i++ )

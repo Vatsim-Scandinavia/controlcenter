@@ -80,6 +80,17 @@ class TrainingsTest extends TestCase
     }
 
     #[Test]
+    public function test_director_is_eligible_as_training_mentor_in_their_area(): void
+    {
+        $area = Area::factory()->create();
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
+
+        $this->assertTrue($director->hasPermission('mentor-trainings', $area));
+        $this->assertTrue($director->hasPermission('view-mentor-dashboard'));
+    }
+
+    #[Test]
     public function moderator_can_update_training_request()
     {
         $moderator = User::factory()->create();
