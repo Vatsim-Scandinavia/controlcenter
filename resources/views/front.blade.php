@@ -23,11 +23,7 @@
                 {{ config('app.name') }}
             </div>
             <div class="content-description">
-                @if(config('app.owner_code') == 'SCA')
-                Scandinavian Training Administration
-                @else
-                Training Administration
-                @endif
+                {{ config('app.tagline') }}
             </div>
             <a href="{{ route('login') }}" class="btn btn-success">Login</a>
 

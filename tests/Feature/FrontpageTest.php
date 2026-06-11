@@ -17,6 +17,15 @@ class FrontpageTest extends TestCase
     }
 
     #[Test]
+    public function front_page_shows_configured_tagline()
+    {
+        config(['app.tagline' => 'Nordic Training Administration']);
+
+        $response = $this->get('/');
+        $response->assertSee('Nordic Training Administration');
+    }
+
+    #[Test]
     public function user_gets_redirect_if_logged_in()
     {
         $user = User::factory()->make();
