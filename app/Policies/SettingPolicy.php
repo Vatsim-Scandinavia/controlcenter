@@ -11,13 +11,13 @@ class SettingPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user view global settings.
+     * Determine whether the user can view global settings.
      *
      * @return bool
      */
     public function index(User $user, Setting $setting)
     {
-        return $user->hasRole('admin');
+        return $user->hasPermission('manage-settings');
     }
 
     /**
@@ -27,6 +27,6 @@ class SettingPolicy
      */
     public function edit(User $user, Setting $setting)
     {
-        return $user->hasRole('admin');
+        return $user->hasPermission('manage-settings');
     }
 }

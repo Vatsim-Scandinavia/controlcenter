@@ -16,6 +16,6 @@ class ActivityLogPolicy
      */
     public function index(User $user)
     {
-        return $user->hasRole('admin');
+        return $user->hasPermission('view-activity-log');
     }
 }
