@@ -1,7 +1,0 @@
-fix(docs): refresh and pin docs to mkdocs <2.0.0
-
-JJ: Change ID: suququoq
-JJ: This commit contains the following changes:
-JJ:     M pdm.lock
-JJ:
-JJ: Lines starting with "JJ:" (like this one) will be removed.
