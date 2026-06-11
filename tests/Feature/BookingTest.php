@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Helpers\VatsimRating;
+use App\Models\Area;
 use App\Models\Booking;
 use App\Models\Endorsement;
 use App\Models\Position;
@@ -284,6 +285,27 @@ class BookingTest extends TestCase
 
         $this->actingAs($user)->followingRedirects()->postJson(route('booking.store', ['id' => $booking->id]), $booking->getAttributes())
             ->assertStatus(403);
+    }
+
+    #[Test]
+    public function test_director_can_update_other_users_booking(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+        $booking = Booking::factory()->create(['user_id' => User::factory()->create()->id, 'source' => 'CC']);
+
+        $this->assertTrue($director->can('update', $booking));
+    }
+
+    #[Test]
+    public function test_mentor_cannot_update_other_users_booking(): void
+    {
+        $area = Area::factory()->create();
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+        $booking = Booking::factory()->create(['user_id' => User::factory()->create()->id, 'source' => 'CC']);
+
+        $this->assertFalse($mentor->can('update', $booking));
     }
 
     #[Test]
