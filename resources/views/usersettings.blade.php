@@ -61,7 +61,7 @@
 
                             @endcan
 
-                            @if($user->hasRole(['admin', 'director', 'moderator']))
+                            @can('receive-training-notifications')
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>
@@ -93,8 +93,8 @@
                                         <span class="text-danger">{{ $errors->first('setting_workmail_address') }}</span>
                                     @enderror
                                 </div>
-                                
-                            @endif
+
+                            @endcan
 
                             <button class="btn btn-success mt-3" type="submit">Save</button>
                         </form>

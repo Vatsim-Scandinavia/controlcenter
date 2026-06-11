@@ -144,4 +144,39 @@ class NotificationEmailTest extends TestCase
         Notification::assertNotSentTo($staffWrongArea, TrainingCreatedNotification::class);
         Notification::assertNotSentTo($staffNoNotify, TrainingCreatedNotification::class);
     }
+
+    #[Test]
+    public function bccs_directors_who_opted_in_to_new_request_notifications(): void
+    {
+        $director = User::factory()->create([
+            'setting_workmail_address' => 'director@example.com',
+        ]);
+        $director->setting_notify_newreq = true;
+        $director->save();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
+
+        $outsider = User::factory()->create([
+            'setting_workmail_address' => 'outsider@example.com',
+        ]);
+        $outsider->setting_notify_newreq = true;
+        $outsider->save();
+        $outsider->roleAssignments()->create(['role' => 'moderator', 'area_id' => Area::factory()->create()->id]);
+
+        $training = Training::factory()->for($this->user)->for($this->area)->create();
+
+        $this->user->notify(new TrainingCreatedNotification($training));
+
+        Notification::assertSentTo(
+            $this->user,
+            TrainingCreatedNotification::class,
+            function ($notification, $channels, $notifiable) {
+                $bccAddresses = collect($notification->toMail($notifiable)->bcc)->pluck('address');
+
+                $this->assertContains('director@example.com', $bccAddresses);
+                $this->assertNotContains('outsider@example.com', $bccAddresses);
+
+                return true;
+            }
+        );
+    }
 }

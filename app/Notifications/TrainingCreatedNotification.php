@@ -60,13 +60,8 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
         }
 
         // Find staff who wants notification of new training request
-        $bcc = User::allWithRole(['admin', 'moderator'])->where('setting_notify_newreq', true);
-
-        foreach ($bcc as $key => $user) {
-            if (! $user->hasRole(['admin', 'moderator'], $this->training->area)) {
-                $bcc->pull($key);
-            }
-        }
+        $bcc = User::allWithPermission('receive-training-notifications', $this->training->area)
+            ->where('setting_notify_newreq', true);
 
         $contactMail = $area->contact;
 
