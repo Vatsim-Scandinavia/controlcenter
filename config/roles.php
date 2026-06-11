@@ -91,5 +91,8 @@ return [
 
         // Alerts
         'receive-inactivity-alerts' => ['admin', 'director', 'moderator'],
+
+        // Workmail
+        'use-workmail' => ['admin', 'director', 'moderator'],
     ],
 ];

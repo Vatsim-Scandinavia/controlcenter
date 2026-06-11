@@ -42,9 +42,9 @@ class UpdateWorkmails extends Command
         // Check for expired workmails
         DB::table('users')->where('setting_workmail_expire', '<=', date('Y-m-d H:i:s'))->update(['setting_workmail_address' => null, 'setting_workmail_expire' => null]);
 
-        // Check for users that no longer hold a moderator, admin or director rank
+        // Check for users that no longer hold a role granting workmail
         foreach (User::whereNotNull('setting_workmail_address')->get() as $user) {
-            if ($user->roleAssignments()->count() == 0 || ! $user->hasRole(['moderator', 'admin', 'director'])) {
+            if (! $user->hasPermission('use-workmail')) {
                 $user->setting_workmail_address = null;
                 $user->setting_workmail_expire = null;
                 $user->save();

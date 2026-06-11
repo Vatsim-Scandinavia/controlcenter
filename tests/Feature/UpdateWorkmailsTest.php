@@ -41,4 +41,22 @@ class UpdateWorkmailsTest extends TestCase
         $this->assertNull($roleless->fresh()->setting_workmail_address);
         $this->assertNull($mentor->fresh()->setting_workmail_address);
     }
+
+    public function test_workmail_eligibility_follows_configured_permission(): void
+    {
+        config(['roles.matrix.use-workmail' => ['mentor']]);
+
+        $area = Area::factory()->create();
+
+        $mentor = User::factory()->create(['setting_workmail_address' => 'mentor@example.test']);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        $moderator = User::factory()->create(['setting_workmail_address' => 'moderator@example.test']);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $this->artisan('update:workmails')->assertExitCode(0);
+
+        $this->assertEquals('mentor@example.test', $mentor->fresh()->setting_workmail_address);
+        $this->assertNull($moderator->fresh()->setting_workmail_address);
+    }
 }
