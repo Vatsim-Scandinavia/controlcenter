@@ -202,6 +202,16 @@ class TrainingsTest extends TestCase
     //    }
 
     #[Test]
+    public function test_director_can_create_training_requests_for_others(): void
+    {
+        $director = User::factory()->create();
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
+
+        $this->assertTrue($director->can('create', Training::class));
+        $this->assertTrue($director->hasPermission('view-training-activities', Area::factory()->create()));
+    }
+
+    #[Test]
     public function a_mentor_cant_be_added_if_they_are_not_a_mentor_in_the_right_area()
     {
         $training = Training::factory()->create([
