@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.0-alpha.06](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.05...v7.0.0-alpha.06) (2026-06-12)
+
+
+### Bug Fixes
+
+* **bookings:** create shared booking service with sweatbook ([#1498](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1498)) ([5afaa3b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5afaa3bcf70c7c12980babcdda52d14ab97becfe))
+
 ## [7.0.0-alpha.05](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.04...v7.0.0-alpha.05) (2026-06-11)
 
 
