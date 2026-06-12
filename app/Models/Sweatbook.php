@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sweatbook extends Model
 {
+    protected $casts = [
+        'time_start' => 'datetime',
+        'time_end' => 'datetime',
+    ];
+
     public function position()
     {
         return $this->hasOne(Position::class, 'id', 'position_id');

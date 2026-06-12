@@ -40,18 +40,18 @@
                             <tr>
                                 <td>
                                     @can('update', $booking)
-                                        <a href="/sweatbook/{{ $booking->id }}">{{ Carbon\Carbon::create($booking->date)->toEuropeanDate(true) }}
+                                        <a href="/sweatbook/{{ $booking->id }}">{{ $booking->time_start->toEuropeanDate(true) }}
                                         &nbsp;&nbsp;<i class="fa fa-pencil-alt w3-tiny" aria-hidden="true"></i></a>
                                     @endcan
                                     @cannot('update', $booking)
-                                        {{ Carbon\Carbon::create($booking->date)->toEuropeanDate(true) }}
+                                        {{ $booking->time_start->toEuropeanDate(true) }}
                                     @endcannot
                                 </td>
                                 <td>
-                                    {{ Carbon\Carbon::create($booking->start_at)->toEuropeanTime() }}
+                                    {{ $booking->time_start->toEuropeanTime() }}
                                 </td>
                                 <td>
-                                    {{ Carbon\Carbon::create($booking->end_at)->toEuropeanTime() }}
+                                    {{ $booking->time_end->toEuropeanTime() }}
                                 </td>
                                 <td>
                                     {{ $booking->position->callsign }} ({{ $booking->position->name }})

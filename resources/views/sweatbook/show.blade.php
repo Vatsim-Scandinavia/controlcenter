@@ -21,7 +21,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="start_at">Start (Zulu)</label>
-                        <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ empty(old('start_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->start_at)->format('H:i') : old('start_at') }}" required>
+                        <input id="start_at" class="form-control @error('start_at') is-invalid @enderror" type="time" name="start_at" placeholder="12:00" value="{{ empty(old('start_at')) ? $booking->time_start->format('H:i') : old('start_at') }}" required>
                         @error('start_at')
                             <span class="text-danger">{{ $errors->first('start_at') }}</span>
                         @enderror
@@ -29,7 +29,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="end_at">End (Zulu)</label>
-                        <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ empty(old('end_at')) ? \Carbon\Carbon::createFromFormat('H:i:s', $booking->end_at)->format('H:i') : old('end_at') }}" required>
+                        <input id="end_at" class="form-control @error('end_at') is-invalid @enderror" type="time" name="end_at" placeholder="12:00" value="{{ empty(old('end_at')) ? $booking->time_end->format('H:i') : old('end_at') }}" required>
                         @error('end_at')
                             <span class="text-danger">{{ $errors->first('end_at') }}</span>
                         @enderror
@@ -82,7 +82,7 @@
 @vite(['resources/js/flatpickr.js', 'resources/sass/flatpickr.scss'])
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var defaultDate = "{{ empty(old('date')) ? \Carbon\Carbon::createFromFormat('Y-m-d', $booking->date)->format('d/m/Y') : old('date') }}"
+        var defaultDate = "{{ empty(old('date')) ? $booking->time_start->format('d/m/Y') : old('date') }}"
         document.querySelector('.datepicker').flatpickr({ disableMobile: true, minDate: "{!! date('Y-m-d') !!}", dateFormat: "d/m/Y", defaultDate: defaultDate, locale: {firstDayOfWeek: 1 }});
     })
 </script>

@@ -6,6 +6,7 @@ use App\Providers\CarbonServiceProvider;
 use App\Providers\DivisionApiServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\RouteServiceProvider;
+use App\Providers\VatsimBookingApiServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -256,6 +257,7 @@ return [
 
         CarbonServiceProvider::class,
         DivisionApiServiceProvider::class,
+        VatsimBookingApiServiceProvider::class,
 
     ])->toArray(),
 

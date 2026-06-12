@@ -38,7 +38,7 @@ class CleanSweatbooks extends Command
      */
     public function handle()
     {
-        DB::table('sweatbooks')->where('date', '<', date('Y-m-d'))->delete();
+        DB::table('sweatbooks')->whereDate('time_start', '<', date('Y-m-d'))->delete();
         $this->info('All old sweatbooks have been cleaned.');
     }
 }
