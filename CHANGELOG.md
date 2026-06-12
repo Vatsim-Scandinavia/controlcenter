@@ -1,5 +1,49 @@
 # Changelog
 
+## [7.0.0-alpha.05](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.04...v7.0.0-alpha.05) (2026-06-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** upgrade laravel/framework to v13 and PHP >=8.3
+* remove unused laravel/ui
+
+### Features
+
+* **front:** replace hardcoded tagline with APP_TAGLINE config ([#1496](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1496)) ([87ef518](https://github.com/Vatsim-Scandinavia/controlcenter/commit/87ef518e4021c993f21fcc146760bc961c036624))
+* **roles:** add director role & make admins global ([#1497](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1497)) ([3df93c6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3df93c62f9ff4efbe9836a6199cbacb01dd61fa5))
+* **roles:** add director role & restrict admin to global scope ([3df93c6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3df93c62f9ff4efbe9836a6199cbacb01dd61fa5))
+
+
+### Bug Fixes
+
+* **booking:** facility training no longer bypasses position rating check ([#1492](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1492)) ([c5c0186](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c5c0186220b3c3ae762ee01c1f4c7d285fa779c1))
+* **booking:** use highest vatsim rating for combined training checks ([#1489](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1489)) ([f216983](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f216983d08e691317647aa985ac150ad5f35f20a))
+* **deps:** upgrade laravel/framework to v13 and PHP &gt;=8.3 ([ff35c4c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ff35c4cae0b6f97f00c27a38051244a85d99fd68))
+* **deps:** upgrade tinker, phpunit, and several other packages ([11424e6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/11424e6f871a7b671345e874492133f61de1184a))
+* **docs:** refresh and pin docs to mkdocs &lt;2.0.0 ([1d86604](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1d8660408b91758b488c40718213fad216510f8b))
+* **perms:** enforce area scope on role assignments ([ab15728](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ab15728393fe7d8e3fbe980a69e11fe3c297a0f5))
+* **training:** add rating ID existence validation to prevent ratingless trainings ([#1484](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1484)) ([c0e03c3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c0e03c323b27e8e604e9f10a788ae33f92fa3bd2))
+* **training:** return type declarations for fetchVatsimHours and apply() ([#1484](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1484)) ([c0e03c3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c0e03c323b27e8e604e9f10a788ae33f92fa3bd2))
+
+
+### Performance Improvements
+
+* **user profile:** vastly reduce number of queries ([#1482](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1482)) ([9e20920](https://github.com/Vatsim-Scandinavia/controlcenter/commit/9e20920e45116f3e387d11baa1c9561bbb29466e))
+
+
+### Miscellaneous Chores
+
+* add Tailwind v4 + SortableJS ([7cf4644](https://github.com/Vatsim-Scandinavia/controlcenter/commit/7cf4644bdc0ff116c4783668dca0cc370271d686))
+* **docs:** remove goofy pipe docs ([286be9a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/286be9a2a255a83e5f9cde3326be133fe0ea7887))
+* install Livewire 3 and Flux v4 ([6fbf1f6](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6fbf1f6d0731720fb90c6fdc77aff3e40d03015b))
+* rebuild npm lock ([df9846d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/df9846d00fc7593a3acfc0d0910d94dded24f715))
+
+
+### Code Refactoring
+
+* remove unused laravel/ui ([4bda52e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4bda52e6718aa3c96fa08b1beec003ea153f4916))
+
 ## [7.0.0-alpha.04](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.03...v7.0.0-alpha.04) (2026-05-30)
 
 
