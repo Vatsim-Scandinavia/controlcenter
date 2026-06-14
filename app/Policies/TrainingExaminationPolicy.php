@@ -19,7 +19,7 @@ class TrainingExaminationPolicy
      */
     public function view(User $user, TrainingExamination $examination)
     {
-        return $user->hasPermission('manage-examinations', $examination->training->area) || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->isExaminer());
+        return $user->hasPermission('examinations.manage', $examination->training->area) || ($examination->training->mentors->contains($user) || $user->is($examination->training->user) || $user->isExaminer());
     }
 
     /**
@@ -30,7 +30,7 @@ class TrainingExaminationPolicy
     public function create(User $user, Training $training)
     {
 
-        if ($user->hasPermission('create-examinations')) {
+        if ($user->hasPermission('examinations.create')) {
             return true;
         }
 
@@ -51,7 +51,7 @@ class TrainingExaminationPolicy
      */
     public function update(User $user, TrainingExamination $examination)
     {
-        return $examination->draft ? ($user->hasPermission('manage-examinations', $examination->training->area) || $user->isExaminer()) : $user->hasPermission('manage-examinations', $examination->training->area);
+        return $examination->draft ? ($user->hasPermission('examinations.manage', $examination->training->area) || $user->isExaminer()) : $user->hasPermission('examinations.manage', $examination->training->area);
     }
 
     /**
@@ -61,6 +61,6 @@ class TrainingExaminationPolicy
      */
     public function delete(User $user, TrainingExamination $trainingExamination)
     {
-        return $user->hasPermission('manage-examinations', $trainingExamination->training->area);
+        return $user->hasPermission('examinations.manage', $trainingExamination->training->area);
     }
 }

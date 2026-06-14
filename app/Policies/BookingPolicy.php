@@ -34,7 +34,7 @@ class BookingPolicy
             $user->isAtcActive() && $user->rating >= VatsimRating::S1->value
             || $user->hasActiveEndorsement('VISITING')
             || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
-            || $user->hasPermission('manage-bookings');
+            || $user->hasPermission('bookings.manage');
     }
 
     /**
@@ -55,7 +55,7 @@ class BookingPolicy
         }
 
         // The booking is not Discord but the user is moderator or above
-        if ($booking->source != 'DISCORD' && $user->hasPermission('manage-bookings')) {
+        if ($booking->source != 'DISCORD' && $user->hasPermission('bookings.manage')) {
             return Response::allow();
         }
 
@@ -75,7 +75,7 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user): bool
     {
-        if ($user->hasPermission('manage-bookings')) {
+        if ($user->hasPermission('bookings.manage')) {
             return true;
         }
 
@@ -98,7 +98,7 @@ class BookingPolicy
     public function bookExamTag(User $user): bool
     {
 
-        return $user->isMember() && ($user->rating >= VatsimRating::C1->value || $user->hasPermission('manage-bookings'));
+        return $user->isMember() && ($user->rating >= VatsimRating::C1->value || $user->hasPermission('bookings.manage'));
     }
 
     /**
@@ -109,7 +109,7 @@ class BookingPolicy
     public function position(User $user, Booking $booking)
     {
         // TODO: Make it easier to read the order of checks
-        if (($booking->position->rating->value > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->hasPermission('manage-bookings')) {
+        if (($booking->position->rating->value > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->hasPermission('bookings.manage')) {
             if (
                 $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
                 $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating >= $booking->position->rating->value &&

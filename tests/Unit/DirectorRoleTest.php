@@ -19,8 +19,8 @@ class DirectorRoleTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
 
-        $this->assertFalse($director->hasPermission('view-system-health'));
-        $this->assertFalse($director->hasPermission('manage-area', $area));
+        $this->assertFalse($director->hasPermission('system.health.view'));
+        $this->assertFalse($director->hasPermission('system.settings.manage', $area));
     }
 
     #[Test]
@@ -31,6 +31,6 @@ class DirectorRoleTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
 
-        $this->assertFalse($director->hasPermission('manage-users', $otherArea));
+        $this->assertFalse($director->hasPermission('users.manage', $otherArea));
     }
 }

@@ -86,8 +86,8 @@ class TrainingsTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
 
-        $this->assertTrue($director->hasPermission('mentor-trainings', $area));
-        $this->assertTrue($director->hasPermission('view-mentor-dashboard'));
+        $this->assertTrue($director->hasPermission('training.mentor', $area));
+        $this->assertTrue($director->hasPermission('training.mentor-dashboard.view'));
     }
 
     #[Test]
@@ -219,7 +219,7 @@ class TrainingsTest extends TestCase
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
 
         $this->assertTrue($director->can('create', Training::class));
-        $this->assertTrue($director->hasPermission('view-training-activities', Area::factory()->create()));
+        $this->assertTrue($director->hasPermission('training.activities.view', Area::factory()->create()));
     }
 
     #[Test]

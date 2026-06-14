@@ -19,7 +19,7 @@ class VotePolicy
      */
     public function index(User $user)
     {
-        return $user->hasPermission('manage-votes');
+        return $user->hasPermission('system.votes.manage');
     }
 
     /**
@@ -29,7 +29,7 @@ class VotePolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission('manage-votes');
+        return $user->hasPermission('system.votes.manage');
     }
 
     /**
@@ -39,7 +39,7 @@ class VotePolicy
      */
     public function store(User $user)
     {
-        return $user->hasPermission('manage-votes');
+        return $user->hasPermission('system.votes.manage');
     }
 
     /**

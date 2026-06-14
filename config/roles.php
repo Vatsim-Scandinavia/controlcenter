@@ -45,85 +45,141 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Permission Catalogue
+    |--------------------------------------------------------------------------
+    |
+    | The flat, authoritative list of every concrete permission. This drives
+    | gate registration and the expansion of wildcard patterns in the matrix.
+    | A permission must appear here to exist.
+    |
+    */
+    'permissions' => [
+        // Training
+        'training.view',
+        'training.create',
+        'training.update',
+        'training.delete',
+        'training.mentor',
+        'training.mentor-dashboard.view',
+        'training.ratings.manage',
+        'training.reports.view',
+        'training.reports.create',
+        'training.reports.update',
+        'training.reports.delete',
+        'training.reports.one-time-link',
+        'training.attachments.view-hidden',
+        'training.activities.view',
+        'training.statistics.view',
+        'training.notifications.receive',
+
+        // Examinations
+        'examinations.manage',
+        'examinations.create',
+
+        // Endorsements
+        'endorsements.solo.manage',
+        'endorsements.solo.delete',
+        'endorsements.visiting.manage',
+        'endorsements.visiting.delete',
+        'endorsements.examiner.manage',
+        'endorsements.examiner.delete',
+
+        // FIR operations
+        'fir.positions.manage',
+        'fir.management.reports.view',
+
+        // Users
+        'users.manage',
+        'users.access.view',
+        'users.workmail.use',
+
+        // Tasks
+        'tasks.manage',
+        'tasks.suggested-recipient',
+
+        // Files
+        'files.manage',
+        'files.upload',
+
+        // Feedback
+        'feedback.correlated.view',
+        'feedback.uncorrelated.view',
+
+        // Bookings
+        'bookings.bypass-restrictions',
+        'bookings.manage',
+        'bookings.sweatbox.use',
+        'bookings.sweatbox.manage',
+
+        // Notifications
+        'notifications.inactivity.receive',
+        'notifications.templates.manage',
+
+        // System
+        'system.health.view',
+        'system.settings.manage',
+        'system.votes.manage',
+        'system.activity-log.view',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Permission Matrix
     |--------------------------------------------------------------------------
     |
-    | Map specific granular permissions to the assigned roles.
+    | Maps each role to the permission patterns it grants. Patterns support
+    | dot-wildcards: '*' matches exactly one segment, '**' matches one or more,
+    | and a leading '!' negates (deny always wins over allow).
     |
     */
     'matrix' => [
-        // Training permissions
-        'view-training' => ['admin', 'director', 'moderator', 'mentor', 'buddy'],
-        'create-training' => ['admin', 'director', 'moderator', 'mentor'],
-        'update-training' => ['admin', 'director', 'moderator'],
-        'delete-training' => ['admin', 'director'],
-        'mentor-trainings' => ['admin', 'director', 'moderator', 'mentor'],
-        'view-mentor-dashboard' => ['admin', 'director', 'moderator', 'mentor'],
-
-        // Training reports
-        'view-training-reports' => ['admin', 'director', 'moderator'],
-        'create-training-reports' => ['admin', 'director', 'moderator'],
-        'update-training-reports' => ['admin', 'director', 'moderator'],
-        'delete-training-reports' => ['admin', 'director', 'moderator'],
-        'use-report-one-time-link' => ['mentor', 'buddy'],
-        'view-hidden-training-attachments' => ['mentor'],
-
-        // Examinations
-        'manage-examinations' => ['admin', 'director', 'moderator'],
-        'create-examinations' => ['admin'],
-
-        // Area management
-        'manage-area' => ['admin'],
-
-        // System
-        'view-system-health' => ['admin'],
-        'manage-settings' => ['admin'],
-        'manage-votes' => ['admin'],
-        'view-activity-log' => ['admin'],
-
-        // Users & Access
-        'manage-users' => ['admin', 'director', 'moderator'],
-        'view-user-access' => ['admin', 'director', 'moderator'],
-
-        // Operations
-        'manage-positions' => ['admin', 'director', 'moderator', 'nav-editor'],
-
-        // Endorsements
-        'manage-endorsements' => ['admin', 'director', 'moderator'],
-        'manage-visiting-endorsements' => ['admin', 'director'],
-        'manage-examiner-endorsements' => ['admin', 'director'],
-
-        // Tasks
-        'manage-tasks' => ['admin', 'director', 'moderator', 'mentor'],
-        'suggested-task-recipient' => ['admin', 'director', 'moderator'],
-
-        // Files
-        'manage-files' => ['admin', 'director', 'moderator'],
-        'upload-files' => ['admin', 'director', 'moderator', 'mentor'],
-
-        // Reports
-        'view-management-reports' => ['admin', 'director', 'moderator'],
-        'view-training-activities' => ['admin', 'director', 'moderator'],
-        'view-training-statistics' => ['admin', 'director', 'moderator'],
-
-        // Feedback
-        'view-correlated-feedback' => ['admin', 'director', 'moderator'],
-        'view-uncorrelated-feedback' => ['admin', 'director', 'moderator'],
-
-        // Bookings
-        'bypass-booking-restrictions' => ['admin', 'director', 'moderator', 'mentor'],
-        'manage-bookings' => ['admin', 'director', 'moderator'],
-        'use-sweatbook' => ['admin', 'director', 'moderator', 'mentor'],
-        'manage-sweatbook' => ['admin', 'director', 'moderator'],
-
-        // Alerts & notifications
-        'receive-inactivity-alerts' => ['admin', 'director', 'moderator'],
-        'receive-training-notifications' => ['admin', 'director', 'moderator'],
-
-        // Notification templates
-        'manage-notification-templates' => ['admin', 'director', 'moderator'],
-
-        // Workmail
-        'use-workmail' => ['admin', 'director', 'moderator'],
+        'admin' => [
+            '**',
+            '!training.reports.one-time-link',
+            '!training.attachments.view-hidden',
+        ],
+        'director' => [
+            '**',
+            '!system.**',
+            '!examinations.create',
+            '!training.reports.one-time-link',
+            '!training.attachments.view-hidden',
+        ],
+        'moderator' => [
+            'training.**',
+            '!training.delete',
+            '!training.ratings.manage',
+            '!training.reports.one-time-link',
+            '!training.attachments.view-hidden',
+            'examinations.manage',
+            'endorsements.solo.*',
+            'fir.positions.manage',
+            'fir.management.reports.view',
+            'users.**',
+            'tasks.**',
+            'files.**',
+            'feedback.**',
+            'bookings.**',
+            'notifications.**',
+        ],
+        'nav-editor' => [
+            'fir.positions.*',
+        ],
+        'mentor' => [
+            'training.view',
+            'training.create',
+            'training.mentor',
+            'training.mentor-dashboard.view',
+            'training.reports.one-time-link',
+            'training.attachments.view-hidden',
+            'tasks.manage',
+            'files.upload',
+            'bookings.bypass-restrictions',
+            'bookings.sweatbox.use',
+        ],
+        'buddy' => [
+            'training.view',
+            'training.reports.one-time-link',
+        ],
     ],
 ];

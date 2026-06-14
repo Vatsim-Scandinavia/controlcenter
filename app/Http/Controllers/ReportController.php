@@ -56,7 +56,7 @@ class ReportController extends Controller
     {
         if (! $filterArea) {
             if ($response = $this->resolveAreaScope(
-                'view-training-statistics',
+                'training.statistics.view',
                 'reports.training.area',
                 'Training Statistics',
             )) {
@@ -147,7 +147,7 @@ class ReportController extends Controller
     {
         if (! $filterArea) {
             if ($response = $this->resolveAreaScope(
-                'view-training-activities',
+                'training.activities.view',
                 'reports.activities.area',
                 'Training Activities',
             )) {
@@ -218,7 +218,7 @@ class ReportController extends Controller
     {
         $this->authorize('viewMentors', ManagementReport::class);
 
-        $scope = auth()->user()->accessibleAreasForPermission('view-management-reports');
+        $scope = auth()->user()->accessibleAreasForPermission('fir.management.reports.view');
 
         $query = User::whereHas('roleAssignments', function ($q) {
             $q->where('role', 'mentor');
@@ -253,8 +253,8 @@ class ReportController extends Controller
         $this->authorize('viewFeedback', ManagementReport::class);
 
         $user = auth()->user();
-        $correlatedScope = $user->accessibleAreasForPermission('view-correlated-feedback');
-        $canViewUncorrelated = $user->accessibleAreasForPermission('view-uncorrelated-feedback')->hasAccess();
+        $correlatedScope = $user->accessibleAreasForPermission('feedback.correlated.view');
+        $canViewUncorrelated = $user->accessibleAreasForPermission('feedback.uncorrelated.view')->hasAccess();
 
         $feedback = Feedback::with(['submitter', 'referenceUser', 'referencePosition.area'])
             ->latest()

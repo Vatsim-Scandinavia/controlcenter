@@ -121,7 +121,7 @@ class UserUnitTest extends TestCase
     {
         $this->user->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
 
-        $scope = $this->user->accessibleAreasForPermission('view-training-statistics');
+        $scope = $this->user->accessibleAreasForPermission('training.statistics.view');
 
         $this->assertTrue($scope->isGlobal);
         $this->assertTrue($scope->hasAccess());
@@ -133,7 +133,7 @@ class UserUnitTest extends TestCase
         $area = Area::factory()->create();
         $this->user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
 
-        $scope = $this->user->accessibleAreasForPermission('view-training-statistics');
+        $scope = $this->user->accessibleAreasForPermission('training.statistics.view');
 
         $this->assertFalse($scope->isGlobal);
         $this->assertTrue($scope->hasAccess());
@@ -149,7 +149,7 @@ class UserUnitTest extends TestCase
         $this->user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area1->id]);
         $this->user->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area2->id]);
 
-        $scope = $this->user->accessibleAreasForPermission('view-training-statistics');
+        $scope = $this->user->accessibleAreasForPermission('training.statistics.view');
 
         $this->assertFalse($scope->isGlobal);
         $this->assertCount(2, $scope->areas);

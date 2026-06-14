@@ -10,8 +10,8 @@ The catalogue of roles, permissions, and configuration knobs that ship with Cont
 
 | Role | Scope | Description |
 | --- | --- | --- |
-| `admin` | `global` | System-wide administrator. Assignable **only** via the `user:makeadmin` CLI command — never through the UI. Bypasses area checks (via the per-policy `before` hook) and is expected to be listed against every permission you want unrestricted. |
-| `director` | `both` | Director of an area, or of the whole organisation when assigned globally. Holds every admin permission except the system-level ones (`manage-area`, `view-system-health`). Only global admins and global directors may grant or revoke it. |
+| `admin` | `global` | System-wide administrator. Assignable **only** via the `user:makeadmin` CLI command — never through the UI. Bypasses area checks (via the per-policy `before` hook) and holds every permission except those explicitly negated in its matrix entry. |
+| `director` | `both` | Director of an area, or of the whole organisation when assigned globally. Holds every permission except the `system.**` namespace (e.g. `system.health.view`, `system.settings.manage`). Only global admins and global directors may grant or revoke it. |
 | `moderator` | `both` | Area moderator. Manages users, reports, positions, and endorsements within the assigned area, or system-wide if assigned globally. |
 | `nav-editor` | `area` | Navigational editor. May edit operationally relevant sector data such as positions within the assigned area. |
 | `mentor` | `area` | Training mentor. Can manage and view training within the assigned area. |
@@ -30,21 +30,30 @@ The `scope` field on a role restricts where assignments are allowed:
 - `area` — only area-scoped assignments (`area_id` required).
 - `both` — either; an area-less assignment behaves as system-wide.
 
-## Default Permission Matrix
+## Permission Catalogue and Matrix
 
-??? abstract "Default matrix in `config/roles.php`"
-    The default permission-to-role mapping lives in the `matrix` block of
-    [`config/roles.php` on `main`](https://github.com/Vatsim-Scandinavia/controlcenter/blob/main/config/roles.php).
+`config/roles.php` holds three blocks:
 
-A permission that is not listed in the matrix grants no role — `admin` included. The "administrators can do anything" behaviour is a per-policy convention (a `before` hook), not a property of the matrix.
+- `roles` — the role definitions above.
+- `permissions` — the flat catalogue of every dot-namespaced permission that exists.
+- `matrix` — maps each role to the permission **patterns** it grants.
+
+Patterns support dot-wildcards:
+
+- `*` matches exactly one segment — `fir.positions.*` covers `fir.positions.manage` but not `fir.positions.foo.bar`.
+- `**` matches one or more segments — `training.**` covers `training.view` and `training.reports.view`.
+- A leading `!` negates a pattern; deny always wins. This is how `director` gets everything except `system.**`.
+
+A permission granted by no role, or absent from the catalogue, grants nothing — `admin` included. The "administrators can do anything" behaviour remains a per-policy `before` hook, not a property of the matrix.
 
 ## Customising Roles and Permissions
 
 `config/roles.php` is the single source of truth.
 
-- **Rewire** an existing permission by changing the role list for that key in the `matrix` block. Example: drop `mentor` from `bypass-booking-restrictions` to tighten booking enforcement.
-- **Add** a new role by adding an entry under `roles` with a `name`, `description`, and `scope`, then add it to whichever permissions it should hold in the `matrix`.
-- **Remove** a role you don't use by deleting it from `roles`, dropping it from any permission lists in the `matrix`, and clearing its assignments from the `role_user` table.
+- **Rewire** a role by editing its pattern list in the `matrix` block. Example: drop `bookings.sweatbox.use` from `mentor` to remove their sweatbox access.
+- **Add** a new permission by adding it to the `permissions` catalogue and granting it to roles via patterns in the `matrix`.
+- **Add** a new role by adding an entry under `roles`, then granting it permissions in the `matrix`.
+- **Remove** a role by deleting it from `roles` and `matrix`, and clearing its assignments from the `role_user` table.
 
 After changing the file, clear the config cache so the new mapping is picked up:
 

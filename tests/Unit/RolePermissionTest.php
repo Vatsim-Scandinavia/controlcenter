@@ -16,19 +16,25 @@ class RolePermissionTest extends TestCase
         parent::setUp();
 
         config([
-            'roles.matrix' => [
-                'view-training' => ['admin', 'moderator', 'mentor', 'buddy'],
-                'create-training' => ['admin', 'moderator', 'mentor'],
-                'update-training' => ['admin', 'moderator'],
-                'delete-training' => ['admin'],
-                'mentor-specific' => ['mentor'],
-                'manage-area' => ['admin'],
-            ],
             'roles.roles' => [
                 'admin' => ['name' => 'Admin', 'description' => 'A', 'scope' => 'global'],
                 'moderator' => ['name' => 'Mod', 'description' => 'M', 'scope' => 'both'],
                 'mentor' => ['name' => 'Mentor', 'description' => 'M', 'scope' => 'area'],
                 'buddy' => ['name' => 'Buddy', 'description' => 'B', 'scope' => 'area'],
+            ],
+            'roles.permissions' => [
+                'training.view',
+                'training.create',
+                'training.update',
+                'training.delete',
+                'training.mentor-specific',
+                'test-permission',
+            ],
+            'roles.matrix' => [
+                'admin' => ['**'],
+                'moderator' => ['training.view', 'training.create', 'training.update'],
+                'mentor' => ['training.view', 'training.create', 'training.mentor-specific'],
+                'buddy' => ['training.view'],
             ],
         ]);
     }
@@ -73,13 +79,13 @@ class RolePermissionTest extends TestCase
         ]);
 
         // Moderator can update training
-        $this->assertTrue($user->hasPermission('update-training', $area));
+        $this->assertTrue($user->hasPermission('training.update', $area));
 
         // Moderator cannot delete training
-        $this->assertFalse($user->hasPermission('delete-training', $area));
+        $this->assertFalse($user->hasPermission('training.delete', $area));
 
         // Moderator cannot do mentor-specific actions
-        $this->assertFalse($user->hasPermission('mentor-specific', $area));
+        $this->assertFalse($user->hasPermission('training.mentor-specific', $area));
     }
 
     public function test_user_has_multiple_roles()
@@ -120,7 +126,7 @@ class RolePermissionTest extends TestCase
 
     public function test_all_with_permission_scoped_to_area_includes_global_and_area_holders()
     {
-        config(['roles.matrix.test-permission' => ['admin', 'moderator']]);
+        config(['roles.matrix.moderator' => ['training.view', 'training.create', 'training.update', 'test-permission']]);
 
         $area = Area::factory()->create();
         $otherArea = Area::factory()->create();
@@ -147,7 +153,7 @@ class RolePermissionTest extends TestCase
 
     public function test_all_with_permission_without_area_includes_holders_anywhere()
     {
-        config(['roles.matrix.test-permission' => ['admin', 'moderator']]);
+        config(['roles.matrix.moderator' => ['training.view', 'training.create', 'training.update', 'test-permission']]);
 
         $area = Area::factory()->create();
 
@@ -169,7 +175,7 @@ class RolePermissionTest extends TestCase
 
     public function test_all_with_permission_matches_has_permission_semantics()
     {
-        config(['roles.matrix.test-permission' => ['moderator']]);
+        config(['roles.matrix.moderator' => ['test-permission']]);
 
         $area = Area::factory()->create();
         $otherArea = Area::factory()->create();
@@ -195,7 +201,7 @@ class RolePermissionTest extends TestCase
 
     public function test_all_with_permission_returns_each_user_once_despite_multiple_assignments()
     {
-        config(['roles.matrix.test-permission' => ['admin', 'moderator']]);
+        config(['roles.matrix.moderator' => ['training.view', 'training.create', 'training.update', 'test-permission']]);
 
         $area = Area::factory()->create();
 

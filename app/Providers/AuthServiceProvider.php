@@ -22,9 +22,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $matrix = config('roles.matrix', []);
-
-        foreach ($matrix as $permission => $roles) {
+        foreach (config('roles.permissions', []) as $permission) {
             Gate::define($permission, function ($user, $area = null) use ($permission) {
                 return $user->hasPermission($permission, $area);
             });

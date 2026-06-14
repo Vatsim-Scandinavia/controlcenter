@@ -4,11 +4,11 @@
 @section('title-flex')
     <div>
         <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
-        @if(\Auth::user()->accessibleAreasForPermission('view-training-activities')->isGlobal)
+        @if(\Auth::user()->accessibleAreasForPermission('training.activities.view')->isGlobal)
             <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities') }}">All Areas</a>
         @endif
         @foreach($areas as $area)
-            @can('view-training-activities', $area)
+            @can('training.activities.view', $area)
                 <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
             @endcan
         @endforeach

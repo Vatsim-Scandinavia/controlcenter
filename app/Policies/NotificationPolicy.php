@@ -17,7 +17,7 @@ class NotificationPolicy
      */
     public function viewTemplates(User $user)
     {
-        return $user->hasPermission('manage-notification-templates');
+        return $user->hasPermission('notifications.templates.manage');
     }
 
     /**
@@ -27,6 +27,6 @@ class NotificationPolicy
      */
     public function modifyAreaTemplate(User $user, Area $area)
     {
-        return $user->hasPermission('manage-notification-templates', $area);
+        return $user->hasPermission('notifications.templates.manage', $area);
     }
 }

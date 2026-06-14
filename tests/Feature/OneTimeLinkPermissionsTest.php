@@ -21,8 +21,8 @@ class OneTimeLinkPermissionsTest extends TestCase
         $moderator = User::factory()->create();
         $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
 
-        $this->assertTrue($buddy->hasPermission('use-report-one-time-link'));
-        $this->assertFalse($moderator->hasPermission('use-report-one-time-link'));
+        $this->assertTrue($buddy->hasPermission('training.reports.one-time-link'));
+        $this->assertFalse($moderator->hasPermission('training.reports.one-time-link'));
     }
 
     public function test_director_holds_update_training_in_their_area(): void
@@ -31,6 +31,6 @@ class OneTimeLinkPermissionsTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
 
-        $this->assertTrue($director->hasPermission('update-training', $area));
+        $this->assertTrue($director->hasPermission('training.update', $area));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
+use App\Services\PermissionMatrix;
 use App\Support\AreaScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -67,7 +68,7 @@ class User extends Authenticatable
      */
     public static function allWithPermission(string $permission, ?Area $area = null): Collection
     {
-        $allowedRoles = config("roles.matrix.{$permission}", []);
+        $allowedRoles = app(PermissionMatrix::class)->rolesFor($permission);
 
         if (empty($allowedRoles)) {
             return (new User)->newCollection();
@@ -504,7 +505,7 @@ class User extends Authenticatable
 
     public function hasPermission(string $permission, ?Area $area = null): bool
     {
-        $allowedRoles = config("roles.matrix.{$permission}", []);
+        $allowedRoles = app(PermissionMatrix::class)->rolesFor($permission);
         if (empty($allowedRoles)) {
             return false;
         }
@@ -514,7 +515,7 @@ class User extends Authenticatable
 
     public function accessibleAreasForPermission(string $permission): AreaScope
     {
-        $allowedRoles = config("roles.matrix.{$permission}", []);
+        $allowedRoles = app(PermissionMatrix::class)->rolesFor($permission);
 
         if (empty($allowedRoles)) {
             return AreaScope::forAreas(collect());

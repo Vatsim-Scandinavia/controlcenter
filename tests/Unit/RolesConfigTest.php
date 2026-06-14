@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Services\PermissionMatrix;
 use Tests\TestCase;
 
 class RolesConfigTest extends TestCase
@@ -10,39 +11,39 @@ class RolesConfigTest extends TestCase
     {
         $definedRoles = array_keys(config('roles.roles'));
 
-        foreach (config('roles.matrix') as $permission => $roles) {
-            foreach ($roles as $role) {
-                $this->assertContains($role, $definedRoles, "Permission {$permission} references undefined role {$role}");
-            }
+        foreach (array_keys(config('roles.matrix')) as $role) {
+            $this->assertContains($role, $definedRoles, "Matrix references undefined role {$role}");
         }
     }
 
-    public function test_permissions_for_migrated_hasrole_checks_exist(): void
+    public function test_every_role_grants_at_least_one_permission(): void
     {
-        $matrix = config('roles.matrix');
+        $matrix = new PermissionMatrix;
 
-        $expected = [
-            'manage-tasks', 'suggested-task-recipient',
-            'manage-files', 'upload-files',
-            'manage-bookings', 'use-sweatbook', 'manage-sweatbook',
-            'manage-notification-templates',
-            'view-training-reports', 'create-training-reports', 'update-training-reports', 'delete-training-reports',
-            'use-report-one-time-link', 'view-hidden-training-attachments',
-            'manage-examinations', 'create-examinations',
-            'view-mentor-dashboard', 'mentor-trainings',
-            'receive-training-notifications',
-            'manage-settings', 'manage-votes', 'view-activity-log',
-        ];
-
-        foreach ($expected as $permission) {
-            $this->assertArrayHasKey($permission, $matrix);
+        foreach (array_keys(config('roles.matrix')) as $role) {
+            $this->assertNotEmpty($matrix->permissionsFor($role), "Role '{$role}' grants no permissions.");
         }
     }
 
-    public function test_every_matrix_permission_has_at_least_one_role(): void
+    public function test_permission_catalogue_is_unique_and_non_empty(): void
     {
-        foreach (config('roles.matrix') as $permission => $roles) {
-            $this->assertNotEmpty($roles, "Permission '{$permission}' has no roles assigned.");
+        $permissions = config('roles.permissions');
+
+        $this->assertNotEmpty($permissions);
+        $this->assertSame(array_unique($permissions), $permissions, 'The permission catalogue contains duplicates.');
+    }
+
+    public function test_all_returns_the_catalogue(): void
+    {
+        $this->assertSame(array_values(config('roles.permissions')), (new PermissionMatrix)->all());
+    }
+
+    public function test_no_orphan_permissions(): void
+    {
+        $matrix = new PermissionMatrix;
+
+        foreach ($matrix->all() as $permission) {
+            $this->assertNotEmpty($matrix->rolesFor($permission), "Permission '{$permission}' is granted to no role.");
         }
     }
 }
