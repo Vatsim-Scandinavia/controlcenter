@@ -2,98 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLevel;
 use App\Models\ActivityLog;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
- * This controller logs various activity and stores it in database for logging purposes.
+ * Displays the activity log and provides backwards-compatible logging shims.
+ *
+ * The static debug/info/warning/danger methods are thin wrappers over the
+ * activity() helper, kept so the ~28 existing call sites keep working while they
+ * are migrated to the new API. They are removed once migration is complete.
  */
 class ActivityLogController extends Controller
 {
     /**
-     * Internal function to save the log according to type
-     *
-     * @param  string  $type
-     * @param  string  $message
-     * @return void
+     * Write a legacy-style log entry, mapping the free-text category onto the
+     * activity log_name and the severity onto the level.
      */
-    private static function log($type, $category, $message)
+    private static function record(ActivityLevel $level, string $category, string $message): void
     {
-        $log = new ActivityLog();
-
-        $log->type = $type;
-        $log->category = $category;
-        $log->message = $message;
-
-        $request = request();
-
-        if (isset($request)) {
-            if (isset($request->user()->id)) {
-                $log->user_id = $request->user()->id;
-            }
-
-            $log->ip_address = $request->ip();
-            $log->user_agent = $request->userAgent();
-        }
-
-        $log->created_at = now();
-        $log->save();
+        activity(Str::lower($category))
+            ->tap(fn (ActivityLog $log) => $log->level = $level)
+            ->log($message);
     }
 
-    /**
-     * Store a debug log
-     *
-     * @param  string  $message
-     * @return void
-     */
-    public static function debug($category, $message)
+    public static function debug(string $category, string $message): void
     {
-        ActivityLogController::log('DEBUG', $category, $message);
+        self::record(ActivityLevel::Debug, $category, $message);
     }
 
-    /**
-     * Store a info log
-     *
-     * @param  string  $message
-     * @return void
-     */
-    public static function info($category, $message)
+    public static function info(string $category, string $message): void
     {
-        ActivityLogController::log('INFO', $category, $message);
+        self::record(ActivityLevel::Info, $category, $message);
     }
 
-    /**
-     * Store a warning log
-     *
-     * @param  string  $message
-     * @return void
-     */
-    public static function warning($category, $message)
+    public static function warning(string $category, string $message): void
     {
-        ActivityLogController::log('WARNING', $category, $message);
+        self::record(ActivityLevel::Warning, $category, $message);
     }
 
-    /**
-     * Store a danger log
-     *
-     * @param  string  $message
-     * @return void
-     */
-    public static function danger($category, $message)
+    public static function danger(string $category, string $message): void
     {
-        ActivityLogController::log('DANGER', $category, $message);
+        self::record(ActivityLevel::Danger, $category, $message);
     }
 
     /**
      * Display a listing of the logs to the view.
      *
-     * @param  anlutro\LaravelSettings\Facade  $setting
-     * @return View
-     *
      * @throws AuthorizationException
      */
-    public function index()
+    public function index(): View
     {
         $this->authorize('index', ActivityLog::class);
         $logs = ActivityLog::where('category', '!=', null)->with('user')->get()->sortByDesc('created_at');
