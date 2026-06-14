@@ -27,6 +27,34 @@ This is due to a change in the StatSim API offering which we didn't get around t
 
 The new API requires the use of a dedicated API key, which has a corresponding [required new environment variable for authenticating to StatSim](configuration/index.md#vatsim).
 
+### Access Management: CLI-only Admin and the new Director role
+
+The `admin` role is now strictly system-wide and can no longer be granted, scoped
+to an area, or revoked through the web UI. It is assigned exclusively via:
+
+```sh
+php artisan user:makeadmin
+```
+
+A new `director` [role takes over the "full access to an area" use-case](reference/permissions.md).
+It can be assigned per area or globally through the user access page, and holds every admin permission except the system-level ones (`manage-area`, `view-system-health`).
+Only global admins and global directors can grant or revoke directorships.
+
+#### Manual step after upgrading
+
+Members of the previous administrator group are migrated as **global admins** and
+retain full access. After upgrading, review who actually needs system-wide admin
+rights:
+
+1. Grant `director` (per-area or global) through the UI to those who only need
+   area- or organisation-level management access.
+2. Remove their admin assignment from the `role_user` table directly
+   (`DELETE FROM role_user WHERE user_id = <cid> AND role = 'admin';`).
+   There is no CLI command for revoking admin yet.
+   <!-- TODO: replace with `user:removeadmin` once available. -->
+
+Until this review is done, previously migrated admins keep unrestricted access.
+
 ### Theme System Migration
 
 The theme system has been completely redesigned to support light/dark themes and user preferences.
