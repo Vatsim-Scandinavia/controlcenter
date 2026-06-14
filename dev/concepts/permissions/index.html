@@ -2115,24 +2115,24 @@
 <p>The system has three layers, intentionally separated so an operator can shift policy without changing code:</p>
 <ol>
 <li><strong>Roles</strong> describe what kind of contributor a user is — administrator, moderator, mentor, and so on. A role is an identifier you can assign to a user, optionally inside an area.</li>
-<li><strong>Permissions</strong> describe individual capabilities — <code>manage-positions</code>, <code>view-management-reports</code>, and the like. They are not assigned to users directly; they are defined in a <strong>matrix</strong> that maps each permission to the roles that may exercise it.</li>
+<li><strong>Permissions</strong> describe individual capabilities — <code>fir.positions.manage</code>, <code>training.reports.view</code>, and the like. They are dot-namespaced (<code>{domain}.{action}</code>) and listed in a <strong>catalogue</strong>. They are never assigned to users directly; the <strong>matrix</strong> maps each role to the permission patterns it grants.</li>
 <li><strong>Areas</strong> scope a role assignment to part of the division (an ARTCC, a <abbr title="Virtual Area Control Centre">vACC</abbr>, a sector group). The same user can hold the same role in several areas at once, in a single area, or globally.</li>
 </ol>
-<p>Both the role list and the matrix live in <code>config/roles.php</code>. Granting a role to a new permission, retiring a role, or introducing a new role is a configuration change, not a code change or migration.</p>
+<p>All three blocks — <code>roles</code>, <code>permissions</code>, and <code>matrix</code> — live in <code>config/roles.php</code>. The matrix is keyed by role, so granting a role a new capability, retiring a role, or introducing a new role is a configuration change, not a code change or migration.</p>
 <h2 id="how-a-check-resolves">How a Check Resolves<a class="headerlink" href="#how-a-check-resolves" title="Permanent link">&para;</a></h2>
 <p>Authorisation asks two questions when checking a permission:</p>
 <ol>
-<li><strong>Does the user hold a role that grants this permission?</strong> The matrix is consulted to find which roles satisfy it.</li>
+<li><strong>Does the user hold a role that grants this permission?</strong> The matrix is consulted to find which roles' patterns grant it.</li>
 <li><strong>Does at least one of those role assignments cover the relevant area?</strong> If the action targets an area, the assignment must either be in that area or be a global one. Area-agnostic actions only need the role somewhere.</li>
 </ol>
-<p>The matrix is authoritative: a permission that is not listed grants no role — even <code>admin</code>. The familiar "administrators can do anything" behaviour is a <strong>per-policy convention</strong>, implemented as a <code>before</code> hook in individual policy classes (for example <code>PositionPolicy::before()</code> returns <code>true</code> when the user holds <code>admin</code>). Resources whose policies install that hook let admins through regardless of the matrix; gates and policies without it are bound strictly by it.</p>
+<p>The catalogue is authoritative: a permission that is absent from the <code>permissions</code> catalogue grants nothing — even for <code>admin</code>. The familiar "administrators can do anything" behaviour is a <strong>per-policy convention</strong>, implemented as a <code>before</code> hook in individual policy classes (for example <code>PositionPolicy::before()</code> returns <code>true</code> when the user holds <code>admin</code>). Resources whose policies install that hook let admins through regardless of the matrix; gates and policies without it are bound strictly by it.</p>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>A user holds <code>nav-editor</code> in Area A.</p>
 <ul>
-<li>Editing a position in <strong>Area A</strong> — allowed: <code>manage-positions</code> includes <code>nav-editor</code>, and the assignment matches the position's area.</li>
+<li>Editing a position in <strong>Area A</strong> — allowed: <code>fir.positions.manage</code> is in <code>nav-editor</code>'s pattern list, and the assignment matches the position's area.</li>
 <li>Editing a position in <strong>Area B</strong> — denied: the role assignment does not cover Area B.</li>
-<li>Moving a position from <strong>Area A to Area B</strong> — denied unless the user also holds <code>nav-editor</code> (or another role granting <code>manage-positions</code>) in Area B.</li>
+<li>Moving a position from <strong>Area A to Area B</strong> — denied unless the user also holds <code>nav-editor</code> (or another role granting <code>fir.positions.manage</code>) in Area B.</li>
 </ul>
 </blockquote>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
@@ -2172,7 +2172,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 20:15:08 UTC">June 14, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 21:01:59 UTC">June 14, 2026</span>
   </span>
 
     
@@ -2182,7 +2182,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 20:15:08 UTC">June 14, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 21:01:59 UTC">June 14, 2026</span>
   </span>
 
     

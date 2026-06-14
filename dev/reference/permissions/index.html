@@ -1757,10 +1757,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#default-permission-matrix" class="md-nav__link">
+  <a href="#permission-catalogue-and-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default Permission Matrix
+        Permission Catalogue and Matrix
       
     </span>
   </a>
@@ -2063,10 +2063,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#default-permission-matrix" class="md-nav__link">
+  <a href="#permission-catalogue-and-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default Permission Matrix
+        Permission Catalogue and Matrix
       
     </span>
   </a>
@@ -2135,12 +2135,12 @@
 <tr>
 <td><code>admin</code></td>
 <td><code>global</code></td>
-<td>System-wide administrator. Assignable <strong>only</strong> via the <code>user:makeadmin</code> CLI command — never through the UI. Bypasses area checks (via the per-policy <code>before</code> hook) and is expected to be listed against every permission you want unrestricted.</td>
+<td>System-wide administrator. Assignable <strong>only</strong> via the <code>user:makeadmin</code> CLI command — never through the UI. Bypasses area checks (via the per-policy <code>before</code> hook) and holds every permission except those explicitly negated in its matrix entry.</td>
 </tr>
 <tr>
 <td><code>director</code></td>
 <td><code>both</code></td>
-<td>Director of an area, or of the whole organisation when assigned globally. Holds every admin permission except the system-level ones (<code>manage-area</code>, <code>view-system-health</code>). Only global admins and global directors may grant or revoke it.</td>
+<td>Director of an area, or of the whole organisation when assigned globally. Holds every permission except the <code>system.**</code> namespace (e.g. <code>system.health.view</code>, <code>system.settings.manage</code>). Only global admins and global directors may grant or revoke it.</td>
 </tr>
 <tr>
 <td><code>moderator</code></td>
@@ -2177,19 +2177,27 @@ deleting the row from the <code>role_user</code> table directly.
 <li><code>area</code> — only area-scoped assignments (<code>area_id</code> required).</li>
 <li><code>both</code> — either; an area-less assignment behaves as system-wide.</li>
 </ul>
-<h2 id="default-permission-matrix">Default Permission Matrix<a class="headerlink" href="#default-permission-matrix" title="Permanent link">&para;</a></h2>
-<details class="abstract">
-<summary>Default matrix in <code>config/roles.php</code></summary>
-<p>The default permission-to-role mapping lives in the <code>matrix</code> block of
-<a href="https://github.com/Vatsim-Scandinavia/controlcenter/blob/main/config/roles.php"><code>config/roles.php</code> on <code>main</code></a>.</p>
-</details>
-<p>A permission that is not listed in the matrix grants no role — <code>admin</code> included. The "administrators can do anything" behaviour is a per-policy convention (a <code>before</code> hook), not a property of the matrix.</p>
+<h2 id="permission-catalogue-and-matrix">Permission Catalogue and Matrix<a class="headerlink" href="#permission-catalogue-and-matrix" title="Permanent link">&para;</a></h2>
+<p><code>config/roles.php</code> holds three blocks:</p>
+<ul>
+<li><code>roles</code> — the role definitions above.</li>
+<li><code>permissions</code> — the flat catalogue of every dot-namespaced permission that exists.</li>
+<li><code>matrix</code> — maps each role to the permission <strong>patterns</strong> it grants.</li>
+</ul>
+<p>Patterns support dot-wildcards:</p>
+<ul>
+<li><code>*</code> matches exactly one segment — <code>fir.positions.*</code> covers <code>fir.positions.manage</code> but not <code>fir.positions.foo.bar</code>.</li>
+<li><code>**</code> matches one or more segments — <code>training.**</code> covers <code>training.view</code> and <code>training.reports.view</code>.</li>
+<li>A leading <code>!</code> negates a pattern; deny always wins. This is how <code>director</code> gets everything except <code>system.**</code>.</li>
+</ul>
+<p>A permission granted by no role, or absent from the catalogue, grants nothing — <code>admin</code> included. The "administrators can do anything" behaviour remains a per-policy <code>before</code> hook, not a property of the matrix.</p>
 <h2 id="customising-roles-and-permissions">Customising Roles and Permissions<a class="headerlink" href="#customising-roles-and-permissions" title="Permanent link">&para;</a></h2>
 <p><code>config/roles.php</code> is the single source of truth.</p>
 <ul>
-<li><strong>Rewire</strong> an existing permission by changing the role list for that key in the <code>matrix</code> block. Example: drop <code>mentor</code> from <code>bypass-booking-restrictions</code> to tighten booking enforcement.</li>
-<li><strong>Add</strong> a new role by adding an entry under <code>roles</code> with a <code>name</code>, <code>description</code>, and <code>scope</code>, then add it to whichever permissions it should hold in the <code>matrix</code>.</li>
-<li><strong>Remove</strong> a role you don't use by deleting it from <code>roles</code>, dropping it from any permission lists in the <code>matrix</code>, and clearing its assignments from the <code>role_user</code> table.</li>
+<li><strong>Rewire</strong> a role by editing its pattern list in the <code>matrix</code> block. Example: drop <code>bookings.sweatbox.use</code> from <code>mentor</code> to remove their sweatbox access.</li>
+<li><strong>Add</strong> a new permission by adding it to the <code>permissions</code> catalogue and granting it to roles via patterns in the <code>matrix</code>.</li>
+<li><strong>Add</strong> a new role by adding an entry under <code>roles</code>, then granting it permissions in the <code>matrix</code>.</li>
+<li><strong>Remove</strong> a role by deleting it from <code>roles</code> and <code>matrix</code>, and clearing its assignments from the <code>role_user</code> table.</li>
 </ul>
 <p>After changing the file, clear the config cache so the new mapping is picked up:</p>
 <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
@@ -2260,7 +2268,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 20:15:08 UTC">June 14, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 21:01:59 UTC">June 14, 2026</span>
   </span>
 
     
@@ -2270,7 +2278,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 20:15:08 UTC">June 14, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 21:01:59 UTC">June 14, 2026</span>
   </span>
 
     
