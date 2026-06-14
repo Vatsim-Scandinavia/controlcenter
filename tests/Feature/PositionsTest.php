@@ -300,43 +300,46 @@ class PositionsTest extends TestCase
 
     // /region Logging
     #[Test]
-    public function position_creation_is_logged()
+    public function position_lifecycle_is_logged()
     {
-        $this->markTestIncomplete('activity logging not implemented yet');
         ActivityLog::query()->delete();
+
+        // Created
         $this->actingAs($this->admin)->post(route('positions.store'), $this->positionData);
-        $this->assertDatabaseCount('activity_logs', 1);
-        $log = ActivityLog::first();
-        $this->assertEquals('SECTOR', $log->category);
-        $this->assertStringContainsString('Position created', $log->message);
-        $this->assertStringContainsString($this->positionData['callsign'], $log->message);
+        $position = Position::where('callsign', $this->positionData['callsign'])->firstOrFail();
+
+        $created = $this->latestLogFor($position, 'created');
+        $this->assertSame('sector', $created->log_name);
+        $this->assertStringContainsString('Position created', $created->description);
+        $this->assertStringContainsString($position->callsign, $created->description);
+
+        // Updated — the changed attribute is captured
+        $this->actingAs($this->admin)
+            ->put(route('positions.update', $position), array_merge($this->positionData, ['name' => 'New Name']));
+
+        $updated = $this->latestLogFor($position, 'updated');
+        $this->assertStringContainsString('Position updated', $updated->description);
+        $this->assertSame('New Name', $updated->attribute_changes['attributes']['name']);
+
+        // Deleted
+        $this->actingAs($this->admin)->delete(route('positions.destroy', $position));
+
+        $deleted = $this->latestLogFor($position, 'deleted');
+        $this->assertStringContainsString('Position deleted', $deleted->description);
+        $this->assertStringContainsString($position->callsign, $deleted->description);
     }
 
-    #[Test]
-    public function position_update_is_logged()
+    private function latestLogFor(Position $position, string $event): ActivityLog
     {
-        $this->markTestIncomplete('activity logging not implemented yet');
-        ActivityLog::query()->delete();
-        $data = array_merge($this->existingPosition->toArray(), ['name' => 'New Name', 'fir' => 'NEWF']);
-        $this->actingAs($this->admin)->put(route('positions.update', $this->existingPosition), $data);
-        $this->assertDatabaseCount('activity_logs', 1);
-        $log = ActivityLog::first();
-        $this->assertEquals('SECTOR', $log->category);
-        $this->assertStringContainsString('Position updated', $log->message);
-        $this->assertStringContainsString("Name: {$this->existingPosition->name} → New Name", $log->message);
-    }
+        $log = ActivityLog::where('subject_type', Position::class)
+            ->where('subject_id', $position->id)
+            ->where('event', $event)
+            ->latest('id')
+            ->first();
 
-    #[Test]
-    public function position_deletion_is_logged()
-    {
-        $this->markTestIncomplete('activity logging not implemented yet');
-        ActivityLog::query()->delete();
-        $this->actingAs($this->admin)->delete(route('positions.destroy', $this->existingPosition));
-        $this->assertDatabaseCount('activity_logs', 1);
-        $log = ActivityLog::first();
-        $this->assertEquals('SECTOR', $log->category);
-        $this->assertStringContainsString('Position deleted', $log->message);
-        $this->assertStringContainsString($this->existingPosition->callsign, $log->message);
+        $this->assertNotNull($log, "Expected a '{$event}' activity log for the position.");
+
+        return $log;
     }
     // /endregion
 
