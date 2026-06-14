@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": ">=8.3 <8.6",
+        "php": ">=8.4 <8.6",
         "anlutro/l4-settings": "^1.4.1",
         "graham-campbell/markdown": "^16.0",
         "guzzlehttp/guzzle": "^7.9.0",
@@ -43,7 +43,7 @@
             "php-http/discovery": true
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         }
     },
     "extra": {
