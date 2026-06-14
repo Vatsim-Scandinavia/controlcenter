@@ -65,8 +65,8 @@ class UpdateMemberDetails extends Command
             // Remove any active trainings and training roles
             $mentor->teaches()->detach();
 
-            // Remove training role assignments
-            $mentor->roleAssignments()->delete();
+            // Remove training role assignments (delete per-model so each revocation is logged)
+            $mentor->roleAssignments()->get()->each->delete();
             $mentor->save();
 
             $count++;

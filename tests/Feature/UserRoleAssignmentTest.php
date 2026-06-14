@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ActivityLog;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -65,6 +66,31 @@ class UserRoleAssignmentTest extends TestCase
             'role' => 'moderator',
             'area_id' => $this->area->id,
         ]);
+    }
+
+    public function test_revoking_a_role_via_the_update_endpoint_is_logged(): void
+    {
+        $this->target->roleAssignments()->create([
+            'role' => 'moderator',
+            'area_id' => $this->area->id,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->patch(route('user.update', $this->target), [])
+            ->assertRedirect();
+
+        $log = ActivityLog::where('subject_type', User::class)
+            ->where('subject_id', $this->target->id)
+            ->where('log_name', 'role')
+            ->where('event', 'deleted')
+            ->latest('id')
+            ->first();
+
+        $this->assertNotNull($log);
+        $this->assertSame('Role revoked', $log->description);
+        $this->assertSame('moderator', $log->properties['role']);
+        $this->assertSame($this->area->name, $log->properties['area']);
+        $this->assertSame($this->admin->id, $log->causer_id);
     }
 
     public function test_global_row_is_visible_on_user_show_page(): void

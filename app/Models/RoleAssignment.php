@@ -63,6 +63,41 @@ class RoleAssignment extends Model
 
         static::creating($validate);
         static::updating($validate);
+
+        static::created(function (RoleAssignment $assignment) {
+            $assignment->logRoleAssignmentActivity('created', 'Role granted');
+        });
+
+        static::updated(function (RoleAssignment $assignment) {
+            $assignment->logRoleAssignmentActivity('updated', 'Role assignment updated');
+        });
+
+        static::deleted(function (RoleAssignment $assignment) {
+            $assignment->logRoleAssignmentActivity('deleted', 'Role revoked');
+        });
+    }
+
+    /**
+     * Record this assignment change against the affected user so it surfaces
+     * on, and links to, their profile in the activity log. The granted role
+     * and its area (or "Global") are stored as properties.
+     */
+    protected function logRoleAssignmentActivity(string $event, string $description): void
+    {
+        $user = $this->user;
+
+        if ($user === null) {
+            return;
+        }
+
+        activity('role')
+            ->performedOn($user)
+            ->event($event)
+            ->withProperties([
+                'role' => $this->role,
+                'area' => $this->area?->name ?? 'Global',
+            ])
+            ->log($description);
     }
 
     /**

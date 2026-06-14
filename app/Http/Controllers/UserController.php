@@ -380,8 +380,8 @@ class UserController extends Controller
                         }
                     }
 
-                    // Detach the permission
-                    $assignments->delete();
+                    // Detach the permission (delete per-model so the revocation is logged)
+                    $assignments->get()->each->delete();
                 }
             }
 

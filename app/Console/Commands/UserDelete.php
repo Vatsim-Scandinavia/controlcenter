@@ -83,7 +83,7 @@ class UserDelete extends Command
                 if ($confirmed) {
                     // Remove things from Control Center
                     $this->closeUserTrainings($user);
-                    $user->roleAssignments()->delete();
+                    $user->roleAssignments()->get()->each->delete();
 
                     $user->email = 'void@void.void';
                     $user->first_name = 'Anonymous';
