@@ -1,5 +1,35 @@
 # Changelog
 
+## [7.0.0-alpha.07](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.06...v7.0.0-alpha.07) (2026-06-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* require PHP 8.4+ due to activity logs
+
+### Features
+
+* **logs:** install spatie/laravel-activitylog and make migration ([301f67c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/301f67cbbcb02bacb6b3d7b0d4fb3250770a1d23))
+* **logs:** support automatic audit logging on per-model basis ([cb64b54](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cb64b54714fb642bdc7cc2b4573b25699953587b))
+* **roles:** add matrix permisison entries for role migration ([f18741b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f18741ba28f847f8c55522b8012df08035b43b68))
+* **roles:** create audit logs for role assignments ([f5b5c63](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f5b5c63e5eb9535beaae5e4b0dd04edfc1f418fe))
+
+
+### Bug Fixes
+
+* **notifications:** drive training notification BCC from permissions ([d4034d7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d4034d7476b494cc5a384718d33584ac0b0fe905))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency bootstrap-table to v1.27.3 ([#1465](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1465)) ([64209f4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/64209f409d73457d0ed8f2c160e194ef6d14c060))
+* **deps:** update docker.io/library/php docker tag to v8.5.7 ([#1488](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1488)) ([518d79a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/518d79ae49a09566812f234165fe4e1027cc5513))
+
+
+### Code Refactoring
+
+* require PHP 8.4+ due to activity logs ([49983f4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/49983f4ff2477ba9f983264cb3ffde59137b5223))
+
 ## [7.0.0-alpha.06](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.05...v7.0.0-alpha.06) (2026-06-12)
 
 
