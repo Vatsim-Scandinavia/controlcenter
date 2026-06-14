@@ -387,9 +387,9 @@ class BookingServiceTest extends TestCase
         $this->service->logBookingCreated($booking);
 
         $this->assertDatabaseHas('activity_logs', [
-            'type' => 'INFO',
-            'category' => 'BOOKING',
-            'message' => 'Created booking booking ' . $booking->id .
+            'level' => 'info',
+            'log_name' => 'booking',
+            'description' => 'Created booking booking ' . $booking->id .
                 ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
                 ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
                 ' ― Position: ' . $position->callsign,
@@ -407,9 +407,9 @@ class BookingServiceTest extends TestCase
         $this->service->logBookingDeleted($booking);
 
         $this->assertDatabaseHas('activity_logs', [
-            'type' => 'WARNING',
-            'category' => 'BOOKING',
-            'message' => 'Deleted sweatbox booking ' . $booking->id .
+            'level' => 'warning',
+            'log_name' => 'booking',
+            'description' => 'Deleted sweatbox booking ' . $booking->id .
                 ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
                 ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
                 ' ― Position: ' . $position->callsign,
