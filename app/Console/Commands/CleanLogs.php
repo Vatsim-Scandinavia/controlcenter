@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ActivityLog;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class CleanLogs extends Command
 {
@@ -21,34 +19,19 @@ class CleanLogs extends Command
      *
      * @var string
      */
-    protected $description = 'Clean and purge old logs';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Scrub IP and user agent details from old activity log entries';
 
     /**
      * Execute the console command.
      *
-     * @return void
+     * Deletion of old entries is handled separately by the activitylog:clean
+     * command (see config/activitylog.php).
      */
-    public function handle()
+    public function handle(): void
     {
-        $entries = ActivityLog::where('created_at', '<', Carbon::now()->subWeeks(2))->get();
-        foreach ($entries as $entry) {
-            $entry->ip_address = null;
-            $entry->user_agent = null;
-            $entry->save();
-        }
+        $scrubbed = ActivityLog::where('created_at', '<', now()->subWeeks(2))
+            ->update(['ip_address' => null, 'user_agent' => null]);
 
-        DB::table('activity_logs')->where('created_at', '<', Carbon::now()->subMonths(3)->format('Y-m-d H:i:s'))->delete();
-
-        $this->info('All logs older than two weeks has been purged for IP and user agent details. Logs older than three months have been deleted.');
+        $this->info("Scrubbed IP and user agent details from {$scrubbed} activity log entries older than two weeks.");
     }
 }

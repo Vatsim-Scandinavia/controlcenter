@@ -49,8 +49,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('clean:votes')
             ->everyMinute();
 
-        // Clean IP addresses and user agent information from old logs and very old logs
+        // Scrub IP addresses and user agent information from old activity logs
         $schedule->command('clean:logs')
+            ->daily();
+
+        // Delete activity log entries older than the configured retention period
+        $schedule->command('activitylog:clean')
             ->daily();
 
         // Daily fetch updated member data from OAuth provider
