@@ -4,11 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App;
 use App\Helpers\TrainingStatus;
-use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Position;
 use App\Models\User;
+use App\Services\ActivityLogService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -164,7 +164,7 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', 'Created booking booking' . $booking->id . ' via API' .
+        ActivityLogService::info('BOOKING', 'Created booking booking' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -328,7 +328,7 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::info('BOOKING', 'Updated booking booking ' . $booking->id . ' via API' .
+        ActivityLogService::info('BOOKING', 'Updated booking booking ' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -361,7 +361,7 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogController::warning('BOOKING', 'Deleted booking booking ' . $booking->id . ' via API' .
+        ActivityLogService::warning('BOOKING', 'Deleted booking booking ' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);

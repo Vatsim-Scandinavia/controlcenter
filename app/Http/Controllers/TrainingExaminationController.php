@@ -13,6 +13,7 @@ use App\Models\TrainingExamination;
 use App\Models\User;
 use App\Notifications\MentorExaminationNotification;
 use App\Notifications\TrainingExamNotification;
+use App\Services\ActivityLogService;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -172,7 +173,7 @@ class TrainingExaminationController extends Controller
         $this->authorize('delete', $examination);
 
         $examination->delete();
-        ActivityLogController::danger('TRAINING', 'Deleted training examination ' . $examination->id . ' ― From Training ' . $examination->training->id);
+        ActivityLogService::danger('TRAINING', 'Deleted training examination ' . $examination->id . ' ― From Training ' . $examination->training->id);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Examination successfully deleted']);

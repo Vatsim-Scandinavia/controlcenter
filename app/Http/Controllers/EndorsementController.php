@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
+use App\Services\ActivityLogService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -143,7 +144,7 @@ class EndorsementController extends Controller
             // Add ratings
             $endorsement->ratings()->save(Rating::find($data['ratingFACILITY']));
 
-            ActivityLogController::warning('ENDORSEMENT', 'Created facility endorsement ' .
+            ActivityLogService::warning('ENDORSEMENT', 'Created facility endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Rating: ' . Rating::find($data['ratingFACILITY'])->name);
 
@@ -210,7 +211,7 @@ class EndorsementController extends Controller
             // Add positions
             $endorsement->positions()->save(Position::where('callsign', $data['position'])->get()->first());
 
-            ActivityLogController::warning('ENDORSEMENT', 'Created SOLO endorsement ' .
+            ActivityLogService::warning('ENDORSEMENT', 'Created SOLO endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Positions: ' . $data['position']);
 
@@ -249,7 +250,7 @@ class EndorsementController extends Controller
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
             $endorsement->areas()->saveMany(Area::find($data['areas']));
 
-            ActivityLogController::warning('ENDORSEMENT', 'Created ' . $endorsementType . ' endorsement ' .
+            ActivityLogService::warning('ENDORSEMENT', 'Created ' . $endorsementType . ' endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Rating: ' . $data['ratingGRP'] .
             ' ― Areas: ' . implode(',', $data['areas']));
@@ -277,7 +278,7 @@ class EndorsementController extends Controller
             $endorsement->areas()->saveMany(Area::find($data['areas']));
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
 
-            ActivityLogController::warning('ENDORSEMENT', 'Created ' . $endorsementType . ' endorsement ' .
+            ActivityLogService::warning('ENDORSEMENT', 'Created ' . $endorsementType . ' endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Areas: ' . implode(',', $data['areas']));
 
@@ -328,7 +329,7 @@ class EndorsementController extends Controller
         $endorsement->valid_to = now();
         $endorsement->save();
 
-        ActivityLogController::warning('ENDORSEMENT', 'Deleted ' . $user->name . '\'s ' . $endorsement->type . ' endorsement');
+        ActivityLogService::warning('ENDORSEMENT', 'Deleted ' . $user->name . '\'s ' . $endorsement->type . ' endorsement');
         if ($endorsement->type == 'SOLO') {
             $endorsement->user->notify(new EndorsementRevokedNotification($endorsement));
 
@@ -367,7 +368,7 @@ class EndorsementController extends Controller
         $endorsement->valid_to = $date;
         $endorsement->save();
 
-        ActivityLogController::warning('ENDORSEMENT', 'Shortened ' . User::find($endorsement->user_id)->name . '\'s ' . $endorsement->type . ' endorsement to date ' . $date);
+        ActivityLogService::warning('ENDORSEMENT', 'Shortened ' . User::find($endorsement->user_id)->name . '\'s ' . $endorsement->type . ' endorsement to date ' . $date);
         $endorsement->user->notify(new EndorsementModifiedNotification($endorsement));
 
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s " . $endorsement->type . ' endorsement shortened to ' . Carbon::parse($date)->toEuropeanDateTime() . '. E-mail sent to student.');

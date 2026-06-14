@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vote;
 use App\Models\VoteOption;
+use App\Services\ActivityLogService;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
@@ -101,7 +102,7 @@ class VoteController extends Controller
             $vote_option->save();
         }
 
-        ActivityLogController::danger('OTHER', 'Created vote ' . $vote->id . ' ― Question: ' . $vote->question);
+        ActivityLogService::danger('OTHER', 'Created vote ' . $vote->id . ' ― Question: ' . $vote->question);
 
         return redirect()->intended(route('vote.overview'))->withSuccess('Vote succesfully created.');
     }
@@ -152,7 +153,7 @@ class VoteController extends Controller
         $user = \Auth::user();
         $vote->user()->attach($user);
 
-        ActivityLogController::info('OTHER', 'Voted in vote poll ' . $vote->id);
+        ActivityLogService::info('OTHER', 'Voted in vote poll ' . $vote->id);
 
         return redirect()->intended(route('vote.show', $vote->id))->withSuccess('Your vote is succesfully registered.');
     }

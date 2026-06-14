@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Rules\InactivityReminderHours;
+use App\Services\ActivityLogService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -113,7 +114,7 @@ class GlobalSettingController extends Controller
         Setting::set('telemetryEnabled', $telemetryEnabled);
         Setting::save();
 
-        ActivityLogController::danger('OTHER', 'Global Settings Updated');
+        ActivityLogService::danger('OTHER', 'Global Settings Updated');
 
         return redirect()->intended(route('admin.settings'))->withSuccess('Server settings successfully changed');
     }

@@ -5,7 +5,6 @@ namespace App\Services;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
-use App\Http\Controllers\ActivityLogController;
 use App\Models\Booking;
 use App\Models\Position;
 use App\Models\Sweatbook;
@@ -190,17 +189,17 @@ class BookingService
     public function logBookingCreated(Booking|Sweatbook $booking, bool $bulk = false): void
     {
         $kind = $bulk ? 'booking BULK' : $this->bookingKind($booking);
-        ActivityLogController::info('BOOKING', 'Created ' . $kind . ' ' . $this->describeBooking($booking));
+        ActivityLogService::info('BOOKING', 'Created ' . $kind . ' ' . $this->describeBooking($booking));
     }
 
     public function logBookingUpdated(Booking|Sweatbook $booking): void
     {
-        ActivityLogController::info('BOOKING', 'Updated ' . $this->bookingKind($booking) . ' ' . $this->describeBooking($booking));
+        ActivityLogService::info('BOOKING', 'Updated ' . $this->bookingKind($booking) . ' ' . $this->describeBooking($booking));
     }
 
     public function logBookingDeleted(Booking|Sweatbook $booking): void
     {
-        ActivityLogController::warning('BOOKING', 'Deleted ' . $this->bookingKind($booking) . ' ' . $this->describeBooking($booking));
+        ActivityLogService::warning('BOOKING', 'Deleted ' . $this->bookingKind($booking) . ' ' . $this->describeBooking($booking));
     }
 
     private function bookingKind(Booking|Sweatbook $booking): string

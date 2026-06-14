@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OAuthController;
 use App\Models\User;
+use App\Services\ActivityLogService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -92,9 +92,9 @@ class LoginController extends Controller
 
         $roles = \Auth::user()->roleAssignments->pluck('role')->unique();
         if ($roles->isNotEmpty()) {
-            ActivityLogController::warning('ACCESS', 'Logged in with ' . $roles->join(', ') . ' access');
+            ActivityLogService::warning('ACCESS', 'Logged in with ' . $roles->join(', ') . ' access');
         } else {
-            ActivityLogController::info('ACCESS', 'Logged in with User access');
+            ActivityLogService::info('ACCESS', 'Logged in with User access');
         }
 
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
@@ -141,7 +141,7 @@ class LoginController extends Controller
      */
     public function logout()
     {
-        ActivityLogController::info('ACCESS', 'Logged out.');
+        ActivityLogService::info('ACCESS', 'Logged out.');
         auth()->logout();
 
         return redirect(route('front'))->withSuccess('You have been successfully logged out');

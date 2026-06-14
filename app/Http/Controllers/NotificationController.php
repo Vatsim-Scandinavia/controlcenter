@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Services\ActivityLogService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,7 +63,7 @@ class NotificationController extends Controller
 
         $area->save();
 
-        ActivityLogController::warning('OTHER', 'Training Notification Text Updated ― Area: ' . $area->name);
+        ActivityLogService::warning('OTHER', 'Training Notification Text Updated ― Area: ' . $area->name);
 
         return redirect()->intended(route('admin.templates.area', $area->id))->withSuccess($area->name . "'s notifications updated.");
     }
