@@ -89,21 +89,8 @@ class CheckOnlineControllers extends Command
                             $user->last_inactivity_warning = now();
                             $user->save();
 
-                            // Send warning to all admins, and moderators in selected area
-                            $sendToStaff = User::allWithRole('admin');
-
-                            if (isset($area)) {
-                                $moderators = User::allWithRole('moderator');
-                                foreach ($moderators as $m) {
-                                    if ($sendToStaff->where('id', $m->id)->count()) {
-                                        continue;
-                                    }
-
-                                    if ($m->hasRole('moderator', $area)) {
-                                        $sendToStaff->push($m);
-                                    }
-                                }
-                            }
+                            // Send warning to staff holding the alert permission, limited to the position's area when known
+                            $sendToStaff = User::allWithPermission('receive-inactivity-alerts', $area);
 
                             $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d['callsign'], $d['logon_time']));
                         } else {

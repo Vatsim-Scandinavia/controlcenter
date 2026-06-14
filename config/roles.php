@@ -88,5 +88,8 @@ return [
 
         // Bookings
         'bypass-booking-restrictions' => ['admin', 'director', 'moderator', 'mentor'],
+
+        // Alerts
+        'receive-inactivity-alerts' => ['admin', 'director', 'moderator'],
     ],
 ];

@@ -7,6 +7,7 @@ use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Support\AreaScope;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,6 +55,33 @@ class User extends Authenticatable
 
         return User::whereHas('roleAssignments', function ($query) use ($roles) {
             $query->whereIn('role', $roles);
+        })->get();
+    }
+
+    /**
+     * Find all users granted the given permission, mirroring hasPermission():
+     * without an area, holding the permission anywhere is sufficient; with an
+     * area, the assignment must be global or in that area.
+     *
+     * @return Collection<int, User>
+     */
+    public static function allWithPermission(string $permission, ?Area $area = null): Collection
+    {
+        $allowedRoles = config("roles.matrix.{$permission}", []);
+
+        if (empty($allowedRoles)) {
+            return (new User)->newCollection();
+        }
+
+        return User::whereHas('roleAssignments', function ($query) use ($allowedRoles, $area) {
+            $query->whereIn('role', $allowedRoles);
+
+            if ($area !== null) {
+                $query->where(function ($areaQuery) use ($area) {
+                    $areaQuery->whereNull('area_id')
+                        ->orWhere('area_id', $area->id);
+                });
+            }
         })->get();
     }
 
