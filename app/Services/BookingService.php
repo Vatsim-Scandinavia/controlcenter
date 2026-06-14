@@ -40,7 +40,7 @@ class BookingService
     public function getBookablePositions(User $user)
     {
         // Moderators and above can book any position
-        if ($user->hasPermission('bypass-booking-restrictions')) {
+        if ($user->hasPermission('bookings.bypass-restrictions')) {
             return Position::all();
         }
 
@@ -141,7 +141,7 @@ class BookingService
      */
     public function shouldForceTrainingTag(Booking $booking, Position $position, User $bookingUser): bool
     {
-        if ($bookingUser->hasPermission('bypass-booking-restrictions')) {
+        if ($bookingUser->hasPermission('bookings.bypass-restrictions')) {
             return false;
         }
 

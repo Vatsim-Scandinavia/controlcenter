@@ -106,10 +106,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating > $user->rating) && ! $user->hasPermission('bypass-booking-restrictions')) {
+        if (($booking->position->rating > $user->rating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bypass-booking-restrictions')) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {
@@ -200,7 +200,7 @@ class BookingController extends Controller
             $positions = $positions->merge($user->getActiveTraining()->area->positions->where('rating', '<=', $user->getActiveTraining()->first()->vatsim_rating));
         }
 
-        if ($user->hasPermission('bypass-booking-restrictions')) {
+        if ($user->hasPermission('bookings.bypass-restrictions')) {
             $positions = Position::all();
         }
 
@@ -271,10 +271,10 @@ class BookingController extends Controller
 
         $forcedTrainingTag = false;
 
-        if (($booking->position->rating > $user->rating) && ! $user->hasPermission('bypass-booking-restrictions')) {
+        if (($booking->position->rating > $user->rating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
-        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bypass-booking-restrictions')) {
+        } elseif ($position->requiredRating && ! $user->hasEndorsementRating($position->requiredRating) && ! $user->hasPermission('bookings.bypass-restrictions')) {
             $booking->training = 1;
             $forcedTrainingTag = true;
         } else {

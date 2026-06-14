@@ -17,7 +17,7 @@ class UserPolicy
      */
     public function index(User $user)
     {
-        return $user->hasPermission('manage-users');
+        return $user->hasPermission('users.manage');
     }
 
     /**
@@ -27,7 +27,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->is($model) || $user->hasPermission('manage-users') || $user->isTeaching($model);
+        return $user->is($model) || $user->hasPermission('users.manage') || $user->isTeaching($model);
     }
 
     /**
@@ -37,7 +37,7 @@ class UserPolicy
      */
     public function viewAccess(User $user)
     {
-        return $user->hasPermission('view-user-access');
+        return $user->hasPermission('users.access.view');
     }
 
     /**
@@ -47,7 +47,7 @@ class UserPolicy
      */
     public function viewReports(User $user, User $model)
     {
-        return $user->is($model) || $user->hasPermission('view-management-reports');
+        return $user->is($model) || $user->hasPermission('fir.management.reports.view');
     }
 
     /**
@@ -57,7 +57,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return $user->hasPermission('manage-users');
+        return $user->hasPermission('users.manage');
     }
 
     /**

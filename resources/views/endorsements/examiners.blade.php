@@ -3,7 +3,7 @@
 @section('title', 'Examiners')
 @section('title-flex')
     <div>
-        @can('manage-examiner-endorsements')
+        @can('endorsements.examiner.manage')
             <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
         @endcan
     </div>

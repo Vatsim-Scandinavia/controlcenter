@@ -64,7 +64,7 @@ class TaskPermissionsTest extends TestCase
         $moderator = User::factory()->create();
         $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
 
-        $this->assertFalse($mentor->hasPermission('suggested-task-recipient'));
-        $this->assertTrue($moderator->hasPermission('suggested-task-recipient'));
+        $this->assertFalse($mentor->hasPermission('tasks.suggested-recipient'));
+        $this->assertTrue($moderator->hasPermission('tasks.suggested-recipient'));
     }
 }

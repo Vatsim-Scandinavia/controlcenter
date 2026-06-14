@@ -90,7 +90,7 @@ class CheckOnlineControllers extends Command
                             $user->save();
 
                             // Send warning to staff holding the alert permission, limited to the position's area when known
-                            $sendToStaff = User::allWithPermission('receive-inactivity-alerts', $area);
+                            $sendToStaff = User::allWithPermission('notifications.inactivity.receive', $area);
 
                             $user->notify(new InactiveOnlineStaffNotification($sendToStaff, $user, $d['callsign'], $d['logon_time']));
                         } else {

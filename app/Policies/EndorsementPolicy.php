@@ -17,7 +17,7 @@ class EndorsementPolicy
      */
     public function view(User $user)
     {
-        return $user == Auth::user() || $user->hasPermission('manage-endorsements');
+        return $user == Auth::user() || $user->hasPermission('endorsements.solo.manage');
     }
 
     /**
@@ -28,14 +28,14 @@ class EndorsementPolicy
     public function create(User $user, $type = null)
     {
         if ($type == 'VISITING') {
-            return $user->hasPermission('manage-visiting-endorsements');
+            return $user->hasPermission('endorsements.visiting.manage');
         }
 
         if ($type == 'EXAMINER') {
-            return $user->hasPermission('manage-examiner-endorsements');
+            return $user->hasPermission('endorsements.examiner.manage');
         }
 
-        return $user->hasPermission('manage-endorsements');
+        return $user->hasPermission('endorsements.solo.manage');
     }
 
     /**
@@ -52,14 +52,14 @@ class EndorsementPolicy
 
         // Check if user got correct permissions
         if ($endorsement->type == 'VISITING') {
-            return $user->hasPermission('manage-visiting-endorsements');
+            return $user->hasPermission('endorsements.visiting.delete');
         }
 
         if ($endorsement->type == 'EXAMINER') {
-            return $user->hasPermission('manage-examiner-endorsements');
+            return $user->hasPermission('endorsements.examiner.delete');
         }
 
-        return $user->hasPermission('manage-endorsements');
+        return $user->hasPermission('endorsements.solo.delete');
     }
 
     /**

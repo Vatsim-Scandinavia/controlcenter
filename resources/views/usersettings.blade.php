@@ -47,7 +47,7 @@
                                 @endif
                             </div>
 
-                            @can('manage-tasks')
+                            @can('tasks.manage')
                                 <hr>
 
                                 <h5>Mentor Notifications</h5>
@@ -61,7 +61,7 @@
 
                             @endcan
 
-                            @can('receive-training-notifications')
+                            @can('training.notifications.receive')
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>

@@ -480,7 +480,7 @@ class TrainingController extends Controller
         $notifyOfNewMentor = false;
         if (array_key_exists('mentors', $attributes)) {
             foreach ((array) $attributes['mentors'] as $mentor) {
-                if (! $training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->hasPermission('mentor-trainings', $training->area)) {
+                if (! $training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->hasPermission('training.mentor', $training->area)) {
                     $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
 
                     // Notify student of their new mentor

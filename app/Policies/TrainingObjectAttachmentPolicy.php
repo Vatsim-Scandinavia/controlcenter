@@ -19,7 +19,7 @@ class TrainingObjectAttachmentPolicy
     {
         $attachmentArea = $attachment->object->training->area;
 
-        return ($user->can('view', $attachment->object) && $attachment->hidden != true) || $user->hasPermission('view-hidden-training-attachments', $attachmentArea);
+        return ($user->can('view', $attachment->object) && $attachment->hidden != true) || $user->hasPermission('training.attachments.view-hidden', $attachmentArea);
     }
 
     /**
@@ -29,7 +29,7 @@ class TrainingObjectAttachmentPolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission('upload-files');
+        return $user->hasPermission('files.upload');
     }
 
     /**
@@ -39,6 +39,6 @@ class TrainingObjectAttachmentPolicy
      */
     public function delete(User $user, TrainingObjectAttachment $attachment)
     {
-        return $user->hasPermission('manage-files', $attachment->object->training->area) || $user->is($attachment->file->owner);
+        return $user->hasPermission('files.manage', $attachment->object->training->area) || $user->is($attachment->file->owner);
     }
 }

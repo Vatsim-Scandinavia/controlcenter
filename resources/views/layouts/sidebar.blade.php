@@ -52,7 +52,7 @@
             </li>
         @endif
 
-        @canany(['view-mentor-dashboard', 'use-sweatbook', 'view-management-reports'])
+        @canany(['training.mentor-dashboard.view', 'bookings.sweatbox.use', 'fir.management.reports.view'])
 
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
@@ -62,7 +62,7 @@
             Training
             </div>
 
-            @can('view-mentor-dashboard')
+            @can('training.mentor-dashboard.view')
                 <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('mentor') }}">
                     <i class="fas fa-fw fa-chalkboard-teacher"></i>
@@ -70,7 +70,7 @@
                 </li>
             @endcan
 
-            @can('use-sweatbook')
+            @can('bookings.sweatbox.use')
                 <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('sweatbook') }}">
                         <i class="fas fa-fw fa-calendar-alt"></i>
@@ -79,7 +79,7 @@
                 </li>
             @endcan
 
-            @can('view-management-reports')
+            @can('fir.management.reports.view')
 
                 {{-- Nav Item - Pages Collapse Menu --}}
                 <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
@@ -106,7 +106,7 @@
         Members
         </div>
 
-        @can('manage-users')
+        @can('users.manage')
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
@@ -170,7 +170,7 @@
 
 
 
-        @can('view-management-reports')
+        @can('fir.management.reports.view')
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
 
@@ -183,10 +183,10 @@
             <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
 
-                @can('view-training-statistics')
+                @can('training.statistics.view')
                     <a class="collapse-item" href="{{ route('reports.trainings') }}">Training Statistics</a>
                 @endcan
-                @can('view-training-activities')
+                @can('training.activities.view')
                     <a class="collapse-item" href="{{ route('reports.activities') }}">Training Activities</a>
                 @endcan
 
@@ -203,7 +203,7 @@
             </li>
         @endif
 
-        @if(auth()->user()->canAny(['view-system-health', 'manage-users']) || auth()->user()->can('viewAny', App\Models\Position::class))
+        @if(auth()->user()->canAny(['system.health.view', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <li class="nav-item {{ Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview') ? 'active' : '' }}">
@@ -213,13 +213,13 @@
             </a>
             <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#sidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                @can('view-system-health')
+                @can('system.health.view')
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
                 @endcan
 
-                @can('manage-users')
+                @can('users.manage')
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endcan
                 @can('viewAny', App\Models\Position::class)

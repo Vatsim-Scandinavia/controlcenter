@@ -29,7 +29,7 @@ class TrainingActivityPolicy
     public function view(User $user, Training $training, string $type)
     {
         if ($type == 'COMMENT') {
-            return $training->mentors->contains($user) || $user->hasPermission('view-training-activities', $training->area);
+            return $training->mentors->contains($user) || $user->hasPermission('training.activities.view', $training->area);
         }
 
         return true;

@@ -44,7 +44,10 @@ class UpdateWorkmailsTest extends TestCase
 
     public function test_workmail_eligibility_follows_configured_permission(): void
     {
-        config(['roles.matrix.use-workmail' => ['mentor']]);
+        config([
+            'roles.permissions' => ['users.workmail.use'],
+            'roles.matrix' => ['mentor' => ['users.workmail.use']],
+        ]);
 
         $area = Area::factory()->create();
 

@@ -17,7 +17,7 @@ class FilePolicy
      */
     public function view(User $user, File $file)
     {
-        return $user->hasPermission('manage-files') ||
+        return $user->hasPermission('files.manage') ||
                 $user->is($file->owner) ||
                 ($file->trainingReportAttachment != null ? $user->can('view', $file->trainingReportAttachment) : false);
     }
@@ -29,7 +29,7 @@ class FilePolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermission('upload-files');
+        return $user->hasPermission('files.upload');
     }
 
     /**
@@ -39,7 +39,7 @@ class FilePolicy
      */
     public function update(User $user, File $file)
     {
-        return $user->hasPermission('manage-files') || $user->is($file->owner);
+        return $user->hasPermission('files.manage') || $user->is($file->owner);
     }
 
     /**
@@ -49,6 +49,6 @@ class FilePolicy
      */
     public function delete(User $user, File $file)
     {
-        return $user->hasPermission('manage-files') || $user->is($file->owner);
+        return $user->hasPermission('files.manage') || $user->is($file->owner);
     }
 }

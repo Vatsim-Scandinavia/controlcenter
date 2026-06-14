@@ -80,7 +80,7 @@ class TrainingClosedNotification extends Notification implements ShouldQueue
         }
 
         // Find staff who wants notification of new training request
-        $bcc = User::allWithPermission('receive-training-notifications', $this->training->area)
+        $bcc = User::allWithPermission('training.notifications.receive', $this->training->area)
             ->where('setting_notify_closedreq', true);
 
         return (new TrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))

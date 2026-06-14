@@ -14,7 +14,7 @@ class PositionPolicy
 
     public function viewAny(User $user, ?Area $area = null): bool
     {
-        return $user->hasPermission('manage-positions', $area);
+        return $user->hasPermission('fir.positions.manage', $area);
     }
 
     public function before(User $user): ?bool
@@ -28,14 +28,14 @@ class PositionPolicy
 
     public function update(User $user, Position $position): Response
     {
-        return $user->hasPermission('manage-positions', $position->area)
+        return $user->hasPermission('fir.positions.manage', $position->area)
             ? Response::allow()
             : Response::deny('You are not authorized to update this position.');
     }
 
     public function delete(User $user, Position $position): Response
     {
-        return $user->hasPermission('manage-positions', $position->area)
+        return $user->hasPermission('fir.positions.manage', $position->area)
             ? Response::allow()
             : Response::deny('You are not authorized to delete this position.');
     }
@@ -46,14 +46,14 @@ class PositionPolicy
         // unsaved models (e.g. when authorising a create with a transient Position).
         $area = Area::find($position->area_id);
 
-        return $user->hasPermission('manage-positions', $area)
+        return $user->hasPermission('fir.positions.manage', $area)
             ? Response::allow()
             : Response::deny('You are not authorized to create positions in this area.');
     }
 
     public function createAny(User $user): Response
     {
-        return $user->hasPermission('manage-positions')
+        return $user->hasPermission('fir.positions.manage')
             ? Response::allow()
             : Response::deny('You are not authorized to create positions.');
     }
