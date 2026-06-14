@@ -47,7 +47,7 @@ return [
     |
     */
     /* x-release-please-start-version */
-    'version' => '7.0.0-alpha.06',
+    'version' => '7.0.0-alpha.07',
     /* x-release-please-end */
 
     /*
