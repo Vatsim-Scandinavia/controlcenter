@@ -2135,7 +2135,12 @@
 <tr>
 <td><code>admin</code></td>
 <td><code>global</code></td>
-<td>System-wide administrator. Bypasses area checks (via the per-policy <code>before</code> hook) and is expected to be listed against every permission you want unrestricted.</td>
+<td>System-wide administrator. Assignable <strong>only</strong> via the <code>user:makeadmin</code> CLI command — never through the UI. Bypasses area checks (via the per-policy <code>before</code> hook) and is expected to be listed against every permission you want unrestricted.</td>
+</tr>
+<tr>
+<td><code>director</code></td>
+<td><code>both</code></td>
+<td>Director of an area, or of the whole organisation when assigned globally. Holds every admin permission except the system-level ones (<code>manage-area</code>, <code>view-system-health</code>). Only global admins and global directors may grant or revoke it.</td>
 </tr>
 <tr>
 <td><code>moderator</code></td>
@@ -2159,6 +2164,12 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Removing an admin</p>
+<p>There is currently no CLI command to revoke the <code>admin</code> role; removal requires
+deleting the row from the <code>role_user</code> table directly.
+<!-- TODO: replace with <code>user:removeadmin</code> once available. --></p>
+</div>
 <h3 id="role-scope">Role Scope<a class="headerlink" href="#role-scope" title="Permanent link">&para;</a></h3>
 <p>The <code>scope</code> field on a role restricts where assignments are allowed:</p>
 <ul>
@@ -2167,40 +2178,11 @@
 <li><code>both</code> — either; an area-less assignment behaves as system-wide.</li>
 </ul>
 <h2 id="default-permission-matrix">Default Permission Matrix<a class="headerlink" href="#default-permission-matrix" title="Permanent link">&para;</a></h2>
-<p>The matrix in <code>config/roles.php</code>:</p>
-<div class="language-php highlight"><pre><span></span><code><span class="x">&#39;matrix&#39; =&gt; [</span>
-<span class="x">    // Training</span>
-<span class="x">    &#39;view-training&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;, &#39;buddy&#39;],</span>
-<span class="x">    &#39;create-training&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;],</span>
-<span class="x">    &#39;update-training&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-<span class="x">    &#39;delete-training&#39; =&gt; [&#39;admin&#39;],</span>
-
-<span class="x">    // Area &amp; system</span>
-<span class="x">    &#39;manage-area&#39; =&gt; [&#39;admin&#39;],</span>
-<span class="x">    &#39;view-system-health&#39; =&gt; [&#39;admin&#39;],</span>
-
-<span class="x">    // Users &amp; access</span>
-<span class="x">    &#39;manage-users&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-<span class="x">    &#39;view-user-access&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-
-<span class="x">    // Operations</span>
-<span class="x">    &#39;manage-positions&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;nav-editor&#39;],</span>
-
-<span class="x">    // Endorsements</span>
-<span class="x">    &#39;manage-endorsements&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-<span class="x">    &#39;manage-visiting-endorsements&#39; =&gt; [&#39;admin&#39;],</span>
-<span class="x">    &#39;manage-examiner-endorsements&#39; =&gt; [&#39;admin&#39;],</span>
-
-<span class="x">    // Reports</span>
-<span class="x">    &#39;view-management-reports&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-<span class="x">    &#39;view-training-activities&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-<span class="x">    &#39;view-training-statistics&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;],</span>
-<span class="x">    &#39;view-mentor-reports&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;],</span>
-
-<span class="x">    // Bookings</span>
-<span class="x">    &#39;bypass-booking-restrictions&#39; =&gt; [&#39;admin&#39;, &#39;moderator&#39;, &#39;mentor&#39;],</span>
-<span class="x">],</span>
-</code></pre></div>
+<details class="abstract">
+<summary>Default matrix in <code>config/roles.php</code></summary>
+<p>The default permission-to-role mapping lives in the <code>matrix</code> block of
+<a href="https://github.com/Vatsim-Scandinavia/controlcenter/blob/main/config/roles.php"><code>config/roles.php</code> on <code>main</code></a>.</p>
+</details>
 <p>A permission that is not listed in the matrix grants no role — <code>admin</code> included. The "administrators can do anything" behaviour is a per-policy convention (a <code>before</code> hook), not a property of the matrix.</p>
 <h2 id="customising-roles-and-permissions">Customising Roles and Permissions<a class="headerlink" href="#customising-roles-and-permissions" title="Permanent link">&para;</a></h2>
 <p><code>config/roles.php</code> is the single source of truth.</p>
@@ -2278,7 +2260,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 12:54:00 UTC">June 14, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 13:21:56 UTC">June 14, 2026</span>
   </span>
 
     
@@ -2288,7 +2270,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 12:54:00 UTC">June 14, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 14, 2026 13:21:56 UTC">June 14, 2026</span>
   </span>
 
     
