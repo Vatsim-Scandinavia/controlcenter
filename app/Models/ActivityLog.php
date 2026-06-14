@@ -18,7 +18,6 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
  */
 class ActivityLog extends BaseActivity
 {
-
     /**
      * Use the same database table convention as established.
      */

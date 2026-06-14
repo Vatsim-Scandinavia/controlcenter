@@ -461,7 +461,11 @@ class TrainingController extends Controller
                 return redirect($training->path())->withErrors('Training can not be reopened. The student already has an active training request.');
             }
 
-            $training->updateStatus($attributes['status']);
+            // Stage the status change (and its derived timestamps) in memory so
+            // the rest of this request reads the new state. Everything is then
+            // persisted together in the single update below, keeping the
+            // activity log to one entry per request.
+            $training->fill($training->resolveStatusChanges((int) $attributes['status']));
 
             if ($attributes['status'] != $oldStatus) {
                 if ($attributes['status'] == -2 || $attributes['status'] == -4) {
@@ -519,8 +523,7 @@ class TrainingController extends Controller
         } else {
             // If paused is unchecked but training is paused, sum up the length and unpause.
             if (isset($training->paused_at)) {
-                $training->paused_length = $training->paused_length + (int) Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
-                $training->update(['paused_length' => $training->paused_length]);
+                $attributes['paused_length'] = $training->paused_length + (int) Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
                 TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::id());
             }
 

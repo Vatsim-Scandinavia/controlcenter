@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Endorsement extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $casts = [
         'valid_from' => 'datetime',
@@ -15,6 +17,15 @@ class Endorsement extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('endorsement')
+            ->logOnly(['type', 'valid_from', 'valid_to', 'expired', 'revoked', 'user_id'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     public function ratings()
     {

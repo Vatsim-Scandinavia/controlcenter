@@ -8,10 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Training extends Model
 {
     use HasFactory;
+
+    /**
+     * Idle activity log options not used until LogsActivity is used.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('training')
+            ->logOnly(['status', 'type', 'user_id', 'paused_at', 'closed_reason'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     protected $guarded = [];
 
@@ -38,26 +51,48 @@ class Training extends Model
      */
     public function updateStatus(int $newStatus, bool $expiredInterest = false): void
     {
+        $changes = $this->resolveStatusChanges($newStatus, $expiredInterest);
+
+        if (! empty($changes)) {
+            $this->update($changes);
+        }
+    }
+
+    /**
+     * Resolve the attribute changes for a status transition, applying any
+     * related-table side effects, without persisting the training itself.
+     *
+     * This lets callers batch the status change together with their own
+     * attribute changes into a single save, so the activity log records one
+     * entry per request rather than one per individual write.
+     *
+     * @return array<string, mixed>
+     */
+    public function resolveStatusChanges(int $newStatus, bool $expiredInterest = false): array
+    {
         $oldStatus = $this->fresh()->status;
 
         if ($newStatus == $oldStatus) {
-            return;
+            return [];
         }
+
+        $changes = ['status' => $newStatus];
 
         // Training was put back in queue
         if ($newStatus == 0) {
-            $this->update(['started_at' => null, 'closed_at' => null]);
+            $changes['started_at'] = null;
+            $changes['closed_at'] = null;
         }
 
         // Training is active or completed
         if ($newStatus >= 1 || $newStatus == -1) {
             // In case someone resurrects a closed training
             if ($oldStatus < 0) {
-                $this->update(['closed_at' => null]);
+                $changes['closed_at'] = null;
             }
 
             if (! isset($this->started_at)) {
-                $this->update(['started_at' => now()]);
+                $changes['started_at'] = now();
             }
 
             $this->expireInterests($expiredInterest);
@@ -65,19 +100,19 @@ class Training extends Model
 
         // Training is completed or closed
         if ($newStatus < 0) {
-            $this->update(['closed_at' => now()]);
+            $changes['closed_at'] = now();
 
             // Expire all related interests, as they only cause problems if the training is re-opened.
             $this->expireInterests($expiredInterest);
 
             // If the training is paused, sum up the length and unpause.
             if (isset($this->paused_at)) {
-                $this->paused_length = $this->paused_length + (int) Carbon::create($this->paused_at)->diffInSeconds(Carbon::now(), true);
-                $this->update(['paused_at' => null, 'paused_length' => $this->paused_length]);
+                $changes['paused_at'] = null;
+                $changes['paused_length'] = $this->paused_length + (int) Carbon::create($this->paused_at)->diffInSeconds(Carbon::now(), true);
             }
         }
 
-        $this->update(['status' => $newStatus]);
+        return $changes;
     }
 
     /**

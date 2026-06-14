@@ -90,10 +90,14 @@ class UpdateMemberDetails extends Command
             // Detach mentors before closing the training
             $training->mentors()->detach();
 
-            // Close the training
-            $training->updateStatus(-4);
-            $training->closed_reason = 'The student has left or is no longer part of our division.';
-            $training->save();
+            // Close the training. Suppress automatic model-event logging here:
+            // the closure is recorded explicitly below, so the LogsActivity trait
+            // would only add a duplicate entry for this bulk maintenance write.
+            activity()->withoutLogging(function () use ($training) {
+                $training->updateStatus(-4);
+                $training->closed_reason = 'The student has left or is no longer part of our division.';
+                $training->save();
+            });
 
             // Notify student of closure
             $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the division.'));
