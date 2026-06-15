@@ -1,5 +1,32 @@
 # Changelog
 
+## [7.0.0-alpha.08](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.07...v7.0.0-alpha.08) (2026-06-15)
+
+
+### Bug Fixes
+
+* **positions:** log changes to FIR positions ([#1510](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1510)) ([ce63fa1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ce63fa18fbe65111a73f98e4a776a7935cf25227))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @vitejs/plugin-vue to v6.0.7 ([#1458](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1458)) ([e359038](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e35903850a58ec30116ff4b34f7e90209a5d1a17))
+* **deps:** update dependency core-js to v3.49.0 ([#1494](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1494)) ([e7a2b02](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e7a2b0242b3e2b4c36e45b15175fa2fb8adf758a))
+* **deps:** update dependency easymde to v2.21.0 ([#1502](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1502)) ([1fda430](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1fda430f8f7b7523a7c26bc555628164de763c25))
+* **deps:** update dependency pdm to v2.27.0 ([#1512](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1512)) ([ff4ccb7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ff4ccb7604313b87ecde8e625d96f078f654028b))
+* **deps:** update dependency phpunit/phpunit to v12.5.30 ([#1516](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1516)) ([8ba21bf](https://github.com/Vatsim-Scandinavia/controlcenter/commit/8ba21bf2f01b5180651c5282ec2946cadd607e47))
+* **deps:** update dependency sass to v1.101.0 ([#1258](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1258)) ([4301da4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4301da4945b93d132c99a3a07aae2e555057ac87))
+* **deps:** update dependency vite to v7.3.5 ([#1487](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1487)) ([a947db0](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a947db0b2a3e9dac84e31fd30831491a26a8e5f1))
+* **deps:** update docker/build-push-action action to v7 ([#1515](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1515)) ([a89af42](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a89af4252a4a1f38ed8ea18e1335724ce2d5fb9e))
+* **deps:** update docker/login-action action to v4 ([#1517](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1517)) ([97f6190](https://github.com/Vatsim-Scandinavia/controlcenter/commit/97f619064602dc9301ebfd84bca0797337837058))
+* **deps:** update docker/metadata-action action to v6 ([#1518](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1518)) ([2073ed1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2073ed1a60f75789c7bfd928692fa16d57a1a321))
+* **deps:** update docker/setup-buildx-action action to v4 ([#1519](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1519)) ([54e0e91](https://github.com/Vatsim-Scandinavia/controlcenter/commit/54e0e91a6ee87d6c33866d647fd30016ebac5618))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.11.9 ([#1513](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1513)) ([ba6a353](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ba6a3531cdf7cb9b48c354248735056713973e79))
+* **deps:** update mysql docker tag to v8.4.9 ([#1490](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1490)) ([a9b87b1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a9b87b16a93171d3d90116d21cd979d21ea1f585))
+* **deps:** update node.js to v24.16.0 ([#1439](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1439)) ([ad13f2b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ad13f2ba9a1bce87c0262951f898c5fa2a93a970))
+* **deps:** update tailwindcss monorepo to v4.3.1 ([#1506](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1506)) ([57f0e52](https://github.com/Vatsim-Scandinavia/controlcenter/commit/57f0e52cb9850981976d20cc40c254b0756bb2da))
+* **deps:** update vue monorepo to v3.5.38 ([#1491](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1491)) ([cb5df21](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cb5df210c462055158c52271f3fc7c04448c07bf))
+
 ## [7.0.0-alpha.07](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.06...v7.0.0-alpha.07) (2026-06-14)
 
 
