@@ -59,4 +59,4 @@ depends = ["deps:npm"]
 sources = ["package.json"]
 
 [tools]
-pdm = "2.26.6"
+pdm = "2.27.0"
