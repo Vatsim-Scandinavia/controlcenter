@@ -7,9 +7,11 @@ use App\Models\OneTimeLink;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Notifications\TrainingReportNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -219,6 +221,144 @@ class TrainingReportsTest extends TestCase
             ->assertRedirect();
 
         $this->assertDatabaseHas('training_reports', ['content' => $content]);
+    }
+
+    #[Test]
+    public function publishing_a_draft_report_stamps_the_published_at_date()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => true,
+            'published_at' => null,
+        ]);
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        $this->assertNull($report->published_at);
+
+        $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), [
+                'report_date' => today()->format('d/m/Y'),
+                'content' => $report->content,
+                // 'draft' omitted, so the report is published
+            ])
+            ->assertRedirect();
+
+        $this->assertNotNull($report->fresh()->published_at);
+    }
+
+    #[Test]
+    public function publishing_a_draft_report_notifies_the_student_once()
+    {
+        Notification::fake();
+
+        $student = User::factory()->create(['setting_notify_newreport' => true]);
+        $training = Training::factory()->create(['user_id' => $student->id]);
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => true,
+            'published_at' => null,
+        ]);
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        // First publish notifies the student.
+        $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), [
+                'report_date' => today()->format('d/m/Y'),
+                'content' => $report->content,
+            ])
+            ->assertRedirect();
+
+        // A later edit of the already-published report must not re-notify.
+        $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), [
+                'report_date' => today()->format('d/m/Y'),
+                'content' => $this->faker->paragraph(),
+            ])
+            ->assertRedirect();
+
+        Notification::assertSentToTimes($student, TrainingReportNotification::class, 1);
+    }
+
+    #[Test]
+    public function published_at_is_not_overwritten_on_later_edits()
+    {
+        $publishedAt = now()->subMonth()->startOfSecond();
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => false,
+            'published_at' => $publishedAt,
+        ]);
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), [
+                'report_date' => today()->format('d/m/Y'),
+                'content' => $this->faker->paragraph(),
+            ])
+            ->assertRedirect();
+
+        $this->assertTrue($report->fresh()->published_at->equalTo($publishedAt));
+    }
+
+    #[Test]
+    public function a_report_created_as_published_gets_a_published_at_date()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => false,
+            'published_at' => null,
+        ]);
+
+        $this->assertNotNull($report->published_at);
+    }
+
+    #[Test]
+    public function a_draft_report_has_no_published_at_date()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => true,
+            'published_at' => null,
+        ]);
+
+        $this->assertNull($report->published_at);
+    }
+
+    #[Test]
+    public function activity_date_uses_published_at_when_present()
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => false,
+            'created_at' => now()->subYear(),
+            'published_at' => now()->subDay(),
+        ]);
+
+        $this->assertTrue($report->activity_date->equalTo($report->published_at));
     }
 
     #[Test]
