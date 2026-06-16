@@ -206,6 +206,22 @@
         </div>
     </div>
 
+    <div class="col-xl-6 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Training sessions per rating
+                </h6>
+            </div>
+            <div class="card-body">
+                <canvas id="sessionsPerRating"></canvas>
+                <p class="text-muted small mb-0 mt-2">
+                    Bars count sessions delivered in the period; the average and median count sessions per completed or closed training.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -606,6 +622,111 @@
                         stacked: true,
                         ticks: {
                             stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Training sessions per rating combo chart
+        var sessionsPerRatingElement = document.getElementById("sessionsPerRating");
+        if (!sessionsPerRatingElement) return;
+
+        var sessionsPerRatingData = {!! json_encode($sessionsPerRating) !!}
+
+        var ratingLabels = Object.keys(sessionsPerRatingData);
+        var volumes = [];
+        var averages = [];
+        var medians = [];
+        for (const rating of ratingLabels) {
+            volumes.push(sessionsPerRatingData[rating].volume);
+            averages.push(sessionsPerRatingData[rating].average);
+            medians.push(sessionsPerRatingData[rating].median);
+        }
+
+        var comboChartData = {
+            labels: ratingLabels,
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Sessions delivered',
+                    data: volumes,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    yAxisID: 'y',
+                    order: 2
+                },
+                {
+                    type: 'line',
+                    label: 'Avg sessions / training',
+                    data: averages,
+                    backgroundColor: 'rgb(255, 159, 64)',
+                    borderColor: 'rgb(255, 159, 64)',
+                    yAxisID: 'y1',
+                    showLine: false,
+                    pointStyle: 'circle',
+                    pointRadius: 5,
+                    order: 1
+                },
+                {
+                    type: 'line',
+                    label: 'Median sessions / training',
+                    data: medians,
+                    backgroundColor: 'rgb(46, 184, 92)',
+                    borderColor: 'rgb(46, 184, 92)',
+                    yAxisID: 'y1',
+                    showLine: false,
+                    pointStyle: 'triangle',
+                    pointRadius: 6,
+                    order: 0
+                }
+            ]
+        };
+
+        var mix = sessionsPerRatingElement.getContext('2d');
+        var sessionsPerRatingChart = new Chart(mix, {
+            data: comboChartData,
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Note: One training may have multiple ratings shown individually in this graph'
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sessions delivered'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sessions per training'
+                        },
+                        grid: {
+                            drawOnChartArea: false
                         }
                     }
                 }

@@ -117,6 +117,7 @@ class ReportController extends Controller
         $cardStats = $this->getCardStats($filterArea, $startDate, $endDate);
         $totalRequests = $this->getDailyRequestsStats($filterArea, $startDate, $endDate);
         $queues = $this->getQueueStats($filterArea);
+        $sessionsPerRating = $this->getSessionsPerRatingStats($filterArea, $startDate, $endDate);
 
         return view('reports.trainings', [
             'filterName' => $filterName,
@@ -129,6 +130,7 @@ class ReportController extends Controller
             'passedExamRequests' => $passedExamRequests,
             'failedExamRequests' => $failedExamRequests,
             'queues' => $queues,
+            'sessionsPerRating' => $sessionsPerRating,
             'labels' => $labels,
             'startDate' => $startDate,
             'endDate' => $endDate,
@@ -546,5 +548,143 @@ class ReportController extends Controller
             ->keyBy('name')
             ->map(fn ($row) => [$row->avg_low, $row->avg_high])
             ->all();
+    }
+
+    /**
+     * Return per-rating training session statistics.
+     *
+     * A session is a single non-draft training report. Volume is the count of
+     * non-draft reports within the window/area, attributed to each rating linked
+     * to the report's training. Average/median are computed over the per-training
+     * session counts of ended (completed/closed) trainings within the window/area
+     * that recorded at least one session; trainings with zero sessions (e.g. queue
+     * drop-outs) are excluded. When a rating has no qualifying sample, average and
+     * median are null so the chart omits the marker rather than plotting a false 0.
+     *
+     * @param  false|int  $areaFilter  areaId to filter by
+     * @param  ?Carbon  $startDate  window start; defaults to 6 months ago
+     * @param  ?Carbon  $endDate  window end; defaults to now
+     * @return array<string, array{volume: int, average: ?float, median: ?float}>
+     */
+    protected function getSessionsPerRatingStats(false|int $areaFilter, ?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        $queryStart = $startDate ?? now()->subMonths(6)->startOfMonth();
+        $queryEnd = $endDate ?? now()->endOfDay();
+
+        // Volume: count of non-draft reports per rating, scoped by activity date.
+        $activityDate = Sql::coalesce('training_reports.published_at', 'training_reports.created_at');
+
+        $volumeQuery = DB::table('training_reports')
+            ->select('ratings.id as rating_id', 'ratings.name as rating_name', DB::raw('count(training_reports.id) as volume'))
+            ->join('trainings', 'trainings.id', '=', 'training_reports.training_id')
+            ->join('rating_training', 'rating_training.training_id', '=', 'trainings.id')
+            ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+            ->where('training_reports.draft', false)
+            ->whereRaw("$activityDate >= ?", [$queryStart])
+            ->whereRaw("$activityDate <= ?", [$queryEnd])
+            ->groupBy('ratings.id', 'ratings.name');
+
+        if ($areaFilter) {
+            $volumeQuery->where('trainings.area_id', $areaFilter);
+        }
+
+        // Accumulate per-rating data keyed by rating id, so the final order can
+        // follow the ratings table (training progression) like the sibling charts.
+        $ratings = [];
+        foreach ($volumeQuery->get() as $row) {
+            $ratings[$row->rating_id]['name'] = $row->rating_name;
+            $ratings[$row->rating_id]['volume'] = (int) $row->volume;
+        }
+
+        // Average/median: per-training non-draft report counts over ended trainings.
+        $sampleQuery = DB::table('trainings')
+            ->select(
+                'ratings.id as rating_id',
+                'ratings.name as rating_name',
+                DB::raw('count(training_reports.id) as report_count')
+            )
+            ->join('rating_training', 'rating_training.training_id', '=', 'trainings.id')
+            ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+            // Inner join: trainings with zero non-draft sessions are excluded from
+            // the sample. A closed training that never recorded a session is a queue
+            // drop-out, not a training that "took zero sessions", so counting it
+            // would wrongly drag the average/median toward zero.
+            ->join('training_reports', function ($join) {
+                $join->on('training_reports.training_id', '=', 'trainings.id')
+                    ->where('training_reports.draft', '=', false);
+            })
+            ->whereIn('trainings.status', [-1, -2])
+            ->whereBetween('trainings.closed_at', [$queryStart, $queryEnd])
+            ->groupBy('trainings.id', 'ratings.id', 'ratings.name');
+
+        if ($areaFilter) {
+            $sampleQuery->where('trainings.area_id', $areaFilter);
+        }
+
+        foreach ($sampleQuery->get() as $row) {
+            $ratings[$row->rating_id]['name'] = $row->rating_name;
+            $ratings[$row->rating_id]['sample'][] = (int) $row->report_count;
+        }
+
+        // Order by rating id (S1, S2, S3, …) to match the sibling charts' x-axis.
+        ksort($ratings);
+
+        $payload = [];
+        foreach ($ratings as $rating) {
+            $volume = $rating['volume'] ?? 0;
+            $sample = $rating['sample'] ?? [];
+
+            // Drop ratings with no volume and no ended-training sample.
+            if ($volume === 0 && count($sample) === 0) {
+                continue;
+            }
+
+            $payload[$rating['name']] = [
+                'volume' => $volume,
+                'average' => $this->mean($sample),
+                'median' => $this->median($sample),
+            ];
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Compute the mean of a sample, rounded to one decimal. Returns null for an
+     * empty sample so callers can omit the data point rather than plot a false 0.
+     *
+     * @param  array<int>  $sample
+     */
+    private function mean(array $sample): ?float
+    {
+        if (count($sample) === 0) {
+            return null;
+        }
+
+        return round(array_sum($sample) / count($sample), 1);
+    }
+
+    /**
+     * Compute the median of a sample. Even-sized samples return the mean of the
+     * two middle values. Returns null for an empty sample so callers can omit the
+     * data point rather than plot a false 0.
+     *
+     * @param  array<int>  $sample
+     */
+    private function median(array $sample): ?float
+    {
+        $count = count($sample);
+        if ($count === 0) {
+            return null;
+        }
+
+        sort($sample);
+        $middle = intdiv($count, 2);
+
+        if ($count % 2 === 0) {
+            return round(($sample[$middle - 1] + $sample[$middle]) / 2, 1);
+        }
+
+        return round((float) $sample[$middle], 1);
     }
 }
