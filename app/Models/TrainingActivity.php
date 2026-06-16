@@ -29,4 +29,12 @@ class TrainingActivity extends Model
     {
         return $this->belongsTo(Endorsement::class, 'new_data');
     }
+
+    /**
+     * The date this entry should be sorted and displayed by in activity feeds.
+     */
+    public function getActivityDateAttribute()
+    {
+        return $this->created_at;
+    }
 }

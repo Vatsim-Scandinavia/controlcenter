@@ -175,7 +175,7 @@ class ReportController extends Controller
                 ->when($filterArea, function (Builder $query, $filterArea) {
                     $query->whereHas('training', fn (Builder $q) => $q->where('area_id', $filterArea));
                 })
-                ->where($filterArea ? 'created_at' : 'updated_at', '>=', $filterArea ? $activities->last()->created_at : $activities->last()->updated_at)
+                ->where('published_at', '>=', $activities->last()->created_at)
                 ->get();
 
             $examinationReports = TrainingExamination::where('created_at', '>=', $activities->last()->created_at)
@@ -187,7 +187,7 @@ class ReportController extends Controller
             $entries = $entries->concat($trainingReports)->concat($examinationReports);
         }
 
-        $entries = $entries->concat($activities)->sortByDesc('created_at');
+        $entries = $entries->concat($activities)->sortByDesc('activity_date');
         $statuses = TrainingController::$statuses;
 
         $areas = Area::all();

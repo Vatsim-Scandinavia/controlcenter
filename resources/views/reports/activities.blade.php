@@ -174,15 +174,9 @@
 
                                     </td>
                                     <td>
-                                        @if(is_a($activity, 'App\Models\TrainingReport'))
-                                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $activity->updated_at->toEuropeanDateTime() }}">
-                                                {{ $activity->updated_at->diffForHumans() }}
-                                            </span>
-                                        @else
-                                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $activity->created_at->toEuropeanDateTime() }}">
-                                                {{ $activity->created_at->diffForHumans() }}
-                                            </span>
-                                        @endif
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $activity->activity_date->toEuropeanDateTime() }}">
+                                            {{ $activity->activity_date->diffForHumans() }}
+                                        </span>
                                     </td>
                                 </tr>
                             @endforeach

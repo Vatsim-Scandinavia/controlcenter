@@ -15,4 +15,12 @@ class TrainingObject extends Model
     {
         return $this->belongsTo(Training::class);
     }
+
+    /**
+     * The date this entry should be sorted and displayed by in activity feeds.
+     */
+    public function getActivityDateAttribute()
+    {
+        return $this->created_at;
+    }
 }

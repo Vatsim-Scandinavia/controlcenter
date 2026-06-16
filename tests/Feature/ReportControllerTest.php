@@ -5,6 +5,9 @@ namespace Tests\Feature;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Position;
+use App\Models\Training;
+use App\Models\TrainingActivity;
+use App\Models\TrainingReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -185,6 +188,39 @@ class ReportControllerTest extends TestCase
         $response->assertViewIs('partials.area-picker');
         $response->assertViewHas('route', 'reports.activities.area');
         $response->assertViewHas('title', 'Training Activities');
+    }
+
+    #[Test]
+    public function activities_report_orders_training_reports_by_publishing_date(): void
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+
+        // A single activity defines the lower bound of the displayed time window.
+        $activity = new TrainingActivity;
+        $activity->training_id = $training->id;
+        $activity->triggered_by_id = $this->adminUser->id;
+        $activity->type = 'COMMENT';
+        $activity->comment = 'An activity comment';
+        $activity->created_at = now()->subDays(5);
+        $activity->updated_at = now()->subDays(5);
+        $activity->save();
+
+        // Created long ago but only published recently. Ordered by created_at it
+        // would sort last (and fall outside the window); by published_at it sorts first.
+        $report = TrainingReport::factory()->create([
+            'training_id' => $training->id,
+            'draft' => false,
+            'created_at' => now()->subDays(30),
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->actingAs($this->adminUser)->get(route('reports.activities'));
+
+        $response->assertOk();
+        $entries = $response->viewData('entries');
+        $this->assertTrue($entries->first()->is($report));
     }
 
     #[Test]

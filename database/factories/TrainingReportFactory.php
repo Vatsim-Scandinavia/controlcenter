@@ -24,6 +24,7 @@ class TrainingReportFactory extends Factory
     public function definition()
     {
         $date = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = 'now');
+        $isDraft = (bool) $this->faker->numberBetween(0, 1);
 
         return [
             'written_by_id' => User::factory(),
@@ -31,9 +32,10 @@ class TrainingReportFactory extends Factory
             'content' => $this->faker->paragraph(),
             'contentimprove' => $this->faker->paragraph(),
             'position' => Position::inRandomOrder()->first()->callsign,
-            'draft' => $this->faker->numberBetween(0, 1),
+            'draft' => $isDraft,
             'created_at' => $date,
             'updated_at' => $date,
+            'published_at' => $isDraft ? null : $date,
         ];
     }
 }
