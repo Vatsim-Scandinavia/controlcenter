@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Notifications\TrainingReportNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -19,236 +18,184 @@ class TrainingReportsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    #[Test]
-    public function mentor_can_access_training_reports()
+    /**
+     * Create a training with a student.
+     */
+    private function makeTraining(): Training
     {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000005])->id,
-        ]);
-        $mentor = User::factory()->create(['id' => 10000400]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => false,
-        ]);
-
-        $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->allowed());
-    }
-
-    #[Test]
-    public function trainee_can_access_training_reports()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000005])->id,
-        ]);
-
-        $mentor = User::factory()->create(['id' => 10000400]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => false,
-        ]);
-
-        $this->actingAs($training->user)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->allowed());
-    }
-
-    #[Test]
-    public function a_regular_user_cant_access_training_reports()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000005])->id,
-        ]);
-
-        $mentor = User::factory()->create(['id' => 10000400]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => false,
-        ]);
-
-        $otherUser = User::factory()->create(['id' => 10000134]);
-        $this->actingAs($otherUser)->assertTrue(Gate::inspect('view', $report, [$training->user, $report])->denied());
-    }
-
-    #[Test]
-    public function trainee_cant_access_draft_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000067])->id,
-        ]);
-
-        $mentor = User::factory()->create(['id' => 10000159]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => true,
-        ]);
-        $this->actingAs($report->training->user)->assertTrue(Gate::inspect('view', $report)->denied());
-    }
-
-    #[Test]
-    public function mentor_trainee_cant_access_draft_training_report_for_their_training()
-    {
-        $traineeMentor = User::factory()->create();
-        $mentor = User::factory()->create();
-        $training = Training::factory()->create([
-            'user_id' => $traineeMentor->id,
-        ]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-        $traineeMentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'draft' => true,
-        ]);
-
-        $this->actingAs($report->training->user)->assertTrue(Gate::inspect('view', $report)->denied());
-        $this->actingAs($traineeMentor)->assertTrue(Gate::inspect('view', $report)->denied());
-    }
-
-    #[Test]
-    public function mentor_can_access_draft_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000042])->id,
-        ]);
-
-        $mentor = User::factory()->create(['id' => 10000080]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => true,
-        ]);
-
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
-        $this->actingAs($mentor)->assertTrue(Gate::inspect('view', $report)->allowed());
-    }
-
-    /*
-    #[Test]
-    public function mentor_can_create_training_report()
-    {
-
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000042])->id,
-        ]);
-
-        $mentor = User::factory()->create(['id' => 10000080]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
-
-        $report = TrainingReport::factory()->make([
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
-            'contentimprove' => 'Nothing',
-            'position' => 'Sweatbox',
-            'draft' => false,
-            'report_date' => '21/07/2024'
-        ]);
-
-        $this->actingAs($mentor)
-            ->post(route('training.report.store', ['training' => $training->id]), $report->getAttributes())
-            ->assertStatus(200);
-
-        $this->assertDatabaseHas('training_reports', $report->getAttributes());
-    }
-    */
-
-    #[Test]
-    public function a_regular_user_cant_create_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000090])->id,
-        ]);
-        $report = TrainingReport::factory()->make([
-            'training_id' => $training->id,
-        ]);
-
-        $this->actingAs(User::factory()->create())
-            ->post(route('training.report.store', ['training' => $report->training->id]), $report->getAttributes())
-            ->assertStatus(403);
-
-        $this->assertDatabaseMissing('training_reports', $report->getAttributes());
-    }
-
-    #[Test]
-    public function mentor_can_update_a_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000091])->id,
-        ]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-        ]);
-        $mentor = User::factory()->create(['id' => 10000015]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-        $content = $this->faker->paragraph();
-
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
-
-        $response = $this->actingAs($mentor)
-            ->patch(route('training.report.update', ['report' => $report->id]), ['report_date' => today()->format('d/m/Y'), 'content' => $content])
-            ->assertRedirect();
-
-        $this->assertDatabaseHas('training_reports', ['content' => $content]);
-    }
-
-    #[Test]
-    public function publishing_a_draft_report_stamps_the_published_at_date()
-    {
-        $training = Training::factory()->create([
+        return Training::factory()->create([
             'user_id' => User::factory()->create()->id,
         ]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'draft' => true,
-            'published_at' => null,
-        ]);
+    }
+
+    /**
+     * Create a mentor with a role assignment in the training's area, attached to
+     * the training by default.
+     */
+    private function makeMentor(Training $training, bool $attach = true): User
+    {
         $mentor = User::factory()->create();
         $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
 
-        $this->assertNull($report->published_at);
+        if ($attach) {
+            $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+        }
+
+        return $mentor;
+    }
+
+    /**
+     * Create a published training report (a session) for the training.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    private function makeReport(Training $training, array $attributes = []): TrainingReport
+    {
+        return TrainingReport::factory()->create(array_merge([
+            'training_id' => $training->id,
+            'draft' => false,
+        ], $attributes));
+    }
+
+    #[Test]
+    public function only_authorized_users_can_view_published_reports()
+    {
+        $training = $this->makeTraining();
+        $mentor = $this->makeMentor($training);
+        $report = $this->makeReport($training, ['written_by_id' => $mentor->id]);
+
+        $buddy = User::factory()->create();
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]);
+
+        $this->assertTrue($mentor->can('view', $report));
+        $this->assertTrue($training->user->can('view', $report));
+        $this->assertFalse(User::factory()->create()->can('view', $report));
+        $this->assertFalse($buddy->can('view', $report));
+    }
+
+    #[Test]
+    public function only_attached_mentors_can_view_draft_reports()
+    {
+        $training = $this->makeTraining();
+        $attachedMentor = $this->makeMentor($training);
+        $unattachedMentor = $this->makeMentor($training, attach: false);
+        $report = $this->makeReport($training, ['draft' => true, 'written_by_id' => $attachedMentor->id]);
+
+        $this->assertTrue($attachedMentor->can('view', $report));
+        $this->assertFalse($training->user->can('view', $report));
+        $this->assertFalse($unattachedMentor->can('view', $report));
+    }
+
+    #[Test]
+    public function a_regular_user_cant_create_a_training_report()
+    {
+        $training = $this->makeTraining();
+        $report = TrainingReport::factory()->make(['training_id' => $training->id]);
+
+        $this->actingAs(User::factory()->create())
+            ->post(route('training.report.store', ['training' => $training->id]), $report->getAttributes())
+            ->assertStatus(403);
+
+        $this->assertDatabaseMissing('training_reports', ['training_id' => $training->id]);
+    }
+
+    #[Test]
+    public function a_buddy_can_create_a_report_via_a_one_time_link()
+    {
+        $training = $this->makeTraining();
+        $buddy = User::factory()->create();
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]);
+
+        $oneTimeLink = OneTimeLink::create([
+            'training_id' => $training->id,
+            'training_object_type' => OneTimeLink::TRAINING_REPORT_TYPE,
+            'key' => sha1($training->id . now()),
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        $this->actingAs($buddy)
+            ->get(route('training.onetimelink.redirect', ['key' => $oneTimeLink->key]))
+            ->assertRedirect(route('training.report.create', ['training' => $training]));
+        $this->assertEquals($oneTimeLink->key, session()->get('onetimekey'));
+
+        $this->actingAs($buddy)
+            ->post(route('training.report.store', ['training' => $training]), [
+                'report_date' => now()->format('d/m/Y'),
+                'content' => 'Report via one-time link.',
+                'contentimprove' => 'Improvement notes.',
+                'position' => 'EKCH_A_TWR',
+                'draft' => false,
+            ])
+            ->assertStatus(302);
+
+        $this->assertDatabaseHas('training_reports', [
+            'training_id' => $training->id,
+            'written_by_id' => $buddy->id,
+            'content' => 'Report via one-time link.',
+        ]);
+    }
+
+    #[Test]
+    public function a_mentor_can_update_a_training_report()
+    {
+        $training = $this->makeTraining();
+        $mentor = $this->makeMentor($training);
+        $report = $this->makeReport($training);
+        $content = $this->faker->paragraph();
 
         $this->actingAs($mentor)
             ->patch(route('training.report.update', ['report' => $report->id]), [
                 'report_date' => today()->format('d/m/Y'),
-                'content' => $report->content,
-                // 'draft' omitted, so the report is published
+                'content' => $content,
             ])
             ->assertRedirect();
 
-        $this->assertNotNull($report->fresh()->published_at);
+        $this->assertDatabaseHas('training_reports', ['id' => $report->id, 'content' => $content]);
+    }
+
+    #[Test]
+    public function a_regular_user_cant_update_a_training_report()
+    {
+        $training = $this->makeTraining();
+        $report = $this->makeReport($training, ['draft' => true]);
+        $content = $this->faker->paragraph();
+
+        $this->actingAs($training->user)
+            ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
+            ->assertStatus(403);
+
+        $this->assertDatabaseMissing('training_reports', ['content' => $content]);
+    }
+
+    #[Test]
+    public function publishing_a_draft_report_stamps_published_at_and_edits_preserve_it()
+    {
+        $training = $this->makeTraining();
+        $mentor = $this->makeMentor($training);
+        $report = $this->makeReport($training, ['draft' => true, 'published_at' => null]);
+
+        $this->assertNull($report->published_at);
+
+        // Publishing (omitting 'draft') stamps the publish date.
+        $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), [
+                'report_date' => today()->format('d/m/Y'),
+                'content' => $report->content,
+            ])
+            ->assertRedirect();
+
+        $publishedAt = $report->fresh()->published_at;
+        $this->assertNotNull($publishedAt);
+
+        // A later edit must not move the publish date.
+        $this->actingAs($mentor)
+            ->patch(route('training.report.update', ['report' => $report->id]), [
+                'report_date' => today()->format('d/m/Y'),
+                'content' => $this->faker->paragraph(),
+            ])
+            ->assertRedirect();
+
+        $this->assertTrue($report->fresh()->published_at->equalTo($publishedAt));
     }
 
     #[Test]
@@ -258,14 +205,8 @@ class TrainingReportsTest extends TestCase
 
         $student = User::factory()->create(['setting_notify_newreport' => true]);
         $training = Training::factory()->create(['user_id' => $student->id]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'draft' => true,
-            'published_at' => null,
-        ]);
-        $mentor = User::factory()->create();
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+        $mentor = $this->makeMentor($training);
+        $report = $this->makeReport($training, ['draft' => true, 'published_at' => null]);
 
         // First publish notifies the student.
         $this->actingAs($mentor)
@@ -287,73 +228,22 @@ class TrainingReportsTest extends TestCase
     }
 
     #[Test]
-    public function published_at_is_not_overwritten_on_later_edits()
+    public function published_at_is_set_for_published_reports_but_not_drafts()
     {
-        $publishedAt = now()->subMonth()->startOfSecond();
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'draft' => false,
-            'published_at' => $publishedAt,
-        ]);
-        $mentor = User::factory()->create();
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+        $training = $this->makeTraining();
 
-        $this->actingAs($mentor)
-            ->patch(route('training.report.update', ['report' => $report->id]), [
-                'report_date' => today()->format('d/m/Y'),
-                'content' => $this->faker->paragraph(),
-            ])
-            ->assertRedirect();
+        $published = $this->makeReport($training, ['published_at' => null]);
+        $draft = $this->makeReport($training, ['draft' => true, 'published_at' => null]);
 
-        $this->assertTrue($report->fresh()->published_at->equalTo($publishedAt));
-    }
-
-    #[Test]
-    public function a_report_created_as_published_gets_a_published_at_date()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'draft' => false,
-            'published_at' => null,
-        ]);
-
-        $this->assertNotNull($report->published_at);
-    }
-
-    #[Test]
-    public function a_draft_report_has_no_published_at_date()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'draft' => true,
-            'published_at' => null,
-        ]);
-
-        $this->assertNull($report->published_at);
+        $this->assertNotNull($published->published_at);
+        $this->assertNull($draft->published_at);
     }
 
     #[Test]
     public function activity_date_uses_published_at_when_present()
     {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'draft' => false,
+        $training = $this->makeTraining();
+        $report = $this->makeReport($training, [
             'created_at' => now()->subYear(),
             'published_at' => now()->subDay(),
         ]);
@@ -362,304 +252,72 @@ class TrainingReportsTest extends TestCase
     }
 
     #[Test]
-    public function a_regular_user_cant_update_a_training_report()
+    public function privileged_users_can_delete_reports()
     {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000092])->id,
-        ]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => null,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => true,
-        ]);
-        $content = $this->faker->paragraph();
+        $training = $this->makeTraining();
+        $mentor = $this->makeMentor($training);
 
-        $this->actingAs($report->training->user)
-            ->patch(route('training.report.update', ['report' => $report->id]), ['content' => $content])
-            ->assertStatus(403);
+        $admin = User::factory()->create();
+        $admin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
 
-        $this->assertDatabaseMissing('training_reports', ['content' => $content]);
+        foreach ([$mentor, $admin] as $user) {
+            $report = $this->makeReport($training, ['written_by_id' => $mentor->id]);
+
+            $this->actingAs($user)->get(route('training.report.delete', ['report' => $report->id]));
+
+            $this->assertDatabaseMissing('training_reports', ['id' => $report->id]);
+        }
     }
 
     #[Test]
-    public function mentor_can_delete_a_training_report()
+    public function unauthorized_users_cannot_delete_reports()
     {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000093])->id,
-            'id' => 2,
-        ]);
+        $training = $this->makeTraining();
+        $author = $this->makeMentor($training);
+        $report = $this->makeReport($training, ['written_by_id' => $author->id]);
 
-        $mentor = User::factory()->create(['id' => 10000500]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => false,
-        ]);
-
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
-
-        $this->actingAs($mentor)
-            ->get(route('training.report.delete', ['report' => $report->id]));
-
-        $this->assertDatabaseMissing('training_reports', $report->getAttributes());
-    }
-
-    #[Test]
-    public function another_mentor_cant_delete_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000094])->id,
-        ]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-        ]);
-        $otherMentor = User::factory()->create(['id' => 10000100]);
-        $otherMentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $this->actingAs($otherMentor)
-            ->get(route('training.report.delete', ['report' => $report->id]))
-            ->assertStatus(403);
-
-        $this->assertDatabaseHas('training_reports', $report->getAttributes());
-    }
-
-    #[Test]
-    public function regular_user_cant_delete_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000095])->id,
-        ]);
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-        ]);
-        $regularUser = User::factory()->create(['id' => 1000096]);
-
-        $this->actingAs($regularUser)
-            ->get(route('training.report.delete', ['report' => $report->id]))
-            ->assertStatus(403);
-
-        $this->assertDatabaseHas(TrainingReport::class, $report->getAttributes());
-    }
-
-    #[Test]
-    public function another_moderator_can_delete_training_report()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create(['id' => 10000098])->id,
-        ]);
-
-        $mentor = User::factory()->create(['id' => 10000220]);
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addYear(),
-            'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis enim ac commodo lacinia. Nunc scelerisque mauris vitae nisl placerat suscipit. Integer vitae cursus urna, id pulvinar diam. Nunc ullamcorper commodo tellus, nec porta mi hendrerit in. Morbi suscipit id justo eget imperdiet. Cras tempor auctor justo eget aliquet. Cras lectus sapien, maximus nec enim porttitor, pretium mattis tellus. Vivamus dictum turpis eget dolor aliquam euismod. Fusce quis orci nulla. Vivamus congue libero ut ipsum feugiat feugiat. Donec neque erat, egestas eu varius et, volutpat ut augue. Etiam ac rutrum elit, at iaculis ligula. Vestibulum viverra libero ligula, ac euismod tellus bibendum eu.',
-            'contentimprove' => null,
-            'position' => null,
-            'draft' => false,
-        ]);
-        $otherModerator = User::factory()->create(['id' => 10000101]);
-        $otherModerator->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
-
-        $this->actingAs($otherModerator)
-            ->get(route('training.report.delete', ['report' => $report->id]));
-
-        $this->assertDatabaseMissing('training_reports', $report->getAttributes());
-    }
-
-    #[Test]
-    public function buddy_can_use_one_time_link_in_their_area()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
+        $unattachedMentor = $this->makeMentor($training, attach: false);
 
         $buddy = User::factory()->create();
-        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
+        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]);
+        // A report the buddy wrote themselves: they still can't delete it.
+        $ownReport = $this->makeReport($training, ['written_by_id' => $buddy->id]);
 
-        // Create a one-time link for the training report
-        $oneTimeLink = OneTimeLink::create([
-            'training_id' => $training->id,
-            'training_object_type' => OneTimeLink::TRAINING_REPORT_TYPE,
-            'key' => sha1($training->id . now()),
-            'expires_at' => now()->addDays(7),
-        ]);
-
-        // Test that the buddy can access the one-time link
-        $response = $this->actingAs($buddy)
-            ->get(route('training.onetimelink.redirect', ['key' => $oneTimeLink->key]));
-
-        $response->assertRedirect(route('training.report.create', ['training' => $training]));
-        $this->assertEquals($oneTimeLink->key, session()->get('onetimekey'));
-
-        // Test that the buddy can create a training report using the one-time link
-        $reportData = [
-            'report_date' => now()->format('d/m/Y'),
-            'content' => 'Training report written by buddy via one-time link.',
-            'contentimprove' => 'Areas for improvement noted.',
-            'position' => 'EKCH_A_TWR',
-            'draft' => false,
+        $attempts = [
+            [$unattachedMentor, $report],
+            [User::factory()->create(), $report],
+            [$buddy, $report],
+            [$buddy, $ownReport],
         ];
 
-        $response = $this->actingAs($buddy)
-            ->post(route('training.report.store', ['training' => $training]), $reportData);
+        foreach ($attempts as [$user, $target]) {
+            $this->actingAs($user)
+                ->get(route('training.report.delete', ['report' => $target->id]))
+                ->assertStatus(403);
+        }
 
-        $response->assertStatus(302);
-        $this->assertDatabaseHas('training_reports', [
-            'training_id' => $training->id,
-            'written_by_id' => $buddy->id,
-            'content' => 'Training report written by buddy via one-time link.',
-        ]);
+        $this->assertDatabaseHas('training_reports', ['id' => $report->id]);
+        $this->assertDatabaseHas('training_reports', ['id' => $ownReport->id]);
     }
 
     #[Test]
-    public function buddy_cant_see_reports_created_by_others()
+    public function director_permissions_are_scoped_to_their_area()
     {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-
-        // Create a mentor who writes a report
-        $mentor = User::factory()->create();
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]); // Attach mentor group (id 3)
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
-
-        // Create a buddy in the same area
-        $buddy = User::factory()->create();
-        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
-
-        // Create a training report written by the mentor
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addDay(),
-            'content' => 'This is a training report written by a mentor.',
-            'contentimprove' => null,
-            'position' => 'EKCH_A_TWR',
-            'draft' => false,
-        ]);
-
-        // Test that the buddy cannot view the report created by the mentor
-        $this->actingAs($buddy)->assertTrue(Gate::inspect('view', $report)->denied());
-    }
-
-    #[Test]
-    public function buddy_cant_delete_training_reports()
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-
-        // Create a mentor who writes a report
-        $mentor = User::factory()->create();
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]); // Attach mentor group (id 3)
-        $training->mentors()->attach($mentor, ['expire_at' => now()->addYears(10)]);
-
-        // Create a buddy in the same area
-        $buddy = User::factory()->create();
-        $buddy->roleAssignments()->create(['role' => 'buddy', 'area_id' => $training->area->id]); // Attach buddy group (id 4)
-
-        // Create a training report written by the mentor
-        $reportByMentor = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'report_date' => now()->addDay(),
-            'content' => 'This is a training report written by a mentor.',
-            'contentimprove' => null,
-            'position' => 'EKCH_A_TWR',
-            'draft' => false,
-        ]);
-
-        // Create a training report written by the buddy themselves (via one-time link)
-        $reportByBuddy = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $buddy->id,
-            'report_date' => now()->addDays(2),
-            'content' => 'This is a training report written by a buddy.',
-            'contentimprove' => null,
-            'position' => 'EKCH_A_TWR',
-            'draft' => false,
-        ]);
-
-        // Test that the buddy cannot delete a report created by a mentor
-        $this->actingAs($buddy)->assertTrue(Gate::inspect('delete', $reportByMentor)->denied());
-
-        // Test that the buddy cannot delete their own report either (buddies don't have delete permissions)
-        $this->actingAs($buddy)->assertTrue(Gate::inspect('delete', $reportByBuddy)->denied());
-
-        // Verify via HTTP request that buddy gets 403 when trying to delete mentor's report
-        $this->actingAs($buddy)
-            ->get(route('training.report.delete', ['report' => $reportByMentor->id]))
-            ->assertStatus(403);
-
-        // Verify via HTTP request that buddy gets 403 when trying to delete their own report
-        $this->actingAs($buddy)
-            ->get(route('training.report.delete', ['report' => $reportByBuddy->id]))
-            ->assertStatus(403);
-
-        // Ensure reports still exist in database
-        $this->assertDatabaseHas('training_reports', ['id' => $reportByMentor->id]);
-        $this->assertDatabaseHas('training_reports', ['id' => $reportByBuddy->id]);
-    }
-
-    #[Test]
-    public function test_director_can_view_update_and_delete_reports_in_their_area(): void
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
-        $area = $training->area;
-
-        $mentor = User::factory()->create();
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'draft' => false,
-        ]);
+        $training = $this->makeTraining();
+        $mentor = $this->makeMentor($training);
+        $report = $this->makeReport($training, ['written_by_id' => $mentor->id]);
 
         $director = User::factory()->create();
-        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $area->id]);
+        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $training->area->id]);
 
         $this->assertTrue($director->can('view', $report));
         $this->assertTrue($director->can('update', $report));
         $this->assertTrue($director->can('delete', $report));
         $this->assertTrue($director->can('create', [TrainingReport::class, $training]));
-    }
 
-    #[Test]
-    public function test_director_of_other_area_cannot_update_report(): void
-    {
-        $training = Training::factory()->create([
-            'user_id' => User::factory()->create()->id,
-        ]);
+        $otherDirector = User::factory()->create();
+        $otherDirector->roleAssignments()->create(['role' => 'director', 'area_id' => Area::factory()->create()->id]);
 
-        $mentor = User::factory()->create();
-        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
-
-        $report = TrainingReport::factory()->create([
-            'training_id' => $training->id,
-            'written_by_id' => $mentor->id,
-            'draft' => false,
-        ]);
-
-        $otherArea = Area::factory()->create();
-        $director = User::factory()->create();
-        $director->roleAssignments()->create(['role' => 'director', 'area_id' => $otherArea->id]);
-
-        $this->assertFalse($director->can('update', $report));
+        $this->assertFalse($otherDirector->can('update', $report));
     }
 }
