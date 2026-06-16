@@ -206,22 +206,6 @@
         </div>
     </div>
 
-    <div class="col-xl-6 col-md-12 mb-12">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">
-                    Training sessions per rating
-                </h6>
-            </div>
-            <div class="card-body">
-                <canvas id="sessionsPerRating"></canvas>
-                <p class="text-muted small mb-0 mt-2">
-                    Bars count sessions delivered in the period; the average and median count sessions per completed or closed training.
-                </p>
-            </div>
-        </div>
-    </div>
-
     <div class="col-xl-4 col-md-12 mb-12">
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -251,6 +235,23 @@
             </div>
         </div>
     </div>
+
+    <div class="col-xl-6 col-md-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Training sessions per rating
+                </h6>
+            </div>
+            <div class="card-body">
+                <canvas id="sessionsPerRating"></canvas>
+                <p class="text-muted small mb-0 mt-2">
+                    Bars count sessions delivered in the period; the average and median count sessions per completed or closed training.
+                </p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @endsection
