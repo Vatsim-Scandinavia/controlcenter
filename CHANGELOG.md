@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.0.0-alpha.09](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.08...v7.0.0-alpha.09) (2026-06-16)
+
+
+### Bug Fixes
+
+* **reports:** track and sort by activity date (e.g. publish time) ([#1524](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1524)) ([ab22dac](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ab22dac361cd8e5d050bfd58daac7681345d0145))
+
+
+### Miscellaneous Chores
+
+* **deps:** update ubuntu docker tag to v26 ([#1520](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1520)) ([6883471](https://github.com/Vatsim-Scandinavia/controlcenter/commit/6883471c9204a419108f642d117768d21c12b143))
+
 ## [7.0.0-alpha.08](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.07...v7.0.0-alpha.08) (2026-06-15)
 
 
