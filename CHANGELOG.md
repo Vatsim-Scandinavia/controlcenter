@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.0.0-alpha.10](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.09...v7.0.0-alpha.10) (2026-06-16)
+
+
+### Features
+
+* **reports:** add sessions-per-rating chart to training statistics view ([#1525](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1525)) ([06a17a9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/06a17a9e7e0a89e3db81b959b83d86d6a6c1ebcb))
+
+
+### Bug Fixes
+
+* **reports:** place training sessions per rating at the bottom ([#1528](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1528)) ([96c2178](https://github.com/Vatsim-Scandinavia/controlcenter/commit/96c21780e09bb3ba19ca6b86bc7f4d4837a7b669))
+
 ## [7.0.0-alpha.09](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.08...v7.0.0-alpha.09) (2026-06-16)
 
 
