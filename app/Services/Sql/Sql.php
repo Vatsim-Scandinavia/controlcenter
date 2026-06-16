@@ -44,4 +44,13 @@ class Sql
 
         return SQL::as($sql, $alias);
     }
+
+    /**
+     * Build an ANSI-standard COALESCE expression over the given columns,
+     * returning the first non-null value. Portable across sqlite/MySQL/Postgres.
+     */
+    public static function coalesce(string ...$columns): string
+    {
+        return 'COALESCE(' . implode(', ', $columns) . ')';
+    }
 }
