@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.0-alpha.11](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.10...v7.0.0-alpha.11) (2026-06-16)
+
+
+### Bug Fixes
+
+* remove flux and tailwindcss to avoid overlap and invisible menu ([#1531](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1531)) ([ec8a8a3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ec8a8a3f1d78badb2190cfb84356b22c037429d7))
+
 ## [7.0.0-alpha.10](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.09...v7.0.0-alpha.10) (2026-06-16)
 
 
