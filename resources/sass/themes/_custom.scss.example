@@ -1,0 +1,18 @@
+// Instance theme override
+//
+// `_custom.scss` is gitignored, so your styles stay out of version control and never
+// conflict on update. Override only what you need. Anything left out keeps its default.
+
+// 1. Variables (overrides `resources/sass/_variables.scss`)
+$border-radius: 2px;
+
+// 2a. CSS custom properties — light theme (overrides `resources/sass/themes/_light.scss`)
+:root,
+[data-theme="light"] {
+    --color-primary: #6d28d9;
+}
+
+// 2b. CSS custom properties — dark theme (overrides `resources/sass/themes/_dark.scss`)
+[data-theme="dark"] {
+    --color-primary: #8b5cf6;
+}

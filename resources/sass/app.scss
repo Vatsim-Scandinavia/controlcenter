@@ -17,6 +17,9 @@
 // Variables
 @import "variables";
 
+// Instance theme override (see themes/_custom.scss.example).
+@import "themes/custom";
+
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 

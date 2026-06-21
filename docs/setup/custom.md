@@ -21,14 +21,13 @@ FROM ghcr.io/vatsim-scandinavia/control-center:6.4.3
 
 ### Custom Theme
 
-You can customise the theme by [copying your modified theme files and running `/container/theme/build.sh`](./theme.md):
+You can customise the theme by [creating a `_custom.scss` override](./theme.md#customizing-theme) and running `container/theme/build.sh` to recompile the assets:
 
 ```Dockerfile title="Custom theme in Control Center"
 FROM ghcr.io/vatsim-scandinavia/control-center:6.4.3
 
-# Copy your custom theme files
-COPY _light.scss /app/resources/sass/themes/_light.scss
-COPY _dark.scss /app/resources/sass/themes/_dark.scss
+# Copy your theme override
+COPY _custom.scss /app/resources/sass/themes/_custom.scss
 
 # Make the theme build script executable and run it
 RUN chmod +x container/theme/build.sh && container/theme/build.sh
