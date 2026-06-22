@@ -25,7 +25,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: read pdm version from mise config
         id: pdm_version
@@ -71,12 +71,12 @@ jobs:
       DOCS_DEVELOPMENT_ALIAS: dev
     steps:
       - name: checkout docs-site
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.DOCS_BRANCH }}
 
       - name: checkout current branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: read pdm version from mise config
         id: pdm_version
