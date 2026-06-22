@@ -21,7 +21,7 @@ public/css/*
 public/fonts/vendor/*
 public/images/logos/*
 public/js/*
-resources/sass/_env.scss
+resources/sass/themes/_custom.scss
 yarn-error.log
 storage/.container-setup-complete
 

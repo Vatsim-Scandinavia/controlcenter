@@ -32,46 +32,41 @@ Automatically switches between light and dark based on:
 - Time of day settings (on supported systems)
 - No page reload required when system theme changes
 
-## Customizing Theme Colors
-To customize the colors for your division, edit the theme files directly:
+## Customizing Theme
 
-### Light Theme Colors
+To brand your instance, put your overrides in `resources/sass/themes/_custom.scss`.
+That file is git-ignored, so your styles stay out of version control while still
+compiling into the regular front-end build.
 
-Edit: `resources/sass/themes/_light.scss`
+### 1. Create the override file
 
-```scss
-:root, [data-theme="light"] {
-    --color-primary: #1a475f;      // Your primary color
-    --color-secondary: #484b4c;    // Your secondary color
-    --color-success: #41826e;      // Success/green color
-    --color-info: #17a2b8;         // Info/blue color
-    --color-warning: #ff9800;      // Warning/orange color
-    --color-danger: #b63f3f;       // Danger/red color
-    // ... more variables
-}
+Copy the example to get started:
+
+```sh
+cp resources/sass/themes/_custom.scss.example resources/sass/themes/_custom.scss
 ```
 
-### Dark Theme Colors
+### 2. Edit your colors
 
-Edit: `resources/sass/themes/_dark.scss`
+Edit `resources/sass/themes/_custom.scss`. Override only what you need.
+Anything left out keeps its default.
 
-```scss
-[data-theme="dark"] {
-    --color-primary: #4a9cc5;      // Your primary color (adjusted for dark)
-    --color-secondary: #6c757d;    // Your secondary color
-    // ... more variables
-}
-```
+Reference for the available values:
 
-### Rebuild After Changes
+- `resources/sass/themes/_light.scss` — CSS custom properties for the light theme
+- `resources/sass/themes/_dark.scss` — CSS custom properties for the dark theme
+- `resources/sass/_variables.scss` — SCSS variables consumed by Bootstrap
 
-After editing theme files, rebuild the frontend assets:
+### 3. Rebuild the assets
+
+After editing `_custom.scss`, rebuild the frontend assets:
 
 ```sh
 npm run build
 ```
 
 For Docker deployments:
+
 ```sh
 docker exec -it control-center npm run build
 ```
@@ -86,8 +81,6 @@ The theme system uses CSS variables for dynamic switching:
 - **Bootstrap overrides**: `resources/sass/_theme-overrides.scss`
 - **JavaScript**: `resources/js/theme.js`
 
-See the root-level `THEME_*.md` files for comprehensive developer documentation.
-
 Older browsers (like IE11) will fall back to the default light theme without switching capability.
 
 ## Troubleshooting
@@ -98,11 +91,10 @@ Older browsers (like IE11) will fall back to the default light theme without swi
 - Verify assets are built: `npm run build`
 
 ### Colors look wrong
-- Ensure you edited both `_light.scss` and `_dark.scss`
+- Ensure you edited both the light and dark blocks in `_custom.scss` so the colors match in either mode
 - Rebuild assets after changes
 - Check CSS variables in browser DevTools
 
 ## Further Reading
-
 
 - [Custom Container](./custom.md) - Persistent customizations
