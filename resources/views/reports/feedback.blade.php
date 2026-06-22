@@ -32,7 +32,7 @@
                             <tr>
                                 <th data-field="received" data-sortable="true">Received</th>
                                 <th data-field="submitter" data-sortable="true" data-filter-control="input">Submitter</th>
-                                <th data-field="controller" data-sortable="true" data-filter-control="select">Controller</th>
+                                <th data-field="controller" data-sortable="true" data-filter-control="input">Controller</th>
                                 <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="feedback" data-sortable="false" data-filter-control="input">Feedback</th>
