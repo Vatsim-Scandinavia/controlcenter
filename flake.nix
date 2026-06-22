@@ -1,5 +1,5 @@
 {
-  description = "VATSIM Scandinavia Control Center – Laravel dev environment with PHP 8.3/8.4/8.5 and MySQL";
+  description = "VATSIM Scandinavia Control Center – Laravel dev environment with PHP 8.4/8.5 and MySQL";
 
   # nixos-unstable has php85; use a recent nixpkgs for all three PHP versions
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -30,7 +30,7 @@
     mkDevShell = system: let
       pkgs = pkgsFor system;
       # Keep version setup compact so adding/removing versions only changes one list.
-      desiredPhpVersions = [ "83" "84" "85" ];
+      desiredPhpVersions = [ "84" "85" ];
       availablePhpVersions = builtins.filter (version: builtins.hasAttr "php${version}" pkgs) desiredPhpVersions;
       defaultPhpVersion = lib.last availablePhpVersions;
       mkPhpVersion = version: let
