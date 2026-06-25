@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\TrainingStatus;
 use App\Models\AtcActivity;
 use App\Models\Training;
 use App\Models\User;
@@ -75,7 +76,7 @@ class UpdateMemberDetails extends Command
         $this->info($count . ' users affected.');
 
         // Get active trainings
-        $trainings = Training::where('status', '>=', 0)->where('type', '!=', 5)->get();
+        $trainings = Training::where('status', '>=', TrainingStatus::IN_QUEUE)->where('type', '!=', 5)->get();
 
         $this->info('Closing trainings for those who left division...');
         $count = 0;
@@ -94,13 +95,13 @@ class UpdateMemberDetails extends Command
             // the closure is recorded explicitly below, so the LogsActivity trait
             // would only add a duplicate entry for this bulk maintenance write.
             activity()->withoutLogging(function () use ($training) {
-                $training->updateStatus(-4);
+                $training->updateStatus(TrainingStatus::CLOSED_BY_SYSTEM);
                 $training->closed_reason = 'The student has left or is no longer part of our division.';
                 $training->save();
             });
 
             // Notify student of closure
-            $training->user->notify(new TrainingClosedNotification($training, -4, 'Student has left the division.'));
+            $training->user->notify(new TrainingClosedNotification($training, TrainingStatus::CLOSED_BY_SYSTEM, 'Student has left the division.'));
 
             // Log the closure
             ActivityLogService::warning('TRAINING', 'Closed training request ' . $training->id . ' due to student leaving division');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\VatsimRating;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class SuspendedUser
     {
         if (\Auth::check()) {
             $user = \Auth::user();
-            if ($user->rating == 0) {
+            if ($user->rating == VatsimRating::SUS) {
                 \Auth::logout();
 
                 return redirect('/')->with('error', 'Your account has been suspended.');

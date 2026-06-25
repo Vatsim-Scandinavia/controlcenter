@@ -84,6 +84,9 @@
         ],
         "phpstan": [
             "./vendor/bin/phpstan analyse --memory-limit=512M"
+        ],
+        "ide-helper": [
+            "@php artisan ide-helper:generate"
         ]
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\ManagementReport;
@@ -190,7 +191,6 @@ class ReportController extends Controller
         }
 
         $entries = $entries->concat($activities)->sortByDesc('activity_date');
-        $statuses = TrainingController::$statuses;
 
         $areas = Area::all();
         $filterName = 'All Areas';
@@ -203,7 +203,6 @@ class ReportController extends Controller
 
         return view('reports.activities', [
             'entries' => $entries,
-            'statuses' => $statuses,
             'filterName' => $filterName,
             'areas' => $areas,
         ]);
@@ -235,9 +234,8 @@ class ReportController extends Controller
         $mentors = $query->get();
 
         $mentors = $mentors->sortBy('name')->unique();
-        $statuses = TrainingController::$statuses;
 
-        return view('reports.mentors', compact('mentors', 'statuses'));
+        return view('reports.mentors', compact('mentors'));
     }
 
     /**
@@ -294,11 +292,11 @@ class ReportController extends Controller
         }
 
         $stats = $query->selectRaw('
-                COUNT(CASE WHEN status = 0 THEN 1 END) as waiting,
-                COUNT(CASE WHEN status IN (1, 2) THEN 1 END) as training,
-                COUNT(CASE WHEN status = 3 THEN 1 END) as exam,
-                COUNT(CASE WHEN status = -1 AND closed_at >= ? AND closed_at <= ? THEN 1 END) as completed,
-                COUNT(CASE WHEN status = -2 AND closed_at >= ? AND closed_at <= ? THEN 1 END) as closed
+                COUNT(CASE WHEN status = ' . TrainingStatus::IN_QUEUE->value . ' THEN 1 END) as waiting,
+                COUNT(CASE WHEN status IN (' . TrainingStatus::PRE_TRAINING->value . ', ' . TrainingStatus::ACTIVE_TRAINING->value . ') THEN 1 END) as training,
+                COUNT(CASE WHEN status = ' . TrainingStatus::AWAITING_EXAM->value . ' THEN 1 END) as exam,
+                COUNT(CASE WHEN status = ' . TrainingStatus::COMPLETED->value . ' AND closed_at >= ? AND closed_at <= ? THEN 1 END) as completed,
+                COUNT(CASE WHEN status = ' . TrainingStatus::CLOSED_BY_STAFF->value . ' AND closed_at >= ? AND closed_at <= ? THEN 1 END) as closed
             ', [$start, $end, $start, $end])
             ->first();
 
@@ -400,7 +398,7 @@ class ReportController extends Controller
             ->where(function ($query) use ($queryStart, $queryEnd) {
                 $query->whereBetween('created_at', [$queryStart, $queryEnd])
                     ->orWhere(function ($subQuery) use ($queryStart, $queryEnd) {
-                        $subQuery->whereIn('status', [-1, -2])
+                        $subQuery->whereIn('status', [TrainingStatus::COMPLETED, TrainingStatus::CLOSED_BY_STAFF])
                             ->whereBetween('closed_at', [$queryStart, $queryEnd]);
                     });
             });
@@ -427,9 +425,9 @@ class ReportController extends Controller
                 if ($training->closed_at && $training->closed_at >= $queryStart && $training->closed_at <= $queryEnd) {
                     $key = $training->closed_at->format('Y-m');
                     if (isset($monthTranslator[$key])) {
-                        if ($training->status == -1) {
+                        if ($training->status === TrainingStatus::COMPLETED) {
                             $completedRequests[$rating->name][$monthTranslator[$key]]++;
-                        } elseif ($training->status == -2) {
+                        } elseif ($training->status === TrainingStatus::CLOSED_BY_STAFF) {
                             $closedRequests[$rating->name][$monthTranslator[$key]]++;
                         }
                     }

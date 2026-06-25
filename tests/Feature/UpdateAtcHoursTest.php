@@ -55,7 +55,7 @@ class UpdateAtcHoursTest extends TestCase
             'rating' => 4,
         ]);
 
-        $user = User::factory()->create(['rating' => VatsimRating::C1->value]);
+        $user = User::factory()->create(['rating' => VatsimRating::C1]);
 
         Config::set('app.mode', 'division');
         Config::set('app.owner_code', 'VATSCA');

@@ -22,7 +22,7 @@ class OneTimeLinkPolicy
     {
         // Only allow examination link generation if the training is awaiting exam
         if ($type == OneTimeLink::TRAINING_EXAMINATION_TYPE) {
-            return $training->status == TrainingStatus::AWAITING_EXAM->value && ($training->mentors->contains($user) || $user->hasPermission('training.update', $training->area));
+            return $training->status === TrainingStatus::AWAITING_EXAM && ($training->mentors->contains($user) || $user->hasPermission('training.update', $training->area));
         }
 
         return $training->mentors->contains($user) || $user->hasPermission('training.update', $training->area);

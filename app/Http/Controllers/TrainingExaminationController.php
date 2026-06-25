@@ -40,7 +40,7 @@ class TrainingExaminationController extends Controller
     public function create(Request $request, Training $training)
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
-        if ($training->status != TrainingStatus::AWAITING_EXAM->value) {
+        if ($training->status !== TrainingStatus::AWAITING_EXAM) {
             return redirect(null, 400)->to($training->path())->withSuccess('Training examination cannot be created for a training not awaiting exam.');
         }
 
@@ -69,7 +69,7 @@ class TrainingExaminationController extends Controller
         $pass = strtolower($data['result']) == 'passed' ? true : false;
 
         // Attempt Division API sync first if the training has VATSIM ratings and it's an S2+ examination
-        if ($request->file('files') && $training->hasVatsimRatings() && $training->getHighestVatsimRating()->vatsim_rating >= VatsimRating::S2->value) {
+        if ($request->file('files') && $training->hasVatsimRatings() && $training->getHighestVatsimRating()->vatsim_rating->isGreaterThanOrEqual(VatsimRating::S2)) {
             foreach ($request->file('files') as $file) {
                 $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
                 if ($response && $response->failed()) {

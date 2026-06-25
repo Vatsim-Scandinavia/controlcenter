@@ -45,7 +45,7 @@
                                         <td>{{ $user['name_first'] }}</td>
                                         <td>{{ $user['name_last'] }}</td>
                                         <td>Yes</td>
-                                        <td>{{ App\Helpers\VatsimRating::from($user['rating'])->name }}</td>
+                                        <td>{{ \App\Helpers\VatsimRating::from($user['rating'])->name }}</td>
                                         <td><i class="fas fa-{{ $user['active'] ? 'check' : 'times' }}"></i> {{ $user['active'] ? 'Yes' : 'No' }}</td>
                                         <td>{{ isset($user['hours']) ? round($user['hours']) : 'N/A' }}</td>
                                         <td>{{ isset($user['lastratingchange']) ? Carbon\Carbon::create($user['lastratingchange'])->toEuropeanDate() : 'N/A' }}</td>
@@ -55,7 +55,7 @@
                                         <td>{{ $user['name_first'] }}</td>
                                         <td>{{ $user['name_last'] }}</td>
                                         <td>No</td>
-                                        <td>{{ App\Helpers\VatsimRating::from($user['rating'])->name }}</td>
+                                        <td>{{ \App\Helpers\VatsimRating::from($user['rating'])->name }}</td>
                                         <td>N/A</td>
                                         <td>N/A</td>
                                         <td>{{ isset($user['lastratingchange']) ? Carbon\Carbon::create($user['lastratingchange'])->toEuropeanDate() : 'N/A' }}</td>

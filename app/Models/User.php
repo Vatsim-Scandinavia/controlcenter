@@ -5,6 +5,8 @@ namespace App\Models;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
+use App\Helpers\TrainingStatus;
+use App\Helpers\VatsimRating;
 use App\Services\PermissionMatrix;
 use App\Support\AreaScope;
 use Carbon\Carbon;
@@ -25,6 +27,7 @@ class User extends Authenticatable
         'last_login' => 'datetime',
         'last_activity' => 'datetime',
         'last_inactivity_warning' => 'datetime',
+        'rating' => VatsimRating::class,
     ];
 
     /**
@@ -267,48 +270,39 @@ class User extends Authenticatable
      */
     public static function getActiveAtcMembers(array $userIds = [])
     {
-        // Return S1+ users who are VATSCA members and active as ATC
-        if (! empty($userIds)) {
-            return User::whereIn('id', $userIds)
-                ->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                })->get();
-        } else {
-            return User::whereHas('atcActivity', function ($query) {
+        $query = User::where('rating', '>=', VatsimRating::S1->value)
+            ->whereHas('atcActivity', function ($query) {
                 $query->where('atc_active', true);
-            })->get();
+            });
+
+        if (! empty($userIds)) {
+            $query->whereIn('id', $userIds);
         }
+
+        return $query->get();
     }
 
     /**
-     * Fetch members that are active as ATC and associated with the division.
+     * Fetch members that are active as ATC and associated with the sub-/division.
      *
      * @return EloquentCollection<User>
      */
     public static function getAssociatedActiveAtcMembers(bool $onlyCheckActiveControllers = true, array $userIds = [])
     {
-        // Return S1+ users who are VATSCA members and active as ATC
+        $query = User::where('rating', '>=', VatsimRating::S1->value)
+            ->where(config('app.mode'), config('app.owner_code'));
+
         if (! empty($userIds)) {
-            $query = User::whereIn('id', $userIds)
-                ->where(config('app.mode'), config('app.owner_code'));
-
-            if ($onlyCheckActiveControllers) {
-                $query->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
-            }
-
-            return $query->get();
-        } else {
-            $query = User::where(config('app.mode'), config('app.owner_code'));
-            if ($onlyCheckActiveControllers) {
-                $query->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
-            }
-
-            return $query->get();
+            $query->whereIn('id', $userIds);
         }
+
+        if ($onlyCheckActiveControllers) {
+            $query->whereHas('atcActivity', function ($query) {
+                $query->where('atc_active', true);
+            });
+        }
+
+        return $query->get();
     }
 
     /**
@@ -348,7 +342,7 @@ class User extends Authenticatable
      */
     public function mentoringTrainings()
     {
-        $trainings = Training::where('status', '>=', 1)->whereHas('mentors', function ($query) {
+        $trainings = Training::where('status', '>=', TrainingStatus::PRE_TRAINING)->whereHas('mentors', function ($query) {
             $query->where('user_id', $this->id);
         })->with('area', 'ratings', 'reports', 'user')->orderBy('id')->get();
 
@@ -372,49 +366,36 @@ class User extends Authenticatable
     /**
      * Return whether or not the user has active trainings.
      * A area can be provided to check if the user has an active training in the specified area.
-     *
-     * @return bool
      */
-    public function hasActiveTrainings(bool $includeWaiting, ?Area $area = null)
+    public function hasActiveTrainings(bool $includeWaiting, ?Area $area = null): bool
     {
-        $statuses = $includeWaiting ? [0, 1, 2, 3] : [1, 2, 3];
+        $minStatus = $includeWaiting ? TrainingStatus::IN_QUEUE : TrainingStatus::PRE_TRAINING;
 
         if ($this->relationLoaded('trainings')) {
-            $trainings = $this->trainings;
-            if ($area) {
-                $trainings = $trainings->where('area_id', $area->id);
-            }
+            $trainings = $area ? $this->trainings->where('area_id', $area->id) : $this->trainings;
 
-            return $trainings->whereIn('status', $statuses)->isNotEmpty();
+            return $trainings->filter(fn (Training $t) => $t->status->isGreaterThanOrEqual($minStatus))->isNotEmpty();
         }
 
-        if ($includeWaiting) {
-            if ($area == null) {
-                return $this->trainings()->whereIn('status', [0, 1, 2, 3])->exists();
-            }
+        $query = $this->trainings()->where('status', '>=', $minStatus->value);
 
-            return $this->trainings()->where('area_id', $area->id)->whereIn('status', [0, 1, 2, 3])->exists();
-        } else {
-            if ($area == null) {
-                return $this->trainings()->whereIn('status', [1, 2, 3])->exists();
-            }
-
-            return $this->trainings()->where('area_id', $area->id)->whereIn('status', [1, 2, 3])->exists();
+        if ($area) {
+            $query->where('area_id', $area->id);
         }
+
+        return $query->exists();
     }
 
     /**
      * Return the active training for the user
-     *
-     * @return Training|null
      */
-    public function getActiveTraining(int $minStatus = 0, ?Area $area = null)
+    public function getActiveTraining(TrainingStatus $minStatus = TrainingStatus::IN_QUEUE, ?Area $area = null): ?Training
     {
         if ($area == null) {
-            return $this->trainings()->where([['status', '>=', $minStatus]])->get()->first();
+            return $this->trainings()->where([['status', '>=', $minStatus->value]])->first();
         }
 
-        return $this->trainings()->where([['status', '>=', $minStatus], ['area_id', '=', $area->id]])->get()->first();
+        return $this->trainings()->where([['status', '>=', $minStatus->value], ['area_id', '=', $area->id]])->first();
     }
 
     /**
@@ -454,7 +435,7 @@ class User extends Authenticatable
      */
     public function hasRecentlyCompletedTraining()
     {
-        $training = $this->trainings->where('status', -1)->where('closed_at', '>', Carbon::now()->subDays(7))->first();
+        $training = $this->trainings->where('status', TrainingStatus::COMPLETED)->where('closed_at', '>', Carbon::now()->subDays(7))->first();
 
         if ($training == null || $training->isFacilityTraining() || $training->type != 1) {
             return false;

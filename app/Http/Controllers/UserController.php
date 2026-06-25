@@ -147,7 +147,6 @@ class UserController extends Controller
         ]);
 
         $trainings = $user->trainings;
-        $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
         $endorsements = $user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->sortBy([['expired', 'asc'], ['revoked', 'asc']]);
 
@@ -211,7 +210,7 @@ class UserController extends Controller
             )
         );
 
-        return view('user.show', compact('user', 'roles', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
+        return view('user.show', compact('user', 'roles', 'areas', 'trainings', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
     }
 
     /**

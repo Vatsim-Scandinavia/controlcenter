@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\TrainingStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TrainingController;
 use App\Models\Area;
@@ -95,7 +96,7 @@ class UserController extends Controller
 
         if ($paramIncludeTraining) {
             $trainingUsers = User::whereHas('trainings', function (Builder $q) {
-                $q->where('status', '>=', 0);
+                $q->where('status', '>=', TrainingStatus::IN_QUEUE);
             })->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
                 $trainingUsers = $trainingUsers->whereHas('atcActivity', function ($query) {
@@ -138,7 +139,7 @@ class UserController extends Controller
         // Trainings
         if ($paramIncludeTraining) {
             foreach ($returnUsers as $user) {
-                $user->training = $this->mapTrainings($user->trainings->where('status', '>=', 0));
+                $user->training = $this->mapTrainings($user->trainings->filter(fn ($t) => $t->status->isOpen()));
             }
         }
 
@@ -274,8 +275,8 @@ class UserController extends Controller
             return [
                 'area' => $training->area->name,
                 'type' => TrainingController::$types[$training->type]['text'],
-                'status' => $training->status,
-                'status_description' => TrainingController::$statuses[$training->status]['text'],
+                'status' => $training->status->value,
+                'status_description' => $training->status->label(),
                 'created_at' => $training->created_at,
                 'started_at' => $training->started_at,
                 'ratings' => $training->ratings->pluck('name'),

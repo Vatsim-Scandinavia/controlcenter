@@ -31,9 +31,9 @@ class BookingPolicy
     public function create(User $user)
     {
         return
-            $user->isAtcActive() && $user->rating >= VatsimRating::S1->value
+            $user->isAtcActive() && $user->rating->isGreaterThanOrEqual(VatsimRating::S1)
             || $user->hasActiveEndorsement('VISITING')
-            || $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) != null
+            || $user->getActiveTraining(TrainingStatus::PRE_TRAINING) != null
             || $user->hasPermission('bookings.manage');
     }
 
@@ -79,7 +79,7 @@ class BookingPolicy
             return true;
         }
 
-        return $user->rating >= VatsimRating::S1->value && $user->hasActiveTrainings(includeWaiting: false);
+        return $user->rating->isGreaterThanOrEqual(VatsimRating::S1) && $user->hasActiveTrainings(includeWaiting: false);
     }
 
     /**
@@ -87,7 +87,7 @@ class BookingPolicy
      */
     public function bookEventTag(User $user): bool
     {
-        return ($user->isMember() || $user->isVisiting()) && $user->rating >= VatsimRating::S1->value;
+        return ($user->isMember() || $user->isVisiting()) && $user->rating->isGreaterThanOrEqual(VatsimRating::S1);
     }
 
     /**
@@ -98,7 +98,7 @@ class BookingPolicy
     public function bookExamTag(User $user): bool
     {
 
-        return $user->isMember() && ($user->rating >= VatsimRating::C1->value || $user->hasPermission('bookings.manage'));
+        return $user->isMember() && ($user->rating->isGreaterThanOrEqual(VatsimRating::C1) || $user->hasPermission('bookings.manage'));
     }
 
     /**
@@ -109,10 +109,10 @@ class BookingPolicy
     public function position(User $user, Booking $booking)
     {
         // TODO: Make it easier to read the order of checks
-        if (($booking->position->rating->value > $user->rating || $user->rating < VatsimRating::S1->value) && ! $user->hasPermission('bookings.manage')) {
+        if (($booking->position->rating->isGreaterThan($user->rating) || $user->rating->isLessThan(VatsimRating::S1)) && ! $user->hasPermission('bookings.manage')) {
             if (
-                $user->getActiveTraining(TrainingStatus::PRE_TRAINING->value) &&
-                $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating >= $booking->position->rating->value &&
+                $user->getActiveTraining(TrainingStatus::PRE_TRAINING) &&
+                $user->getActiveTraining()->getHighestVatsimRating()?->vatsim_rating?->isGreaterThanOrEqual($booking->position->rating) &&
                 $user->getActiveTraining()->area->id === $booking->position->area->id
             ) {
                 return true;

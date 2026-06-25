@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\TrainingStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,7 @@ class Training extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'closed_at' => 'datetime',
+        'status' => TrainingStatus::class,
     ];
 
     /**
@@ -46,10 +48,10 @@ class Training extends Model
     /**
      * Update the status of the training, keeping the related timestamps consistent.
      *
-     * @param  int  $newStatus  the new status to set
+     * @param  TrainingStatus  $newStatus  the new status to set
      * @param  bool  $expiredInterest  whether this update expired an interest request
      */
-    public function updateStatus(int $newStatus, bool $expiredInterest = false): void
+    public function updateStatus(TrainingStatus $newStatus, bool $expiredInterest = false): void
     {
         $changes = $this->resolveStatusChanges($newStatus, $expiredInterest);
 
@@ -68,26 +70,26 @@ class Training extends Model
      *
      * @return array<string, mixed>
      */
-    public function resolveStatusChanges(int $newStatus, bool $expiredInterest = false): array
+    public function resolveStatusChanges(TrainingStatus $newStatus, bool $expiredInterest = false): array
     {
         $oldStatus = $this->fresh()->status;
 
-        if ($newStatus == $oldStatus) {
+        if ($newStatus === $oldStatus) {
             return [];
         }
 
         $changes = ['status' => $newStatus];
 
         // Training was put back in queue
-        if ($newStatus == 0) {
+        if ($newStatus === TrainingStatus::IN_QUEUE) {
             $changes['started_at'] = null;
             $changes['closed_at'] = null;
         }
 
         // Training is active or completed
-        if ($newStatus >= 1 || $newStatus == -1) {
+        if ($newStatus->isInProgress() || $newStatus === TrainingStatus::COMPLETED) {
             // In case someone resurrects a closed training
-            if ($oldStatus < 0) {
+            if ($oldStatus->isClosed()) {
                 $changes['closed_at'] = null;
             }
 
@@ -99,7 +101,7 @@ class Training extends Model
         }
 
         // Training is completed or closed
-        if ($newStatus < 0) {
+        if ($newStatus->isClosed()) {
             $changes['closed_at'] = now();
 
             // Expire all related interests, as they only cause problems if the training is re-opened.
@@ -167,7 +169,10 @@ class Training extends Model
      */
     public function getHighestVatsimRating(): ?Rating
     {
-        return $this->ratings->whereNotNull('vatsim_rating')->sortByDesc('vatsim_rating')->first();
+        return $this->ratings
+            ->whereNotNull('vatsim_rating')
+            ->sortByDesc(fn (Rating $rating) => $rating->vatsim_rating->value)
+            ->first();
     }
 
     /**

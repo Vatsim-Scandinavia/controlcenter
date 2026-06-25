@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\TrainingStatus;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Training;
 use App\Models\TrainingInterest;
@@ -43,7 +44,7 @@ class SendTrainingInterestNotifications extends Command
      */
     public function handle()
     {
-        $trainings = Training::where([['status', '>=', 0], ['status', '<=', 1], ['created_at', '<=', Carbon::now()->subDays(30)]])->get();
+        $trainings = Training::where([['status', '>=', TrainingStatus::IN_QUEUE], ['status', '<=', TrainingStatus::PRE_TRAINING], ['created_at', '<=', Carbon::now()->subDays(30)]])->get();
 
         foreach ($trainings as $training) {
             $lastInterestRequest = TrainingInterest::where('training_id', $training->id)->orderBy('created_at')->get()->last();
@@ -79,11 +80,11 @@ class SendTrainingInterestNotifications extends Command
 
                     // Update the training
                     // Note: The training interest is set to expire through updateStatus()
-                    $training->updateStatus(-4, true);
+                    $training->updateStatus(TrainingStatus::CLOSED_BY_SYSTEM, true);
                     $training->closed_reason = 'Continued training interest was not confirmed within deadline.';
                     $training->save();
-                    $training->user->notify(new TrainingClosedNotification($training, -4, 'Continued training interest was not confirmed within deadline.'));
-                    TrainingActivityController::create($training->id, 'STATUS', -4, $oldStatus, null, 'Continued training interest was not confirmed within deadline.');
+                    $training->user->notify(new TrainingClosedNotification($training, TrainingStatus::CLOSED_BY_SYSTEM, 'Continued training interest was not confirmed within deadline.'));
+                    TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::CLOSED_BY_SYSTEM->value, $oldStatus->value, null, 'Continued training interest was not confirmed within deadline.');
                 } elseif ($requestDeadline->diffInDays(now(), true) == 6 && $requestUpdated->diffInDays(now(), true) != 0 && $lastInterestRequest->expired == false && $requestConfirmed == null) {
                     // If the interest is not confirmed after 6 days, we remind
                     $this->info('Reminding training ' . $training->id);

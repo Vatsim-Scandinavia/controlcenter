@@ -59,13 +59,13 @@
                                 @foreach ($positions as $position)
                                     <tr data-callsign="{{ $position->callsign }}" data-name="{{ $position->name }}"
                                         data-frequency="{{ $position->frequency }}" data-fir="{{ $position->fir }}"
-                                        data-rating_name="{{ $position->rating_name }}"
+                                        data-rating_name="{{ $position->rating->name }}"
                                         data-area_name="{{ $position->area->name }}">
                                         <td><span class="badge bg-primary">{{ $position->callsign }}</span></td>
                                         <td>{{ $position->name }}</td>
                                         <td><code>{{ $position->frequency }}</code></td>
                                         <td>{{ $position->fir }}</td>
-                                        <td>{{ $position->rating_name }}</td>
+                                        <td>{{ $position->rating->name }}</td>
                                         <td>{{ $position->requiredRating ? $position->requiredRating->name : 'N/A' }}</td>
                                         <td>{{ $position->area->name }}</td>
                                         <td class="text-nowrap">
@@ -186,7 +186,7 @@
                                             <input type="radio" class="btn-check"
                                                 id="edit_rating_{{ $position->id }}_{{ $rating->name }}" name="rating"
                                                 value="{{ $rating->value }}"
-                                                {{ $position->hasBaseRating($rating) ? 'checked' : '' }}>
+                                                {{ $position->rating == $rating ? 'checked' : '' }}>
                                             <label class="btn btn-outline-primary"
                                                 for="edit_rating_{{ $position->id }}_{{ $rating->name }}">{{ $rating->name }}</label>
                                         @endforeach

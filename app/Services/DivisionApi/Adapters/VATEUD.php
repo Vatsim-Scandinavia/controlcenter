@@ -100,7 +100,7 @@ class VATEUD implements DivisionApiContract
     public function assignExaminer(User $user, Rating $rating, int $requesterId)
     {
         // Only assign if the user is S3 or higher, this is VATEUD's definition of examiner
-        if ($user->rating >= VatsimRating::S3->value) {
+        if ($user->rating->isGreaterThanOrEqual(VatsimRating::S3)) {
             return $this->callApi('/facility/training/assign/' . $user->id . '/examiner', 'POST', [
                 'user_cid' => $requesterId,
             ]);
@@ -117,7 +117,7 @@ class VATEUD implements DivisionApiContract
     public function removeExaminer(User $user, Endorsement $endorsement, int $requesterId)
     {
         // Only revoke if the endorsement rating is S3 or higher, this is VATEUD's definition of examiner
-        if ($endorsement->ratings->first()->vatsim_rating >= VatsimRating::S3->value) {
+        if ($endorsement->ratings->first()->vatsim_rating->isGreaterThanOrEqual(VatsimRating::S3)) {
             return $this->callApi('/facility/training/remove/' . $user->id . '/examiner', 'POST', [
                 'user_cid' => $requesterId,
             ]);

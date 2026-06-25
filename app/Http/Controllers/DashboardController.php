@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
+use App\Helpers\VatsimRating;
 use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
 use App\Models\User;
@@ -52,7 +53,6 @@ class DashboardController extends Controller
         ];
 
         $trainings = $user->trainings;
-        $statuses = TrainingController::$statuses;
         $types = TrainingController::$types;
 
         $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->first();
@@ -64,7 +64,7 @@ class DashboardController extends Controller
                 (config('app.mode') == 'subdivision' && in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null)
                 || (config('app.mode') == 'division' && $user->division == config('app.owner_code'))
             )
-            && ! $user->hasActiveTrainings(true) && $user->rating > 1 && ! $user->isAtcActive() && ! $user->hasRecentlyCompletedTraining()
+            && ! $user->hasActiveTrainings(true) && $user->rating->isGreaterThan(VatsimRating::OBS) && ! $user->isAtcActive() && ! $user->hasRecentlyCompletedTraining()
         );
         $completedTrainingMessage = $user->hasRecentlyCompletedTraining();
 
@@ -81,7 +81,7 @@ class DashboardController extends Controller
 
         $oudatedVersionWarning = $user->hasPermission('system.health.view') && Setting::get('_updateAvailable');
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
+        return view('dashboard', compact('data', 'trainings', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
     }
 
     /**
