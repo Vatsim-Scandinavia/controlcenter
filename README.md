@@ -22,7 +22,7 @@ Training Management System created by [Daniel L.](https://github.com/blt950) (13
 - [VATPHIL](https://vatphil.com/)
 - [Portugal vACC](https://portugal-vacc.org/)
 - [Estonia vACC](https://controlcenter.vatsim.ee/)
-- [ATSIM Sub-Sahara Africa](https://vatssa.com/)
+- [VATSIM Sub-Sahara Africa](https://vatssa.com/)
 
 ## Contributing
 
