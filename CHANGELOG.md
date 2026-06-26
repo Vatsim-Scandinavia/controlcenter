@@ -1,5 +1,35 @@
 # Changelog
 
+## [7.0.0-alpha.12](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.11...v7.0.0-alpha.12) (2026-06-25)
+
+
+### Features
+
+* **themes:** customize theme via gitignored _custom.scss ([#1539](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1539)) ([db2c579](https://github.com/Vatsim-Scandinavia/controlcenter/commit/db2c579a334b85ca785e41b5b1079c7adafbd727))
+
+
+### Bug Fixes
+
+* **dev:** update nix flake to PHP 8.4 and 8.5 only ([11ee077](https://github.com/Vatsim-Scandinavia/controlcenter/commit/11ee077585fa33c09c1dc83bb7aa95317b92ba12))
+* **dev:** update sail Docker configuration to PHP 8.4 ([#1537](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1537)) ([4ff5194](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4ff51940bfea9c888bbf6dfa79e016885cff4a40))
+* **docs:** clarify activity documentation and update last online in job ([413a8de](https://github.com/Vatsim-Scandinavia/controlcenter/commit/413a8de8e8b1928bec3760505802e77ffb4de6a2))
+* **feedback:** change controller column filter control to input ([#1540](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1540)) ([26214fd](https://github.com/Vatsim-Scandinavia/controlcenter/commit/26214fd4101311c9648d355baa69487ba746eeda))
+* **theme:** wire --bs-border-color to --border-color theme variable ([98a0a53](https://github.com/Vatsim-Scandinavia/controlcenter/commit/98a0a5397dcbfb18bea422112e475875bc573130))
+* update Docker configuration to PHP 8.4 ([4ff5194](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4ff51940bfea9c888bbf6dfa79e016885cff4a40))
+
+
+### Miscellaneous Chores
+
+* change controller column filter control to input  ([26214fd](https://github.com/Vatsim-Scandinavia/controlcenter/commit/26214fd4101311c9648d355baa69487ba746eeda))
+* **deps:** update actions/checkout action to v7 ([#1542](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1542)) ([5267315](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5267315472ae3001913f4f4bbd75543c4cdb079d))
+* **deps:** update dependency guzzlehttp/guzzle to v7.12.1 ([#1529](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1529)) ([095ee16](https://github.com/Vatsim-Scandinavia/controlcenter/commit/095ee168f1965bab0fc32609d152676bd57e25f6))
+* **deps:** update dependency laravel/framework to v13.16.1 ([#1534](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1534)) ([67459b7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/67459b7fbef2ed6f2f2b483ee440c5dde1809d3e))
+* **deps:** update dependency laravel/pint to v1.29.3 ([#1530](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1530)) ([234c215](https://github.com/Vatsim-Scandinavia/controlcenter/commit/234c215e16cde36579a0488370225ce8c70285e8))
+* **deps:** update dependency livewire/flux to v2.15.0 ([#1541](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1541)) ([fc1ae68](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fc1ae683c04b3ee4eda6f450e939dc6a20418ca3))
+* **deps:** update mlocati/php-extension-installer docker tag to v2.11.12 ([#1533](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1533)) ([aeee457](https://github.com/Vatsim-Scandinavia/controlcenter/commit/aeee457bf15fa01cdfcb09e9f50873242f354a22))
+* **deps:** update mysql docker tag to v8.4.10 ([#1535](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1535)) ([ac348fc](https://github.com/Vatsim-Scandinavia/controlcenter/commit/ac348fc9f8d27e79053e5ff118bcc7eb17cd312d))
+* **deps:** update node.js to v24.17.0 ([#1536](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1536)) ([aa70b46](https://github.com/Vatsim-Scandinavia/controlcenter/commit/aa70b463dd3cec3f266dbca31fa16101f13f49b9))
+
 ## [7.0.0-alpha.11](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.10...v7.0.0-alpha.11) (2026-06-16)
 
 
