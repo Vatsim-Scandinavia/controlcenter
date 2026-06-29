@@ -11,10 +11,12 @@ class TrainingInterest extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'deadline' => 'datetime',
-        'confirmed_at' => 'datetime',
-    ];
+        protected $casts = [
+            'deadline' => 'datetime',
+            'confirmed_at' => 'datetime',
+            'expired' => 'integer',
+        ];
+
 
     public function training()
     {
