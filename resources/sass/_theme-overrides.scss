@@ -80,6 +80,16 @@ body {
     border-color: var(--color-danger);
 }
 
+.btn-link {
+    --bs-btn-color: var(--link-color);
+    --bs-btn-hover-color: var(--link-hover-color);
+}
+
+.btn-light {
+    --bs-btn-bg: var(--btn-light-bg);
+    --bs-btn-color: var(--btn-light-color);
+}
+
 // Bootstrap alerts
 .alert {
     color: var(--color-text-primary);
@@ -450,10 +460,14 @@ textarea.form-control {
 // Bootstrap navigation
 .nav-link {
     color: var(--color-text-primary);
-    
+
     &:hover, &:focus {
         color: var(--color-primary);
     }
+}
+
+.navbar-nav .nav-link.show {
+    color: var(--color-text-primary);
 }
 
 .navbar {

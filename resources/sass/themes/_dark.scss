@@ -8,7 +8,7 @@
     --color-tertiary: #e8eaed;
     
     // Status Colors (slightly brighter for visibility)
-    --color-info: #1a475f;
+    --color-info: #4a9cc5;
     --color-success: #40896e;
     --color-warning: #ffb347;
     --color-danger: #e57373;
@@ -29,8 +29,7 @@
     --color-green: #5dbd9a;
     --color-teal: #4dd0e1;
     --color-cyan: #80deea;
-    --color-info: #4a9cc5;
-    
+
     // Gray Scale (inverted for dark mode)
     --color-gray-100: #2a2a2a;
     --color-gray-200: #333333;
@@ -74,25 +73,9 @@
     --link-color: #4a9cc5;
     --link-hover-color: #6bb6d9;
 
-    .btn-link {
-        --bs-btn-color: #4a9cc5;
-        &:hover { 
-            --bs-btn-hover-color: #6bb6d9;
-        }
-    }
-
-    .bg-lightorange {
-        background-color: #5a4320;
-    }
-    
-    .btn-light {
-        --bs-btn-bg: #1c2128;
-        --bs-btn-color: #fff;
-    }
-    .navbar-nav {
-        .nav-link.show {
-            color: #ddd;
-        }
-    }
+    // Component-specific Colors
+    --bg-lightorange: #5a4320;
+    --btn-light-bg: #1c2128;
+    --btn-light-color: #fff;
 }
 
