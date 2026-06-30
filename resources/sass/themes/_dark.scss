@@ -3,7 +3,10 @@
 
 [data-theme="dark"] {
     // Primary Colors (adjusted for dark mode)
-    --color-primary: #1a475f;
+    // Brightened from light's #1a475f so it reads as a foreground accent on
+    // dark surfaces, but kept dark enough that text on primary fills (see
+    // --color-on-primary) keeps a comfortable contrast margin.
+    --color-primary: #2c6285;
     --color-secondary: #6c757d;
     --color-tertiary: #e8eaed;
     
