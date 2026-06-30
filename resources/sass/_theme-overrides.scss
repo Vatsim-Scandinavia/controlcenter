@@ -94,6 +94,24 @@ body {
     --bs-btn-color: var(--btn-light-color);
 }
 
+// Outline buttons: Bootstrap bakes these at the compiled (light) palette, so
+// they never theme. Drive them from the same --color-* variables as the
+// filled buttons so an outline button always matches its filled counterpart.
+// Hover/active fill with the colour; the hover text colour is left to
+// Bootstrap. Only the variants in use are remapped.
+@each $name in (primary, secondary, success, danger) {
+    .btn-outline-#{$name} {
+        --bs-btn-color: var(--color-#{$name});
+        --bs-btn-border-color: var(--color-#{$name});
+        --bs-btn-hover-bg: var(--color-#{$name});
+        --bs-btn-hover-border-color: var(--color-#{$name});
+        --bs-btn-active-bg: var(--color-#{$name});
+        --bs-btn-active-border-color: var(--color-#{$name});
+        --bs-btn-disabled-color: var(--color-#{$name});
+        --bs-btn-disabled-border-color: var(--color-#{$name});
+    }
+}
+
 // Bootstrap alerts
 .alert {
     color: var(--color-text-primary);
