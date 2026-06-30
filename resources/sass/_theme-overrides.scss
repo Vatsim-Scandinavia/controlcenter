@@ -51,6 +51,10 @@ body {
 
 // Bootstrap button overrides
 .btn-primary {
+    --bs-btn-color: var(--color-on-primary);
+    --bs-btn-hover-color: var(--color-on-primary);
+    --bs-btn-active-color: var(--color-on-primary);
+    --bs-btn-disabled-color: var(--color-on-primary);
     background-color: var(--color-primary);
     border-color: var(--color-primary);
 }
@@ -97,11 +101,11 @@ body {
 
 .alert-primary {
     --bs-alert-bg: var(--color-primary);
-    --bs-alert-color: #fff;
+    --bs-alert-color: var(--color-on-primary);
     --bs-alert-border-color: var(--color-primary);
     background-color: var(--color-primary);
     border-color: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
 }
 
 .alert-secondary {
@@ -150,7 +154,7 @@ body {
 }
 
 // Alert links
-.alert-primary .alert-link { color: #fff; text-decoration: underline; }
+.alert-primary .alert-link { color: var(--color-on-primary); text-decoration: underline; }
 .alert-secondary .alert-link { color: #fff; text-decoration: underline; }
 .alert-success .alert-link { color: #fff; text-decoration: underline; }
 .alert-info .alert-link { color: #fff; text-decoration: underline; }
@@ -362,22 +366,22 @@ textarea.form-control {
 
 .table-dark {
     --bs-table-bg: var(--color-primary);
-    --bs-table-color: #fff;
+    --bs-table-color: var(--color-on-primary);
     --bs-table-border-color: rgba(255, 255, 255, 0.1);
-    
+
     background-color: var(--color-primary);
-    color: #fff;
-    
+    color: var(--color-on-primary);
+
     th, td, thead th, tbody + tbody {
         border-color: rgba(255, 255, 255, 0.1);
-        color: #fff;
+        color: var(--color-on-primary);
     }
 }
 
 // Bootstrap table variants
 .table-primary {
     --bs-table-bg: var(--color-primary);
-    --bs-table-color: #fff;
+    --bs-table-color: var(--color-on-primary);
 }
 
 .table-secondary {
@@ -491,8 +495,10 @@ textarea.form-control {
 }
 
 .page-item.active .page-link {
+    --bs-pagination-active-color: var(--color-on-primary);
     background-color: var(--color-primary);
     border-color: var(--color-primary);
+    color: var(--color-on-primary);
 }
 
 // Links

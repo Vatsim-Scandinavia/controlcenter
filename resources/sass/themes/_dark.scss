@@ -9,6 +9,10 @@
     --color-primary: #2c6285;
     --color-secondary: #6c757d;
     --color-tertiary: #e8eaed;
+
+    // Foreground used for text/icons on top of --color-primary fills.
+    // Softened from pure white; kept >=4.5:1 against #336d91.
+    --color-on-primary: #ececec;
     
     // Status Colors (slightly brighter for visibility)
     --color-info: #4a9cc5;
