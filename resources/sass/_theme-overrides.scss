@@ -51,12 +51,22 @@ body {
 
 // Bootstrap button overrides
 .btn-primary {
-    --bs-btn-color: var(--color-on-primary);
-    --bs-btn-hover-color: var(--color-on-primary);
-    --bs-btn-active-color: var(--color-on-primary);
-    --bs-btn-disabled-color: var(--color-on-primary);
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
+    // Buttons use the brighter interactive primary; white text is AA on it
+    // in dark and matches the existing light appearance.
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-color: #fff;
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-bg: var(--color-primary-emphasis);
+    --bs-btn-border-color: var(--color-primary-emphasis);
+    --bs-btn-hover-bg: color-mix(in srgb, var(--color-primary-emphasis), #000 12%);
+    --bs-btn-hover-border-color: color-mix(in srgb, var(--color-primary-emphasis), #000 12%);
+    --bs-btn-active-bg: color-mix(in srgb, var(--color-primary-emphasis), #000 20%);
+    --bs-btn-active-border-color: color-mix(in srgb, var(--color-primary-emphasis), #000 20%);
+    --bs-btn-disabled-bg: var(--color-primary-emphasis);
+    --bs-btn-disabled-border-color: var(--color-primary-emphasis);
+    background-color: var(--color-primary-emphasis);
+    border-color: var(--color-primary-emphasis);
 }
 
 .btn-secondary {
@@ -95,11 +105,22 @@ body {
 }
 
 // Outline buttons: Bootstrap bakes these at the compiled (light) palette, so
-// they never theme. Drive them from the same --color-* variables as the
-// filled buttons so an outline button always matches its filled counterpart.
-// Hover/active fill with the colour; the hover text colour is left to
-// Bootstrap. Only the variants in use are remapped.
-@each $name in (primary, secondary, success, danger) {
+// they never theme. Drive them from the same primary as the filled buttons so
+// an outline button always matches its filled counterpart. Hover/active fill
+// with the colour; the hover text colour is left to Bootstrap. Only the
+// variants in use are remapped.
+.btn-outline-primary {
+    --bs-btn-color: var(--color-primary-emphasis);
+    --bs-btn-border-color: var(--color-primary-emphasis);
+    --bs-btn-hover-bg: var(--color-primary-emphasis);
+    --bs-btn-hover-border-color: var(--color-primary-emphasis);
+    --bs-btn-active-bg: var(--color-primary-emphasis);
+    --bs-btn-active-border-color: var(--color-primary-emphasis);
+    --bs-btn-disabled-color: var(--color-primary-emphasis);
+    --bs-btn-disabled-border-color: var(--color-primary-emphasis);
+}
+
+@each $name in (secondary, success, danger) {
     .btn-outline-#{$name} {
         --bs-btn-color: var(--color-#{$name});
         --bs-btn-border-color: var(--color-#{$name});
