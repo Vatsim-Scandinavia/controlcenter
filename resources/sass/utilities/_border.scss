@@ -1,7 +1,10 @@
+// Use the runtime CSS variable so these accents follow the active theme,
+// falling back to the compiled Bootstrap color for keys without a
+// --color-* variable (e.g. light/dark).
 @each $color, $value in $theme-colors {
     @each $position in [ "left", "bottom" ] {
         .border-#{$position}-#{$color} {
-            border-#{$position}: 0.25rem solid $value !important;
+            border-#{$position}: 0.25rem solid var(--color-#{$color}, #{$value}) !important;
         }
     }
 }
