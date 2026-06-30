@@ -14,10 +14,14 @@
     // Softened from pure white; kept >=4.5:1 against the primary fill.
     --color-on-primary: #ececec;
 
-    // Brighter "interactive" primary used by buttons (filled + outline), so
-    // they read on --bg-body while surfaces keep the deeper --color-primary.
-    // White text is AA on this (4.56:1).
+    // Brighter "interactive" primary used by filled buttons, so they read on
+    // --bg-body while surfaces keep the deeper --color-primary. White text is
+    // AA on this (4.56:1).
     --color-primary-emphasis: #3a7ca5;
+
+    // Outline buttons brighten their resting text/border one step further
+    // (4.16:1 on --bg-body); on hover they fill with --color-primary-emphasis.
+    --color-primary-outline: #4288b0;
     
     // Status Colors (slightly brighter for visibility)
     --color-info: #4a9cc5;

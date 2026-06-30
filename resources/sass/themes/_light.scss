@@ -11,10 +11,14 @@
     // Foreground used for text/icons on top of --color-primary fills
     --color-on-primary: #fff;
 
-    // Brighter "interactive" primary used by buttons (filled + outline).
-    // Same as --color-primary in light; brighter in dark so buttons stay
-    // legible without darkening surfaces.
+    // Brighter "interactive" primary used by filled buttons. Same as
+    // --color-primary in light; brighter in dark so buttons stay legible
+    // without darkening surfaces.
     --color-primary-emphasis: #1a475f;
+
+    // Outline buttons brighten their resting text/border one step further so
+    // they read on --bg-body; on hover they fill with --color-primary-emphasis.
+    --color-primary-outline: #1a475f;
     
     // Status Colors
     --color-info: #17a2b8;

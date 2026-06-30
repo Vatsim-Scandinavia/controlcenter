@@ -110,14 +110,17 @@ body {
 // with the colour; the hover text colour is left to Bootstrap. Only the
 // variants in use are remapped.
 .btn-outline-primary {
-    --bs-btn-color: var(--color-primary-emphasis);
-    --bs-btn-border-color: var(--color-primary-emphasis);
+    // Resting text/border use the brighter outline primary so they read on
+    // the body; hover/active fill with the filled-button primary (white text
+    // is AA there), so a hovered outline button matches a filled one.
+    --bs-btn-color: var(--color-primary-outline);
+    --bs-btn-border-color: var(--color-primary-outline);
     --bs-btn-hover-bg: var(--color-primary-emphasis);
     --bs-btn-hover-border-color: var(--color-primary-emphasis);
     --bs-btn-active-bg: var(--color-primary-emphasis);
     --bs-btn-active-border-color: var(--color-primary-emphasis);
-    --bs-btn-disabled-color: var(--color-primary-emphasis);
-    --bs-btn-disabled-border-color: var(--color-primary-emphasis);
+    --bs-btn-disabled-color: var(--color-primary-outline);
+    --bs-btn-disabled-border-color: var(--color-primary-outline);
 }
 
 @each $name in (secondary, success, danger) {
