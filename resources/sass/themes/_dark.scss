@@ -34,9 +34,13 @@
     --color-cyan: #80deea;
 
     // Gray Scale (inverted for dark mode)
-    --color-gray-100: #2a2a2a;
-    --color-gray-200: #333333;
-    --color-gray-300: #3d3d3d;
+    // The low end is used for elevation above --bg-card (#2a2a2a):
+    // table striping/hover, active and disabled states. These must stay
+    // distinct from the card surface, so they step lighter than it rather
+    // than landing on it.
+    --color-gray-100: #323232;
+    --color-gray-200: #3a3a3a;
+    --color-gray-300: #424242;
     --color-gray-400: #4a4a4a;
     --color-gray-500: #666666;
     --color-gray-600: #999999;
