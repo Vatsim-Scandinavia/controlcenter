@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
+use App\Helpers\InterestStatus;
 use App\Helpers\VatsimRating;
 use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
@@ -55,7 +56,7 @@ class DashboardController extends Controller
         $trainings = $user->trainings;
         $types = TrainingController::$types;
 
-        $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->first();
+        $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', InterestStatus::NOT_EXPIRED->value)->first();
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));

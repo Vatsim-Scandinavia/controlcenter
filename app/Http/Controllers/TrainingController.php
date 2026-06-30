@@ -690,13 +690,13 @@ class TrainingController extends Controller
                 return redirect($training->path())->withSuccess('You have already confirmed your interest for this training.');
             }
 
-            if ($interest->expired) {
+            if ($interest->expired !== InterestStatus::NOT_EXPIRED->value) {
                 return redirect($training->path())->withErrors('This training interest link has expired. Please contact staff.');
             }
 
             $interest->confirmed_at = now();
             $interest->updated_at = now();
-            $interest->expired = true;
+            $interest->expired = InterestStatus::CLOSED->value;
             $interest->save();
 
             ActivityLogService::info('TRAINING', 'Training interest confirmed.');

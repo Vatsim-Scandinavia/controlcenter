@@ -14,6 +14,7 @@ class TrainingInterest extends Model
     protected $casts = [
         'deadline' => 'datetime',
         'confirmed_at' => 'datetime',
+        'expired' => 'integer',
     ];
 
     public function training()
