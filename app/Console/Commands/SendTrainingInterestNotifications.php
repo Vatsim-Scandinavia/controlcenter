@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\InterestStatus;
 use App\Helpers\TrainingStatus;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Training;
 use App\Models\TrainingInterest;
 use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingInterestNotification;
-use App\Helpers\InterestStatus;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
