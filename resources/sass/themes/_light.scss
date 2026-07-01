@@ -91,6 +91,11 @@
     --btn-light-bg: #f8f9fc;
     --btn-light-color: #000;
 
+    // Table row elevation. Light striping/hover step slightly darker than the
+    // white card with the subtle gray scale (as before), keeping the tint faint.
+    --table-striped-bg: var(--color-gray-100);
+    --table-hover-bg: var(--color-gray-200);
+
     .alert-primary {
         a {
             color: #ddd !important;

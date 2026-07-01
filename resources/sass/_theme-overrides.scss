@@ -363,9 +363,13 @@ textarea.form-control {
 // Bootstrap tables
 .table {
     --bs-table-bg: var(--bg-card);
-    --bs-table-striped-bg: var(--color-gray-100);
-    --bs-table-hover-bg: var(--color-gray-200);
-    --bs-table-active-bg: var(--color-gray-200);
+    // Striped/hover row surfaces are defined per theme (see _light.scss /
+    // _dark.scss): light steps lighter with the subtle gray scale, dark darkens
+    // the card so links stay legible. Keeping the values in the theme files
+    // avoids baking a single (dark-tuned) formula into this shared mapping.
+    --bs-table-striped-bg: var(--table-striped-bg);
+    --bs-table-hover-bg: var(--table-hover-bg);
+    --bs-table-active-bg: var(--table-hover-bg);
     
     color: var(--color-text-primary);
     border-color: var(--border-color);
@@ -391,18 +395,19 @@ textarea.form-control {
 }
 
 .table-striped {
-    --bs-table-striped-bg: var(--color-gray-100);
-    
+    // Row surface is theme-defined (--table-striped-bg); see .table above.
+    --bs-table-striped-bg: var(--table-striped-bg);
+
     > tbody > tr:nth-of-type(odd) > * {
-        background-color: var(--color-gray-100);
+        background-color: var(--bs-table-striped-bg);
     }
 }
 
 .table-hover {
-    --bs-table-hover-bg: var(--color-gray-200);
-    
+    --bs-table-hover-bg: var(--table-hover-bg);
+
     > tbody > tr:hover > * {
-        background-color: var(--color-gray-200);
+        background-color: var(--bs-table-hover-bg);
     }
 }
 

@@ -97,5 +97,11 @@
     --bg-lightorange: #5a4320;
     --btn-light-bg: #1c2128;
     --btn-light-color: #fff;
+
+    // Table row elevation. On dark surfaces we darken the card (rather than the
+    // lighter gray scale) so links stay legible on striped/hover rows: base
+    // #2a2a2a -> stripe (-30%, ~5.5:1) -> hover (-50%, ~6:1).
+    --table-striped-bg: color-mix(in srgb, var(--bg-card), #000 30%);
+    --table-hover-bg: color-mix(in srgb, var(--bg-card), #000 50%);
 }
 
