@@ -21,7 +21,6 @@ site_dir: ../docs_site
 
 theme:
   name: 'material'
-  custom_dir: '_theme'
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
