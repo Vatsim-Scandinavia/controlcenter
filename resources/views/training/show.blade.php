@@ -360,7 +360,7 @@
                             <i class="fas fa-flag"></i>
                             @isset($training->created_by)
                                 {{ \App\Models\User::find($training->created_by)->name }} —
-                            @endisset 
+                            @endisset
                             {{ $training->created_at->toEuropeanDateTime() }}
                         </div>
                         <p>
@@ -432,7 +432,7 @@
                         <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-plus"></i> Create
                         </button>
-                    
+
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\TrainingReport::class, $training])
                                 @if($training->status->isInProgress())
@@ -511,7 +511,7 @@
                                                     @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
                                                         <hr>
                                                         <p class="fw-bold text-primary">
-                                                            <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
+                                                            <i class="fas fa-clipboard-check"></i>&nbsp;Areas to improve
                                                         </p>
                                                         <div id="markdown-improve">
                                                             @markdown($reportModel->contentimprove)
