@@ -1,5 +1,27 @@
 # Changelog
 
+## [7.0.0-alpha.13](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.12...v7.0.0-alpha.13) (2026-07-03)
+
+
+### Features
+
+* **theme:** add a header theme toggle & activate Bootstrap dark cascade ([559722f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/559722f6febc7fad0e78c25644c4e192c108d8e2))
+* **theme:** brighter interactive primary for buttons ([edd41c5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/edd41c53e8ec883eda57cf76d3fbde4a12411b3e))
+* **theme:** improve text readability on primary fillers ([1be080a](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1be080a3108d22ddd6dc1f1b0adc82e308e9bbf6))
+
+
+### Bug Fixes
+
+* **theme:** brighten outline-primary resting state ([a7753bd](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7753bd5b3ca594d860c5ff09d35611f94cda940))
+* **theme:** correct primary colours for dark theme ([4deb43b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4deb43bcc59598005ab61c20ba1295509bc128cf))
+* **theme:** customise border colors via CSS variables ([2f2e48e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2f2e48e05edfc12b90834a68a08aff58519a2373))
+* **theme:** raise dark muted-text contrast to AA ([fdb839c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fdb839c642fbaded3b1f90b46ede99854b37b5f8))
+* **theme:** resolve dark gray-ramp collision with card surface ([c497806](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c49780639e350e61a105bde9cebcbad6f0207275))
+* **theme:** theme outline buttons more visible ([338321d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/338321da5c3a36f317d0c8b6c8ca433ef55951f6))
+* **theme:** theme-aware table row backgrounds ([be9c09b](https://github.com/Vatsim-Scandinavia/controlcenter/commit/be9c09b9e4aae249cb1899ebf8c6bb93d67953c0))
+* **theme:** tweak dark-mode primary color for legibility ([b117435](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b117435749fe7bb5f7b56d5d6c4417bc743c4b93))
+* **training:** add missing clipboard icon next to 'areas to improve' ([3f835ef](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3f835ef2397a3b6274d978bc24baf124aee62d83))
+
 ## [7.0.0-alpha.12](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.11...v7.0.0-alpha.12) (2026-06-25)
 
 
