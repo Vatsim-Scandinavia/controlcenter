@@ -396,7 +396,7 @@
             </div>
 
             <div class="p-4">
-                <p class="fw-bold text-primary">
+                <p class="fw-bold text-primary-emphasis">
                     <i class="fas fa-envelope-open-text"></i>&nbsp;Letter of motivation
                 </p>
 
@@ -510,7 +510,7 @@
 
                                                     @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
                                                         <hr>
-                                                        <p class="fw-bold text-primary">
+                                                        <p class="fw-bold text-primary-emphasis">
                                                             <i class="fas fa-clipboard-check"></i>&nbsp;Areas to improve
                                                         </p>
                                                         <div id="markdown-improve">

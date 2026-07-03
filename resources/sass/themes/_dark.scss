@@ -22,17 +22,23 @@
     // Outline buttons brighten their resting text/border one step further
     // (4.16:1 on --bg-body); on hover they fill with --color-primary-emphasis.
     --color-primary-outline: #4288b0;
-    
+
+    // Primary used as *foreground text* on surfaces (e.g.
+    // .text-primary-emphasis headings). Purpose-built for text, so it's
+    // brightened past the fill ramp to clear AA while keeping the brand
+    // hue/saturation for --bg-card, --bg-card-header and --bg-body.8:1).
+    --color-primary-text: #56a3cc;
+
     // Status Colors (slightly brighter for visibility)
     --color-info: #4a9cc5;
     --color-success: #40896e;
     --color-warning: #ffb347;
     --color-danger: #e57373;
-    
+
     // Note: --color-white and --color-black are NOT overridden in dark theme
     // They remain literal white (#fff) and black (#000) for consistency
     // Use --bg-* and --color-text-* variables for themed surfaces instead
-    
+
     // Named Colors (adjusted for dark mode)
     --color-darkblue: #e8eaed;
     --color-blue: #4a9cc5;
@@ -60,7 +66,7 @@
     --color-gray-700: #b0b0b0;
     --color-gray-800: #cccccc;
     --color-gray-900: #e0e0e0;
-    
+
     // Text Colors
     --color-body: #e8eaed;
     --color-text-primary: #f5f5f5;
@@ -68,7 +74,7 @@
     --color-text-muted: #aaaaaa;
     --color-text-light: #b0b0b0;
     --color-text-dark: #f5f5f5;
-    
+
     // Background Colors
     --bg-body: #1b2128;
     --bg-card: #2a2a2a;
@@ -77,18 +83,18 @@
     --bg-topbar: #101419;
     --bg-light: #333333;
     --bg-dark: #0a0a0a;
-    
+
     // Special Colors (context-specific, always same in all themes)
     --color-sidebar-text: #fff;  // Sidebar is always dark, text always white
-    
+
     // Border
     --border-color: #3d3d3d;
     --border-radius: 2px;
-    
+
     // Shadows (darker shadows for dark mode)
     --shadow-sm: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.5);
     --shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.6);
-    
+
     // Link Colors
     --link-color: #4a9cc5;
     --link-hover-color: #6bb6d9;

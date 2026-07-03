@@ -17,19 +17,24 @@
     --color-primary-emphasis: #1a475f;
 
     // Outline buttons brighten their resting text/border one step further so
-    // they read on --bg-body; on hover they fill with --color-primary-emphasis.
+    // they read on --bg-body; on hover they fill with
+    // --color-primary-emphasis.
     --color-primary-outline: #1a475f;
-    
+
+    // Primary used as *foreground text* on surfaces (e.g.
+    // .text-primary-emphasis headings). Same as --color-primary in light.
+    --color-primary-text: #1a475f;
+
     // Status Colors
     --color-info: #17a2b8;
     --color-success: #41826e;
     --color-warning: #ff9800;
     --color-danger: #b63f3f;
-    
+
     // Base Colors (literal colors, not theme-dependent)
     --color-white: #fff;
     --color-black: #000;
-    
+
     // Named Colors
     --color-darkblue: #011328;
     --color-blue: #1a475f;
@@ -42,7 +47,7 @@
     --color-green: #41826e;
     --color-teal: #20c9a6;
     --color-cyan: #43c6e7;
-    
+
     // Gray Scale
     --color-gray-100: #f8f9fc;
     --color-gray-200: #eaecf4;
@@ -53,7 +58,7 @@
     --color-gray-700: #6e707e;
     --color-gray-800: #5a5c69;
     --color-gray-900: #3a3b45;
-    
+
     // Text Colors
     --color-body: #011328;
     --color-text-primary: #3a3b45;
@@ -61,7 +66,7 @@
     --color-text-muted: #858796;
     --color-text-light: #858796;
     --color-text-dark: #3a3b45;
-    
+
     // Background Colors
     --bg-body: #f8f9fc;
     --bg-card: #fff;
@@ -70,18 +75,18 @@
     --bg-topbar: #fff;
     --bg-light: #f8f9fc;
     --bg-dark: #3a3b45;
-    
+
     // Special Colors (context-specific, always same in all themes)
     --color-sidebar-text: #fff;  // Sidebar is always dark, text always white
-    
+
     // Border
     --border-color: #e3e6f0;
     --border-radius: 2px;
-    
+
     // Shadows
     --shadow-sm: 0 0.125rem 0.25rem 0 rgba(58, 59, 69, 0.2);
     --shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-    
+
     // Link Colors
     --link-color: #1a475f;
     --link-hover-color: #011328;

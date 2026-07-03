@@ -7,6 +7,12 @@ body {
     background-color: var(--bg-body);
     --bs-border-color: var(--border-color);
     --bs-border-color-translucent: var(--border-color);
+
+    // Feed our tuned foreground primary into Bootstrap's emphasis variable so
+    // .text-primary-emphasis tracks the brand ramp. Avoid Bootstrap's, the
+    // auto-derive value desaturates our custom dark primary).
+    // See --color-primary-text.
+    --bs-primary-text-emphasis: var(--color-primary-text);
 }
 
 // Override Bootstrap utility classes
@@ -40,11 +46,11 @@ body {
 .bg-info { background-color: var(--color-info) !important; }
 .bg-warning { background-color: var(--color-warning) !important; }
 .bg-danger { background-color: var(--color-danger) !important; }
-.bg-light { 
-    background-color: var(--bg-light) !important; 
+.bg-light {
+    background-color: var(--bg-light) !important;
 }
 
-.bg-dark { 
+.bg-dark {
     background-color: var(--bg-dark) !important;
     color: #fff !important;
 }
@@ -234,35 +240,35 @@ body {
     --bs-card-cap-bg: var(--bg-card-header);
     --bs-card-color: var(--color-text-primary);
     --bs-card-border-color: var(--border-color);
-    
+
     background-color: var(--bg-card);
     border-color: var(--border-color);
     color: var(--color-text-primary);
-    
+
     .card-header {
         background-color: var(--bg-card-header);
         border-bottom-color: var(--border-color);
         color: var(--color-text-primary);
     }
-    
+
     .card-body {
         color: var(--color-text-primary);
     }
-    
+
     .card-footer {
         background-color: var(--bg-card-header);
         border-top-color: var(--border-color);
         color: var(--color-text-primary);
     }
-    
+
     .card-title {
         color: var(--color-text-primary);
     }
-    
+
     .card-subtitle {
         color: var(--color-text-secondary);
     }
-    
+
     .card-text {
         color: var(--color-text-primary);
     }
@@ -275,18 +281,18 @@ body {
     background-color: var(--bg-card);
     border-color: var(--border-color);
     color: var(--color-text-primary);
-    
+
     &:focus {
         background-color: var(--bg-card);
         border-color: var(--color-primary);
         color: var(--color-text-primary);
     }
-    
+
     &::placeholder {
         color: var(--color-text-muted);
         opacity: 0.7;
     }
-    
+
     &:disabled {
         background-color: var(--color-gray-200);
         background-image: repeating-linear-gradient(
@@ -301,7 +307,7 @@ body {
         opacity: 0.8;
         cursor: not-allowed;
     }
-    
+
     &[readonly] {
         background-color: var(--color-gray-100);
         border-color: var(--border-color);
@@ -313,12 +319,12 @@ body {
 .form-check-input {
     background-color: var(--bg-card);
     border-color: var(--border-color);
-    
+
     &:checked {
         background-color: var(--color-primary);
         border-color: var(--color-primary);
     }
-    
+
     &:disabled {
         background-color: var(--color-gray-200);
         border-color: var(--color-gray-300);
@@ -370,25 +376,25 @@ textarea.form-control {
     --bs-table-striped-bg: var(--table-striped-bg);
     --bs-table-hover-bg: var(--table-hover-bg);
     --bs-table-active-bg: var(--table-hover-bg);
-    
+
     color: var(--color-text-primary);
     border-color: var(--border-color);
     background-color: var(--bg-card);
-    
+
     th, td {
         border-color: var(--border-color);
         color: var(--color-text-primary);
         background-color: transparent;
     }
-    
+
     thead th {
         border-bottom-color: var(--border-color);
     }
-    
+
     tbody + tbody {
         border-top-color: var(--border-color);
     }
-    
+
     > :not(caption) > * > * {
         background-color: transparent;
     }
@@ -466,21 +472,21 @@ textarea.form-control {
     background-color: var(--bg-card);
     border-color: var(--border-color);
     color: var(--color-text-primary);
-    
+
     .modal-header {
         border-bottom-color: var(--border-color);
         color: var(--color-text-primary);
     }
-    
+
     .modal-body {
         color: var(--color-text-primary);
     }
-    
+
     .modal-footer {
         border-top-color: var(--border-color);
         color: var(--color-text-primary);
     }
-    
+
     .modal-title {
         color: var(--color-text-primary);
     }
@@ -494,15 +500,15 @@ textarea.form-control {
 .dropdown-menu {
     background-color: var(--bg-card);
     border-color: var(--border-color);
-    
+
     .dropdown-item {
         color: var(--color-text-primary);
-        
+
         &:hover, &:focus {
             background-color: var(--color-gray-200);
         }
     }
-    
+
     .dropdown-divider {
         border-top-color: var(--border-color);
     }
@@ -534,7 +540,7 @@ textarea.form-control {
     background-color: var(--bg-card);
     border-color: var(--border-color);
     color: var(--color-primary);
-    
+
     &:hover {
         background-color: var(--color-gray-200);
         border-color: var(--border-color);
@@ -551,7 +557,7 @@ textarea.form-control {
 // Links
 a {
     color: var(--link-color);
-    
+
     &:hover {
         color: var(--link-hover-color);
     }
