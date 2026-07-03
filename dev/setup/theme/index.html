@@ -958,22 +958,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#customizing-theme-colors" class="md-nav__link">
+  <a href="#customizing-theme" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Customizing Theme Colors
+        Customizing Theme
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Customizing Theme Colors">
+    <nav class="md-nav" aria-label="Customizing Theme">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#light-theme-colors" class="md-nav__link">
+  <a href="#1-create-the-override-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Light Theme Colors
+        1. Create the override file
       
     </span>
   </a>
@@ -981,10 +981,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dark-theme-colors" class="md-nav__link">
+  <a href="#2-edit-your-colors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dark Theme Colors
+        2. Edit your colors
       
     </span>
   </a>
@@ -992,10 +992,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#rebuild-after-changes" class="md-nav__link">
+  <a href="#3-rebuild-the-assets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rebuild After Changes
+        3. Rebuild the assets
       
     </span>
   </a>
@@ -2230,22 +2230,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#customizing-theme-colors" class="md-nav__link">
+  <a href="#customizing-theme" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Customizing Theme Colors
+        Customizing Theme
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Customizing Theme Colors">
+    <nav class="md-nav" aria-label="Customizing Theme">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#light-theme-colors" class="md-nav__link">
+  <a href="#1-create-the-override-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Light Theme Colors
+        1. Create the override file
       
     </span>
   </a>
@@ -2253,10 +2253,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dark-theme-colors" class="md-nav__link">
+  <a href="#2-edit-your-colors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dark Theme Colors
+        2. Edit your colors
       
     </span>
   </a>
@@ -2264,10 +2264,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#rebuild-after-changes" class="md-nav__link">
+  <a href="#3-rebuild-the-assets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rebuild After Changes
+        3. Rebuild the assets
       
     </span>
   </a>
@@ -2408,35 +2408,30 @@
 - Operating system theme preference
 - Time of day settings (on supported systems)
 - No page reload required when system theme changes</p>
-<h2 id="customizing-theme-colors">Customizing Theme Colors<a class="headerlink" href="#customizing-theme-colors" title="Permanent link">&para;</a></h2>
-<p>To customize the colors for your division, edit the theme files directly:</p>
-<h3 id="light-theme-colors">Light Theme Colors<a class="headerlink" href="#light-theme-colors" title="Permanent link">&para;</a></h3>
-<p>Edit: <code>resources/sass/themes/_light.scss</code></p>
-<div class="language-scss highlight"><pre><span></span><code><span class="nd">:root</span><span class="o">,</span><span class="w"> </span><span class="o">[</span><span class="nt">data-theme</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="o">]</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">--color-primary</span><span class="nd">:</span><span class="w"> </span><span class="nn">#1a475f</span><span class="o">;</span><span class="w">      </span><span class="o">//</span><span class="w"> </span><span class="nt">Your</span><span class="w"> </span><span class="nt">primary</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="nt">--color-secondary</span><span class="nd">:</span><span class="w"> </span><span class="nn">#484b4c</span><span class="o">;</span><span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="nt">Your</span><span class="w"> </span><span class="nt">secondary</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="nt">--color-success</span><span class="nd">:</span><span class="w"> </span><span class="nn">#41826e</span><span class="o">;</span><span class="w">      </span><span class="o">//</span><span class="w"> </span><span class="nt">Success</span><span class="o">/</span><span class="nt">green</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="nt">--color-info</span><span class="nd">:</span><span class="w"> </span><span class="nn">#17a2b8</span><span class="o">;</span><span class="w">         </span><span class="o">//</span><span class="w"> </span><span class="nt">Info</span><span class="o">/</span><span class="nt">blue</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="nt">--color-warning</span><span class="nd">:</span><span class="w"> </span><span class="nn">#ff9800</span><span class="o">;</span><span class="w">      </span><span class="o">//</span><span class="w"> </span><span class="nt">Warning</span><span class="o">/</span><span class="nt">orange</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="nt">--color-danger</span><span class="nd">:</span><span class="w"> </span><span class="nn">#b63f3f</span><span class="o">;</span><span class="w">       </span><span class="o">//</span><span class="w"> </span><span class="nt">Danger</span><span class="o">/</span><span class="nt">red</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="nc">...</span><span class="w"> </span><span class="nt">more</span><span class="w"> </span><span class="nt">variables</span>
-<span class="p">}</span>
+<h2 id="customizing-theme">Customizing Theme<a class="headerlink" href="#customizing-theme" title="Permanent link">&para;</a></h2>
+<p>To brand your instance, put your overrides in <code>resources/sass/themes/_custom.scss</code>.
+That file is git-ignored, so your styles stay out of version control while still
+compiling into the regular front-end build.</p>
+<h3 id="1-create-the-override-file">1. Create the override file<a class="headerlink" href="#1-create-the-override-file" title="Permanent link">&para;</a></h3>
+<p>Copy the example to get started:</p>
+<div class="language-sh highlight"><pre><span></span><code>cp<span class="w"> </span>resources/sass/themes/_custom.scss.example<span class="w"> </span>resources/sass/themes/_custom.scss
 </code></pre></div>
-<h3 id="dark-theme-colors">Dark Theme Colors<a class="headerlink" href="#dark-theme-colors" title="Permanent link">&para;</a></h3>
-<p>Edit: <code>resources/sass/themes/_dark.scss</code></p>
-<div class="language-scss highlight"><pre><span></span><code><span class="o">[</span><span class="nt">data-theme</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="o">]</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">--color-primary</span><span class="nd">:</span><span class="w"> </span><span class="nn">#4a9cc5</span><span class="o">;</span><span class="w">      </span><span class="o">//</span><span class="w"> </span><span class="nt">Your</span><span class="w"> </span><span class="nt">primary</span><span class="w"> </span><span class="nt">color</span><span class="w"> </span><span class="o">(</span><span class="nt">adjusted</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nt">dark</span><span class="o">)</span>
-<span class="w">    </span><span class="nt">--color-secondary</span><span class="nd">:</span><span class="w"> </span><span class="nn">#6c757d</span><span class="o">;</span><span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="nt">Your</span><span class="w"> </span><span class="nt">secondary</span><span class="w"> </span><span class="nt">color</span>
-<span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="nc">...</span><span class="w"> </span><span class="nt">more</span><span class="w"> </span><span class="nt">variables</span>
-<span class="p">}</span>
-</code></pre></div>
-<h3 id="rebuild-after-changes">Rebuild After Changes<a class="headerlink" href="#rebuild-after-changes" title="Permanent link">&para;</a></h3>
-<p>After editing theme files, rebuild the frontend assets:</p>
+<h3 id="2-edit-your-colors">2. Edit your colors<a class="headerlink" href="#2-edit-your-colors" title="Permanent link">&para;</a></h3>
+<p>Edit <code>resources/sass/themes/_custom.scss</code>. Override only what you need.
+Anything left out keeps its default.</p>
+<p>Reference for the available values:</p>
+<ul>
+<li><code>resources/sass/themes/_light.scss</code> — CSS custom properties for the light theme</li>
+<li><code>resources/sass/themes/_dark.scss</code> — CSS custom properties for the dark theme</li>
+<li><code>resources/sass/_variables.scss</code> — SCSS variables consumed by Bootstrap</li>
+</ul>
+<h3 id="3-rebuild-the-assets">3. Rebuild the assets<a class="headerlink" href="#3-rebuild-the-assets" title="Permanent link">&para;</a></h3>
+<p>After editing <code>_custom.scss</code>, rebuild the frontend assets:</p>
 <div class="language-sh highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build
 </code></pre></div>
-<p>For Docker deployments:
+<p>For Docker deployments:</p>
 <div class="language-sh highlight"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>control-center<span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build
-</code></pre></div></p>
+</code></pre></div>
 <h2 id="technical-details">Technical Details<a class="headerlink" href="#technical-details" title="Permanent link">&para;</a></h2>
 <h3 id="for-developers">For Developers<a class="headerlink" href="#for-developers" title="Permanent link">&para;</a></h3>
 <p>The theme system uses CSS variables for dynamic switching:</p>
@@ -2445,7 +2440,6 @@
 <li><strong>Bootstrap overrides</strong>: <code>resources/sass/_theme-overrides.scss</code></li>
 <li><strong>JavaScript</strong>: <code>resources/js/theme.js</code></li>
 </ul>
-<p>See the root-level <code>THEME_*.md</code> files for comprehensive developer documentation.</p>
 <p>Older browsers (like IE11) will fall back to the default light theme without switching capability.</p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="theme-not-changing">Theme not changing<a class="headerlink" href="#theme-not-changing" title="Permanent link">&para;</a></h3>
@@ -2456,7 +2450,7 @@
 </ul>
 <h3 id="colors-look-wrong">Colors look wrong<a class="headerlink" href="#colors-look-wrong" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Ensure you edited both <code>_light.scss</code> and <code>_dark.scss</code></li>
+<li>Ensure you edited both the light and dark blocks in <code>_custom.scss</code> so the colors match in either mode</li>
 <li>Rebuild assets after changes</li>
 <li>Check CSS variables in browser DevTools</li>
 </ul>
@@ -2496,7 +2490,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 22, 2026 11:10:23 UTC">June 22, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 3, 2026 16:12:20 UTC">July 3, 2026</span>
   </span>
 
     
@@ -2506,7 +2500,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 22, 2026 11:10:23 UTC">June 22, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 3, 2026 16:12:20 UTC">July 3, 2026</span>
   </span>
 
     
@@ -2524,9 +2518,9 @@ They'll be better off on the specific page in question.
     
     <nav>
       
-        <a href="https://github.com/bjerrecs" class="md-author" title="@bjerrecs">
+        <a href="https://github.com/bedrich-schindler" class="md-author" title="@bedrich-schindler">
           
-          <img src="https://avatars.githubusercontent.com/u/32055984?v=4&size=72" alt="bjerrecs">
+          <img src="https://avatars.githubusercontent.com/u/10213870?v=4&size=72" alt="bedrich-schindler">
         </a>
       
         <a href="https://github.com/web-flow" class="md-author" title="@web-flow">
@@ -2534,17 +2528,23 @@ They'll be better off on the specific page in question.
           <img src="https://avatars.githubusercontent.com/u/19864447?v=4&size=72" alt="web-flow">
         </a>
       
+        <a href="https://github.com/bjerrecs" class="md-author" title="@bjerrecs">
+          
+          <img src="https://avatars.githubusercontent.com/u/32055984?v=4&size=72" alt="bjerrecs">
+        </a>
+      
         <a href="https://github.com/thor" class="md-author" title="@thor">
           
           <img src="https://avatars.githubusercontent.com/u/234489?v=4&size=72" alt="thor">
         </a>
       
-        <a href="https://github.com/blt950" class="md-author" title="@blt950">
-          
-          <img src="https://avatars.githubusercontent.com/u/2505044?u=6d3a83913ae5689c601670b26643f39ec8d2c580&v=4&size=72" alt="Daniel">
-        </a>
       
       
+        
+          <a href="https://github.com/vatsim-scandinavia/controlcenter/blob/main/docs/setup/theme.md" class="md-author md-author--more">
+            +1
+          </a>
+        
       
     </nav>
   </span>

@@ -2108,18 +2108,23 @@
 <li><strong>Source</strong>: It queries the public <strong><abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> Data API</strong> to retrieve <abbr title="Air Traffic Controller">ATC</abbr> sessions for your members. No personal tokens are required for this.</li>
 <li><strong>Scope</strong>: It looks back a configurable number of months defined by the <code>atcActivityQualificationPeriod</code>.</li>
 <li><strong>Filtering</strong>: It filters sessions based on the <strong>Callsigns</strong> defined for your Areas (FIRs/ACCs). Only time spent on positions matching your facility's prefixes is counted.</li>
-<li><strong>Storage</strong>: The calculated hours are stored per user, per area.</li>
+<li><strong>Storage</strong>: The accumulated hours are stored per user, per area. Because the API query is already scoped to the qualification window, the stored hours reflect activity within that period.</li>
 </ul>
 <h3 id="2-status-evaluation">2. Status Evaluation<a class="headerlink" href="#2-status-evaluation" title="Permanent link">&para;</a></h3>
 <p>This job analyzes the collected data to set the <code>atc_active</code> flag for each user.</p>
 <p>A user is considered <strong>Active</strong> if they meet <strong>either</strong> of the following criteria:</p>
 <ol>
-<li><strong>Grace Period</strong>: The user has a valid <code>Grace Period</code> set in their profile (e.g., for new members or returning controllers) that has not yet expired.</li>
+<li><strong>Grace Period</strong>: The user has a <code>Grace Period</code> that has not yet expired. How this is evaluated depends on the <strong>Activity Mode</strong>:<ul>
+<li><strong>Total Hours</strong>: if <em>any</em> area has a valid grace period, the user is fully protected.</li>
+<li><strong>Per Area</strong>: each area's grace period is evaluated independently.</li>
+</ul>
+</li>
 <li><strong>Minimum Hours</strong>: The user has accumulated enough controlling hours to meet the <code>atcActivityRequirement</code> (default: 10 hours) within the qualification period.</li>
 </ol>
 <p>If a user fails both checks:</p>
 <ul>
 <li>Their <code>atc_active</code> status is set to <code>false</code>.</li>
+<li>They receive an <strong>inactivity notification</strong>. In <strong>Total Hours</strong> mode, one notification is sent per user. In <strong>Per Area</strong> mode, a notification is sent for each area that goes inactive.</li>
 <li>If configured, they may be removed from external rosters (see <a href="../integrations/vateud/">Division Integrations</a>) during the next synchronization.</li>
 </ul>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
@@ -2129,6 +2134,7 @@
 <li><strong><abbr title="Air Traffic Controller">ATC</abbr> Activity Qualification Period</strong>: How far back to count hours (default: 12 months).</li>
 <li><strong>Grace Period Duration</strong>: Default duration for new grace periods (default: 12 months).</li>
 <li><strong>Activity Mode</strong>: Whether activity is calculated based on <strong>Total Hours</strong> (sum of all areas) or <strong>Per Area</strong> (requiring hours in specific areas to remain active there).</li>
+<li><strong>Allow Reactivation</strong>: When enabled, members whose <code>atc_active</code> status is <code>false</code> are included in the data collection job, allowing them to regain active status by accumulating hours. When disabled, only currently-active members have their hours updated.</li>
 </ul>
 <!--
 This is a list of abbreviations which will be automatically expanded on every content page.
@@ -2162,7 +2168,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 22, 2026 11:10:23 UTC">June 22, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 3, 2026 16:12:20 UTC">July 3, 2026</span>
   </span>
 
     
@@ -2172,7 +2178,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 22, 2026 11:10:23 UTC">June 22, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 3, 2026 16:12:20 UTC">July 3, 2026</span>
   </span>
 
     
