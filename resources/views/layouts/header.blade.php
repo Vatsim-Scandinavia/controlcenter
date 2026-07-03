@@ -15,15 +15,15 @@
                           document.documentElement.getAttribute('data-user-theme') ||
                           'system';
 
-    // Only apply non-system preferences to avoid FOUC
-    // System preference detection is handled by theme.js after load
-    if (storedPreference === 'light' || storedPreference === 'dark') {
-        document.documentElement.setAttribute('data-theme', storedPreference);
-    } else {
-        // For 'system', detect but let theme.js handle the watching
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-    }
+    // Resolve to the effective (light/dark) theme. 'system' is watched by
+    // theme.js after load; here we just detect once to avoid FOUC.
+    var effective = (storedPreference === 'light' || storedPreference === 'dark')
+        ? storedPreference
+        : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    // data-bs-theme mirrors data-theme so Bootstrap's dark cascade applies.
+    document.documentElement.setAttribute('data-theme', effective);
+    document.documentElement.setAttribute('data-bs-theme', effective);
 })();
 </script>
 

@@ -57,6 +57,14 @@
 
         @endcan
 
+        {{-- Nav Item - Theme Toggle (cycles system -> light -> dark) --}}
+        <li class="nav-item no-arrow">
+            <button type="button" class="nav-link" id="theme-toggle" title="Theme preference">
+                <i class="fas fa-fw fa-desktop" data-theme-icon></i>
+                <span class="visually-hidden">Change theme</span>
+            </button>
+        </li>
+
         <div class="topbar-divider d-none d-lg-block"></div>
 
         {{-- Nav Item - User Information --}}
