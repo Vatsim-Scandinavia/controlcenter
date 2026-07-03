@@ -59,7 +59,7 @@
 
         {{-- Nav Item - Theme Toggle (cycles system -> light -> dark) --}}
         <li class="nav-item no-arrow">
-            <button type="button" class="nav-link" id="theme-toggle" title="Theme preference">
+            <button type="button" class="nav-link" id="theme-toggle" title="Theme preference" data-theme-url="{{ route('user.settings.theme') }}">
                 <i class="fas fa-fw fa-desktop" data-theme-icon></i>
                 <span class="visually-hidden">Change theme</span>
             </button>

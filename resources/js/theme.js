@@ -9,11 +9,23 @@
     const THEME_STORAGE_KEY = 'user_theme_preference';
     const THEME_ATTRIBUTE = 'data-theme';
     const BS_THEME_ATTRIBUTE = 'data-bs-theme';
-    // Also the click-cycle order for the header toggle.
-    const VALID_PREFERENCES = ['system', 'light', 'dark'];
+
+    // Single source of truth for the three preferences. Insertion order is also
+    // the header toggle's click-cycle order (system -> light -> dark -> system).
+    const PREFERENCES = {
+        system: { icon: 'fa-desktop', label: 'System' },
+        light: { icon: 'fa-sun', label: 'Light' },
+        dark: { icon: 'fa-moon', label: 'Dark' },
+    };
+    const PREFERENCE_ORDER = Object.keys(PREFERENCES);
+    const THEME_ICON_CLASSES = PREFERENCE_ORDER.map((preference) => PREFERENCES[preference].icon);
+
     // Delay before a preference is persisted to the profile, so rapid clicks
     // through the cycle only result in a single request for the final choice.
     const PERSIST_DELAY = 2000;
+
+    // Cached once; `.matches` always reflects the current system setting.
+    const DARK_MEDIA_QUERY = window.matchMedia('(prefers-color-scheme: dark)');
 
     /**
      * Return a debounced wrapper that delays calling fn until `wait` ms after
@@ -25,21 +37,28 @@
     function debounce(fn, wait) {
         let timeout;
 
-        return function (...args) {
+        return function(...args) {
             clearTimeout(timeout);
             timeout = setTimeout(() => fn.apply(this, args), wait);
         };
     }
 
     /**
-     * Get the effective theme based on preference
+     * The stored preference, defaulting to 'system'.
+     * @returns {string} - 'light', 'dark', or 'system'
+     */
+    function getStoredPreference() {
+        return localStorage.getItem(THEME_STORAGE_KEY) || 'system';
+    }
+
+    /**
+     * Resolve a preference to the effective theme.
      * @param {string} preference - 'light', 'dark', or 'system'
      * @returns {string} - 'light' or 'dark'
      */
     function getEffectiveTheme(preference) {
         if (preference === 'system') {
-            // Detect system preference
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            return DARK_MEDIA_QUERY.matches ? 'dark' : 'light';
         }
         return preference;
     }
@@ -61,17 +80,15 @@
      * This function reconciles and sets up dynamic behavior
      */
     function initializeTheme() {
-        // Get stored preference
-        let storedPreference = localStorage.getItem(THEME_STORAGE_KEY) ||
-                              document.documentElement.getAttribute('data-user-theme') || 
-                              'system';
+        const storedPreference = localStorage.getItem(THEME_STORAGE_KEY) ||
+            document.documentElement.getAttribute('data-user-theme') ||
+            'system';
 
         // Store the preference for consistency
         localStorage.setItem(THEME_STORAGE_KEY, storedPreference);
 
         // Apply theme (inline script has already done initial set, this ensures correctness)
-        const effectiveTheme = getEffectiveTheme(storedPreference);
-        applyTheme(effectiveTheme);
+        applyTheme(getEffectiveTheme(storedPreference));
     }
 
     /**
@@ -80,22 +97,18 @@
      * @param {boolean} persist - also save to the user profile (debounced)
      */
     function setThemePreference(preference, persist = false) {
-        if (!VALID_PREFERENCES.includes(preference)) {
+        if (!PREFERENCES[preference]) {
             return;
         }
 
         localStorage.setItem(THEME_STORAGE_KEY, preference);
-        const effectiveTheme = getEffectiveTheme(preference);
-        applyTheme(effectiveTheme);
+        applyTheme(getEffectiveTheme(preference));
         updateToggleUI(preference);
 
         if (persist) {
             debouncedPersist(preference);
         }
     }
-
-    // Persist only the final choice a couple of seconds after the last click.
-    const debouncedPersist = debounce(persistPreference, PERSIST_DELAY);
 
     /**
      * Persist the preference to the user profile so it syncs across devices
@@ -110,7 +123,12 @@
             return;
         }
 
-        fetch('/settings/theme', {
+        // Prefer the server-generated route (handles subdirectory deploys); the
+        // literal path is a fallback if the toggle isn't on the page.
+        const toggle = document.getElementById('theme-toggle');
+        const url = toggle?.dataset.themeUrl || '/settings/theme';
+
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -121,6 +139,9 @@
         }).catch(() => { /* preference is kept in localStorage regardless */ });
     }
 
+    // Persist only the final choice a couple of seconds after the last click.
+    const debouncedPersist = debounce(persistPreference, PERSIST_DELAY);
+
     /**
      * Reflect the active preference on the header toggle: swap the icon and
      * label. Driven by the 3-way preference (not the resolved theme) so
@@ -129,25 +150,26 @@
      */
     function updateToggleUI(preference) {
         const toggle = document.getElementById('theme-toggle');
+        const config = PREFERENCES[preference];
 
-        if (!toggle) {
+        if (!toggle || !config) {
             return;
         }
 
         const icon = toggle.querySelector('[data-theme-icon]');
 
         if (icon) {
-            const iconClass = { system: 'fa-desktop', light: 'fa-sun', dark: 'fa-moon' }[preference];
-            icon.className = 'fas fa-fw ' + iconClass;
+            // Swap only the theme icon class so sizing/utility classes survive.
+            icon.classList.remove(...THEME_ICON_CLASSES);
+            icon.classList.add(config.icon);
         }
 
-        const label = { system: 'System', light: 'Light', dark: 'Dark' }[preference];
-        toggle.setAttribute('title', 'Theme: ' + label + ' (click to change)');
+        toggle.setAttribute('title', `Theme: ${config.label} (click to change)`);
     }
 
     /**
      * Wire the header theme toggle: each click advances to the next preference
-     * in VALID_PREFERENCES (system -> light -> dark -> system).
+     * (system -> light -> dark -> system).
      */
     function watchThemeToggle() {
         const toggle = document.getElementById('theme-toggle');
@@ -158,28 +180,23 @@
 
         toggle.addEventListener('click', (e) => {
             e.preventDefault();
-            const current = localStorage.getItem(THEME_STORAGE_KEY) || 'system';
-            const next = VALID_PREFERENCES[(VALID_PREFERENCES.indexOf(current) + 1) % VALID_PREFERENCES.length];
+            const current = getStoredPreference();
+            const next = PREFERENCE_ORDER[(PREFERENCE_ORDER.indexOf(current) + 1) % PREFERENCE_ORDER.length];
             setThemePreference(next, true);
         });
 
         // Reflect the current preference on load.
-        updateToggleUI(localStorage.getItem(THEME_STORAGE_KEY) || 'system');
+        updateToggleUI(getStoredPreference());
     }
 
     /**
      * Listen for system theme changes when in system mode
      */
     function watchSystemTheme() {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        
-        mediaQuery.addEventListener('change', (e) => {
-            const currentPreference = localStorage.getItem(THEME_STORAGE_KEY) || 'system';
-            
+        DARK_MEDIA_QUERY.addEventListener('change', (e) => {
             // Only react if we're in system mode
-            if (currentPreference === 'system') {
-                const effectiveTheme = e.matches ? 'dark' : 'light';
-                applyTheme(effectiveTheme);
+            if (getStoredPreference() === 'system') {
+                applyTheme(e.matches ? 'dark' : 'light');
             }
         });
     }
@@ -189,13 +206,21 @@
      */
     function watchThemeSelector() {
         const themeSelector = document.getElementById('setting_theme');
-        
+
         if (themeSelector) {
             themeSelector.addEventListener('change', (e) => {
-                const newPreference = e.target.value;
-                setThemePreference(newPreference);
+                setThemePreference(e.target.value);
             });
         }
+    }
+
+    /**
+     * Attach all runtime listeners. Safe to call once the DOM is ready.
+     */
+    function setupWatchers() {
+        watchSystemTheme();
+        watchThemeSelector();
+        watchThemeToggle();
     }
 
     // Initialize theme immediately (before DOM ready to prevent flash)
@@ -203,26 +228,16 @@
 
     // Set up watchers when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            watchSystemTheme();
-            watchThemeSelector();
-            watchThemeToggle();
-        });
+        document.addEventListener('DOMContentLoaded', setupWatchers);
     } else {
-        watchSystemTheme();
-        watchThemeSelector();
-        watchThemeToggle();
+        setupWatchers();
     }
 
     // Expose API for manual theme changes
     window.ThemeManager = {
         setTheme: setThemePreference,
-        getTheme: () => localStorage.getItem(THEME_STORAGE_KEY) || 'system',
-        getEffectiveTheme: () => {
-            const preference = localStorage.getItem(THEME_STORAGE_KEY) || 'system';
-            return getEffectiveTheme(preference);
-        }
+        getTheme: getStoredPreference,
+        getEffectiveTheme: () => getEffectiveTheme(getStoredPreference()),
     };
 
 })();
-
