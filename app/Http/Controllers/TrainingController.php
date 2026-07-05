@@ -7,6 +7,7 @@ use App;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Facades\DivisionApi;
+use App\Helpers\InterestStatus;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
@@ -690,13 +691,13 @@ class TrainingController extends Controller
                 return redirect($training->path())->withSuccess('You have already confirmed your interest for this training.');
             }
 
-            if ($interest->expired !== InterestStatus::NOT_EXPIRED->value) {
+            if ($interest->expired !== InterestStatus::NOT_EXPIRED) {
                 return redirect($training->path())->withErrors('This training interest link has expired. Please contact staff.');
             }
 
             $interest->confirmed_at = now();
             $interest->updated_at = now();
-            $interest->expired = InterestStatus::CLOSED->value;
+            $interest->expired = InterestStatus::CLOSED;
             $interest->save();
 
             ActivityLogService::info('TRAINING', 'Training interest confirmed.');
