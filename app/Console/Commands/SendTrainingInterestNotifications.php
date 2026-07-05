@@ -70,7 +70,7 @@ class SendTrainingInterestNotifications extends Command
                 $requestConfirmed = $lastInterestRequest->confirmed_at;
                 $requestUpdated = $lastInterestRequest->updated_at;
 
-                if ($requestDeadline->diffInMinutes(now(), false) >= 0 && $requestConfirmed == null && $lastInterestRequest->expired === InterestStatus::NOT_EXPIRED->value) {
+                if ($requestDeadline->diffInMinutes(now(), false) >= 0 && $requestConfirmed == null && $lastInterestRequest->expired === InterestStatus::NOT_EXPIRED) {
                     // If it's 14 days passed deadline, close the training
                     $this->info('Closing training ' . $training->id);
 
@@ -86,7 +86,7 @@ class SendTrainingInterestNotifications extends Command
                     $training->save();
                     $training->user->notify(new TrainingClosedNotification($training, TrainingStatus::CLOSED_BY_SYSTEM, 'Continued training interest was not confirmed within deadline.'));
                     TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::CLOSED_BY_SYSTEM->value, $oldStatus->value, null, 'Continued training interest was not confirmed within deadline.');
-                } elseif ($requestDeadline->diffInDays(now(), true) == 6 && $requestUpdated->diffInDays(now(), true) != 0 && $lastInterestRequest->expired === InterestStatus::NOT_EXPIRED->value && $requestConfirmed == null) {
+                } elseif ($requestDeadline->diffInDays(now(), true) == 6 && $requestUpdated->diffInDays(now(), true) != 0 && $lastInterestRequest->expired === InterestStatus::NOT_EXPIRED && $requestConfirmed == null) {
                     // If the interest is not confirmed after 6 days, we remind
                     $this->info('Reminding training ' . $training->id);
 
@@ -94,7 +94,7 @@ class SendTrainingInterestNotifications extends Command
                     $lastInterestRequest->save();
 
                     $training->user->notify(new TrainingInterestNotification($training, $lastInterestRequest, true));
-                } elseif ($lastInterestRequest->created_at->diffInDays(now(), true) >= 30 && $lastInterestRequest->expired !== InterestStatus::NOT_EXPIRED->value) {
+                } elseif ($lastInterestRequest->created_at->diffInDays(now(), true) >= 30 && $lastInterestRequest->expired !== InterestStatus::NOT_EXPIRED) {
                     // The training has been previously notified, after 30 days it's time for a new request
                     // Generate training interest key and store it in the request
                     $key = sha1($training->id . now()->format('Ymd_His') . rand(0, 9999));

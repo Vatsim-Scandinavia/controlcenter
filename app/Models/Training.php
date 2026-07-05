@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\InterestStatus;
 use App\Helpers\TrainingStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -125,7 +126,7 @@ class Training extends Model
     protected function expireInterests(bool $expiredInterest): void
     {
         TrainingInterest::where([['training_id', $this->id], ['expired', false]])
-            ->update(['updated_at' => now(), 'expired' => $expiredInterest ? 2 : 1]);
+            ->update(['updated_at' => now(), 'expired' => $expiredInterest ? InterestStatus::EXPIRED : InterestStatus::CLOSED]);
     }
 
     /**
