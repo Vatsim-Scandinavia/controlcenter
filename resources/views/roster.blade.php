@@ -28,8 +28,8 @@
                         <thead class="table-light">
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="lastOnline" data-sortable="false" data-filter-strict-search="false">Online</th>
-                                <th data-field="hoursInPeriod" data-sortable="true" data-filter-strict-search="false">Last {{ $qualificationPeriod }} months</th>
+                                <th data-field="lastOnline" data-sortable="true" data-sorter="tableSortNumbers" data-filter-strict-search="false">Online</th>
+                                <th data-field="hoursInPeriod" data-sortable="true" data-sorter="tableSortNumbers" data-filter-strict-search="false" class="text-end">Last {{ $qualificationPeriod }} months</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
                                 <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 @foreach($ratings as $r)
@@ -47,8 +47,8 @@
                                             {{ $u->name }} ({{ $u->id }})
                                         @endcan
                                     </td>
-                                    <td>{{ $u->last_online ? \Carbon\Carbon::parse($u->last_online)->diffForHumans() : 'N/A' }}</td>
-                                    <td>{{ round($u->hours_in_period) }} h</td>
+                                    <td><span data-sort="{{ $u->last_online ? \Carbon\Carbon::parse($u->last_online)->timestamp : 0 }}">{{ $u->last_online ? \Carbon\Carbon::parse($u->last_online)->diffForHumans() : 'N/A' }}</span></td>
+                                    <td class="text-end"><span data-sort="{{ $u->hours_in_period }}">{{ round($u->hours_in_period) }} h</span></td>
                                     <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
                                     <td class="text-center text-white {{ $u->isAtcActive() || $u->isVisiting() ? 'bg-success' : 'bg-danger' }}">
                                         @if($u->isAtcActive())

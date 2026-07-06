@@ -4,6 +4,23 @@
         return value.replace(/<[^>]+>/g, '').trim();
     }
 
+    // Bootstrap-table: Sort numerically and not alphabethically. Reads a
+    // data-sort="..." attribute from the cell if present, otherwise falls back
+    // to the numbers found in the cell text (e.g. "10 h").
+    window.tableSortNumbers = function(a, b){
+        var parse = function(value){
+            var match = String(value).match(/data-sort="(-?\d+(?:\.\d+)?)"/);
+            return match ? parseFloat(match[1]) : 0;
+        };
+
+        var x = parse(a);
+        var y = parse(b);
+
+        if (x > y) return 1;
+        if (x < y) return -1;
+        return 0;
+    }
+
     // Bootstrap-table: Sort dates according to timetamp and not alphabethically
     window.tableSortDates = function(a, b, rowA, rowB){
         var a = moment(window.tableFilterStripHtml(a), "DD/MM/YYYY");
