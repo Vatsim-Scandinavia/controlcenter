@@ -38,7 +38,7 @@
                     <dt class="pt-2">ATC Rating</dt>
                     <dd>{{ $user->rating_short }}</dd>
 
-                    
+
                     @if(config('app.mode') == 'subdivision')
                         <dt>Sub/Division</dt>
                         <dd class="separator pb-3">{{ $user->division }} / {{ $user->subdivision }}</dd>
@@ -162,7 +162,7 @@
                                 @foreach($recentAtcSessions as $session)
                                 <tr>
                                     <td>{{ $session['callsign'] }}</td>
-                                    <td>{{ ($session['callsign'] ?? '') !== '' ? $session['callsign'] : '—' }}</td>
+                                    <td>{{ isset($session['start']) ? Carbon\Carbon::parse($session['start'])->toEuropeanDateTime() : '—' }}</td>
                                     <td>{{ $session['duration'] ?? '—' }}</td>
                                 </tr>
                                 @endforeach
@@ -193,7 +193,7 @@
                         @endcan
                     </div>
                     <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
-        
+
                         @if($trainings->count() == 0)
                             <p class="mb-0">No registered trainings</p>
                         @else
@@ -250,11 +250,11 @@
                                 </table>
                             </div>
                         @endif
-                        
+
                     </div>
                 </div>
             </div>
-        
+
             <div class="col-xl-4 col-lg-12 col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -263,7 +263,7 @@
                         </h6>
                     </div>
                     <div class="card-body {{ $divisionExams->count() == 0 ? '' : 'p-0' }}">
-        
+
                         @if($divisionExams->count() == 0)
                             <p class="mb-0">No division exam history</p>
                         @else
@@ -308,7 +308,7 @@
                                 </table>
                             </div>
                         @endif
-        
+
                     </div>
                 </div>
             </div>
@@ -383,7 +383,7 @@
                                                 <th>Revoked by</th>
                                                 <td>{{ $endorsement->revokedBy?->name ?? 'System' }}</td>
                                             </tr>
-                                        @endif                    
+                                        @endif
                                     @elseif($endorsement->type == 'SOLO')
                                         <tr class="spacing">
                                             <th>Rating</th>
@@ -519,7 +519,7 @@
                                                 @else
                                                     <td class="text-center"><input type="checkbox" {{ $user->roleAssignments->where('role', $roleKey)->where('area_id', $area->id)->isNotEmpty() ? "checked" : "" }} disabled></td>
                                                 @endif
-                                                
+
                                             @endforeach
 
                                         </tr>
@@ -569,7 +569,7 @@
             .then(response => response.json())
             .then(data => {
                 var vatsimHours = document.getElementById("vatsim-data");
-    
+
                 if (data.data) {
                     for (let key in data.data) {
                         if (key === "pilot") {
@@ -586,7 +586,7 @@
                 console.error(error);
                 alert('An error occurred while fetching VATSIM hours data.');
             });
-    </script>    
+    </script>
 
     <!-- Activity chart -->
     <script>
@@ -598,15 +598,15 @@
             const fromDate = new Date();
             fromDate.setMonth(fromDate.getMonth() - 11);
             fromDate.setHours(0, 0, 0, 0);
-            
+
             const toDate = new Date();
             toDate.setHours(23, 59, 59, 999);
 
-            const apiUrl = "{{ route('user.statistics.sessions', $user) }}?from=" 
-                + encodeURIComponent(fromDate.toISOString()) 
-                + "&to=" 
+            const apiUrl = "{{ route('user.statistics.sessions', $user) }}?from="
+                + encodeURIComponent(fromDate.toISOString())
+                + "&to="
                 + encodeURIComponent(toDate.toISOString());
-            
+
             fetch(apiUrl)
                 .then(response => {
                     if (!response.ok) {
@@ -637,7 +637,7 @@
                         const logoffTime = new Date(session.logofftime * 1000);
                         // Calculate hours: difference is in milliseconds, convert to hours
                         const hours = Number(((logoffTime - logonTime) / 3_600_000).toFixed(1));
-                        
+
                         return {
                             ...session,
                             logontime: logonTime,
