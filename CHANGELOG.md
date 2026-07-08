@@ -1,5 +1,15 @@
 # Changelog
 
+## [7.0.0-alpha.14](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.13...v7.0.0-alpha.14) (2026-07-08)
+
+
+### Bug Fixes
+
+* **psql:** training interest expiry should be stored as integer ([#1552](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1552)) ([fadae16](https://github.com/Vatsim-Scandinavia/controlcenter/commit/fadae16dd8b6f90cfbf085ab929fe224f95d8bdf))
+* **roster:** allow sorting of last online & hours last year ([24da025](https://github.com/Vatsim-Scandinavia/controlcenter/commit/24da025b412a29f0603f9e8418b5da0b563124fb))
+* **training:** alert when moving away from report with changes ([25bb64c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/25bb64c690114b7806de983e68bd6751af9eff94))
+* **vateud:** use enum-backed int for rating comparisons ([#1563](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1563)) ([c199e05](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c199e05dcc4aa125020879de84e4ccfe7b608242))
+
 ## [7.0.0-alpha.13](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.12...v7.0.0-alpha.13) (2026-07-03)
 
 
