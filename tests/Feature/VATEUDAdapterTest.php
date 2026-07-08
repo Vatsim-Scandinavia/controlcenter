@@ -84,4 +84,44 @@ class VATEUDAdapterTest extends TestCase
 
         $this->assertFalse($result);
     }
+
+    #[Test]
+    public function assign_theory_exam_matches_exam_type_to_rating(): void
+    {
+        Http::fake([
+            '*exams/assign' => Http::response(['status' => 'ok'], 200),
+            '*exams' => Http::response(['data' => [
+                ['id' => 99, 'flag_exam_type' => VatsimRating::S3->value - 1],
+                ['id' => 42, 'flag_exam_type' => VatsimRating::S2->value - 1],
+            ]], 200),
+        ]);
+
+        $user = User::factory()->create();
+        $requester = User::factory()->create();
+        $rating = Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value]);
+
+        $adapter = new VATEUD();
+        $result = $adapter->assignTheoryExam($user, $rating, $requester->id);
+
+        $this->assertNotNull($result);
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'exams/assign')
+            && $request['exam_id'] === 42);
+    }
+
+    #[Test]
+    public function user_has_passed_theory_exam_returns_true_for_matching_passed_exam(): void
+    {
+        Http::fake([
+            '*exams' => Http::response(['data' => ['results' => [
+                ['flag_exam_type' => VatsimRating::S2->value - 1, 'passed' => true],
+            ]]], 200),
+        ]);
+
+        $user = User::factory()->create();
+        $rating = Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value]);
+
+        $adapter = new VATEUD();
+
+        $this->assertTrue($adapter->userHasPassedTheoryExam($user, $rating));
+    }
 }

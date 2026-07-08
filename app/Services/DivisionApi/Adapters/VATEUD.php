@@ -270,7 +270,7 @@ class VATEUD implements DivisionApiContract
         $availableExams = $this->callApi('/facility/training/exams', 'GET')->json()['data'];
         foreach ($availableExams as $exam) {
             // If the flag exam type is the same as the rating - 1, assign it. This is because VATEUD calls S2 = 2 instead of 3 like VATSIM does.
-            if ($exam['flag_exam_type'] == $rating->vatsim_rating - 1) {
+            if ($exam['flag_exam_type'] == $rating->vatsim_rating->value - 1) {
                 return $this->callApi('/facility/training/exams/assign', 'POST', [
                     'user_cid' => $user->id,
                     'exam_id' => $exam['id'],
@@ -335,7 +335,7 @@ class VATEUD implements DivisionApiContract
         $exams = $this->getUserExams($user);
         if ($exams && $exams->successful()) {
             foreach ($exams->json()['data']['results'] as $exam) {
-                if ($exam['flag_exam_type'] == $rating->vatsim_rating - 1 && $exam['passed'] == true) {
+                if ($exam['flag_exam_type'] == $rating->vatsim_rating->value - 1 && $exam['passed'] == true) {
                     return true;
                 }
             }
