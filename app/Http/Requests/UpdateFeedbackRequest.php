@@ -11,7 +11,9 @@ class UpdateFeedbackRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $feedback = $this->route('feedback');
+
+        return $feedback !== null && $this->user()->can('update', $feedback);
     }
 
     /**

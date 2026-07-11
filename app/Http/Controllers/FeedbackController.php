@@ -9,6 +9,9 @@ use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
+use App\Services\ActivityLogService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class FeedbackController extends Controller
@@ -16,7 +19,7 @@ class FeedbackController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -34,7 +37,7 @@ class FeedbackController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StoreFeedbackRequest $request)
     {
@@ -70,7 +73,7 @@ class FeedbackController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(UpdateFeedbackRequest $request, Feedback $feedback)
     {
@@ -112,7 +115,7 @@ class FeedbackController extends Controller
 
         if (! empty($changes)) {
             try {
-                ActivityLogController::info('FEEDBACK', 'Updated feedback ' . $feedback->id . ' ― ' . implode(', ', $changes));
+                ActivityLogService::info('FEEDBACK', 'Updated feedback ' . $feedback->id . ' ― ' . implode(', ', $changes));
             } catch (\Exception $e) {
                 // Log error but don't fail the request if logging fails
                 Log::error('Failed to log feedback update: ' . $e->getMessage());

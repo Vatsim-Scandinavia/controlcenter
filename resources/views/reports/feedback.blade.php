@@ -36,9 +36,9 @@
                                 <th data-field="position" data-sortable="true" data-filter-control="select">Position</th>
                                 <th data-field="area" data-sortable="true" data-filter-control="select">Area</th>
                                 <th data-field="feedback" data-sortable="false" data-filter-control="input">Feedback</th>
-                                @if(Auth::user()->isModeratorOrAbove())
+                                @can('update', \App\Models\Feedback::class)
                                     <th data-field="actions" data-sortable="false">Actions</th>
-                                @endif
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -64,7 +64,7 @@
                                     <td>
                                         {!! nl2br($f->feedback) !!}
                                     </td>
-                                    @if(Auth::user()->isModeratorOrAbove())
+                                    @can('update', $f)
                                         <td>
                                             <button type="button"
                                                 class="btn btn-sm btn-primary"
@@ -73,7 +73,7 @@
                                                 Edit
                                             </button>
                                         </td>
-                                    @endif
+                                    @endcan
                                 </tr>
                             @endforeach
                         </tbody>
@@ -85,8 +85,8 @@
 
 </div>
 
-@if(Auth::user()->isModeratorOrAbove())
-    @foreach($feedback as $f)
+@foreach($feedback as $f)
+    @can('update', $f)
         <div class="modal fade" id="feedback-edit-modal-{{ $f->id }}" tabindex="-1"
             aria-labelledby="feedback-edit-modal-label-{{ $f->id }}" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -199,7 +199,7 @@
                 </div>
             </div>
         </div>
-    @endforeach
-@endif
+    @endcan
+@endforeach
 
 @endsection
