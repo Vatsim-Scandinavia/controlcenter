@@ -202,12 +202,24 @@ body {
 }
 
 // Alert links
-.alert-primary .alert-link { color: var(--color-on-primary); text-decoration: underline; }
-.alert-secondary .alert-link { color: #fff; text-decoration: underline; }
-.alert-success .alert-link { color: #fff; text-decoration: underline; }
-.alert-info .alert-link { color: #fff; text-decoration: underline; }
-.alert-warning .alert-link { color: #000; text-decoration: underline; }
-.alert-danger .alert-link { color: #fff; text-decoration: underline; }
+// Inherit the alert's text color so links stay legible on the solid
+// coloured background. Every .alert-* variant sets an explicit color above.
+// Scoped to direct-child body links (and opt-in .alert-link) so nested
+// components such as navs, lists or tables keep their own styling.
+// Exclude button-styled anchors so they keep their own styling.
+.alert > a:not(.btn),
+.alert .alert-link {
+    color: inherit;
+    text-decoration: underline;
+
+    // Keep the inherited (full-contrast) colour on hover/focus so the link
+    // never drops below the alert body text's contrast ratio.
+    &:hover,
+    &:focus {
+        color: inherit;
+        text-decoration: underline;
+    }
+}
 
 // Bootstrap badges
 .badge-primary {
