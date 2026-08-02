@@ -155,7 +155,7 @@ class DatabaseSeeder extends Seeder
         // Populate trainings and other of the Scandinavian users
         for ($i = 1; $i <= rand(100, 125); $i++) {
             $training = Training::factory()->create();
-            $training->ratings()->attach(Rating::where('vatsim_rating', '>', 1)->inRandomOrder()->first());
+            $training->ratings()->attach(Rating::whereIn('vatsim_rating', VatsimRating::TRAINABLE_RATINGS)->inRandomOrder()->first());
 
             // Give all non-queued trainings a mentor
             if ($training->status != TrainingStatus::IN_QUEUE->value) {
@@ -182,7 +182,7 @@ class DatabaseSeeder extends Seeder
                     ]);
 
                     // Add position for solo
-                    $soloEndorsement->positions()->save(Position::where('rating', '>', 1)->inRandomOrder()->first());
+                    $soloEndorsement->positions()->save(Position::whereIn('rating', VatsimRating::getPositionRatingValues())->inRandomOrder()->first());
                 }
 
                 // And some a exam result

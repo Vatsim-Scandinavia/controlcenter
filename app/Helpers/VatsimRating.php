@@ -43,6 +43,14 @@ enum VatsimRating: int
         self::I3,
     ];
 
+    public const TRAINABLE_RATINGS = [
+        self::S1,
+        self::S2,
+        self::S3,
+        self::C1,
+        self::C3,
+    ];
+
     public static function getControllerRatings()
     {
         return collect(self::CONTROLLER_RATINGS)->mapWithKeys(function ($rating) {
