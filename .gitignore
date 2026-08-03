@@ -1,6 +1,7 @@
 .DS_Store
 .env
 .envrc
+.mise.local.toml
 .direnv/
 .htaccess
 .idea/
