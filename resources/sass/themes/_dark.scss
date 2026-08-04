@@ -104,6 +104,11 @@
     --btn-light-bg: #1c2128;
     --btn-light-color: #fff;
 
+    // Transient highlight used by `.flash-highlight`. Muted amber so the field
+    // still reads as attention-grabbing without blowing out the dark surface,
+    // and so --color-text-primary stays legible on top of it.
+    --flash-highlight-bg: #5a4320;
+
     // Table row elevation. On dark surfaces we darken the card (rather than the
     // lighter gray scale) so links stay legible on striped/hover rows: base
     // #2a2a2a -> stripe (-30%, ~5.5:1) -> hover (-50%, ~6:1).

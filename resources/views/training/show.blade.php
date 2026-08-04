@@ -686,17 +686,22 @@
         }
 
         function updateComment(id, oldText){
+            const commentInput = document.getElementById('activity_comment')
+
             document.getElementById('activity_update_id').value = id
-            document.getElementById('activity_comment').value = oldText
+            commentInput.value = oldText
             document.getElementById('activity_button').innerHTML = 'Update'
 
-            // flash the activity_comment field yellow for a second
-            document.getElementById('activity_comment').style.backgroundColor = '#fff7bd'
-            document.getElementById('activity_comment').style.transition = 'background-color 100ms linear'
-            setTimeout(function(){
-                document.getElementById('activity_comment').style.backgroundColor = '#ffffff'
-            }, 750)
-
+            // Flash the comment field to show it's now holding the comment
+            // being edited. The colour lives in .flash-highlight so it follows
+            // the active theme; setting it inline here would stick around and
+            // override the themed background.
+            commentInput.classList.remove('flash-highlight')
+            void commentInput.offsetWidth // reflow, so a repeat edit restarts the animation
+            commentInput.classList.add('flash-highlight')
+            commentInput.addEventListener('animationend', function(){
+                commentInput.classList.remove('flash-highlight')
+            }, { once: true })
         }
 
     </script>

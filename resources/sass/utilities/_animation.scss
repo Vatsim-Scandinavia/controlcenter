@@ -35,3 +35,31 @@
     animation-duration: 200ms;
     animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
 }
+
+// Flash Highlight Animation
+//
+// Briefly tints an element to draw the eye to it, then fades back to
+// transparent so whatever background the stylesheet defines takes over again.
+// Never set the resting background inline — that would outlive the flash and
+// break theming.
+
+@keyframes flashHighlight {
+    0% {
+        background-color: var(--flash-highlight-bg);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.flash-highlight {
+    animation-name: flashHighlight;
+    animation-duration: 750ms;
+    animation-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flash-highlight {
+        animation-duration: 1ms;
+    }
+}
