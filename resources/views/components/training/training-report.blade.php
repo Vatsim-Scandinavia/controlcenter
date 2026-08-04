@@ -18,7 +18,7 @@
                     <i class="fas fa-fw fa-chevron-right me-2"></i>
                     {{ $report->report_date->toEuropeanDate() }}
                     @if($showContext)
-                        | {{ isset(\App\Models\User::find($report->training->user->id)->first_name) ? \App\Models\User::find($report->training->user->id)->first_name : "Unknown"  }}'s
+                        | {{ $report->training->user?->first_name ?? 'Unknown' }}'s
                         {{ $report->training->ratings->pluck('name')->implode(' + ') }}
                         Training
                     @endif
@@ -36,7 +36,7 @@
                     @if(filled($report->position))
                         <i class="fas fa-map-marker-alt"></i> {{ $report->position }}&emsp;
                     @endif
-                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($report->written_by_id)->name) ? \App\Models\User::find($report->written_by_id)->name : "Unknown"  }}
+                    <i class="fas fa-user-edit"></i> {{ $report->author?->name ?? 'Unknown' }}
                     @if($showContext)
                         @can('view', $report->training)
                             <a class="float-end" href="{{ route('training.show', $report->training->id) }}"><i class="fa fa-eye"></i><span class="ms-1">View training</span></a>
