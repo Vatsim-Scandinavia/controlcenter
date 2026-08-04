@@ -476,8 +476,9 @@ class UserController extends Controller
         $this->authorize('viewReports', $user);
 
         $viewingUser = Auth::user();
-        $examinations = $viewingUser->viewableModels(TrainingExamination::class, [['examiner_id', '=', $user->id]], ['training']);
-        $reports = $viewingUser->viewableModels(TrainingReport::class, [['written_by_id', '=', $user->id]], ['training']);
+        $trainingContext = ['training.area', 'training.user', 'training.ratings', 'training.mentors', 'attachments.file'];
+        $examinations = $viewingUser->viewableModels(TrainingExamination::class, [['examiner_id', '=', $user->id]], [...$trainingContext, 'examiner']);
+        $reports = $viewingUser->viewableModels(TrainingReport::class, [['written_by_id', '=', $user->id]], [...$trainingContext, 'author']);
 
         $reportsAndExams = collect($reports)->merge($examinations);
         $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
