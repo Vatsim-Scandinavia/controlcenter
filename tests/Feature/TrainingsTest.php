@@ -369,4 +369,28 @@ class TrainingsTest extends TestCase
         // The S2 rating should appear as available for the S1 user
         $response->assertSee($rating->name);
     }
+
+    #[Test]
+    public function a_mentor_can_edit_their_own_timeline_comment(): void
+    {
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $this->training->area->id]);
+        $this->training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        $activity = $this->training->activities()->create([
+            'triggered_by_id' => $mentor->id,
+            'type' => 'COMMENT',
+            'comment' => 'Discussed holding patterns',
+        ]);
+
+        $this->actingAs($mentor)
+            ->post(route('training.activity.comment'), [
+                'training_id' => $this->training->id,
+                'update_id' => $activity->id,
+                'comment' => 'Discussed holding patterns and missed approaches',
+            ])
+            ->assertRedirect();
+
+        $this->assertEquals('Discussed holding patterns and missed approaches', $activity->fresh()->comment);
+    }
 }
