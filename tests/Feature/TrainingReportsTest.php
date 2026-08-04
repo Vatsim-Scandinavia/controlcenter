@@ -7,6 +7,7 @@ use App\Models\Area;
 use App\Models\OneTimeLink;
 use App\Models\Rating;
 use App\Models\Training;
+use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
 use App\Notifications\TrainingReportNotification;
@@ -338,11 +339,16 @@ class TrainingReportsTest extends TestCase
     }
 
     #[Test]
-    public function the_reports_archive_shows_which_training_each_report_belongs_to()
+    public function the_reports_archive_shows_which_training_each_report_and_exam_belongs_to()
     {
         $training = $this->makeTraining();
         $mentor = $this->makeMentor($training);
         $this->makeReport($training, ['written_by_id' => $mentor->id]);
+        TrainingExamination::factory()->create([
+            'training_id' => $training->id,
+            'examiner_id' => $mentor->id,
+            'result' => 'PASSED',
+        ]);
         $training->ratings()->attach([
             Rating::factory()->create(['name' => 'Faketown TWR'])->id,
             Rating::factory()->create(['name' => 'Faketown APP'])->id,
@@ -352,6 +358,7 @@ class TrainingReportsTest extends TestCase
             ->get(route('user.reports', $mentor))
             ->assertOk()
             ->assertSee('Faketown TWR + Faketown APP')
+            ->assertSee('<span class="badge bg-success">PASSED</span>', false)
             ->assertSee(route('training.show', $training->id), false);
     }
 }
