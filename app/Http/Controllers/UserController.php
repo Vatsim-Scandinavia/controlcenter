@@ -477,7 +477,7 @@ class UserController extends Controller
 
         $viewingUser = Auth::user();
         $trainingContext = ['training.area', 'training.user', 'training.ratings', 'training.mentors', 'attachments.file'];
-        $examinations = $viewingUser->viewableModels(TrainingExamination::class, [['examiner_id', '=', $user->id]], [...$trainingContext, 'examiner']);
+        $examinations = $viewingUser->viewableModels(TrainingExamination::class, [['examiner_id', '=', $user->id]], [...$trainingContext, 'examiner', 'position']);
         $reports = $viewingUser->viewableModels(TrainingReport::class, [['written_by_id', '=', $user->id]], [...$trainingContext, 'author']);
 
         $reportsAndExams = collect($reports)->merge($examinations);

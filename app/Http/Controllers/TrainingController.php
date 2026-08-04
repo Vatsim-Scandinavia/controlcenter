@@ -321,7 +321,7 @@ class TrainingController extends Controller
 
         // The view policy walks training.user/mentors/area for every entry, so eager load it.
         $policyContext = ['training.user', 'training.mentors', 'training.area', 'attachments.file'];
-        $examinations = TrainingExamination::where('training_id', $training->id)->with([...$policyContext, 'examiner'])->get();
+        $examinations = TrainingExamination::where('training_id', $training->id)->with([...$policyContext, 'examiner', 'position'])->get();
         $reports = TrainingReport::where('training_id', $training->id)->with([...$policyContext, 'author'])->get();
 
         $reportsAndExams = collect($reports)->merge($examinations)

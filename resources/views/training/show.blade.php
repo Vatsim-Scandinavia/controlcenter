@@ -474,60 +474,8 @@
                                 @if(is_a($reportModel, '\App\Models\TrainingReport'))
                                     <x-training.training-report :report="$reportModel" />
                                 @else
-                                    @php
-                                        $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
-                                    @endphp
-
-                                    <div class="card">
-                                        <div class="card-header p-0">
-                                            <h5 class="mb-0 bg-lightorange">
-                                                <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
-                                                    <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $reportModel->examination_date->toEuropeanDate() }}
-                                                </button>
-                                            </h5>
-                                        </div>
-
-                                        <div id="{{ $uuid }}" class="collapse" data-bs-parent="#reportAccordion">
-                                            <div class="card-body">
-
-                                                <small class="text-muted">
-                                                    @if(isset($reportModel->position))
-                                                        <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($reportModel->position_id)->callsign }}&emsp;
-                                                    @endif
-                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}
-                                                    @can('delete', [\App\Models\TrainingExamination::class, $reportModel])
-                                                        <a class="float-end" href="{{ route('training.examination.delete', $reportModel->id) }}" onclick="return confirm('Are you sure you want to delete this examination?')"><i class="fa fa-trash"></i> Delete</a>
-                                                    @endcan
-                                                </small>
-
-                                                <div class="mt-2">
-                                                    @if($reportModel->result == "PASSED")
-                                                        <span class='badge bg-success'>PASSED</span>
-                                                    @elseif($reportModel->result == "FAILED")
-                                                        <span class='badge bg-danger'>FAILED</span>
-                                                    @elseif($reportModel->result == "INCOMPLETE")
-                                                        <span class='badge bg-primary'>INCOMPLETE</span>
-                                                    @elseif($reportModel->result == "POSTPONED")
-                                                        <span class='badge bg-warning'>POSTPONED</span>
-                                                    @endif
-                                                </div>
-
-                                                @if($reportModel->attachments->count() > 0)
-                                                    @foreach($reportModel->attachments as $attachment)
-                                                        <div>
-                                                            <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
-                                                                <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
-                                                @endif
-
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <x-training.exam-report :report="$reportModel" />
                                 @endif
-
-
                             @endforeach
                         @endif
                     </div>
