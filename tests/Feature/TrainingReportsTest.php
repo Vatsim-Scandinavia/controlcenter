@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Helpers\TrainingStatus;
 use App\Models\Area;
 use App\Models\OneTimeLink;
+use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingReport;
 use App\Models\User;
@@ -334,5 +335,23 @@ class TrainingReportsTest extends TestCase
         $otherDirector->roleAssignments()->create(['role' => 'director', 'area_id' => Area::factory()->create()->id]);
 
         $this->assertFalse($otherDirector->can('update', $report));
+    }
+
+    #[Test]
+    public function the_reports_archive_shows_which_training_each_report_belongs_to()
+    {
+        $training = $this->makeTraining();
+        $mentor = $this->makeMentor($training);
+        $this->makeReport($training, ['written_by_id' => $mentor->id]);
+        $training->ratings()->attach([
+            Rating::factory()->create(['name' => 'Faketown TWR'])->id,
+            Rating::factory()->create(['name' => 'Faketown APP'])->id,
+        ]);
+
+        $this->actingAs($mentor)
+            ->get(route('user.reports', $mentor))
+            ->assertOk()
+            ->assertSee('Faketown TWR + Faketown APP')
+            ->assertSee(route('training.show', $training->id), false);
     }
 }
