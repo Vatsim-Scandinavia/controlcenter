@@ -1,5 +1,20 @@
 # Changelog
 
+## [7.0.0-alpha.15](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.14...v7.0.0-alpha.15) (2026-08-05)
+
+
+### Bug Fixes
+
+* **profile:** recent connections show date instead of callsign ([#1564](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1564)) ([b7a2030](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b7a20302a964a3adcd17038afacf33f5d77a5f10))
+* **style:** editing a timeline comment no longer makes the text box undreadable ([9eea002](https://github.com/Vatsim-Scandinavia/controlcenter/commit/9eea0021d100bfa7c8bdb8debb8df9a85ccdd4d9))
+* **style:** use keyframes to flash timeline comment edit box ([9eea002](https://github.com/Vatsim-Scandinavia/controlcenter/commit/9eea0021d100bfa7c8bdb8debb8df9a85ccdd4d9))
+* **theme:** make alert box links legible again ([#1570](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1570)) ([2a11121](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2a11121bfa0c1e8faf710f1bcf39c9e193fc88c0))
+
+
+### Performance Improvements
+
+* **training:** collapse queries for examination and training reports ([4e69315](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4e69315cd8837b5c960b8c033403a9bb4d129ae1))
+
 ## [7.0.0-alpha.14](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.13...v7.0.0-alpha.14) (2026-07-08)
 
 
