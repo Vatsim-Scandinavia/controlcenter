@@ -28,8 +28,13 @@ return [
         ],
         'training-staff' => [
             'name' => 'Training Staff',
-            'description' => 'Training staff with edit access to training-related matters',
+            'description' => 'Training staff, e.g. leads, coordinators, with access to all training-related data',
             'scope' => 'area',
+        ],
+        'staff' => [
+            'name' => 'Staff',
+            'description' => 'Generic staff member with view-only access to positions',
+            'scope' => 'both',
         ],
         'nav-editor' => [
             'name' => 'Navigational Editor',
@@ -45,11 +50,6 @@ return [
             'name' => 'Buddy',
             'description' => 'Training buddy',
             'scope' => 'area',
-        ],
-        'staff' => [
-            'name' => 'Staff',
-            'description' => 'Generic staff member with view-only access to positions',
-            'scope' => 'both',
         ],
     ],
 
