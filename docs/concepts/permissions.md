@@ -36,4 +36,5 @@ The catalogue is authoritative: a permission that is absent from the `permission
 ## Next Steps
 
 - The [Roles and Permissions Reference](../reference/permissions.md) lists every shipped role, the full default permission matrix, and the steps to customise them.
+- [Feedback](feedback.md) documents the internal feedback report, edit flow, and the `feedback.*` permissions.
 - `config/roles.php` is the source of truth in the codebase.

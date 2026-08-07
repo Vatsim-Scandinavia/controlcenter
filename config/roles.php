@@ -115,6 +115,7 @@ return [
         // Feedback
         'feedback.correlated.view',
         'feedback.uncorrelated.view',
+        'feedback.update',
 
         // Bookings
         'bookings.bypass-restrictions',
