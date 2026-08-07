@@ -78,7 +78,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     // Users
     Route::controller(UserController::class)->group(function () {
         Route::get('/user/{user}', 'show')->name('user.show');
-        Route::patch('/user/{user}', 'update')->name('user.update');
         Route::get('/user/{user}/reports', 'reports')->name('user.reports');
         Route::get('/settings', 'settings')->name('user.settings');
         Route::post('/settings', 'settings_update')->name('user.settings.store');

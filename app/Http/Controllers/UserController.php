@@ -25,10 +25,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 /**
  * Controller to handle user views
@@ -300,97 +298,6 @@ class UserController extends Controller
                 'status' => $e->getHttpStatus() ?: 500,
             ], $e->getHttpStatus() ?: 500);
         }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @throws AuthorizationException
-     */
-    public function update(Request $request, User $user): SymfonyResponse
-    {
-        $this->authorize('update', $user);
-        $permissions = [];
-
-        // Generate a list of possible validations: one key per area/role cell,
-        // plus the global row (area-less assignments) keyed as global_{role}
-        foreach (Area::all() as $area) {
-            foreach (config('roles.roles') as $roleKey => $role) {
-                // Only process ranks the user is allowed to change
-                if (! Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed()) {
-                    continue;
-                }
-
-                $key = $area->id . '_' . $roleKey;
-                $permissions[$key] = '';
-            }
-        }
-
-        foreach (config('roles.roles') as $roleKey => $role) {
-            if (! Gate::inspect('updateRole', [$user, $roleKey, null])->allowed()) {
-                continue;
-            }
-
-            $permissions['global_' . $roleKey] = '';
-        }
-
-        // Valiate and allow these fields, then loop through permissions to set the final data set
-        $data = $request->validate($permissions);
-        foreach ($permissions as $key => $value) {
-            isset($data[$key]) ? $permissions[$key] = true : $permissions[$key] = false;
-        }
-
-        // Check and update the permissions
-        foreach ($permissions as $key => $value) {
-            [$scopeKey, $roleKey] = explode('_', $key, 2);
-            $area = $scopeKey === 'global' ? null : Area::find($scopeKey);
-
-            $assignments = $user->roleAssignments()->where('role', $roleKey)->when(
-                $area === null,
-                fn ($query) => $query->whereNull('area_id'),
-                fn ($query) => $query->where('area_id', $area->id),
-            );
-
-            // Check if permission is not set, and set it or other way around.
-            if ($assignments->count() == 0) {
-                if ($value == true) {
-                    $this->authorize('updateRole', [$user, $roleKey, $area]);
-
-                    // Call the division API to assign mentor
-                    if ($roleKey == 'mentor') {
-                        $response = DivisionApi::assignMentor($user, Auth::id());
-                        if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                        }
-                    }
-
-                    // Attach the new permission
-                    $user->roleAssignments()->create(['role' => $roleKey, 'area_id' => $area?->id]);
-                }
-            } else {
-                if ($value == false) {
-                    $this->authorize('updateRole', [$user, $roleKey, $area]);
-
-                    // Call the division API to assign mentor
-                    if ($roleKey == 'mentor') {
-                        $response = DivisionApi::removeMentor($user, Auth::id());
-                        if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                        }
-                    }
-
-                    // Detach the permission (delete per-model so the revocation is logged)
-                    $assignments->get()->each->delete();
-                }
-            }
-
-            // Check and detach trainings from mentor
-            if ($area !== null && $user->teaches()->where('area_id', $area->id)->count() > 0 && ! $user->hasRole('mentor') && $value == false) {
-                $user->teaches()->detach($user->teaches->where('area_id', $area->id));
-            }
-        }
-
-        return redirect(route('user.show', $user))->with('success', 'User access settings successfully updated.');
     }
 
     /**

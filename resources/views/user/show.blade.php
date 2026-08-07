@@ -92,6 +92,10 @@
             </div>
         </div>
 
+        @can('viewAccess', $user)
+            @livewire('user-roles', ['user' => $user])
+        @endcan
+
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
@@ -469,76 +473,6 @@
                 </div>
             </div>
         </div>
-        @if (\Illuminate\Support\Facades\Gate::inspect('viewAccess', $user)->allowed())
-            <div class="col-xl-12 col-lg-12 col-md-12 mb-12 p-0">
-                <div class="card shadow mb-4">
-                    <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 fw-bold text-white">
-                            Access
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('user.update', $user->id) }}" method="POST">
-                            @method('PATCH')
-                            @csrf
-
-                            <p>Select none, one or multiple permissions for the user.</p>
-
-                            <table class="table table-bordered table-hover table-responsive w-100 d-block d-md-table">
-                                <thead>
-                                    <tr>
-                                        <th>Area</th>
-                                        @foreach($roles as $roleKey => $roleData)
-                                            <th class="text-center">{{ $roleData['name'] }} <i class="fas fa-question-circle text-gray-400" title="{{ $roleData['description'] }}"></i></th>
-                                        @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                    <tr>
-                                        <td><strong>Global</strong></td>
-                                        @foreach($roles as $roleKey => $roleData)
-
-                                            @if (\Illuminate\Support\Facades\Gate::inspect('updateRole', [$user, $roleKey, null])->allowed())
-                                                <td class="text-center"><input type="checkbox" name="global_{{ $roleKey }}" {{ $user->roleAssignments->where('role', $roleKey)->whereNull('area_id')->isNotEmpty() ? 'checked' : '' }}></td>
-                                            @else
-                                                <td class="text-center"><input type="checkbox" {{ $user->roleAssignments->where('role', $roleKey)->whereNull('area_id')->isNotEmpty() ? 'checked' : '' }} disabled></td>
-                                            @endif
-
-                                        @endforeach
-                                    </tr>
-
-                                    @foreach($areas as $area)
-                                        <tr>
-                                            <td>{{ $area->name }}</td>
-
-                                            @foreach($roles as $roleKey => $roleData)
-
-                                                @if (\Illuminate\Support\Facades\Gate::inspect('updateRole', [$user, $roleKey, $area])->allowed())
-                                                    <td class="text-center"><input type="checkbox" name="{{ $area->id }}_{{ $roleKey }}" {{ $user->roleAssignments->where('role', $roleKey)->where('area_id', $area->id)->isNotEmpty() ? "checked" : "" }}></td>
-                                                @else
-                                                    <td class="text-center"><input type="checkbox" {{ $user->roleAssignments->where('role', $roleKey)->where('area_id', $area->id)->isNotEmpty() ? "checked" : "" }} disabled></td>
-                                                @endif
-
-                                            @endforeach
-
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-
-                            @if (\Illuminate\Support\Facades\Gate::inspect('update', $user)->allowed())
-                                <div class="mb-3">
-                                    <button type="submit" class="btn btn-primary">Save access</button>
-                                </div>
-                            @endif
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        @endif
     </div>
 
 </div>

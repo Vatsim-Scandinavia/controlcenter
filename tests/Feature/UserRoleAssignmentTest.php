@@ -2,12 +2,19 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\UserRoles;
 use App\Models\ActivityLog;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
+/**
+ * Behavioural coverage for role assignment now that the Bootstrap role matrix
+ * (form + user.update endpoint) has been replaced by the UserRoles Livewire
+ * component. Each test drives the component the same way the profile page does.
+ */
 class UserRoleAssignmentTest extends TestCase
 {
     use RefreshDatabase;
@@ -30,15 +37,23 @@ class UserRoleAssignmentTest extends TestCase
         $this->target = User::factory()->create();
     }
 
-    public function test_role_assignment_checkbox_keys_match_controller_expectations(): void
+    public function test_user_show_page_renders_the_user_roles_component(): void
     {
-        // Submit with lowercase role key (what the controller expects)
-        $key = $this->area->id . '_moderator';
+        $this->actingAs($this->admin)
+            ->get(route('user.show', $this->target))
+            ->assertOk()
+            ->assertSeeLivewire(UserRoles::class);
+    }
 
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), [$key => 'on']);
-
-        $response->assertRedirect();
+    public function test_global_admin_can_assign_moderator_per_area(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'moderator')
+            ->set('selectedAreaIds', [$this->area->id])
+            ->call('grant')
+            ->assertHasNoErrors();
 
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
@@ -47,37 +62,17 @@ class UserRoleAssignmentTest extends TestCase
         ]);
     }
 
-    public function test_role_removal_works_when_key_matches(): void
-    {
-        // Pre-assign moderator role
-        $this->target->roleAssignments()->create([
-            'role' => 'moderator',
-            'area_id' => $this->area->id,
-        ]);
-
-        // Submit without that key (unchecked) — should remove the role
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), []);
-
-        $response->assertRedirect();
-
-        $this->assertDatabaseMissing('role_user', [
-            'user_id' => $this->target->id,
-            'role' => 'moderator',
-            'area_id' => $this->area->id,
-        ]);
-    }
-
-    public function test_revoking_a_role_via_the_update_endpoint_is_logged(): void
+    public function test_revoking_a_role_via_the_component_is_logged(): void
     {
         $this->target->roleAssignments()->create([
             'role' => 'moderator',
             'area_id' => $this->area->id,
         ]);
 
-        $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), [])
-            ->assertRedirect();
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('confirmRemoval', 'moderator', $this->area->id)
+            ->call('remove');
 
         $log = ActivityLog::where('subject_type', User::class)
             ->where('subject_id', $this->target->id)
@@ -93,72 +88,30 @@ class UserRoleAssignmentTest extends TestCase
         $this->assertSame($this->admin->id, $log->causer_id);
     }
 
-    public function test_global_row_is_visible_on_user_show_page(): void
+    public function test_admin_role_cannot_be_assigned_via_the_component_even_by_global_admin(): void
     {
-        $response = $this->actingAs($this->admin)
-            ->get(route('user.show', $this->target));
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->set('selectedRole', 'admin')
+            ->set('selectedGlobal', true)
+            ->call('grant');
 
-        $response->assertOk();
-        $response->assertSee('Global');
-    }
-
-    public function test_global_admin_can_assign_director_per_area(): void
-    {
-        $key = $this->area->id . '_director';
-
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), [$key => 'on']);
-
-        $response->assertRedirect();
-
-        $this->assertDatabaseHas('role_user', [
-            'user_id' => $this->target->id,
-            'role' => 'director',
-            'area_id' => $this->area->id,
-        ]);
-    }
-
-    public function test_global_admin_can_revoke_director_per_area(): void
-    {
-        $this->target->roleAssignments()->create([
-            'role' => 'director',
-            'area_id' => $this->area->id,
-        ]);
-
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), []);
-
-        $response->assertRedirect();
-
-        $this->assertDatabaseMissing('role_user', [
-            'user_id' => $this->target->id,
-            'role' => 'director',
-            'area_id' => $this->area->id,
-        ]);
-    }
-
-    public function test_admin_role_cannot_be_assigned_via_ui_even_by_global_admin(): void
-    {
-        $key = $this->area->id . '_admin';
-
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), [$key => 'on']);
-
-        $response->assertRedirect();
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
             'role' => 'admin',
         ]);
     }
 
-    public function test_admin_role_cannot_be_revoked_via_ui(): void
+    public function test_admin_role_cannot_be_revoked_via_the_component(): void
     {
         $this->target->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
 
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), []);
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('confirmRemoval', 'admin', null)
+            ->call('remove')
+            ->assertForbidden();
 
-        $response->assertRedirect();
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
             'role' => 'admin',
@@ -171,12 +124,14 @@ class UserRoleAssignmentTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
 
-        $key = $this->area->id . '_moderator';
+        Livewire::actingAs($director)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'moderator')
+            ->set('selectedAreaIds', [$this->area->id])
+            ->call('grant')
+            ->assertHasNoErrors();
 
-        $response = $this->actingAs($director)
-            ->patch(route('user.update', $this->target), [$key => 'on']);
-
-        $response->assertRedirect();
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
             'role' => 'moderator',
@@ -189,12 +144,12 @@ class UserRoleAssignmentTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
 
-        $key = $this->area->id . '_director';
+        Livewire::actingAs($director)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->set('selectedRole', 'director')
+            ->set('selectedAreaIds', [$this->area->id])
+            ->call('grant');
 
-        $response = $this->actingAs($director)
-            ->patch(route('user.update', $this->target), [$key => 'on']);
-
-        $response->assertRedirect();
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
             'role' => 'director',
@@ -206,12 +161,14 @@ class UserRoleAssignmentTest extends TestCase
         $globalDirector = User::factory()->create();
         $globalDirector->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
 
-        $key = $this->area->id . '_director';
+        Livewire::actingAs($globalDirector)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'director')
+            ->set('selectedAreaIds', [$this->area->id])
+            ->call('grant')
+            ->assertHasNoErrors();
 
-        $response = $this->actingAs($globalDirector)
-            ->patch(route('user.update', $this->target), [$key => 'on']);
-
-        $response->assertRedirect();
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
             'role' => 'director',
@@ -224,23 +181,32 @@ class UserRoleAssignmentTest extends TestCase
         $moderator = User::factory()->create();
         $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->area->id]);
 
-        $response = $this->actingAs($moderator)
-            ->patch(route('user.update', $this->target), [
-                $this->area->id . '_director' => 'on',
-                $this->area->id . '_admin' => 'on',
-            ]);
+        $component = Livewire::actingAs($moderator)
+            ->test(UserRoles::class, ['user' => $this->target]);
 
-        $response->assertRedirect();
+        $component->set('selectedRole', 'director')
+            ->set('selectedAreaIds', [$this->area->id])
+            ->call('grant');
+
+        $component->set('selectedRole', 'admin')
+            ->set('selectedAreaIds', [])
+            ->set('selectedGlobal', true)
+            ->call('grant');
+
         $this->assertDatabaseMissing('role_user', ['user_id' => $this->target->id, 'role' => 'director']);
         $this->assertDatabaseMissing('role_user', ['user_id' => $this->target->id, 'role' => 'admin']);
     }
 
     public function test_global_admin_can_assign_global_moderator(): void
     {
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), ['global_moderator' => 'on']);
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'moderator')
+            ->set('selectedGlobal', true)
+            ->call('grant')
+            ->assertHasNoErrors();
 
-        $response->assertRedirect();
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
             'role' => 'moderator',
@@ -252,37 +218,29 @@ class UserRoleAssignmentTest extends TestCase
     {
         $this->target->roleAssignments()->create(['role' => 'moderator', 'area_id' => null]);
 
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), []);
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('confirmRemoval', 'moderator', null)
+            ->call('remove');
 
-        $response->assertRedirect();
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
             'role' => 'moderator',
+            'area_id' => null,
         ]);
     }
 
-    public function test_global_mentor_key_is_ignored_due_to_area_scope(): void
+    public function test_mentor_cannot_be_assigned_globally_due_to_area_scope(): void
     {
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), ['global_mentor' => 'on']);
+        Livewire::actingAs($this->admin)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'mentor')
+            ->call('grant');
 
-        $response->assertRedirect();
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
             'role' => 'mentor',
-        ]);
-    }
-
-    public function test_global_admin_key_is_ignored(): void
-    {
-        $response = $this->actingAs($this->admin)
-            ->patch(route('user.update', $this->target), ['global_admin' => 'on']);
-
-        $response->assertRedirect();
-        $this->assertDatabaseMissing('role_user', [
-            'user_id' => $this->target->id,
-            'role' => 'admin',
         ]);
     }
 
@@ -291,10 +249,14 @@ class UserRoleAssignmentTest extends TestCase
         $globalDirector = User::factory()->create();
         $globalDirector->roleAssignments()->create(['role' => 'director', 'area_id' => null]);
 
-        $response = $this->actingAs($globalDirector)
-            ->patch(route('user.update', $this->target), ['global_director' => 'on']);
+        Livewire::actingAs($globalDirector)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'director')
+            ->set('selectedGlobal', true)
+            ->call('grant')
+            ->assertHasNoErrors();
 
-        $response->assertRedirect();
         $this->assertDatabaseHas('role_user', [
             'user_id' => $this->target->id,
             'role' => 'director',
@@ -307,25 +269,17 @@ class UserRoleAssignmentTest extends TestCase
         $director = User::factory()->create();
         $director->roleAssignments()->create(['role' => 'director', 'area_id' => $this->area->id]);
 
-        $response = $this->actingAs($director)
-            ->patch(route('user.update', $this->target), ['global_moderator' => 'on']);
+        Livewire::actingAs($director)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->set('selectedRole', 'moderator')
+            ->set('selectedAreaIds', [])
+            ->set('selectedGlobal', true)
+            ->call('grant');
 
-        $response->assertRedirect();
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $this->target->id,
             'role' => 'moderator',
+            'area_id' => null,
         ]);
-    }
-
-    public function test_global_row_renders_enabled_checkboxes_for_admin(): void
-    {
-        $response = $this->actingAs($this->admin)
-            ->get(route('user.show', $this->target));
-
-        $response->assertOk();
-        $response->assertSee('name="global_moderator"', false);
-        $response->assertSee('name="global_director"', false);
-        $response->assertDontSee('name="global_admin"', false);
-        $response->assertDontSee('name="global_mentor"', false);
     }
 }
