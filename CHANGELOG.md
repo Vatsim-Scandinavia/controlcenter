@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.0-beta.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.2...v7.0.0-beta.3) (2026-08-07)
+
+
+### Bug Fixes
+
+* **users:** correctly move staff to the right side of training staff ([f37571f](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f37571f36a0bb28f1fb913893bbf3786e1224df0))
+
 ## [7.0.0-beta.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2026-08-07)
 
 
