@@ -548,6 +548,18 @@ textarea.form-control {
 }
 
 // Bootstrap pagination
+// Livewire's bootstrap paginator renders the "Showing … results" text in a <p>
+// and the page links in a <ul class="pagination">, both of which inherit
+// Reboot's 1rem bottom margin. Inside a flex-centred card footer that phantom
+// margin lifts them above the per-page selector, so zero it on the paginator
+// nav to keep the footer's controls on one centre line.
+.card-footer nav {
+    p,
+    .pagination {
+        margin-bottom: 0;
+    }
+}
+
 .page-link {
     background-color: var(--bg-card);
     border-color: var(--border-color);

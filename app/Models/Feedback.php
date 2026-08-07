@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\DescribesActivityChanges;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -71,6 +72,31 @@ class Feedback extends Model implements DescribesActivityChanges
                 'link' => null, // future: fn (Position $position) => $position->path()
             ],
         ];
+    }
+
+    /**
+     * Scope feedback to what the given user may see: correlated feedback within
+     * their permitted areas (or all correlated when global), plus uncorrelated
+     * feedback when they hold that permission. Single source of truth for
+     * feedback visibility — used by the report listing and the filter option
+     * providers, so a crafted filter can never widen it.
+     */
+    public function scopeVisibleTo(Builder $query, User $user): void
+    {
+        $correlatedScope = $user->accessibleAreasForPermission('feedback.correlated.view');
+        $canViewUncorrelated = $user->accessibleAreasForPermission('feedback.uncorrelated.view')->hasAccess();
+
+        $query->where(function (Builder $q) use ($correlatedScope, $canViewUncorrelated) {
+            if ($correlatedScope->isGlobal) {
+                $q->whereNotNull('reference_position_id');
+            } else {
+                $q->whereHas('referencePosition', fn (Builder $q) => $q->whereIn('area_id', $correlatedScope->areas->pluck('id')));
+            }
+
+            if ($canViewUncorrelated) {
+                $q->orWhereNull('reference_position_id');
+            }
+        });
     }
 
     public function submitter()

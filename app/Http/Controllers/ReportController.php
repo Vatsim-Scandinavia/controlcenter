@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\TrainingStatus;
 use App\Models\Area;
-use App\Models\Feedback;
 use App\Models\ManagementReport;
-use App\Models\Position;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingActivity;
@@ -253,29 +251,7 @@ class ReportController extends Controller
     {
         $this->authorize('viewFeedback', ManagementReport::class);
 
-        $user = auth()->user();
-        $correlatedScope = $user->accessibleAreasForPermission('feedback.correlated.view');
-        $canViewUncorrelated = $user->accessibleAreasForPermission('feedback.uncorrelated.view')->hasAccess();
-
-        $feedback = Feedback::with(['submitter', 'referenceUser', 'referencePosition.area'])
-            ->latest()
-            ->where(function ($q) use ($correlatedScope, $canViewUncorrelated) {
-                if ($correlatedScope->isGlobal) {
-                    $q->whereNotNull('reference_position_id');
-                } else {
-                    $q->whereHas('referencePosition', fn ($q) => $q->whereIn('area_id', $correlatedScope->areas->pluck('id')));
-                }
-
-                if ($canViewUncorrelated) {
-                    $q->orWhereNull('reference_position_id');
-                }
-            })
-            ->get();
-
-        $positions = Position::all();
-        $controllers = User::getActiveAtcMembers();
-
-        return view('reports.feedback', compact('feedback', 'positions', 'controllers'));
+        return view('reports.feedback');
     }
 
     /**
