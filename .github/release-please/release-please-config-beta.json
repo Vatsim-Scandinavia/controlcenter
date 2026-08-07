@@ -2,6 +2,7 @@
   "release-type": "php",
   "changelog-path": "CHANGELOG.md",
   "draft": false,
+  "extra-label": "sourcery-ignore",
   "extra-files": [
     "config/app.php"
   ],
