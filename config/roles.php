@@ -190,6 +190,9 @@ return [
             'tasks.**',
             'users.**',
         ],
+        'staff' => [
+            'fir.positions.view',
+        ],
         'nav-editor' => [
             'fir.positions.*',
         ],
@@ -208,9 +211,6 @@ return [
         'buddy' => [
             'training.view',
             'training.reports.one-time-link',
-        ],
-        'staff' => [
-            'fir.positions.view',
         ],
     ],
 ];
