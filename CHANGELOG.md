@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0-beta.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2026-08-07)
+
+
+### Features
+
+* **feedback:** enable editing of feedback controller and position ([#1427](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1427)) ([0ba1b37](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0ba1b37892df61a8e60fd0e4b967a97c5688231b))
+* **feedback:** record edits in the activity log, shown as names ([db49754](https://github.com/Vatsim-Scandinavia/controlcenter/commit/db49754e6db1a2ad45465ac40d935cdc3b7bb90a))
+* **logs:** let each model describe how its own log entries are shown ([f6bb126](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f6bb1266000d0efb899cba11fa5ff3bba986dc39))
+
+
+### Bug Fixes
+
+* **feedback:** harden the feedback backend ([a0be344](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a0be344d291a54d3710a47fd88f2560321133345))
+* **feedback:** normalise feedbackEnabled as setting key ([f0021a1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f0021a1b6e52bf7fc5ff805258b381dd6e1816b4))
+* **user:** move staff option to the right of training staff ([37c8e98](https://github.com/Vatsim-Scandinavia/controlcenter/commit/37c8e98c57a6cd00c13798120e20676728e16eb7))
+
 ## [7.0.0-beta.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-alpha.15...v7.0.0-beta.1) (2026-08-07)
 
 
