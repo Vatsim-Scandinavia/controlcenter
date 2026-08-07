@@ -2,14 +2,25 @@
 
 namespace App\Models;
 
+use App\Contracts\DescribesActivityChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
-class Feedback extends Model
+class Feedback extends Model implements DescribesActivityChanges
 {
-    use HasFactory;
-    use Notifiable;
+    use HasFactory, LogsActivity, Notifiable;
+
+    /**
+     * Only log staff edits. MUST stay static — spatie v5 checks
+     * isset(static::$recordEvents); a non-static property is ignored and every
+     * event (including public submissions) would be logged.
+     *
+     * @var array<int, string>
+     */
+    protected static array $recordEvents = ['updated'];
 
     /**
      * @var array<int, string>
@@ -21,6 +32,46 @@ class Feedback extends Model
         'reference_position_id',
         'forwarded',
     ];
+
+    /**
+     * Record reference re-assignments to the activity log under the "feedback"
+     * category, storing old→new for the two foreign keys.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('feedback')
+            ->logOnly(['reference_user_id', 'reference_position_id'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->setDescriptionForEvent(fn (string $eventName): string => "Feedback {$eventName}");
+    }
+
+    /**
+     * Present the logged reference foreign keys as resolved names. The `link`
+     * closures are stubbed until the position and controller-feedback routes
+     * exist; wiring them here is all that is needed to make the log entries
+     * link through — the generic log view needs no changes.
+     *
+     * {@inheritDoc}
+     */
+    public static function activityChangeReferences(): array
+    {
+        return [
+            'reference_user_id' => [
+                'label' => 'Controller',
+                'model' => User::class,
+                'display' => fn (User $user): string => "{$user->name} ({$user->id})",
+                'link' => null, // future: fn (User $user) => route('reports.feedback', ['controller' => $user->id])
+            ],
+            'reference_position_id' => [
+                'label' => 'Position',
+                'model' => Position::class,
+                'display' => fn (Position $position): string => $position->callsign,
+                'link' => null, // future: fn (Position $position) => $position->path()
+            ],
+        ];
+    }
 
     public function submitter()
     {

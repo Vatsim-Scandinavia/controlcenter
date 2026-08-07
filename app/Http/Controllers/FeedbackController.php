@@ -9,10 +9,8 @@ use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
-use App\Services\ActivityLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class FeedbackController extends Controller
 {
@@ -71,56 +69,20 @@ class FeedbackController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @return RedirectResponse
+     * Update the reference controller/position of an existing feedback entry.
+     * Authorization is enforced by UpdateFeedbackRequest.
      */
-    public function update(UpdateFeedbackRequest $request, Feedback $feedback)
+    public function update(UpdateFeedbackRequest $request, Feedback $feedback): RedirectResponse
     {
-        $this->authorize('update', $feedback);
-
         $data = $request->validated();
 
-        // Track old values for logging
-        $oldController = $feedback->referenceUser;
-        $oldPosition = $feedback->referencePosition;
-        $oldControllerId = $feedback->reference_user_id;
-        $oldPositionId = $feedback->reference_position_id;
+        $position = ! empty($data['position']) ? Position::where('callsign', $data['position'])->first() : null;
+        $controller = ! empty($data['controller']) ? User::find($data['controller']) : null;
 
-        // Get new values
-        $newPosition = isset($data['position']) && ! empty($data['position']) ? Position::where('callsign', $data['position'])->first() : null;
-        $newController = isset($data['controller']) && ! empty($data['controller']) ? User::find($data['controller']) : null;
-        $newControllerId = $newController ? $newController->id : null;
-        $newPositionId = $newPosition ? $newPosition->id : null;
-
-        // Update the feedback
-        $feedback->reference_user_id = $newControllerId;
-        $feedback->reference_position_id = $newPositionId;
-        $feedback->save();
-
-        // Build log message
-        $changes = [];
-
-        if ($oldControllerId != $newControllerId) {
-            $oldControllerText = $oldController ? $oldController->name . ' (' . $oldControllerId . ')' : 'N/A';
-            $newControllerText = $newController ? $newController->name . ' (' . $newControllerId . ')' : 'N/A';
-            $changes[] = 'Controller: ' . $oldControllerText . ' → ' . $newControllerText;
-        }
-
-        if ($oldPositionId != $newPositionId) {
-            $oldPositionText = $oldPosition ? $oldPosition->callsign : 'N/A';
-            $newPositionText = $newPosition ? $newPosition->callsign : 'N/A';
-            $changes[] = 'Position: ' . $oldPositionText . ' → ' . $newPositionText;
-        }
-
-        if (! empty($changes)) {
-            try {
-                ActivityLogService::info('FEEDBACK', 'Updated feedback ' . $feedback->id . ' ― ' . implode(', ', $changes));
-            } catch (\Exception $e) {
-                // Log error but don't fail the request if logging fails
-                Log::error('Failed to log feedback update: ' . $e->getMessage());
-            }
-        }
+        $feedback->update([
+            'reference_user_id' => $controller?->id,
+            'reference_position_id' => $position?->id,
+        ]);
 
         return redirect()->route('reports.feedback')->with('success', 'Feedback updated successfully!');
     }

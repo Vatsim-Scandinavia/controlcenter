@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Helpers\ActivityLevel;
 use App\Models\ActivityLog;
+use App\Models\Feedback;
 use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -97,6 +98,32 @@ class ActivityLogIndexTest extends TestCase
             ->assertOk()
             ->assertSee('Feedback')
             ->assertSee('Sector');
+    }
+
+    public function test_feedback_reference_ids_are_rendered_as_labelled_names(): void
+    {
+        $controller = User::factory()->create(['first_name' => 'Jane', 'last_name' => 'Controller']);
+
+        // Feedback (the subject) declares how its reference keys are presented,
+        // so the generic view resolves the id to a labelled name with no
+        // feedback-specific code in the controller or view.
+        ActivityLog::create([
+            'log_name' => 'feedback',
+            'description' => 'Feedback updated',
+            'subject_type' => Feedback::class,
+            'subject_id' => 1,
+            'attribute_changes' => [
+                'attributes' => ['reference_user_id' => $controller->id],
+                'old' => ['reference_user_id' => null],
+            ],
+        ]);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.logs'))
+            ->assertOk()
+            ->assertSee('Controller:')
+            ->assertSee('Jane Controller (' . $controller->id . ')')
+            ->assertDontSee('reference_user_id');
     }
 
     public function test_undeclared_changes_fall_back_to_raw_key_and_value(): void
