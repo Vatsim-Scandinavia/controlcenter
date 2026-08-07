@@ -86,4 +86,36 @@ class ActivityLogIndexTest extends TestCase
             ->assertOk()
             ->assertSee('SYSTEM');
     }
+
+    public function test_category_filter_lists_distinct_log_names(): void
+    {
+        ActivityLog::create(['log_name' => 'feedback', 'description' => 'Feedback updated']);
+        ActivityLog::create(['log_name' => 'sector', 'description' => 'Position updated']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.logs'))
+            ->assertOk()
+            ->assertSee('Feedback')
+            ->assertSee('Sector');
+    }
+
+    public function test_undeclared_changes_fall_back_to_raw_key_and_value(): void
+    {
+        // A log whose subject does not describe its changes renders generically.
+        ActivityLog::create([
+            'log_name' => 'sector',
+            'description' => 'Position updated',
+            'attribute_changes' => [
+                'attributes' => ['callsign' => 'EKCH_APP'],
+                'old' => ['callsign' => 'EKCH_A_APP'],
+            ],
+        ]);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.logs'))
+            ->assertOk()
+            ->assertSee('callsign:')
+            ->assertSee('EKCH_A_APP')
+            ->assertSee('EKCH_APP');
+    }
 }

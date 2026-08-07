@@ -68,12 +68,15 @@
                                     @endif
                                 </td>
                                 <td class="small text-muted">
-                                    @php
-                                        $new = data_get($log->attribute_changes, 'attributes', []);
-                                        $old = data_get($log->attribute_changes, 'old', []);
-                                    @endphp
-                                    @foreach($new as $key => $value)
-                                        <div>{{ $key }}: @isset($old[$key]){{ $old[$key] }} → @endisset{{ is_scalar($value) ? $value : json_encode($value) }}</div>
+                                    @foreach($changes[$log->id] ?? [] as $line)
+                                        <div>
+                                            {{ $line['label'] }}:
+                                            @isset($line['from'])
+                                                @include('admin.partials.log-change-value', ['value' => $line['from']])
+                                                →
+                                            @endisset
+                                            @include('admin.partials.log-change-value', ['value' => $line['to']])
+                                        </div>
                                     @endforeach
                                     @foreach($log->properties ?? [] as $key => $value)
                                         <div>{{ $key }}: {{ is_scalar($value) ? $value : json_encode($value) }}</div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLevel;
 use App\Models\ActivityLog;
+use App\Support\ActivityLog\ActivityChangePresenter;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -26,9 +27,17 @@ class ActivityLogController extends Controller
             ->paginate(50)
             ->withQueryString();
 
-        $categories = ['access', 'training', 'booking', 'endorsement', 'other'];
+        $categories = ActivityLog::query()
+            ->whereNotNull('log_name')
+            ->distinct()
+            ->orderBy('log_name')
+            ->pluck('log_name')
+            ->all();
+
         $levels = array_map(fn (ActivityLevel $level) => $level->value, ActivityLevel::cases());
 
-        return view('admin.logs', compact('logs', 'categories', 'levels'));
+        $changes = ActivityChangePresenter::present($logs->getCollection());
+
+        return view('admin.logs', compact('logs', 'categories', 'levels', 'changes'));
     }
 }
