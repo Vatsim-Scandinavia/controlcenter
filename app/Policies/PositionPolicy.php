@@ -14,7 +14,8 @@ class PositionPolicy
 
     public function viewAny(User $user, ?Area $area = null): bool
     {
-        return $user->hasPermission('fir.positions.manage', $area);
+        return $user->hasPermission('fir.positions.view', $area)
+            || $user->hasPermission('fir.positions.manage', $area);
     }
 
     public function before(User $user): ?bool

@@ -109,6 +109,18 @@ class PositionsTest extends TestCase
     }
     // endregion
 
+    // region View-only staff tests
+    #[Test]
+    public function view_only_staff_can_view_index_but_cannot_store()
+    {
+        $staff = User::factory()->create();
+        $staff->roleAssignments()->create(['role' => 'staff', 'area_id' => null]);
+
+        $this->actingAs($staff)->get(route('positions.index'))->assertOk();
+        $this->actingAs($staff)->post(route('positions.store'), $this->positionData)->assertForbidden();
+    }
+    // endregion
+
     // region Permitted user tests
     #[Test]
     public function permitted_user_can_view_index()

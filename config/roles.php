@@ -46,6 +46,11 @@ return [
             'description' => 'Training buddy',
             'scope' => 'area',
         ],
+        'staff' => [
+            'name' => 'Staff',
+            'description' => 'Generic staff member with view-only access to positions',
+            'scope' => 'both',
+        ],
     ],
 
     /*
@@ -90,6 +95,7 @@ return [
         'endorsements.examiner.delete',
 
         // FIR operations
+        'fir.positions.view',
         'fir.positions.manage',
         'fir.management.reports.view',
 
@@ -201,6 +207,9 @@ return [
         'buddy' => [
             'training.view',
             'training.reports.one-time-link',
+        ],
+        'staff' => [
+            'fir.positions.view',
         ],
     ],
 ];

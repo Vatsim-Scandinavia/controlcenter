@@ -17,6 +17,7 @@ The catalogue of roles, permissions, and configuration knobs that ship with Cont
 | `nav-editor` | `area` | Navigational editor. May edit operationally relevant sector data such as positions within the assigned area. |
 | `mentor` | `area` | Training mentor. Can manage and view training within the assigned area. |
 | `buddy` | `area` | Training buddy. Limited training visibility within the assigned area. |
+| `staff` | `both` | Generic staff member. Can view positions but not edit them. |
 
 !!! note "Removing an admin"
     There is currently no CLI command to revoke the `admin` role; removal requires
