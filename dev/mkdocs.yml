@@ -120,6 +120,7 @@ nav:
           - Mentoring: concepts/mentors.md
           - Ratings: concepts/ratings.md
           - Positions: concepts/positions.md
+          - Feedback: concepts/feedback.md
           - Roles and Permissions: concepts/permissions.md
   - Reference:
       - Activity: activity.md
