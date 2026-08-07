@@ -22,7 +22,7 @@ class StoreFeedbackRequest extends FormRequest
         return [
             'position' => 'nullable|exists:positions,callsign',
             'controller' => 'nullable|numeric|exists:users,id',
-            'feedback' => 'required',
+            'feedback' => 'required|string|max:16000',
         ];
     }
 

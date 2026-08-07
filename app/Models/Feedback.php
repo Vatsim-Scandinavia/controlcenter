@@ -11,7 +11,16 @@ class Feedback extends Model
     use HasFactory;
     use Notifiable;
 
-    protected $guarded = [];
+    /**
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'feedback',
+        'submitter_user_id',
+        'reference_user_id',
+        'reference_position_id',
+        'forwarded',
+    ];
 
     public function submitter()
     {

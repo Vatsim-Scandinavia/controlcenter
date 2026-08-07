@@ -13,7 +13,7 @@ class UpdateFeedbackRequest extends FormRequest
     {
         $feedback = $this->route('feedback');
 
-        return $feedback !== null && $this->user()->can('update', $feedback);
+        return $feedback !== null && (bool) $this->user()?->can('update', $feedback);
     }
 
     /**

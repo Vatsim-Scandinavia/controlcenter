@@ -84,4 +84,40 @@ class FeedbackControllerTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    #[Test]
+    public function update_cannot_change_feedback_text_or_submitter(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $position = Position::factory()->create(['area_id' => $area->id]);
+        $feedback = Feedback::factory()->create(['reference_position_id' => $position->id]);
+        $originalText = $feedback->feedback;
+        $originalSubmitter = $feedback->submitter_user_id;
+
+        $this->actingAs($moderator)->patch(route('feedback.update', $feedback), [
+            'controller' => '',
+            'position' => $position->callsign,
+            'feedback' => 'HACKED TEXT',
+            'submitter_user_id' => 999999,
+        ]);
+
+        $feedback->refresh();
+        $this->assertSame($originalText, $feedback->feedback);
+        $this->assertEquals($originalSubmitter, $feedback->submitter_user_id);
+    }
+
+    #[Test]
+    public function feedback_submission_is_rejected_when_text_exceeds_the_limit(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('feedback.store'), [
+            'feedback' => str_repeat('a', 16001),
+        ]);
+
+        $response->assertSessionHasErrors('feedback');
+    }
 }
