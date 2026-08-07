@@ -13,6 +13,7 @@ The catalogue of roles, permissions, and configuration knobs that ship with Cont
 | `admin` | `global` | System-wide administrator. Assignable **only** via the `user:makeadmin` CLI command — never through the UI. Bypasses area checks (via the per-policy `before` hook) and holds every permission except those explicitly negated in its matrix entry. |
 | `director` | `both` | Director of an area, or of the whole organisation when assigned globally. Holds every permission except the `system.**` namespace (e.g. `system.health.view`, `system.settings.manage`). Only global admins and global directors may grant or revoke it. |
 | `moderator` | `both` | Area moderator. Manages users, reports, positions, and endorsements within the assigned area, or system-wide if assigned globally. |
+| `training-staff` | `area` | Training staff. Edit access to training-related matters within the assigned area: training and reports (excluding delete and rating management), examinations, and solo endorsements. A training-only subset of `moderator`. |
 | `nav-editor` | `area` | Navigational editor. May edit operationally relevant sector data such as positions within the assigned area. |
 | `mentor` | `area` | Training mentor. Can manage and view training within the assigned area. |
 | `buddy` | `area` | Training buddy. Limited training visibility within the assigned area. |
