@@ -11,13 +11,33 @@ on:
 
 env:
   IMAGE_NAME: vatsim-scandinavia/control-center
-  TARGET_PLATFORMS: linux/amd64,linux/arm64
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
+  # Each platform is built on its own native runner in parallel and pushed by
+  # digest. This avoids the slow QEMU emulation of building linux/arm64 on an
+  # amd64 host. The digests are stitched into a single multi-arch manifest by
+  # the `merge` job below.
   build-container:
-    name: Build Control Center Container
-    runs-on: ubuntu-latest
+    name: Build image (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
+      - name: Prepare platform slug
+        run: echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
+        env:
+          platform: ${{ matrix.platform }}
+
       - name: configure docker buildx
         uses: docker/setup-buildx-action@v4
 
@@ -28,27 +48,40 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: setup container metadata
+      - name: extract image labels
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: |
-            ghcr.io/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=pr
-            type=sha,event=branch,prefix=
-            type=semver,event=tag,pattern=v{{version}}
-            type=semver,event=tag,pattern=v{{major}}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          images: ghcr.io/${{ env.IMAGE_NAME }}
 
-      - name: build & push container image
+      - name: build & push image by digest
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: "{{defaultContext}}:."
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ env.TARGET_PLATFORMS }}
+          # push-by-digest requires push=true, so only publish on non-PR events.
+          # On pull requests this still builds both arches natively as validation.
+          outputs: type=image,name=ghcr.io/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+          cache-from: type=gha,scope=${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,mode=max,scope=${{ env.PLATFORM_PAIR }}
+
+      - name: export digest
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: upload digest
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
   test-app:
     name: Control Center Test Suite
@@ -83,3 +116,52 @@ jobs:
         working-directory: ./controlcenter
         env:
           DB_CONNECTION: sqlite-testing
+
+  # Combine the per-platform digests into one multi-arch manifest list and tag
+  # it. Gated on the test suite so a broken build never gets published.
+  merge:
+    name: Merge & publish multi-arch manifest
+    runs-on: ubuntu-latest
+    needs:
+      - test-app
+      - build-container
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: configure docker buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: login to github container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: setup container metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,event=branch,prefix=
+            type=semver,event=tag,pattern=v{{version}}
+            type=semver,event=tag,pattern=v{{major}}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+
+      - name: create manifest list & push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf 'ghcr.io/${{ env.IMAGE_NAME }}@sha256:%s ' *)
+
+      - name: inspect published image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
