@@ -9,6 +9,10 @@ return [
     | Define all available roles here instead of in the database.
     | The string key is the identifier used in the system.
     |
+    | Each role has a `scope` (where it may be HELD: global|area|both) and an
+    | optional `grant_scope` (where grant-authority must be HELD to grant/revoke
+    | it: 'area' [default] accepts area-or-global authority, 'global' requires an
+    | area-less assignment even for an area-scoped grant).
     */
     'roles' => [
         'admin' => [
@@ -20,6 +24,7 @@ return [
             'name' => 'Director',
             'description' => 'Director of an area or the whole organisation',
             'scope' => 'both',
+            'grant_scope' => 'global', // only global directors may grant the director role
         ],
         'moderator' => [
             'name' => 'Moderator',
@@ -132,6 +137,16 @@ return [
         'system.settings.manage',
         'system.votes.manage',
         'system.activity-log.view',
+
+        // Role management — one grant-authority permission per grantable role.
+        // Governs both granting and revoking that role (both go through UserPolicy::updateRole).
+        'roles.director.manage',
+        'roles.moderator.manage',
+        'roles.training-staff.manage',
+        'roles.staff.manage',
+        'roles.nav-editor.manage',
+        'roles.mentor.manage',
+        'roles.buddy.manage',
     ],
 
     /*
@@ -156,6 +171,7 @@ return [
             '!examinations.create',
             '!training.reports.one-time-link',
             '!training.attachments.view-hidden',
+            'roles.*.manage',
         ],
         'moderator' => [
             'training.**',
@@ -173,6 +189,8 @@ return [
             'notifications.**',
             'tasks.**',
             'users.**',
+            'roles.mentor.manage',
+            'roles.buddy.manage',
         ],
         'training-staff' => [
             'training.**',
@@ -189,6 +207,8 @@ return [
             'notifications.**',
             'tasks.**',
             'users.**',
+            'roles.mentor.manage',
+            'roles.buddy.manage',
         ],
         'staff' => [
             'fir.positions.view',

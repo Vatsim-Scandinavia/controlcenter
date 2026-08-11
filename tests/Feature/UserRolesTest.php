@@ -132,6 +132,20 @@ class UserRolesTest extends TestCase
     }
 
     #[Test]
+    public function grantable_roles_for_training_staff_are_mentor_and_buddy(): void
+    {
+        $area = Area::factory()->create();
+        $trainingStaff = User::factory()->create();
+        $trainingStaff->roleAssignments()->create(['role' => 'training-staff', 'area_id' => $area->id]);
+        $target = User::factory()->create();
+
+        $component = Livewire::actingAs($trainingStaff)->test(UserRoles::class, ['user' => $target]);
+        $grantable = array_keys($component->instance()->grantableRoles());
+
+        $this->assertEqualsCanonicalizing(['mentor', 'buddy'], $grantable);
+    }
+
+    #[Test]
     public function global_option_for_an_area_only_role_is_not_applicable(): void
     {
         $target = User::factory()->create();

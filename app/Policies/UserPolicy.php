@@ -75,35 +75,21 @@ class UserPolicy
             return false;
         }
 
-        // Global assignments require the role's scope to allow them
-        if ($requestedArea === null && ! in_array(config("roles.roles.{$requestedRole}.scope"), ['both', 'global'], true)) {
+        // Global (area-less) assignments require the role's scope to allow them
+        if ($requestedArea === null
+            && ! in_array(config("roles.roles.{$requestedRole}.scope"), ['both', 'global'], true)) {
             return false;
         }
 
-        if ($user->hasRole('admin')) {
-            return true;
-        }
+        $permission = "roles.{$requestedRole}.manage";
 
-        // Only global directors may grant or revoke the director role
-        if ($requestedRole === 'director') {
-            return $user->hasGlobalRole('director');
-        }
+        // Grant authority must be held at (or above) the grant's scope. A global grant always
+        // needs global authority; a role declaring grant_scope 'global' needs it even in an area.
+        $requiresGlobalAuthority = $requestedArea === null
+            || config("roles.roles.{$requestedRole}.grant_scope", 'area') === 'global';
 
-        // Global assignments of the remaining roles also require a global director
-        if ($requestedArea === null) {
-            return $user->hasGlobalRole('director');
-        }
-
-        // Directors manage the remaining roles within their scope
-        if ($user->hasRole('director', $requestedArea)) {
-            return true;
-        }
-
-        // Moderators can only set mentors and buddies
-        if ($user->hasRole('moderator', $requestedArea)) {
-            return in_array($requestedRole, ['mentor', 'buddy']);
-        }
-
-        return false;
+        return $requiresGlobalAuthority
+            ? $user->hasGlobalPermission($permission)
+            : $user->hasPermission($permission, $requestedArea);
     }
 }

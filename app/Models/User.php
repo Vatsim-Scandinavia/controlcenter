@@ -494,6 +494,17 @@ class User extends Authenticatable
         return $this->hasRole($allowedRoles, $area);
     }
 
+    public function hasGlobalPermission(string $permission): bool
+    {
+        $allowedRoles = app(PermissionMatrix::class)->rolesFor($permission);
+
+        if (empty($allowedRoles)) {
+            return false;
+        }
+
+        return $this->hasGlobalRole($allowedRoles);
+    }
+
     public function accessibleAreasForPermission(string $permission): AreaScope
     {
         $allowedRoles = app(PermissionMatrix::class)->rolesFor($permission);

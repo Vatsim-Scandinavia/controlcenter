@@ -46,4 +46,16 @@ class RolesConfigTest extends TestCase
             $this->assertNotEmpty($matrix->rolesFor($permission), "Permission '{$permission}' is granted to no role.");
         }
     }
+
+    public function test_role_management_permissions_are_registered_and_granted(): void
+    {
+        $matrix = new PermissionMatrix;
+        $grantableRoles = array_keys(array_diff_key(config('roles.roles'), ['admin' => true]));
+
+        foreach ($grantableRoles as $role) {
+            $permission = "roles.{$role}.manage";
+            $this->assertContains($permission, $matrix->all(), "{$permission} is not registered in the catalogue.");
+            $this->assertNotEmpty($matrix->rolesFor($permission), "{$permission} is granted by no role.");
+        }
+    }
 }

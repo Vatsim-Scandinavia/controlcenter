@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Facades\DivisionApi;
 use App\Livewire\UserRoles;
 use App\Models\ActivityLog;
 use App\Models\Area;
@@ -281,5 +282,41 @@ class UserRoleAssignmentTest extends TestCase
             'role' => 'moderator',
             'area_id' => null,
         ]);
+    }
+
+    public function test_area_training_staff_can_assign_mentor_in_their_area(): void
+    {
+        DivisionApi::shouldReceive('assignMentor')->once()->andReturn(false);
+
+        $trainingStaff = User::factory()->create();
+        $trainingStaff->roleAssignments()->create(['role' => 'training-staff', 'area_id' => $this->area->id]);
+
+        Livewire::actingAs($trainingStaff)
+            ->test(UserRoles::class, ['user' => $this->target])
+            ->call('openAddModal')
+            ->set('selectedRole', 'mentor')
+            ->set('selectedAreaIds', [$this->area->id])
+            ->call('grant')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('role_user', [
+            'user_id' => $this->target->id,
+            'role' => 'mentor',
+            'area_id' => $this->area->id,
+        ]);
+    }
+
+    public function test_area_training_staff_cannot_assign_moderator_or_director(): void
+    {
+        $trainingStaff = User::factory()->create();
+        $trainingStaff->roleAssignments()->create(['role' => 'training-staff', 'area_id' => $this->area->id]);
+
+        $component = Livewire::actingAs($trainingStaff)->test(UserRoles::class, ['user' => $this->target]);
+
+        $component->set('selectedRole', 'moderator')->set('selectedAreaIds', [$this->area->id])->call('grant');
+        $component->set('selectedRole', 'director')->set('selectedAreaIds', [$this->area->id])->call('grant');
+
+        $this->assertDatabaseMissing('role_user', ['user_id' => $this->target->id, 'role' => 'moderator']);
+        $this->assertDatabaseMissing('role_user', ['user_id' => $this->target->id, 'role' => 'director']);
     }
 }

@@ -211,4 +211,27 @@ class RolePermissionTest extends TestCase
 
         $this->assertCount(1, User::allWithPermission('test-permission', $area));
     }
+
+    public function test_has_global_permission_true_only_for_a_global_holder(): void
+    {
+        config(['roles.matrix.moderator' => ['training.view', 'test-permission']]);
+
+        $globalHolder = User::factory()->create();
+        $globalHolder->roleAssignments()->create(['role' => 'moderator', 'area_id' => null]);
+
+        $areaHolder = User::factory()->create();
+        $areaHolder->roleAssignments()->create(['role' => 'moderator', 'area_id' => Area::factory()->create()->id]);
+
+        $this->assertTrue($globalHolder->hasGlobalPermission('test-permission'));
+        $this->assertFalse($areaHolder->hasGlobalPermission('test-permission'));
+    }
+
+    public function test_has_global_permission_false_for_unregistered_permission(): void
+    {
+        $admin = User::factory()->create();
+        $admin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+
+        // Even though admin grants '**', an unregistered permission resolves to no roles.
+        $this->assertFalse($admin->hasGlobalPermission('does-not-exist'));
+    }
 }

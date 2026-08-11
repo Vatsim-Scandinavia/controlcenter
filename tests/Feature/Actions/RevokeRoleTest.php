@@ -120,4 +120,24 @@ class RevokeRoleTest extends TestCase
         $this->assertSame('Request failed due to error in VATEUD API: boom', $error);
         $this->assertDatabaseHas('role_user', ['user_id' => $target->id, 'role' => 'mentor']);
     }
+
+    #[Test]
+    public function area_training_staff_can_revoke_a_mentor_in_their_area(): void
+    {
+        $area = Area::factory()->create();
+        $trainingStaff = User::factory()->create();
+        $trainingStaff->roleAssignments()->create(['role' => 'training-staff', 'area_id' => $area->id]);
+
+        $target = User::factory()->create();
+        $target->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        DivisionApi::shouldReceive('removeMentor')->once()->andReturn(false);
+
+        $error = (new RevokeRole)($trainingStaff, $target, 'mentor', $area);
+
+        $this->assertNull($error);
+        $this->assertDatabaseMissing('role_user', [
+            'user_id' => $target->id, 'role' => 'mentor', 'area_id' => $area->id,
+        ]);
+    }
 }
