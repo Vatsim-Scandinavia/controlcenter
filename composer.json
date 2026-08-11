@@ -11,7 +11,7 @@
         "php": ">=8.4 <8.6",
         "anlutro/l4-settings": "^1.4.1",
         "graham-campbell/markdown": "^16.0",
-        "guzzlehttp/guzzle": "^7.9.0",
+        "guzzlehttp/guzzle": "^8.0.0",
         "hisorange/browser-detect": "^5.0",
         "laravel/framework": "^13",
         "laravel/tinker": "^3.0",
