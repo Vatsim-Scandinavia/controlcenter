@@ -275,7 +275,9 @@
                         </h6>
                     </div>
                     <div class="card-body">
-                        <canvas id="activityChart"></canvas>
+                        <div class="position-relative" style="height: 300px;">
+                            <canvas id="activityChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -567,7 +569,7 @@
 
                     // Handle empty response - user has no ATC sessions
                     if (!Array.isArray(data) || data.length === 0) {
-                        chartElement.parentElement.innerHTML = '<p class="mb-0">No ATC activity data available</p>';
+                        chartElement.closest('.card-body').innerHTML = '<p class="mb-0">No ATC activity data available</p>';
                         return;
                     }
 
@@ -616,11 +618,15 @@
                                 borderWidth: 1
                             }]
                         },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                        },
                     });
                 })
                 .catch(error => {
                     console.error('Statistics API error:', error);
-                    chartElement.parentElement.innerHTML = '<p class="mb-0 text-danger">Failed to load activity data</p>';
+                    chartElement.closest('.card-body').innerHTML = '<p class="mb-0 text-danger">Failed to load activity data</p>';
                 });
         });
     </script>
