@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0-beta.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.3...v7.0.0-beta.4) (2026-08-12)
+
+
+### Features
+
+* **feedback:** pagination, improved filters & faster performance ([0c71194](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0c71194106c01fbf9e9a9fb97bad697a25b798e3))
+* **roles:** matrix-driven role-grant authority ([f1f1216](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f1f12161babb87f61c3df74306fb3796a3bc1d23))
+* **roles:** replace access matrix with UserRoles component ([d0c9f01](https://github.com/Vatsim-Scandinavia/controlcenter/commit/d0c9f01466b74ee98e14887b913520f31d9d3647))
+* **user:** move recent connections & activity graph to second column ([cd38609](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cd386090e6c3741df3405115e687868d6929938e))
+
+
+### Bug Fixes
+
+* **user:** make activity graph reflow on browser resize ([b5e2535](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b5e253550baa381228e74c9531f15dca1f479fe6))
+* **user:** move activity & recent connections below endorsements ([24440a2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/24440a2d620c67fa80d7140b19bc9cdef1446d37))
+
 ## [7.0.0-beta.3](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.2...v7.0.0-beta.3) (2026-08-07)
 
 
