@@ -96,6 +96,19 @@ Settings related to the [VATSIM integration](../integrations/vatsim.md).
 | `STATSIM_RECENT_SESSIONS_LIMIT` | 10                                    | Maximum number of recent ATC sessions shown in the \"Recent Connections\" table                    |
 <!-- --8<-- [end:env-vars-vatsim] -->
 
+## Moodle
+
+<!-- --8<-- [start:env-vars-moodle] -->
+Settings for [automatic Moodle enrolment](../integrations/moodle.md).
+
+| Variable                 | Default value               | Explanation                                                        |
+| ------------------------ | --------------------------- | ------------------------------------------------------------------ |
+| `MOODLE_ENABLED`         | false                       | Enables course refresh and queued enrolment processing             |
+| `MOODLE_URL`             | `https://moodle.example.org` | Base URL of the Moodle installation                                |
+| `MOODLE_TOKEN`           | null                        | REST web-service token for the dedicated Moodle service account    |
+| `MOODLE_STUDENT_ROLE_ID` | 5                           | Moodle role ID assigned to students during manual enrolment        |
+<!-- --8<-- [end:env-vars-moodle] -->
+
 ## Mail
 
 <!-- --8<-- [start:env-vars-mail] -->

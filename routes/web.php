@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\MoodleController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\MentorController;
+use App\Http\Controllers\MoodleTrainingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
@@ -110,6 +112,9 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
     Route::resource('/admin/positions', PositionController::class)->except(['show']);
     Route::get('/admin/positions/{area}', [PositionController::class, 'index'])->name('positions.index.area');
+    Route::get('/admin/moodle', [MoodleController::class, 'index'])->name('admin.moodle');
+    Route::post('/admin/moodle/courses', [MoodleController::class, 'syncCourses'])->name('admin.moodle.courses.sync');
+    Route::put('/admin/moodle/rules', [MoodleController::class, 'updateRules'])->name('admin.moodle.rules.update');
 
     // Training routes
     Route::controller(TrainingController::class)->group(function () {
@@ -126,6 +131,11 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
         Route::get('/training/{training}/confirm/{key}', 'confirmInterest')->name('training.confirm.interest');
     });
+
+    Route::get('/training/{training}/moodle/users', [MoodleTrainingController::class, 'searchUsers'])->name('training.moodle.users');
+    Route::post('/training/{training}/moodle/courses', [MoodleTrainingController::class, 'assignCourses'])->name('training.moodle.courses.assign');
+    Route::post('/training/{training}/moodle/link', [MoodleTrainingController::class, 'linkUser'])->name('training.moodle.link');
+    Route::post('/training/{training}/moodle/retry', [MoodleTrainingController::class, 'retry'])->name('training.moodle.retry');
 
     // Training report routes
     Route::controller(TrainingReportController::class)->group(function () {

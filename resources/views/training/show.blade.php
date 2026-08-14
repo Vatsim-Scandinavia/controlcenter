@@ -220,6 +220,8 @@
             </div>
         @endcan
 
+        @include('training.parts.moodle')
+
     </div>
 
     <div class="col-xl-4 col-md-6 col-sm-12 mb-12">

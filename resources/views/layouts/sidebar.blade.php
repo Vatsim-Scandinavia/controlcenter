@@ -203,7 +203,7 @@
             </li>
         @endif
 
-        @if(auth()->user()->canAny(['system.health.view', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
+        @if(auth()->user()->canAny(['system.health.view', 'system.settings.manage', 'training.moodle.manage', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <li class="nav-item {{ Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview') ? 'active' : '' }}">
@@ -217,6 +217,10 @@
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
+                @endcan
+
+                @can('training.moodle.manage')
+                    <a class="collapse-item" href="{{ route('admin.moodle') }}">Moodle integration</a>
                 @endcan
 
                 @can('users.manage')

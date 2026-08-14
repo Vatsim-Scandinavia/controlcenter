@@ -12,6 +12,7 @@ use App\Support\AreaScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -47,6 +48,11 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token',
     ];
+
+    public function moodleUserLink(): HasOne
+    {
+        return $this->hasOne(MoodleUserLink::class);
+    }
 
     public function roleAssignments()
     {

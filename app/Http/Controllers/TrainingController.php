@@ -13,6 +13,7 @@ use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Endorsement;
+use App\Models\MoodleCourse;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingExamination;
@@ -349,8 +350,11 @@ class TrainingController extends Controller
 
         $requestTypes = TaskController::getTypes();
         $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
+        $moodleEnrolments = $training->moodleEnrolments()->with(['course', 'userLink'])->orderBy('created_at')->get();
+        $moodleUserLink = $training->user->moodleUserLink;
+        $moodleCourses = MoodleCourse::query()->where('enabled', true)->orderBy('full_name')->get();
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'moodleEnrolments', 'moodleUserLink', 'moodleCourses'));
     }
 
     /**

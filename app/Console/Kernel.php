@@ -81,6 +81,13 @@ class Kernel extends ConsoleKernel
         $schedule->command('send:task:notifications')
             ->hourly();
 
+        // Process Moodle enrolments outside the training update request.
+        if (config('services.moodle.enabled')) {
+            $schedule->command('queue:work database --queue=moodle --stop-when-empty --tries=3 --max-time=50')
+                ->everyMinute()
+                ->withoutOverlapping();
+        }
+
         // Send telemetry data
         if (Setting::get('telemetryEnabled')) {
             $schedule->command('send:telemetry')

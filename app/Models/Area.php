@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Area extends Model
 {
@@ -21,7 +22,10 @@ class Area extends Model
         return $this->belongsToMany(Endorsement::class);
     }
 
-    public function ratings()
+    /**
+     * @return BelongsToMany<Rating, $this>
+     */
+    public function ratings(): BelongsToMany
     {
         return $this->belongsToMany(Rating::class)->withPivot('required_vatsim_rating', 'allow_bundling', 'hour_requirement', 'queue_length_low', 'queue_length_high');
     }
