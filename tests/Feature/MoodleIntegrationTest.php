@@ -416,10 +416,10 @@ class MoodleIntegrationTest extends TestCase
             ->get(route('admin.moodle'))
             ->assertOk()
             ->assertSee('id="moodle-training-picker"', false)
-            ->assertSee('data-moodle-rule-panel="'.$area->id.'.'.$configuredRating->id.'"', false)
+            ->assertSee('data-moodle-rule-panel="' . $area->id . '.' . $configuredRating->id . '"', false)
             ->assertSee('data-moodle-rule-configured="true"', false)
             ->assertSee('S2 training (configured)')
-            ->assertSee('data-moodle-rule-panel="'.$area->id.'.'.$availableRating->id.'"', false)
+            ->assertSee('data-moodle-rule-panel="' . $area->id . '.' . $availableRating->id . '"', false)
             ->assertSee('data-moodle-rule-configured="false"', false)
             ->assertSee('class="border rounded p-3 mb-3 d-none"', false);
     }
