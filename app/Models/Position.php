@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\LogName;
 use App\Helpers\VatsimRating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ class Position extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('sector')
+            ->useLogName(LogName::Sector)
             ->logOnly(['callsign', 'name', 'frequency', 'fir', 'rating', 'area_id'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges()

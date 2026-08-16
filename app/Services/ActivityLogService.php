@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Helpers\ActivityLevel;
+use App\Helpers\LogName;
 use App\Models\ActivityLog;
-use Illuminate\Support\Str;
 
 /**
  * Backwards-compatible logging shims over the activity() helper.
@@ -16,32 +16,32 @@ use Illuminate\Support\Str;
 class ActivityLogService
 {
     /**
-     * Write a legacy-style log entry, mapping the free-text category onto the
-     * activity log_name and the severity onto the level.
+     * Write a legacy-style log entry, mapping the category onto the activity
+     * log_name and the severity onto the level.
      */
-    private static function record(ActivityLevel $level, string $category, string $message): void
+    private static function record(ActivityLevel $level, LogName $category, string $message): void
     {
-        activity(Str::lower($category))
+        activity($category)
             ->tap(fn (ActivityLog $log) => $log->level = $level)
             ->log($message);
     }
 
-    public static function debug(string $category, string $message): void
+    public static function debug(LogName $category, string $message): void
     {
         self::record(ActivityLevel::Debug, $category, $message);
     }
 
-    public static function info(string $category, string $message): void
+    public static function info(LogName $category, string $message): void
     {
         self::record(ActivityLevel::Info, $category, $message);
     }
 
-    public static function warning(string $category, string $message): void
+    public static function warning(LogName $category, string $message): void
     {
         self::record(ActivityLevel::Warning, $category, $message);
     }
 
-    public static function danger(string $category, string $message): void
+    public static function danger(LogName $category, string $message): void
     {
         self::record(ActivityLevel::Danger, $category, $message);
     }

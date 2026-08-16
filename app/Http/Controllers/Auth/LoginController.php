@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\LogName;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OAuthController;
 use App\Models\User;
@@ -92,9 +93,9 @@ class LoginController extends Controller
 
         $roles = \Auth::user()->roleAssignments->pluck('role')->unique();
         if ($roles->isNotEmpty()) {
-            ActivityLogService::warning('ACCESS', 'Logged in with ' . $roles->join(', ') . ' access');
+            ActivityLogService::warning(LogName::Access, 'Logged in with ' . $roles->join(', ') . ' access');
         } else {
-            ActivityLogService::info('ACCESS', 'Logged in with User access');
+            ActivityLogService::info(LogName::Access, 'Logged in with User access');
         }
 
         return redirect()->intended(route('dashboard'))->withSuccess('Login Successful');
@@ -141,7 +142,7 @@ class LoginController extends Controller
      */
     public function logout()
     {
-        ActivityLogService::info('ACCESS', 'Logged out.');
+        ActivityLogService::info(LogName::Access, 'Logged out.');
         auth()->logout();
 
         return redirect(route('front'))->withSuccess('You have been successfully logged out');
