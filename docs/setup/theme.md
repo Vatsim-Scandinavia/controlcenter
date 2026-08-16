@@ -1,36 +1,20 @@
 # Themes
 
-Control Center includes a dynamic theme system that allows users to switch between light and dark modes, or follow their system preferences.
+Control Center ships a light and a dark theme. Each user selects one from `/settings`,
+or leaves it on **System Default** to follow the operating system. The preference is
+stored per user in the database and mirrored in browser storage, so the chosen theme is
+painted on first load without flashing the wrong one.
 
-## User Theme Selection
+Both themes are built from the same set of CSS custom properties, so anything you
+override below applies in either mode.
 
-Users can choose their preferred theme from their settings page (`/settings`):
+=== "Light"
 
-- **System Default**: Automatically matches the user's operating system theme preference
-- **Light**: Always uses the light theme
-- **Dark**: Always uses the dark theme
+    ![Light theme](../_assets/theme_light.png)
 
-The theme preference is saved to the database and persists across sessions.
+=== "Dark"
 
-## Available Themes
-
-### Light Theme (Default)
-The default theme with a clean, professional appearance:
-- White backgrounds
-- Dark text for optimal readability
-- Blue primary colors
-
-### Dark Theme
-A dark mode optimized for low-light environments:
-- Dark backgrounds
-- Light text for reduced eye strain
-- Adjusted colors for better visibility
-
-### System Theme
-Automatically switches between light and dark based on:
-- Operating system theme preference
-- Time of day settings (on supported systems)
-- No page reload required when system theme changes
+    ![Dark theme](../_assets/theme_dark.png)
 
 ## Customizing Theme
 
@@ -53,35 +37,30 @@ Anything left out keeps its default.
 
 Reference for the available values:
 
-- `resources/sass/themes/_light.scss` — CSS custom properties for the light theme
-- `resources/sass/themes/_dark.scss` — CSS custom properties for the dark theme
-- `resources/sass/_variables.scss` — SCSS variables consumed by Bootstrap
+- `resources/sass/themes/_light.scss`: CSS custom properties for the light theme
+- `resources/sass/themes/_dark.scss`: CSS custom properties for the dark theme
+- `resources/sass/_variables.scss`: SCSS variables consumed by Bootstrap
 
 ### 3. Rebuild the assets
 
-After editing `_custom.scss`, rebuild the frontend assets:
+The CSS is compiled ahead of time, so the override only takes effect once the front-end
+is rebuilt. How you do that depends on how you run Control Center.
 
-```sh
-npm run build
-```
+=== "Without a container"
 
-For Docker deployments:
+    ```sh
+    npm run build
+    ```
 
-```sh
-docker exec -it control-center npm run build
-```
+=== "With a container"
 
-## Technical Details
+    Build your own image with the override baked in. See
+    [Custom container image](./custom.md#custom-theme).
 
-### For Developers
-
-The theme system uses CSS variables for dynamic switching:
-
-- **Theme definitions**: `resources/sass/themes/*.scss`
-- **Bootstrap overrides**: `resources/sass/_theme-overrides.scss`
-- **JavaScript**: `resources/js/theme.js`
-
-Older browsers (like IE11) will fall back to the default light theme without switching capability.
+!!! warning "Don't build inside a running container"
+    The published image contains no Node toolchain, and anything compiled into a running
+    container is lost the moment it is recreated. Either bake the theme into an image you
+    build yourself, or run Control Center without a container.
 
 ## Troubleshooting
 

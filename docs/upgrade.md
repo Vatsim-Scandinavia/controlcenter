@@ -96,10 +96,9 @@ If you had customized colors in your `.env` file:
 2. Copy the structure from `_light.scss` or `_dark.scss`
 3. Update your color variables to match your previous customizations
 4. Import your theme in `resources/sass/app.scss`
-5. See [User Theme Guide](user-themes.md) and [Theme Setup](setup/theme.md) for detailed instructions
+5. See [Themes](setup/theme.md) for detailed instructions
 
-For detailed information on using themes as an end-user, see the [User Theme Guide](user-themes.md).  
-For customizing themes as an operator, see [Theme Setup](setup/theme.md)
+For customizing themes as an operator, see [Themes](setup/theme.md)
 
 ### Permissions and Roles Refactor
 
