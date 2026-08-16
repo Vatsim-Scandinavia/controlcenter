@@ -4901,16 +4901,16 @@
         },
         {
             "name": "spatie/laravel-login-link",
-            "version": "1.6.6",
+            "version": "1.6.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-login-link.git",
-                "reference": "a087d9f3beee653f51e82e8570ba17664f840f8c"
+                "reference": "a315bd42d930516b4b8e0ad5441dba30e29155b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-login-link/zipball/a087d9f3beee653f51e82e8570ba17664f840f8c",
-                "reference": "a087d9f3beee653f51e82e8570ba17664f840f8c",
+                "url": "https://api.github.com/repos/spatie/laravel-login-link/zipball/a315bd42d930516b4b8e0ad5441dba30e29155b3",
+                "reference": "a315bd42d930516b4b8e0ad5441dba30e29155b3",
                 "shasum": ""
             },
             "require": {
@@ -4921,8 +4921,8 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.8",
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^4.4",
-                "pestphp/pest-plugin-laravel": "^4.1",
+                "pestphp/pest": "^4.4|^5.0",
+                "pestphp/pest-plugin-laravel": "^4.1|^5.0",
                 "spatie/laravel-ray": "^1.26",
                 "spatie/pest-plugin-snapshots": "^2.1",
                 "spatie/phpunit-snapshot-assertions": "^5.1"
@@ -4959,9 +4959,9 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-login-link/tree/1.6.6"
+                "source": "https://github.com/spatie/laravel-login-link/tree/1.6.7"
             },
-            "time": "2026-02-27T15:26:30+00:00"
+            "time": "2026-08-14T12:11:54+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
