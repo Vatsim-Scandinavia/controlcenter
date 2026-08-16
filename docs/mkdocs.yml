@@ -169,6 +169,10 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
+# Substitute %%version%%, %%major%% and %%image_tag%% into page content.
+hooks:
+  - variables.py
+
 plugins:
   # Generate multiple versions of docs
   - mike:
@@ -181,6 +185,7 @@ plugins:
         - _includes/*
         - _theme/*
         - __pycache__/*
+        - '*.py'
   # Show creation and revision date on each page
   - git-revision-date-localized:
       enabled: !ENV ["CI", false]
