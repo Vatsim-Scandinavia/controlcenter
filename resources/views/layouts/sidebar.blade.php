@@ -18,30 +18,22 @@
         {{-- Divider --}}
         <div class="sidebar-divider my-0"></div>
 
-        <li class="nav-item {{ Route::is('dashboard') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('dashboard') }}">
-            <i class="fas fa-fw fa-table-columns"></i>
-            <span>Dashboard</span></a>
-        </li>
+        <x-sidebar.item :href="route('dashboard')" icon="fa-table-columns" title="Dashboard" :active="Route::is('dashboard')" />
 
         @can('update', [\App\Models\Task::class])
-            <li class="nav-item {{ Route::is('tasks') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('tasks') }}">
-                    <i class="fas fa-fw fa-list"></i>
-                    <span>Tasks</span>
-                    @if(\Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count())
-                        <span class="badge text-bg-danger">{{ \Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count() }}</span>
-                    @endif
-                </a>
-            </li>
+            @php
+                $pendingTaskCount = \Auth::user()->tasks->where('status', \App\Helpers\TaskStatus::PENDING)->count();
+            @endphp
+
+            <x-sidebar.item :href="route('tasks')" icon="fa-list" title="Tasks" :active="Route::is('tasks')">
+                @if($pendingTaskCount)
+                    <span class="badge text-bg-danger">{{ $pendingTaskCount }}</span>
+                @endif
+            </x-sidebar.item>
         @endcan
 
         @can('view', \App\Models\Booking::class)
-            <li class="nav-item {{ Route::is('booking*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('booking') }}">
-                <i class="fas fa-fw fa-calendar"></i>
-                <span>Booking</span></a>
-            </li>
+            <x-sidebar.item :href="route('booking')" icon="fa-calendar" title="Booking" :active="Route::is('booking*')" />
         @endcan
 
         @if(Setting::get('linkMoodle') && Setting::get('linkMoodle') != "")
@@ -63,37 +55,20 @@
             </div>
 
             @can('training.mentor-dashboard.view')
-                <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('mentor') }}">
-                    <i class="fas fa-fw fa-chalkboard-teacher"></i>
-                    <span>My students</span></a>
-                </li>
+                <x-sidebar.item :href="route('mentor')" icon="fa-chalkboard-teacher" title="My students" :active="Route::is('mentor')" />
             @endcan
 
             @can('bookings.sweatbox.use')
-                <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('sweatbook') }}">
-                        <i class="fas fa-fw fa-calendar-alt"></i>
-                        <span>Sweatbox Calendar</span>
-                    </a>
-                </li>
+                <x-sidebar.item :href="route('sweatbook')" icon="fa-calendar-alt" title="Sweatbox Calendar" :active="Route::is('sweatbook')" />
             @endcan
 
             @can('fir.management.reports.view')
 
                 {{-- Nav Item - Pages Collapse Menu --}}
-                <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
-                    <i class="fas fa-fw fa-flag"></i>
-                    <span>Requests</span>
-                </a>
-                <div id="collapseReq" class="collapse" data-bs-parent="#sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
-                    <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
-                    </div>
-                </div>
-                </li>
+                <x-sidebar.section icon="fa-flag" title="Requests" :active="Route::is('requests') || Route::is('requests.history')" id="collapseReq">
+                    <x-sidebar.item :href="route('requests')" title="Open Requests" collapse />
+                    <x-sidebar.item :href="route('requests.history')" title="Closed Requests" collapse />
+                </x-sidebar.section>
             @endcan
 
         @endcanany
@@ -109,64 +84,34 @@
         @can('users.manage')
 
             {{-- Nav Item - Pages Collapse Menu --}}
-            <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMem" aria-expanded="true" aria-controls="collapseMem">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>Users</span>
-                </a>
-                <div id="collapseMem" class="collapse" data-bs-parent=".sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('users') }}">Member Overview</a>
-                    <a class="collapse-item" href="{{ route('users.other') }}">Other Users</a>
-                    </div>
-                </div>
-            </li>
+            <x-sidebar.section icon="fa-users" title="Users" :active="Route::is('users') || Route::is('users.other')" id="collapseMem">
+                <x-sidebar.item :href="route('users')" title="Member Overview" collapse />
+                <x-sidebar.item :href="route('users.other')" title="Other Users" collapse />
+            </x-sidebar.section>
 
         @endif
 
         {{-- Nav Item - Pages Collapse Menu --}}
-        <li class="nav-item {{ Route::is('roster') ? 'active' : '' }}">
+        @php
+            $areas = \App\Models\Area::all();
+        @endphp
 
-            @php
-                $areas = \App\Models\Area::all();
-            @endphp
-
-            @if($areas->count() > 1)
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRosters" aria-expanded="true" aria-controls="collapseRosters">
-                    <i class="fas fa-fw fa-address-book"></i>
-                    <span>ATC Roster</span>
-                </a>
-
-                <div id="collapseRosters" class="collapse" data-bs-parent="#sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    @foreach($areas as $area)
-                        <a class="collapse-item" href="{{ route('roster', $area->id) }}">{{ $area->name }}</a>
-                    @endforeach
-                    </div>
-                </div>
-            @else
-                <a class="nav-link" href="{{ route('roster', $areas->first()->id) }}">
-                    <i class="fas fa-fw fa-address-book"></i>
-                    <span>ATC Roster</span>
-                </a>
-            @endif
-
-        </li>
+        @if($areas->count() > 1)
+            <x-sidebar.section icon="fa-address-book" title="ATC Roster" :active="Route::is('roster')" id="collapseRosters">
+                @foreach($areas as $area)
+                    <x-sidebar.item :href="route('roster', $area->id)" :title="$area->name" collapse />
+                @endforeach
+            </x-sidebar.section>
+        @else
+            <x-sidebar.item :href="route('roster', $areas->first()->id)" icon="fa-address-book" title="ATC Roster" :active="Route::is('roster')" />
+        @endif
 
         {{-- Nav Item - Pages Collapse Menu --}}
-        <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
-                <i class="fas fa-fw fa-check-square"></i>
-                <span>Endorsements</span>
-            </a>
-            <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('endorsements.solos') }}">Solo</a>
-                <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiner</a>
-                <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
-                </div>
-            </div>
-        </li>
+        <x-sidebar.section icon="fa-check-square" title="Endorsements" :active="Route::is('endorsements.*')" id="collapseEndorsements">
+            <x-sidebar.item :href="route('endorsements.solos')" title="Solo" collapse />
+            <x-sidebar.item :href="route('endorsements.examiners')" title="Examiner" collapse />
+            <x-sidebar.item :href="route('endorsements.visiting')" title="Visiting" collapse />
+        </x-sidebar.section>
 
 
 
@@ -175,59 +120,43 @@
             <div class="sidebar-divider"></div>
 
             {{-- Nav Item - Pages Collapse Menu --}}
-            <li class="nav-item {{ Route::is('reports.trainings') || Route::is('reports.training.area') || Route::is('reports.activities') || Route::is('reports.activities.area') || Route::is('reports.mentors') || Route::is('reports.access') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-clipboard-list"></i>
-                <span>Reports</span>
-            </a>
-            <div id="collapseTwo" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
+            <x-sidebar.section icon="fa-clipboard-list" title="Reports" :active="Route::is('reports.trainings') || Route::is('reports.training.area') || Route::is('reports.activities') || Route::is('reports.activities.area') || Route::is('reports.mentors') || Route::is('reports.access')" id="collapseTwo">
 
                 @can('training.statistics.view')
-                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Training Statistics</a>
+                    <x-sidebar.item :href="route('reports.trainings')" title="Training Statistics" collapse />
                 @endcan
                 @can('training.activities.view')
-                    <a class="collapse-item" href="{{ route('reports.activities') }}">Training Activities</a>
+                    <x-sidebar.item :href="route('reports.activities')" title="Training Activities" collapse />
                 @endcan
 
-                <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+                <x-sidebar.item :href="route('reports.mentors')" title="Mentors" collapse />
 
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
-                    <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
+                    <x-sidebar.item :href="route('reports.access')" title="Access" collapse />
                 @endcan
 
-                <a class="collapse-item" href="{{ route('reports.feedback') }}">Feedback</a>
+                <x-sidebar.item :href="route('reports.feedback')" title="Feedback" collapse />
 
-                </div>
-            </div>
-            </li>
+            </x-sidebar.section>
         @endif
 
         @if(auth()->user()->canAny(['system.health.view', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
-            <li class="nav-item {{ Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-                <i class="fas fa-fw fa-cogs"></i>
-                <span>Administration</span>
-            </a>
-            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
+            <x-sidebar.section icon="fa-cogs" title="Administration" :active="Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview')" id="collapseUtilities">
                 @can('system.health.view')
-                    <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
-                    <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
-                    <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
+                    <x-sidebar.item :href="route('admin.settings')" title="Settings" collapse />
+                    <x-sidebar.item :href="route('vote.overview')" title="Votes" collapse />
+                    <x-sidebar.item :href="route('admin.logs')" title="Logs" collapse />
                 @endcan
 
                 @can('users.manage')
-                    <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
+                    <x-sidebar.item :href="route('admin.templates')" title="Notification templates" collapse />
                 @endcan
                 @can('viewAny', App\Models\Position::class)
-                    <a class="collapse-item" href="{{ route('positions.index') }}">Positions</a>
+                    <x-sidebar.item :href="route('positions.index')" title="Positions" collapse />
                 @endcan
-                </div>
-            </div>
-            </li>
+            </x-sidebar.section>
 
         @endif
 
