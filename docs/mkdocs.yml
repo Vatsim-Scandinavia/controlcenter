@@ -103,7 +103,7 @@ nav:
       - Setup:
           - Define the division: setup/division.md
           - Changing the logo: setup/logo.md
-          - Changing the colours & borders: setup/theme.md
+          - Customizing the theme: setup/theme.md
           - Creating a custom image: setup/custom.md
           - Custom OAuth authentication: setup/authentication.md
   - Usage:
