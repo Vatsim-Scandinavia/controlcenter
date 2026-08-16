@@ -120,7 +120,7 @@
             <div class="sidebar-divider"></div>
 
             {{-- Nav Item - Pages Collapse Menu --}}
-            <x-sidebar.section icon="fa-clipboard-list" title="Reports" :active="Route::is('reports.trainings') || Route::is('reports.training.area') || Route::is('reports.activities') || Route::is('reports.activities.area') || Route::is('reports.mentors') || Route::is('reports.access')" id="collapseTwo">
+            <x-sidebar.section icon="fa-clipboard-list" title="Reports" :active="Route::is('reports.trainings') || Route::is('reports.training.area') || Route::is('reports.activities') || Route::is('reports.activities.area') || Route::is('reports.mentors') || Route::is('reports.access') || Route::is('reports.feedback')" id="collapseTwo">
 
                 @can('training.statistics.view')
                     <x-sidebar.item :href="route('reports.trainings')" title="Training Statistics" collapse />
