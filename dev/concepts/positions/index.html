@@ -829,7 +829,7 @@
   <span class="md-ellipsis">
     
   
-    Changing the colours & borders
+    Customizing the theme
   
 
     
@@ -1131,34 +1131,6 @@
     
   
     Buddies
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../user-themes/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Themes
   
 
     
@@ -2188,19 +2160,37 @@
 <div class="admonition note">
 <p class="admonition-title">Current Limitations</p>
 <p>The current version of the position management interface does not allow for viewing or editing endorsements (or tiers) required for a position. This must be managed directly in the database.</p>
-<p>The current version does not allow for viewing or editing the endorsements themselves.</p>
 </div>
 <h2 id="access-and-permissions">Access and Permissions<a class="headerlink" href="#access-and-permissions" title="Permanent link">&para;</a></h2>
-<p>Access to the positions overview is restricted to authorized staff members using the <a href="../permissions/">system for Permissions and Groups</a>.
-The permissions for this page are structured as follows:</p>
+<p>Access is governed by the <a href="../permissions/">roles and permissions system</a>. Two permissions apply to this page:</p>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Grants</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fir.positions.view</code></td>
+<td>Read-only access to the positions overview.</td>
+</tr>
+<tr>
+<td><code>fir.positions.manage</code></td>
+<td>Creating, editing, and deleting positions. Also grants access to the overview.</td>
+</tr>
+</tbody>
+</table>
+<p>Both are evaluated <strong>per area</strong>. An area-scoped role assignment only covers positions in that area; an area-less assignment covers the whole division. In practice this means:</p>
 <ul>
-<li><strong>Administrators</strong>: Have full access to view, create, edit, and delete all positions across all areas.</li>
-<li><strong>Area Moderators</strong>: Can view all positions in the division. However, they can only create, edit, and delete positions that belong to the specific areas they manage.</li>
+<li>The overview lists only positions in the areas you can access. There is no division-wide view unless you hold the permission globally.</li>
+<li>The <strong>Area</strong> selector when creating or editing a position is limited to the areas you can manage.</li>
+<li>Moving a position from one area to another requires <code>fir.positions.manage</code> in <strong>both</strong> areas.</li>
 </ul>
-<p>This granular control ensures that position management is delegated effectively while maintaining administrative oversight.</p>
+<p>Which roles hold these permissions is defined by the matrix in <code>config/roles.php</code>. In the shipped defaults <code>staff</code> gets view-only access, <code>nav-editor</code> and <code>moderator</code> may manage positions in their areas, and <code>director</code> and <code>admin</code> have full access. See the <a href="../../reference/permissions/">Roles and Permissions Reference</a> for the complete role list and how to change it.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you are an Area Moderator and cannot edit a position you believe you should have access to, please contact a system administrator.</p>
+<p>If you cannot edit a position you believe you should have access to, check that your role assignment covers that position's area, then contact a system administrator.</p>
 </div>
 <h2 id="the-positions-overview">The Positions Overview<a class="headerlink" href="#the-positions-overview" title="Permanent link">&para;</a></h2>
 <p>The main page presents a comprehensive list of all configured positions. The table provides the following information:</p>
@@ -2225,7 +2215,7 @@ The permissions for this page are structured as follows:</p>
 <li><strong>Frequency</strong>: The frequency.</li>
 <li><strong><abbr title="Flight Information Region">FIR</abbr></strong>: The four-letter ICAO code for the <abbr title="Flight Information Region">FIR</abbr>.</li>
 <li><strong>Rating</strong>: Select the minimum required controller rating from the available options.</li>
-<li><strong>Area</strong>: Assign the position to an administrative area. As a moderator you can only assign the areas you manage.</li>
+<li><strong>Area</strong>: Assign the position to an administrative area. Only the areas you can manage are selectable.</li>
 <li>Click <strong>Create</strong> to save the new position.</li>
 </ol>
 <h3 id="editing-a-position">Editing a Position<a class="headerlink" href="#editing-a-position" title="Permanent link">&para;</a></h3>
@@ -2279,7 +2269,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 16, 2026 15:21:36 UTC">August 16, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 16, 2026 16:14:15 UTC">August 16, 2026</span>
   </span>
 
     
@@ -2289,7 +2279,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 16, 2026 15:21:36 UTC">August 16, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 16, 2026 16:14:15 UTC">August 16, 2026</span>
   </span>
 
     
