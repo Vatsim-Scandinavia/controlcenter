@@ -1,5 +1,34 @@
 # Changelog
 
+## [7.0.0-rc.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.4...v7.0.0-rc.1) (2026-08-17)
+
+
+### Bug Fixes
+
+* **feedback:** avoid table jumping in ([#1622](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1622)) ([046036d](https://github.com/Vatsim-Scandinavia/controlcenter/commit/046036d97a77b1898ceb9c7df3731025debcb518))
+* **sidebar:** correctly mark feedback section as active ([35f02f1](https://github.com/Vatsim-Scandinavia/controlcenter/commit/35f02f1c9f12e088ff3df71b962a611196c90829))
+
+
+### Miscellaneous Chores
+
+* **deps:** update a bunch of different dependencies ([#1610](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1610)) ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update actions/setup-node action to v7 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency guzzlehttp/guzzle to v8 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency laravel-vite-plugin to v3.2.0 ([792c1ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/792c1ca4553120b070cab1a1936f4e0638b2872e))
+* **deps:** update dependency laravel/framework to v13.25.0 ([#1617](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1617)) ([efa1c61](https://github.com/Vatsim-Scandinavia/controlcenter/commit/efa1c617070c32f90932d4af8e23956e0b3758ed))
+* **deps:** update dependency laravel/pint to v1.30.5 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency league/commonmark to v2.10.0 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency livewire/flux to v2.16.0 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency livewire/livewire to v4.4.0 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency mockery/mockery to v1.6.13 ([792c1ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/792c1ca4553120b070cab1a1936f4e0638b2872e))
+* **deps:** update dependency pdm to v2.28.1 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency phpunit/phpunit to v13.3.1 ([792c1ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/792c1ca4553120b070cab1a1936f4e0638b2872e))
+* **deps:** update dependency sass to v1.102.0 ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+* **deps:** update dependency spatie/laravel-activitylog to v5.1.0 ([#1619](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1619)) ([f5d9c1c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/f5d9c1c23de9ca6e9ff62f89838903b5b1691bca))
+* **deps:** update dependency spatie/laravel-login-link to v1.6.7 ([792c1ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/792c1ca4553120b070cab1a1936f4e0638b2872e))
+* **deps:** update even more dependencies ([#1616](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1616)) ([792c1ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/792c1ca4553120b070cab1a1936f4e0638b2872e))
+* **deps:** update github artifact actions ([a7f37a4](https://github.com/Vatsim-Scandinavia/controlcenter/commit/a7f37a45cb3079217fb26a4acce1191dfb64ffa2))
+
 ## [7.0.0-beta.4](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.3...v7.0.0-beta.4) (2026-08-12)
 
 
