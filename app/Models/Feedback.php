@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\DescribesActivityChanges;
+use App\Helpers\LogName;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +42,7 @@ class Feedback extends Model implements DescribesActivityChanges
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('feedback')
+            ->useLogName(LogName::Feedback)
             ->logOnly(['reference_user_id', 'reference_position_id'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges()

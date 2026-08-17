@@ -8,6 +8,7 @@ use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Facades\DivisionApi;
 use App\Helpers\InterestStatus;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
@@ -296,7 +297,7 @@ class TrainingController extends Controller
 
         $training->ratings()->saveMany($ratings);
 
-        ActivityLogService::info('TRAINING', 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
+        ActivityLogService::info(LogName::Training, 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
 
         // Send confimration mail
         $training->user->notify(new TrainingCreatedNotification($training));
@@ -415,7 +416,7 @@ class TrainingController extends Controller
         $training->save();
 
         // Log the action
-        ActivityLogService::warning('TRAINING', 'Updated training request ' . $training->id .
+        ActivityLogService::warning(LogName::Training, 'Updated training request ' . $training->id .
         ' ― Old Ratings: ' . $preChangeRatings->pluck('name') .
         ' ― New Ratings: ' . $ratings->pluck('name') .
         ' ― Old Training type: ' . TrainingController::$types[$preChangeType]['text'] .
@@ -531,7 +532,7 @@ class TrainingController extends Controller
         // Update the training
         $training->update($attributes);
 
-        ActivityLogService::warning('TRAINING', 'Updated training details ' . $training->id .
+        ActivityLogService::warning(LogName::Training, 'Updated training details ' . $training->id .
         ' ― Old Status: ' . $oldStatus->label() .
         ' ― New Status: ' . $training->status->label() .
         ' ― Mentor: ' . $training->mentors->pluck('name'));
@@ -636,7 +637,7 @@ class TrainingController extends Controller
     public function close(Training $training)
     {
         $this->authorize('close', $training);
-        ActivityLogService::warning('TRAINING', 'Student closed training request ' . $training->id .
+        ActivityLogService::warning(LogName::Training, 'Student closed training request ' . $training->id .
         ' ― Status: ' . $training->status->label() .
         ' ― Training type: ' . TrainingController::$types[$training->type]['text']);
         TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::CLOSED_BY_STUDENT->value, $training->status->value, $training->user->id);
@@ -667,7 +668,7 @@ class TrainingController extends Controller
         $training->pre_training_completed = $newState;
         $training->save();
 
-        ActivityLogService::warning('TRAINING', 'Student marked pre-training as completed ' . $training->id);
+        ActivityLogService::warning(LogName::Training, 'Student marked pre-training as completed ' . $training->id);
         TrainingActivityController::create($training->id, 'PRETRAINING', $newState, $oldState, Auth::id());
 
         return redirect($training->path())->withSuccess('Pre-training marked as ' . ($newState ? 'completed' : 'not completed'));
@@ -702,7 +703,7 @@ class TrainingController extends Controller
             $interest->expired = InterestStatus::CLOSED;
             $interest->save();
 
-            ActivityLogService::info('TRAINING', 'Training interest confirmed.');
+            ActivityLogService::info(LogName::Training, 'Training interest confirmed.');
 
             return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }

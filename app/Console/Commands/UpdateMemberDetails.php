@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Models\AtcActivity;
 use App\Models\Training;
@@ -104,7 +105,7 @@ class UpdateMemberDetails extends Command
             $training->user->notify(new TrainingClosedNotification($training, TrainingStatus::CLOSED_BY_SYSTEM, 'Student has left the division.'));
 
             // Log the closure
-            ActivityLogService::warning('TRAINING', 'Closed training request ' . $training->id . ' due to student leaving division');
+            ActivityLogService::warning(LogName::Training, 'Closed training request ' . $training->id . ' due to student leaving division');
 
             $count++;
         }

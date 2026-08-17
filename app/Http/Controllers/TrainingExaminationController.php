@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Facades\DivisionApi;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\OneTimeLink;
@@ -173,7 +174,7 @@ class TrainingExaminationController extends Controller
         $this->authorize('delete', $examination);
 
         $examination->delete();
-        ActivityLogService::danger('TRAINING', 'Deleted training examination ' . $examination->id . ' ― From Training ' . $examination->training->id);
+        ActivityLogService::danger(LogName::Training, 'Deleted training examination ' . $examination->id . ' ― From Training ' . $examination->training->id);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Examination successfully deleted']);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\LogName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -21,7 +22,7 @@ class Endorsement extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('endorsement')
+            ->useLogName(LogName::Endorsement)
             ->logOnly(['type', 'valid_from', 'valid_to', 'expired', 'revoked', 'user_id'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();

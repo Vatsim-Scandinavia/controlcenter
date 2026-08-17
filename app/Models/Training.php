@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\InterestStatus;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ class Training extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('training')
+            ->useLogName(LogName::Training)
             ->logOnly(['status', 'type', 'user_id', 'paused_at', 'closed_reason'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();

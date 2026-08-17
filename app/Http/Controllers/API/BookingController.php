@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Http\Controllers\Controller;
@@ -165,7 +166,7 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogService::info('BOOKING', 'Created booking booking' . $booking->id . ' via API' .
+        ActivityLogService::info(LogName::Booking, 'Created booking booking' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -335,7 +336,7 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogService::info('BOOKING', 'Updated booking booking ' . $booking->id . ' via API' .
+        ActivityLogService::info(LogName::Booking, 'Updated booking booking ' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -368,7 +369,7 @@ class BookingController extends Controller
 
         $booking->save();
 
-        ActivityLogService::warning('BOOKING', 'Deleted booking booking ' . $booking->id . ' via API' .
+        ActivityLogService::warning(LogName::Booking, 'Deleted booking booking ' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
