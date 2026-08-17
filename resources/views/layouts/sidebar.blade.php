@@ -140,7 +140,7 @@
             </x-sidebar.section>
         @endif
 
-        @if(auth()->user()->canAny(['system.health.view', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
+        @if(auth()->user()->canAny(['system.health.view', 'system.settings.manage', 'training.moodle.manage', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <x-sidebar.section icon="fa-cogs" title="Administration" :active="Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview')" id="collapseUtilities">
@@ -148,6 +148,10 @@
                     <x-sidebar.item :href="route('admin.settings')" title="Settings" collapse />
                     <x-sidebar.item :href="route('vote.overview')" title="Votes" collapse />
                     <x-sidebar.item :href="route('admin.logs')" title="Logs" collapse />
+                @endcan
+
+                @can('training.moodle.manage')
+                    <a class="collapse-item" href="{{ route('admin.moodle') }}">Moodle integration</a>
                 @endcan
 
                 @can('users.manage')

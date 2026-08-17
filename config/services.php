@@ -36,6 +36,13 @@ return [
         'secret' => env('SPARKPOST_SECRET'),
     ],
 
+    'moodle' => [
+        'enabled' => env('MOODLE_ENABLED', false),
+        'url' => env('MOODLE_URL'),
+        'token' => env('MOODLE_TOKEN'),
+        'student_role_id' => env('MOODLE_STUDENT_ROLE_ID', 5),
+    ],
+
     'stripe' => [
         'model' => User::class,
         'key' => env('STRIPE_KEY'),

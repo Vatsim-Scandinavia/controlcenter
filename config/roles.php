@@ -86,6 +86,7 @@ return [
         'training.activities.view',
         'training.statistics.view',
         'training.notifications.receive',
+        'training.moodle.manage',
 
         // Examinations
         'examinations.manage',

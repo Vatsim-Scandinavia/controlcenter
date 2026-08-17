@@ -211,10 +211,22 @@ class Training extends Model
 
     /**
      * Get the ratings of the training.
+     *
+     * @return BelongsToMany<Rating, $this>
      */
     public function ratings(): BelongsToMany
     {
         return $this->belongsToMany(Rating::class);
+    }
+
+    /**
+     * Get the Moodle enrolments created for this training.
+     *
+     * @return HasMany<MoodleEnrolment, $this>
+     */
+    public function moodleEnrolments(): HasMany
+    {
+        return $this->hasMany(MoodleEnrolment::class);
     }
 
     /**
