@@ -1,5 +1,11 @@
 // Global component styles
 
+// Keep Alpine x-show/x-transition elements hidden until Alpine boots,
+// preventing a flash of the initial state (e.g. combobox dropdowns) on load.
+[x-cloak] {
+    display: none !important;
+}
+
 html {
     position: relative;
     min-height: 100%;

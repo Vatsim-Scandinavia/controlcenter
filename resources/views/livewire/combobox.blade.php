@@ -41,6 +41,7 @@
 
     <div
         x-ref="list"
+        x-cloak
         x-show="open"
         x-transition.opacity
         class="list-group position-absolute w-100 shadow mt-1"
