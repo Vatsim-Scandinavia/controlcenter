@@ -344,7 +344,15 @@ class User extends Authenticatable
     {
         $trainings = Training::where('status', '>=', TrainingStatus::PRE_TRAINING)->whereHas('mentors', function ($query) {
             $query->where('user_id', $this->id);
-        })->with('area', 'ratings', 'reports', 'user')->orderBy('id')->get();
+        })->with([
+            'area',
+            'ratings',
+            'reports',
+            'user',
+            'trainingSessions' => fn ($query) => $query
+                ->where('time_start', '>=', now())
+                ->with('position'),
+        ])->orderBy('id')->get();
 
         return $trainings;
     }

@@ -250,6 +250,17 @@ class Training extends Model
     }
 
     /**
+     * Get the student's bookings that are tagged as training sessions.
+     */
+    public function trainingSessions(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'user_id', 'user_id')
+            ->where('training', true)
+            ->where('deleted', false)
+            ->orderBy('time_start');
+    }
+
+    /**
      * Get the one time links associated with the training.
      */
     public function onetimelink(): HasMany
