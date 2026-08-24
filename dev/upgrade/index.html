@@ -1810,15 +1810,66 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#atc-activity-chart-statsim" class="md-nav__link">
+  <a href="#upgrade-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ATC activity chart (StatSim)
+        Upgrade steps
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#post-upgrade-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-upgrade tasks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-upgrade tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-who-is-a-global-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review who is a global admin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-configrolesphp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review config/roles.php
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What changed">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#admin-is-now-cli-only-with-a-new-director-role" class="md-nav__link">
@@ -1828,23 +1879,6 @@
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Admin is now CLI-only, with a new Director role">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#after-upgrading-review-who-is-an-admin" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        After upgrading, review who is an admin
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1867,6 +1901,22 @@
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atc-activity-chart-statsim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ATC activity chart (StatSim)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2134,15 +2184,66 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#atc-activity-chart-statsim" class="md-nav__link">
+  <a href="#upgrade-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ATC activity chart (StatSim)
+        Upgrade steps
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#post-upgrade-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-upgrade tasks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-upgrade tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-who-is-a-global-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review who is a global admin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-configrolesphp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review config/roles.php
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What changed">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#admin-is-now-cli-only-with-a-new-director-role" class="md-nav__link">
@@ -2152,23 +2253,6 @@
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Admin is now CLI-only, with a new Director role">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#after-upgrading-review-who-is-an-admin" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        After upgrading, review who is an admin
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -2191,6 +2275,22 @@
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atc-activity-chart-statsim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ATC activity chart (StatSim)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2263,105 +2363,109 @@ Remember to <a href="../setup/theme/">run the theme build</a> again if you have 
 php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
 </code></pre></div>
 <h2 id="upgrading-to-700">Upgrading to 7.0.0<a class="headerlink" href="#upgrading-to-700" title="Permanent link">&para;</a></h2>
-<p>This release changes how access is managed and rebuilds the theme system, so it
-needs a few manual steps beyond the usual migrate and cache clear. Work through the
-sections below in order.</p>
-<h3 id="atc-activity-chart-statsim"><abbr title="Air Traffic Controller">ATC</abbr> activity chart (StatSim)<a class="headerlink" href="#atc-activity-chart-statsim" title="Permanent link">&para;</a></h3>
-<p>The <abbr title="Air Traffic Controller">ATC</abbr> activity numbers on user profiles started erroring out. The old StatSim API
-was deprecated and shut down before we could update the integration, which is what
-you were seeing.</p>
-<p>The replacement API needs its own API key. Add the new
-<a href="../configuration/#vatsim">StatSim environment variable</a> and the chart will
-work again.</p>
-<h3 id="admin-is-now-cli-only-with-a-new-director-role">Admin is now CLI-only, with a new Director role<a class="headerlink" href="#admin-is-now-cli-only-with-a-new-director-role" title="Permanent link">&para;</a></h3>
-<p>The <code>admin</code> role is now strictly system-wide. You can no longer grant it, scope it
-to an area, or revoke it from the web UI. Assign it from the command line instead:</p>
-<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>user:makeadmin
-</code></pre></div>
-<p>The new <code>director</code> role covers the "full access to an area" case that admin used to
-fill. You grant it per area or globally from a user's access page, and it holds
-every admin permission except the system-level ones (<code>manage-area</code>,
-<code>view-system-health</code>). Only global admins and global directors can grant or revoke
-it. See <a href="../reference/permissions/">Roles and Permissions</a> for the full picture.</p>
-<h4 id="after-upgrading-review-who-is-an-admin">After upgrading, review who is an admin<a class="headerlink" href="#after-upgrading-review-who-is-an-admin" title="Permanent link">&para;</a></h4>
-<p>Everyone in the old administrator group becomes a global admin during the
-migration, so they keep full access. Once you have upgraded, check who really needs
-system-wide rights:</p>
+<p>This release changes how access is managed, rebuilds the theme system, and switches
+the <abbr title="Air Traffic Controller">ATC</abbr> activity chart to a new API. Follow the upgrade steps once, then work
+through the post-upgrade tasks. A single <code>php artisan migrate</code> applies every
+database change in this release, so you only run it once.</p>
+<h3 id="upgrade-steps">Upgrade steps<a class="headerlink" href="#upgrade-steps" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Grant <code>director</code> (per area or global) to anyone who only needs area or
-   organisation level management.</li>
-<li>Remove their admin assignment from the <code>role_user</code> table by hand. There is no
-   command for revoking admin yet.
-   <div class="language-sql highlight"><pre><span></span><code><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">role_user</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">user_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">cid</span><span class="o">&gt;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="p">;</span>
-</code></pre></div>
-   <!-- TODO: replace with `user:removeadmin` once available. -->
-</li>
-</ol>
-<p>Until you do this, the migrated admins keep unrestricted access.</p>
-<h3 id="theme-system">Theme system<a class="headerlink" href="#theme-system" title="Permanent link">&para;</a></h3>
-<p>Themes were redesigned to support light and dark modes and a per-user preference.
-The colors you used to set in <code>.env</code> have moved into SCSS files.</p>
-<p>What changed:</p>
-<ul>
-<li>The <code>VITE_THEME_*</code> color variables in <code>.env</code> are gone.</li>
-<li>Themes now live in SCSS files under <code>resources/sass/themes/</code>.</li>
-<li>Each user picks their own theme, and the choice is stored in the database.</li>
+<li>If you added any custom groups beyond the four defaults (Administrator,
+   Moderator, Mentor, Buddy), note down their members now. The migration drops them,
+   and you recreate them as roles afterwards.</li>
+<li>Update your environment file:<ul>
+<li>Add the new <a href="../configuration/#vatsim">StatSim API key variable</a>. The
+  activity chart stays broken until this is set.</li>
+<li>Remove any <code>VITE_THEME_*</code> color variables. They are no longer used.</li>
 </ul>
-<p>To upgrade:</p>
-<ol>
-<li>Remove any <code>VITE_THEME_*</code> variables from your <code>.env</code> file.</li>
-<li>Run the migration, which adds the <code>setting_theme</code> column to the <code>users</code> table:
+</li>
+<li>Run the database migration. This one command applies everything in the release,
+   including the new <code>setting_theme</code> column on <code>users</code> and the new <code>role_user</code> table.
+   It also copies the four standard groups across and drops the old <code>groups</code> and
+   <code>permissions</code> tables:
    <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
 </code></pre></div></li>
-<li>Rebuild the frontend assets:
+<li>Rebuild the frontend assets, but only if you run without a container and maintain
+   a custom theme. The published container image already ships with assets built,
+   and you should never build inside a running container. See
+   <a href="../setup/theme/">Themes</a> for why:
    <div class="language-sh highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build
 </code></pre></div></li>
 <li>Clear the caches:
    <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
 </code></pre></div></li>
-<li>Clear your browser cache and check that theme switching works.</li>
+<li>Clear your browser cache, then load the app and confirm theme switching works and
+   the <abbr title="Air Traffic Controller">ATC</abbr> activity chart renders on a profile.</li>
 </ol>
-<p>If you had custom colors in <code>.env</code>, move them into a custom theme file. In short:
-copy <code>_custom.scss.example</code> to <code>_custom.scss</code>, port your colors across using
-<code>_light.scss</code> and <code>_dark.scss</code> as a reference, and rebuild. See
-<a href="../setup/theme/">Themes</a> for the full walkthrough.</p>
-<h3 id="permissions-and-roles">Permissions and roles<a class="headerlink" href="#permissions-and-roles" title="Permanent link">&para;</a></h3>
+<h3 id="post-upgrade-tasks">Post-upgrade tasks<a class="headerlink" href="#post-upgrade-tasks" title="Permanent link">&para;</a></h3>
+<p>These need your judgement, so do them after the steps above.</p>
+<h4 id="review-who-is-a-global-admin">Review who is a global admin<a class="headerlink" href="#review-who-is-a-global-admin" title="Permanent link">&para;</a></h4>
+<p>Everyone in the old administrator group becomes a global admin during the migration,
+so they keep full access until you review it. Admins can no longer be changed from
+the UI, so this is a manual database step.</p>
+<div class="admonition warning">
+<p class="admonition-title">Back up first, and keep at least one admin</p>
+<p>This edits the <code>role_user</code> table directly, with no undo. Back the table up before
+you delete anything, remove only the rows you mean to, and make sure at least one
+admin remains. Do not delete your own only admin row.</p>
+</div>
+<ol>
+<li>Grant <code>director</code> (per area or global) from a user's access page to anyone who only
+   needs area or organisation level management.</li>
+<li>List the current admin assignments and confirm which rows you mean to remove.
+   <code>user_id</code> is the person's <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> CID:
+   <div class="language-sql highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">role_user</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="p">;</span>
+</code></pre></div></li>
+<li>Remove the assignments you no longer want:
+   <div class="language-sql highlight"><pre><span></span><code><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">role_user</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">user_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">cid</span><span class="o">&gt;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="p">;</span>
+</code></pre></div>
+   There is no command for revoking admin yet.
+   <!-- TODO: replace with `user:removeadmin` once available. -->
+</li>
+</ol>
+<h4 id="review-configrolesphp">Review <code>config/roles.php</code><a class="headerlink" href="#review-configrolesphp" title="Permanent link">&para;</a></h4>
+<p>Adjust the matrix if your division wants different permissions per role, or extra
+roles beyond the defaults. Recreate any custom groups you noted down in step 1 as
+roles here. Run <code>php artisan optimize:clear</code> again after editing the file.</p>
+<h3 id="what-changed">What changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
+<h4 id="admin-is-now-cli-only-with-a-new-director-role">Admin is now CLI-only, with a new Director role<a class="headerlink" href="#admin-is-now-cli-only-with-a-new-director-role" title="Permanent link">&para;</a></h4>
+<p>The <code>admin</code> role is now strictly system-wide. You can no longer grant it, scope it
+to an area, or revoke it from the web UI. Assign it from the command line instead:</p>
+<div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>user:makeadmin
+</code></pre></div>
+<p>The new <code>director</code> role covers the "full access to an area" case that admin used to
+fill. It holds every admin permission except the system-level ones (<code>manage-area</code>,
+<code>view-system-health</code>), and only global admins and global directors can grant or
+revoke it. See <a href="../reference/permissions/">Roles and Permissions</a> for the full picture.</p>
+<h4 id="theme-system">Theme system<a class="headerlink" href="#theme-system" title="Permanent link">&para;</a></h4>
+<p>Themes were redesigned to support light and dark modes and a per-user preference.
+The colors you used to set with <code>VITE_THEME_*</code> in <code>.env</code> have moved into SCSS files
+under <code>resources/sass/themes/</code>, and each user now picks their own theme, stored in
+the database.</p>
+<p>If you had custom colors in <code>.env</code>, move them into a custom theme file: copy
+<code>_custom.scss.example</code> to <code>_custom.scss</code>, port your colors across using <code>_light.scss</code>
+and <code>_dark.scss</code> as a reference, and rebuild. See <a href="../setup/theme/">Themes</a> for the
+full walkthrough, including how to bake a custom theme into a container image.</p>
+<h4 id="permissions-and-roles">Permissions and roles<a class="headerlink" href="#permissions-and-roles" title="Permanent link">&para;</a></h4>
 <p>The old groups and permissions system has been rebuilt around a role matrix you
-configure in <code>config/roles.php</code>. See <a href="../concepts/permissions/">Roles and Permissions</a>
-for how the new model works.</p>
-<p>What changed:</p>
+configure in <code>config/roles.php</code>. Assignments now live in one <code>role_user</code> table that
+stores the role name and an optional <code>area_id</code> (null means global), and permissions
+are defined in <code>config/roles.php</code> rather than the database. A few things to know:</p>
 <ul>
-<li>The <code>groups</code> and <code>permissions</code> tables are dropped. Assignments now live in one
-  <code>role_user</code> table that stores the role name and an optional <code>area_id</code> (null means
-  global).</li>
-<li>Permissions are no longer in the database. They are defined in <code>config/roles.php</code>
-  as a matrix that maps each permission to the roles that hold it. Changing access
-  now means editing that file and clearing the config cache, not updating the
-  database.</li>
-<li>Admins are now strictly global. Any <code>area_id</code> on an old admin assignment is
-  dropped during the migration.</li>
-<li>Custom groups are not migrated. Only the four standard groups (Administrator,
-  Moderator, Mentor, Buddy) become roles. Any custom group or permission rows you
-  added by hand are dropped with the old tables, so note them down first and
-  recreate them as roles afterwards.</li>
+<li>Admins are now strictly global. Any <code>area_id</code> on an old admin assignment is dropped
+  during the migration.</li>
+<li>Only the four standard groups (Administrator, Moderator, Mentor, Buddy) are
+  migrated. Any custom group or permission rows you added by hand are dropped with
+  the old tables, which is why you note them down before upgrading and recreate them
+  as roles afterwards.</li>
 <li>The <code>nav-editor</code> role is new and is not derived from any old group, so nobody is
   assigned to it automatically. Grant it to whoever needs to edit navigational data
   in an area.</li>
 </ul>
-<p>To upgrade:</p>
-<ol>
-<li>Note down any custom groups you added beyond the four defaults, along with their
-   members, so you can re-grant access afterwards.</li>
-<li>Run the migration, which creates <code>role_user</code>, copies the four standard groups
-   across, and drops the old tables:
-   <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
-</code></pre></div></li>
-<li>Review <code>config/roles.php</code> and adjust the matrix if your division wants different
-   permissions per role or extra roles.</li>
-<li>Clear the caches:
-   <div class="language-sh highlight"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>optimize:clear
-</code></pre></div></li>
-</ol>
+<p>See <a href="../concepts/permissions/">Roles and Permissions</a> for how the new model works.</p>
+<h4 id="atc-activity-chart-statsim"><abbr title="Air Traffic Controller">ATC</abbr> activity chart (StatSim)<a class="headerlink" href="#atc-activity-chart-statsim" title="Permanent link">&para;</a></h4>
+<p>The old StatSim API was deprecated and shut down, which is why the <abbr title="Air Traffic Controller">ATC</abbr> activity
+numbers on profiles started erroring. The replacement API needs its own API key,
+added in step 2 above.</p>
 <h2 id="upgrading-to-600">Upgrading to 6.0.0<a class="headerlink" href="#upgrading-to-600" title="Permanent link">&para;</a></h2>
 <p>This release contains breaking changes and requires you to backup your data before upgrading.</p>
 <ul>
@@ -2416,7 +2520,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 24, 2026 15:46:54 UTC">August 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 24, 2026 16:09:33 UTC">August 24, 2026</span>
   </span>
 
     
@@ -2426,7 +2530,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 24, 2026 15:46:54 UTC">August 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 24, 2026 16:09:33 UTC">August 24, 2026</span>
   </span>
 
     
