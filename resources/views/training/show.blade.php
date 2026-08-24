@@ -45,14 +45,7 @@
         <div class="card shadow mb-2">
             <div class="card-header bg-primary py-3 d-flex flex-row column-gap-3 pe-0">
                 <h6 class="m-0 fw-bold text-white flex-grow-1">
-                    <i class="fas fa-flag"></i>&nbsp;{{ $training->user->first_name }}'s training for
-                    @foreach($training->ratings as $rating)
-                        @if ($loop->last)
-                            {{ $rating->name }}
-                        @else
-                            {{ $rating->name . " + " }}
-                        @endif
-                    @endforeach
+                    <i class="fas fa-flag"></i>&nbsp;{{ $training->user->first_name }}'s training for {{ $training->getInlineRatings() }}
                 </h6>
 
                 @can('create', [\App\Models\Task::class])
@@ -90,19 +83,7 @@
                     <dd><i class="{{ $types[$training->type]["icon"] }} text-primary"></i>&ensp;{{ $types[$training->type]["text"] }}</dd>
 
                     <dt>Level</dt>
-                    <dd class="separator pb-3">
-                        @if ( is_iterable($ratings = $training->ratings->toArray()) )
-                            @for( $i = 0; $i < sizeof($ratings); $i++ )
-                                @if ( $i == (sizeof($ratings) - 1) )
-                                    {{ $ratings[$i]["name"] }}
-                                @else
-                                    {{ $ratings[$i]["name"] . " + " }}
-                                @endif
-                            @endfor
-                        @else
-                            {{ $ratings["name"] }}
-                        @endif
-                    </dd>
+                    <dd class="separator pb-3">{{ $training->getInlineRatings() }}</dd>
 
                     <dt class="pt-2">Vatsim ID</dt>
                     <dd>
