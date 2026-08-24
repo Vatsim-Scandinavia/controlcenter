@@ -7,7 +7,7 @@ site_name: Control Center Docs
 site_description: Training, exam & booking management system for VATSIM regions
 
 # The copyright footer at the bottom.
-copyright: Copyright © 2023 VATSIM Scandinavia contributors
+copyright: Copyright © 2023–2026 VATSIM Scandinavia contributors
 
 # Fail on warnings.
 strict: true
