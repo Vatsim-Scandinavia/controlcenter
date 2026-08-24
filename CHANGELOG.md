@@ -1,5 +1,8 @@
 # Changelog
 
+> [!IMPORTANT]
+> Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
+
 ## [7.0.0-rc.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0-beta.4...v7.0.0-rc.1) (2026-08-17)
 
 
