@@ -9,6 +9,8 @@ use App\Http\Controllers\TrainingController;
 use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\User;
+use Dedoc\Scramble\Attributes\Api;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -16,10 +18,30 @@ use Illuminate\Support\Collection;
 class UserController extends Controller
 {
     /**
-     * Return data based on request parameters
+     * Return the authenticated API user.
+     *
+     * Assigned to the `internal` API spec, so it is intentionally excluded from the public docs.
+     */
+    #[Api('internal')]
+    public function authenticated(Request $request)
+    {
+        return $request->user();
+    }
+
+    /**
+     * List users.
+     *
+     * Returns users filtered by the `onlyAtcActive` query parameter, with relations and
+     * fields (name, email, divisions, active areas, endorsements, roles, training) added
+     * only when requested via the `include[]` query parameter.
      *
      * @return array
      */
+    #[Response(
+        status: 200,
+        description: 'The matching users, wrapped in a `data` array. Each user always includes `id`, `rating`, and `atc_active`; all other fields and relations appear only when requested via the `include[]` query parameter.',
+        type: "array{data: array<int, array{id: int, rating: 'INA'|'SUS'|'OBS'|'S1'|'S2'|'S3'|'C1'|'C3'|'I1'|'I3'|'SUP'|'ADM', atc_active: bool, email?: string, first_name?: string, last_name?: string, region?: string, division?: string, subdivision?: string, atc_active_areas?: array<string, bool>, endorsements?: mixed, roles?: mixed, training?: mixed}>}",
+    )]
     public function index(Request $request)
     {
         $returnUsers = collect();
@@ -28,7 +50,17 @@ class UserController extends Controller
         // Validate data and set paramters to defaults
         //
         $parameters = $request->validate([
+            /**
+             * Restrict results to users who are currently ATC active.
+             *
+             * @example true
+             */
             'onlyAtcActive' => 'sometimes|boolean',
+            /**
+             * Additional data to include in the response. Allowed values: allUsers, endorsements, roles, training, name, email, divisions, activeAreas.
+             *
+             * @example ["endorsements", "roles", "training"]
+             */
             'include' => 'sometimes|array',
         ]);
 

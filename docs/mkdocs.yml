@@ -180,6 +180,7 @@ plugins:
       alias_type: symlink
       canonical_version: latest
   - search
+  - swagger-ui-tag
   # Exclude files that aren't part of the site
   - exclude:
       glob:

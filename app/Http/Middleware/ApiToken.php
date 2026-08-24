@@ -24,8 +24,10 @@ class ApiToken
 
         if ($key == null || ($args == 'edit' && $key->read_only == true)) {
 
-            // Exception for open routes
-            if ($request->getRequestUri() == '/api/bookings' || $request->getRequestUri() == '/api/positions') {
+            // Exception for open routes. Compare the path only (getPathInfo), so a query
+            // string such as `/api/v1/bookings?date=today` still resolves as a public route.
+            $openRoutes = ['/api/bookings', '/api/positions', '/api/v1/bookings', '/api/v1/positions'];
+            if (in_array($request->getPathInfo(), $openRoutes, true)) {
                 $request->attributes->set('unauthenticated', true);
 
                 return $next($request);

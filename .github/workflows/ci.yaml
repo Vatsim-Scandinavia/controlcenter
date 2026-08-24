@@ -117,6 +117,13 @@ jobs:
         env:
           DB_CONNECTION: sqlite-testing
 
+      - name: Verify committed OpenAPI spec is up to date
+        if: always() && matrix.php-version == '8.5'
+        working-directory: ./controlcenter
+        run: |
+          php artisan scramble:export --path=docs/api-v1.json
+          git diff --exit-code -- docs/api-v1.json
+
   # Combine the per-platform digests into one multi-arch manifest list and tag
   # it. Gated on the test suite so a broken build never gets published.
   merge:
