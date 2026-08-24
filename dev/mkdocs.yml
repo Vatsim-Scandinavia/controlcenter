@@ -69,7 +69,7 @@ repo_name: vatsim-scandinavia/controlcenter
 repo_url: https://github.com/vatsim-scandinavia/controlcenter
 
 # Where do we publish the docs to?
-site_url: https://docs.vatsim-scandinavia.org/controlcenter/
+site_url: https://docs.vatsca.org/controlcenter/
 
 # The URL we'll append to the repo_url to give edit links.
 edit_uri: edit/main/docs/
