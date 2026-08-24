@@ -26,7 +26,9 @@ class BookingController extends Controller
     }*/
 
     /**
-     * Display a listing of the resource.
+     * List bookings.
+     *
+     * Returns a reduced payload when the request is unauthenticated.
      *
      * @return Response
      */
@@ -44,19 +46,67 @@ class BookingController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a booking.
+     *
+     * Validates CID, date, start/end time, position, and optional tag, then persists a
+     * new booking, forcing a training tag when the controller or position rating requires it.
      *
      * @return Response
      */
+    #[\Dedoc\Scramble\Attributes\Response(
+        status: 200,
+        description: 'The booking was created. `tag` is only present when a training tag was forced.',
+        type: 'array{success: string, booking: array{id: int, source: string, vatsim_booking: int|null, callsign: string, position_id: int, name: string, time_start: string, time_end: string, user_id: int, training: int, event: int, exam: int, deleted: int, created_at: string, updated_at: string}, tag?: string}',
+    )]
+    #[\Dedoc\Scramble\Attributes\Response(
+        status: 400,
+        description: 'The booking could not be created — for example the start and end time are equal, the start time is in the past, or it overlaps an existing booking.',
+        type: 'array{message: string}',
+    )]
     public function store(Request $request)
     {
         $data = $request->validate([
+            /**
+             * The VATSIM CID (user ID) to create the booking for.
+             *
+             * @example 10000001
+             */
             'cid' => 'required|integer',
+            /**
+             * The booking date, in `d/m/Y` format.
+             *
+             * @example 15/02/2024
+             */
             'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            /**
+             * The booking start time, in 24-hour `H:i` format.
+             *
+             * @example 12:00
+             */
             'start_at' => 'required|date_format:H:i',
+            /**
+             * The booking end time, in 24-hour `H:i` format.
+             *
+             * @example 13:00
+             */
             'end_at' => 'required|date_format:H:i',
+            /**
+             * The callsign of the position to book.
+             *
+             * @example EKCH_TWR
+             */
             'position' => 'required|exists:positions,callsign',
+            /**
+             * The booking type: `1` for training, `2` for exam, `3` for event.
+             *
+             * @example 1
+             */
             'tag' => 'nullable|integer|between:1,3',
+            /**
+             * The booking source; use `CC` for Control Center bookings.
+             *
+             * @example CC
+             */
             'source' => 'required',
         ]);
 
@@ -186,7 +236,7 @@ class BookingController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display a single booking.
      *
      * @return Response
      */
@@ -218,18 +268,51 @@ class BookingController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update an existing booking.
+     *
+     * Revalidates CID, date, start/end time, position, and optional tag, re-checks for
+     * overlapping bookings, and re-evaluates whether a training tag must be forced.
      *
      * @return Response
      */
     public function update(Request $request, Booking $booking)
     {
         $data = $request->validate([
+            /**
+             * The VATSIM CID (user ID) the booking belongs to.
+             *
+             * @example 10000001
+             */
             'cid' => 'required|integer',
+            /**
+             * The booking date, in `d/m/Y` format.
+             *
+             * @example 15/02/2024
+             */
             'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            /**
+             * The booking start time, in 24-hour `H:i` format.
+             *
+             * @example 12:00
+             */
             'start_at' => 'required|date_format:H:i',
+            /**
+             * The booking end time, in 24-hour `H:i` format.
+             *
+             * @example 13:00
+             */
             'end_at' => 'required|date_format:H:i',
+            /**
+             * The callsign of the position to book.
+             *
+             * @example EKCH_TWR
+             */
             'position' => 'required|exists:positions,callsign',
+            /**
+             * The booking type: `1` for training, `2` for exam, `3` for event.
+             *
+             * @example 1
+             */
             'tag' => 'nullable|integer|between:1,3',
         ]);
 
@@ -356,7 +439,9 @@ class BookingController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a booking.
+     *
+     * Soft-deletes the booking and cancels the corresponding VATSIM booking.
      *
      * @return Response
      */

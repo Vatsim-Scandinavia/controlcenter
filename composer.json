@@ -10,6 +10,7 @@
     "require": {
         "php": ">=8.4 <8.6",
         "anlutro/l4-settings": "^1.4.1",
+        "dedoc/scramble": "^0.13.42",
         "graham-campbell/markdown": "^16.0",
         "guzzlehttp/guzzle": "^7.9.0",
         "hisorange/browser-detect": "^5.0",
@@ -87,6 +88,7 @@
         ],
         "ide-helper": [
             "@php artisan ide-helper:generate"
-        ]
+        ],
+        "api-docs": "@php artisan scramble:export --path=docs/api-v1.json"
     }
 }

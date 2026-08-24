@@ -58,5 +58,10 @@ run = "npm run build"
 depends = ["deps:npm"]
 sources = ["package.json"]
 
+[tasks."docs:api"]
+description = "Export the OpenAPI (Swagger) spec for the API"
+run = "composer api-docs"
+depends = ["deps:composer"]
+
 [tools]
 pdm = "2.28.1"
