@@ -15,6 +15,7 @@ dependencies = [
     "mkdocs-exclude>=1.0.2",
     "mkdocs-git-revision-date-localized-plugin>=1.2.2",
     "mkdocs-git-committers-plugin-2>=2.2.2",
+    "mkdocs-swagger-ui-tag>=0.8.1",
 ]
 
 [tool.pdm]
