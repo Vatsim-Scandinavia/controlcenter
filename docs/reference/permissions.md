@@ -46,9 +46,24 @@ Patterns support dot-wildcards:
 - `**` matches one or more segments — `training.**` covers `training.view` and `training.reports.view`.
 - A leading `!` negates a pattern; deny always wins. This is how `director` gets everything except `system.**`.
 
-A permission granted by no role, or absent from the catalogue, grants nothing — `admin` included. The "administrators can do anything" behaviour remains a per-policy `before` hook, not a property of the matrix.
+A permission granted by no role, or absent from the catalogue, grants nothing — `admin` included. The "administrators can do anything" behaviour is a per-policy `before` hook rather than a matrix rule; see [How a check resolves](../concepts/permissions.md#how-a-check-resolves) for what that means.
 
 ## Customising Roles and Permissions
+
+!!! warning "Edit `config/roles.php` with care"
+    This file controls who can do what across the whole application, and there is no
+    safety net in the UI to catch a mistake. A stray pattern can quietly lock people
+    out of an area, or hand out access you never intended. A few things to keep in mind:
+
+    - A permission that is missing from the `permissions` catalogue grants nothing to
+      anyone, `admin` included. Removing an entry is not the same as leaving it in place.
+    - Deleting a role only stops it granting access. Any rows still pointing at it in
+      `role_user` are left behind and grant nothing, so clean them up too.
+    - Changes do not take effect until you clear the config cache (see below).
+
+    Try changes on a staging instance first, keep the file under version control so you
+    can roll back, and double-check you have not removed your own access before you
+    deploy.
 
 `config/roles.php` is the single source of truth.
 

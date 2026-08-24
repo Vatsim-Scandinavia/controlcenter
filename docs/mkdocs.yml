@@ -121,6 +121,7 @@ nav:
           - Positions: concepts/positions.md
           - Feedback: concepts/feedback.md
           - Roles and Permissions: concepts/permissions.md
+          - Managing user access: concepts/managing-access.md
   - Reference:
       - Activity: activity.md
       - Contribute: contribute.md
