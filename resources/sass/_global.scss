@@ -89,6 +89,13 @@ dl.copyable{
             color: var(--color-success);
         }
     }
+
+    @include media-breakpoint-down(lg) {
+        dd button, dd a.link-btn, dt a {
+            visibility: visible;
+            color: var(--color-gray-400);
+        }
+    }
 }
 
 
