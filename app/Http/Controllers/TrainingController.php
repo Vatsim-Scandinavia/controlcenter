@@ -6,14 +6,11 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
-use App\Facades\DivisionApi;
 use App\Helpers\InterestStatus;
 use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
-use App\Models\AtcActivity;
-use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingExamination;
@@ -25,11 +22,11 @@ use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
 use App\Services\ActivityLogService;
+use App\Services\TrainingService;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -540,74 +537,10 @@ class TrainingController extends Controller
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if ($training->status !== $oldStatus) {
             if ($training->status->isClosed()) {
-                // Detach all mentors
-                $training->mentors()->detach();
-
-                // If the training was completed store the relevant endorsements
-                if ($training->status === TrainingStatus::COMPLETED) {
-                    foreach ($training->ratings as $rating) {
-                        if ($rating->vatsim_rating == null) {
-                            // Revoke the old endorsement if active
-                            $oldEndorsement = $training->user->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false);
-                            foreach ($oldEndorsement as $oe) {
-                                foreach ($oe->ratings as $oer) {
-                                    if ($oer->id == $rating->id) {
-                                        $oe->revoked = true;
-                                        $oe->valid_to = now();
-                                        $oe->save();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // All clear, let's start by attemping the insertion to the API
-                            $response = DivisionApi::assignTierEndorsement($training->user, $rating, Auth::id());
-                            if ($response && $response->failed()) {
-                                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                            }
-
-                            // Grant new endorsement
-                            $endorsement = new Endorsement();
-                            $endorsement->user_id = $training->user->id;
-                            $endorsement->type = 'FACILITY';
-                            $endorsement->valid_from = now()->format('Y-m-d H:i:s');
-                            $endorsement->valid_to = null;
-                            $endorsement->issued_by = null;
-                            $endorsement->save();
-
-                            $endorsement->ratings()->save(Rating::find($rating->id));
-                        }
-                    }
+                $error = app(TrainingService::class)->closeTraining($training);
+                if ($error !== null) {
+                    return back()->withErrors($error);
                 }
-
-                // If training is completed, let's set the user to active
-                if ($training->status === TrainingStatus::COMPLETED) {
-                    // atcActivityBasedOnTotalHours is false OR true and type is not familiarisation
-                    if (! Setting::get('atcActivityBasedOnTotalHours') || Setting::get('atcActivityBasedOnTotalHours') && $training->type <= 4) {
-
-                        // Apply activity only if user belongs to accepted divisions.
-                        // Visitors should manually be granted visitor endorsement, hence not covered here.
-                        if ($this->isUserInDivision($training->user)) {
-
-                            try {
-                                $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
-                                $activity->atc_active = true;
-                                $activity->start_of_grace_period = now();
-                                $activity->save();
-                            } catch (ModelNotFoundException $e) {
-                                AtcActivity::create([
-                                    'user_id' => $training->user->id,
-                                    'area_id' => $training->area->id,
-                                    'hours' => 0,
-                                    'atc_active' => true,
-                                    'start_of_grace_period' => now(),
-                                ]);
-                            }
-                        }
-                    }
-                }
-
-                $training->user->notify(new TrainingClosedNotification($training, $training->status, $training->closed_reason));
 
                 return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
             }
@@ -768,20 +701,6 @@ class TrainingController extends Controller
         }
 
         return ['success' => true];
-    }
-
-    /**
-     * Check if the user is from the same division as the training request
-     *
-     * @return bool
-     */
-    protected function isUserInDivision($user)
-    {
-        if (config('app.mode') === 'subdivision') {
-            return in_array($user->subdivision, array_map('trim', explode(',', Setting::get('trainingSubDivisions'))));
-        }
-
-        return $user->division === config('app.owner_code');
     }
 
     /**
