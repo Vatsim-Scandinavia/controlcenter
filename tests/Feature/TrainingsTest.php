@@ -3,17 +3,23 @@
 namespace Tests\Feature;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Facades\DivisionApi;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
+use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
+use App\Notifications\TrainingClosedNotification;
 use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingMentorNotification;
+use App\Services\TrainingService;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
@@ -45,14 +51,67 @@ class TrainingsTest extends TestCase
     }
 
     /**
-     * Create a user with moderator rights in the training's area.
+     * Create a user with moderator rights in the default training's area.
      */
     private function makeModerator(): User
     {
+        return $this->moderatorFor($this->training);
+    }
+
+    /**
+     * Create a user with moderator rights in the given training's area.
+     */
+    private function moderatorFor(Training $training): User
+    {
         $moderator = User::factory()->create();
-        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $this->training->area->id]);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $training->area->id]);
 
         return $moderator;
+    }
+
+    /**
+     * An open training (ACTIVE_TRAINING) in area 1, type 1, whose student is inside the division.
+     */
+    private function openTrainingInDivision(): Training
+    {
+        Setting::set('trainingSubDivisions', 'SCA');
+
+        $student = User::factory()->create([
+            'division' => config('app.owner_code'),
+            'subdivision' => 'SCA',
+        ]);
+
+        return Training::factory()->create([
+            'user_id' => $student->id,
+            'area_id' => 1,
+            'type' => 1,
+            'status' => TrainingStatus::ACTIVE_TRAINING->value,
+        ]);
+    }
+
+    /**
+     * Attach a fresh facility rating (no VATSIM rating) to the training.
+     */
+    private function attachFacilityRating(Training $training): Rating
+    {
+        $rating = Rating::factory()->create(['vatsim_rating' => null]);
+        $training->ratings()->attach($rating->id);
+
+        return $rating;
+    }
+
+    /**
+     * An existing active FACILITY endorsement for $rating, which completion should revoke.
+     */
+    private function priorFacilityEndorsement(Training $training, Rating $rating): Endorsement
+    {
+        $endorsement = Endorsement::factory()->create([
+            'user_id' => $training->user->id,
+            'type' => 'FACILITY',
+        ]);
+        $endorsement->ratings()->attach($rating->id);
+
+        return $endorsement;
     }
 
     #[Test]
@@ -519,5 +578,273 @@ class TrainingsTest extends TestCase
             ->assertRedirect();
 
         $this->assertEquals('Discussed holding patterns and missed approaches', $activity->fresh()->comment);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Completion / closure side-effects (TrainingController::updateDetails,
+    | delegated to App\Services\TrainingService)
+    |--------------------------------------------------------------------------
+    */
+
+    #[Test]
+    public function completing_a_training_grants_a_facility_endorsement_and_activates_atc(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $rating = $this->attachFacilityRating($training);
+        $oldEndorsement = $this->priorFacilityEndorsement($training, $rating);
+
+        DivisionApi::shouldReceive('assignTierEndorsement')->once()->andReturn(false);
+
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($training->path());
+
+        $this->assertTrue((bool) $oldEndorsement->fresh()->revoked);
+
+        $new = Endorsement::where('user_id', $training->user->id)
+            ->where('revoked', false)
+            ->where('id', '!=', $oldEndorsement->id)
+            ->get();
+        $this->assertCount(1, $new);
+        $this->assertTrue($new->first()->ratings->contains($rating->id));
+
+        $this->assertTrue(
+            AtcActivity::where('user_id', $training->user->id)
+                ->where('area_id', $training->area->id)
+                ->where('atc_active', true)
+                ->exists()
+        );
+
+        Notification::assertSentToTimes($training->user, TrainingClosedNotification::class, 1);
+    }
+
+    #[Test]
+    public function completing_a_vatsim_only_training_activates_atc_without_an_endorsement(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $training->ratings()->attach(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value])->id);
+
+        // VATSIM ratings are Core-side upgrades, not facility endorsements: no API call.
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($training->path());
+
+        $this->assertSame(0, Endorsement::where('user_id', $training->user->id)->count());
+        $this->assertTrue(
+            AtcActivity::where('user_id', $training->user->id)
+                ->where('area_id', $training->area->id)
+                ->where('atc_active', true)
+                ->exists()
+        );
+        Notification::assertSentToTimes($training->user, TrainingClosedNotification::class, 1);
+    }
+
+    #[Test]
+    public function atc_activation_respects_the_total_hours_gate_for_familiarisation(): void
+    {
+        Notification::fake();
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        // When activity is hours-based, familiarisations (type > 4) are excluded from
+        // automatic ATC activation; with the setting off, every type activates.
+        Setting::set('atcActivityBasedOnTotalHours', true);
+        $gated = $this->openTrainingInDivision();
+        $gated->update(['type' => 5]);
+        $gated->ratings()->attach(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value])->id);
+
+        $this->actingAs($this->moderatorFor($gated))
+            ->patch(route('training.update.details', $gated), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($gated->path());
+
+        $this->assertFalse(
+            AtcActivity::where('user_id', $gated->user->id)
+                ->where('area_id', $gated->area->id)
+                ->where('atc_active', true)
+                ->exists()
+        );
+
+        Setting::set('atcActivityBasedOnTotalHours', false);
+        $ungated = $this->openTrainingInDivision();
+        $ungated->update(['type' => 5]);
+        $ungated->ratings()->attach(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value])->id);
+
+        $this->actingAs($this->moderatorFor($ungated))
+            ->patch(route('training.update.details', $ungated), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($ungated->path());
+
+        $this->assertTrue(
+            AtcActivity::where('user_id', $ungated->user->id)
+                ->where('area_id', $ungated->area->id)
+                ->where('atc_active', true)
+                ->exists()
+        );
+    }
+
+    #[Test]
+    public function completing_a_training_for_a_user_outside_the_division_skips_atc_activation(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+        Setting::set('trainingSubDivisions', 'SCA');
+
+        // Both fields mismatched so the user is out-of-division regardless of app.mode
+        // (subdivision mode checks subdivision; division mode checks division vs owner_code).
+        $student = User::factory()->create(['division' => 'XXX', 'subdivision' => 'XXX']);
+        $training = Training::factory()->create([
+            'user_id' => $student->id,
+            'area_id' => 1,
+            'type' => 1,
+            'status' => TrainingStatus::ACTIVE_TRAINING->value,
+        ]);
+        $training->ratings()->attach(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value])->id);
+
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($training->path());
+
+        $this->assertSame(0, AtcActivity::where('user_id', $student->id)->count());
+    }
+
+    #[Test]
+    public function a_division_api_failure_when_completing_redirects_back_without_notifying(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $rating = $this->attachFacilityRating($training);
+        $oldEndorsement = $this->priorFacilityEndorsement($training, $rating);
+
+        $failed = new ClientResponse(new GuzzleResponse(422, [], json_encode(['message' => 'nope'])));
+        DivisionApi::shouldReceive('assignTierEndorsement')->once()->andReturn($failed);
+        DivisionApi::shouldReceive('getName')->andReturn('VATEUD');
+
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect() // back(), not the training path
+            ->assertSessionHasErrors();
+
+        // The grant runs after the API call, so a failure leaves no new endorsement...
+        $this->assertSame(1, Endorsement::where('user_id', $training->user->id)->count());
+        // ...but the old one was already revoked before the call. That partial state is
+        // one the controller has always produced, pinned here so a refactor can't silently change it.
+        $this->assertTrue((bool) $oldEndorsement->fresh()->revoked);
+        Notification::assertNotSentTo($training->user, TrainingClosedNotification::class);
+    }
+
+    #[Test]
+    public function closing_a_training_without_completion_detaches_mentors_and_notifies(): void
+    {
+        Notification::fake();
+
+        $training = $this->openTrainingInDivision();
+        $this->attachFacilityRating($training);
+
+        $mentor = User::factory()->create();
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area->id]);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        // Send the mentor back so mentor-sync keeps them: the close path itself must be
+        // what detaches them, not the "no mentors key = detach all" fallback.
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), [
+                'status' => TrainingStatus::CLOSED_BY_STAFF->value,
+                'closed_reason' => 'Test reason',
+                'mentors' => [$mentor->id],
+            ])
+            ->assertRedirect($training->path());
+
+        $this->assertTrue($training->fresh()->mentors->isEmpty());
+        $this->assertSame(0, Endorsement::where('user_id', $training->user->id)->count());
+        $this->assertFalse(AtcActivity::where('user_id', $training->user->id)->where('atc_active', true)->exists());
+        Notification::assertSentToTimes($training->user, TrainingClosedNotification::class, 1);
+    }
+
+    #[Test]
+    public function re_saving_an_already_completed_training_unchanged_fires_no_side_effects(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $training->update(['status' => TrainingStatus::COMPLETED->value]);
+        $rating = $this->attachFacilityRating($training);
+        $oldEndorsement = $this->priorFacilityEndorsement($training, $rating);
+
+        // Re-saving with the status unchanged must hit the "status changed" guard and
+        // short-circuit. Otherwise a closed training would re-grant endorsements and
+        // re-notify every time its detail form is submitted.
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($training->path());
+
+        $this->assertSame(1, Endorsement::where('user_id', $training->user->id)->count());
+        $this->assertFalse((bool) $oldEndorsement->fresh()->revoked);
+        Notification::assertNotSentTo($training->user, TrainingClosedNotification::class);
+    }
+
+    #[Test]
+    public function close_training_on_an_open_status_notifies_and_detaches_without_completion_work(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision(); // status = ACTIVE_TRAINING
+        $this->attachFacilityRating($training);
+
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        // Called directly (no HTTP path leaves a training open at this point): completion
+        // work is gated on COMPLETED, but the detach + notification run for any status.
+        $error = app(TrainingService::class)->closeTraining($training);
+
+        $this->assertNull($error);
+        $this->assertSame(0, Endorsement::where('user_id', $training->user->id)->count());
+        $this->assertFalse(AtcActivity::where('user_id', $training->user->id)->where('atc_active', true)->exists());
+        Notification::assertSentToTimes($training->user, TrainingClosedNotification::class, 1);
+    }
+
+    #[Test]
+    public function completing_another_training_restarts_the_activity_grace_period(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $training->ratings()->attach(Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value])->id);
+
+        // The student is already half way through a grace period.
+        $activity = AtcActivity::create([
+            'user_id' => $training->user->id,
+            'area_id' => $training->area->id,
+            'hours' => 0,
+            'atc_active' => true,
+            'start_of_grace_period' => now()->subMonths(6),
+        ]);
+
+        DivisionApi::shouldReceive('assignTierEndorsement')->never();
+
+        $this->actingAs($this->moderatorFor($training))
+            ->patch(route('training.update.details', $training), ['status' => TrainingStatus::COMPLETED->value])
+            ->assertRedirect($training->path());
+
+        // Deliberate: finishing another training earns a fresh window rather than
+        // running out the one already in progress.
+        $this->assertTrue($activity->fresh()->start_of_grace_period->greaterThan(now()->subMinute()));
     }
 }
