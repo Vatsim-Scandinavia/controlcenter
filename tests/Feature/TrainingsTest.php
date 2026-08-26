@@ -205,7 +205,8 @@ class TrainingsTest extends TestCase
         $this->actingAs($moderator)->get($combinedTraining->path())
             ->assertSeeText('Rating Upgrade')
             ->assertSeeText('Theoretical Exam Access')
-            ->assertSee('for <b>TST-S2</b> rating', false);
+            ->assertSee('for <b>TST-S2</b> rating', false)
+            ->assertSeeText('TST-S2 + TST-MAE');
     }
 
     #[Test]
