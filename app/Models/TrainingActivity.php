@@ -31,6 +31,15 @@ class TrainingActivity extends Model
     }
 
     /**
+     * The rating a RATING entry signed off. Shares new_data with endorsement(),
+     * so it is only meaningful on entries of that type.
+     */
+    public function rating()
+    {
+        return $this->belongsTo(Rating::class, 'new_data');
+    }
+
+    /**
      * The date this entry should be sorted and displayed by in activity feeds.
      */
     public function getActivityDateAttribute()

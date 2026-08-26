@@ -5,6 +5,7 @@ namespace App\Services;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Helpers\TrainingStatus;
+use App\Http\Controllers\TrainingActivityController;
 use App\Models\AtcActivity;
 use App\Models\Endorsement;
 use App\Models\Rating;
@@ -67,10 +68,102 @@ class TrainingService
     }
 
     /**
+     * Complete a single VATSIM rating part of a multi-rating training.
+     *
+     * Stamps the part, activates ATC for the training area, and logs it on the training
+     * timeline. When it stamps the last outstanding part, the training is completed and
+     * closed through closeTraining(), so this and the full-completion flow send exactly
+     * one TrainingClosedNotification each.
+     *
+     * Facility ratings are never completable individually: they are granted by full
+     * completion, which calls the Division API for the tier endorsement.
+     *
+     * Returns an error string for the caller to flash, or null on success.
+     */
+    public function completeRatingPart(Training $training, Rating $rating): ?string
+    {
+        if (! $training->status->isInProgress()) {
+            return 'Only a training in progress can have a part completed.';
+        }
+
+        if ($training->ratings->count() < 2) {
+            return 'A single-rating training is completed by setting its status to Completed.';
+        }
+
+        if (! $training->ratings->contains($rating->id)) {
+            return $rating->name . ' is not part of this training.';
+        }
+
+        if ($rating->vatsim_rating === null) {
+            return $rating->name . ' is granted when the whole training is completed, not part by part.';
+        }
+
+        if ($this->ratingPartIsCompleted($training, $rating)) {
+            return 'The ' . $rating->name . ' part is already completed.';
+        }
+
+        $this->stampRatingCompleted($training, $rating);
+        $this->activateAtcForTraining($training);
+
+        // A RATING entry rather than a COMMENT: TrainingActivityPolicy hides COMMENT from
+        // the student, and the timeline renders COMMENT with an author edit button. A part
+        // sign-off is neither private nor editable, and holding the rating id keeps the
+        // entry readable after a rating is renamed.
+        TrainingActivityController::create($training->id, 'RATING', $rating->id, null, Auth::id());
+
+        // Load-bearing: the outstanding check below reads the pivots we just wrote.
+        $training->load('ratings');
+
+        if ($training->outstandingRatings()->isNotEmpty()) {
+            return null;
+        }
+
+        // Every part is done and all are VATSIM ratings, so finish the training.
+        return $this->completeWholeTraining($training);
+    }
+
+    /**
+     * Complete a whole training and close it.
+     *
+     * Reached from completeRatingPart() once the last outstanding part is stamped.
+     * closeTraining() grants every rating its endorsement, so a training can end with one
+     * endorsement or several.
+     *
+     * Returns an error string for the caller to flash, or null on success.
+     */
+    private function completeWholeTraining(Training $training): ?string
+    {
+        if (! $training->status->isInProgress()) {
+            return 'Only a training in progress can be completed.';
+        }
+
+        $oldStatus = $training->status;
+        $training->updateStatus(TrainingStatus::COMPLETED);
+        TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::COMPLETED->value, $oldStatus->value, Auth::id());
+
+        return $this->closeTraining($training);
+    }
+
+    /**
+     * Whether this rating part of the training has already been completed.
+     */
+    private function ratingPartIsCompleted(Training $training, Rating $rating): bool
+    {
+        return $training->ratings()
+            ->wherePivotNotNull('completed_at')
+            ->wherePivot('rating_id', $rating->id)
+            ->exists();
+    }
+
+    /**
      * Run the completion work for a training: per-rating endorsements, then ATC activation.
      */
     public function completeTraining(Training $training): ?string
     {
+        // Deliberately unfiltered: a VATSIM part stamped earlier by completeRatingPart()
+        // re-runs completeRating() as a no-op (stampRatingCompleted() keeps the first
+        // stamp), but a facility part must re-run so a reopened and re-completed
+        // training still revokes the old endorsement and grants a fresh one.
         foreach ($training->ratings as $rating) {
             $error = $this->completeRating($training, $rating);
             if ($error !== null) {
@@ -86,11 +179,13 @@ class TrainingService
     /**
      * Apply one rating's completion effect. Facility ratings (vatsim_rating null)
      * revoke the prior endorsement, call the Division API, and grant a fresh
-     * endorsement; VATSIM ratings are a no-op.
+     * endorsement; VATSIM ratings only get stamped.
      */
     public function completeRating(Training $training, Rating $rating): ?string
     {
         if ($rating->vatsim_rating != null) {
+            $this->stampRatingCompleted($training, $rating);
+
             return null;
         }
 
@@ -124,7 +219,30 @@ class TrainingService
 
         $endorsement->ratings()->save(Rating::find($rating->id));
 
+        // Stamped last, and only on success, so a failed call leaves the part outstanding
+        // for a retry. The stamp records the grant; completeTraining() re-runs stamped
+        // parts deliberately.
+        $this->stampRatingCompleted($training, $rating);
+
         return null;
+    }
+
+    /**
+     * Mark one rating part of the training as completed.
+     *
+     * Keeps the first stamp: a part is completed once, and re-running completion must
+     * not move its date.
+     */
+    private function stampRatingCompleted(Training $training, Rating $rating): void
+    {
+        $outstanding = $training->ratings()
+            ->wherePivotNull('completed_at')
+            ->wherePivot('rating_id', $rating->id)
+            ->exists();
+
+        if ($outstanding) {
+            $training->ratings()->updateExistingPivot($rating->id, ['completed_at' => now()]);
+        }
     }
 
     /**

@@ -8,10 +8,12 @@ use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use App\Helpers\InterestStatus;
 use App\Helpers\LogName;
+use App\Helpers\TaskStatus;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\Rating;
+use App\Models\Task;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingInterest;
@@ -23,6 +25,7 @@ use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
 use App\Services\ActivityLogService;
 use App\Services\TrainingService;
+use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -338,7 +341,11 @@ class TrainingController extends Controller
         $trainingMentors = $training->area->mentors->sortBy('name');
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
-        $activities = $training->activities->sortByDesc('created_at');
+        // Entries written in the same request share a created_at, since training_activity
+        // only keeps second precision. Tie-breaking on id keeps the newest entry on top,
+        // so a status change lands above the part-completion comment that triggered it
+        // instead of in whatever order the query happened to return.
+        $activities = $training->activities->sortBy([['created_at', 'desc'], ['id', 'desc']]);
 
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at', 'DESC')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();
@@ -348,7 +355,50 @@ class TrainingController extends Controller
         $requestTypes = TaskController::getTypes();
         $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees'));
+        // Shares its rule with TrainingService::completeRatingPart(), so the control and
+        // the sign-off always agree on what is left.
+        $outstandingRatings = $training->outstandingRatings();
+
+        // Signing off a part is offered on multi-rating trainings in progress only: a
+        // single-rating training keeps the status -> Completed flow.
+        $multiRatingInProgress = $training->status->isInProgress() && $training->ratings->count() > 1;
+
+        // The next part staff can sign off: the lowest outstanding VATSIM rating, because a
+        // student earns S1 before S2. Facility and tier ratings are never signed off on
+        // their own, they are granted when the training is completed as a whole.
+        $completablePart = $multiRatingInProgress
+            ? $outstandingRatings
+                ->whereNotNull('vatsim_rating')
+                ->sortBy(fn (Rating $rating) => $rating->vatsim_rating->value)
+                ->first()
+            : null;
+
+        // Only a part that can actually be signed off gets a control. A training whose
+        // outstanding ratings are all facility or tier ones is finished through its status.
+        $showCompletionControl = $completablePart !== null;
+
+        // What stays outstanding once that part is signed off, so the modal can name it.
+        $otherOutstandingRatings = $outstandingRatings->filter(fn (Rating $rating) => $rating->id !== $completablePart?->id);
+
+        // With nothing else outstanding, signing off the part would finish the whole
+        // training, which is not a partial completion. The control is shown but disabled.
+        $canCompletePartially = $otherOutstandingRatings->isNotEmpty();
+
+        // Whether the rating upgrade for that part was already requested, so the modal can
+        // warn when it was not. Mirrors how RatingUpgrade picks its target rating.
+        $upgradeRequestedForPart = $completablePart !== null && $training->tasks->contains(function (Task $task) use ($training, $completablePart) {
+            if ($task->type !== RatingUpgrade::class || $task->status !== TaskStatus::COMPLETED) {
+                return false;
+            }
+
+            if ($task->subject_training_rating_id !== null) {
+                return (int) $task->subject_training_rating_id === $completablePart->id;
+            }
+
+            return $training->getHighestVatsimRating()?->id === $completablePart->id;
+        });
+
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'otherOutstandingRatings', 'canCompletePartially', 'upgradeRequestedForPart'));
     }
 
     /**
@@ -405,6 +455,18 @@ class TrainingController extends Controller
 
         // Save the ratings
         $training->ratings()->saveMany($ratings);
+
+        // The detach above dropped the per-rating completion stamps. Put them back for the
+        // ratings that survived the edit: a part that was signed off stays signed off.
+        $completedAt = $preChangeRatings
+            ->mapWithKeys(fn (Rating $rating) => [$rating->id => $rating->pivot->completed_at])
+            ->filter();
+
+        foreach ($ratings as $rating) {
+            if ($completedAt->has($rating->id)) {
+                $training->ratings()->updateExistingPivot($rating->id, ['completed_at' => $completedAt->get($rating->id)]);
+            }
+        }
 
         // Save the rest
         $training->type = $attributes['type'];
@@ -605,6 +667,25 @@ class TrainingController extends Controller
         TrainingActivityController::create($training->id, 'PRETRAINING', $newState, $oldState, Auth::id());
 
         return redirect($training->path())->withSuccess('Pre-training marked as ' . ($newState ? 'completed' : 'not completed'));
+    }
+
+    /**
+     * Complete a single VATSIM rating part of a multi-rating training.
+     *
+     * @throws AuthorizationException
+     */
+    public function completePart(Training $training, Rating $rating): RedirectResponse
+    {
+        $this->authorize('update', $training);
+
+        $error = app(TrainingService::class)->completeRatingPart($training, $rating);
+        if ($error !== null) {
+            return back()->withErrors($error);
+        }
+
+        ActivityLogService::warning(LogName::Training, 'Completed the ' . $rating->name . ' part of training ' . $training->id . ' for CID ' . $training->user_id);
+
+        return back()->withSuccess('Completed the ' . $rating->name . ' part.');
     }
 
     /**

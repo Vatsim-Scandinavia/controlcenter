@@ -163,7 +163,7 @@ class ReportController extends Controller
 
         $this->authorize('accessActivityReports', [ManagementReport::class, $filterArea]);
 
-        $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement')
+        $activities = TrainingActivity::with('training', 'training.ratings', 'training.user', 'user', 'endorsement', 'rating')
             ->when($filterArea, function (Builder $query, $filterArea) {
                 $query->whereHas('training', fn (Builder $q) => $q->where('area_id', $filterArea));
             })
