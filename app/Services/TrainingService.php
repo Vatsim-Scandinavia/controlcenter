@@ -11,6 +11,7 @@ use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
+use App\Services\DivisionApi\DivisionApiError;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 
@@ -109,7 +110,7 @@ class TrainingService
         // All clear, let's start by attemping the insertion to the API
         $response = DivisionApi::assignTierEndorsement($training->user, $rating, Auth::id());
         if ($response && $response->failed()) {
-            return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
+            return DivisionApiError::message($response);
         }
 
         // Grant new endorsement

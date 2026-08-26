@@ -7,6 +7,7 @@ use App\Facades\DivisionApi;
 use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\User;
+use App\Services\DivisionApi\DivisionApiError;
 use Illuminate\Console\Command;
 
 class SyncEndorsements extends Command
@@ -105,7 +106,7 @@ class SyncEndorsements extends Command
                             if (! $dryRun) {
                                 $response = DivisionApi::assignTierEndorsement(User::find($storedEndorsement->user_id), $rating, $addEndorsementsAsUser);
                                 if ($response->failed()) {
-                                    $this->error('Failed to add endorsement for ' . $storedEndorsement->user_id . ' to Division API: ' . $response->json()['message']);
+                                    $this->error('Failed to add endorsement for ' . $storedEndorsement->user_id . ' to Division API: ' . DivisionApiError::detail($response));
                                 }
                             }
                         }
@@ -121,7 +122,7 @@ class SyncEndorsements extends Command
                         if (! $dryRun) {
                             $response = DivisionApi::revokeTierEndorsement($tier, $apiEndorsement['user_cid'], $apiEndorsement['position']);
                             if ($response->failed()) {
-                                $this->error('Failed to remove endorsement for ' . $apiEndorsement['user_cid'] . ' from Division API: ' . $response->json()['message']);
+                                $this->error('Failed to remove endorsement for ' . $apiEndorsement['user_cid'] . ' from Division API: ' . DivisionApiError::detail($response));
                             }
                         }
                     }

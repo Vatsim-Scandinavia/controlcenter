@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Notifications\MentorExaminationNotification;
 use App\Notifications\TrainingExamNotification;
 use App\Services\ActivityLogService;
+use App\Services\DivisionApi\DivisionApiError;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -74,7 +75,7 @@ class TrainingExaminationController extends Controller
             foreach ($request->file('files') as $file) {
                 $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
                 if ($response && $response->failed()) {
-                    return redirect()->back()->withErrors('Please try uploading the examination again. Failed to upload exam results to the Division API: ' . $response->json()['message']);
+                    return redirect()->back()->withErrors('Please try uploading the examination again. Failed to upload exam results to the Division API: ' . DivisionApiError::detail($response));
                 }
             }
         }

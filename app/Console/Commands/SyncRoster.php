@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Models\User;
+use App\Services\DivisionApi\DivisionApiError;
 use Illuminate\Console\Command;
 
 class SyncRoster extends Command
@@ -56,7 +57,7 @@ class SyncRoster extends Command
                     if ($response->successful()) {
                         $this->info('Added member ' . $memberId . ' to roster.');
                     } else {
-                        $this->error('Failed to add member ' . $memberId . ' to roster: ' . $response->json()['message']);
+                        $this->error('Failed to add member ' . $memberId . ' to roster: ' . DivisionApiError::detail($response));
                     }
                 });
 
@@ -68,14 +69,14 @@ class SyncRoster extends Command
                     if ($response->successful()) {
                         $this->info('Removed member ' . $memberId . ' from roster.');
                     } else {
-                        $this->error('Failed to remove member ' . $memberId . ' from roster: ' . $response->json()['message']);
+                        $this->error('Failed to remove member ' . $memberId . ' from roster: ' . DivisionApiError::detail($response));
                     }
                 });
 
                 $this->info('Syncing roster with Division API completed.');
             }
         } else {
-            $this->error('Failed to sync roster with Division API: ' . $rosterResponse->json()['message']);
+            $this->error('Failed to sync roster with Division API: ' . DivisionApiError::detail($rosterResponse));
         }
 
     }

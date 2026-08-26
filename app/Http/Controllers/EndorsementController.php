@@ -14,6 +14,7 @@ use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
 use App\Services\ActivityLogService;
+use App\Services\DivisionApi\DivisionApiError;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -136,7 +137,7 @@ class EndorsementController extends Controller
             $rating = Rating::find($data['ratingFACILITY']);
             $response = DivisionApi::assignTierEndorsement($user, $rating, Auth::id());
             if ($response && $response->failed()) {
-                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                return back()->withErrors(DivisionApiError::message($response));
             }
 
             // All clear, create endorsement
@@ -199,7 +200,7 @@ class EndorsementController extends Controller
             // All clear, call the API to create the endorsement
             $response = DivisionApi::assignSoloEndorsement($user, $position, Auth::id(), $expireDate);
             if ($response && $response->failed()) {
-                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                return back()->withErrors(DivisionApiError::message($response));
             }
 
             // All clear, create endorsement
@@ -241,7 +242,7 @@ class EndorsementController extends Controller
             $rating = Rating::find($data['ratingGRP']);
             $response = DivisionApi::assignExaminer($user, $rating, Auth::id());
             if ($response && $response->failed()) {
-                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                return back()->withErrors(DivisionApiError::message($response));
             }
 
             // All clear, create endorsement
@@ -309,19 +310,19 @@ class EndorsementController extends Controller
         if ($endorsement->type == 'EXAMINER') {
             $response = DivisionApi::removeExaminer($user, $endorsement, Auth::id());
             if ($response && $response->failed()) {
-                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                return back()->withErrors(DivisionApiError::message($response));
             }
         } elseif ($endorsement->type == 'FACILITY') {
             if (isset($endorsement->ratings->first()->endorsement_type)) {
                 $response = DivisionApi::revokeTierEndorsement($endorsement->ratings->first()->endorsement_type, $endorsement->user->id, $endorsement->ratings->first()->name);
                 if ($response && $response->failed()) {
-                    return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                    return back()->withErrors(DivisionApiError::message($response));
                 }
             }
         } elseif ($endorsement->type == 'SOLO') {
             $response = DivisionApi::revokeSoloEndorsement($endorsement);
             if ($response && $response->failed()) {
-                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+                return back()->withErrors(DivisionApiError::message($response));
             }
         }
 
@@ -362,7 +363,7 @@ class EndorsementController extends Controller
         // Push updated date to API
         $response = DivisionApi::assignSoloEndorsement($endorsement->user, $endorsement->positions->first(), Auth::id(), $date);
         if ($response && $response->failed()) {
-            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
+            return back()->withErrors(DivisionApiError::message($response));
         }
 
         // Save new date
