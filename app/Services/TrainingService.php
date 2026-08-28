@@ -125,13 +125,13 @@ class TrainingService
     /**
      * Complete a whole training and close it.
      *
-     * Reached from completeRatingPart() once the last outstanding part is stamped.
-     * closeTraining() grants every rating its endorsement, so a training can end with one
-     * endorsement or several.
+     * This is what finishes a training whose outstanding ratings cannot be signed off part
+     * by part, which is every facility and tier rating. closeTraining() grants each of them
+     * its endorsement, so a training can end with one endorsement or several.
      *
      * Returns an error string for the caller to flash, or null on success.
      */
-    private function completeWholeTraining(Training $training): ?string
+    public function completeWholeTraining(Training $training): ?string
     {
         if (! $training->status->isInProgress()) {
             return 'Only a training in progress can be completed.';

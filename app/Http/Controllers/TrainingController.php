@@ -359,30 +359,35 @@ class TrainingController extends Controller
         // the sign-off always agree on what is left.
         $outstandingRatings = $training->outstandingRatings();
 
-        // Signing off a part is offered on multi-rating trainings in progress only: a
+        // The completion menu is offered on multi-rating trainings in progress only: a
         // single-rating training keeps the status -> Completed flow.
-        $multiRatingInProgress = $training->status->isInProgress() && $training->ratings->count() > 1;
+        $showCompletionControl = $training->status->isInProgress() && $training->ratings->count() > 1;
 
         // The next part staff can sign off: the lowest outstanding VATSIM rating, because a
         // student earns S1 before S2. Facility and tier ratings are never signed off on
         // their own, they are granted when the training is completed as a whole.
-        $completablePart = $multiRatingInProgress
+        $completablePart = $showCompletionControl
             ? $outstandingRatings
                 ->whereNotNull('vatsim_rating')
                 ->sortBy(fn (Rating $rating) => $rating->vatsim_rating->value)
                 ->first()
             : null;
 
-        // Only a part that can actually be signed off gets a control. A training whose
-        // outstanding ratings are all facility or tier ones is finished through its status.
-        $showCompletionControl = $completablePart !== null;
-
-        // What stays outstanding once that part is signed off, so the modal can name it.
+        // What stays outstanding once that part is signed off, so the partial modal can
+        // name it.
         $otherOutstandingRatings = $outstandingRatings->filter(fn (Rating $rating) => $rating->id !== $completablePart?->id);
 
-        // With nothing else outstanding, signing off the part would finish the whole
-        // training, which is not a partial completion. The control is shown but disabled.
-        $canCompletePartially = $otherOutstandingRatings->isNotEmpty();
+        // Signing off a part is only a partial completion while something else stays
+        // outstanding. With nothing else left the part is the training, so the menu drops
+        // the entry and leaves only the whole-training one, which does the same thing and
+        // says so. Marking the whole training as completed is always offered: it is how
+        // staff finish a training whose remaining ratings carry endorsements, and the
+        // escape hatch when a part is not worth signing off on its own.
+        $canCompletePartially = $completablePart !== null && $otherOutstandingRatings->isNotEmpty();
+
+        // The endorsements the whole-training entry would grant, which is every outstanding
+        // rating that is not a VATSIM one.
+        $outstandingEndorsementRatings = $outstandingRatings->whereNull('vatsim_rating');
 
         // Whether the rating upgrade for that part was already requested, so the modal can
         // warn when it was not. Mirrors how RatingUpgrade picks its target rating.
@@ -398,7 +403,7 @@ class TrainingController extends Controller
             return $training->getHighestVatsimRating()?->id === $completablePart->id;
         });
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'otherOutstandingRatings', 'canCompletePartially', 'upgradeRequestedForPart'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart'));
     }
 
     /**
@@ -686,6 +691,26 @@ class TrainingController extends Controller
         ActivityLogService::warning(LogName::Training, 'Completed the ' . $rating->name . ' part of training ' . $training->id . ' for CID ' . $training->user_id);
 
         return back()->withSuccess('Completed the ' . $rating->name . ' part.');
+    }
+
+    /**
+     * Complete a whole training, for the outstanding ratings that cannot be signed off
+     * part by part.
+     *
+     * @throws AuthorizationException
+     */
+    public function complete(Training $training): RedirectResponse
+    {
+        $this->authorize('update', $training);
+
+        $error = app(TrainingService::class)->completeWholeTraining($training);
+        if ($error !== null) {
+            return back()->withErrors($error);
+        }
+
+        ActivityLogService::warning(LogName::Training, 'Completed training ' . $training->id . ' for CID ' . $training->user_id);
+
+        return back()->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
     }
 
     /**

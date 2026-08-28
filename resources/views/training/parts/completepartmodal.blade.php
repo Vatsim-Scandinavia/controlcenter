@@ -1,8 +1,8 @@
-<div class="modal fade" id="completeTraining" tabindex="-1" aria-labelledby="completeTrainingLabel" aria-hidden="true">
+<div class="modal fade" id="completePartialTraining" tabindex="-1" aria-labelledby="completePartialTrainingLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="completeTrainingLabel">Complete partial training</h1>
+                <h1 class="modal-title fs-5" id="completePartialTrainingLabel">Complete partial training</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -15,11 +15,7 @@
                         <i class="fas fa-check"></i> Sign off the <b>{{ $completablePart->name }}</b> part of this training
                     </div>
 
-                    @if($otherOutstandingRatings->isNotEmpty())
-                        <p>The training stays open for {{ $otherOutstandingRatings->pluck('name')->implode(', ') }}.</p>
-                    @else
-                        <p>This is the last outstanding part, so the training is completed and closed.</p>
-                    @endif
+                    <p>The training stays open for {{ $otherOutstandingRatings->pluck('name')->implode(', ') }}.</p>
                     <p>The student is marked active for {{ $training->area->name }}.</p>
 
                     @if(! $upgradeRequestedForPart)

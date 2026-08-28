@@ -58,9 +58,10 @@ See [Roles and Permissions][permissions].
 A training can cover more than one rating, such as S1 + S2.
 Because a student is examined and awarded one rating at a time, you can sign off each rating as the student earns it and leave the training open for the rest.
 
-The **Complete partial training** button appears on the training page when the training is *In Progress* and covers more than one rating.
+The **Complete training** menu appears on the training page when the training is *In Progress* and covers more than one rating.
+It holds **Complete partial training** whenever signing off a rating would still leave something outstanding.
 
-1. Open the training and select **Complete partial training**.
+1. Open the training and select **Complete training**, then **Complete partial training**.
 2. Check the rating shown. Control Center offers the lowest rating still outstanding, because a student earns S1 before S2.
 3. Select **Complete S1**, or whichever rating is named.
 
@@ -70,24 +71,25 @@ Control Center then:
 - Marks the student active for the training's area and starts a fresh [activity grace period][activity]. This follows the same rules as closing a training, so visitors and members outside your division are not affected.
 - Adds an entry to the training timeline naming the rating and you as the author. Unlike a comment, the student sees this one on their own training, and it cannot be edited afterwards.
 
-The training stays *In Progress* for the remaining ratings, and the button offers the next one the next time you open the page.
+The training stays *In Progress* for the remaining ratings, and the menu offers the next one the next time you open the page.
 
 !!! note "Older trainings show no per-rating dates"
     Trainings closed before per-rating sign-off existed show nothing under **Level** but the ratings themselves.
     Only the training's own closing date was recorded then.
 
-### Finish a training
+### Complete a whole training
 
-The control only ever signs off a part while something else stays outstanding.
-When one rating is left, signing it off would finish the whole training, so the control is shown with the part it would sign off but is disabled.
-Close the training by setting its status to *Completed*, which grants any endorsements its ratings carry and emails the student a confirmation.
+**Mark training as completed** is the menu's other entry, and it is always offered.
+Selecting it closes the training, completes every rating still outstanding, grants the endorsements they carry, and emails the student a confirmation.
 
-Facility and tier ratings are never signed off part by part, because their endorsement is granted through the [Division API][vateud] when the training is completed.
-A training with nothing left that can be signed off on its own therefore offers no button.
-Close it by setting the training status to *Completed*.
+Use it when the student has finished everything the training covers, and there is no reason to sign the remaining ratings off one at a time.
+Facility and tier ratings are never signed off part by part, because their endorsement is granted through the [Division API][vateud] when the training is completed as a whole.
+A training whose outstanding ratings are all facility or tier ones therefore offers this entry alone.
 
-A training that covers a single rating has no completion button either.
-Close it the same way, and its rating still gets a completion date under **Level**.
+When one rating is left, signing it off would finish the training anyway, so **Complete partial training** drops out of the menu and this entry names the rating it completes.
+
+A training that covers a single rating has no completion menu.
+Close it by setting the training status to *Completed*, and its rating still gets a completion date under **Level**.
 
 However you get there, a training is closed and the student emailed exactly once.
 
@@ -99,6 +101,7 @@ Every closing status emails the student, but only *Completed* grants the endorse
 ### Rating upgrades and the roster
 
 When you sign off a rating, Control Center warns you if it finds no completed [rating upgrade task][tasks] for it.
+**Mark training as completed** carries a matching warning, naming the VATSIM ratings it signs off with the training rather than part by part.
 The warning is advisory and does not block you:
 
 - Completing the upgrade task first is the normal order, since that is what adds the student to the Division roster.
