@@ -49,6 +49,17 @@ class UserController extends Controller
         //
         // Validate data and set paramters to defaults
         //
+
+        // The `boolean` rule accepts 1/0 only, so normalise the spellings a query string
+        // carries. Unparseable values are left for validation to reject.
+        if ($request->has('onlyAtcActive')) {
+            $normalisedOnlyAtcActive = filter_var($request->input('onlyAtcActive'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+
+            if ($normalisedOnlyAtcActive !== null) {
+                $request->merge(['onlyAtcActive' => $normalisedOnlyAtcActive]);
+            }
+        }
+
         $parameters = $request->validate([
             /**
              * Restrict results to users who are currently ATC active.
@@ -155,6 +166,10 @@ class UserController extends Controller
         if ($paramIncludeRoles) {
             foreach ($returnUsers as $user) {
                 $user->roles = collect();
+
+                // A global assignment has no area_id, so it fits no area bucket.
+                $globalRoles = $user->roleAssignments->whereNull('area_id')->pluck('role');
+                $user->roles['global'] = $globalRoles->count() ? $globalRoles : null;
 
                 foreach (Area::all() as $area) {
                     $areaRoles = $user->roleAssignments->where('area_id', $area->id)->pluck('role');
