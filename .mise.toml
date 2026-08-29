@@ -64,4 +64,4 @@ run = "composer api-docs"
 depends = ["deps:composer"]
 
 [tools]
-pdm = "2.28.1"
+pdm = "2.29.0"
