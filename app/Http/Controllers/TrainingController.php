@@ -344,11 +344,12 @@ class TrainingController extends Controller
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();
 
         $relatedTasks = $training->tasks->sortByDesc('created_at');
+        $trainingSessions = $training->trainingSessions()->with('position')->get();
 
         $requestTypes = TaskController::getTypes();
         $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'trainingSessions', 'requestTypes', 'requestPopularAssignees'));
     }
 
     /**

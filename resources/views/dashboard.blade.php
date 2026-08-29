@@ -156,6 +156,7 @@
                                 <th>Area</th>
                                 <th>State</th>
                                 <th>Last Training</th>
+                                <th>Next Training Session</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -196,6 +197,19 @@
                                         </span>
                                     @else
                                         No registered training yet
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($training->trainingSessions->isNotEmpty())
+                                        @php($nextTrainingSession = $training->trainingSessions->first())
+                                        <span title="{{ \Carbon\Carbon::create($nextTrainingSession->time_start)->toEuropeanDateTime() }}">
+                                            {{ \Carbon\Carbon::create($nextTrainingSession->time_start)->toEuropeanDate(true) }}
+                                            {{ \Carbon\Carbon::create($nextTrainingSession->time_start)->toEuropeanTime() }}
+                                        </span>
+                                        <br>
+                                        <span class="text-muted">{{ $nextTrainingSession->position->callsign }}</span>
+                                    @else
+                                        Not booked
                                     @endif
                                 </td>
                             </tr>
