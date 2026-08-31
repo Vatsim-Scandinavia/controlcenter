@@ -4,8 +4,11 @@ namespace App\Console\Commands;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
+use App\Helpers\TaskStatus;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\DivisionApi\DivisionApiError;
+use App\Tasks\Types\RatingUpgrade;
 use Illuminate\Console\Command;
 
 class SyncRoster extends Command
@@ -23,6 +26,17 @@ class SyncRoster extends Command
      * @var string
      */
     protected $description = 'Sync the roster with Division API';
+
+    /**
+     * How long a requested rating upgrade shields a member from roster removal.
+     *
+     * User.rating is only refreshed by update:member:data (daily 04:00) from the OAuth
+     * provider, so a member whose upgrade Core has already granted can read as OBS here
+     * for up to a day. This window comfortably exceeds that propagation while keeping the
+     * accepted edge case short: a member upgraded and then suspended inside the window
+     * stays on Core until it lapses.
+     */
+    private const UPGRADE_GRACE_DAYS = 30;
 
     /**
      * Execute the console command.
@@ -63,7 +77,18 @@ class SyncRoster extends Command
 
                 // Remove member who are not active anymore
                 $this->info('Removing members from roster...');
-                $removedMembers = $rosteredMembers->diff($activeMembers);
+                // Members whose rating upgrade was recently requested are still waiting for
+                // VATSIM to grant it, so their local rating lags behind the roster. A completed
+                // RatingUpgrade task is that request: requestRatingUpgrade() runs only inside
+                // RatingUpgrade::complete(). Removing them would undo the upgrade we just asked for.
+                $upgradeInProgress = Task::query()
+                    ->where('type', RatingUpgrade::class)
+                    ->where('status', TaskStatus::COMPLETED)
+                    ->where('closed_at', '>=', now()->subDays(self::UPGRADE_GRACE_DAYS))
+                    ->pluck('subject_user_id')
+                    ->unique();
+
+                $removedMembers = $rosteredMembers->diff($activeMembers)->diff($upgradeInProgress);
                 $removedMembers->each(function ($memberId) {
                     $response = DivisionApi::removeRosterUser($memberId);
                     if ($response->successful()) {

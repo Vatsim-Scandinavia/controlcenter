@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Support\LogOptions;
 
 class Training extends Model
@@ -211,10 +212,29 @@ class Training extends Model
 
     /**
      * Get the ratings of the training.
+     *
+     * The completed_at pivot column marks an individually completed part of a
+     * multi-rating training. Read it with Carbon::parse, it is not cast.
      */
     public function ratings(): BelongsToMany
     {
-        return $this->belongsToMany(Rating::class);
+        return $this->belongsToMany(Rating::class)->withPivot('completed_at');
+    }
+
+    /**
+     * The ratings of this training that are still to be earned.
+     *
+     * A facility or tier rating counts as outstanding whatever its pivot says: it is only
+     * granted by completing the training as a whole, and a completion that was since
+     * reopened leaves its stamp behind.
+     *
+     * @return Collection<int, Rating>
+     */
+    public function outstandingRatings(): Collection
+    {
+        return $this->ratings->filter(
+            fn (Rating $rating) => $rating->pivot->completed_at === null || $rating->vatsim_rating === null
+        );
     }
 
     /**

@@ -85,6 +85,8 @@
                                                 <i class="fas fa-circle-pause"></i>
                                             @elseif($activity->type == "ENDORSEMENT")
                                                 <i class="fas fa-check-square"></i>
+                                            @elseif($activity->type == "RATING")
+                                                <i class="fas fa-list-check"></i>
                                             @elseif($activity->type == "COMMENT")
                                                 <i class="fas fa-comment"></i>
                                             @elseif($activity->type == 'PRETRAINING')
@@ -145,6 +147,10 @@
                                                         @endforeach
                                                     @endempty
                                                 @endif
+                                            @elseif($activity->type == "RATING")
+                                                @isset($activity->rating)
+                                                    <span class="badge text-bg-light">{{ $activity->rating->name }}</span> part completed
+                                                @endisset
                                             @elseif($activity->type == "COMMENT")
                                                 {!! nl2br($activity->comment) !!}
 

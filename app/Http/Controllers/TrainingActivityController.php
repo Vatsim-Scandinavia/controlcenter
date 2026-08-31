@@ -15,7 +15,7 @@ class TrainingActivityController extends Controller
     /*
     * A table over allowed activity types
     */
-    public static $activityTypes = ['STATUS' => true, 'TYPE' => true, 'MENTOR' => true, 'PAUSE' => true, 'ENDORSEMENT' => true, 'COMMENT' => true, 'PRETRAINING' => true];
+    public static $activityTypes = ['STATUS' => true, 'TYPE' => true, 'MENTOR' => true, 'PAUSE' => true, 'ENDORSEMENT' => true, 'COMMENT' => true, 'PRETRAINING' => true, 'RATING' => true];
 
     /**
      * Store a newly created resource in storage.
