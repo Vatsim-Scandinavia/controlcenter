@@ -1241,10 +1241,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#finish-a-training" class="md-nav__link">
+  <a href="#complete-a-whole-training" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Finish a training
+        Complete a whole training
       
     </span>
   </a>
@@ -2279,10 +2279,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#finish-a-training" class="md-nav__link">
+  <a href="#complete-a-whole-training" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Finish a training
+        Complete a whole training
       
     </span>
   </a>
@@ -2378,9 +2378,10 @@ See <a href="../permissions/">Roles and Permissions</a>.</p>
 <h3 id="sign-off-part-of-a-training">Sign off part of a training<a class="headerlink" href="#sign-off-part-of-a-training" title="Permanent link">&para;</a></h3>
 <p>A training can cover more than one rating, such as <abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr> + <abbr title="Aerodrome Controller (TWR and below)">S2</abbr>.
 Because a student is examined and awarded one rating at a time, you can sign off each rating as the student earns it and leave the training open for the rest.</p>
-<p>The <strong>Complete partial training</strong> button appears on the training page when the training is <em>In Progress</em> and covers more than one rating.</p>
+<p>The <strong>Complete training</strong> menu appears on the training page when the training is <em>In Progress</em> and covers more than one rating.
+It holds <strong>Complete partial training</strong> whenever signing off a rating would still leave something outstanding.</p>
 <ol>
-<li>Open the training and select <strong>Complete partial training</strong>.</li>
+<li>Open the training and select <strong>Complete training</strong>, then <strong>Complete partial training</strong>.</li>
 <li>Check the rating shown. Control Center offers the lowest rating still outstanding, because a student earns <abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr> before <abbr title="Aerodrome Controller (TWR and below)">S2</abbr>.</li>
 <li>Select <strong>Complete <abbr title="Developing Controller (FIR-dependent, RMP, DEL, and GND)">S1</abbr></strong>, or whichever rating is named.</li>
 </ol>
@@ -2390,27 +2391,28 @@ Because a student is examined and awarded one rating at a time, you can sign off
 <li>Marks the student active for the training's area and starts a fresh <a href="../../activity/">activity grace period</a>. This follows the same rules as closing a training, so visitors and members outside your division are not affected.</li>
 <li>Adds an entry to the training timeline naming the rating and you as the author. Unlike a comment, the student sees this one on their own training, and it cannot be edited afterwards.</li>
 </ul>
-<p>The training stays <em>In Progress</em> for the remaining ratings, and the button offers the next one the next time you open the page.</p>
+<p>The training stays <em>In Progress</em> for the remaining ratings, and the menu offers the next one the next time you open the page.</p>
 <div class="admonition note">
 <p class="admonition-title">Older trainings show no per-rating dates</p>
 <p>Trainings closed before per-rating sign-off existed show nothing under <strong>Level</strong> but the ratings themselves.
 Only the training's own closing date was recorded then.</p>
 </div>
-<h3 id="finish-a-training">Finish a training<a class="headerlink" href="#finish-a-training" title="Permanent link">&para;</a></h3>
-<p>The control only ever signs off a part while something else stays outstanding.
-When one rating is left, signing it off would finish the whole training, so the control is shown with the part it would sign off but is disabled.
-Close the training by setting its status to <em>Completed</em>, which grants any endorsements its ratings carry and emails the student a confirmation.</p>
-<p>Facility and tier ratings are never signed off part by part, because their endorsement is granted through the <a href="../../integrations/vateud/">Division API</a> when the training is completed.
-A training with nothing left that can be signed off on its own therefore offers no button.
-Close it by setting the training status to <em>Completed</em>.</p>
-<p>A training that covers a single rating has no completion button either.
-Close it the same way, and its rating still gets a completion date under <strong>Level</strong>.</p>
+<h3 id="complete-a-whole-training">Complete a whole training<a class="headerlink" href="#complete-a-whole-training" title="Permanent link">&para;</a></h3>
+<p><strong>Mark training as completed</strong> is the menu's other entry, and it is always offered.
+Selecting it closes the training, completes every rating still outstanding, grants the endorsements they carry, and emails the student a confirmation.</p>
+<p>Use it when the student has finished everything the training covers, and there is no reason to sign the remaining ratings off one at a time.
+Facility and tier ratings are never signed off part by part, because their endorsement is granted through the <a href="../../integrations/vateud/">Division API</a> when the training is completed as a whole.
+A training whose outstanding ratings are all facility or tier ones therefore offers this entry alone.</p>
+<p>When one rating is left, signing it off would finish the training anyway, so <strong>Complete partial training</strong> drops out of the menu and this entry names the rating it completes.</p>
+<p>A training that covers a single rating has no completion menu.
+Close it by setting the training status to <em>Completed</em>, and its rating still gets a completion date under <strong>Level</strong>.</p>
 <p>However you get there, a training is closed and the student emailed exactly once.</p>
 <h3 id="close-a-training-that-was-not-finished">Close a training that was not finished<a class="headerlink" href="#close-a-training-that-was-not-finished" title="Permanent link">&para;</a></h3>
 <p>Set the training status to <em>Closed by staff</em>, <em>Closed by student</em>, or <em>Completed</em> as the case requires.
 Every closing status emails the student, but only <em>Completed</em> grants the endorsements the ratings carry.</p>
 <h3 id="rating-upgrades-and-the-roster">Rating upgrades and the roster<a class="headerlink" href="#rating-upgrades-and-the-roster" title="Permanent link">&para;</a></h3>
 <p>When you sign off a rating, Control Center warns you if it finds no completed <a href="../tasks/">rating upgrade task</a> for it.
+<strong>Mark training as completed</strong> carries a matching warning, naming the <abbr title="Virtual Air Traffic Simulation network">VATSIM</abbr> ratings it signs off with the training rather than part by part.
 The warning is advisory and does not block you:</p>
 <ul>
 <li>Completing the upgrade task first is the normal order, since that is what adds the student to the Division roster.</li>
@@ -2451,7 +2453,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 31, 2026 10:09:53 UTC">August 31, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 31, 2026 10:14:42 UTC">August 31, 2026</span>
   </span>
 
     
@@ -2461,7 +2463,7 @@ They'll be better off on the specific page in question.
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 31, 2026 10:09:53 UTC">August 31, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 31, 2026 10:14:42 UTC">August 31, 2026</span>
   </span>
 
     
