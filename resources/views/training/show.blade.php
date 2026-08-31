@@ -150,13 +150,21 @@
 
                     @if($showCompletionControl)
                         @can('update', $training)
-                            <button type="button" class="btn btn-outline-success btn-icon" data-bs-toggle="modal" data-bs-target="#completeTraining"
-                                @unless($canCompletePartially)
-                                    disabled title="{{ $completablePart->name }} is the only rating left, so signing it off would finish the whole training. Set the training status to Completed instead."
-                                @endunless
-                            >
-                                <i class="fas fa-check"></i>&nbsp;Complete partial training
-                            </button>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-success btn-icon dropdown-toggle" type="button" id="completionMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-check me-1"></i>Complete training
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="completionMenuButton">
+                                    @if($canCompletePartially)
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#completePartialTraining">
+                                            <i class="fas fa-list-check me-1"></i>Complete partial training
+                                        </button>
+                                    @endif
+                                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#completeWholeTraining">
+                                        <i class="fas fa-check me-1"></i>Mark training as completed
+                                    </button>
+                                </div>
+                            </div>
                         @endcan
                     @endif
                 </div>
@@ -624,7 +632,10 @@
 
 @if($showCompletionControl)
     @can('update', $training)
-        @include('training.parts.completepartmodal', ['training' => $training, 'completablePart' => $completablePart, 'otherOutstandingRatings' => $otherOutstandingRatings, 'upgradeRequestedForPart' => $upgradeRequestedForPart])
+        @if($canCompletePartially)
+            @include('training.parts.completepartmodal', ['training' => $training, 'completablePart' => $completablePart, 'otherOutstandingRatings' => $otherOutstandingRatings, 'upgradeRequestedForPart' => $upgradeRequestedForPart])
+        @endif
+        @include('training.parts.completetrainingmodal', ['training' => $training, 'outstandingRatings' => $outstandingRatings, 'outstandingEndorsementRatings' => $outstandingEndorsementRatings])
     @endcan
 @endif
 

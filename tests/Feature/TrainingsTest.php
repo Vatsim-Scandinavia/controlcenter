@@ -1305,7 +1305,7 @@ class TrainingsTest extends TestCase
 
         $this->get(route('training.show', $training))
             ->assertOk()
-            ->assertSee('Complete ' . $s2->name)
+            ->assertSee('Complete the final ' . $s2->name . ' rating')
             ->assertDontSee('No rating upgrade request found');
     }
 
@@ -1329,12 +1329,14 @@ class TrainingsTest extends TestCase
             // The date is asserted with its parentheses so this fails if the per-rating
             // date span is dropped: a bare date also appears in the activity log.
             ->assertSee('(' . $completedOn . ')')
-            ->assertSee('Complete ' . $s2->name)
+            // S2 is all that is left, so the menu offers it as the final rating rather
+            // than as a part to sign off.
+            ->assertSee('Complete the final ' . $s2->name . ' rating')
             ->assertDontSee('Complete ' . $s1->name);
     }
 
     #[Test]
-    public function the_control_is_disabled_when_signing_off_the_part_would_finish_the_training(): void
+    public function the_control_offers_to_finish_the_training_when_one_rating_is_left(): void
     {
         Notification::fake();
         Setting::set('atcActivityBasedOnTotalHours', false);
@@ -1355,11 +1357,12 @@ class TrainingsTest extends TestCase
         $this->assertNull(app(TrainingService::class)->completeRatingPart($training, $s1));
         $this->assertNull(app(TrainingService::class)->completeRatingPart($training->fresh(), $s2));
 
-        // S3 is the only rating left, so the control is disabled and says why.
+        // S3 is the only rating left, so the control switches to finishing the training.
         $this->get(route('training.show', $training))
             ->assertOk()
-            ->assertSee('Complete partial training')
-            ->assertSee('disabled title="' . $s3->name . ' is the only rating left', false);
+            ->assertSee('Mark training as completed')
+            ->assertDontSee('Complete partial training')
+            ->assertDontSee('is the only rating left');
 
         $this->assertTrue($training->fresh()->status->isInProgress());
     }
@@ -1425,10 +1428,33 @@ class TrainingsTest extends TestCase
             ->get(route('training.show', $training))
             ->assertOk()
             ->assertSee('Complete partial training')
-            ->assertDontSee('Mark training as completed')
+            // Both menu entries apply here: sign off S3 alone, or finish the training and
+            // grant both endorsements in one go.
+            ->assertSee('Mark training as completed')
             ->assertSee('Sign off the')
             ->assertSee('The training stays open for T1 ENGM APP, T2 EKCH APP.')
             ->assertSee('Complete ' . $s3->name);
+    }
+
+    #[Test]
+    public function the_completion_menu_offers_both_ways_of_finishing_a_training(): void
+    {
+        $training = $this->openTrainingInDivision();
+        $s1 = $this->attachVatsimRating($training, VatsimRating::S1, 'S1 TWR');
+        $s2 = $this->attachVatsimRating($training, VatsimRating::S2, 'S2 TWR');
+
+        // Signing off S1 leaves S2 outstanding, so the partial entry is a real choice
+        // alongside finishing the whole training in one go.
+        $this->actingAs($this->moderatorFor($training))
+            ->get(route('training.show', $training))
+            ->assertOk()
+            ->assertSee('Complete partial training')
+            ->assertSee('Mark training as completed')
+            // Each entry opens its own modal, posting to its own route.
+            ->assertSee(route('training.action.completepart', ['training' => $training->id, 'rating' => $s1->id]), false)
+            ->assertSee(route('training.action.complete', $training), false)
+            // The whole-training modal warns that both parts are signed off at once.
+            ->assertSee($s1->name . ', ' . $s2->name . ' are signed off with the training');
     }
 
     #[Test]
@@ -1448,6 +1474,172 @@ class TrainingsTest extends TestCase
             ->assertSee('Complete partial training')
             ->assertSee('The training stays open for T1 ENGM APP.')
             ->assertDontSee('This is the last outstanding part');
+    }
+
+    #[Test]
+    public function the_control_says_completed_when_the_last_vatsim_part_finishes_the_training(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $s1 = $this->attachVatsimRating($training, VatsimRating::S1, 'S1 TWR');
+        $s2 = $this->attachVatsimRating($training, VatsimRating::S2, 'S2 TWR');
+
+        $this->actingAs($this->moderatorFor($training));
+        $this->assertNull(app(TrainingService::class)->completeRatingPart($training, $s1));
+
+        $this->get(route('training.show', $training))
+            ->assertOk()
+            ->assertSee('Mark training as completed')
+            ->assertDontSee('Complete partial training')
+            ->assertSee('Complete the final ' . $s2->name . ' rating and close this training')
+            // Singular form of the sign-off warning, which the plural render would spell
+            // "S2 TWR are signed off".
+            ->assertSee($s2->name . ' is signed off with the training');
+    }
+
+    #[Test]
+    public function the_control_completes_the_whole_training_when_only_endorsement_ratings_remain(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $s3 = $this->attachVatsimRating($training, VatsimRating::S3, 'S3 APP');
+        $this->attachNamedFacilityRating($training, 'T1 ENGM APP');
+        $this->attachNamedFacilityRating($training, 'T2 EKCH APP');
+
+        $this->actingAs($this->moderatorFor($training));
+        $this->assertNull(app(TrainingService::class)->completeRatingPart($training, $s3));
+
+        $this->get(route('training.show', $training))
+            ->assertOk()
+            ->assertSee('Mark training as completed')
+            ->assertDontSee('Complete partial training')
+            // Every outstanding endorsement is named, and the copy is plural for two of them.
+            ->assertSee('T1 ENGM APP, T2 EKCH APP')
+            ->assertSee('endorsements')
+            ->assertSee(route('training.action.complete', $training), false);
+    }
+
+    #[Test]
+    public function the_endorsement_copy_is_singular_for_a_single_outstanding_endorsement(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $s3 = $this->attachVatsimRating($training, VatsimRating::S3, 'S3 APP');
+        $this->attachNamedFacilityRating($training, 'T1 ENGM APP');
+
+        $this->actingAs($this->moderatorFor($training));
+        $this->assertNull(app(TrainingService::class)->completeRatingPart($training, $s3));
+
+        $this->get(route('training.show', $training))
+            ->assertOk()
+            ->assertSee('Mark training as completed')
+            // Pins the singular form directly: a plural render would read "endorsements."
+            // here, which does not contain the substring "endorsement." (note the period
+            // right after the singular word), so this line alone rules out the plural.
+            ->assertSee('This grants the T1 ENGM APP endorsement.');
+    }
+
+    #[Test]
+    public function completing_a_training_from_the_header_grants_every_outstanding_endorsement_and_closes_it(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        $training = $this->openTrainingInDivision();
+        $s3 = $this->attachVatsimRating($training, VatsimRating::S3, 'S3 APP');
+        $t1 = $this->attachNamedFacilityRating($training, 'T1 ENGM APP');
+        $t2 = $this->attachNamedFacilityRating($training, 'T2 EKCH APP');
+
+        $this->actingAs($this->moderatorFor($training));
+        $this->assertNull(app(TrainingService::class)->completeRatingPart($training, $s3));
+
+        // One API call per outstanding endorsement rating.
+        DivisionApi::shouldReceive('assignTierEndorsement')->twice()->andReturn(false);
+
+        $this->from($training->path())
+            ->post(route('training.action.complete', $training))
+            ->assertRedirect($training->path())
+            ->assertSessionHas('success');
+
+        $closed = $training->fresh();
+        $this->assertSame(TrainingStatus::COMPLETED, $closed->status);
+        $this->assertNotNull($closed->closed_at);
+
+        // Both endorsements granted, and every rating is stamped.
+        $this->assertSame(2, Endorsement::where('user_id', $training->user->id)->where('revoked', false)->count());
+        $this->assertNotNull($this->partCompletedAt($training, $t1));
+        $this->assertNotNull($this->partCompletedAt($training, $t2));
+        $this->assertNotNull($this->partCompletedAt($training, $s3));
+
+        Notification::assertSentToTimes($training->user, TrainingClosedNotification::class, 1);
+    }
+
+    #[Test]
+    public function completing_a_whole_training_from_the_menu_stamps_the_outstanding_vatsim_parts(): void
+    {
+        Notification::fake();
+        Setting::set('atcActivityBasedOnTotalHours', false);
+
+        // The menu now offers this while parts are still outstanding, so the whole-training
+        // route has to sweep them up rather than leave them unstamped.
+        $training = $this->openTrainingInDivision();
+        $s1 = $this->attachVatsimRating($training, VatsimRating::S1, 'S1 TWR');
+        $s2 = $this->attachVatsimRating($training, VatsimRating::S2, 'S2 TWR');
+
+        $this->actingAs($this->moderatorFor($training))
+            ->from($training->path())
+            ->post(route('training.action.complete', $training))
+            ->assertRedirect($training->path())
+            ->assertSessionHas('success');
+
+        $closed = $training->fresh();
+        $this->assertSame(TrainingStatus::COMPLETED, $closed->status);
+        $this->assertNotNull($closed->closed_at);
+
+        $this->assertNotNull($this->partCompletedAt($training, $s1));
+        $this->assertNotNull($this->partCompletedAt($training, $s2));
+
+        Notification::assertSentToTimes($training->user, TrainingClosedNotification::class, 1);
+    }
+
+    #[Test]
+    public function a_user_without_training_update_cannot_complete_a_whole_training(): void
+    {
+        $training = $this->openTrainingInDivision();
+        $this->attachVatsimRating($training, VatsimRating::S1, 'S1 TWR');
+        $this->attachNamedFacilityRating($training, 'T1 ENGM APP');
+
+        $this->actingAs(User::factory()->create())
+            ->post(route('training.action.complete', $training))
+            ->assertStatus(403);
+
+        $this->assertTrue($training->fresh()->status->isInProgress());
+    }
+
+    #[Test]
+    public function completing_an_already_closed_training_from_the_header_is_rejected(): void
+    {
+        Notification::fake();
+
+        $training = $this->openTrainingInDivision();
+        $this->attachVatsimRating($training, VatsimRating::S1, 'S1 TWR');
+        $this->attachNamedFacilityRating($training, 'T1 ENGM APP');
+        $training->update(['status' => TrainingStatus::CLOSED_BY_STAFF]);
+
+        $this->actingAs($this->moderatorFor($training))
+            ->from($training->path())
+            ->post(route('training.action.complete', $training))
+            ->assertRedirect($training->path())
+            ->assertSessionHasErrors();
+
+        $this->assertSame(TrainingStatus::CLOSED_BY_STAFF, $training->fresh()->status);
+        Notification::assertNothingSentTo($training->user);
     }
 
     #[Test]

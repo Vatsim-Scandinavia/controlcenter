@@ -122,6 +122,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/training/{training}/action/close', 'close')->name('training.action.close');
         Route::get('/training/{training}/action/pretraining', 'togglePreTrainingCompleted')->name('training.action.pretraining');
         Route::post('/training/{training}/rating/{rating}/complete', 'completePart')->name('training.action.completepart');
+        Route::post('/training/{training}/complete', 'complete')->name('training.action.complete');
         Route::patch('/training/{training}', 'updateDetails')->name('training.update.details');
         Route::get('/training/{training}', 'show')->name('training.show');
 
