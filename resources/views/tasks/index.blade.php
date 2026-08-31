@@ -2,12 +2,11 @@
 
 @section('title', 'Tasks')
 @section('title-flex')
-    <div>
-        <i class="fas fa-filter"></i>&nbsp;Filter:&nbsp;
-        <a class="btn btn-sm {{ ($activeFilter != 'sent' && $activeFilter != 'archived') ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tasks') }}">Open</a>
-        <a class="btn btn-sm {{ ($activeFilter == 'sent') ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tasks.filtered', 'sent') }}">Sent</a>
-        <a class="btn btn-sm {{ ($activeFilter == 'archived') ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tasks.filtered', 'archived') }}">Archived</a>
-    </div>
+    <x-filter.group>
+        <x-filter.item :href="route('tasks')" :active="$activeFilter !== 'sent' && $activeFilter !== 'archived'">Open</x-filter.item>
+        <x-filter.item :href="route('tasks.filtered', 'sent')" :active="$activeFilter === 'sent'">Sent</x-filter.item>
+        <x-filter.item :href="route('tasks.filtered', 'archived')" :active="$activeFilter === 'archived'">Archived</x-filter.item>
+    </x-filter.group>
 @endsection
 
 @section('content')

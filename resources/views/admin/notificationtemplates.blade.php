@@ -2,12 +2,11 @@
 
 @section('title', 'Notification Templates')
 @section('title-flex')
-    <div>
-        <i class="fas fa-filter"></i>&nbsp;Filter:&nbsp;
+    <x-filter.group>
         @foreach($areas as $area)
-            <a class="btn btn-sm {{ $currentArea == $area ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('admin.templates.area', $area->id) }}">{{ $area->name }}</a>
+            <x-filter.item :href="route('admin.templates.area', $area->id)" :active="$currentArea?->is($area)">{{ $area->name }}</x-filter.item>
         @endforeach
-    </div>
+    </x-filter.group>
 @endsection
 
 @section('content')
