@@ -3,6 +3,28 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## [7.1.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.1...v7.1.0) (2026-08-31)
+
+
+### Features
+
+* **training:** mark a whole training as completed through button dropdown ([#1646](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1646)) ([4c36d8e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4c36d8edb744da6880914a6d53ab68d770f4a7e3))
+* **training:** sign off a training one VATSIM rating part at a time ([#1645](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1645)) ([3f37a65](https://github.com/Vatsim-Scandinavia/controlcenter/commit/3f37a65185d077b323ae831fd700ac419befd60e))
+
+
+### Bug Fixes
+
+* **training:** show user action icons on smaller screens ([#1633](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1633)) ([8038ec5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/8038ec5452f81e1d12de251f9a9e81b505a6baaf))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency fruitcake/laravel-debugbar to v4.4.2 ([#1625](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1625)) ([af140fd](https://github.com/Vatsim-Scandinavia/controlcenter/commit/af140fd12d64e8d2c7571c9ab5fe2c095144399b))
+* **deps:** update dependency laravel/sail to v1.67.0 ([#1618](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1618)) ([4c72fc8](https://github.com/Vatsim-Scandinavia/controlcenter/commit/4c72fc85f795cdd3339dce8bf59b792c22cca417))
+* **deps:** update dependency sass to v1.103.1 ([#1642](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1642)) ([1ab10d7](https://github.com/Vatsim-Scandinavia/controlcenter/commit/1ab10d7717aa4f0bad0ff219996ec9d5a6190229))
+* **deps:** update dependency vue to v3.5.42 ([#1641](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1641)) ([e827472](https://github.com/Vatsim-Scandinavia/controlcenter/commit/e8274727a796c139e67c5d33231a9b75c5182094))
+* **deps:** update ghcr.io/vatsim-scandinavia/control-center docker tag to v7 ([#1644](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1644)) ([2b82f97](https://github.com/Vatsim-Scandinavia/controlcenter/commit/2b82f9777f366795c498bf835b74ae5153ec179c))
+
 ## [7.0.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.0...v7.0.1) (2026-08-29)
 
 
