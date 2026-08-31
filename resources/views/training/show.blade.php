@@ -391,6 +391,68 @@
             </div>
         </div>
 
+        @if($soloEndorsementSummary)
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-white">
+                        Solo Endorsements
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {{-- A native details element, so the breakdown needs no collapse
+                         script and stays keyboard accessible on its own. --}}
+                    <details class="solo-endorsements" @if(! $soloEndorsementSummary['collapsed']) open @endif>
+                        <summary>
+                            Solo days remaining:
+                            <span class="{{ $soloEndorsementSummary['left'] === 0 ? 'text-danger' : 'text-success' }}">{{ $soloEndorsementSummary['left'] }}</span>
+                            of {{ $soloEndorsementSummary['total'] }}
+                        </summary>
+
+                        <div class="mt-3">
+                            <div class="text-muted mb-2">
+                                Days granted: {{ $soloEndorsementSummary['used'] }}
+                            </div>
+                            <div class="progress mb-3" role="progressbar" aria-label="Solo days used" aria-valuemin="0" aria-valuemax="{{ $soloEndorsementSummary['total'] }}" aria-valuenow="{{ $soloEndorsementSummary['used'] }}">
+                                <div class="progress-bar {{ $soloEndorsementSummary['percentage_used'] >= 100 ? 'bg-danger' : 'bg-primary' }}" style="width: {{ $soloEndorsementSummary['percentage_used'] }}%;"></div>
+                            </div>
+                            <small class="text-muted d-block mb-3">{{ $soloEndorsementSummary['percentage_used'] }}% of the allowable {{ $soloEndorsementSummary['total'] }} days used.</small>
+
+                            <div class="table-responsive">
+                                <table class="table table-sm table-leftpadded mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Granted</th>
+                                            <th>Expires</th>
+                                            <th>Days Granted</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($soloEndorsementSummary['endorsements'] as ['endorsement' => $soloEndorsement, 'days' => $soloDays])
+                                            <tr>
+                                                <td>{{ $soloEndorsement->valid_from?->toEuropeanDateTime() ?? '—' }}</td>
+                                                <td>{{ $soloEndorsement->valid_to?->toEuropeanDateTime() ?? '—' }}</td>
+                                                <td>{{ $soloEndorsement->valid_to ? $soloDays : '—' }}</td>
+                                                <td>
+                                                    @if($soloEndorsement->revoked)
+                                                        <span class="badge bg-danger">Revoked</span>
+                                                    @elseif($soloEndorsement->expired || $soloEndorsement->valid_to?->isPast())
+                                                        <span class="badge bg-warning text-dark">Expired</span>
+                                                    @else
+                                                        <span class="badge bg-success">Active</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        @endif
+
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
