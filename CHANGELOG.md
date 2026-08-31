@@ -3,6 +3,14 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## [7.1.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.1.0...v7.1.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* **api:** document the real /positions response schema ([#1650](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1650)) ([96fa2ca](https://github.com/Vatsim-Scandinavia/controlcenter/commit/96fa2ca7f8b59853459f7519212d216f055b6ec8))
+* **ui:** unify page filter pills into shared components across pages ([#1652](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1652)) ([8423415](https://github.com/Vatsim-Scandinavia/controlcenter/commit/8423415b3179bc8e63e1f44541567634ea7d39c3))
+
 ## [7.1.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.0.1...v7.1.0) (2026-08-31)
 
 
