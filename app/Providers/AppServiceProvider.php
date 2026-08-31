@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\PermissionMatrix;
+use App\Support\OpenApi\RemovesUnreferencedSchemas;
 use App\Support\OpenApi\SortsDocumentAlphabetically;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\ServerVariable;
@@ -43,7 +44,10 @@ class AppServiceProvider extends ServiceProvider
         // Sort the generated document alphabetically so the exported `docs/api-v1.json` is
         // byte-identical regardless of the database engine it is generated against. See
         // SortsDocumentAlphabetically for the full rationale.
-        Scramble::configure()->withDocumentTransformers(SortsDocumentAlphabetically::class);
-        Scramble::configure('internal')->withDocumentTransformers(SortsDocumentAlphabetically::class);
+        // Prune first so the sort only ever runs over schemas that survive, then sort, keeping the
+        // exported document byte-identical across engines. See RemovesUnreferencedSchemas for why
+        // orphaned schemas appear at all.
+        Scramble::configure()->withDocumentTransformers([RemovesUnreferencedSchemas::class, SortsDocumentAlphabetically::class]);
+        Scramble::configure('internal')->withDocumentTransformers([RemovesUnreferencedSchemas::class, SortsDocumentAlphabetically::class]);
     }
 }

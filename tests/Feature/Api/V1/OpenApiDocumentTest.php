@@ -76,6 +76,68 @@ class OpenApiDocumentTest extends TestCase
         $this->assertSchemaOrdering($document['components']['schemas'] ?? [], 'components.schemas');
     }
 
+    public function test_every_reference_resolves_to_a_defined_component_schema(): void
+    {
+        $document = app(Generator::class)();
+        $schemas = $document['components']['schemas'] ?? [];
+
+        foreach ($this->referencedSchemaNames($document) as $name) {
+            $this->assertArrayHasKey($name, $schemas, "Reference to undefined component schema {$name}.");
+        }
+    }
+
+    public function test_no_component_schema_is_left_unreferenced(): void
+    {
+        $document = app(Generator::class)();
+        $schemas = $document['components']['schemas'] ?? [];
+        $this->assertNotEmpty($schemas);
+
+        // Scramble registers a model schema whenever it analyses a query on that model, even when
+        // an explicit #[Response] attribute documents a narrower shape, so orphans appear without
+        // RemovesUnreferencedSchemas. The docs renderer lists component schemas, so an orphan would
+        // advertise an object shape no endpoint returns.
+        $withoutDefinitions = $document;
+        unset($withoutDefinitions['components']['schemas']);
+
+        $reachable = $this->referencedSchemaNames($withoutDefinitions);
+
+        do {
+            $before = count($reachable);
+
+            foreach ($reachable as $name) {
+                if (isset($schemas[$name])) {
+                    $reachable = array_values(array_unique(array_merge(
+                        $reachable,
+                        $this->referencedSchemaNames($schemas[$name]),
+                    )));
+                }
+            }
+        } while (count($reachable) > $before);
+
+        $orphans = array_values(array_diff(array_keys($schemas), $reachable));
+
+        $this->assertSame([], $orphans, 'Unreferenced component schemas: ' . implode(', ', $orphans));
+    }
+
+    /**
+     * Collect the component schema names every `$ref` in the given node points at.
+     *
+     * @param  array<array-key, mixed>  $node
+     * @return array<int, string>
+     */
+    private function referencedSchemaNames(array $node): array
+    {
+        $names = [];
+
+        array_walk_recursive($node, function ($value, $key) use (&$names): void {
+            if ($key === '$ref' && is_string($value) && str_starts_with($value, '#/components/schemas/')) {
+                $names[] = basename($value);
+            }
+        });
+
+        return array_values(array_unique($names));
+    }
+
     /**
      * Recursively assert that every object node exposes its `properties` keys and `required`
      * entries in alphabetical order.
