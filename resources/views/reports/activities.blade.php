@@ -2,17 +2,16 @@
 
 @section('title', 'Training Activities')
 @section('title-flex')
-    <div>
-        <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
+    <x-filter.group>
         @if(\Auth::user()->accessibleAreasForPermission('training.activities.view')->isGlobal)
-            <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities') }}">All Areas</a>
+            <x-filter.item :href="route('reports.activities')" :active="! $currentArea">All Areas</x-filter.item>
         @endif
         @foreach($areas as $area)
             @can('training.activities.view', $area)
-                <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
+                <x-filter.item :href="route('reports.activities.area', $area->id)" :active="$currentArea?->is($area)">{{ $area->name }}</x-filter.item>
             @endcan
         @endforeach
-    </div>
+    </x-filter.group>
 @endsection
 
 @section('header')

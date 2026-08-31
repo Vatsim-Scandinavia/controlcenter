@@ -20,8 +20,7 @@ class PositionController extends Controller
 
         $accessibleAreas = $allAreas->filter(fn ($a) => $request->user()->can('viewAny', [Position::class, $a]));
 
-        $currentAreaId = $area ?? $request->input('area');
-        $currentArea = $currentAreaId ? $allAreas->firstWhere('id', $currentAreaId) : null;
+        $currentArea = $area ? $allAreas->firstWhere('id', $area) : null;
 
         $this->authorize('viewAny', [Position::class, $currentArea]);
 
