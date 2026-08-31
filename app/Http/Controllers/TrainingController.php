@@ -24,6 +24,7 @@ use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
 use App\Services\ActivityLogService;
+use App\Services\SoloEndorsementService;
 use App\Services\TrainingService;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
@@ -403,7 +404,11 @@ class TrainingController extends Controller
             return $training->getHighestVatsimRating()?->id === $completablePart->id;
         });
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart'));
+        // How much of the solo day allowance this training has used, or null when
+        // no solo endorsement was ever issued on it.
+        $soloEndorsementSummary = app(SoloEndorsementService::class)->summaryFor($training);
+
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
     }
 
     /**

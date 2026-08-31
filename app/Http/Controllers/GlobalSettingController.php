@@ -50,6 +50,7 @@ class GlobalSettingController extends Controller
             'trainingSubDivisions' => 'nullable',
             'trainingInterval' => 'required|integer|min:1',
             'trainingSoloRequirement' => 'required|max:200',
+            'trainingSoloMaxDays' => 'required|integer|min:1',
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
@@ -93,6 +94,7 @@ class GlobalSettingController extends Controller
         Setting::set('trainingSubDivisions', $trainingSubDivisions);
         Setting::set('trainingInterval', $data['trainingInterval']);
         Setting::set('trainingSoloRequirement', $data['trainingSoloRequirement']);
+        Setting::set('trainingSoloMaxDays', $data['trainingSoloMaxDays']);
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
