@@ -453,13 +453,14 @@
         "/positions": {
             "get": {
                 "operationId": "v1.positions.index",
-                "summary": "Display all positions",
+                "description": "Returns every position, reduced to the fields a booking client needs to render\nand match a callsign.",
+                "summary": "List positions",
                 "tags": [
                     "Position"
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "All positions, wrapped in a `data` array. The query selects three columns only, so the response carries no `id`, `fir`, `rating`, `area_id` or `required_facility_rating_id`.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -468,7 +469,26 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Position"
+                                                "type": "object",
+                                                "properties": {
+                                                    "callsign": {
+                                                        "type": "string"
+                                                    },
+                                                    "frequency": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "callsign",
+                                                    "frequency",
+                                                    "name"
+                                                ]
                                             }
                                         }
                                     },
@@ -694,74 +714,6 @@
                     "vatsim_booking"
                 ],
                 "title": "Booking"
-            },
-            "Position": {
-                "type": "object",
-                "properties": {
-                    "area_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "callsign": {
-                        "type": "string"
-                    },
-                    "fir": {
-                        "type": "string"
-                    },
-                    "frequency": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "id": {
-                        "type": "integer"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "rating": {
-                        "$ref": "#/components/schemas/VatsimRating"
-                    },
-                    "required_facility_rating_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    }
-                },
-                "required": [
-                    "area_id",
-                    "callsign",
-                    "fir",
-                    "frequency",
-                    "id",
-                    "name",
-                    "rating",
-                    "required_facility_rating_id"
-                ],
-                "title": "Position"
-            },
-            "VatsimRating": {
-                "type": "integer",
-                "description": "The VATSIM ATC ratings. The case name is the short code (e.g. `OBS`, `S3`) and the backing value is the numeric VATSIM rating id. Note that `C2` (6) and `I2` (9) exist in VATSIM but are unused here.\n| |\n|---|\n| `-1` <br/> Inactive. |\n| `0` <br/> Suspended. |\n| `1` <br/> Pilot/Observer. |\n| `2` <br/> Tower Trainee. |\n| `3` <br/> Tower Controller. |\n| `4` <br/> TMA Controller. |\n| `5` <br/> Enroute Controller. |\n| `7` <br/> Senior Controller. |\n| `8` <br/> Instructor. |\n| `10` <br/> Senior Instructor. |\n| `11` <br/> Supervisor. |\n| `12` <br/> Administrator. |",
-                "enum": [
-                    -1,
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    7,
-                    8,
-                    10,
-                    11,
-                    12
-                ],
-                "title": "VatsimRating"
             }
         },
         "responses": {
