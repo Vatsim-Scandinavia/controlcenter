@@ -6,6 +6,7 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\StatisticsApiException;
 use App\Facades\DivisionApi;
 use App\Helpers\Vatsim;
+use App\Http\Requests\RevealUserEmailRequest;
 use App\Http\Requests\StatisticsSessionsRequest;
 use App\Models\Area;
 use App\Models\AtcActivity;
@@ -209,6 +210,25 @@ class UserController extends Controller
         );
 
         return view('user.show', compact('user', 'roles', 'areas', 'trainings', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours', 'recentAtcSessions'));
+    }
+
+    /**
+     * Reveal a user's email address and record the access in the activity log.
+     */
+    public function revealEmail(RevealUserEmailRequest $request, User $user): JsonResponse
+    {
+        activity('user-email')
+            ->performedOn($user)
+            ->causedBy($request->user())
+            ->event('viewed')
+            ->withProperties([
+                'reason' => $request->validated('reason'),
+            ])
+            ->log('Email address viewed');
+
+        return response()->json([
+            'email' => $user->email,
+        ]);
     }
 
     /**
