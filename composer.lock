@@ -2635,16 +2635,16 @@
         },
         {
             "name": "livewire/flux",
-            "version": "v2.16.0",
+            "version": "v2.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/flux.git",
-                "reference": "b7e993d567dd7ffdcba42dcc7cdcb2163183b7f8"
+                "reference": "c4e2d5735c7d200d67e8dd0e2ca50111e75e8244"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/flux/zipball/b7e993d567dd7ffdcba42dcc7cdcb2163183b7f8",
-                "reference": "b7e993d567dd7ffdcba42dcc7cdcb2163183b7f8",
+                "url": "https://api.github.com/repos/livewire/flux/zipball/c4e2d5735c7d200d67e8dd0e2ca50111e75e8244",
+                "reference": "c4e2d5735c7d200d67e8dd0e2ca50111e75e8244",
                 "shasum": ""
             },
             "require": {
@@ -2695,9 +2695,9 @@
             ],
             "support": {
                 "issues": "https://github.com/livewire/flux/issues",
-                "source": "https://github.com/livewire/flux/tree/v2.16.0"
+                "source": "https://github.com/livewire/flux/tree/v2.18.0"
             },
-            "time": "2026-08-09T17:23:35+00:00"
+            "time": "2026-08-31T16:48:24+00:00"
         },
         {
             "name": "livewire/livewire",
