@@ -2701,16 +2701,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.4.2",
+            "version": "v4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "4a030935e6c255c89a114b00ece66326f78157c0"
+                "reference": "92f1427022714b34024459167aa6a85d4fb4af44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/4a030935e6c255c89a114b00ece66326f78157c0",
-                "reference": "4a030935e6c255c89a114b00ece66326f78157c0",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/92f1427022714b34024459167aa6a85d4fb4af44",
+                "reference": "92f1427022714b34024459167aa6a85d4fb4af44",
                 "shasum": ""
             },
             "require": {
@@ -2765,7 +2765,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.4.2"
+                "source": "https://github.com/livewire/livewire/tree/v4.4.3"
             },
             "funding": [
                 {
@@ -2773,7 +2773,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-24T15:02:06+00:00"
+            "time": "2026-08-31T15:40:58+00:00"
         },
         {
             "name": "matomo/device-detector",
