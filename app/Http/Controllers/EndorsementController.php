@@ -161,21 +161,24 @@ class EndorsementController extends Controller
             ]);
             $user = User::find($data['user']);
 
-            // Check if user has active training
-            if (! $user->getActiveTraining(TrainingStatus::PRE_TRAINING)) {
-                return back()->withInput()->withErrors($user->name . ' has no active training to link this endorsement to.');
-            }
-
-            // Validate if the user has passed the related exam
-            $highestTrainingRating = $user->getActiveTraining()->ratings->sortByDesc('vatsim_rating')->first();
-            if (! DivisionApi::userHasPassedTheoryExam($user, $highestTrainingRating)) {
-                return back()->withInput()->withErrors($user->name . ' has not passed the ' . $highestTrainingRating->name . ' theory exam. Solo endorsement can not be created.');
-            }
-
             // Validate the position
             $position = Position::firstWhere('callsign', $data['position']);
             if (! $position) {
                 return back()->withInput()->withErrors('Position not found: ' . strtoupper($data['position']));
+            }
+
+            // A solo is issued for a position, so it belongs to the training running
+            // in that position's area. Positions may carry no area, and then this
+            // falls back to the student's active training whichever area it is in.
+            $training = $user->getActiveTraining(TrainingStatus::ACTIVE_TRAINING, $position->area);
+            if (! $training) {
+                return back()->withInput()->withErrors($user->name . ' has no active training in ' . ($position->area?->name ?? 'any area') . ' to link this endorsement to.');
+            }
+
+            // Validate if the user has passed the related exam
+            $highestTrainingRating = $training->ratings->sortByDesc('vatsim_rating')->first();
+            if (! DivisionApi::userHasPassedTheoryExam($user, $highestTrainingRating)) {
+                return back()->withInput()->withErrors($user->name . ' has not passed the ' . $highestTrainingRating->name . ' theory exam. Solo endorsement can not be created.');
             }
 
             // Let's validate the expire date
@@ -217,8 +220,9 @@ class EndorsementController extends Controller
             ' ― User: ' . $endorsement->user_id .
             ' ― Positions: ' . $data['position']);
 
-            // Log this new endorsement to the user's active training
-            TrainingActivityController::create($user->trainings->filter(fn ($training) => $training->status->isOpen())->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            // Log this new endorsement to the training it was issued for, so the
+            // solo day counter on that training can find it.
+            TrainingActivityController::create($training->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
