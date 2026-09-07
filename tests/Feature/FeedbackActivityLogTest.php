@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\ActivityLog;
+use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -41,6 +42,31 @@ class FeedbackActivityLogTest extends TestCase
         $log = $this->feedbackLogs()->first();
         $this->assertEquals($causer->id, $log->causer_id);
         $this->assertEquals($newController->id, data_get($log->attribute_changes, 'attributes.reference_user_id'));
+    }
+
+    #[Test]
+    public function reassigning_the_explicit_area_writes_one_feedback_activity_row(): void
+    {
+        $area = Area::factory()->create();
+        $feedback = Feedback::factory()->create();
+        $this->actingAs(User::factory()->create());
+
+        $feedback->update(['area_id' => $area->id]);
+
+        $this->assertSame(1, $this->feedbackLogs()->count());
+        $this->assertEquals($area->id, data_get($this->feedbackLogs()->first()->attribute_changes, 'attributes.area_id'));
+    }
+
+    #[Test]
+    public function the_activity_log_resolves_an_area_id_change_to_the_area_name(): void
+    {
+        $area = Area::factory()->create();
+
+        $reference = Feedback::activityChangeReferences()['area_id'];
+
+        $this->assertSame('Area', $reference['label']);
+        $this->assertSame(Area::class, $reference['model']);
+        $this->assertSame($area->name, ($reference['display'])($area));
     }
 
     #[Test]

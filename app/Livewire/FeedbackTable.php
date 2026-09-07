@@ -108,11 +108,11 @@ class FeedbackTable extends Component
         $direction = in_array($this->sortDirection, ['asc', 'desc'], true) ? $this->sortDirection : 'desc';
 
         return Feedback::visibleTo(auth()->user())
-            ->with(['submitter', 'referenceUser', 'referencePosition.area'])
+            ->with(['submitter', 'referenceUser', 'referencePosition.area', 'explicitArea'])
             ->when($this->search !== '', fn (Builder $q) => $q->where('feedback', 'like', '%' . $this->search . '%'))
             ->when($this->controller !== '', fn (Builder $q) => $q->whereHas('referenceUser', fn (Builder $q) => $q->whereRaw(Sql::concat('first_name', "' '", 'last_name') . ' like ?', ['%' . $this->controller . '%'])->orWhere('id', 'like', '%' . $this->controller . '%')))
             ->when($this->position !== '', fn (Builder $q) => $q->whereHas('referencePosition', fn (Builder $q) => $q->where('callsign', 'like', '%' . $this->position . '%')->orWhere('name', 'like', '%' . $this->position . '%')))
-            ->when($this->area !== null, fn (Builder $q) => $q->whereHas('referencePosition', fn (Builder $q) => $q->where('area_id', $this->area)))
+            ->when($this->area !== null, fn (Builder $q) => $q->inArea([$this->area]))
             ->when($this->submitter !== '', fn (Builder $q) => $q->whereHas('submitter', fn (Builder $q) => $q->where('first_name', 'like', '%' . $this->submitter . '%')->orWhere('last_name', 'like', '%' . $this->submitter . '%')->orWhere('id', 'like', '%' . $this->submitter . '%')))
             ->orderBy('created_at', $direction);
     }
@@ -123,25 +123,34 @@ class FeedbackTable extends Component
 
         $feedbacks = $this->baseQuery()->paginate($perPage);
 
+        // Every area, because staff may hand a feedback to one they have no
+        // access to. The edit modal's select sits inside `wire:ignore`, so
+        // unlike the other pick-lists it cannot wait for the modal to open.
+        // The filter's scoped options are narrowed from these same rows.
+        $areas = Area::orderBy('name')->get();
+
         return view('livewire.feedback-table', [
             'feedbacks' => $feedbacks,
-            'areas' => $this->filterAreas(),
+            'areas' => $this->filterAreas($areas),
             'editControllers' => $this->showReferenceOptions ? User::getActiveAtcMembers() : collect(),
             'editPositions' => $this->showReferenceOptions ? Position::all() : collect(),
+            'editAreas' => $areas,
         ]);
     }
 
     /**
-     * Scoped area options for the filter select.
+     * Narrow the area options offered by the filter select to those the user
+     * may see feedback for.
      *
+     * @param  Collection<int, Area>  $areas
      * @return Collection<int, Area>
      */
-    protected function filterAreas(): Collection
+    protected function filterAreas(Collection $areas): Collection
     {
         $scope = auth()->user()->accessibleAreasForPermission('feedback.correlated.view');
 
         return $scope->isGlobal
-            ? Area::orderBy('name')->get()
-            : $scope->areas->sortBy('name')->values();
+            ? $areas
+            : $areas->whereIn('id', $scope->areas->pluck('id'))->values();
     }
 }
