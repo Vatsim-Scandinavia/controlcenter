@@ -124,6 +124,26 @@ class SoloEndorsementCounterTest extends TestCase
     }
 
     #[Test]
+    public function the_time_of_day_a_solo_was_issued_does_not_change_the_days_it_grants()
+    {
+        // valid_from is the real issue time while valid_to is pinned to 12:00, so
+        // diffing raw timestamps would count a whole extra day before noon.
+        $morning = $this->grantSolo(Carbon::parse('2026-01-01 09:00'), Carbon::parse('2026-01-31 12:00'));
+        $afternoon = $this->grantSolo(Carbon::parse('2026-02-01 14:00'), Carbon::parse('2026-03-03 12:00'));
+
+        $this->assertSame(30, $this->service->daysGranted($morning));
+        $this->assertSame(30, $this->service->daysGranted($afternoon));
+    }
+
+    #[Test]
+    public function a_solo_that_starts_and_expires_the_same_day_grants_one_day()
+    {
+        $endorsement = $this->grantSolo(Carbon::parse('2026-01-01 09:00'), Carbon::parse('2026-01-01 12:00'));
+
+        $this->assertSame(1, $this->service->daysGranted($endorsement));
+    }
+
+    #[Test]
     public function the_allowance_comes_from_the_global_setting()
     {
         Setting::set('trainingSoloMaxDays', 30);

@@ -82,22 +82,23 @@ class SoloEndorsementService
     }
 
     /**
-     * Whole days an endorsement grants. An endorsement with no end date grants
-     * nothing countable, and a backwards range counts as zero rather than
-     * crediting days back to the student.
+     * Whole days an endorsement grants, counted on calendar dates: one issued on
+     * the 1st and expiring on the 31st grants 30 days. valid_from is the issue
+     * time while valid_to is pinned to 12:00, so raw timestamps would count an
+     * extra day for every solo issued before noon.
      *
-     * Rounded up, because a part day is a day the student was on solo: an
-     * endorsement issued at 14:00 and expiring at 12:00 twenty days later spans
-     * 19.9 days, and counting that as 19 would quietly hand back a day of the
-     * allowance on every endorsement.
+     * No end date or a backwards range grants nothing. A same-day solo grants one.
      */
     public function daysGranted(Endorsement $endorsement): int
     {
-        if (! $endorsement->valid_from || ! $endorsement->valid_to) {
+        $from = $endorsement->valid_from;
+        $to = $endorsement->valid_to;
+
+        if (! $from || ! $to || $to->lessThanOrEqualTo($from)) {
             return 0;
         }
 
-        return (int) max(0, ceil($endorsement->valid_from->diffInDays($endorsement->valid_to, false)));
+        return max(1, (int) round($from->copy()->startOfDay()->diffInDays($to->copy()->startOfDay())));
     }
 
     /**
