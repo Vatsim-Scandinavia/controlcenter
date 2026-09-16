@@ -75,7 +75,7 @@ class BookingPolicy
      */
     public function bookTrainingTag(User $user): bool
     {
-        if ($user->hasPermission('bookings.manage')) {
+        if ($user->hasPermission('bookings.manage') || $user->hasPermission('training.mentor')) {
             return true;
         }
 
