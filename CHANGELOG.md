@@ -3,6 +3,19 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## [7.2.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.1.1...v7.2.0) (2026-09-16)
+
+
+### Features
+
+* **feedback:** specify an area when there's no specific controller ([#1668](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1668)) ([65480a9](https://github.com/Vatsim-Scandinavia/controlcenter/commit/65480a94d80d49bd98cec360d1e7488d0a82506c))
+
+
+### Bug Fixes
+
+* **bookings:** allow mentors to use the training tag ([#1670](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1670)) ([cf12be2](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cf12be2ff446d16a302d3296c14fc261342fb74d))
+* **security:** escape flash messages and user-written comments ([#1663](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1663)) ([2118681](https://github.com/Vatsim-Scandinavia/controlcenter/commit/211868104685e827501688555611bc3361ce3476))
+
 ## [7.1.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.1.0...v7.1.1) (2026-08-31)
 
 
