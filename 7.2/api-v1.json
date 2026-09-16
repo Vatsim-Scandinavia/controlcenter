@@ -1,0 +1,771 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Control Center API",
+        "version": "v1",
+        "description": "Control Center API v1"
+    },
+    "servers": [
+        {
+            "url": "https://{host}/api/v1",
+            "description": "v1",
+            "variables": {
+                "host": {
+                    "default": "your-controlcenter-host.example",
+                    "description": "The host serving your Control Center instance, without scheme or path (e.g. cc.example.org)."
+                }
+            }
+        }
+    ],
+    "security": [
+        {
+            "http": []
+        }
+    ],
+    "paths": {
+        "/bookings/create": {
+            "post": {
+                "operationId": "v1.booking.store",
+                "description": "Validates CID, date, start/end time, position, and optional tag, then persists a\nnew booking, forcing a training tag when the controller or position rating requires it.",
+                "summary": "Create a booking",
+                "tags": [
+                    "Booking"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "cid": {
+                                        "type": "integer",
+                                        "description": "The VATSIM CID (user ID) to create the booking for.",
+                                        "examples": [
+                                            10000001
+                                        ]
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "description": "The booking date, in `d/m/Y` format.",
+                                        "examples": [
+                                            "15/02/2024"
+                                        ]
+                                    },
+                                    "start_at": {
+                                        "type": "string",
+                                        "description": "The booking start time, in 24-hour `H:i` format.",
+                                        "examples": [
+                                            "12:00"
+                                        ]
+                                    },
+                                    "end_at": {
+                                        "type": "string",
+                                        "description": "The booking end time, in 24-hour `H:i` format.",
+                                        "examples": [
+                                            "13:00"
+                                        ]
+                                    },
+                                    "position": {
+                                        "type": "string",
+                                        "description": "The callsign of the position to book.",
+                                        "examples": [
+                                            "EKCH_TWR"
+                                        ]
+                                    },
+                                    "tag": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "The booking type: `1` for training, `2` for exam, `3` for event.",
+                                        "examples": [
+                                            1
+                                        ],
+                                        "minimum": 1,
+                                        "maximum": 3
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "description": "The booking source; use `CC` for Control Center bookings.",
+                                        "examples": [
+                                            "CC"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "cid",
+                                    "date",
+                                    "start_at",
+                                    "end_at",
+                                    "position",
+                                    "source"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The booking was created. `tag` is only present when a training tag was forced.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        },
+                                        "booking": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "source": {
+                                                    "type": "string"
+                                                },
+                                                "vatsim_booking": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "callsign": {
+                                                    "type": "string"
+                                                },
+                                                "position_id": {
+                                                    "type": "integer"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "time_start": {
+                                                    "type": "string"
+                                                },
+                                                "time_end": {
+                                                    "type": "string"
+                                                },
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "training": {
+                                                    "type": "integer"
+                                                },
+                                                "event": {
+                                                    "type": "integer"
+                                                },
+                                                "exam": {
+                                                    "type": "integer"
+                                                },
+                                                "deleted": {
+                                                    "type": "integer"
+                                                },
+                                                "created_at": {
+                                                    "type": "string"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "source",
+                                                "vatsim_booking",
+                                                "callsign",
+                                                "position_id",
+                                                "name",
+                                                "time_start",
+                                                "time_end",
+                                                "user_id",
+                                                "training",
+                                                "event",
+                                                "exam",
+                                                "deleted",
+                                                "created_at",
+                                                "updated_at"
+                                            ]
+                                        },
+                                        "tag": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "booking"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "400": {
+                        "description": "The booking could not be created \u2014 for example the start and end time are equal, the start time is in the past, or it overlaps an existing booking.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/bookings/{booking}": {
+            "patch": {
+                "operationId": "v1.booking.update",
+                "description": "Revalidates CID, date, start/end time, position, and optional tag, re-checks for\noverlapping bookings, and re-evaluates whether a training tag must be forced.",
+                "summary": "Update an existing booking",
+                "tags": [
+                    "Booking"
+                ],
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "description": "The booking ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "cid": {
+                                        "type": "integer",
+                                        "description": "The VATSIM CID (user ID) the booking belongs to.",
+                                        "examples": [
+                                            10000001
+                                        ]
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "description": "The booking date, in `d/m/Y` format.",
+                                        "examples": [
+                                            "15/02/2024"
+                                        ]
+                                    },
+                                    "start_at": {
+                                        "type": "string",
+                                        "description": "The booking start time, in 24-hour `H:i` format.",
+                                        "examples": [
+                                            "12:00"
+                                        ]
+                                    },
+                                    "end_at": {
+                                        "type": "string",
+                                        "description": "The booking end time, in 24-hour `H:i` format.",
+                                        "examples": [
+                                            "13:00"
+                                        ]
+                                    },
+                                    "position": {
+                                        "type": "string",
+                                        "description": "The callsign of the position to book.",
+                                        "examples": [
+                                            "EKCH_TWR"
+                                        ]
+                                    },
+                                    "tag": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "The booking type: `1` for training, `2` for exam, `3` for event.",
+                                        "examples": [
+                                            1
+                                        ],
+                                        "minimum": 1,
+                                        "maximum": 3
+                                    }
+                                },
+                                "required": [
+                                    "cid",
+                                    "date",
+                                    "start_at",
+                                    "end_at",
+                                    "position"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "v1.booking.destroy",
+                "description": "Soft-deletes the booking and cancels the corresponding VATSIM booking.",
+                "summary": "Delete a booking",
+                "tags": [
+                    "Booking"
+                ],
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "description": "The booking ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Booking deleted"
+                                        },
+                                        "booking": {
+                                            "$ref": "#/components/schemas/Booking"
+                                        }
+                                    },
+                                    "required": [
+                                        "message",
+                                        "booking"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            },
+            "get": {
+                "operationId": "v1.booking.show",
+                "summary": "Display a single booking",
+                "tags": [
+                    "Booking"
+                ],
+                "parameters": [
+                    {
+                        "name": "booking",
+                        "in": "path",
+                        "required": true,
+                        "description": "The booking ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "booking": {
+                                            "$ref": "#/components/schemas/Booking"
+                                        }
+                                    },
+                                    "required": [
+                                        "booking"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/bookings": {
+            "get": {
+                "operationId": "v1.booking.index",
+                "description": "Returns a reduced payload when the request is unauthenticated.",
+                "summary": "List bookings",
+                "tags": [
+                    "Booking"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Booking"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/positions": {
+            "get": {
+                "operationId": "v1.positions.index",
+                "description": "Returns every position, reduced to the fields a booking client needs to render\nand match a callsign.",
+                "summary": "List positions",
+                "tags": [
+                    "Position"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All positions, wrapped in a `data` array. The query selects three columns only, so the response carries no `id`, `fir`, `rating`, `area_id` or `required_facility_rating_id`.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "callsign": {
+                                                        "type": "string"
+                                                    },
+                                                    "frequency": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "callsign",
+                                                    "frequency",
+                                                    "name"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/users": {
+            "get": {
+                "operationId": "v1.users.index",
+                "description": "Returns users filtered by the `onlyAtcActive` query parameter, with relations and\nfields (name, email, divisions, active areas, endorsements, roles, training) added\nonly when requested via the `include[]` query parameter.",
+                "summary": "List users",
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "name": "onlyAtcActive",
+                        "in": "query",
+                        "description": "Restrict results to users who are currently ATC active.",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": true
+                    },
+                    {
+                        "name": "include[]",
+                        "in": "query",
+                        "description": "Additional data to include in the response. Allowed values: allUsers, endorsements, roles, training, name, email, divisions, activeAreas.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "example": [
+                            "endorsements",
+                            "roles",
+                            "training"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The matching users, wrapped in a `data` array. Each user always includes `id`, `rating`, and `atc_active`; all other fields and relations appear only when requested via the `include[]` query parameter.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "rating": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "INA",
+                                                            "SUS",
+                                                            "OBS",
+                                                            "S1",
+                                                            "S2",
+                                                            "S3",
+                                                            "C1",
+                                                            "C3",
+                                                            "I1",
+                                                            "I3",
+                                                            "SUP",
+                                                            "ADM"
+                                                        ]
+                                                    },
+                                                    "atc_active": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "region": {
+                                                        "type": "string"
+                                                    },
+                                                    "division": {
+                                                        "type": "string"
+                                                    },
+                                                    "subdivision": {
+                                                        "type": "string"
+                                                    },
+                                                    "atc_active_areas": {
+                                                        "type": "object",
+                                                        "additionalProperties": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "endorsements": {},
+                                                    "roles": {},
+                                                    "training": {}
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "rating",
+                                                    "atc_active"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                },
+                "security": []
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "http": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "Booking": {
+                "type": "object",
+                "properties": {
+                    "callsign": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "deleted": {
+                        "type": "integer"
+                    },
+                    "event": {
+                        "type": "integer"
+                    },
+                    "exam": {
+                        "type": "integer"
+                    },
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "position_id": {
+                        "type": "integer"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "time_end": {
+                        "type": "string"
+                    },
+                    "time_start": {
+                        "type": "string"
+                    },
+                    "training": {
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "user_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "vatsim_booking": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "callsign",
+                    "created_at",
+                    "deleted",
+                    "event",
+                    "exam",
+                    "id",
+                    "name",
+                    "position_id",
+                    "source",
+                    "time_end",
+                    "time_start",
+                    "training",
+                    "updated_at",
+                    "user_id",
+                    "vatsim_booking"
+                ],
+                "title": "Booking"
+            }
+        },
+        "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            },
+            "ModelNotFoundException": {
+                "description": "Not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
