@@ -31,6 +31,14 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can reveal another user's email address.
+     */
+    public function viewEmail(User $user, User $model): bool
+    {
+        return $user->hasPermission('users.email.view');
+    }
+
+    /**
      * Determine whether the user can view the access table.
      *
      * @return bool
