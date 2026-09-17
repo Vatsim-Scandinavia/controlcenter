@@ -9,6 +9,7 @@ use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\Position;
 use App\Models\Rating;
+use App\Models\Training;
 use App\Models\User;
 use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
@@ -217,8 +218,12 @@ class EndorsementController extends Controller
             ' ― User: ' . $endorsement->user_id .
             ' ― Positions: ' . $data['position']);
 
-            // Log this new endorsement to the user's active training
-            TrainingActivityController::create($user->trainings->filter(fn ($training) => $training->status->isOpen())->first()->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            // Log this new endorsement to the training it was issued for
+            $linkedTraining = $this->trainingForSoloEndorsement($user, $position);
+
+            if ($linkedTraining) {
+                TrainingActivityController::create($linkedTraining->id, 'ENDORSEMENT', $endorsement->id, null, Auth::user()->id, $endorsement->positions->pluck('callsign')->implode(', '));
+            }
 
             $user->notify(new EndorsementCreatedNotification($endorsement));
 
@@ -374,6 +379,30 @@ class EndorsementController extends Controller
         $endorsement->user->notify(new EndorsementModifiedNotification($endorsement));
 
         return redirect()->back()->withSuccess(User::find($endorsement->user_id)->name . "'s " . $endorsement->type . ' endorsement shortened to ' . Carbon::parse($date)->toEuropeanDateTime() . '. E-mail sent to student.');
+    }
+
+    /**
+     * The training a solo endorsement belongs to.
+     *
+     * A solo is issued for a position, and a position belongs to an area, so the
+     * student's open training in that area is the training the endorsement is
+     * part of. Picking the first open training instead, as this used to, put the
+     * entry on an unrelated training whenever a student had more than one open —
+     * a Norwegian training taking the record of a Swedish solo, for instance.
+     *
+     * Falls back to any open training when none covers the position's area, so
+     * the endorsement is still recorded somewhere rather than lost.
+     */
+    private function trainingForSoloEndorsement(User $user, Position $position): ?Training
+    {
+        $openTrainings = $user->trainings
+            ->filter(fn (Training $training): bool => $training->status->isOpen())
+            // Furthest along first: a student with two open trainings in the same
+            // area is most likely being soloed on the one nearest its exam.
+            ->sortByDesc(fn (Training $training): int => $training->status->value);
+
+        return $openTrainings->firstWhere('area_id', $position->area_id)
+            ?? $openTrainings->first();
     }
 
     /**
