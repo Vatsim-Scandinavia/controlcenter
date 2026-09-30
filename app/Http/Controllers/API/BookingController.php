@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\ActivityLogService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -442,9 +443,10 @@ class BookingController extends Controller
         try {
             VatsimBookingApi::deleteBooking($booking);
         } catch (VatsimAPIException $e) {
-            return response()->json([
+            // Thrown rather than returned so the documented 200 response keeps its precise shape.
+            throw new HttpResponseException(response()->json([
                 'message' => 'VATSIM API error: ' . $e->getMessage(),
-            ], 400);
+            ], 400));
         }
 
         $booking->save();

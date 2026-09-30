@@ -12,6 +12,7 @@ use App\Services\VatsimBooking\Api;
 use App\Services\VatsimBooking\NoOpApi;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -146,7 +147,7 @@ class VatsimBookingApiTest extends TestCase
     public function connection_failure_throws_a_vatsim_api_exception(): void
     {
         Http::fake(function () {
-            throw new \Illuminate\Http\Client\ConnectionException('Connection timed out');
+            throw new ConnectionException('Connection timed out');
         });
 
         $this->expectException(VatsimAPIException::class);
