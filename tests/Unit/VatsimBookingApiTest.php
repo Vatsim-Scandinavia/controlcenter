@@ -131,4 +131,26 @@ class VatsimBookingApiTest extends TestCase
 
         (new Api())->createBooking($this->makeBooking(), 'booking');
     }
+
+    #[Test]
+    public function successful_response_without_a_valid_id_returns_null(): void
+    {
+        Http::fake([
+            'booking-api.test/booking' => Http::response(['status' => 'ok']),
+        ]);
+
+        $this->assertNull((new Api())->createBooking($this->makeBooking(), 'booking'));
+    }
+
+    #[Test]
+    public function connection_failure_throws_a_vatsim_api_exception(): void
+    {
+        Http::fake(function () {
+            throw new \Illuminate\Http\Client\ConnectionException('Connection timed out');
+        });
+
+        $this->expectException(VatsimAPIException::class);
+
+        (new Api())->createBooking($this->makeBooking(), 'booking');
+    }
 }
