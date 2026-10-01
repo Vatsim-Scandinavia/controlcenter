@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App;
+use App\Exceptions\VatsimAPIException;
+use App\Facades\VatsimBookingApi;
 use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
@@ -12,9 +13,8 @@ use App\Models\Position;
 use App\Models\User;
 use App\Services\ActivityLogService;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -197,21 +197,16 @@ class BookingController extends Controller
             $type = 'booking';
         }
 
-        if (App::environment('production')) {
-            $client = new Client();
+        try {
+            $vatsimBookingId = VatsimBookingApi::createBooking($booking, $type);
+        } catch (VatsimAPIException $e) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
+            ], 400);
+        }
 
-            $url = $this->getVatsimBookingUrl('post');
-            $response = $this->makeHttpRequest($client, $url, 'post', [
-                'callsign' => (string) $booking->callsign,
-                'cid' => $booking->user_id,
-                'type' => $type,
-                'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                'end' => $booking->time_end->format('Y-m-d H:i:s'),
-            ]);
-
-            $vatsim_booking = json_decode($response->getBody()->getContents());
-
-            $booking->vatsim_booking = $vatsim_booking->id;
+        if ($vatsimBookingId !== null) {
+            $booking->vatsim_booking = $vatsimBookingId;
         }
 
         $booking->save();
@@ -401,20 +396,16 @@ class BookingController extends Controller
             $type = 'booking';
         }
 
-        if (App::environment('production')) {
-            $client = new Client();
-            $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
-            $response = $this->makeHttpRequest($client, $url, 'put', [
-                'callsign' => (string) $booking->callsign,
-                'cid' => $booking->user_id,
-                'type' => $type,
-                'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                'end' => $booking->time_end->format('Y-m-d H:i:s'),
-            ]);
+        try {
+            $vatsimBookingId = VatsimBookingApi::updateBooking($booking, $type);
+        } catch (VatsimAPIException $e) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
+            ], 400);
+        }
 
-            $vatsim_booking = json_decode($response->getBody()->getContents());
-
-            $booking->vatsim_booking = $vatsim_booking->id;
+        if ($vatsimBookingId !== null) {
+            $booking->vatsim_booking = $vatsimBookingId;
         }
 
         $booking->save();
@@ -448,9 +439,15 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         $booking->deleted = true;
-        $client = new Client();
-        $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
-        $response = $this->makeHttpRequest($client, $url, 'delete');
+
+        try {
+            VatsimBookingApi::deleteBooking($booking);
+        } catch (VatsimAPIException $e) {
+            // Thrown rather than returned so the documented 200 response keeps its precise shape.
+            throw new HttpResponseException(response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
+            ], 400));
+        }
 
         $booking->save();
 
@@ -463,49 +460,5 @@ class BookingController extends Controller
             'message' => 'Booking deleted',
             'booking' => $booking,
         ], 200);
-    }
-
-    private function getVatsimBookingUrl(string $type, ?int $id = null)
-    {
-        if ($type == 'get' || $type == 'post') {
-            $url = config('vatsim.booking_api_url') . '/booking';
-        } elseif ($type == 'put' || $type == 'delete') {
-            $url = config('vatsim.booking_api_url') . '/booking/' . $id;
-        } else {
-            return null;
-        }
-
-        return $url;
-    }
-
-    private function makeHttpRequest(Client $client, string $url, string $type, ?array $data = null)
-    {
-        try {
-            $headers = [
-                'Authorization' => 'Bearer ' . config('vatsim.booking_api_token'),
-                'Accept' => 'application/json',
-            ];
-            if ($type == 'get') {
-                $response = $client->request('GET', $url, [
-                    'headers' => $headers,
-                ]);
-            } elseif ($type == 'post') {
-                $response = $client->request('POST', $url, ['headers' => $headers, 'form_params' => $data]);
-            } elseif ($type == 'put') {
-                $response = $client->request('PUT', $url, ['headers' => $headers, 'form_params' => $data]);
-            } elseif ($type == 'delete') {
-                $response = $client->request('DELETE', $url, ['headers' => $headers]);
-            }
-        } catch (ClientException $e) {
-            return response()->json([
-                'message' => 'VATSIM API error: ' . $e->getMessage(),
-            ], 400);
-        }
-
-        if (isset($response)) {
-            return $response;
-        }
-
-        return null;
     }
 }
