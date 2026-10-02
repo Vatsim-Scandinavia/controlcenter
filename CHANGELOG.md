@@ -3,6 +3,13 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## [7.2.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.2.1...v7.2.2) (2026-10-02)
+
+
+### Bug Fixes
+
+* **seeder:** avoid multiple open trainings per student ([#1653](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1653)) ([b83d9c0](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b83d9c0772a9356dbf16ba0daa6f16518a20dbcb))
+
 ## [7.2.1](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.2.0...v7.2.1) (2026-10-02)
 
 
