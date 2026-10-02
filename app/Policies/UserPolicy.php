@@ -31,6 +31,16 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can reveal a user's email address.
+     *
+     * Requires the dedicated permission in addition to being able to view the profile itself.
+     */
+    public function viewEmail(User $user, User $model): bool
+    {
+        return $this->view($user, $model) && $user->hasPermission('users.email.view');
+    }
+
+    /**
      * Determine whether the user can view the access table.
      *
      * @return bool
