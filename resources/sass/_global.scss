@@ -384,3 +384,31 @@ table{
     margin-bottom: 3px;
     vertical-align: middle;
 }
+
+.solo-endorsements {
+    > summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::after {
+            content: "\f078";
+            font-family: "Font Awesome 7 Free";
+            font-weight: 900;
+            font-size: 0.8em;
+            color: var(--bs-secondary-color);
+            transition: transform 0.2s ease-in-out;
+        }
+    }
+
+    &[open] > summary::after {
+        transform: rotate(180deg);
+    }
+}
