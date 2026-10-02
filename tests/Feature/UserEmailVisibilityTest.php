@@ -29,7 +29,11 @@ class UserEmailVisibilityTest extends TestCase
             ->get(route('user.show', $target))
             ->assertOk()
             ->assertDontSee('private@example.test')
-            ->assertSee('Reveal email');
+            ->assertSee('aria-label="Reveal email address"', false)
+            ->assertSee('id="reveal-email-control"', false)
+            ->assertSee('class="fas fa-eye" aria-hidden="true"', false)
+            ->assertDontSee('btn-outline-primary')
+            ->assertDontSee('> Reveal email');
     }
 
     public function test_profile_viewer_without_permission_cannot_reveal_email(): void
@@ -41,6 +45,7 @@ class UserEmailVisibilityTest extends TestCase
             ->assertOk()
             ->assertDontSee('private@example.test')
             ->assertDontSee('Reveal email')
+            ->assertDontSee('id="reveal-email-control"', false)
             ->assertSee('Hidden');
 
         $this->actingAs($target)
@@ -62,7 +67,7 @@ class UserEmailVisibilityTest extends TestCase
             ->assertExactJson(['email' => 'private@example.test']);
 
         $log = ActivityLog::query()
-            ->where('log_name', 'user-email')
+            ->where('log_name', 'access')
             ->where('event', 'viewed')
             ->first();
 
@@ -73,6 +78,13 @@ class UserEmailVisibilityTest extends TestCase
         $this->assertSame(User::class, $log->subject_type);
         $this->assertSame('Contacting the student about an upcoming session', $log->properties['reason']);
         $this->assertStringNotContainsString($target->email, $log->properties->toJson());
+
+        $this->actingAs($viewer)
+            ->get(route('admin.logs', ['log_name' => 'access']))
+            ->assertOk()
+            ->assertSee('Email address viewed')
+            ->assertSee('Contacting the student about an upcoming session')
+            ->assertDontSee($target->email);
     }
 
     public function test_reveal_requires_a_meaningful_reason(): void
@@ -87,7 +99,7 @@ class UserEmailVisibilityTest extends TestCase
             ->assertJsonValidationErrors('reason');
 
         $this->assertDatabaseMissing('activity_logs', [
-            'log_name' => 'user-email',
+            'log_name' => 'access',
             'event' => 'viewed',
         ]);
     }

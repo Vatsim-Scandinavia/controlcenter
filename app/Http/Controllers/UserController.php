@@ -217,7 +217,7 @@ class UserController extends Controller
      */
     public function revealEmail(RevealUserEmailRequest $request, User $user): JsonResponse
     {
-        activity('user-email')
+        activity('access')
             ->performedOn($user)
             ->causedBy($request->user())
             ->event('viewed')

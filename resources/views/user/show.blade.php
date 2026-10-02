@@ -34,12 +34,13 @@
 
                     <dt>Email</dt>
                     <dd class="separator pb-3">
-                        <span id="user-email" class="font-monospace text-muted" aria-label="Email address hidden">••••••••••••</span>
                         @can('viewEmail', $user)
-                            <a href="#reveal-email-modal" role="button" class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#reveal-email-modal">
-                                <i class="fas fa-eye"></i> Reveal email
+                            <a id="reveal-email-control" href="#reveal-email-modal" class="d-inline-flex align-items-center gap-2 text-muted" data-bs-toggle="modal" data-bs-target="#reveal-email-modal" aria-label="Reveal email address" title="Reveal email address">
+                                <span id="user-email" class="font-monospace" aria-label="Email address hidden">••••••••••••</span>
+                                <i class="fas fa-eye" aria-hidden="true"></i>
                             </a>
                         @else
+                            <span id="user-email" class="font-monospace text-muted" aria-label="Email address hidden">••••••••••••</span>
                             <span class="badge bg-secondary ms-2"><i class="fas fa-lock"></i> Hidden</span>
                         @endcan
                     </dd>
@@ -556,7 +557,7 @@
                     email.textContent = data.email;
                     email.classList.remove('text-muted');
                     email.setAttribute('aria-label', 'Email address revealed');
-                    document.querySelector('[data-bs-target="#reveal-email-modal"]')?.remove();
+                    document.getElementById('reveal-email-control').replaceWith(email);
 
                     const copy = document.createElement('button');
                     copy.type = 'button';
