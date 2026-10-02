@@ -156,7 +156,7 @@
                                 <th>Area</th>
                                 <th>State</th>
                                 <th>Last Training</th>
-                                <th>Next Training Session</th>
+                                <th>Next Session</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -202,9 +202,9 @@
                                 <td>
                                     @if($training->trainingSessions->isNotEmpty())
                                         @php($nextTrainingSession = $training->trainingSessions->first())
-                                        <span title="{{ \Carbon\Carbon::create($nextTrainingSession->time_start)->toEuropeanDateTime() }}">
-                                            {{ \Carbon\Carbon::create($nextTrainingSession->time_start)->toEuropeanDate(true) }}
-                                            {{ \Carbon\Carbon::create($nextTrainingSession->time_start)->toEuropeanTime() }}
+                                        <span title="{{ $nextTrainingSession->time_start->toEuropeanDateTime() }}">
+                                            {{ $nextTrainingSession->time_start->toEuropeanDate(true) }}
+                                            {{ $nextTrainingSession->time_start->toEuropeanTime() }}
                                         </span>
                                         <br>
                                         <span class="text-muted">{{ $nextTrainingSession->position->callsign }}</span>

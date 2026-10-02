@@ -54,9 +54,9 @@ class TrainingSessionsDisplayTest extends TestCase
         $response = $this->actingAs($mentor)->get(route('dashboard'));
 
         $response->assertOk()
-            ->assertSee('Next Training Session')
-            ->assertSee(Carbon::parse($nextBooking->time_start)->toEuropeanDate(true))
-            ->assertSee(Carbon::parse($nextBooking->time_start)->toEuropeanTime())
+            ->assertSee('Next Session')
+            ->assertSee($nextBooking->time_start->toEuropeanDate(true))
+            ->assertSee($nextBooking->time_start->toEuropeanTime())
             ->assertSee('EKCH_TWR')
             ->assertDontSee('EKDK_CTR');
     }
@@ -93,9 +93,27 @@ class TrainingSessionsDisplayTest extends TestCase
         $response->assertOk()
             ->assertSee('Training Sessions')
             ->assertSeeInOrder(['FIRST_TWR', 'SECOND_APP'])
+            ->assertDontSee('First Tower')
+            ->assertDontSee('Second Approach')
             ->assertDontSee('UNTAGGED')
             ->assertDontSee('DELETED')
             ->assertDontSee('OTHER_TWR');
+    }
+
+    #[Test]
+    public function booking_times_are_cast_to_carbon_instances_when_loaded(): void
+    {
+        $area = Area::factory()->create();
+        Position::factory()->for($area)->create();
+        $booking = Booking::factory()->create([
+            'time_start' => '2026-08-15 14:00:00',
+            'time_end' => '2026-08-15 16:00:00',
+        ])->fresh();
+
+        $this->assertInstanceOf(Carbon::class, $booking->time_start);
+        $this->assertInstanceOf(Carbon::class, $booking->time_end);
+        $this->assertSame('2026-08-15 14:00:00', $booking->time_start->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-08-15 16:00:00', $booking->time_end->format('Y-m-d H:i:s'));
     }
 
     private function createBooking(

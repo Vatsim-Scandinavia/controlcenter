@@ -624,10 +624,10 @@
                             <tbody>
                                 @foreach($trainingSessions as $trainingSession)
                                     <tr>
-                                        <td>{{ \Carbon\Carbon::create($trainingSession->time_start)->toEuropeanDate(true) }}</td>
-                                        <td>{{ \Carbon\Carbon::create($trainingSession->time_start)->toEuropeanTime() }}</td>
-                                        <td>{{ \Carbon\Carbon::create($trainingSession->time_end)->toEuropeanTime() }}</td>
-                                        <td>{{ $trainingSession->position->callsign }} ({{ $trainingSession->position->name }})</td>
+                                        <td>{{ $trainingSession->time_start->toEuropeanDate(true) }}</td>
+                                        <td>{{ $trainingSession->time_start->toEuropeanTime() }}</td>
+                                        <td>{{ $trainingSession->time_end->toEuropeanTime() }}</td>
+                                        <td>{{ $trainingSession->position->callsign }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

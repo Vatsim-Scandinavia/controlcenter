@@ -16,6 +16,11 @@ class Booking extends Model
      */
     protected $fillable = ['callsign', 'position_id', 'name', 'time_start', 'time_end', 'cid', 'user_id', 'training', 'event', 'exam'];
 
+    protected $casts = [
+        'time_start' => 'datetime',
+        'time_end' => 'datetime',
+    ];
+
     public function position()
     {
         return $this->hasOne(Position::class, 'id', 'position_id');
