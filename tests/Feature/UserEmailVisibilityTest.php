@@ -103,4 +103,46 @@ class UserEmailVisibilityTest extends TestCase
             'event' => 'viewed',
         ]);
     }
+
+    public function test_reveal_rejects_whitespace_only_reason(): void
+    {
+        $viewer = User::factory()->create();
+        $viewer->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
+        $target = User::factory()->create();
+
+        $this->actingAs($viewer)
+            ->postJson(route('user.email.reveal', $target), ['reason' => "   \t  "])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('reason');
+
+        $this->actingAs($viewer)
+            ->postJson(route('user.email.reveal', $target), ['reason' => '  a  '])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('reason');
+
+        $this->assertDatabaseMissing('activity_logs', [
+            'log_name' => 'access',
+            'event' => 'viewed',
+        ]);
+    }
+
+    public function test_email_permission_without_profile_access_cannot_reveal_email(): void
+    {
+        config(['roles.matrix.staff' => ['users.email.view']]);
+
+        $viewer = User::factory()->create();
+        $viewer->roleAssignments()->create(['role' => 'staff', 'area_id' => null]);
+        $target = User::factory()->create(['email' => 'private@example.test']);
+
+        $this->assertTrue($viewer->hasPermission('users.email.view'));
+
+        $this->actingAs($viewer)
+            ->postJson(route('user.email.reveal', $target), ['reason' => 'Trying to bypass profile access'])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing('activity_logs', [
+            'log_name' => 'access',
+            'event' => 'viewed',
+        ]);
+    }
 }
