@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test:report-images": "node --test tests/JavaScript/report-images.test.js"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^7.0.0",
@@ -19,6 +20,7 @@
         "easymde": "^2.18.0",
         "flatpickr": "^4.6.13",
         "laravel-vite-plugin": "^3.0.0",
+        "marked": "^4.3.0",
         "moment": "^2.29.1",
         "sass": "1.103.1",
         "vite": "^8.0.0",

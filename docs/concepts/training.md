@@ -46,6 +46,10 @@ Add a comment to the training timeline to explain where the training stands, suc
 
 Write a training report for a session, and an exam report for an examination attached to the training.
 
+In training reports, use **Insert image** in the **Report** or **Areas to improve** editor toolbar, or paste an image with **Ctrl+V** (**Cmd+V** on Mac), to place a PNG, JPEG or WebP image at the cursor. Preview shows the image immediately; saving the report uploads it as an attachment and inserts its link automatically. Images removed before saving are not uploaded, and leaving without saving does not upload anything. If form validation fails, remove and reinsert any unsaved images before submitting again.
+
+To resize an image, open **Preview** or **Side-by-side**, click the image, and drag any of its four corner handles. The image resizes live while keeping its proportions. Press **Escape** during a drag to cancel it. Keyboard users can select an image, tab to a corner, and use the arrow keys to resize it (hold **Shift** for smaller steps). Save the report to keep the new size. The original file is unchanged, and images fit within the report on smaller screens.
+
 ## For Training Staff
 
 Training Directors complete and close trainings.
