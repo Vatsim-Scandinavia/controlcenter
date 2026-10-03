@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -31,7 +32,7 @@ class TrainingObjectAttachmentController extends Controller
             'hidden' => 'nullable',
         ]);
 
-        $attachment_ids = self::saveAttachments($request, $trainingObject);
+        $attachment_ids = self::saveAttachments($request, $trainingObject, ['file']);
 
         if ($request->expectsJson()) {
             return json_encode([
@@ -81,25 +82,14 @@ class TrainingObjectAttachmentController extends Controller
     /**
      * @return array
      */
-    public static function saveAttachments(Request $request, TrainingObject $object)
+    public static function saveAttachments(Request $request, TrainingObject $object, array $fields = ['files'])
     {
-        foreach ($request->files as $file) {
-            if (! is_iterable($file)) {
-                $file_id = FileController::saveFile($file);
-
+        foreach ($fields as $field) {
+            foreach (Arr::wrap($request->file($field)) as $file) {
                 $object->attachments()->create([
-                    'file_id' => $file_id,
-                    'hidden' => false, // We hardcode this to false for now
+                    'file_id' => FileController::saveFile($file),
+                    'hidden' => false,
                 ]);
-            } else {
-                foreach ($file as $file2) {
-                    $file_id = FileController::saveFile($file2);
-
-                    $object->attachments()->create([
-                        'file_id' => $file_id,
-                        'hidden' => false, // We hardcode this to false for now
-                    ]);
-                }
             }
         }
 

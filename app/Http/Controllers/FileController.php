@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Throwable;
 
 /**
  * This controls the uploaded file management
@@ -28,7 +30,7 @@ class FileController extends Controller
         $this->authorize('view', $file);
 
         if (Storage::exists($file->full_path)) {
-            return response(Storage::get($file->full_path), 200)->header('Content-Type', Storage::mimeType($file->full_path))->header('Content-Disposition', 'inline');
+            return Storage::response($file->full_path, null, ['X-Content-Type-Options' => 'nosniff'], 'inline');
         } else {
             return abort(404);
         }
@@ -98,7 +100,7 @@ class FileController extends Controller
      */
     public static function saveFile(UploadedFile $file, ?string $filename = null)
     {
-        $extension = $file->getClientOriginalExtension();
+        $extension = $file->guessExtension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
 
         if ($filename == null) {
@@ -110,14 +112,28 @@ class FileController extends Controller
             $filename = $filename . '.' . $extension;
         }
 
-        Storage::putFileAs('public/files/', $file, $filename);
+        $path = Storage::putFileAs('public/files/', $file, $filename);
+        if ($path === false) {
+            throw new RuntimeException('Failed to store the uploaded file.');
+        }
 
-        File::create([
-            'id' => $id,
-            'name' => $file->getClientOriginalName(),
-            'uploaded_by' => Auth::id(),
-            'path' => $filename,
-        ]);
+        try {
+            File::create([
+                'id' => $id,
+                'name' => $file->getClientOriginalName(),
+                'uploaded_by' => Auth::id(),
+                'path' => $filename,
+            ]);
+        } catch (Throwable $exception) {
+            try {
+                if (! Storage::delete($path)) {
+                    report(new RuntimeException('Failed to clean up uploaded file: ' . $path));
+                }
+            } catch (Throwable $cleanupException) {
+                report($cleanupException);
+            }
+            throw $exception;
+        }
 
         return $id;
     }
