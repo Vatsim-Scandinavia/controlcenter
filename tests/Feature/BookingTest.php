@@ -473,4 +473,13 @@ class BookingTest extends TestCase
         $this->assertEquals(1, $booking->training);
         $this->assertEquals($visitor->id, $booking->user_id);
     }
+
+    #[Test]
+    public function mentors_can_specify_the_training_booking_tag(): void
+    {
+        $mentor = User::factory()->create(['rating' => VatsimRating::S1->value]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => Area::factory()->create()->id]);
+
+        $this->assertTrue($mentor->can('bookTrainingTag', Booking::class));
+    }
 }

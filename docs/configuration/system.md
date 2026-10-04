@@ -158,7 +158,7 @@ You must configure a crontab or create a SystemD timer to run the scheduler ever
 
 Create two units to run Control Center's scheduled tasks. The service is responsible for starting our background jobs, and can be run on-demand, whereas the timer is responsible for starting the service.
 
-```yaml title="/etc/systemd/control-center-tasks.service"
+```yaml title="/etc/systemd/system/control-center-tasks.service"
 [Unit]
 Description=Process Control Center background jobs
 
@@ -171,7 +171,7 @@ ExecStart=COMMAND # (2)!
 1. This path should either point to the folder where you have your Docker configuration or your source installation.
 2. Insert the relevant command from the **`COMMAND`** tabs underneath.
 
-```yaml title="/etc/systemd/control-center-tasks.timer"
+```yaml title="/etc/systemd/system/control-center-tasks.timer"
 [Unit]
 Description=Run Control Center's task scheduler every minute
 
@@ -212,6 +212,12 @@ WantedBy=timers.target
     ```
 
 ### Enable the service timer
+
+Reload SystemD so it picks up the new unit files:
+
+```sh
+systemctl daemon-reload
+```
 
 Start the service to verify that your service is working. To start the service:
 

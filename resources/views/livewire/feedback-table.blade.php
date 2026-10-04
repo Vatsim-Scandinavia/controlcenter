@@ -1,4 +1,5 @@
-<div x-data="{ current: { id: null, submitter: '', submitted: '', feedback: '', controller: '', position: '', controllerLabel: '', positionLabel: '', updateUrl: '', ackUrl: '', publishUrl: '' } }">
+<div x-data="{ current: { id: null, submitter: '', submitted: '', feedback: '', controller: '', position: '', area: '', controllerLabel: '', positionLabel: '', areaLabel: '', updateUrl: '', ackUrl: '', publishUrl: '' } }">
+
 
     <div class="card shadow mb-4">
         <div class="card-header bg-primary py-3">
@@ -89,7 +90,7 @@
                                 </td>
                                 <td>{{ $f->referencePosition?->callsign ?? 'N/A' }}</td>
                                 <td>{{ $f->time ?? 'N/A' }}</td>
-                                <td>{{ $f->referencePosition?->area?->name ?? 'N/A' }}</td>
+                                <td>{{ $f->area?->name ?? 'N/A' }}</td>
                                 <td>{!! nl2br(e($f->feedback)) !!}</td>
                                 @can('update', $f)
                                     <td style="vertical-align: middle; text-align: center;">
@@ -115,8 +116,10 @@
                                                 'published' => $f->published,
                                                 'controller' => $f->referenceUser?->id ?? '',
                                                 'position' => $f->referencePosition?->callsign ?? '',
+                                                'area' => $f->explicitArea?->id ?? '',
                                                 'controllerLabel' => $f->referenceUser ? $f->referenceUser->name.' ('.$f->referenceUser->id.')' : 'N/A',
                                                 'positionLabel' => $f->referencePosition?->callsign ?? 'N/A',
+                                                'areaLabel' => $f->area?->name ?? 'N/A',
                                                 'updateUrl' => route('feedback.update', $f->id),
                                                 'ackUrl' => route('feedback.acknowledge'),
                                                 'publishUrl' => route('feedback.publish'),
@@ -191,7 +194,28 @@
                             </div>
 
                             <div class="row mb-4">
-                                <div class="col-md-5">
+                                <div class="col-md-12 col-lg-3">
+                                    <label class="form-label" for="feedback-edit-area">Area
+                                        <small class="form-text"> (Optional)</small></label>
+                                    <select
+                                        id="feedback-edit-area"
+                                        class="form-select @error('area') is-invalid @enderror"
+                                        name="area"
+                                        x-model="current.area"
+                                        @change="current.position = ''"
+                                        :disabled="current.position !== ''"
+                                    >
+                                        <option value="">None</option>
+                                        @foreach($editAreas as $editArea)
+                                            <option value="{{ $editArea->id }}">{{ $editArea->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('area')
+                                        <span class="text-danger">{{ $errors->first('area') }}</span>
+                                    @enderror
+                                    <small class="form-text text-muted">Current: <span x-text="current.areaLabel"></span></small>
+                                </div>
+                                <div class="col-md-12 col-lg-3">
                                     <label class="form-label" for="feedback-edit-controller">Controller
                                         <small class="form-text"> (Optional)</small></label>
                                     <input
@@ -207,7 +231,7 @@
                                     @enderror
                                     <small class="form-text text-muted">Current: <span x-text="current.controllerLabel"></span></small>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-12 col-lg-4">
                                     <label class="form-label" for="feedback-edit-position">Controller's position
                                         <small class="form-text"> (Optional)</small></label>
                                     <input
@@ -217,6 +241,8 @@
                                         name="position"
                                         list="feedback-positions-list"
                                         x-model="current.position"
+                                        @input="current.area = ''"
+                                        :disabled="current.area !== ''"
                                     >
                                     @error('position')
                                         <span class="text-danger">{{ $errors->first('position') }}</span>

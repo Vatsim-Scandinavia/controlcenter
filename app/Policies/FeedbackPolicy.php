@@ -40,6 +40,11 @@ class FeedbackPolicy
 
     /**
      * Determine whether the user can update feedback in general.
+     * Determine whether the user can update feedback in general, or one entry
+     * in particular. An entry is governed by its computed area, so only one
+     * carrying neither an explicit area nor a position falls to the
+     * uncorrelated permission. Re-assigning an entry hands it to the new
+     * area's staff, possibly out of the editor's own reach.
      */
     public function update(User $user, ?Feedback $feedback = null): bool
     {
@@ -47,8 +52,8 @@ class FeedbackPolicy
             return $user->hasPermission('feedback.update');
         }
 
-        if ($feedback->referencePosition) {
-            return $user->hasPermission('feedback.update', $feedback->referencePosition->area);
+        if ($area = $feedback->area) {
+            return $user->hasPermission('feedback.update', $area);
         }
 
         return $user->hasPermission('feedback.update')
