@@ -128,6 +128,15 @@
                                 <span class="text-danger">{{ $errors->first('trainingSoloRequirement') }}</span>
                             @enderror
 
+                            <div class="mb-4">
+                                <label class="form-label" for="trainingSoloMaxDays">Solo Endorsement Day Limit</label>
+                                <input type="number" min="1" class="form-control @error('trainingSoloMaxDays') is-invalid @enderror" id="trainingSoloMaxDays" name="trainingSoloMaxDays" required value="{{ Setting::get("trainingSoloMaxDays") }}">
+                                <small class="form-text">Total solo days a student may be granted on one training, shown as a counter on the training page.</small>
+                            </div>
+                            @error('trainingSoloMaxDays')
+                                <span class="text-danger">{{ $errors->first('trainingSoloMaxDays') }}</span>
+                            @enderror
+
                         </div>
                     </div>
                 </div>
