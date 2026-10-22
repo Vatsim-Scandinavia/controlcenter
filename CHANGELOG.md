@@ -3,6 +3,19 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## [7.3.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.2.2...v7.3.0) (2026-10-22)
+
+
+### Features
+
+* **endorsements:** add solo endorsement day counter ([#1654](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1654)) ([571d6c5](https://github.com/Vatsim-Scandinavia/controlcenter/commit/571d6c58fddb825c0c48bcf370c7a4cc04a14e08))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @vitejs/plugin-vue to v6.0.10 ([#1701](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1701)) ([c40c54c](https://github.com/Vatsim-Scandinavia/controlcenter/commit/c40c54cc2d03213339b880a64e4014df832046d8))
+* **deps:** update dependency vite to v8.3.3 [security] ([#1699](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1699)) ([b067dbf](https://github.com/Vatsim-Scandinavia/controlcenter/commit/b067dbfa5369197491e94f1d5ac004e1ab946d71))
+
 ## [7.2.2](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.2.1...v7.2.2) (2026-10-21)
 
 
