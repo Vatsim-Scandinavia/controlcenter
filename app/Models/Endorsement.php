@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\LogName;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -18,6 +19,15 @@ class Endorsement extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function scopeValidVisiting(Builder $query): Builder
+    {
+        return $query->where('type', 'VISITING')
+            ->where('revoked', false)
+            ->where('expired', false)
+            ->where('valid_from', '<=', now())
+            ->where(fn (Builder $dates) => $dates->whereNull('valid_to')->orWhere('valid_to', '>', now()));
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

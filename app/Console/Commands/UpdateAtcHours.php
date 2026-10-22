@@ -137,8 +137,15 @@ class UpdateAtcHours extends Command
         $this->info('Updating ATC hours for member: ' . $member->id);
 
         $periodStart = Carbon::now()->subMonths($this->qualificationPeriod);
+        $visitingEndorsements = $member->endorsements()->validVisiting()->with('areas')->orderBy('valid_from')->get();
+        $newVisitorActivities = collect();
 
         foreach (Area::all() as $area) {
+            $visitingEndorsement = $visitingEndorsements->first(fn ($endorsement) => $endorsement->areas->contains('id', $area->id));
+            if (! $member->isMember() && ! $visitingEndorsement) {
+                continue;
+            }
+
             $sessionsInArea = $sessions
                 ->filter(fn ($session) => Vatsim::isDivisionCallsign($session->callsign, $divisionCallsignPrefixes[$area->id]));
 
@@ -175,14 +182,32 @@ class UpdateAtcHours extends Command
                 $activity->hours_in_period = $hoursInPeriod;
                 $activity->save();
             } catch (ModelNotFoundException $e) {
-                if ($hoursActiveInArea > 0) {
-                    AtcActivity::create([
+                if ($hoursActiveInArea > 0 || $visitingEndorsement) {
+                    $activity = AtcActivity::create([
                         'user_id' => $member->id,
                         'area_id' => $area->id,
                         'hours' => $hoursActiveInArea,
                         'last_online' => $lastConnection,
+                        'hours_in_period' => $hoursInPeriod,
+                        'start_of_grace_period' => ! $member->isMember() ? $visitingEndorsement->valid_from : null,
                     ]);
+                    if (! $member->isMember()) {
+                        $newVisitorActivities->push($activity);
+                    }
                 }
+            }
+        }
+
+        if ($newVisitorActivities->isNotEmpty()) {
+            $activities = $member->localAtcActivities();
+            $totalHoursMode = Setting::get('atcActivityBasedOnTotalHours', true);
+            $requiredHours = Setting::get('atcActivityRequirement', 10);
+            $graceStart = now()->subMonths(Setting::get('atcActivityGracePeriod', 12));
+            foreach ($newVisitorActivities as $activity) {
+                $qualifyingActivities = $totalHoursMode ? $activities : collect([$activity]);
+                $activity->atc_active = $qualifyingActivities->sum('hours') >= $requiredHours
+                    || $qualifyingActivities->where('start_of_grace_period', '>', $graceStart)->isNotEmpty();
+                $activity->save();
             }
         }
     }
