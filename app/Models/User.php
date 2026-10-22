@@ -10,6 +10,7 @@ use App\Helpers\VatsimRating;
 use App\Services\PermissionMatrix;
 use App\Support\AreaScope;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -102,6 +103,8 @@ class User extends Authenticatable
             ->where('atc_activities.atc_active', true)
             ->select('users.*', 'atc_activities.last_online', 'atc_activities.hours_in_period', 'atc_activities.hours', 'atc_activities.start_of_grace_period')
             ->with(['endorsements']);
+
+        $query->whereIn('atc_activities.id', AtcActivity::locallyEligible()->select('id'));
 
         if (Setting::get('atcActivityBasedOnTotalHours')) {
             $query->where(function ($query) {
@@ -225,29 +228,40 @@ class User extends Authenticatable
      */
     public function isAtcActive(?Area $area = null)
     {
+        if (! $this->isMember() && ! $this->isVisiting($area)) {
+            return false;
+        }
+
+        $activities = $this->localAtcActivities();
+
         if (Setting::get('atcActivityBasedOnTotalHours')) {
 
-            $atLeastOneAreaActive = AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+            $atLeastOneAreaActive = $activities->contains('atc_active', true);
 
-            $hasEnoughHours = $this->atcActivity->sum('hours') >= Setting::get('atcActivityRequirement', 10);
-            $isInGracePeriod = $this->atcActivity->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
+            $hasEnoughHours = $activities->sum('hours') >= Setting::get('atcActivityRequirement', 10);
+            $isInGracePeriod = $activities->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))->count() > 0;
 
             return $atLeastOneAreaActive && ($hasEnoughHours || $isInGracePeriod);
         } else {
             if ($area) {
-                return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->where('area_id', $area->id)->exists();
+                return $activities->where('area_id', $area->id)->contains('atc_active', true);
             }
 
-            return AtcActivity::where('user_id', $this->id)->where('atc_active', true)->exists();
+            return $activities->contains('atc_active', true);
         }
 
     }
 
-    /**
-     * Check if the user is allowed to control online
-     *
-     * @return bool
-     */
+    public function localAtcActivities(): Collection
+    {
+        return $this->atcActivity()->locallyEligible()->get();
+    }
+
+    public function scopeWithActiveAtcActivity(Builder $query): Builder
+    {
+        return $query->whereHas('atcActivity', fn (Builder $activities) => $activities->locallyEligible()->where('atc_active', true));
+    }
+
     public function isAllowedToControlOnline(?Area $area = null)
     {
 
@@ -271,9 +285,7 @@ class User extends Authenticatable
     public static function getActiveAtcMembers(array $userIds = [])
     {
         $query = User::where('rating', '>=', VatsimRating::S1->value)
-            ->whereHas('atcActivity', function ($query) {
-                $query->where('atc_active', true);
-            });
+            ->withActiveAtcActivity();
 
         if (! empty($userIds)) {
             $query->whereIn('id', $userIds);
@@ -283,23 +295,24 @@ class User extends Authenticatable
     }
 
     /**
-     * Fetch members that are active as ATC and associated with the sub-/division.
+     * Fetch associated home controllers and valid visitors for hours collection.
      *
      * @return EloquentCollection<User>
      */
     public static function getAssociatedActiveAtcMembers(bool $onlyCheckActiveControllers = true, array $userIds = [])
     {
         $query = User::where('rating', '>=', VatsimRating::S1->value)
-            ->where(config('app.mode'), config('app.owner_code'));
+            ->where(function (Builder $members) use ($onlyCheckActiveControllers) {
+                $members->where(function (Builder $home) use ($onlyCheckActiveControllers) {
+                    $home->where(config('app.mode'), config('app.owner_code'));
+                    if ($onlyCheckActiveControllers) {
+                        $home->withActiveAtcActivity();
+                    }
+                })->orWhereHas('endorsements', fn (Builder $endorsements) => $endorsements->validVisiting());
+            });
 
         if (! empty($userIds)) {
             $query->whereIn('id', $userIds);
-        }
-
-        if ($onlyCheckActiveControllers) {
-            $query->whereHas('atcActivity', function ($query) {
-                $query->where('atc_active', true);
-            });
         }
 
         return $query->get();
@@ -424,6 +437,10 @@ class User extends Authenticatable
      */
     public function hasActiveEndorsement(string $type)
     {
+        if ($type === 'VISITING') {
+            return $this->isVisiting();
+        }
+
         return Endorsement::where('user_id', $this->id)->where('type', $type)->where('revoked', false)->where('expired', false)->exists();
     }
 
@@ -451,16 +468,12 @@ class User extends Authenticatable
      */
     public function isVisiting(?Area $area = null)
     {
-        if ($area == null) {
-            return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->count();
+        $endorsements = $this->endorsements()->validVisiting();
+        if ($area !== null) {
+            $endorsements->whereHas('areas', fn (Builder $areas) => $areas->where('areas.id', $area->id));
         }
 
-        // Check if the user has an active examiner endorsement for the area
-        if ($this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->first()) {
-            return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->first()->areas()->wherePivot('area_id', $area->id)->count();
-        }
-
-        return false;
+        return $endorsements->exists();
     }
 
     /**

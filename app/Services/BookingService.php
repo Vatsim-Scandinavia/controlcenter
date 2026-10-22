@@ -67,6 +67,10 @@ class BookingService
             );
         }
 
+        if (! $user->isMember()) {
+            $positions = $positions->filter(fn (Position $position) => $user->isAllowedToControlOnline($position->area))->values();
+        }
+
         return $positions;
     }
 

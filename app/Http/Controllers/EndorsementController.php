@@ -73,7 +73,7 @@ class EndorsementController extends Controller
      */
     public function indexVisitors()
     {
-        $endorsements = Endorsement::where('type', 'VISITING')->where('revoked', false)->with('user', 'ratings', 'areas.ratings')->get();
+        $endorsements = Endorsement::where('type', 'VISITING')->where('revoked', false)->with('user.atcActivity', 'user.endorsements.areas', 'ratings', 'areas.ratings')->get();
         $areas = Area::all();
 
         return view('endorsements.visiting', compact('endorsements', 'areas'));

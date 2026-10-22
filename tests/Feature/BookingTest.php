@@ -66,7 +66,7 @@ class BookingTest extends TestCase
     #[DataProvider('controllerProvider')]
     public function controllers_with_activity_can_create_bookings(VatsimRating $rating, callable $setup): void
     {
-        $controller = User::factory()->create([
+        $controller = User::factory()->home()->create([
             'rating' => $rating,
         ]);
 
@@ -243,7 +243,7 @@ class BookingTest extends TestCase
     #[Test]
     public function controller_cannot_create_booking_with_same_start_and_end_time(): void
     {
-        $controller = User::factory()->create([
+        $controller = User::factory()->home()->create([
             'rating' => VatsimRating::C1,
         ]);
 
@@ -344,7 +344,7 @@ class BookingTest extends TestCase
             'rating' => VatsimRating::S1->value,
         ]);
 
-        $user = User::factory()->create(['rating' => VatsimRating::S1->value]);
+        $user = User::factory()->home()->create(['rating' => VatsimRating::S1->value]);
         $user->atcActivity()->create([
             'user_id' => $user->id,
             'area_id' => $area->id,
@@ -449,6 +449,7 @@ class BookingTest extends TestCase
             'rating' => VatsimRating::S2->value,
             'callsign' => 'TEST_TWR',
             'name' => 'Test Tower',
+            'area_id' => $training->area_id,
         ]);
 
         $bookingRequest = [

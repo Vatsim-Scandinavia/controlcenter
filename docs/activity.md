@@ -36,6 +36,18 @@ If a user fails both checks:
 - They receive an **inactivity notification**. In **Total Hours** mode, one notification is sent per user. In **Per Area** mode, a notification is sent for each area that goes inactive.
 - If configured, they may be removed from external rosters (see [Division Integrations](integrations/vateud.md)) during the next synchronization.
 
+## Visiting controllers
+
+Visitors participate in local activity tracking without changing their home division or subdivision. The hours collector includes controllers with a currently valid visiting endorsement even when they have no activity record or automatic reactivation is disabled. Only local positions in their endorsed areas contribute to their visitor activity records.
+
+On the first collection for an endorsed area, a visitor receives an activity record even with zero hours. Its initial grace period starts at the visiting endorsement’s `valid_from`, not at the collection date. Subsequent collections and endorsement renewals do not reset an existing grace period. The normal minimum-hours, total/per-area, inactivity and optional reactivation rules then apply. A valid endorsement does not by itself mean that the visitor meets the activity requirements.
+
+Active visitors appear alongside home controllers in local active rosters and API responses, including `onlyAtcActive=true`. `include[]=allUsers` also includes valid visitors; consumers do not need to request endorsements just to discover them. The API retains their actual home membership and does not assign staff roles. External systems such as Discord bots can use the normal activity fields to identify active controllers, while continuing to inspect endorsements for visiting privileges.
+
+Activity never replaces visiting permission. Revoked, expired or not-yet-valid visiting endorsements cannot qualify an external controller as locally active, even if old activity records remain marked active. Activity and API area status are limited to currently endorsed areas. The member-maintenance job preserves eligible visitors and clears activity outside their current permissions. Division roster and facility-endorsement synchronization continue to include valid visitors independently of local activity requirements.
+
+The Visiting Endorsements table shows activity status, local hours in the configured qualification period, last local session and visiting expiry. Hours are a rolling-period measurement, not hours since the endorsement was issued. Historical hours for that endorsement's areas remain visible after expiry to support renewal review. Valid visitors remain selectable for feedback even if they have not yet met the activity requirement.
+
 ## Configuration
 
 You can customize the activity logic in **Administration > Settings**:

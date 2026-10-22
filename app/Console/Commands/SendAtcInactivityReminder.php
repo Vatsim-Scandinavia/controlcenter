@@ -34,7 +34,7 @@ class SendAtcInactivityReminder extends Command
             return;
         }
 
-        $atcActivities = AtcActivity::where(function ($query) {
+        $atcActivities = AtcActivity::locallyEligible()->where(function ($query) {
             // Don't send reminders if the user has been warned in the last 30 days
             $query->whereNull('last_inactivity_warning')
                 ->orWhere('last_inactivity_warning', '<', now()->subDays(30));

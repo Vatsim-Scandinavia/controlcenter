@@ -108,6 +108,10 @@ class BookingPolicy
      */
     public function position(User $user, Booking $booking)
     {
+        if (! $user->isMember() && ! $user->hasPermission('bookings.manage') && ! $user->isAllowedToControlOnline($booking->position->area)) {
+            return $this->deny('You do not have permission to control in this area.');
+        }
+
         // TODO: Make it easier to read the order of checks
         if (($booking->position->rating->isGreaterThan($user->rating) || $user->rating->isLessThan(VatsimRating::S1)) && ! $user->hasPermission('bookings.manage')) {
             if (
