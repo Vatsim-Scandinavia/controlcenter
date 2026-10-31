@@ -2,17 +2,16 @@
 
 @section('title', 'Training Activities')
 @section('title-flex')
-    <div>
-        <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
+    <x-filter.group>
         @if(\Auth::user()->accessibleAreasForPermission('training.activities.view')->isGlobal)
-            <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities') }}">All Areas</a>
+            <x-filter.item :href="route('reports.activities')" :active="! $currentArea">All Areas</x-filter.item>
         @endif
         @foreach($areas as $area)
             @can('training.activities.view', $area)
-                <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
+                <x-filter.item :href="route('reports.activities.area', $area->id)" :active="$currentArea?->is($area)">{{ $area->name }}</x-filter.item>
             @endcan
         @endforeach
-    </div>
+    </x-filter.group>
 @endsection
 
 @section('header')
@@ -85,6 +84,8 @@
                                                 <i class="fas fa-circle-pause"></i>
                                             @elseif($activity->type == "ENDORSEMENT")
                                                 <i class="fas fa-check-square"></i>
+                                            @elseif($activity->type == "RATING")
+                                                <i class="fas fa-list-check"></i>
                                             @elseif($activity->type == "COMMENT")
                                                 <i class="fas fa-comment"></i>
                                             @elseif($activity->type == 'PRETRAINING')
@@ -145,8 +146,12 @@
                                                         @endforeach
                                                     @endempty
                                                 @endif
+                                            @elseif($activity->type == "RATING")
+                                                @isset($activity->rating)
+                                                    <span class="badge text-bg-light">{{ $activity->rating->name }}</span> part completed
+                                                @endisset
                                             @elseif($activity->type == "COMMENT")
-                                                {!! nl2br($activity->comment) !!}
+                                                {!! nl2br(e($activity->comment)) !!}
 
                                                 @if($activity->created_at != $activity->updated_at)
                                                     <span class="text-muted">(edited)</span>

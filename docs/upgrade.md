@@ -18,114 +18,128 @@ php artisan optimize:clear
 
 ## Upgrading to 7.0.0
 
-This release contains breaking changes to the theme system.
+This release changes how access is managed, rebuilds the theme system, and switches
+the ATC activity chart to a new API. Follow the upgrade steps once, then work
+through the post-upgrade tasks. A single `php artisan migrate` applies every
+database change in this release, so you only run it once.
 
-### StatSim Activity Chart
+### Upgrade steps
 
-You might've noticed that the ATC activity numbers on users' profiles have started generating errors.
-This is due to a change in the StatSim API offering which we didn't get around to fixing before the API was deprecated and decomissioned. 
+1. If you added any custom groups beyond the four defaults (Administrator,
+   Moderator, Mentor, Buddy), note down their members now. The migration drops them,
+   and you recreate them as roles afterwards.
+2. Update your environment file:
+    - Add the new [StatSim API key variable](configuration/index.md#vatsim). The
+      activity chart stays broken until this is set.
+    - Remove any `VITE_THEME_*` color variables. They are no longer used.
+3. Run the database migration. This one command applies everything in the release,
+   including the new `setting_theme` column on `users` and the new `role_user` table.
+   It also copies the four standard groups across and drops the old `groups` and
+   `permissions` tables:
+   ```sh
+   php artisan migrate
+   ```
+4. Rebuild the frontend assets, but only if you run without a container and maintain
+   a custom theme. The published container image already ships with assets built,
+   and you should never build inside a running container. See
+   [Themes](setup/theme.md) for why:
+   ```sh
+   npm run build
+   ```
+5. Clear the caches:
+   ```sh
+   php artisan optimize:clear
+   ```
+6. Clear your browser cache, then load the app and confirm theme switching works and
+   the ATC activity chart renders on a profile.
 
-The new API requires the use of a dedicated API key, which has a corresponding [required new environment variable for authenticating to StatSim](configuration/index.md#vatsim).
+### Post-upgrade tasks
 
-### Access Management: CLI-only Admin and the new Director role
+These need your judgement, so do them after the steps above.
 
-The `admin` role is now strictly system-wide and can no longer be granted, scoped
-to an area, or revoked through the web UI. It is assigned exclusively via:
+#### Review who is a global admin
+
+Everyone in the old administrator group becomes a global admin during the migration,
+so they keep full access until you review it. Admins can no longer be changed from
+the UI, so this is a manual database step.
+
+!!! warning "Back up first, and keep at least one admin"
+    This edits the `role_user` table directly, with no undo. Back the table up before
+    you delete anything, remove only the rows you mean to, and make sure at least one
+    admin remains. Do not delete your own only admin row.
+
+1. Grant `director` (per area or global) from a user's access page to anyone who only
+   needs area or organisation level management.
+2. List the current admin assignments and confirm which rows you mean to remove.
+   `user_id` is the person's VATSIM CID:
+   ```sql
+   SELECT * FROM role_user WHERE role = 'admin';
+   ```
+3. Remove the assignments you no longer want:
+   ```sql
+   DELETE FROM role_user WHERE user_id = <cid> AND role = 'admin';
+   ```
+   There is no command for revoking admin yet.
+   <!-- TODO: replace with `user:removeadmin` once available. -->
+
+#### Review `config/roles.php`
+
+Adjust the matrix if your division wants different permissions per role, or extra
+roles beyond the defaults. Recreate any custom groups you noted down in step 1 as
+roles here. Run `php artisan optimize:clear` again after editing the file.
+
+### What changed
+
+#### Admin is now CLI-only, with a new Director role
+
+The `admin` role is now strictly system-wide. You can no longer grant it, scope it
+to an area, or revoke it from the web UI. Assign it from the command line instead:
 
 ```sh
 php artisan user:makeadmin
 ```
 
-A new `director` [role takes over the "full access to an area" use-case](reference/permissions.md).
-It can be assigned per area or globally through the user access page, and holds every admin permission except the system-level ones (`manage-area`, `view-system-health`).
-Only global admins and global directors can grant or revoke directorships.
+The new `director` role covers the "full access to an area" case that admin used to
+fill. It holds every admin permission except the system-level ones (`manage-area`,
+`view-system-health`), and only global admins and global directors can grant or
+revoke it. See [Roles and Permissions](reference/permissions.md) for the full picture.
 
-#### Manual step after upgrading
+#### Theme system
 
-Members of the previous administrator group are migrated as **global admins** and
-retain full access. After upgrading, review who actually needs system-wide admin
-rights:
+Themes were redesigned to support light and dark modes and a per-user preference.
+The colors you used to set with `VITE_THEME_*` in `.env` have moved into SCSS files
+under `resources/sass/themes/`, and each user now picks their own theme, stored in
+the database.
 
-1. Grant `director` (per-area or global) through the UI to those who only need
-   area- or organisation-level management access.
-2. Remove their admin assignment from the `role_user` table directly
-   (`DELETE FROM role_user WHERE user_id = <cid> AND role = 'admin';`).
-   There is no CLI command for revoking admin yet.
-   <!-- TODO: replace with `user:removeadmin` once available. -->
+If you had custom colors in `.env`, move them into a custom theme file: copy
+`_custom.scss.example` to `_custom.scss`, port your colors across using `_light.scss`
+and `_dark.scss` as a reference, and rebuild. See [Themes](setup/theme.md) for the
+full walkthrough, including how to bake a custom theme into a container image.
 
-Until this review is done, previously migrated admins keep unrestricted access.
+#### Permissions and roles
 
-### Theme System Migration
+The old groups and permissions system has been rebuilt around a role matrix you
+configure in `config/roles.php`. Assignments now live in one `role_user` table that
+stores the role name and an optional `area_id` (null means global), and permissions
+are defined in `config/roles.php` rather than the database. A few things to know:
 
-The theme system has been completely redesigned to support light/dark themes and user preferences.
+- Admins are now strictly global. Any `area_id` on an old admin assignment is dropped
+  during the migration.
+- Only the four standard groups (Administrator, Moderator, Mentor, Buddy) are
+  migrated. Any custom group or permission rows you added by hand are dropped with
+  the old tables, which is why you note them down before upgrading and recreate them
+  as roles afterwards.
+- The `nav-editor` role is new and is not derived from any old group, so nobody is
+  assigned to it automatically. Grant it to whoever needs to edit navigational data
+  in an area.
 
-#### Breaking Changes
+See [Roles and Permissions](concepts/permissions.md) for how the new model works.
 
-1. **Environment Variables Removed**: All `VITE_THEME_*` color variables have been removed from `.env` file
-2. **Theme Files**: Themes are now defined in separate SCSS files under `resources/sass/themes/`
-3. **User Preference**: Theme selection is now a per-user setting stored in the database
+#### ATC activity chart (StatSim)
 
-#### Migration Steps
-
-1. **Remove old environment variables** from your `.env` file:
-   - Remove any `VITE_THEME_*` color variables (these are no longer used)
-
-2. **Run the database migration**:
-   ```sh
-   php artisan migrate
-   ```
-   This adds the `setting_theme` column to the `users` table.
-
-3. **Rebuild frontend assets**:
-   ```sh
-   npm run build
-   ```
-
-4. **Clear caches**:
-   ```sh
-   php artisan optimize:clear
-   ```
-
-5. **Clear browser cache** and test the new theme system
-
-#### For Custom Theme Users
-
-If you had customized colors in your `.env` file:
-
-1. Create a custom theme file in `resources/sass/themes/_custom.scss`
-2. Copy the structure from `_light.scss` or `_dark.scss`
-3. Update your color variables to match your previous customizations
-4. Import your theme in `resources/sass/app.scss`
-5. See [User Theme Guide](user-themes.md) and [Theme Setup](setup/theme.md) for detailed instructions
-
-For detailed information on using themes as an end-user, see the [User Theme Guide](user-themes.md).  
-For customizing themes as an operator, see [Theme Setup](setup/theme.md)
-
-### Permissions and Roles Refactor
-
-The permission and group system has been rebuilt around a configurable role matrix. See [Permissions and Roles](concepts/permissions.md) for the new model.
-
-#### Breaking Changes
-
-1. **Database tables replaced**: The `groups` and `permissions` tables are dropped. User assignments now live in a single `role_user` table that stores the role name as a string and an optional `area_id` (null for global roles).
-2. **Permissions are no longer stored in the database**: They are defined in `config/roles.php` as a *matrix* that maps each permission to the list of roles that hold it. Editing roles or permissions now means editing that file (and clearing config cache), not the database.
-3. **Admins are now strictly global**: Any `area_id` previously attached to an admin assignment is discarded by the migration. An admin assignment without a target area applies system-wide.
-4. **Custom groups are not migrated**: Only the four standard groups (Administrator, Moderator, Mentor, Buddy) are converted to roles. Any custom group rows you added directly to the `groups` or `permissions` tables will be dropped along with the tables. Note them down before upgrading and re-create them as roles in `config/roles.php` afterwards.
-5. **The `nav-editor` role is new in this version**: It ships in `config/roles.php` (see [Permissions and Roles](concepts/permissions.md)) but is not derived from any legacy group, so no users will be auto-assigned to it during the migration. Grant it explicitly to whoever needs to edit navigational data within an area.
-
-#### Migration Steps
-
-1. **Audit any custom groups** you may have added outside the four defaults; capture their members so you can re-grant access after the upgrade.
-2. **Run the database migration**:
-   ```sh
-   php artisan migrate
-   ```
-   This creates `role_user`, copies the four standard groups across, and drops the old tables.
-3. **Review `config/roles.php`** and adjust the matrix if your division wants different permissions per role, or wants to add roles beyond the defaults.
-4. **Clear caches**:
-   ```sh
-   php artisan optimize:clear
-   ```
+The old StatSim API was deprecated and shut down, which is why the ATC activity
+numbers on profiles started erroring. The replacement API needs its own API key,
+added in step 2 above.
 
 ## Upgrading to 6.0.0
 

@@ -6,6 +6,7 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
+use App\Services\DivisionApi\DivisionApiError;
 use Illuminate\Support\Facades\Auth;
 
 class RatingUpgrade extends Types
@@ -60,7 +61,7 @@ class RatingUpgrade extends Types
             $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating : $training->getHighestVatsimRating();
             $response = DivisionApi::requestRatingUpgrade($user, $rating, Auth::id());
             if ($response && $response->failed()) {
-                return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
+                return DivisionApiError::message($response);
             }
 
             // Log in training activity

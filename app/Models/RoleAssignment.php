@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\LogName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -90,7 +91,7 @@ class RoleAssignment extends Model
             return;
         }
 
-        activity('role')
+        activity(LogName::Role)
             ->performedOn($user)
             ->event($event)
             ->withProperties([

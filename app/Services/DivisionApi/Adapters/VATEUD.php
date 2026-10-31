@@ -10,8 +10,11 @@ use App\Models\Position;
 use App\Models\Rating;
 use App\Models\User;
 use Carbon\Carbon;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class VATEUD implements DivisionApiContract
 {
@@ -37,29 +40,46 @@ class VATEUD implements DivisionApiContract
 
     /**
      * Call the API with all headers predefined
-     *
-     * @return Response
      */
-    private function callApi(string $url, string $method = 'GET', ?array $data = null, ?array $multipartData = null)
+    private function callApi(string $url, string $method = 'GET', ?array $data = null, ?array $multipartData = null): Response
     {
-        $userAgent = 'Control Center v' . config('app.version') . ' (' . config('app.owner_code') . ')';
+        $request = Http::withHeaders([
+            'Accept' => 'application/json',
+            'User-Agent' => 'Control Center v' . config('app.version') . ' (' . config('app.owner_code') . ')',
+            'X-API-KEY' => $this->apiToken,
+        ]);
 
-        // Run a normal request if no multipart data is provided
-        if ($multipartData === null) {
-            return Http::withHeaders([
-                'Accept' => 'application/json',
-                'User-Agent' => $userAgent,
-                'X-API-KEY' => $this->apiToken,
-            ])->$method($this->baseUrl . $url, $data);
-        } else {
-            return Http::withHeaders([
-                'Accept' => 'application/json',
-                'User-Agent' => $userAgent,
-                'X-API-KEY' => $this->apiToken,
-            ])->asMultipart()->$method($this->baseUrl . $url, $multipartData);
+        try {
+            // Run a normal request if no multipart data is provided
+            if ($multipartData === null) {
+                return $request->$method($this->baseUrl . $url, $data);
+            }
+
+            return $request->asMultipart()->$method($this->baseUrl . $url, $multipartData);
+        } catch (ConnectionException $e) {
+            return $this->unreachable($url, $method, $e);
         }
+    }
 
-        return false;
+    /**
+     * Stand in for the response we never got.
+     *
+     * An unreachable API (DNS failure, timeout, TLS error) throws instead of
+     * answering, and callers all branch on $response->failed(). Returning a
+     * failed response keeps them on their error path: the alternative, a null
+     * or a thrown exception, either reads as success or escapes as a 500.
+     */
+    private function unreachable(string $url, string $method, ConnectionException $e): Response
+    {
+        Log::error('Could not reach the ' . $this->getName() . ' API', [
+            'method' => $method,
+            'url' => $this->baseUrl . $url,
+            'reason' => $e->getMessage(),
+        ]);
+
+        return new Response(new GuzzleResponse(503, ['Content-Type' => 'application/json'], json_encode([
+            'message' => 'Could not reach the ' . $this->getName() . ' API.',
+        ])));
     }
 
     /**
@@ -175,7 +195,12 @@ class VATEUD implements DivisionApiContract
             $endpointTierString = 'tier-2';
         }
 
-        $externalEndorsements = $this->callApi('/facility/endorsements/' . $endpointTierString, 'GET')->json()['data'];
+        $lookup = $this->callApi('/facility/endorsements/' . $endpointTierString, 'GET');
+        if ($lookup->failed()) {
+            return $lookup;
+        }
+
+        $externalEndorsements = $lookup->json()['data'] ?? [];
 
         foreach ($externalEndorsements as $externalEndorsement) {
             if ($externalEndorsement['user_cid'] == $userId && $externalEndorsement['position'] == $endorsementName) {
@@ -208,7 +233,12 @@ class VATEUD implements DivisionApiContract
      */
     public function revokeSoloEndorsement(Endorsement $endorsement)
     {
-        $externalEndorsements = $this->callApi('/facility/endorsements/solo', 'GET')->json()['data'];
+        $lookup = $this->callApi('/facility/endorsements/solo', 'GET');
+        if ($lookup->failed()) {
+            return $lookup;
+        }
+
+        $externalEndorsements = $lookup->json()['data'] ?? [];
         foreach ($externalEndorsements as $externalEndorsement) {
             if ($externalEndorsement['user_cid'] == $endorsement->user_id && $externalEndorsement['position'] == $endorsement->positions->first()->callsign) {
                 return $this->callApi('/facility/endorsements/solo/' . $externalEndorsement['id'], 'DELETE');
@@ -267,7 +297,12 @@ class VATEUD implements DivisionApiContract
     {
 
         // call facility/training/exams to get different exams, and assign the one that has flag_exam_type corresponding with the rating
-        $availableExams = $this->callApi('/facility/training/exams', 'GET')->json()['data'];
+        $lookup = $this->callApi('/facility/training/exams', 'GET');
+        if ($lookup->failed()) {
+            return $lookup;
+        }
+
+        $availableExams = $lookup->json()['data'] ?? [];
         foreach ($availableExams as $exam) {
             // If the flag exam type is the same as the rating - 1, assign it. This is because VATEUD calls S2 = 2 instead of 3 like VATSIM does.
             if ($exam['flag_exam_type'] == $rating->vatsim_rating->value - 1) {

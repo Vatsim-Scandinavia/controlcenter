@@ -2,12 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Contracts\DivisionApiContract;
 use App\Helpers\VatsimRating;
 use App\Models\Endorsement;
 use App\Models\Rating;
+use App\Models\Training;
 use App\Models\User;
 use App\Services\DivisionApi\Adapters\VATEUD;
+use App\Services\DivisionApi\DivisionApiError;
+use App\Services\TrainingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -123,5 +128,44 @@ class VATEUDAdapterTest extends TestCase
         $adapter = new VATEUD();
 
         $this->assertTrue($adapter->userHasPassedTheoryExam($user, $rating));
+    }
+
+    #[Test]
+    public function an_unreachable_api_yields_a_failed_response_rather_than_throwing(): void
+    {
+        Http::fake(function () {
+            throw new ConnectionException('cURL error 6: Could not resolve host');
+        });
+
+        $user = User::factory()->create();
+        $rating = Rating::factory()->create(['vatsim_rating' => null, 'endorsement_type' => 'T1']);
+
+        $response = (new VATEUD())->assignTierEndorsement($user, $rating, $user->id);
+
+        $this->assertNotNull($response);
+        $this->assertTrue($response->failed());
+        $this->assertStringContainsString('Could not reach', DivisionApiError::detail($response));
+    }
+
+    #[Test]
+    public function an_unreachable_api_stops_a_completion_from_granting_an_endorsement(): void
+    {
+        Http::fake(function () {
+            throw new ConnectionException('cURL error 28: Operation timed out');
+        });
+        $this->app->bind(DivisionApiContract::class, fn () => new VATEUD());
+
+        $training = Training::factory()->create(['user_id' => User::factory()->create()->id]);
+        $rating = Rating::factory()->create(['vatsim_rating' => null, 'endorsement_type' => 'T1']);
+        $training->ratings()->attach($rating->id);
+
+        // completeRating() reads Auth::id() for the requester, so act as a staff member.
+        $this->actingAs(User::factory()->create());
+
+        $error = app(TrainingService::class)->completeRating($training, $rating);
+
+        // The endorsement must not exist locally when the API never received it.
+        $this->assertNotNull($error);
+        $this->assertSame(0, Endorsement::where('user_id', $training->user->id)->count());
     }
 }

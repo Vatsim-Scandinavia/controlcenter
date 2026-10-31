@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
-use App;
+use App\Exceptions\VatsimAPIException;
+use App\Facades\VatsimBookingApi;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Http\Controllers\Controller;
@@ -11,9 +13,8 @@ use App\Models\Position;
 use App\Models\User;
 use App\Services\ActivityLogService;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -25,7 +26,9 @@ class BookingController extends Controller
     }*/
 
     /**
-     * Display a listing of the resource.
+     * List bookings.
+     *
+     * Returns a reduced payload when the request is unauthenticated.
      *
      * @return Response
      */
@@ -43,19 +46,67 @@ class BookingController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a booking.
+     *
+     * Validates CID, date, start/end time, position, and optional tag, then persists a
+     * new booking, forcing a training tag when the controller or position rating requires it.
      *
      * @return Response
      */
+    #[\Dedoc\Scramble\Attributes\Response(
+        status: 200,
+        description: 'The booking was created. `tag` is only present when a training tag was forced.',
+        type: 'array{success: string, booking: array{id: int, source: string, vatsim_booking: int|null, callsign: string, position_id: int, name: string, time_start: string, time_end: string, user_id: int, training: int, event: int, exam: int, deleted: int, created_at: string, updated_at: string}, tag?: string}',
+    )]
+    #[\Dedoc\Scramble\Attributes\Response(
+        status: 400,
+        description: 'The booking could not be created — for example the start and end time are equal, the start time is in the past, or it overlaps an existing booking.',
+        type: 'array{message: string}',
+    )]
     public function store(Request $request)
     {
         $data = $request->validate([
+            /**
+             * The VATSIM CID (user ID) to create the booking for.
+             *
+             * @example 10000001
+             */
             'cid' => 'required|integer',
+            /**
+             * The booking date, in `d/m/Y` format.
+             *
+             * @example 15/02/2024
+             */
             'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            /**
+             * The booking start time, in 24-hour `H:i` format.
+             *
+             * @example 12:00
+             */
             'start_at' => 'required|date_format:H:i',
+            /**
+             * The booking end time, in 24-hour `H:i` format.
+             *
+             * @example 13:00
+             */
             'end_at' => 'required|date_format:H:i',
+            /**
+             * The callsign of the position to book.
+             *
+             * @example EKCH_TWR
+             */
             'position' => 'required|exists:positions,callsign',
+            /**
+             * The booking type: `1` for training, `2` for exam, `3` for event.
+             *
+             * @example 1
+             */
             'tag' => 'nullable|integer|between:1,3',
+            /**
+             * The booking source; use `CC` for Control Center bookings.
+             *
+             * @example CC
+             */
             'source' => 'required',
         ]);
 
@@ -146,26 +197,21 @@ class BookingController extends Controller
             $type = 'booking';
         }
 
-        if (App::environment('production')) {
-            $client = new Client();
+        try {
+            $vatsimBookingId = VatsimBookingApi::createBooking($booking, $type);
+        } catch (VatsimAPIException $e) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
+            ], 400);
+        }
 
-            $url = $this->getVatsimBookingUrl('post');
-            $response = $this->makeHttpRequest($client, $url, 'post', [
-                'callsign' => (string) $booking->callsign,
-                'cid' => $booking->user_id,
-                'type' => $type,
-                'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                'end' => $booking->time_end->format('Y-m-d H:i:s'),
-            ]);
-
-            $vatsim_booking = json_decode($response->getBody()->getContents());
-
-            $booking->vatsim_booking = $vatsim_booking->id;
+        if ($vatsimBookingId !== null) {
+            $booking->vatsim_booking = $vatsimBookingId;
         }
 
         $booking->save();
 
-        ActivityLogService::info('BOOKING', 'Created booking booking' . $booking->id . ' via API' .
+        ActivityLogService::info(LogName::Booking, 'Created booking booking' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -185,7 +231,7 @@ class BookingController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display a single booking.
      *
      * @return Response
      */
@@ -217,18 +263,51 @@ class BookingController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update an existing booking.
+     *
+     * Revalidates CID, date, start/end time, position, and optional tag, re-checks for
+     * overlapping bookings, and re-evaluates whether a training tag must be forced.
      *
      * @return Response
      */
     public function update(Request $request, Booking $booking)
     {
         $data = $request->validate([
+            /**
+             * The VATSIM CID (user ID) the booking belongs to.
+             *
+             * @example 10000001
+             */
             'cid' => 'required|integer',
+            /**
+             * The booking date, in `d/m/Y` format.
+             *
+             * @example 15/02/2024
+             */
             'date' => 'required|date_format:d/m/Y|after_or_equal:today',
+            /**
+             * The booking start time, in 24-hour `H:i` format.
+             *
+             * @example 12:00
+             */
             'start_at' => 'required|date_format:H:i',
+            /**
+             * The booking end time, in 24-hour `H:i` format.
+             *
+             * @example 13:00
+             */
             'end_at' => 'required|date_format:H:i',
+            /**
+             * The callsign of the position to book.
+             *
+             * @example EKCH_TWR
+             */
             'position' => 'required|exists:positions,callsign',
+            /**
+             * The booking type: `1` for training, `2` for exam, `3` for event.
+             *
+             * @example 1
+             */
             'tag' => 'nullable|integer|between:1,3',
         ]);
 
@@ -317,25 +396,21 @@ class BookingController extends Controller
             $type = 'booking';
         }
 
-        if (App::environment('production')) {
-            $client = new Client();
-            $url = $this->getVatsimBookingUrl('put', $booking->vatsim_booking);
-            $response = $this->makeHttpRequest($client, $url, 'put', [
-                'callsign' => (string) $booking->callsign,
-                'cid' => $booking->user_id,
-                'type' => $type,
-                'start' => $booking->time_start->format('Y-m-d H:i:s'),
-                'end' => $booking->time_end->format('Y-m-d H:i:s'),
-            ]);
+        try {
+            $vatsimBookingId = VatsimBookingApi::updateBooking($booking, $type);
+        } catch (VatsimAPIException $e) {
+            return response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
+            ], 400);
+        }
 
-            $vatsim_booking = json_decode($response->getBody()->getContents());
-
-            $booking->vatsim_booking = $vatsim_booking->id;
+        if ($vatsimBookingId !== null) {
+            $booking->vatsim_booking = $vatsimBookingId;
         }
 
         $booking->save();
 
-        ActivityLogService::info('BOOKING', 'Updated booking booking ' . $booking->id . ' via API' .
+        ActivityLogService::info(LogName::Booking, 'Updated booking booking ' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -355,20 +430,28 @@ class BookingController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a booking.
+     *
+     * Soft-deletes the booking and cancels the corresponding VATSIM booking.
      *
      * @return Response
      */
     public function destroy(Booking $booking)
     {
         $booking->deleted = true;
-        $client = new Client();
-        $url = $this->getVatsimBookingUrl('delete', $booking->vatsim_booking);
-        $response = $this->makeHttpRequest($client, $url, 'delete');
+
+        try {
+            VatsimBookingApi::deleteBooking($booking);
+        } catch (VatsimAPIException $e) {
+            // Thrown rather than returned so the documented 200 response keeps its precise shape.
+            throw new HttpResponseException(response()->json([
+                'message' => 'VATSIM API error: ' . $e->getMessage(),
+            ], 400));
+        }
 
         $booking->save();
 
-        ActivityLogService::warning('BOOKING', 'Deleted booking booking ' . $booking->id . ' via API' .
+        ActivityLogService::warning(LogName::Booking, 'Deleted booking booking ' . $booking->id . ' via API' .
             ' ― from ' . Carbon::parse($booking->time_start)->toEuropeanDateTime() .
             ' → ' . Carbon::parse($booking->time_end)->toEuropeanDateTime() .
             ' ― Position: ' . Position::find($booking->position_id)->callsign);
@@ -377,49 +460,5 @@ class BookingController extends Controller
             'message' => 'Booking deleted',
             'booking' => $booking,
         ], 200);
-    }
-
-    private function getVatsimBookingUrl(string $type, ?int $id = null)
-    {
-        if ($type == 'get' || $type == 'post') {
-            $url = config('vatsim.booking_api_url') . '/booking';
-        } elseif ($type == 'put' || $type == 'delete') {
-            $url = config('vatsim.booking_api_url') . '/booking/' . $id;
-        } else {
-            return null;
-        }
-
-        return $url;
-    }
-
-    private function makeHttpRequest(Client $client, string $url, string $type, ?array $data = null)
-    {
-        try {
-            $headers = [
-                'Authorization' => 'Bearer ' . config('vatsim.booking_api_token'),
-                'Accept' => 'application/json',
-            ];
-            if ($type == 'get') {
-                $response = $client->request('GET', $url, [
-                    'headers' => $headers,
-                ]);
-            } elseif ($type == 'post') {
-                $response = $client->request('POST', $url, ['headers' => $headers, 'form_params' => $data]);
-            } elseif ($type == 'put') {
-                $response = $client->request('PUT', $url, ['headers' => $headers, 'form_params' => $data]);
-            } elseif ($type == 'delete') {
-                $response = $client->request('DELETE', $url, ['headers' => $headers]);
-            }
-        } catch (ClientException $e) {
-            return response()->json([
-                'message' => 'VATSIM API error: ' . $e->getMessage(),
-            ], 400);
-        }
-
-        if (isset($response)) {
-            return $response;
-        }
-
-        return null;
     }
 }

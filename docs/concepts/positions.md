@@ -9,20 +9,25 @@ The positions management page provides a centralized overview of all ATC positio
 !!! note "Current Limitations"
     The current version of the position management interface does not allow for viewing or editing endorsements (or tiers) required for a position. This must be managed directly in the database.
 
-    The current version does not allow for viewing or editing the endorsements themselves.
-
 ## Access and Permissions
 
-Access to the positions overview is restricted to authorized staff members using the [system for Permissions and Groups](permissions.md).
-The permissions for this page are structured as follows:
+Access is governed by the [roles and permissions system](permissions.md). Two permissions apply to this page:
 
-- **Administrators**: Have full access to view, create, edit, and delete all positions across all areas.
-- **Area Moderators**: Can view all positions in the division. However, they can only create, edit, and delete positions that belong to the specific areas they manage.
+| Permission | Grants |
+| --- | --- |
+| `fir.positions.view` | Read-only access to the positions overview. |
+| `fir.positions.manage` | Creating, editing, and deleting positions. Also grants access to the overview. |
 
-This granular control ensures that position management is delegated effectively while maintaining administrative oversight.
+Both are evaluated **per area**. An area-scoped role assignment only covers positions in that area; an area-less assignment covers the whole division. In practice this means:
+
+- The overview lists only positions in the areas you can access. There is no division-wide view unless you hold the permission globally.
+- The **Area** selector when creating or editing a position is limited to the areas you can manage.
+- Moving a position from one area to another requires `fir.positions.manage` in **both** areas.
+
+Which roles hold these permissions is defined by the matrix in `config/roles.php`. In the shipped defaults `staff` gets view-only access, `nav-editor` and `moderator` may manage positions in their areas, and `director` and `admin` have full access. See the [Roles and Permissions Reference](../reference/permissions.md) for the complete role list and how to change it.
 
 !!! note
-    If you are an Area Moderator and cannot edit a position you believe you should have access to, please contact a system administrator.
+    If you cannot edit a position you believe you should have access to, check that your role assignment covers that position's area, then contact a system administrator.
 
 ## The Positions Overview
 
@@ -52,7 +57,7 @@ To add a new position:
    - **Frequency**: The frequency.
    - **FIR**: The four-letter ICAO code for the FIR.
    - **Rating**: Select the minimum required controller rating from the available options.
-   - **Area**: Assign the position to an administrative area. As a moderator you can only assign the areas you manage.
+   - **Area**: Assign the position to an administrative area. Only the areas you can manage are selectable.
 3. Click **Create** to save the new position.
 
 ### Editing a Position

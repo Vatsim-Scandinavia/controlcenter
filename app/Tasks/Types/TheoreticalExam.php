@@ -7,6 +7,7 @@ use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
 use App\Notifications\TrainingCustomNotification;
+use App\Services\DivisionApi\DivisionApiError;
 use Illuminate\Support\Facades\Auth;
 
 class TheoreticalExam extends Types
@@ -53,7 +54,7 @@ class TheoreticalExam extends Types
             $rating = $model->subjectTrainingRating ? $model->subjectTrainingRating : $training->getHighestVatsimRating();
             $response = DivisionApi::assignTheoryExam($user, $rating, Auth::id());
             if ($response && $response->failed()) {
-                return 'Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message'];
+                return DivisionApiError::message($response);
             }
 
             // Send email regarding exam access

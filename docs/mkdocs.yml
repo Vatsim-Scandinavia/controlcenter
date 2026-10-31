@@ -7,7 +7,7 @@ site_name: Control Center Docs
 site_description: Training, exam & booking management system for VATSIM regions
 
 # The copyright footer at the bottom.
-copyright: Copyright © 2023 VATSIM Scandinavia contributors
+copyright: Copyright © 2023–2026 VATSIM Scandinavia contributors
 
 # Fail on warnings.
 strict: true
@@ -69,7 +69,7 @@ repo_name: vatsim-scandinavia/controlcenter
 repo_url: https://github.com/vatsim-scandinavia/controlcenter
 
 # Where do we publish the docs to?
-site_url: https://docs.vatsim-scandinavia.org/controlcenter/
+site_url: https://docs.vatsca.org/controlcenter/
 
 # The URL we'll append to the repo_url to give edit links.
 edit_uri: edit/main/docs/
@@ -103,7 +103,7 @@ nav:
       - Setup:
           - Define the division: setup/division.md
           - Changing the logo: setup/logo.md
-          - Changing the colours & borders: setup/theme.md
+          - Customizing the theme: setup/theme.md
           - Creating a custom image: setup/custom.md
           - Custom OAuth authentication: setup/authentication.md
   - Usage:
@@ -112,7 +112,6 @@ nav:
           - Training: concepts/training.md
           - Bookings: concepts/booking.md
           - Buddies: concepts/buddies.md
-          - Themes: user-themes.md
       - Mentors:
           - Tasks: concepts/tasks.md
       - Division:
@@ -122,6 +121,7 @@ nav:
           - Positions: concepts/positions.md
           - Feedback: concepts/feedback.md
           - Roles and Permissions: concepts/permissions.md
+          - Managing user access: concepts/managing-access.md
   - Reference:
       - Activity: activity.md
       - Contribute: contribute.md
@@ -170,18 +170,24 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
+# Substitute %%version%%, %%major%% and %%image_tag%% into page content.
+hooks:
+  - variables.py
+
 plugins:
   # Generate multiple versions of docs
   - mike:
       alias_type: symlink
       canonical_version: latest
   - search
+  - swagger-ui-tag
   # Exclude files that aren't part of the site
   - exclude:
       glob:
         - _includes/*
         - _theme/*
         - __pycache__/*
+        - '*.py'
   # Show creation and revision date on each page
   - git-revision-date-localized:
       enabled: !ENV ["CI", false]

@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Facades\DivisionApi;
 use App\Models\Area;
 use App\Models\User;
+use App\Services\DivisionApi\DivisionApiError;
 use Illuminate\Support\Facades\Gate;
 
 class GrantRole
@@ -22,8 +23,7 @@ class GrantRole
             $response = DivisionApi::assignMentor($user, $actor->id);
 
             if ($response && $response->failed()) {
-                return 'Request failed due to error in ' . DivisionApi::getName()
-                    . ' API: ' . $response->json()['message'];
+                return DivisionApiError::message($response);
             }
         }
 

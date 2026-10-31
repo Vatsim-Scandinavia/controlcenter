@@ -1,5 +1,11 @@
 // Global component styles
 
+// Keep Alpine x-show/x-transition elements hidden until Alpine boots,
+// preventing a flash of the initial state (e.g. combobox dropdowns) on load.
+[x-cloak] {
+    display: none !important;
+}
+
 html {
     position: relative;
     min-height: 100%;
@@ -81,6 +87,13 @@ dl.copyable{
 
         &:active{
             color: var(--color-success);
+        }
+    }
+
+    @include media-breakpoint-down(lg) {
+        dd button, dd a.link-btn, dt a {
+            visibility: visible;
+            color: var(--color-gray-400);
         }
     }
 }
@@ -370,4 +383,32 @@ table{
     margin-left: 8px;
     margin-bottom: 3px;
     vertical-align: middle;
+}
+
+.solo-endorsements {
+    > summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::after {
+            content: "\f078";
+            font-family: "Font Awesome 7 Free";
+            font-weight: 900;
+            font-size: 0.8em;
+            color: var(--bs-secondary-color);
+            transition: transform 0.2s ease-in-out;
+        }
+    }
+
+    &[open] > summary::after {
+        transform: rotate(180deg);
+    }
 }

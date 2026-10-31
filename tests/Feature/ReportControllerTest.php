@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\VatsimRating;
 use App\Models\Area;
+use App\Models\Rating;
 use App\Models\Training;
 use App\Models\TrainingActivity;
 use App\Models\TrainingReport;
@@ -219,6 +221,30 @@ class ReportControllerTest extends TestCase
         $response->assertOk();
         $entries = $response->viewData('entries');
         $this->assertTrue($entries->first()->is($report));
+    }
+
+    #[Test]
+    public function activities_report_renders_a_rating_part_sign_off(): void
+    {
+        $training = Training::factory()->create([
+            'user_id' => User::factory()->create()->id,
+        ]);
+        $rating = Rating::factory()->create(['vatsim_rating' => VatsimRating::S1->value, 'name' => 'S1 TWR']);
+        $training->ratings()->attach($rating->id);
+
+        // This report switches on the activity type with no fallback branch, so a type it
+        // does not know renders as an empty cell rather than failing.
+        $activity = new TrainingActivity;
+        $activity->training_id = $training->id;
+        $activity->triggered_by_id = $this->adminUser->id;
+        $activity->type = 'RATING';
+        $activity->new_data = $rating->id;
+        $activity->save();
+
+        $this->actingAs($this->adminUser)
+            ->get(route('reports.activities'))
+            ->assertOk()
+            ->assertSee($rating->name . '</span> part completed', false);
     }
 
     #[Test]

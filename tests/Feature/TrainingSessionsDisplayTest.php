@@ -101,7 +101,116 @@ class TrainingSessionsDisplayTest extends TestCase
     }
 
     #[Test]
-    public function booking_times_are_cast_to_carbon_instances_when_loaded(): void
+    public function dashboard_keeps_showing_a_session_until_it_has_ended(): void
+    {
+        Carbon::setTestNow('2026-08-14 12:30:00');
+
+        $area = Area::factory()->create();
+        $student = User::factory()->create();
+        $mentor = $this->createMentorFor($this->createTraining($student, $area));
+        $runningPosition = Position::factory()->for($area)->create(['callsign' => 'RUNNING_TWR']);
+        $laterPosition = Position::factory()->for($area)->create(['callsign' => 'LATER_TWR']);
+
+        $this->createBooking($student, $runningPosition, now()->subMinutes(30), true);
+        $this->createBooking($student, $laterPosition, now()->addDay(), true);
+
+        $this->actingAs($mentor)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('RUNNING_TWR')
+            ->assertDontSee('LATER_TWR')
+            ->assertDontSee('Not booked');
+    }
+
+    #[Test]
+    public function dashboard_does_not_show_a_session_that_has_ended(): void
+    {
+        Carbon::setTestNow('2026-08-14 12:30:00');
+
+        $area = Area::factory()->create();
+        $student = User::factory()->create();
+        $mentor = $this->createMentorFor($this->createTraining($student, $area));
+        $position = Position::factory()->for($area)->create(['callsign' => 'ENDED_TWR']);
+
+        $this->createBooking($student, $position, now()->subHours(3), true);
+
+        $this->actingAs($mentor)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Not booked')
+            ->assertDontSee('ENDED_TWR');
+    }
+
+    #[Test]
+    public function dashboard_does_not_show_a_session_from_another_area(): void
+    {
+        $area = Area::factory()->create();
+        $otherArea = Area::factory()->create();
+        $student = User::factory()->create();
+        $mentor = $this->createMentorFor($this->createTraining($student, $area));
+        $otherAreaPosition = Position::factory()->for($otherArea)->create(['callsign' => 'OTHER_AREA']);
+
+        $this->createBooking($student, $otherAreaPosition, now()->addDay(), true);
+
+        $this->actingAs($mentor)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Not booked')
+            ->assertDontSee('OTHER_AREA');
+    }
+
+    #[Test]
+    public function training_page_does_not_list_sessions_from_another_area(): void
+    {
+        $area = Area::factory()->create();
+        $otherArea = Area::factory()->create();
+        $student = User::factory()->create();
+        $training = $this->createTraining($student, $area);
+        $areaPosition = Position::factory()->for($area)->create(['callsign' => 'AREA_TWR']);
+        $otherAreaPosition = Position::factory()->for($otherArea)->create(['callsign' => 'OTHER_AREA']);
+
+        $this->createBooking($student, $areaPosition, now()->addDay(), true);
+        $this->createBooking($student, $otherAreaPosition, now()->addDays(2), true);
+
+        $this->actingAs($student)->get(route('training.show', $training))
+            ->assertOk()
+            ->assertSee('AREA_TWR')
+            ->assertDontSee('OTHER_AREA');
+    }
+
+    #[Test]
+    public function closed_training_page_does_not_list_sessions_of_a_newer_training(): void
+    {
+        $area = Area::factory()->create();
+        $student = User::factory()->create();
+        $completedTraining = $this->createTraining($student, $area, TrainingStatus::COMPLETED);
+        $newerTraining = $this->createTraining($student, $area);
+        $position = Position::factory()->for($area)->create(['callsign' => 'NEWER_TWR']);
+
+        $this->createBooking($student, $position, now()->addDay(), true);
+
+        $this->actingAs($student)->get(route('training.show', $completedTraining))
+            ->assertOk()
+            ->assertSee('No training sessions booked')
+            ->assertDontSee('NEWER_TWR');
+
+        $this->actingAs($student)->get(route('training.show', $newerTraining))
+            ->assertOk()
+            ->assertSee('NEWER_TWR');
+    }
+
+    #[Test]
+    public function queued_training_has_no_booked_sessions(): void
+    {
+        $area = Area::factory()->create();
+        $student = User::factory()->create();
+        $training = $this->createTraining($student, $area, TrainingStatus::IN_QUEUE);
+        $position = Position::factory()->for($area)->create();
+
+        $this->createBooking($student, $position, now()->addDay(), true);
+
+        $this->assertTrue($training->bookedSessions()->isEmpty());
+    }
+
+    #[Test]
+    public function booking_exposes_its_times_as_carbon_instances_without_casting_the_columns(): void
     {
         $area = Area::factory()->create();
         Position::factory()->for($area)->create();
@@ -110,10 +219,27 @@ class TrainingSessionsDisplayTest extends TestCase
             'time_end' => '2026-08-15 16:00:00',
         ])->fresh();
 
-        $this->assertInstanceOf(Carbon::class, $booking->time_start);
-        $this->assertInstanceOf(Carbon::class, $booking->time_end);
-        $this->assertSame('2026-08-15 14:00:00', $booking->time_start->format('Y-m-d H:i:s'));
-        $this->assertSame('2026-08-15 16:00:00', $booking->time_end->format('Y-m-d H:i:s'));
+        $this->assertInstanceOf(Carbon::class, $booking->starts_at);
+        $this->assertInstanceOf(Carbon::class, $booking->ends_at);
+        $this->assertSame('2026-08-15 14:00:00', $booking->starts_at->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-08-15 16:00:00', $booking->ends_at->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-08-15 14:00:00', $booking->time_start);
+        $this->assertSame('2026-08-15 16:00:00', $booking->time_end);
+    }
+
+    private function createTraining(User $student, Area $area, TrainingStatus $status = TrainingStatus::ACTIVE_TRAINING): Training
+    {
+        return Training::factory()->for($student)->for($area)->create(['status' => $status]);
+    }
+
+    private function createMentorFor(Training $training): User
+    {
+        $mentor = User::factory()->create();
+
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => $training->area_id]);
+        $training->mentors()->attach($mentor, ['expire_at' => now()->addYear()]);
+
+        return $mentor;
     }
 
     private function createBooking(

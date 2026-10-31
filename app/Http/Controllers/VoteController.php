@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\LogName;
 use App\Models\Vote;
 use App\Models\VoteOption;
 use App\Services\ActivityLogService;
@@ -102,7 +103,7 @@ class VoteController extends Controller
             $vote_option->save();
         }
 
-        ActivityLogService::danger('OTHER', 'Created vote ' . $vote->id . ' ― Question: ' . $vote->question);
+        ActivityLogService::danger(LogName::Other, 'Created vote ' . $vote->id . ' ― Question: ' . $vote->question);
 
         return redirect()->intended(route('vote.overview'))->withSuccess('Vote succesfully created.');
     }
@@ -153,7 +154,7 @@ class VoteController extends Controller
         $user = \Auth::user();
         $vote->user()->attach($user);
 
-        ActivityLogService::info('OTHER', 'Voted in vote poll ' . $vote->id);
+        ActivityLogService::info(LogName::Other, 'Voted in vote poll ' . $vote->id);
 
         return redirect()->intended(route('vote.show', $vote->id))->withSuccess('Your vote is succesfully registered.');
     }

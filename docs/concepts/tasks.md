@@ -14,7 +14,7 @@ You may only send a task to one person.
 
 ### Type of tasks
 
-- **Rating upgrade**: Request rating upgrade for a student
+- **Rating upgrade**: Request rating upgrade for a student. With a Division API enabled, completing it adds the student to the roster and protects them from roster removal for 30 days, while their rating catches up. It is also what Control Center looks for when [signing off a rating][completing] on a training.
 - **Solo Endorsement**: Request granting of solo endorsement
 - **Theory Exam Access**: Request access to theory exam
 - **Custom Request:** Free text
@@ -25,3 +25,5 @@ When running tasks without an API, the completion of a task will simply mark it 
 
 !!! tip "Quick add"
     When creating a task, there's up to three quick add buttons identified by a lightning bolt and the recipient's name. The quick feature automatically creates the suggestions based on who has a mentor or moderator role in the current area of training, and also historically who has received most of the tasks.
+
+  [completing]: ./training.md#rating-upgrades-and-the-roster

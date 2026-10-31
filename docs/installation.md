@@ -17,10 +17,8 @@ In the instructions where we use `docker exec`, we assume your container is name
 
 Open up a terminal and pull the latest image with:
 
-<!-- TODO: Add a common variable with the latest version? Make release-please update it? -->
-
 ```shell
-docker pull ghcr.io/vatsim-scandinavia/control-center:v6
+docker pull %%image_tag%%
 ```
 
 If you're not familiar with Docker, don't worry. We'll walk you through the initial setup.

@@ -30,6 +30,13 @@ This job ensures the list of controllers on the VATEUD roster matches your **Act
     - **Inactive Members**: Home members who have failed to meet activity requirements (`atc_active = false`).
     - **Expired Visitors**: Visiting members whose endorsement has expired or been revoked.
     - **Transfers**: Members who have left the subdivision.
+- **Keeps regardless**:
+    - **Pending rating upgrades**: Members whose [rating upgrade task](../concepts/tasks.md) was completed within the last 30 days.
+
+!!! note "Why pending upgrades are kept"
+    Completing a rating upgrade task adds the member to the VATEUD roster immediately, but their rating in Control Center is only refreshed once a day, at 04:00, from your OAuth provider.
+    In between, the member reads as OBS locally, and a roster sync would otherwise undo the upgrade that was just granted.
+    The 30 day window covers that delay. A member who is upgraded and then suspended stays on the roster until the window lapses.
 
 ### Endorsement Sync
 

@@ -8,6 +8,7 @@ use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\CreatesRoleAssignedUsers;
@@ -251,6 +252,134 @@ class FeedbackOverviewTest extends TestCase
             // Opening the modal (front-end toggles this flag) loads the options.
             ->set('showReferenceOptions', true)
             ->assertSee('ZZZZ_TWR');
+    }
+
+    #[Test]
+    public function edit_modal_area_options_are_present_on_a_plain_render(): void
+    {
+        // Assert on view data, not HTML: the filter select lists areas too, so
+        // assertSee() cannot tell the two selects apart.
+        $area = Area::factory()->create();
+
+        Livewire::actingAs($this->admin())
+            ->test(FeedbackTable::class)
+            ->assertSet('showReferenceOptions', false)
+            ->assertViewHas('editAreas', fn ($areas) => $areas->contains($area));
+    }
+
+    #[Test]
+    public function edit_modal_area_options_span_every_area_not_just_the_users_own(): void
+    {
+        // The edit list is deliberately wider than the scoped filter list.
+        $own = Area::factory()->create(['name' => 'Zulu']);
+        $other = Area::factory()->create(['name' => 'Alpha']);
+        $alsoOwn = Area::factory()->create(['name' => 'Mike']);
+        $moderator = $this->moderatorFor($own);
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $alsoOwn->id]);
+
+        Livewire::actingAs($moderator)
+            ->test(FeedbackTable::class)
+            // Seeded areas share the list, so check membership, not an exact set.
+            ->assertViewHas('editAreas', fn ($areas) => $areas->contains($own)
+                && $areas->contains($other)
+                && $areas->contains($alsoOwn)
+                && $areas->pluck('name')->all() === $areas->pluck('name')->sort()->values()->all())
+            ->assertViewHas('areas', fn ($areas) => $areas->pluck('name')->all() === ['Mike', 'Zulu']);
+    }
+
+    #[Test]
+    public function the_row_count_does_not_drive_the_query_count(): void
+    {
+        // Each row's `@can('update')` resolves the computed area, so both the
+        // explicit area and the position's must come off the eager load.
+        $area = Area::factory()->create();
+        $position = Position::factory()->create(['area_id' => $area->id]);
+        $rows = fn (int $n) => [
+            Feedback::factory()->count($n)->create(['reference_position_id' => $position->id]),
+            Feedback::factory()->count($n)->uncorrelated()->create(['area_id' => $area->id]),
+        ];
+
+        $admin = $this->admin();
+        $rows(2);
+
+        // Warm the role-assignment cache; it loads once per user instance.
+        Livewire::actingAs($admin)->test(FeedbackTable::class);
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        Livewire::actingAs($admin)->test(FeedbackTable::class);
+        $forFourRows = count(DB::getQueryLog());
+
+        $rows(8);
+
+        DB::flushQueryLog();
+        Livewire::actingAs($admin)->test(FeedbackTable::class);
+        $forTwentyRows = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
+        $this->assertSame($forFourRows, $forTwentyRows, 'Rendering more rows must not issue more queries.');
+    }
+
+    #[Test]
+    public function area_filter_matches_an_explicitly_assigned_area(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+        $explicit = Feedback::factory()->uncorrelated()->create(['area_id' => $area1->id]);
+        $otherArea = Feedback::factory()->uncorrelated()->create(['area_id' => $area2->id]);
+        $viaPosition = Feedback::factory()->create([
+            'reference_position_id' => Position::factory()->create(['area_id' => $area1->id])->id,
+        ]);
+
+        Livewire::actingAs($this->admin())
+            ->test(FeedbackTable::class)
+            ->set('area', $area1->id)
+            ->assertViewHas('feedbacks', fn ($f) => $f->contains($explicit)
+                && $f->contains($viaPosition)
+                && ! $f->contains($otherArea));
+    }
+
+    #[Test]
+    public function an_explicit_area_is_displayed_when_no_position_is_referenced(): void
+    {
+        $area = Area::factory()->create(['name' => 'Explicitly Assigned']);
+        Feedback::factory()->uncorrelated()->create(['area_id' => $area->id]);
+
+        Livewire::actingAs($this->admin())
+            ->test(FeedbackTable::class)
+            ->assertSee('Explicitly Assigned');
+    }
+
+    #[Test]
+    public function an_explicit_area_correlates_feedback_for_visibility(): void
+    {
+        $area1 = Area::factory()->create();
+        $area2 = Area::factory()->create();
+        $mine = Feedback::factory()->uncorrelated()->create(['area_id' => $area1->id]);
+        $theirs = Feedback::factory()->uncorrelated()->create(['area_id' => $area2->id]);
+
+        Livewire::actingAs($this->moderatorFor($area1))
+            ->test(FeedbackTable::class)
+            ->assertViewHas('feedbacks', fn ($f) => $f->contains($mine) && ! $f->contains($theirs));
+    }
+
+    #[Test]
+    public function an_explicit_area_correlates_feedback_for_a_viewer_without_uncorrelated_access(): void
+    {
+        // Without uncorrelated view, the assigned feedback can only arrive on
+        // the correlated branch.
+        config(['roles.matrix.moderator' => ['feedback.correlated.view', 'feedback.update']]);
+
+        $area = Area::factory()->create();
+        $assigned = Feedback::factory()->uncorrelated()->create(['area_id' => $area->id]);
+        $unassigned = Feedback::factory()->uncorrelated()->create();
+
+        $viewer = User::factory()->create();
+        $viewer->roleAssignments()->create(['role' => 'moderator', 'area_id' => null]);
+
+        Livewire::actingAs($viewer)
+            ->test(FeedbackTable::class)
+            ->assertViewHas('feedbacks', fn ($f) => $f->contains($assigned) && ! $f->contains($unassigned));
     }
 
     #[Test]

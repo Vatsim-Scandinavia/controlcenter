@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\LogName;
 use App\Rules\InactivityReminderHours;
 use App\Services\ActivityLogService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -49,6 +50,7 @@ class GlobalSettingController extends Controller
             'trainingSubDivisions' => 'nullable',
             'trainingInterval' => 'required|integer|min:1',
             'trainingSoloRequirement' => 'required|max:200',
+            'trainingSoloMaxDays' => 'required|integer|min:1',
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
@@ -92,6 +94,7 @@ class GlobalSettingController extends Controller
         Setting::set('trainingSubDivisions', $trainingSubDivisions);
         Setting::set('trainingInterval', $data['trainingInterval']);
         Setting::set('trainingSoloRequirement', $data['trainingSoloRequirement']);
+        Setting::set('trainingSoloMaxDays', $data['trainingSoloMaxDays']);
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
@@ -114,7 +117,7 @@ class GlobalSettingController extends Controller
         Setting::set('telemetryEnabled', $telemetryEnabled);
         Setting::save();
 
-        ActivityLogService::danger('OTHER', 'Global Settings Updated');
+        ActivityLogService::danger(LogName::Other, 'Global Settings Updated');
 
         return redirect()->intended(route('admin.settings'))->withSuccess('Server settings successfully changed');
     }

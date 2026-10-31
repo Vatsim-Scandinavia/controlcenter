@@ -350,7 +350,7 @@ class User extends Authenticatable
             'reports',
             'user',
             'trainingSessions' => fn ($query) => $query
-                ->where('time_start', '>=', now())
+                ->where('time_end', '>=', now())
                 ->with('position'),
         ])->orderBy('id')->get();
 

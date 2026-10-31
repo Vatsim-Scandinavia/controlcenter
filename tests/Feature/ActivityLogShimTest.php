@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\LogName;
 use App\Services\ActivityLogService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,9 +15,9 @@ class ActivityLogShimTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_info_shim_lowercases_category_into_log_name(): void
+    public function test_info_shim_stores_the_category_enum_value_as_log_name(): void
     {
-        ActivityLogService::info('TRAINING', 'Created training request 5');
+        ActivityLogService::info(LogName::Training, 'Created training request 5');
 
         $this->assertDatabaseHas('activity_logs', [
             'log_name' => 'training',
@@ -27,7 +28,7 @@ class ActivityLogShimTest extends TestCase
 
     public function test_warning_shim_sets_warning_level(): void
     {
-        ActivityLogService::warning('ACCESS', 'Logged in with Admin access');
+        ActivityLogService::warning(LogName::Access, 'Logged in with Admin access');
 
         $this->assertDatabaseHas('activity_logs', [
             'log_name' => 'access',
@@ -38,7 +39,7 @@ class ActivityLogShimTest extends TestCase
 
     public function test_danger_shim_sets_danger_level(): void
     {
-        ActivityLogService::danger('OTHER', 'Global Settings Updated');
+        ActivityLogService::danger(LogName::Other, 'Global Settings Updated');
 
         $this->assertDatabaseHas('activity_logs', [
             'log_name' => 'other',
@@ -49,7 +50,7 @@ class ActivityLogShimTest extends TestCase
 
     public function test_debug_shim_sets_debug_level(): void
     {
-        ActivityLogService::debug('OTHER', 'Some debug detail');
+        ActivityLogService::debug(LogName::Other, 'Some debug detail');
 
         $this->assertDatabaseHas('activity_logs', [
             'log_name' => 'other',

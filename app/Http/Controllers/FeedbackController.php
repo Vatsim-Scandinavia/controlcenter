@@ -69,8 +69,11 @@ class FeedbackController extends Controller
     }
 
     /**
-     * Update the reference controller/position of an existing feedback entry.
-     * Authorization is enforced by UpdateFeedbackRequest.
+     * Update the reference controller/position/area of an existing feedback
+     * entry. Every reference is replaced wholesale, so an omitted or empty
+     * field clears its column.
+     * Validation and authorization are enforced by UpdateFeedbackRequest, the
+     * latter against the entry as it stands before the update.
      */
     public function update(UpdateFeedbackRequest $request, Feedback $feedback): RedirectResponse
     {
@@ -82,6 +85,7 @@ class FeedbackController extends Controller
         $feedback->update([
             'reference_user_id' => $controller?->id,
             'reference_position_id' => $position?->id,
+            'area_id' => ! empty($data['area']) ? (int) $data['area'] : null,
         ]);
 
         return redirect()->route('reports.feedback')->with('success', 'Feedback updated successfully!');

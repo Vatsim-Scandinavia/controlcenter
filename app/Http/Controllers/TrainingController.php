@@ -6,14 +6,14 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
-use App\Facades\DivisionApi;
 use App\Helpers\InterestStatus;
+use App\Helpers\LogName;
+use App\Helpers\TaskStatus;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
-use App\Models\AtcActivity;
-use App\Models\Endorsement;
 use App\Models\Rating;
+use App\Models\Task;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\TrainingInterest;
@@ -24,11 +24,13 @@ use App\Notifications\TrainingCreatedNotification;
 use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
 use App\Services\ActivityLogService;
+use App\Services\SoloEndorsementService;
+use App\Services\TrainingService;
+use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -296,7 +298,7 @@ class TrainingController extends Controller
 
         $training->ratings()->saveMany($ratings);
 
-        ActivityLogService::info('TRAINING', 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
+        ActivityLogService::info(LogName::Training, 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
 
         // Send confimration mail
         $training->user->notify(new TrainingCreatedNotification($training));
@@ -340,18 +342,74 @@ class TrainingController extends Controller
         $trainingMentors = $training->area->mentors->sortBy('name');
         $types = TrainingController::$types;
         $experiences = TrainingController::$experiences;
-        $activities = $training->activities->sortByDesc('created_at');
+        // Entries written in the same request share a created_at, since training_activity
+        // only keeps second precision. Tie-breaking on id keeps the newest entry on top,
+        // so a status change lands above the part-completion comment that triggered it
+        // instead of in whatever order the query happened to return.
+        $activities = $training->activities->sortBy([['created_at', 'desc'], ['id', 'desc']]);
 
         $trainingInterests = TrainingInterest::where('training_id', $training->id)->orderBy('created_at', 'DESC')->get();
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();
 
         $relatedTasks = $training->tasks->sortByDesc('created_at');
-        $trainingSessions = $training->trainingSessions()->with('position')->get();
+        $trainingSessions = $training->bookedSessions();
 
         $requestTypes = TaskController::getTypes();
         $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'trainingSessions', 'requestTypes', 'requestPopularAssignees'));
+        // Shares its rule with TrainingService::completeRatingPart(), so the control and
+        // the sign-off always agree on what is left.
+        $outstandingRatings = $training->outstandingRatings();
+
+        // The completion menu is offered on multi-rating trainings in progress only: a
+        // single-rating training keeps the status -> Completed flow.
+        $showCompletionControl = $training->status->isInProgress() && $training->ratings->count() > 1;
+
+        // The next part staff can sign off: the lowest outstanding VATSIM rating, because a
+        // student earns S1 before S2. Facility and tier ratings are never signed off on
+        // their own, they are granted when the training is completed as a whole.
+        $completablePart = $showCompletionControl
+            ? $outstandingRatings
+                ->whereNotNull('vatsim_rating')
+                ->sortBy(fn (Rating $rating) => $rating->vatsim_rating->value)
+                ->first()
+            : null;
+
+        // What stays outstanding once that part is signed off, so the partial modal can
+        // name it.
+        $otherOutstandingRatings = $outstandingRatings->filter(fn (Rating $rating) => $rating->id !== $completablePart?->id);
+
+        // Signing off a part is only a partial completion while something else stays
+        // outstanding. With nothing else left the part is the training, so the menu drops
+        // the entry and leaves only the whole-training one, which does the same thing and
+        // says so. Marking the whole training as completed is always offered: it is how
+        // staff finish a training whose remaining ratings carry endorsements, and the
+        // escape hatch when a part is not worth signing off on its own.
+        $canCompletePartially = $completablePart !== null && $otherOutstandingRatings->isNotEmpty();
+
+        // The endorsements the whole-training entry would grant, which is every outstanding
+        // rating that is not a VATSIM one.
+        $outstandingEndorsementRatings = $outstandingRatings->whereNull('vatsim_rating');
+
+        // Whether the rating upgrade for that part was already requested, so the modal can
+        // warn when it was not. Mirrors how RatingUpgrade picks its target rating.
+        $upgradeRequestedForPart = $completablePart !== null && $training->tasks->contains(function (Task $task) use ($training, $completablePart) {
+            if ($task->type !== RatingUpgrade::class || $task->status !== TaskStatus::COMPLETED) {
+                return false;
+            }
+
+            if ($task->subject_training_rating_id !== null) {
+                return (int) $task->subject_training_rating_id === $completablePart->id;
+            }
+
+            return $training->getHighestVatsimRating()?->id === $completablePart->id;
+        });
+
+        // How much of the solo day allowance this training has used, or null when
+        // no solo endorsement was ever issued on it.
+        $soloEndorsementSummary = app(SoloEndorsementService::class)->summaryFor($training);
+
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'trainingSessions', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
     }
 
     /**
@@ -409,6 +467,18 @@ class TrainingController extends Controller
         // Save the ratings
         $training->ratings()->saveMany($ratings);
 
+        // The detach above dropped the per-rating completion stamps. Put them back for the
+        // ratings that survived the edit: a part that was signed off stays signed off.
+        $completedAt = $preChangeRatings
+            ->mapWithKeys(fn (Rating $rating) => [$rating->id => $rating->pivot->completed_at])
+            ->filter();
+
+        foreach ($ratings as $rating) {
+            if ($completedAt->has($rating->id)) {
+                $training->ratings()->updateExistingPivot($rating->id, ['completed_at' => $completedAt->get($rating->id)]);
+            }
+        }
+
         // Save the rest
         $training->type = $attributes['type'];
         $training->english_only_training = array_key_exists('englishOnly', $attributes);
@@ -416,7 +486,7 @@ class TrainingController extends Controller
         $training->save();
 
         // Log the action
-        ActivityLogService::warning('TRAINING', 'Updated training request ' . $training->id .
+        ActivityLogService::warning(LogName::Training, 'Updated training request ' . $training->id .
         ' ― Old Ratings: ' . $preChangeRatings->pluck('name') .
         ' ― New Ratings: ' . $ratings->pluck('name') .
         ' ― Old Training type: ' . TrainingController::$types[$preChangeType]['text'] .
@@ -532,7 +602,7 @@ class TrainingController extends Controller
         // Update the training
         $training->update($attributes);
 
-        ActivityLogService::warning('TRAINING', 'Updated training details ' . $training->id .
+        ActivityLogService::warning(LogName::Training, 'Updated training details ' . $training->id .
         ' ― Old Status: ' . $oldStatus->label() .
         ' ― New Status: ' . $training->status->label() .
         ' ― Mentor: ' . $training->mentors->pluck('name'));
@@ -540,74 +610,10 @@ class TrainingController extends Controller
         // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
         if ($training->status !== $oldStatus) {
             if ($training->status->isClosed()) {
-                // Detach all mentors
-                $training->mentors()->detach();
-
-                // If the training was completed store the relevant endorsements
-                if ($training->status === TrainingStatus::COMPLETED) {
-                    foreach ($training->ratings as $rating) {
-                        if ($rating->vatsim_rating == null) {
-                            // Revoke the old endorsement if active
-                            $oldEndorsement = $training->user->endorsements->where('type', 'FACILITY')->where('revoked', false)->where('expired', false);
-                            foreach ($oldEndorsement as $oe) {
-                                foreach ($oe->ratings as $oer) {
-                                    if ($oer->id == $rating->id) {
-                                        $oe->revoked = true;
-                                        $oe->valid_to = now();
-                                        $oe->save();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // All clear, let's start by attemping the insertion to the API
-                            $response = DivisionApi::assignTierEndorsement($training->user, $rating, Auth::id());
-                            if ($response && $response->failed()) {
-                                return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                            }
-
-                            // Grant new endorsement
-                            $endorsement = new Endorsement();
-                            $endorsement->user_id = $training->user->id;
-                            $endorsement->type = 'FACILITY';
-                            $endorsement->valid_from = now()->format('Y-m-d H:i:s');
-                            $endorsement->valid_to = null;
-                            $endorsement->issued_by = null;
-                            $endorsement->save();
-
-                            $endorsement->ratings()->save(Rating::find($rating->id));
-                        }
-                    }
+                $error = app(TrainingService::class)->closeTraining($training);
+                if ($error !== null) {
+                    return back()->withErrors($error);
                 }
-
-                // If training is completed, let's set the user to active
-                if ($training->status === TrainingStatus::COMPLETED) {
-                    // atcActivityBasedOnTotalHours is false OR true and type is not familiarisation
-                    if (! Setting::get('atcActivityBasedOnTotalHours') || Setting::get('atcActivityBasedOnTotalHours') && $training->type <= 4) {
-
-                        // Apply activity only if user belongs to accepted divisions.
-                        // Visitors should manually be granted visitor endorsement, hence not covered here.
-                        if ($this->isUserInDivision($training->user)) {
-
-                            try {
-                                $activity = AtcActivity::where('user_id', $training->user->id)->where('area_id', $training->area->id)->firstOrFail();
-                                $activity->atc_active = true;
-                                $activity->start_of_grace_period = now();
-                                $activity->save();
-                            } catch (ModelNotFoundException $e) {
-                                AtcActivity::create([
-                                    'user_id' => $training->user->id,
-                                    'area_id' => $training->area->id,
-                                    'hours' => 0,
-                                    'atc_active' => true,
-                                    'start_of_grace_period' => now(),
-                                ]);
-                            }
-                        }
-                    }
-                }
-
-                $training->user->notify(new TrainingClosedNotification($training, $training->status, $training->closed_reason));
 
                 return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
             }
@@ -637,7 +643,7 @@ class TrainingController extends Controller
     public function close(Training $training)
     {
         $this->authorize('close', $training);
-        ActivityLogService::warning('TRAINING', 'Student closed training request ' . $training->id .
+        ActivityLogService::warning(LogName::Training, 'Student closed training request ' . $training->id .
         ' ― Status: ' . $training->status->label() .
         ' ― Training type: ' . TrainingController::$types[$training->type]['text']);
         TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::CLOSED_BY_STUDENT->value, $training->status->value, $training->user->id);
@@ -668,10 +674,49 @@ class TrainingController extends Controller
         $training->pre_training_completed = $newState;
         $training->save();
 
-        ActivityLogService::warning('TRAINING', 'Student marked pre-training as completed ' . $training->id);
+        ActivityLogService::warning(LogName::Training, 'Student marked pre-training as completed ' . $training->id);
         TrainingActivityController::create($training->id, 'PRETRAINING', $newState, $oldState, Auth::id());
 
         return redirect($training->path())->withSuccess('Pre-training marked as ' . ($newState ? 'completed' : 'not completed'));
+    }
+
+    /**
+     * Complete a single VATSIM rating part of a multi-rating training.
+     *
+     * @throws AuthorizationException
+     */
+    public function completePart(Training $training, Rating $rating): RedirectResponse
+    {
+        $this->authorize('update', $training);
+
+        $error = app(TrainingService::class)->completeRatingPart($training, $rating);
+        if ($error !== null) {
+            return back()->withErrors($error);
+        }
+
+        ActivityLogService::warning(LogName::Training, 'Completed the ' . $rating->name . ' part of training ' . $training->id . ' for CID ' . $training->user_id);
+
+        return back()->withSuccess('Completed the ' . $rating->name . ' part.');
+    }
+
+    /**
+     * Complete a whole training, for the outstanding ratings that cannot be signed off
+     * part by part.
+     *
+     * @throws AuthorizationException
+     */
+    public function complete(Training $training): RedirectResponse
+    {
+        $this->authorize('update', $training);
+
+        $error = app(TrainingService::class)->completeWholeTraining($training);
+        if ($error !== null) {
+            return back()->withErrors($error);
+        }
+
+        ActivityLogService::warning(LogName::Training, 'Completed training ' . $training->id . ' for CID ' . $training->user_id);
+
+        return back()->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
     }
 
     /**
@@ -703,7 +748,7 @@ class TrainingController extends Controller
             $interest->expired = InterestStatus::CLOSED;
             $interest->save();
 
-            ActivityLogService::info('TRAINING', 'Training interest confirmed.');
+            ActivityLogService::info(LogName::Training, 'Training interest confirmed.');
 
             return redirect()->to($training->path())->withSuccess('Interest successfully confirmed');
         }
@@ -768,20 +813,6 @@ class TrainingController extends Controller
         }
 
         return ['success' => true];
-    }
-
-    /**
-     * Check if the user is from the same division as the training request
-     *
-     * @return bool
-     */
-    protected function isUserInDivision($user)
-    {
-        if (config('app.mode') === 'subdivision') {
-            return in_array($user->subdivision, array_map('trim', explode(',', Setting::get('trainingSubDivisions'))));
-        }
-
-        return $user->division === config('app.owner_code');
     }
 
     /**

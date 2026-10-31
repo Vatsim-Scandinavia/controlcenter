@@ -12,6 +12,7 @@ use App\Services\VatsimBooking\Api;
 use App\Services\VatsimBooking\NoOpApi;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -126,6 +127,28 @@ class VatsimBookingApiTest extends TestCase
         Http::fake([
             'booking-api.test/*' => Http::response(['error' => 'nope'], 422),
         ]);
+
+        $this->expectException(VatsimAPIException::class);
+
+        (new Api())->createBooking($this->makeBooking(), 'booking');
+    }
+
+    #[Test]
+    public function successful_response_without_a_valid_id_returns_null(): void
+    {
+        Http::fake([
+            'booking-api.test/booking' => Http::response(['status' => 'ok']),
+        ]);
+
+        $this->assertNull((new Api())->createBooking($this->makeBooking(), 'booking'));
+    }
+
+    #[Test]
+    public function connection_failure_throws_a_vatsim_api_exception(): void
+    {
+        Http::fake(function () {
+            throw new ConnectionException('Connection timed out');
+        });
 
         $this->expectException(VatsimAPIException::class);
 

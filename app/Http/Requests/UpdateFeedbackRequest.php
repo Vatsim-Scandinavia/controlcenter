@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateFeedbackRequest extends FormRequest
@@ -24,6 +25,15 @@ class UpdateFeedbackRequest extends FormRequest
         return [
             'position' => 'nullable|exists:positions,callsign',
             'controller' => 'nullable|numeric|exists:users,id',
+            'area' => [
+                'nullable',
+                'exists:areas,id',
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if (filled($value) && $this->filled('position')) {
+                        $fail('An explicit area cannot be set when a position is selected.');
+                    }
+                },
+            ],
         ];
     }
 

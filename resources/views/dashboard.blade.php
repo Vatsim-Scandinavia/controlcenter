@@ -200,11 +200,11 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($training->trainingSessions->isNotEmpty())
-                                        @php($nextTrainingSession = $training->trainingSessions->first())
-                                        <span title="{{ $nextTrainingSession->time_start->toEuropeanDateTime() }}">
-                                            {{ $nextTrainingSession->time_start->toEuropeanDate(true) }}
-                                            {{ $nextTrainingSession->time_start->toEuropeanTime() }}
+                                    @php($nextTrainingSession = $training->bookedSessions()->first())
+                                    @if($nextTrainingSession)
+                                        <span title="{{ $nextTrainingSession->starts_at->toEuropeanDateTime() }}">
+                                            {{ $nextTrainingSession->starts_at->toEuropeanDate(true) }}
+                                            {{ $nextTrainingSession->starts_at->toEuropeanTime() }}
                                         </span>
                                         <br>
                                         <span class="text-muted">{{ $nextTrainingSession->position->callsign }}</span>

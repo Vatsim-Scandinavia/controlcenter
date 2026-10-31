@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\InterestStatus;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Support\LogOptions;
 
 class Training extends Model
@@ -22,7 +24,7 @@ class Training extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('training')
+            ->useLogName(LogName::Training)
             ->logOnly(['status', 'type', 'user_id', 'paused_at', 'closed_reason'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
@@ -210,10 +212,29 @@ class Training extends Model
 
     /**
      * Get the ratings of the training.
+     *
+     * The completed_at pivot column marks an individually completed part of a
+     * multi-rating training. Read it with Carbon::parse, it is not cast.
      */
     public function ratings(): BelongsToMany
     {
-        return $this->belongsToMany(Rating::class);
+        return $this->belongsToMany(Rating::class)->withPivot('completed_at');
+    }
+
+    /**
+     * The ratings of this training that are still to be earned.
+     *
+     * A facility or tier rating counts as outstanding whatever its pivot says: it is only
+     * granted by completing the training as a whole, and a completion that was since
+     * reopened leaves its stamp behind.
+     *
+     * @return Collection<int, Rating>
+     */
+    public function outstandingRatings(): Collection
+    {
+        return $this->ratings->filter(
+            fn (Rating $rating) => $rating->pivot->completed_at === null || $rating->vatsim_rating === null
+        );
     }
 
     /**
@@ -249,7 +270,10 @@ class Training extends Model
     }
 
     /**
-     * Get the student's bookings that are tagged as training sessions.
+     * Get every booking of the student that is tagged as a training session.
+     *
+     * Bookings are only linked to the student, so this spans all of the student's
+     * trainings and areas. Use bookedSessions() for the ones belonging to this training.
      */
     public function trainingSessions(): HasMany
     {
@@ -257,6 +281,29 @@ class Training extends Model
             ->where('training', true)
             ->where('deleted', false)
             ->orderBy('time_start');
+    }
+
+    /**
+     * Get the training sessions booked for this training.
+     *
+     * A student only has one open training at a time, so while this training is in
+     * progress the student's sessions on positions in its area belong to it.
+     *
+     * The area comes from each training, which a relation constraint can't reach when
+     * eager loading trainings in bulk, so the sessions are filtered here instead.
+     *
+     * @return Collection<int, Booking>
+     */
+    public function bookedSessions(): Collection
+    {
+        if (! $this->status->isInProgress()) {
+            return collect();
+        }
+
+        return $this->trainingSessions
+            ->loadMissing('position')
+            ->filter(fn (Booking $booking) => $booking->position?->area_id === $this->area_id)
+            ->values();
     }
 
     /**

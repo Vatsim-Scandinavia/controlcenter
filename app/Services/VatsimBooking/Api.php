@@ -6,6 +6,7 @@ use App\Contracts\VatsimBookingApiContract;
 use App\Exceptions\VatsimAPIException;
 use App\Models\Booking;
 use Carbon\Carbon;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -18,14 +19,24 @@ class Api implements VatsimBookingApiContract
     {
         $response = $this->callApi('post', $this->bookingUrl(), $this->bookingPayload($booking, $type));
 
-        return (int) $response->json('id');
+        return $this->bookingId($response);
     }
 
     public function updateBooking(Booking $booking, string $type): ?int
     {
         $response = $this->callApi('put', $this->bookingUrl($booking->vatsim_booking), $this->bookingPayload($booking, $type));
 
-        return (int) $response->json('id');
+        return $this->bookingId($response);
+    }
+
+    /**
+     * Extract the VATSIM booking id, or null if the response lacks a valid positive integer id.
+     */
+    private function bookingId(Response $response): ?int
+    {
+        $id = filter_var($response->json('id'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        return $id === false ? null : $id;
     }
 
     public function deleteBooking(Booking $booking): void
@@ -57,10 +68,14 @@ class Api implements VatsimBookingApiContract
      */
     private function callApi(string $method, string $url, ?array $data = null): Response
     {
-        $response = Http::withToken(config('vatsim.booking_api_token'))
-            ->acceptJson()
-            ->asForm()
-            ->$method($url, $data ?? []);
+        try {
+            $response = Http::withToken(config('vatsim.booking_api_token'))
+                ->acceptJson()
+                ->asForm()
+                ->$method($url, $data ?? []);
+        } catch (ConnectionException $e) {
+            throw new VatsimAPIException('Could not connect to the VATSIM booking API', 503, $e);
+        }
 
         if ($response->failed()) {
             throw new VatsimAPIException('VATSIM booking API responded with status ' . $response->status(), $response->status());

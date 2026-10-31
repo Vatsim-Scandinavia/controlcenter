@@ -14,7 +14,7 @@ The system has three layers, intentionally separated so an operator can shift po
 2. **Permissions** describe individual capabilities — `fir.positions.manage`, `training.reports.view`, and the like. They are dot-namespaced (`{domain}.{action}`) and listed in a **catalogue**. They are never assigned to users directly; the **matrix** maps each role to the permission patterns it grants.
 3. **Areas** scope a role assignment to part of the division (an ARTCC, a vACC, a sector group). The same user can hold the same role in several areas at once, in a single area, or globally.
 
-All three blocks — `roles`, `permissions`, and `matrix` — live in `config/roles.php`. The matrix is keyed by role, so granting a role a new capability, retiring a role, or introducing a new role is a configuration change, not a code change or migration.
+All three live in `config/roles.php` (see the [reference](../reference/permissions.md#permission-catalogue-and-matrix) for the exact block layout and pattern syntax). The matrix is keyed by role, so granting a role a new capability, retiring a role, or introducing a new role is a configuration change, not a code change or migration.
 
 ## How a Check Resolves
 

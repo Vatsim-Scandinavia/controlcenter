@@ -4,15 +4,12 @@
 
 @section('title-flex')
     <div class="d-flex align-items-center">
-        <div class="me-3">
-            <i class="fas fa-filter"></i>&nbsp;Filter:&nbsp;
-            <a class="btn btn-sm {{ !isset($currentArea) ? 'btn-primary' : 'btn-outline-primary' }}"
-                href="{{ route('positions.index') }}">All</a>
+        <x-filter.group class="me-3">
+            <x-filter.item :href="route('positions.index')" :active="! $currentArea">All</x-filter.item>
             @foreach ($areas as $area)
-                <a class="btn btn-sm {{ isset($currentArea) && $currentArea->id == $area->id ? 'btn-primary' : 'btn-outline-primary' }}"
-                    href="{{ route('positions.index.area', $area->id) }}">{{ $area->name }}</a>
+                <x-filter.item :href="route('positions.index.area', $area->id)" :active="$currentArea?->is($area)">{{ $area->name }}</x-filter.item>
             @endforeach
-        </div>
+        </x-filter.group>
         @can('createAny', App\Models\Position::class)
             <div>
                 <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#create-position-modal">

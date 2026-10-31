@@ -154,11 +154,14 @@ class DatabaseSeeder extends Seeder
 
         // Populate trainings and other of the Scandinavian users
         for ($i = 1; $i <= rand(100, 125); $i++) {
-            $training = Training::factory()->create();
+            $student = User::whereDoesntHave('trainings', fn ($query) => $query->where('status', '>=', TrainingStatus::IN_QUEUE->value))
+                ->inRandomOrder()->firstOrFail();
+
+            $training = Training::factory()->create(['user_id' => $student->id]);
             $training->ratings()->attach(Rating::whereIn('vatsim_rating', VatsimRating::TRAINABLE_RATINGS)->inRandomOrder()->first());
 
             // Give all non-queued trainings a mentor
-            if ($training->status != TrainingStatus::IN_QUEUE->value) {
+            if ($training->status !== TrainingStatus::IN_QUEUE) {
                 $training->mentors()->attach(
                     User::whereHas('roleAssignments', function ($query) {
                         $query->where('role', 'mentor');
@@ -172,8 +175,8 @@ class DatabaseSeeder extends Seeder
             }
 
             // Give all exam awaiting trainings a solo endorsement
-            if ($training->status == TrainingStatus::AWAITING_EXAM->value
-                || $training->status == TrainingStatus::COMPLETED->value) {
+            if ($training->status === TrainingStatus::AWAITING_EXAM
+                || $training->status === TrainingStatus::COMPLETED) {
                 if (! Endorsement::where('user_id', $training->user_id)->exists()) {
                     $soloEndorsement = Endorsement::factory()->create([
                         'user_id' => $training->user_id,

@@ -281,6 +281,36 @@ class BookingTest extends TestCase
     }
 
     #[Test]
+    public function web_store_rolls_the_end_of_an_overnight_booking_to_the_next_day(): void
+    {
+        $controller = User::factory()->create(['rating' => VatsimRating::S3->value]);
+        $position = Position::factory()->create([
+            'area_id' => Area::factory()->create()->id,
+            'rating' => VatsimRating::S1->value,
+        ]);
+        $controller->atcActivity()->create([
+            'user_id' => $controller->id,
+            'area_id' => $position->area_id,
+            'hours' => 100,
+            'atc_active' => true,
+        ]);
+        $date = Carbon::tomorrow();
+
+        $this->actingAs($controller)->post(route('booking.store'), [
+            'date' => $date->format('d/m/Y'),
+            'start_at' => '23:00',
+            'end_at' => '01:00',
+            'position' => $position->callsign,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('bookings', [
+            'position_id' => $position->id,
+            'time_start' => $date->format('Y-m-d') . ' 23:00:00',
+            'time_end' => $date->copy()->addDay()->format('Y-m-d') . ' 01:00:00',
+        ]);
+    }
+
+    #[Test]
     public function guest_cannot_book_positions(): void
     {
         $user = User::factory()->create();
@@ -388,6 +418,104 @@ class BookingTest extends TestCase
     }
 
     #[Test]
+    public function api_store_rolls_the_end_of_an_overnight_booking_to_the_next_day(): void
+    {
+        $position = Position::factory()->create([
+            'area_id' => Area::factory()->create()->id,
+            'rating' => VatsimRating::S1->value,
+        ]);
+        $controller = User::factory()->create(['rating' => VatsimRating::S3->value]);
+        $date = Carbon::tomorrow();
+
+        $this->withoutMiddleware(ApiToken::class)->postJson(route('api.booking.store'), [
+            'cid' => $controller->id,
+            'date' => $date->format('d/m/Y'),
+            'start_at' => '23:00',
+            'end_at' => '01:00',
+            'position' => $position->callsign,
+            'source' => 'TEST',
+        ])->assertSuccessful();
+
+        $this->assertDatabaseHas('bookings', [
+            'position_id' => $position->id,
+            'time_start' => $date->format('Y-m-d') . ' 23:00:00',
+            'time_end' => $date->copy()->addDay()->format('Y-m-d') . ' 01:00:00',
+        ]);
+    }
+
+    #[Test]
+    public function api_update_rolls_the_end_of_an_overnight_booking_to_the_next_day(): void
+    {
+        $position = Position::factory()->create([
+            'area_id' => Area::factory()->create()->id,
+            'rating' => VatsimRating::S1->value,
+        ]);
+        $controller = User::factory()->create(['rating' => VatsimRating::S3->value]);
+        $date = Carbon::tomorrow();
+        $booking = Booking::factory()->create([
+            'user_id' => $controller->id,
+            'position_id' => $position->id,
+            'callsign' => $position->callsign,
+            'time_start' => $date->copy()->addHours(10),
+            'time_end' => $date->copy()->addHours(12),
+        ]);
+
+        $this->withoutMiddleware(ApiToken::class)->patchJson(route('api.booking.update', $booking), [
+            'cid' => $controller->id,
+            'date' => $date->format('d/m/Y'),
+            'start_at' => '23:00',
+            'end_at' => '01:00',
+            'position' => $position->callsign,
+        ])->assertSuccessful();
+
+        $this->assertDatabaseHas('bookings', [
+            'id' => $booking->id,
+            'time_end' => $date->copy()->addDay()->format('Y-m-d') . ' 01:00:00',
+        ]);
+    }
+
+    #[Test]
+    public function api_store_rejects_an_overnight_booking_overlapping_an_existing_one(): void
+    {
+        $position = Position::factory()->create([
+            'area_id' => Area::factory()->create()->id,
+            'rating' => VatsimRating::S1->value,
+        ]);
+        $controller = User::factory()->create(['rating' => VatsimRating::S3->value]);
+        $date = Carbon::tomorrow();
+        Booking::factory()->create([
+            'position_id' => $position->id,
+            'callsign' => $position->callsign,
+            'time_start' => $date->copy()->addMinutes(23 * 60 + 30),
+            'time_end' => $date->copy()->addMinutes(24 * 60 + 30),
+        ]);
+
+        $this->withoutMiddleware(ApiToken::class)->postJson(route('api.booking.store'), [
+            'cid' => $controller->id,
+            'date' => $date->format('d/m/Y'),
+            'start_at' => '23:00',
+            'end_at' => '01:00',
+            'position' => $position->callsign,
+            'source' => 'TEST',
+        ])->assertStatus(400);
+    }
+
+    #[Test]
+    public function api_index_returns_booking_times_in_the_stored_format(): void
+    {
+        $position = Position::factory()->create(['area_id' => Area::factory()->create()->id]);
+        Booking::factory()->create([
+            'position_id' => $position->id,
+            'time_start' => '2026-11-15 14:00:00',
+            'time_end' => '2026-11-15 16:00:00',
+        ]);
+
+        $this->withoutMiddleware(ApiToken::class)->getJson(route('api.booking.index'))
+            ->assertSuccessful()
+            ->assertJsonFragment(['time_start' => '2026-11-15 14:00:00', 'time_end' => '2026-11-15 16:00:00']);
+    }
+
+    #[Test]
     public function api_update_booking_forces_training_tag_when_position_rating_exceeds_user(): void
     {
         $area = Area::factory()->create();
@@ -472,5 +600,14 @@ class BookingTest extends TestCase
         $this->assertEquals('TEST_TWR', $booking->callsign);
         $this->assertEquals(1, $booking->training);
         $this->assertEquals($visitor->id, $booking->user_id);
+    }
+
+    #[Test]
+    public function mentors_can_specify_the_training_booking_tag(): void
+    {
+        $mentor = User::factory()->create(['rating' => VatsimRating::S1->value]);
+        $mentor->roleAssignments()->create(['role' => 'mentor', 'area_id' => Area::factory()->create()->id]);
+
+        $this->assertTrue($mentor->can('bookTrainingTag', Booking::class));
     }
 }
