@@ -37,6 +37,7 @@ class ModuleServiceProvider extends ServiceProvider
         $registry = $this->app->make(ModuleRegistry::class);
 
         $this->registerCommands($registry);
+        $this->registerMigrations($registry);
         (new ModuleRouteLoader($registry))->load();
     }
 
@@ -65,6 +66,19 @@ class ModuleServiceProvider extends ServiceProvider
             'roles.roles' => $roles,
             'roles.matrix' => $matrix,
         ]);
+    }
+
+    /**
+     * Register module-shipped migration paths so `php artisan migrate`
+     * discovers each compatible module's tables.
+     */
+    private function registerMigrations(ModuleRegistry $registry): void
+    {
+        $paths = $registry->migrationPaths();
+
+        if ($paths !== []) {
+            $this->loadMigrationsFrom($paths);
+        }
     }
 
     private function registerCommands(ModuleRegistry $registry): void

@@ -62,6 +62,18 @@ class ModuleAdminPageTest extends TestCase
     }
 
     #[Test]
+    public function the_modules_page_shows_a_health_summary(): void
+    {
+        $this->bootModules([ExampleModule::class], ['example']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.modules'))
+            ->assertOk()
+            ->assertSee('1 enabled')
+            ->assertSee('1 installed');
+    }
+
+    #[Test]
     public function an_admin_can_enable_and_disable_a_module(): void
     {
         $this->bootModules([ExampleModule::class]);

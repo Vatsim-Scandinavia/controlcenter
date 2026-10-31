@@ -5,7 +5,6 @@ namespace App\Modules;
 use App\Models\Module as ModuleRecord;
 use ControlCenter\ModuleApi\Module;
 use ControlCenter\ModuleApi\Navigation\NavigationItem;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -275,21 +274,33 @@ class ModuleRegistry
     }
 
     /**
-     * Register scheduled work contributed by booted (enabled) modules. A
-     * disabled module contributes no schedule. Each callback is isolated so a
-     * throwing module cannot break the rest of the application's schedule.
+     * Database migration paths contributed by discovered, compatible modules.
+     *
+     * A bundled module may ship migrations in `modules/<slug>/database/migrations`;
+     * when that directory exists it is registered so `php artisan migrate` (and
+     * the test migrator) discovers the module's tables. Migrations are exposed
+     * for every compatible module regardless of enabled state, because a
+     * disabled module's data tables must continue to exist.
+     *
+     * @return array<int, string>
      */
-    public function applySchedules(Schedule $schedule): void
+    public function migrationPaths(): array
     {
-        foreach ($this->booted() as $slug => $registrar) {
-            foreach ($registrar->schedules as $callback) {
-                try {
-                    $callback($schedule);
-                } catch (Throwable $e) {
-                    $this->report($slug, $e, 'scheduling');
-                }
+        $paths = [];
+
+        foreach ($this->discovered() as $slug => $module) {
+            if (! $module->compatible) {
+                continue;
+            }
+
+            $path = $this->app->basePath("modules/{$slug}/database/migrations");
+
+            if (is_dir($path)) {
+                $paths[] = $path;
             }
         }
+
+        return $paths;
     }
 
     /**
@@ -437,8 +448,28 @@ class ModuleRegistry
 
         Log::error($message, ['exception' => $e, 'module' => $slug]);
 
-        if (app()->bound('sentry')) {
-            app('sentry')->captureException($e);
+        self::captureToSentry($e, $slug);
+    }
+
+    /**
+     * Report a module-origin throwable to Sentry, tagged with the offending
+     * module so failures in module code (boot, registration, slots, commands)
+     * are attributable to the module rather than the core application.
+     */
+    public static function captureToSentry(Throwable $e, string $slug): void
+    {
+        if (! app()->bound('sentry')) {
+            return;
         }
+
+        $sentry = app('sentry');
+
+        if (method_exists($sentry, 'configureScope')) {
+            $sentry->configureScope(function ($scope) use ($slug): void {
+                $scope->setTag('module', $slug);
+            });
+        }
+
+        $sentry->captureException($e);
     }
 }

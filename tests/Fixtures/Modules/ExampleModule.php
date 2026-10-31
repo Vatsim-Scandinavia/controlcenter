@@ -77,7 +77,9 @@ class ExampleModule implements Module
                 Route::get('/', fn () => 'example module index')->name('index');
             })
             ->api(function (): void {
-                Route::get('/ping', fn () => response()->json(['ok' => true]))->name('ping');
+                Route::get('/ping', fn () => response()->json(['ok' => true]))
+                    ->middleware('api-token:modules.example.read')
+                    ->name('ping');
             });
     }
 }
