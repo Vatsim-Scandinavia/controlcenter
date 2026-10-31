@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\ApiToken;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnsureModuleEnabled;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\SuspendedUser;
@@ -90,6 +91,7 @@ class Kernel extends HttpKernel
         'api-token' => ApiToken::class,
         'activity' => UserActive::class,
         'suspended' => SuspendedUser::class,
+        'module' => EnsureModuleEnabled::class,
     ];
 
     /**

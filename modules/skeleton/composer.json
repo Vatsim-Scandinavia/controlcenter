@@ -1,0 +1,21 @@
+{
+    "name": "controlcenter/module-skeleton",
+    "description": "Starting point for a Control Center module. Copy this directory, rename it and build.",
+    "license": "MIT",
+    "type": "controlcenter-module",
+    "require": {
+        "php": ">=8.4 <8.6",
+        "controlcenter/module-api": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ControlCenter\\Modules\\Skeleton\\": "src/"
+        }
+    },
+    "extra": {
+        "controlcenter": {
+            "module": "ControlCenter\\Modules\\Skeleton\\SkeletonModule"
+        }
+    },
+    "minimum-stability": "stable"
+}

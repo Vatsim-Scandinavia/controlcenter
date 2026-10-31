@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class TheoreticalExam extends Types
 {
+    /** Stable key persisted in the tasks.type column. Never change once shipped. */
+    public const string KEY = 'theoretical-exam';
+
     public function getName()
     {
         return 'Theoretical Exam Access';

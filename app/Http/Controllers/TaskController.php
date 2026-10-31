@@ -7,10 +7,10 @@ use App\Models\Area;
 use App\Models\Task;
 use App\Models\User;
 use App\Rules\ValidTaskType;
+use App\Tasks\TaskTypeRegistry;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
 class TaskController extends Controller
@@ -125,26 +125,9 @@ class TaskController extends Controller
      */
     public static function getTypes()
     {
-        // Specify the directory where your subclasses are located
-        $subclassesDirectory = app_path('Tasks/Types');
-
-        // Initialize an array to store the subclasses
-        $subclasses = [];
-
-        // Get all PHP files in the directory
-        $files = File::files($subclassesDirectory);
-
-        foreach ($files as $file) {
-            // Get the class name from the file path
-            $className = 'App\\Tasks\\Types\\' . pathinfo($file, PATHINFO_FILENAME);
-
-            // Check if the class exists and is a subclass of Types
-            if (class_exists($className) && is_subclass_of($className, 'App\\Tasks\\Types\\Types')) {
-                $subclasses[] = new $className();
-            }
-        }
-
-        return $subclasses;
+        // Resolved from the task type registry so core and module-provided
+        // types are discovered the same way, keyed by their stable key.
+        return array_values(app(TaskTypeRegistry::class)->all());
     }
 
     /**
@@ -176,14 +159,6 @@ class TaskController extends Controller
      */
     public static function isValidType($type)
     {
-        $types = self::getTypes();
-
-        foreach ($types as $taskType) {
-            if ($taskType::class == $type) {
-                return true;
-            }
-        }
-
-        return false;
+        return app(TaskTypeRegistry::class)->has($type);
     }
 }

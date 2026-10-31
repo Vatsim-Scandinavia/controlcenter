@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
@@ -108,6 +109,9 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/admin/templates/{id}', [NotificationController::class, 'index'])->name('admin.templates.area');
     Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
+    Route::get('/admin/modules', [ModuleController::class, 'index'])->name('admin.modules');
+    Route::post('/admin/modules/{slug}/enable', [ModuleController::class, 'enable'])->name('admin.modules.enable');
+    Route::post('/admin/modules/{slug}/disable', [ModuleController::class, 'disable'])->name('admin.modules.disable');
     Route::resource('/admin/positions', PositionController::class)->except(['show']);
     Route::get('/admin/positions/{area}', [PositionController::class, 'index'])->name('positions.index.area');
 

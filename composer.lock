@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f184261d3cbf5a98b618282f4d5a1178",
+    "content-hash": "f730fcc378d59da013a3c4c091069752",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -268,6 +268,36 @@
                 }
             ],
             "time": "2026-07-18T12:35:13+00:00"
+        },
+        {
+            "name": "controlcenter/module-api",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/module-api",
+                "reference": "8dfa2ac5ed6ee9f74f53b87c0da38e3460f5554e"
+            },
+            "require": {
+                "php": ">=8.4 <8.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ControlCenter\\ModuleApi\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Stable contracts and value objects for Control Center modules.",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "dedoc/scramble",
@@ -11545,7 +11575,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "controlcenter/module-api": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

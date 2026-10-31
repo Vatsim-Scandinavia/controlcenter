@@ -6,6 +6,9 @@ use App\Models\Task;
 
 class Custom extends Types
 {
+    /** Stable key persisted in the tasks.type column. Never change once shipped. */
+    public const string KEY = 'custom';
+
     public function getName()
     {
         return 'Custom Request';

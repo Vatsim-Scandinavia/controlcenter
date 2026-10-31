@@ -5,6 +5,7 @@ use App\Providers\AuthServiceProvider;
 use App\Providers\CarbonServiceProvider;
 use App\Providers\DivisionApiServiceProvider;
 use App\Providers\EventServiceProvider;
+use App\Providers\ModuleServiceProvider;
 use App\Providers\RouteServiceProvider;
 use App\Providers\VatsimBookingApiServiceProvider;
 use Illuminate\Support\Facades\Facade;
@@ -246,6 +247,7 @@ return [
          * Application Service Providers...
          */
         AppServiceProvider::class,
+        ModuleServiceProvider::class,
         AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         EventServiceProvider::class,

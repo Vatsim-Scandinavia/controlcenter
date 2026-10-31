@@ -110,7 +110,7 @@ class TrainingExaminationController extends Controller
             $taskRating = isset($data['subject_training_rating_id']) ? (int) $data['subject_training_rating_id'] : null;
             if ($taskAsignee->can('receive', Task::class)) {
                 $task = Task::create([
-                    'type' => RatingUpgrade::class,
+                    'type' => RatingUpgrade::KEY,
                     'subject_user_id' => $training->user->id,
                     'subject_training_id' => $training->id,
                     'subject_training_rating_id' => $taskRating,

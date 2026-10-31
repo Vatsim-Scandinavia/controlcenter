@@ -1,0 +1,20 @@
+{
+    "name": "controlcenter/module-api",
+    "description": "Stable contracts and value objects for Control Center modules.",
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": ">=8.4 <8.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "ControlCenter\\ModuleApi\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        }
+    },
+    "minimum-stability": "stable"
+}

@@ -393,7 +393,7 @@ class TrainingController extends Controller
         // Whether the rating upgrade for that part was already requested, so the modal can
         // warn when it was not. Mirrors how RatingUpgrade picks its target rating.
         $upgradeRequestedForPart = $completablePart !== null && $training->tasks->contains(function (Task $task) use ($training, $completablePart) {
-            if ($task->type !== RatingUpgrade::class || $task->status !== TaskStatus::COMPLETED) {
+            if ($task->type !== RatingUpgrade::KEY || $task->status !== TaskStatus::COMPLETED) {
                 return false;
             }
 

@@ -6,6 +6,9 @@ use App\Models\Task;
 
 class SoloEndorsement extends Types
 {
+    /** Stable key persisted in the tasks.type column. Never change once shipped. */
+    public const string KEY = 'solo-endorsement';
+
     public function getName()
     {
         return 'Solo Endorsement';

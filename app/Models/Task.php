@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\TaskStatus;
+use App\Tasks\TaskTypeRegistry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,10 +45,10 @@ class Task extends Model
 
     public function type()
     {
-        if ($this->type) {
-            return app($this->type);
-        } else {
+        if (! $this->type) {
             throw new \Exception('Invalid task type: ' . $this->type);
         }
+
+        return app(TaskTypeRegistry::class)->make($this->type);
     }
 }

@@ -66,7 +66,7 @@ class SyncRosterTest extends TestCase
     private function ratingUpgradeTask(User $user, Carbon $closedAt, TaskStatus $status = TaskStatus::COMPLETED): Task
     {
         return Task::create([
-            'type' => RatingUpgrade::class,
+            'type' => RatingUpgrade::KEY,
             'status' => $status,
             'subject_user_id' => $user->id,
             'subject_training_id' => Training::factory()->create(['user_id' => $user->id])->id,

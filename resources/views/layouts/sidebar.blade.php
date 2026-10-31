@@ -140,7 +140,7 @@
             </x-sidebar.section>
         @endif
 
-        @if(auth()->user()->canAny(['system.health.view', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
+        @if(auth()->user()->canAny(['system.health.view', 'system.modules.manage', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <x-sidebar.section icon="fa-cogs" title="Administration" :active="Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview')" id="collapseUtilities">
@@ -155,6 +155,9 @@
                 @endcan
                 @can('viewAny', App\Models\Position::class)
                     <x-sidebar.item :href="route('positions.index')" title="Positions" collapse />
+                @endcan
+                @can('system.modules.manage')
+                    <x-sidebar.item :href="route('admin.modules')" title="Modules" collapse />
                 @endcan
             </x-sidebar.section>
 

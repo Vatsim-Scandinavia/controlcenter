@@ -82,7 +82,7 @@ class SyncRoster extends Command
                 // RatingUpgrade task is that request: requestRatingUpgrade() runs only inside
                 // RatingUpgrade::complete(). Removing them would undo the upgrade we just asked for.
                 $upgradeInProgress = Task::query()
-                    ->where('type', RatingUpgrade::class)
+                    ->where('type', RatingUpgrade::KEY)
                     ->where('status', TaskStatus::COMPLETED)
                     ->where('closed_at', '>=', now()->subDays(self::UPGRADE_GRACE_DAYS))
                     ->pluck('subject_user_id')
