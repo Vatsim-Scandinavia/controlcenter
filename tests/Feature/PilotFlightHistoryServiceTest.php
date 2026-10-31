@@ -102,6 +102,22 @@ class PilotFlightHistoryServiceTest extends TestCase
     }
 
     #[Test]
+    public function it_ignores_flights_starting_after_today(): void
+    {
+        Http::fake([
+            self::HISTORY_URL => Http::response(['items' => [
+                $this->connection(12, 'CSA456', '2026-11-01T00:00:00Z'),
+                $this->connection(11, 'CSA123', '2026-10-31T23:59:59Z'),
+            ]]),
+            self::FLIGHT_PLANS_URL => Http::response([]),
+        ]);
+
+        $flights = app(PilotFlightHistoryService::class)->recentFlights(1000000);
+
+        $this->assertSame(['CSA123'], array_column($flights, 'callsign'));
+    }
+
+    #[Test]
     public function it_lists_every_connection_as_reported_without_merging(): void
     {
         Http::fake([
@@ -285,6 +301,31 @@ class PilotFlightHistoryServiceTest extends TestCase
         ]);
 
         $this->assertSame([], app(PilotFlightHistoryService::class)->recentFlights(1000000));
+    }
+
+    #[Test]
+    public function a_late_failure_does_not_replace_flights_cached_by_a_concurrent_request(): void
+    {
+        $service = app(PilotFlightHistoryService::class);
+        $concurrentRequestFinished = false;
+
+        Http::fake(function (Request $request) use ($service, &$concurrentRequestFinished) {
+            if (str_contains($request->url(), '/flightplans')) {
+                return Http::response([]);
+            }
+
+            if (! $concurrentRequestFinished) {
+                $concurrentRequestFinished = true;
+                $service->recentFlights(1000000);
+
+                return Http::response([], 503);
+            }
+
+            return Http::response(['items' => [$this->connection(11, 'CSA123', '2026-10-27T17:47:58Z')]]);
+        });
+
+        $this->assertSame([], $service->recentFlights(1000000));
+        $this->assertSame('CSA123', $service->recentFlights(1000000)[0]['callsign']);
     }
 
     #[Test]

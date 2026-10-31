@@ -59,7 +59,7 @@ class PilotFlightHistoryService
             $connections = $this->fetchConnections($cid);
         } catch (ConnectionException|RequestException|UnexpectedValueException $e) {
             $this->logFailure('connections', $cid, $e);
-            Cache::put($cacheKey, [], now()->addMinutes(self::FAILURE_CACHE_MINUTES));
+            Cache::add($cacheKey, [], now()->addMinutes(self::FAILURE_CACHE_MINUTES));
 
             return [];
         }
@@ -173,7 +173,8 @@ class PilotFlightHistoryService
             && $connection['callsign'] !== ''
             && is_string($connection['start'] ?? null)
             && strtotime($connection['start']) !== false
-            && Carbon::parse($connection['start'])->isAfter(now()->subDays(self::RECENT_DAYS));
+            && Carbon::parse($connection['start'])->isAfter(now()->subDays(self::RECENT_DAYS))
+            && Carbon::parse($connection['start'])->lte(now()->endOfDay());
     }
 
     private function icaoCode(mixed $code): ?string
