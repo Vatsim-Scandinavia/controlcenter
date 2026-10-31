@@ -112,6 +112,8 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/admin/modules', [ModuleController::class, 'index'])->name('admin.modules');
     Route::post('/admin/modules/{slug}/enable', [ModuleController::class, 'enable'])->name('admin.modules.enable');
     Route::post('/admin/modules/{slug}/disable', [ModuleController::class, 'disable'])->name('admin.modules.disable');
+    Route::get('/admin/modules/{slug}/settings', [ModuleController::class, 'settings'])->name('admin.modules.settings');
+    Route::post('/admin/modules/{slug}/settings', [ModuleController::class, 'updateSettings'])->name('admin.modules.settings.store');
     Route::resource('/admin/positions', PositionController::class)->except(['show']);
     Route::get('/admin/positions/{area}', [PositionController::class, 'index'])->name('positions.index.area');
 

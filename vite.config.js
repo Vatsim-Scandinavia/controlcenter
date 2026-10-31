@@ -52,7 +52,16 @@ export default () => {
                     "/resources/js/bootstrap-table.js",
                     "/resources/sass/bootstrap-table.scss",
                 ],
-                refresh: true,
+                // Mirror laravel-vite-plugin's default refresh paths and add
+                // installed module views so changes to them trigger a reload.
+                refresh: [
+                    "app/Livewire/**",
+                    "app/View/Components/**",
+                    "lang/**",
+                    "resources/views/**",
+                    "routes/**",
+                    "modules/**/resources/views/**",
+                ],
             }),
         ],
         resolve: {

@@ -312,16 +312,6 @@
                                 <span class="text-danger">{{ $errors->first('linkDiscord') }}</span>
                             @enderror
 
-
-                            <div class="mb-4">
-                                <label class="form-label" for="linkMoodle">Moodle</label>
-                                <input type="url" class="form-control @error('linkMoodle') is-invalid @enderror" id="linkMoodle" name="linkMoodle" value="{{ (Setting::get("linkMoodle") != false) ? Setting::get("linkMoodle") : '' }}">
-                                <small class="form-text">Enter full link to Moodle or leave blank to disable</small>
-                            </div>
-                            @error('linkMoodle')
-                                <span class="text-danger">{{ $errors->first('linkMoodle') }}</span>
-                            @enderror
-
                         </div>
                     </div>
                 </div>

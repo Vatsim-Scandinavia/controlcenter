@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "996561c7be0ba9259acdfc3338e0348c",
+    "content-hash": "88ac30674b8b30461693cf31dccf1da7",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -275,7 +275,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/module-api",
-                "reference": "5b0138b576ccf5f635702a3103b73c455c8a211b"
+                "reference": "8dfa2ac5ed6ee9f74f53b87c0da38e3460f5554e"
             },
             "require": {
                 "php": ">=8.4 <8.6"
@@ -300,12 +300,43 @@
             }
         },
         {
+            "name": "controlcenter/module-moodle",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "modules/moodle",
+                "reference": "0ac6264b2565e2382799c177064f6629b7e7bd16"
+            },
+            "require": {
+                "controlcenter/module-api": "@dev",
+                "php": ">=8.4 <8.6"
+            },
+            "type": "controlcenter-module",
+            "extra": {
+                "controlcenter": {
+                    "module": "ControlCenter\\Modules\\Moodle\\MoodleModule"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ControlCenter\\Modules\\Moodle\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Adds a sidebar link to a Moodle instance configured per installation.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "controlcenter/module-vateud",
             "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "modules/vateud",
-                "reference": "fe4a50f8b62aa657e042bf005661e9e91a4b56a3"
+                "reference": "3e981b46d4f32cb05a9f7b7415c66707e3d613c7"
             },
             "require": {
                 "controlcenter/module-api": "^1.0",
@@ -11608,6 +11639,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "controlcenter/module-api": 20,
+        "controlcenter/module-moodle": 20,
         "controlcenter/module-vateud": 20
     },
     "prefer-stable": true,

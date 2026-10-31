@@ -36,13 +36,17 @@
             <x-sidebar.item :href="route('booking')" icon="fa-calendar" title="Booking" :active="Route::is('booking*')" />
         @endcan
 
-        @if(Setting::get('linkMoodle') && Setting::get('linkMoodle') != "")
-            <li class="nav-item">
-            <a class="nav-link" href="{{ Setting::get('linkMoodle') }}" target="_blank">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Moodle</span></a>
-            </li>
-        @endif
+        {{-- Module-contributed navigation. Each item is authorized through the
+             gate; an item without a permission shows to any authenticated user. --}}
+        @foreach(app(\App\Modules\ModuleRegistry::class)->navigation() as $moduleNavItem)
+            @if(($moduleNavItem->permission === null || auth()->user()->can($moduleNavItem->permission)) && Route::has($moduleNavItem->route))
+                <x-sidebar.item
+                    :href="route($moduleNavItem->route, $moduleNavItem->routeParameters)"
+                    :icon="$moduleNavItem->icon"
+                    :title="$moduleNavItem->title"
+                    :active="Route::is($moduleNavItem->activeWhen ?? $moduleNavItem->route)" />
+            @endif
+        @endforeach
 
         @canany(['training.mentor-dashboard.view', 'bookings.sweatbox.use', 'fir.management.reports.view'])
 

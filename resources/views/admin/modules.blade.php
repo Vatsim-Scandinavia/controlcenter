@@ -103,6 +103,9 @@
                                             @endforelse
                                         </td>
                                         <td class="text-end">
+                                            @if($module->enabled && in_array($module->slug(), $configurable, true))
+                                                <a href="{{ route('admin.modules.settings', $module->slug()) }}" class="btn btn-sm btn-outline-primary mb-1">Settings</a>
+                                            @endif
                                             @if($module->enabled)
                                                 <form action="{{ route('admin.modules.disable', $module->slug()) }}" method="POST">
                                                     @csrf

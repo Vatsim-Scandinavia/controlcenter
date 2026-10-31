@@ -1,4 +1,6 @@
 @import "tailwindcss/utilities" prefix(tw-);
 @source "../views/livewire/**/*.blade.php";
 @source "../../app/Livewire/**/*.php";
+/* Scan installed module views so their tw-prefixed utilities are not purged. */
+@source "../../modules/**/resources/views/**/*.blade.php";
 @import "../../vendor/livewire/flux/dist/flux.css";
