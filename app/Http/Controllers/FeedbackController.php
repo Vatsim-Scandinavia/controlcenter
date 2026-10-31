@@ -10,6 +10,7 @@ use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
 use App\Services\PilotFlightHistoryService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
@@ -17,10 +18,8 @@ class FeedbackController extends Controller
 {
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Response
      */
-    public function create(PilotFlightHistoryService $flightHistory)
+    public function create(PilotFlightHistoryService $flightHistory): View|RedirectResponse
     {
 
         if (! Setting::get('feedbackEnabled')) {
