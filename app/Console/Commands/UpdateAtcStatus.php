@@ -37,11 +37,9 @@ class UpdateAtcStatus extends Command
             Artisan::call('update:atc:reactivate');
         }
 
-        // Sync with division api
-        if (Setting::get('divisionApiEnabled')) {
-            Artisan::call('sync:roster');
-            Artisan::call('sync:endorsements');
-        }
+        // Division roster/endorsement sync is owned by the division API module
+        // (e.g. vateud), which registers its own schedule while enabled, so core
+        // no longer triggers it here.
 
         // Send ATC inactivity reminder
         if (Setting::get('atcActivityInactivityReminder') > 0) {

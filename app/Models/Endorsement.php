@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Events\V1\EndorsementGranted;
+use App\Events\V1\EndorsementRevoked;
 use App\Helpers\LogName;
+use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -18,6 +21,23 @@ class Endorsement extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Fire versioned domain events at the authoritative Eloquent mutation
+     * points: grant on creation, revoke when the `revoked` flag is raised.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (self $endorsement): void {
+            DomainEvents::dispatch(new EndorsementGranted($endorsement));
+        });
+
+        static::updated(function (self $endorsement): void {
+            if ($endorsement->wasChanged('revoked') && $endorsement->revoked) {
+                DomainEvents::dispatch(new EndorsementRevoked($endorsement));
+            }
+        });
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

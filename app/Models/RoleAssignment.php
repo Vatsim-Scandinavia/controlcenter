@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Events\V1\RoleGranted;
+use App\Events\V1\RoleRevoked;
 use App\Helpers\LogName;
+use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -67,6 +70,7 @@ class RoleAssignment extends Model
 
         static::created(function (RoleAssignment $assignment) {
             $assignment->logRoleAssignmentActivity('created', 'Role granted');
+            DomainEvents::dispatch(new RoleGranted($assignment));
         });
 
         static::updated(function (RoleAssignment $assignment) {
@@ -75,6 +79,7 @@ class RoleAssignment extends Model
 
         static::deleted(function (RoleAssignment $assignment) {
             $assignment->logRoleAssignmentActivity('deleted', 'Role revoked');
+            DomainEvents::dispatch(new RoleRevoked($assignment));
         });
     }
 

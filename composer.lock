@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f730fcc378d59da013a3c4c091069752",
+    "content-hash": "996561c7be0ba9259acdfc3338e0348c",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -275,7 +275,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/module-api",
-                "reference": "8dfa2ac5ed6ee9f74f53b87c0da38e3460f5554e"
+                "reference": "5b0138b576ccf5f635702a3103b73c455c8a211b"
             },
             "require": {
                 "php": ">=8.4 <8.6"
@@ -295,6 +295,37 @@
                 "MIT"
             ],
             "description": "Stable contracts and value objects for Control Center modules.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "controlcenter/module-vateud",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "modules/vateud",
+                "reference": "fe4a50f8b62aa657e042bf005661e9e91a4b56a3"
+            },
+            "require": {
+                "controlcenter/module-api": "^1.0",
+                "php": ">=8.4 <8.6"
+            },
+            "type": "controlcenter-module",
+            "extra": {
+                "controlcenter": {
+                    "module": "ControlCenter\\Modules\\Vateud\\VateudModule"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ControlCenter\\Modules\\Vateud\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "VATEUD division API integration for Control Center, packaged as a first-party module.",
             "transport-options": {
                 "relative": true
             }
@@ -11576,7 +11607,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "controlcenter/module-api": 20
+        "controlcenter/module-api": 20,
+        "controlcenter/module-vateud": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

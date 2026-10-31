@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Services\DivisionApi\Adapters;
+namespace ControlCenter\Modules\Vateud;
 
 use App\Contracts\DivisionApiContract;
 use App\Helpers\VatsimRating;
-use App\Models\Area;
 use App\Models\Endorsement;
 use App\Models\Position;
 use App\Models\Rating;
@@ -16,19 +15,22 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class VATEUD implements DivisionApiContract
+/**
+ * VATEUD implementation of Control Center's division API contract.
+ *
+ * Moved out of core into the vateud module: core keeps only the generic
+ * contract, the driver registry and the no-op default. The adapter is
+ * constructed by {@see VateudModule} with the endpoint and secret resolved from
+ * the module's settings, so it holds no knowledge of where those come from.
+ */
+class VateudAdapter implements DivisionApiContract
 {
-    protected $baseUrl;
-
-    protected $apiToken;
-
     protected $name = 'VATEUD';
 
-    public function __construct()
-    {
-        $this->baseUrl = config('vatsim.division_api_url');
-        $this->apiToken = config('vatsim.division_api_token');
-    }
+    public function __construct(
+        protected ?string $baseUrl,
+        protected ?string $apiToken,
+    ) {}
 
     /**
      * Get the name of the adapter

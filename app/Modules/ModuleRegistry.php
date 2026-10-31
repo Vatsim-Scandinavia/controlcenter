@@ -5,6 +5,7 @@ namespace App\Modules;
 use App\Models\Module as ModuleRecord;
 use ControlCenter\ModuleApi\Module;
 use ControlCenter\ModuleApi\Navigation\NavigationItem;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -269,6 +270,24 @@ class ModuleRegistry
         foreach ($this->booted() as $registrar) {
             foreach ($registrar->bindings as $abstract => $factory) {
                 $this->app->bind($abstract, $factory);
+            }
+        }
+    }
+
+    /**
+     * Register scheduled work contributed by booted (enabled) modules. A
+     * disabled module contributes no schedule. Each callback is isolated so a
+     * throwing module cannot break the rest of the application's schedule.
+     */
+    public function applySchedules(Schedule $schedule): void
+    {
+        foreach ($this->booted() as $slug => $registrar) {
+            foreach ($registrar->schedules as $callback) {
+                try {
+                    $callback($schedule);
+                } catch (Throwable $e) {
+                    $this->report($slug, $e, 'scheduling');
+                }
             }
         }
     }

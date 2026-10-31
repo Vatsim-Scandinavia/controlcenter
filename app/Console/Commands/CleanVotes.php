@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Vote;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class CleanVotes extends Command
 {
@@ -38,7 +38,17 @@ class CleanVotes extends Command
      */
     public function handle()
     {
-        DB::table('votes')->where('end_at', '<=', date('Y-m-d H:i:s'))->update(['closed' => 1]);
+        // Iterate models rather than a bulk query-builder update so the
+        // authoritative Eloquent `updated` event fires and the VoteClosed
+        // domain event reaches module listeners.
+        Vote::where('end_at', '<=', now())
+            ->where('closed', false)
+            ->get()
+            ->each(function (Vote $vote): void {
+                $vote->closed = true;
+                $vote->save();
+            });
+
         $this->info('All expired votes have been closed.');
     }
 }

@@ -5,9 +5,12 @@ namespace App\Console\Commands;
 use App\Helpers\TrainingStatus;
 use App\Models\Training;
 use App\Models\User;
+use App\Modules\ModuleRegistry;
 use App\Notifications\TrainingClosedNotification;
+use ControlCenter\ModuleApi\Privacy\PrivacyHandler;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class UserDelete extends Command
 {
@@ -25,14 +28,36 @@ class UserDelete extends Command
      */
     protected $description = 'Wipe or pseudonymize a user';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function __construct(private ModuleRegistry $modules)
     {
         parent::__construct();
+    }
+
+    /**
+     * Run the given privacy action against every *installed* module's privacy
+     * handlers (enabled or not — a disabled module's user data still exists).
+     *
+     * Each handler runs in isolation: a failing module is reported and skipped
+     * so it cannot abort the deletion of the remaining modules' data or core.
+     *
+     * @param  'pseudonymise'|'delete'  $action
+     */
+    private function runModulePrivacyHandlers(string $action, int $cid): void
+    {
+        foreach ($this->modules->privacyHandlers() as $slug => $handlerClasses) {
+            foreach ($handlerClasses as $handlerClass) {
+                try {
+                    /** @var PrivacyHandler $handler */
+                    $handler = app($handlerClass);
+                    $handler->{$action}($cid);
+
+                    $this->comment("Module [{$slug}] handled {$action} for {$cid}.");
+                } catch (Throwable $e) {
+                    report($e);
+                    $this->error("Module [{$slug}] failed to {$action} data for {$cid}: {$e->getMessage()}");
+                }
+            }
+        }
     }
 
     /**
@@ -105,6 +130,9 @@ class UserDelete extends Command
 
                     $user->save();
 
+                    // Pseudonymise the user's data held by every installed module.
+                    $this->runModulePrivacyHandlers('pseudonymise', (int) $cid);
+
                     $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into CC again.');
                 }
                 // PERMANENTLY DELETE
@@ -116,6 +144,9 @@ class UserDelete extends Command
 
                     // Remove things from Control Center
                     $user->delete();
+
+                    // Permanently delete the user's data held by every installed module.
+                    $this->runModulePrivacyHandlers('delete', (int) $cid);
 
                     $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
                 }

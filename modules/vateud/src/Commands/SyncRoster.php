@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Console\Commands;
+namespace ControlCenter\Modules\Vateud\Commands;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Helpers\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
+use App\Modules\ModuleRegistry;
 use App\Services\DivisionApi\DivisionApiError;
 use App\Tasks\Types\RatingUpgrade;
+use ControlCenter\Modules\Vateud\VateudModule;
 use Illuminate\Console\Command;
 
 class SyncRoster extends Command
@@ -18,14 +19,14 @@ class SyncRoster extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:roster';
+    protected $signature = 'vateud:sync-roster';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sync the roster with Division API';
+    protected $description = 'Sync the roster with the VATEUD division API';
 
     /**
      * How long a requested rating upgrade shields a member from roster removal.
@@ -43,9 +44,8 @@ class SyncRoster extends Command
      */
     public function handle()
     {
-
-        if (! Setting::get('divisionApiEnabled')) {
-            $this->error('This command is only available when Division API setting is enabled');
+        if (! app(ModuleRegistry::class)->isEnabled(VateudModule::SLUG)) {
+            $this->error('This command is only available when the VATEUD module is enabled');
 
             return Command::FAILURE;
         }
@@ -103,6 +103,5 @@ class SyncRoster extends Command
         } else {
             $this->error('Failed to sync roster with Division API: ' . DivisionApiError::detail($rosterResponse));
         }
-
     }
 }

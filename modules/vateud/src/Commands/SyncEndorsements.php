@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Console\Commands;
+namespace ControlCenter\Modules\Vateud\Commands;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\User;
+use App\Modules\ModuleRegistry;
 use App\Services\DivisionApi\DivisionApiError;
+use ControlCenter\Modules\Vateud\VateudModule;
 use Illuminate\Console\Command;
 
 class SyncEndorsements extends Command
@@ -17,23 +18,22 @@ class SyncEndorsements extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:endorsements {addEndorsementsAsUser?} {--dry-run}';
+    protected $signature = 'vateud:sync-endorsements {addEndorsementsAsUser?} {--dry-run}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sync the endorsements with Division API';
+    protected $description = 'Sync the endorsements with the VATEUD division API';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-
-        if (! Setting::get('divisionApiEnabled')) {
-            $this->error('This command is only available when Division API setting is enabled');
+        if (! app(ModuleRegistry::class)->isEnabled(VateudModule::SLUG)) {
+            $this->error('This command is only available when the VATEUD module is enabled');
 
             return Command::FAILURE;
         }
@@ -136,6 +136,5 @@ class SyncEndorsements extends Command
         }
 
         $this->info('Done!');
-
     }
 }
