@@ -156,6 +156,7 @@
                                 <th>Area</th>
                                 <th>State</th>
                                 <th>Last Training</th>
+                                <th>Next Session</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -196,6 +197,19 @@
                                         </span>
                                     @else
                                         No registered training yet
+                                    @endif
+                                </td>
+                                <td>
+                                    @php($nextTrainingSession = $training->bookedSessions()->first())
+                                    @if($nextTrainingSession)
+                                        <span title="{{ $nextTrainingSession->starts_at->toEuropeanDateTime() }}">
+                                            {{ $nextTrainingSession->starts_at->toEuropeanDate(true) }}
+                                            {{ $nextTrainingSession->starts_at->toEuropeanTime() }}
+                                        </span>
+                                        <br>
+                                        <span class="text-muted">{{ $nextTrainingSession->position->callsign }}</span>
+                                    @else
+                                        Not booked
                                     @endif
                                 </td>
                             </tr>
