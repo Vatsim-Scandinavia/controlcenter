@@ -10,6 +10,7 @@ use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
 use App\Models\User;
 use App\Models\Vote;
+use App\Services\TrainingQueueService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -56,6 +57,11 @@ class DashboardController extends Controller
         $trainings = $user->trainings;
         $types = TrainingController::$types;
 
+        $trainingQueue = app(TrainingQueueService::class);
+        $queuePositions = $trainings
+            ->mapWithKeys(fn ($training) => [$training->id => $trainingQueue->positionOf($training)])
+            ->filter();
+
         $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', InterestStatus::NOT_EXPIRED)->first();
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
@@ -82,7 +88,7 @@ class DashboardController extends Controller
 
         $oudatedVersionWarning = $user->hasPermission('system.health.view') && Setting::get('_updateAvailable');
 
-        return view('dashboard', compact('data', 'trainings', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
+        return view('dashboard', compact('data', 'trainings', 'types', 'queuePositions', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
     }
 
     /**

@@ -245,8 +245,16 @@
                                 </td>
                                 <td>{{ $training->area->name }}</td>
                                 <td>
-                                    @if ($training->started_at == null && $training->closed_at == null)
-                                    Training not started
+                                    @if (isset($queuePositions[$training->id]))
+                                    @php($queuePosition = $queuePositions[$training->id])
+                                    Applied {{ $training->created_at->toEuropeanDate() }}
+                                    <br>
+                                    <small class="text-muted">
+                                        Queue position {{ $queuePosition['position'] }} of {{ $queuePosition['total'] }}
+                                        @include('training.parts.queuepositionhint', ['training' => $training, 'queuePosition' => $queuePosition])
+                                    </small>
+                                    @elseif ($training->started_at == null && $training->closed_at == null)
+                                    N/A
                                     @elseif ($training->closed_at == null)
                                     {{ $training->started_at->toEuropeanDate() }} -
                                     @elseif ($training->started_at != null)
@@ -328,4 +336,8 @@
     </div>
     
 </div>
+@endsection
+
+@section('js')
+    @include('scripts.tooltips')
 @endsection
