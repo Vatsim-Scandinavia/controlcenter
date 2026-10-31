@@ -120,7 +120,7 @@
                     <dt class="pt-2">Period</dt>
                     <dd>
                         @if ($training->started_at == null && $training->closed_at == null)
-                            Training not started
+                            N/A
                         @elseif ($training->closed_at == null)
                             {{ $training->started_at->toEuropeanDate() }} -
                         @elseif ($training->started_at != null)
@@ -132,6 +132,14 @@
 
                     <dt>Applied</dt>
                     <dd>{{ $training->created_at->toEuropeanDate() }}</dd>
+
+                    @if ($queuePosition)
+                        <dt>Queue position</dt>
+                        <dd>
+                            {{ $queuePosition['position'] }} of {{ $queuePosition['total'] }}
+                            @include('training.parts.queuepositionhint', ['training' => $training, 'queuePosition' => $queuePosition])
+                        </dd>
+                    @endif
 
                     <dt>Closed</dt>
                     <dd>
@@ -704,6 +712,8 @@
 @endsection
 
 @section('js')
+
+    @include('scripts.tooltips')
 
     <!-- One Time Links -->
     <script>

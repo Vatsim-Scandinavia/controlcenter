@@ -25,6 +25,7 @@ use App\Notifications\TrainingMentorNotification;
 use App\Notifications\TrainingPreStatusNotification;
 use App\Services\ActivityLogService;
 use App\Services\SoloEndorsementService;
+use App\Services\TrainingQueueService;
 use App\Services\TrainingService;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
@@ -124,6 +125,9 @@ class TrainingController extends Controller
         $user = Auth::user();
         $userVatsimRating = $user->rating;
 
+        $trainingQueue = app(TrainingQueueService::class);
+        $queueSizes = $trainingQueue->queueSizes();
+
         // Loop through all areas, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
         $payload = [];
 
@@ -137,6 +141,8 @@ class TrainingController extends Controller
                     // If the required vatsim rating for the selection is lower or equals the level user has today, make it available
                     if ($reqVatRating <= $userVatsimRating->value) {
                         $rating->hour_requirement = $rating->pivot->hour_requirement;
+                        $rating->queue_name = $trainingQueue->queueName(collect([$rating]));
+                        $rating->queue_size = $queueSizes->get($trainingQueue->queueKey($area->id, collect([$rating])), 0);
                         $availableRatings->push($rating);
                     }
                 }
@@ -145,6 +151,7 @@ class TrainingController extends Controller
             // Bundle the ratings if relevant
             $bundle = [];
             $bundleAmount = 0;
+            $bundledRatings = collect();
 
             foreach ($availableRatings as $ratingIndex => $rating) {
                 // If the rating is a MAE rating, or it's a VATSIM-rating allowed to bundle with MAEs. AND if the required vatsim rating to apply for the rating is S3 or below (so we don't bundle C1+ MAEs)
@@ -156,12 +163,15 @@ class TrainingController extends Controller
                     }
 
                     $bundleAmount++;
+                    $bundledRatings->push($rating);
                     $availableRatings->pull($ratingIndex);
                 }
             }
 
             // Re-add the removed ratings as a bundle
             if ($bundleAmount > 0) {
+                $bundle['queue_name'] = $trainingQueue->queueName($bundledRatings);
+                $bundle['queue_size'] = $queueSizes->get($trainingQueue->queueKey($area->id, $bundledRatings), 0);
                 $availableRatings->push($bundle);
             }
 
@@ -408,7 +418,9 @@ class TrainingController extends Controller
         // no solo endorsement was ever issued on it.
         $soloEndorsementSummary = app(SoloEndorsementService::class)->summaryFor($training);
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
+        $queuePosition = app(TrainingQueueService::class)->positionOf($training);
+
+        return view('training.show', compact('training', 'queuePosition', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
     }
 
     /**
