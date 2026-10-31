@@ -18,6 +18,8 @@ Besides supporting [VATSIM Connect](./vatsim-connect.md), Control Center relies 
 !!! info
     VATSIM Core API key v2 is required to enable this feature, contact VATSIM Tech Department using VATSIM Support to get your key.
 
+The feedback form also reads the submitter's recent flights from the Core API. These endpoints are public, so this needs no key.
+
 ## VATSIM ATC Bookings API
 
 [VATSIM ATC Bookings API][vatsim-atc-bookings-api] is used get, publish, edit and remove controller bookings.
