@@ -43,6 +43,21 @@
                 @if(count($modules) === 0)
                     <p class="mb-0">No modules are installed.</p>
                 @else
+                    @php
+                        $enabledCount = collect($modules)->filter(fn ($m) => $m->enabled)->count();
+                        $incompatibleCount = collect($modules)->filter(fn ($m) => ! $m->compatible)->count();
+                    @endphp
+                    <p class="fs-sm mb-3" data-testid="module-health-summary">
+                        <span class="badge bg-success">{{ $enabledCount }} enabled</span>
+                        <span class="badge bg-secondary">{{ count($modules) }} installed</span>
+                        @if($incompatibleCount > 0)
+                            <span class="badge bg-danger">{{ $incompatibleCount }} incompatible</span>
+                        @endif
+                        @if(count($moduleErrors) > 0)
+                            <span class="badge bg-warning text-dark">{{ count($moduleErrors) }} with errors</span>
+                        @endif
+                    </p>
+
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead>

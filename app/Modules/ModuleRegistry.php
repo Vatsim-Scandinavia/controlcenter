@@ -274,6 +274,36 @@ class ModuleRegistry
     }
 
     /**
+     * Database migration paths contributed by discovered, compatible modules.
+     *
+     * A bundled module may ship migrations in `modules/<slug>/database/migrations`;
+     * when that directory exists it is registered so `php artisan migrate` (and
+     * the test migrator) discovers the module's tables. Migrations are exposed
+     * for every compatible module regardless of enabled state, because a
+     * disabled module's data tables must continue to exist.
+     *
+     * @return array<int, string>
+     */
+    public function migrationPaths(): array
+    {
+        $paths = [];
+
+        foreach ($this->discovered() as $slug => $module) {
+            if (! $module->compatible) {
+                continue;
+            }
+
+            $path = $this->app->basePath("modules/{$slug}/database/migrations");
+
+            if (is_dir($path)) {
+                $paths[] = $path;
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
      * @return array<int, string>
      */
     public function errors(): array
@@ -418,8 +448,28 @@ class ModuleRegistry
 
         Log::error($message, ['exception' => $e, 'module' => $slug]);
 
-        if (app()->bound('sentry')) {
-            app('sentry')->captureException($e);
+        self::captureToSentry($e, $slug);
+    }
+
+    /**
+     * Report a module-origin throwable to Sentry, tagged with the offending
+     * module so failures in module code (boot, registration, slots, commands)
+     * are attributable to the module rather than the core application.
+     */
+    public static function captureToSentry(Throwable $e, string $slug): void
+    {
+        if (! app()->bound('sentry')) {
+            return;
         }
+
+        $sentry = app('sentry');
+
+        if (method_exists($sentry, 'configureScope')) {
+            $sentry->configureScope(function ($scope) use ($slug): void {
+                $scope->setTag('module', $slug);
+            });
+        }
+
+        $sentry->captureException($e);
     }
 }

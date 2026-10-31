@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\ResolvesActivitySubjectRoute;
 use App\Helpers\ActivityLevel;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
 
 /**
@@ -63,6 +65,16 @@ class ActivityLog extends BaseActivity
     {
         if ($this->subject_id === null) {
             return null;
+        }
+
+        // A subject model (including one shipped by a module) may resolve its
+        // own detail URL, keeping this view free of per-subject knowledge.
+        if ($this->subject_type !== null) {
+            $class = Relation::getMorphedModel($this->subject_type) ?? $this->subject_type;
+
+            if (is_string($class) && is_a($class, ResolvesActivitySubjectRoute::class, true)) {
+                return $class::activitySubjectRoute($this->subject_id);
+            }
         }
 
         return match ($this->subject_type) {

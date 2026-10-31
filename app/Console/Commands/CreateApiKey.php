@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ApiKey;
+use App\Modules\ModuleRegistry;
 use Illuminate\Console\Command;
 use Ramsey\Uuid\Uuid;
 
@@ -27,7 +28,7 @@ class CreateApiKey extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(ModuleRegistry $registry)
     {
         // Gather details from input
         $choices = [
@@ -39,15 +40,44 @@ class CreateApiKey extends Command
 
         $name = $this->ask('What should we name the API Key?');
 
+        $scopes = $this->chooseScopes($registry);
+
         // Generate key
         $secret = Uuid::uuid4();
         ApiKey::create([
             'id' => $secret,
             'name' => $name,
             'read_only' => $readonly,
+            'scopes' => $scopes ?: null,
             'created_at' => now(),
         ]);
 
         $this->comment('API key `' . $name . '` has been created with following token: `' . $secret . '`');
+    }
+
+    /**
+     * Let the operator grant any module-registered API scopes. Returns the
+     * selected scope names, or an empty array when none are chosen or available.
+     *
+     * @return array<int, string>
+     */
+    private function chooseScopes(ModuleRegistry $registry): array
+    {
+        $available = array_keys($registry->apiScopes());
+
+        if ($available === []) {
+            return [];
+        }
+
+        $none = 'None';
+        $selected = (array) $this->choice(
+            'Which module API scopes should this key have? (comma-separate for multiple)',
+            [$none, ...$available],
+            $none,
+            null,
+            true,
+        );
+
+        return array_values(array_filter($selected, fn (string $scope): bool => $scope !== $none));
     }
 }
