@@ -23,7 +23,6 @@ class AddNewSettings extends Migration
             ['key' => 'linkContact', 'value' => 'https://vatsim-scandinavia.org/about/staff/'],
             ['key' => 'linkVisiting', 'value' => 'https://vatsim-scandinavia.org/atc/visiting-controller/'],
             ['key' => 'linkDiscord', 'value' => 'http://discord.vatsim-scandinavia.org'],
-            ['key' => 'linkMoodle', 'value' => 'https://moodle.vatsim-scandinavia.org/'],
         ]);
     }
 

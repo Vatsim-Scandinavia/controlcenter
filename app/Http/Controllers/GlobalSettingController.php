@@ -66,7 +66,6 @@ class GlobalSettingController extends Controller
             'linkContact' => 'required|url',
             'linkVisiting' => 'required|url',
             'linkDiscord' => 'required|url',
-            'linkMoodle' => '',
             'divisionApiEnabled' => '',
             'feedbackEnabled' => '',
             'feedbackForwardEmail' => 'nullable|email',
@@ -83,7 +82,6 @@ class GlobalSettingController extends Controller
         isset($data['feedbackEnabled']) ? $feedbackEnabled = true : $feedbackEnabled = false;
 
         // The setting dependency doesn't support null values, so we need to set it to false if it's not set
-        isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
         isset($data['feedbackForwardEmail']) ? $feedbackForwardEmail = $data['feedbackForwardEmail'] : $feedbackForwardEmail = false;
         isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
         isset($data['trainingSubDivisions']) ? $trainingSubDivisions = $data['trainingSubDivisions'] : $trainingSubDivisions = false;
@@ -110,7 +108,6 @@ class GlobalSettingController extends Controller
         Setting::set('linkContact', $data['linkContact']);
         Setting::set('linkVisiting', $data['linkVisiting']);
         Setting::set('linkDiscord', $data['linkDiscord']);
-        Setting::set('linkMoodle', $linkMoodle);
         Setting::set('divisionApiEnabled', $divisionApiEnabled);
         Setting::set('feedbackEnabled', $feedbackEnabled);
         Setting::set('feedbackForwardEmail', $feedbackForwardEmail);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f730fcc378d59da013a3c4c091069752",
+    "content-hash": "e0c22eb904324277518f5cf5d8ff50b0",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -275,7 +275,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/module-api",
-                "reference": "8dfa2ac5ed6ee9f74f53b87c0da38e3460f5554e"
+                "reference": "5b0138b576ccf5f635702a3103b73c455c8a211b"
             },
             "require": {
                 "php": ">=8.4 <8.6"
@@ -295,6 +295,37 @@
                 "MIT"
             ],
             "description": "Stable contracts and value objects for Control Center modules.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "controlcenter/module-moodle",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "modules/moodle",
+                "reference": "afdc8c1aef28b4ab5a3f32f7cf2f04607a4bfc16"
+            },
+            "require": {
+                "controlcenter/module-api": "@dev",
+                "php": ">=8.4 <8.6"
+            },
+            "type": "controlcenter-module",
+            "extra": {
+                "controlcenter": {
+                    "module": "ControlCenter\\Modules\\Moodle\\MoodleModule"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ControlCenter\\Modules\\Moodle\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Adds a sidebar link to a Moodle instance configured per installation.",
             "transport-options": {
                 "relative": true
             }
@@ -11576,7 +11607,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "controlcenter/module-api": 20
+        "controlcenter/module-api": 20,
+        "controlcenter/module-moodle": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

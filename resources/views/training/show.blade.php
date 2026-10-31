@@ -13,6 +13,9 @@
                 <a href="{{ route('training.action.pretraining', $training->id) }}" onclick="return confirm('Are you sure you want to mark this pre-training as completed?')" class="btn btn-success"><i class="fas fa-check"></i> Mark pre-training as completed</a>
             @endif
         @endcan
+
+        {{-- Module-contributed training actions. --}}
+        <x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::TrainingActions" :data="['training' => $training]" />
     </div>
 @endsection
 @section('content')
@@ -700,6 +703,9 @@
         @include('training.parts.completetrainingmodal', ['training' => $training, 'outstandingRatings' => $outstandingRatings, 'outstandingEndorsementRatings' => $outstandingEndorsementRatings])
     @endcan
 @endif
+
+{{-- Module-contributed training panels. --}}
+<x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::TrainingPanels" :data="['training' => $training]" />
 
 @endsection
 

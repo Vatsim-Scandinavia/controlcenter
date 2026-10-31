@@ -105,4 +105,7 @@
     </div>
 
 </div>
+
+{{-- Module-contributed user settings panels. --}}
+<x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::UserSettings" />
 @endsection

@@ -21,6 +21,7 @@
         "php": ">=8.4 <8.6",
         "anlutro/l4-settings": "^1.4.1",
         "controlcenter/module-api": "@dev",
+        "controlcenter/module-moodle": "@dev",
         "dedoc/scramble": "^0.13.42",
         "graham-campbell/markdown": "^16.0",
         "guzzlehttp/guzzle": "^7.9.0",

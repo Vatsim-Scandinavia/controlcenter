@@ -47,6 +47,9 @@
 {{-- Page specific header elements --}}
 @yield('header')
 
+{{-- Module-contributed head elements (meta, prebuilt stylesheets). --}}
+<x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::Head" />
+
 @if(!empty(Config::get('app.tracking_script')))
     {{-- Tracking script of choice --}}
     {!! Config::get('app.tracking_script') !!}
