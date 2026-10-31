@@ -8,9 +8,9 @@ use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
+use App\Services\DivisionApi\Adapters\VATEUD;
 use App\Services\DivisionApi\DivisionApiError;
 use App\Services\TrainingService;
-use ControlCenter\Modules\Vateud\VateudAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -20,11 +20,6 @@ use Tests\TestCase;
 class VATEUDAdapterTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function adapter(): VateudAdapter
-    {
-        return new VateudAdapter('https://example.test/api', 'test-token');
-    }
 
     #[Test]
     public function remove_examiner_calls_api_for_s3_rated_endorsement(): void
@@ -44,7 +39,7 @@ class VATEUDAdapterTest extends TestCase
         $endorsement->ratings()->attach($rating->id);
         $endorsement->load('ratings');
 
-        $adapter = $this->adapter();
+        $adapter = new VATEUD();
         $result = $adapter->removeExaminer($user, $endorsement, $requester->id);
 
         $this->assertNotFalse($result);
@@ -69,7 +64,7 @@ class VATEUDAdapterTest extends TestCase
         $endorsement->ratings()->attach($rating->id);
         $endorsement->load('ratings');
 
-        $adapter = $this->adapter();
+        $adapter = new VATEUD();
         $result = $adapter->removeExaminer($user, $endorsement, $requester->id);
 
         $this->assertNotFalse($result);
@@ -89,7 +84,7 @@ class VATEUDAdapterTest extends TestCase
         $endorsement->ratings()->attach($rating->id);
         $endorsement->load('ratings');
 
-        $adapter = $this->adapter();
+        $adapter = new VATEUD();
         $result = $adapter->removeExaminer($user, $endorsement, $requester->id);
 
         $this->assertFalse($result);
@@ -110,7 +105,7 @@ class VATEUDAdapterTest extends TestCase
         $requester = User::factory()->create();
         $rating = Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value]);
 
-        $adapter = $this->adapter();
+        $adapter = new VATEUD();
         $result = $adapter->assignTheoryExam($user, $rating, $requester->id);
 
         $this->assertNotNull($result);
@@ -130,7 +125,7 @@ class VATEUDAdapterTest extends TestCase
         $user = User::factory()->create();
         $rating = Rating::factory()->create(['vatsim_rating' => VatsimRating::S2->value]);
 
-        $adapter = $this->adapter();
+        $adapter = new VATEUD();
 
         $this->assertTrue($adapter->userHasPassedTheoryExam($user, $rating));
     }
@@ -145,7 +140,7 @@ class VATEUDAdapterTest extends TestCase
         $user = User::factory()->create();
         $rating = Rating::factory()->create(['vatsim_rating' => null, 'endorsement_type' => 'T1']);
 
-        $response = $this->adapter()->assignTierEndorsement($user, $rating, $user->id);
+        $response = (new VATEUD())->assignTierEndorsement($user, $rating, $user->id);
 
         $this->assertNotNull($response);
         $this->assertTrue($response->failed());
@@ -158,7 +153,7 @@ class VATEUDAdapterTest extends TestCase
         Http::fake(function () {
             throw new ConnectionException('cURL error 28: Operation timed out');
         });
-        $this->app->bind(DivisionApiContract::class, fn () => $this->adapter());
+        $this->app->bind(DivisionApiContract::class, fn () => new VATEUD());
 
         $training = Training::factory()->create(['user_id' => User::factory()->create()->id]);
         $rating = Rating::factory()->create(['vatsim_rating' => null, 'endorsement_type' => 'T1']);

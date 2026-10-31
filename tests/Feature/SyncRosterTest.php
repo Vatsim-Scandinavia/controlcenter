@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Helpers\TaskStatus;
 use App\Helpers\VatsimRating;
@@ -11,28 +12,21 @@ use App\Models\Training;
 use App\Models\User;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
-use ControlCenter\Modules\Vateud\Commands\SyncRoster;
-use ControlCenter\Modules\Vateud\VateudModule;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Response as ClientResponse;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\Concerns\InteractsWithModules;
 use Tests\TestCase;
 
 class SyncRosterTest extends TestCase
 {
-    use InteractsWithModules, RefreshDatabase;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Roster sync now lives in the vateud module and runs only while it is
-        // enabled; register its command so artisan can resolve it in tests.
-        $this->bootModules([VateudModule::class], ['vateud']);
-        $this->app->make(ConsoleKernel::class)->registerCommand($this->app->make(SyncRoster::class));
+        Setting::set('divisionApiEnabled', true);
     }
 
     /**
@@ -97,7 +91,7 @@ class SyncRosterTest extends TestCase
         DivisionApi::shouldReceive('removeRosterUser')->never();
         DivisionApi::shouldReceive('assignRosterUser')->never();
 
-        $this->artisan('vateud:sync-roster');
+        $this->artisan('sync:roster');
     }
 
     #[Test]
@@ -110,7 +104,7 @@ class SyncRosterTest extends TestCase
 
         DivisionApi::shouldReceive('removeRosterUser')->once()->with($user->id)->andReturn($this->successfulResponse());
 
-        $this->artisan('vateud:sync-roster');
+        $this->artisan('sync:roster');
     }
 
     #[Test]
@@ -127,6 +121,6 @@ class SyncRosterTest extends TestCase
 
         DivisionApi::shouldReceive('removeRosterUser')->twice()->andReturn($this->successfulResponse());
 
-        $this->artisan('vateud:sync-roster');
+        $this->artisan('sync:roster');
     }
 }

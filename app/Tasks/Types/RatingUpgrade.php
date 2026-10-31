@@ -2,6 +2,7 @@
 
 namespace App\Tasks\Types;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
@@ -96,6 +97,6 @@ class RatingUpgrade extends Types
 
     public function isApproval()
     {
-        return DivisionApi::isActive();
+        return Setting::get('divisionApiEnabled', false);
     }
 }

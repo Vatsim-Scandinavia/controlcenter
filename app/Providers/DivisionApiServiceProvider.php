@@ -2,72 +2,85 @@
 
 namespace App\Providers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Contracts\DivisionApiContract;
 use App\Modules\ModuleRegistry;
 use App\Services\DivisionApi\Adapters\NoOpAdapter;
-use ControlCenter\ModuleApi\Registrar;
+use Closure;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 /**
  * Resolves the active division API driver from a registry rather than a closed
- * switch. Core ships only the {@see NoOpAdapter} default; concrete drivers (such
- * as the VATEUD module) register themselves through the module system's
- * {@see Registrar::driver()}, and this provider selects
- * among them using core config.
+ * switch. Drivers come from two sources that share one registry:
+ *  - **built-in** core drivers declared in `config('vatsim.division_api_drivers')`
+ *    (the core registration path), such as VATEUD;
+ *  - **module** drivers registered through the module system's
+ *    `ControlCenter\ModuleApi\Registrar::driver()`.
  *
- * Selection, resolved lazily on first use:
- *  - `vatsim.division_api_driver` names the active driver when set; a configured
- *    name with no matching enabled provider warns and falls back to no-op.
- *  - with no name set, a single enabled provider is used unambiguously; more
- *    than one is ambiguous and warns; none means the division API is simply off.
+ * The admin toggle `divisionApiEnabled` is the master switch and
+ * `vatsim.division_api_driver` names the active driver, preserving the original
+ * behaviour: enabled with a recognised driver resolves it; enabled with an
+ * unrecognised driver warns and falls back to no-op; disabled is silent.
  */
 class DivisionApiServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->bind(DivisionApiContract::class, function (Application $app) {
-            /** @var ModuleRegistry $registry */
-            $registry = $app->make(ModuleRegistry::class);
+            $enabled = Setting::get('divisionApiEnabled', false);
 
-            $drivers = array_values(array_filter(
-                $registry->drivers(),
-                fn (array $driver): bool => $driver['contract'] === DivisionApiContract::class,
-            ));
-
-            $configured = config('vatsim.division_api_driver');
-
-            // An explicit selection by name wins when set.
-            if (is_string($configured) && $configured !== '') {
-                foreach ($drivers as $driver) {
-                    if (strcasecmp($driver['name'], $configured) === 0) {
-                        return ($driver['factory'])($app);
-                    }
-                }
-
-                // The admin enabled a driver by name, but no enabled module
-                // provides it, so every call would silently do nothing. That
-                // pairing is always a misconfiguration worth surfacing.
-                Log::warning('A division API driver is configured but no enabled module provides it. Falling back to no-op, so no calls will reach the division.', [
-                    'driver' => $configured,
-                ]);
-
+            // Disabled is a deliberate choice, not a misconfiguration.
+            if (! $enabled) {
                 return new NoOpAdapter;
             }
 
-            // No explicit selection: a single enabled provider is unambiguous.
-            if (count($drivers) === 1) {
-                return ($drivers[0]['factory'])($app);
+            $configured = config('vatsim.division_api_driver');
+            $drivers = $this->drivers($app);
+
+            if (is_string($configured) && $configured !== '') {
+                foreach ($drivers as $name => $factory) {
+                    if (strcasecmp($name, $configured) === 0) {
+                        return $factory($app);
+                    }
+                }
             }
 
-            if (count($drivers) > 1) {
-                Log::warning('Multiple enabled modules provide a division API driver but none is selected via vatsim.division_api_driver. Falling back to no-op.', [
-                    'drivers' => array_column($drivers, 'name'),
-                ]);
-            }
+            // Enabled, but no registered driver matches the configured name, so
+            // every call would silently do nothing. That pairing is always a
+            // misconfiguration worth surfacing.
+            Log::warning('Division API is enabled but the configured driver is not recognised. Falling back to no-op, so no calls will reach the division.', [
+                'driver' => $configured,
+            ]);
 
             return new NoOpAdapter;
         });
+    }
+
+    /**
+     * The division API driver registry: built-in core drivers merged with any
+     * drivers registered by enabled modules, keyed by name.
+     *
+     * @return array<string, Closure(Application): object>
+     */
+    private function drivers(Application $app): array
+    {
+        $drivers = [];
+
+        foreach ((array) config('vatsim.division_api_drivers', []) as $name => $class) {
+            $drivers[$name] = fn (Application $app): object => $app->make($class);
+        }
+
+        /** @var ModuleRegistry $registry */
+        $registry = $app->make(ModuleRegistry::class);
+
+        foreach ($registry->drivers() as $driver) {
+            if ($driver['contract'] === DivisionApiContract::class) {
+                $drivers[$driver['name']] = $driver['factory'];
+            }
+        }
+
+        return $drivers;
     }
 }

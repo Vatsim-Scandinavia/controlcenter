@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\ApiKey;
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,7 +20,7 @@ class ApiToken
      * served to any valid key, so existing (unscoped) keys keep working.
      *
      * @param  Closure(Request): (Response|RedirectResponse)  $next
-     * @return Response|RedirectResponse
+     * @return Response|RedirectResponse|JsonResponse
      */
     public function handle(Request $request, Closure $next, string ...$args)
     {

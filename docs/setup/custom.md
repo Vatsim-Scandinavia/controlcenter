@@ -37,3 +37,26 @@ COPY _custom.scss /app/resources/sass/themes/_custom.scss
 # Make the theme build script executable and run it
 RUN chmod +x container/theme/build.sh && container/theme/build.sh
 ```
+
+### Bundling a module
+
+[Modules](../development/modules.md) are installed at build time with Composer.
+To add a third-party module to your image, require it and refresh the autoloader.
+Modules ship **prebuilt** frontend assets, so the runtime image needs no Node.
+
+```Dockerfile title="Adding a module to Control Center"
+FROM %%image_tag%%
+
+# For a module published to a registry:
+RUN composer require acme/cc-widget --no-interaction --no-dev
+
+# ...or copy a local module and register it as a path repository:
+# COPY ./cc-widget /app/modules/widget
+# RUN composer config repositories.widget path modules/widget \
+#  && composer require acme/cc-widget:@dev --no-interaction --no-dev
+```
+
+The module is installed but **disabled** until an operator enables it from
+**Administration → Modules** or with `php artisan module:enable <slug>`. A module
+is trusted, in-process code — vet it as you would any dependency.
+

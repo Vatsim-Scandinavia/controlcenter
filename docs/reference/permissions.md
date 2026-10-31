@@ -90,3 +90,38 @@ User role assignments live in the `role_user` table.
 | `created_at`, `updated_at` | timestamps | |
 
 A unique constraint covers `(user_id, role, area_id)`.
+
+## Module Permissions
+
+[Modules](../configuration/modules.md) may register their own permissions. These
+always live under the `modules.<slug>.*` namespace — a module that tries to
+register a permission outside its namespace fails to boot.
+
+Module permissions are merged into the same catalogue and matrix as core
+permissions at runtime, but **only while the module is enabled**. A disabled
+module grants nothing.
+
+Default access to module permissions:
+
+- **`admin`** holds them all, via its catch-all `**`.
+- **`director` is denied** all module permissions — its matrix includes
+  `!modules.**` (deny always wins over allow).
+- Every other role gets module permissions only if you **opt it in** by adding a
+  `modules.<slug>.*` pattern to that role in `config/roles.php`, for example:
+
+```php
+'moderator' => [
+    // ...existing patterns...
+    'modules.my-module.*',
+],
+```
+
+Modules may also register their own **roles** (namespaced to the module) and the
+permission patterns those roles grant. A new system permission,
+`system.modules.manage`, governs access to the **Administration → Modules** page
+and the `module:enable` / `module:disable` commands; it is part of `system.**`,
+so `admin` has it and `director` does not.
+
+API keys can additionally carry per-module **scopes** (`modules.<slug>.*`) that
+gate module API routes; keys created without scopes keep their existing
+behaviour. See the [API reference](../api.md).

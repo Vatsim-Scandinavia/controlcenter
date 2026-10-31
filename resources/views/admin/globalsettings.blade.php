@@ -312,6 +312,37 @@
                                 <span class="text-danger">{{ $errors->first('linkDiscord') }}</span>
                             @enderror
 
+
+                            <div class="mb-4">
+                                <label class="form-label" for="linkMoodle">Moodle</label>
+                                <input type="url" class="form-control @error('linkMoodle') is-invalid @enderror" id="linkMoodle" name="linkMoodle" value="{{ (Setting::get("linkMoodle") != false) ? Setting::get("linkMoodle") : '' }}">
+                                <small class="form-text">Enter full link to Moodle or leave blank to disable</small>
+                            </div>
+                            @error('linkMoodle')
+                                <span class="text-danger">{{ $errors->first('linkMoodle') }}</span>
+                            @enderror
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-white">Division API</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 mb-12">
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input @error('divisionApiEnabled') is-invalid @enderror" type="checkbox" id="divisionApiEnabled" name="divisionApiEnabled" {{ Setting::get('divisionApiEnabled') ? "checked" : "" }}>
+                                <label class="form-check-label" for="divisionApiEnabled">
+                                    Enable division API calls
+                                </label>
+                                <small class="form-text d-block">Automatic calls based on the environmental configuration.</small>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>

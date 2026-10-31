@@ -5,6 +5,7 @@ namespace Tests\Feature\Modules;
 use App\Models\Area;
 use App\Models\Module as ModuleRecord;
 use App\Models\User;
+use App\Modules\ModuleRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\InteractsWithModules;
@@ -66,11 +67,15 @@ class ModuleAdminPageTest extends TestCase
     {
         $this->bootModules([ExampleModule::class], ['example']);
 
+        // Assert the real installed count from the registry (any installed
+        // Composer module packages are discovered alongside the fixture).
+        $installed = count(app(ModuleRegistry::class)->discovered());
+
         $this->actingAs($this->admin())
             ->get(route('admin.modules'))
             ->assertOk()
             ->assertSee('1 enabled')
-            ->assertSee('1 installed');
+            ->assertSee("{$installed} installed");
     }
 
     #[Test]
