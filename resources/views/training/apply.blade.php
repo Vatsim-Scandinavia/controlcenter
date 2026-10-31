@@ -81,8 +81,14 @@
                         @endif
 
                         <div class="alert alert-info">
-                            <i class="fas fa-hourglass"></i>&nbsp;
-                            <span>The waiting time in @{{ trainingAreaName }} is @{{ waitingTime }}</span>
+                            <div>
+                                <i class="fas fa-fw fa-hourglass"></i>&nbsp;
+                                <span>The waiting time in @{{ trainingAreaName }} is @{{ waitingTime }}</span>
+                            </div>
+                            <div v-show="queueMessage" class="mt-2">
+                                <i class="fas fa-fw fa-users"></i>&nbsp;
+                                <span>@{{ queueMessage }}</span>
+                            </div>
                         </div>
 
                         <a class="btn btn-success" href="#" v-on:click="next">I accept</a>
@@ -179,7 +185,21 @@
                     atcActiveInArea: false,
                     waitingTime: 'unknown',
                     trainingArea: null,
-                    trainingAreaName: null
+                    trainingAreaName: null,
+                    selectedOption: null
+                }
+            },
+            computed:{
+                queueMessage() {
+                    if(!this.selectedOption) return ''
+
+                    const size = this.selectedOption.queue_size
+                    const queue = this.selectedOption.queue_name + ' in ' + this.trainingAreaName
+
+                    if(size == 0) return 'There is currently nobody in the queue for ' + queue
+                    if(size == 1) return 'There is currently 1 person in the queue for ' + queue
+
+                    return 'There are currently ' + size + ' people in the queue for ' + queue
                 }
             },
             methods:{
@@ -187,7 +207,10 @@
                     if(this.validate(this.step)) this.step++;
                     
                     if(this.step == 2){
+                        const trainingLevel = document.getElementById('ratingSelect').value
+
                         this.waitingTime = payload[this.trainingArea].waitingTime
+                        this.selectedOption = Object.values(payload[this.trainingArea].data).find(option => String(option.id) === trainingLevel)
                     }
                 },
                 validate(page){

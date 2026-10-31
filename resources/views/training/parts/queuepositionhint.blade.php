@@ -1,0 +1,1 @@
+<i class="fas fa-info-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Place among {{ $queuePosition['name'] }} requests waiting in {{ $training->area->name }}, ordered by application date. It may change as other requests are processed."></i>
