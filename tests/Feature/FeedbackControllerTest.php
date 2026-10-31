@@ -470,7 +470,9 @@ class FeedbackControllerTest extends TestCase
 
         $html = (new FeedbackNotification($feedback))->toMail($feedback)->render();
 
-        $this->assertStringContainsString('N/A', $html);
+        foreach (['Pilot callsign', 'Date of event', 'Departure', 'Arrival'] as $label) {
+            $this->assertStringContainsString($label . '</strong>: N/A', $html);
+        }
     }
 
     #[Test]

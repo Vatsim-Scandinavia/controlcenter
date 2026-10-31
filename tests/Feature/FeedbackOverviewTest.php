@@ -442,10 +442,11 @@ class FeedbackOverviewTest extends TestCase
 
         Feedback::factory()->create(['reference_position_id' => Position::factory()->create(['area_id' => $area->id])->id]);
 
-        Livewire::actingAs($moderator)
-            ->test(FeedbackTable::class)
-            ->assertSee('pilotCallsign')
-            ->assertSee('N\\\\\\/A', false);
+        $component = Livewire::actingAs($moderator)->test(FeedbackTable::class);
+
+        foreach (['pilotCallsign', 'eventDate', 'departureAirport', 'arrivalAirport'] as $key) {
+            $component->assertSeeHtml('\\u0022' . $key . '\\u0022:\\u0022N\\\\\\/A\\u0022');
+        }
     }
 
     #[Test]
