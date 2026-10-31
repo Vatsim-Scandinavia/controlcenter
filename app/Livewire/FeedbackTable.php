@@ -109,7 +109,7 @@ class FeedbackTable extends Component
 
         return Feedback::visibleTo(auth()->user())
             ->with(['submitter', 'referenceUser', 'referencePosition.area', 'explicitArea'])
-            ->when($this->search !== '', fn (Builder $q) => $q->where('feedback', 'like', '%' . $this->search . '%'))
+            ->when($this->search !== '', fn (Builder $q) => $q->where(fn (Builder $q) => $q->where('feedback', 'like', '%' . $this->search . '%')->orWhere('pilot_callsign', 'like', '%' . $this->search . '%')->orWhere('departure_airport', 'like', '%' . $this->search . '%')->orWhere('arrival_airport', 'like', '%' . $this->search . '%')))
             ->when($this->controller !== '', fn (Builder $q) => $q->whereHas('referenceUser', fn (Builder $q) => $q->whereRaw(Sql::concat('first_name', "' '", 'last_name') . ' like ?', ['%' . $this->controller . '%'])->orWhere('id', 'like', '%' . $this->controller . '%')))
             ->when($this->position !== '', fn (Builder $q) => $q->whereHas('referencePosition', fn (Builder $q) => $q->where('callsign', 'like', '%' . $this->position . '%')->orWhere('name', 'like', '%' . $this->position . '%')))
             ->when($this->area !== null, fn (Builder $q) => $q->inArea([$this->area]))

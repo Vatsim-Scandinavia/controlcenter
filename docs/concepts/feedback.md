@@ -25,13 +25,18 @@ Any signed-in member can submit feedback when the feature is enabled. The form i
 
 - **Controller** (optional) — VATSIM CID of the controller the feedback refers to
 - **Position** (optional) — callsign of the position controlled
+- **Pilot callsign** (optional) — the pilot's callsign, so staff can find the flight
+- **Date of event** (optional) — UTC date of the flight or session
+- **Departure airport** and **Arrival airport** (optional) — ICAO codes of the flight's airports
 - **Feedback text** (required)
+
+Members with recent flights on the network can also pick one from a list, which fills in the callsign, date and airports. The list comes from the public VATSIM API. When it is unavailable, these fields are filled in by hand.
 
 Submissions are stored with the submitter, optional controller/position references, and a timestamp. The feedback body itself is not editable after submission; staff may only change how the entry is **correlated** (controller and position fields).
 
 ## Viewing feedback
 
-Staff with the right permissions can open **Reports → Feedback** (`/reports/feedback`). The table lists received entries with submitter, controller, position, area (derived from the position), and the feedback text.
+Staff with the right permissions can open **Reports → Feedback** (`/reports/feedback`). The table lists received entries with submitter, controller, position, area (derived from the position), and the feedback text. The flight details the submitter gave are shown read-only in the entry's edit dialog.
 
 Entries fall into two categories:
 

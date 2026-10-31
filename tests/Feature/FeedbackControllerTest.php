@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
+use App\Notifications\FeedbackNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -230,5 +233,264 @@ class FeedbackControllerTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('feedback');
+    }
+
+    #[Test]
+    public function feedback_stores_the_pilot_callsign_uppercased_with_the_event_date(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+
+        $this->actingAs($user)->post(route('feedback.store'), [
+            'feedback' => 'Great service',
+            'pilot_callsign' => ' csa123 ',
+            'event_date' => '2026-10-27',
+            'departure_airport' => 'lkpr',
+            'arrival_airport' => 'EGLL',
+        ])->assertRedirect(route('dashboard'));
+
+        $feedback = Feedback::where('submitter_user_id', $user->id)->sole();
+
+        $this->assertSame('CSA123', $feedback->pilot_callsign);
+        $this->assertSame('2026-10-27', $feedback->event_date->toDateString());
+        $this->assertSame('LKPR', $feedback->departure_airport);
+        $this->assertSame('EGLL', $feedback->arrival_airport);
+    }
+
+    #[Test]
+    public function feedback_is_rejected_with_an_invalid_airport(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (['LK', 'PRG', 'LKPRX', 'LK-R'] as $airport) {
+            $this->actingAs($user)->post(route('feedback.store'), [
+                'feedback' => 'Great service',
+                'departure_airport' => $airport,
+                'arrival_airport' => $airport,
+            ])->assertSessionHasErrors(['departure_airport', 'arrival_airport']);
+        }
+    }
+
+    #[Test]
+    public function pilot_callsign_and_event_date_are_optional(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+
+        $this->actingAs($user)->post(route('feedback.store'), [
+            'feedback' => 'Great service',
+            'pilot_callsign' => '',
+            'event_date' => '',
+        ])->assertSessionHasNoErrors();
+
+        $feedback = Feedback::where('submitter_user_id', $user->id)->sole();
+
+        $this->assertNull($feedback->pilot_callsign);
+        $this->assertNull($feedback->event_date);
+    }
+
+    #[Test]
+    public function feedback_is_rejected_with_an_invalid_pilot_callsign(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (['CSA 123', '<b>CSA</b>', str_repeat('A', 21)] as $callsign) {
+            $this->actingAs($user)->post(route('feedback.store'), [
+                'feedback' => 'Great service',
+                'pilot_callsign' => $callsign,
+            ])->assertSessionHasErrors('pilot_callsign');
+        }
+    }
+
+    #[Test]
+    public function feedback_is_rejected_with_an_event_date_in_the_future_or_of_the_wrong_format(): void
+    {
+        $user = User::factory()->create();
+
+        foreach ([now()->addDay()->toDateString(), '27.10.2026'] as $eventDate) {
+            $this->actingAs($user)->post(route('feedback.store'), [
+                'feedback' => 'Great service',
+                'event_date' => $eventDate,
+            ])->assertSessionHasErrors('event_date');
+        }
+    }
+
+    #[Test]
+    public function feedback_is_rejected_with_an_impossible_event_date(): void
+    {
+        $this->actingAs(User::factory()->create())->post(route('feedback.store'), [
+            'feedback' => 'Great service',
+            'event_date' => '2026-02-30',
+        ])->assertSessionHasErrors('event_date');
+    }
+
+    #[Test]
+    public function feedback_accepts_a_pilot_callsign_of_the_maximum_length(): void
+    {
+        Setting::set('feedbackEnabled', true);
+
+        $this->actingAs(User::factory()->create())->post(route('feedback.store'), [
+            'feedback' => 'Great service',
+            'pilot_callsign' => str_repeat('A', 20),
+        ])->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function feedback_accepts_today_as_the_event_date(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+
+        $this->actingAs($user)->post(route('feedback.store'), [
+            'feedback' => 'Great service',
+            'event_date' => now()->toDateString(),
+        ])->assertSessionHasNoErrors();
+    }
+
+    #[Test]
+    public function feedback_form_offers_the_members_recent_flights(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+        $this->travelTo('2026-10-31 12:00:00');
+
+        Http::fake([
+            'api.vatsim.net/v2/members/' . $user->id . '/history*' => Http::response(['items' => [
+                ['id' => 11, 'type' => 1, 'callsign' => 'CSA123', 'start' => '2026-10-27T17:47:58Z'],
+            ]]),
+            'api.vatsim.net/v2/members/' . $user->id . '/flightplans' => Http::response([
+                ['connection_id' => 11, 'dep' => 'LKPR', 'arr' => 'EGLL'],
+            ]),
+        ]);
+
+        $this->actingAs($user)->get(route('feedback'))
+            ->assertOk()
+            ->assertSee('id="recentFlight"', false)
+            ->assertSee('data-date="2026-10-27"', false)
+            ->assertSee('data-departure="LKPR"', false)
+            ->assertSee('data-arrival="EGLL"', false)
+            ->assertSee('LKPR');
+    }
+
+    #[Test]
+    public function feedback_form_shows_atc_then_pilot_details_then_the_text(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+
+        Http::fake(['api.vatsim.net/*' => Http::response([], 503)]);
+
+        $this->actingAs($user)->get(route('feedback'))->assertSeeHtmlInOrder([
+            'name="controller"',
+            'name="position"',
+            'Pilot callsign',
+            'Date of event, UTC',
+            'Departure airport, ICAO',
+            'Arrival airport, ICAO',
+            'Your feedback',
+        ]);
+    }
+
+    #[Test]
+    public function feedback_form_does_not_call_the_api_when_feedback_is_disabled(): void
+    {
+        Setting::set('feedbackEnabled', false);
+        Http::fake();
+
+        $this->actingAs(User::factory()->create())->get(route('feedback'))->assertRedirect(route('dashboard'));
+
+        Http::assertNothingSent();
+    }
+
+    #[Test]
+    public function feedback_form_repopulates_flight_details_after_a_validation_error(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+
+        Http::fake(['api.vatsim.net/*' => Http::response([], 503)]);
+
+        $this->actingAs($user)->from(route('feedback'))->followingRedirects()->post(route('feedback.store'), [
+            'pilot_callsign' => 'CSA123',
+            'departure_airport' => 'LKPR',
+        ])->assertSee('value="CSA123"', false)->assertSee('value="LKPR"', false);
+    }
+
+    #[Test]
+    public function feedback_form_still_works_when_the_flight_list_is_unavailable(): void
+    {
+        $user = User::factory()->create();
+        Setting::set('feedbackEnabled', true);
+
+        Http::fake(['api.vatsim.net/*' => Http::response([], 503)]);
+
+        $this->actingAs($user)->get(route('feedback'))
+            ->assertOk()
+            ->assertDontSee('id="recentFlight"', false)
+            ->assertSee('name="pilot_callsign"', false)
+            ->assertSee('name="event_date"', false);
+    }
+
+    #[Test]
+    public function updating_references_keeps_the_pilot_callsign_and_event_date(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $position = Position::factory()->create(['area_id' => $area->id]);
+        $feedback = Feedback::factory()->create([
+            'reference_position_id' => $position->id,
+            'pilot_callsign' => 'CSA123',
+            'event_date' => '2026-10-27',
+            'departure_airport' => 'LKPR',
+        ]);
+
+        $this->actingAs($moderator)->patch(route('feedback.update', $feedback), [
+            'controller' => '',
+            'position' => '',
+            'pilot_callsign' => 'HACKED',
+            'departure_airport' => 'HACK',
+        ])->assertRedirect(route('reports.feedback'));
+
+        $feedback->refresh();
+
+        $this->assertSame('CSA123', $feedback->pilot_callsign);
+        $this->assertSame('2026-10-27', $feedback->event_date->toDateString());
+        $this->assertSame('LKPR', $feedback->departure_airport);
+    }
+
+    #[Test]
+    public function forwarded_feedback_mail_shows_na_for_missing_flight_details(): void
+    {
+        Setting::set('feedbackEnabled', true);
+        Setting::set('feedbackForwardEmail', 'staff@example.com');
+
+        $feedback = Feedback::factory()->create();
+
+        $html = (new FeedbackNotification($feedback))->toMail($feedback)->render();
+
+        $this->assertStringContainsString('N/A', $html);
+    }
+
+    #[Test]
+    public function forwarded_feedback_mail_contains_the_pilot_callsign_and_event_date(): void
+    {
+        Setting::set('feedbackEnabled', true);
+        Setting::set('feedbackForwardEmail', 'staff@example.com');
+
+        $feedback = Feedback::factory()->create([
+            'pilot_callsign' => 'CSA123',
+            'event_date' => '2026-10-27',
+            'departure_airport' => 'LKPR',
+            'arrival_airport' => 'EGLL',
+        ]);
+
+        $html = (new FeedbackNotification($feedback))->toMail($feedback)->render();
+
+        $this->assertStringContainsString('CSA123', $html);
+        $this->assertStringContainsString($feedback->event_date->toEuropeanDate(), $html);
+        $this->assertStringContainsString('LKPR', $html);
+        $this->assertStringContainsString('EGLL', $html);
     }
 }
