@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\V1\TrainingReportCreated;
+use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TrainingReport extends TrainingObject
@@ -28,6 +30,10 @@ class TrainingReport extends TrainingObject
             if (! $report->draft && $report->published_at === null) {
                 $report->published_at = now();
             }
+        });
+
+        static::created(function (self $report): void {
+            DomainEvents::dispatch(new TrainingReportCreated($report));
         });
     }
 

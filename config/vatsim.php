@@ -32,14 +32,15 @@ return [
     | Divisional API Integration
     |--------------------------------------------------------------------------
     |
-    | This is the configuration for the divisional API integration.
-    | This is used to configure the secrets and endpoints.
+    | Selects which registered division API driver is active by name. Drivers
+    | themselves are provided by modules (e.g. the vateud module registers a
+    | 'vateud' driver) through the module driver registry. Leave unset to let a
+    | single enabled provider be used automatically. The driver's own endpoint
+    | and secret live with the module, not here.
     |
     */
 
     'division_api_driver' => env('VATSIM_DIVISION_API_DRIVER'),
-    'division_api_url' => env('VATSIM_DIVISION_API_URL'),
-    'division_api_token' => env('VATSIM_DIVISION_API_TOKEN'),
 
     /*
     |--------------------------------------------------------------------------

@@ -2,7 +2,6 @@
 
 namespace App\Tasks\Types;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
 use App\Http\Controllers\TrainingActivityController;
 use App\Models\Task;
@@ -95,6 +94,6 @@ class TheoreticalExam extends Types
 
     public function isApproval()
     {
-        return Setting::get('divisionApiEnabled', false);
+        return DivisionApi::isActive();
     }
 }

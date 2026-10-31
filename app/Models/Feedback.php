@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Contracts\DescribesActivityChanges;
+use App\Events\V1\FeedbackSubmitted;
 use App\Helpers\LogName;
+use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +27,18 @@ class Feedback extends Model implements DescribesActivityChanges
      * @var array<int, string>
      */
     protected static array $recordEvents = ['updated'];
+
+    /**
+     * Fire a versioned domain event when feedback is submitted, at the
+     * authoritative Eloquent creation point. Independent of the activity-log
+     * $recordEvents restriction above, which only governs activity logging.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (self $feedback): void {
+            DomainEvents::dispatch(new FeedbackSubmitted($feedback));
+        });
+    }
 
     /**
      * @var array<int, string>
