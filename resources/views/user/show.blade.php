@@ -485,6 +485,9 @@
 
 </div>
 
+{{-- Module-contributed user panels. --}}
+<x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::UserPanels" :data="['user' => $user]" />
+
 @endsection
 
 @section('js')

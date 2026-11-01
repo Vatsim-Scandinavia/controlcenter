@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\MentorController;
+use App\Http\Controllers\ModuleUserSettingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
@@ -83,6 +85,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/settings', 'settings_update')->name('user.settings.store');
         Route::post('/settings/theme', 'settings_update_theme')->name('user.settings.theme');
         Route::get('/settings/extendworkmail', 'extendWorkmail')->name('user.settings.extendworkmail');
+        Route::post('/settings/modules/{slug}', [ModuleUserSettingController::class, 'update'])->name('user.settings.modules.store');
 
         // Internal user search
         Route::get('/user/search/find', 'search')->name('user.search');
@@ -108,6 +111,11 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/admin/templates/{id}', [NotificationController::class, 'index'])->name('admin.templates.area');
     Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
+    Route::get('/admin/modules', [ModuleController::class, 'index'])->name('admin.modules');
+    Route::post('/admin/modules/{slug}/enable', [ModuleController::class, 'enable'])->name('admin.modules.enable');
+    Route::post('/admin/modules/{slug}/disable', [ModuleController::class, 'disable'])->name('admin.modules.disable');
+    Route::get('/admin/modules/{slug}/settings', [ModuleController::class, 'settings'])->name('admin.modules.settings');
+    Route::post('/admin/modules/{slug}/settings', [ModuleController::class, 'updateSettings'])->name('admin.modules.settings.store');
     Route::resource('/admin/positions', PositionController::class)->except(['show']);
     Route::get('/admin/positions/{area}', [PositionController::class, 'index'])->name('positions.index.area');
 

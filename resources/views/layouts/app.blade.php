@@ -76,6 +76,9 @@
 
     @yield('js')
 
+    {{-- Module-contributed scripts (prebuilt bundles). --}}
+    <x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::Scripts" />
+
     @livewireScripts
     @fluxScripts
     </body>

@@ -326,6 +326,9 @@
             </div>
         </div>
     </div>
-    
+
 </div>
+
+{{-- Module-contributed dashboard widgets. --}}
+<x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::DashboardWidgets" />
 @endsection

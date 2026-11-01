@@ -44,6 +44,18 @@
             </li>
         @endif
 
+        {{-- Module-contributed navigation. Each item is authorized through the
+             gate; an item without a permission shows to any authenticated user. --}}
+        @foreach(app(\App\Modules\ModuleRegistry::class)->navigation() as $moduleNavItem)
+            @if(($moduleNavItem->permission === null || auth()->user()->can($moduleNavItem->permission)) && Route::has($moduleNavItem->route))
+                <x-sidebar.item
+                    :href="route($moduleNavItem->route, $moduleNavItem->routeParameters)"
+                    :icon="$moduleNavItem->icon"
+                    :title="$moduleNavItem->title"
+                    :active="Route::is($moduleNavItem->activeWhen ?? $moduleNavItem->route)" />
+            @endif
+        @endforeach
+
         @canany(['training.mentor-dashboard.view', 'bookings.sweatbox.use', 'fir.management.reports.view'])
 
             {{-- Divider --}}
@@ -140,7 +152,7 @@
             </x-sidebar.section>
         @endif
 
-        @if(auth()->user()->canAny(['system.health.view', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
+        @if(auth()->user()->canAny(['system.health.view', 'system.modules.manage', 'users.manage']) || auth()->user()->can('viewAny', App\Models\Position::class))
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <x-sidebar.section icon="fa-cogs" title="Administration" :active="Route::is('admin.*') || Route::is('positions.*') || Route::is('vote.overview')" id="collapseUtilities">
@@ -155,6 +167,9 @@
                 @endcan
                 @can('viewAny', App\Models\Position::class)
                     <x-sidebar.item :href="route('positions.index')" title="Positions" collapse />
+                @endcan
+                @can('system.modules.manage')
+                    <x-sidebar.item :href="route('admin.modules')" title="Modules" collapse />
                 @endcan
             </x-sidebar.section>
 
