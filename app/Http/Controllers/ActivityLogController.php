@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ActivityLevel;
 use App\Models\ActivityLog;
 use App\Support\ActivityLog\ActivityChangePresenter;
+use App\Support\ActivityLog\LogNameRegistry;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -27,17 +28,25 @@ class ActivityLogController extends Controller
             ->paginate(50)
             ->withQueryString();
 
+        $categoryLabels = LogNameRegistry::labels();
+
+        // Offer every category that has entries plus every registered one, so a
+        // module's category is filterable even before its first entry.
         $categories = ActivityLog::query()
             ->whereNotNull('log_name')
             ->distinct()
             ->orderBy('log_name')
             ->pluck('log_name')
+            ->merge(array_keys($categoryLabels))
+            ->unique()
+            ->sort()
+            ->values()
             ->all();
 
         $levels = array_map(fn (ActivityLevel $level) => $level->value, ActivityLevel::cases());
 
         $changes = ActivityChangePresenter::present($logs->getCollection());
 
-        return view('admin.logs', compact('logs', 'categories', 'levels', 'changes'));
+        return view('admin.logs', compact('logs', 'categories', 'categoryLabels', 'levels', 'changes'));
     }
 }

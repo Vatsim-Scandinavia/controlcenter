@@ -14,7 +14,7 @@
                     <select name="log_name" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All categories</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category }}" @selected(request('log_name') === $category)>{{ ucfirst($category) }}</option>
+                            <option value="{{ $category }}" @selected(request('log_name') === $category)>{{ $categoryLabels[$category] ?? ucfirst($category) }}</option>
                         @endforeach
                     </select>
 
@@ -49,7 +49,7 @@
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($log->created_at)->toEuropeanDateTime() }}</td>
                                 <td><span class="text-{{ $log->level->value }}">{{ strtoupper($log->level->value) }}</span></td>
-                                <td>{{ ucfirst($log->log_name) }}</td>
+                                <td>{{ $categoryLabels[$log->log_name] ?? ucfirst($log->log_name) }}</td>
                                 <td>
                                     @if($log->causer)
                                         <a href="{{ route('user.show', $log->causer_id) }}">{{ $log->causer->name }} ({{ $log->causer_id }})</a>
