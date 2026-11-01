@@ -2,7 +2,7 @@
 
 namespace App\Modules;
 
-use App\Providers\ModuleServiceProvider;
+use App\Http\Middleware\RegisterModuleRoutes;
 use Illuminate\Routing\CompiledRouteCollection;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\RouteCollectionInterface;
@@ -23,18 +23,21 @@ use Throwable;
  * callbacks never execute — which also means safe mode (where `booted()` is
  * empty) registers no module routes at all.
  *
- * This runs at runtime after the core routes have loaded (see
- * {@see ModuleServiceProvider}), and module routes are never
- * written into the route cache. That keeps enabling/disabling a module
- * effective immediately without re-running `route:cache`, and makes the current
- * enabled state the single source of truth across replicas.
+ * This runs at request time from {@see RegisterModuleRoutes}
+ * (after the core routes have loaded, cached or not), so module routes are
+ * never written into the route cache: the live enabled state is the single
+ * source of truth on every request. Enabling/disabling a module takes effect
+ * immediately without re-running `route:cache`, and the cache can be built by
+ * any means (`route:cache`, `optimize`, a programmatic call) without capturing
+ * module routes, because the cache build never handles an HTTP request.
  *
- * Each module's registration is isolated: a throwing route callback is logged,
- * reported to Sentry, and — crucially — the router's group stack is restored to
- * its pre-module depth, because {@see Router::group()} does not pop its own
- * attributes when the callback throws. Without that restore, the module's
- * prefix, middleware and name-prefix would bleed onto every route registered
- * afterwards (core routes and later modules alike).
+ * Each module's registration is staged into its own collection and merged into
+ * the live routes only if the whole module registered cleanly. A throwing route
+ * callback is logged, reported to Sentry, and leaves nothing behind: the staged
+ * (partial) routes are discarded and the router's group stack is restored to its
+ * pre-module depth ({@see Router::group()} does not pop its own attributes when
+ * the callback throws), so a broken module cannot leave a half route live nor
+ * bleed its prefix/middleware/name onto routes registered afterwards.
  */
 class ModuleRouteLoader
 {
@@ -42,13 +45,28 @@ class ModuleRouteLoader
 
     public function load(): void
     {
-        $registered = false;
+        $booted = $this->registry->booted();
+
+        if ($booted === []) {
+            return;
+        }
 
         /** @var Router $router */
         $router = Route::getFacadeRoot();
+        $live = $router->getRoutes();
+        $registered = false;
 
-        foreach ($this->registry->booted() as $slug => $registrar) {
+        foreach ($booted as $slug => $registrar) {
+            if ($registrar->webRoutes === [] && $registrar->apiRoutes === []) {
+                continue;
+            }
+
+            // Register this module into a throwaway collection so a failure
+            // part-way through can be discarded wholesale; only a clean module
+            // is merged into the live routes.
+            $staging = new RouteCollection;
             $depth = count($router->getGroupStack());
+            $this->useRoutes($router, $staging);
 
             try {
                 foreach ($registrar->webRoutes as $routes) {
@@ -56,7 +74,6 @@ class ModuleRouteLoader
                         ->prefix("modules/{$slug}")
                         ->name("modules.{$slug}.")
                         ->group($routes);
-                    $registered = true;
                 }
 
                 foreach ($registrar->apiRoutes as $routes) {
@@ -64,23 +81,40 @@ class ModuleRouteLoader
                         ->prefix("api/modules/{$slug}")
                         ->name("api.modules.{$slug}.")
                         ->group($routes);
+                }
+
+                foreach ($staging->getRoutes() as $route) {
+                    $live->add($route);
                     $registered = true;
                 }
             } catch (Throwable $e) {
-                // A module's route definitions must never break boot, nor leak
-                // their group attributes onto routes registered afterwards.
-                $this->restoreGroupStack($router, $depth);
+                // Discard the staged (partial) routes entirely.
                 ModuleRegistry::captureToSentry($e, $slug);
                 Log::error("Module [{$slug}] failed while registering routes: {$e->getMessage()}", ['exception' => $e, 'module' => $slug]);
+            } finally {
+                $this->restoreGroupStack($router, $depth);
+                $this->useRoutes($router, $live);
             }
         }
 
-        // Module routes are added after the router has already built its name
-        // lookup (core routes loaded first), so the lookup used by route() and
-        // Route::has() is stale; rebuild it.
+        // The merged routes carry their full (group-prefixed) names, but a cached
+        // instance holds a compiled collection whose name lookup needs rebuilding
+        // for route() and Route::has() to find them.
         if ($registered) {
-            $this->refreshNameLookups(Route::getRoutes());
+            $this->refreshNameLookups($live);
         }
+    }
+
+    /**
+     * Point the router (and the container's `routes` binding) at the given
+     * collection. Used to stage a module's routes in isolation and then restore
+     * the live collection — which may be a {@see CompiledRouteCollection} and so
+     * cannot go through Router::setRoutes() (typed to RouteCollection).
+     */
+    private function useRoutes(Router $router, RouteCollectionInterface $routes): void
+    {
+        (new ReflectionProperty(Router::class, 'routes'))->setValue($router, $routes);
+        app()->instance('routes', $routes);
     }
 
     /**

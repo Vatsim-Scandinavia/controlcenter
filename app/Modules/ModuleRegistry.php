@@ -4,6 +4,7 @@ namespace App\Modules;
 
 use App\Models\Module as ModuleRecord;
 use ControlCenter\ModuleApi\Module;
+use ControlCenter\ModuleApi\ModuleManifest;
 use ControlCenter\ModuleApi\Navigation\NavigationItem;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
@@ -22,6 +23,16 @@ class ModuleRegistry
 {
     /** @var array<string, DiscoveredModule>|null */
     private ?array $discovered = null;
+
+    /**
+     * Installed candidate classes that could not be turned into a discovered
+     * module (missing class, constructor/manifest threw, invalid manifest,
+     * duplicate slug, …), keyed by class. These are packages that exist on disk
+     * but fell out of {@see discovered()}; cleanup must treat them as blocking.
+     *
+     * @var array<class-string, string>|null
+     */
+    private ?array $discoveryFailures = null;
 
     /** @var array<string, ModuleRegistrar> */
     private array $registrars = [];
@@ -52,15 +63,39 @@ class ModuleRegistry
 
         $enabledSlugs = $this->enabledSlugs();
         $discovered = [];
+        $failures = [];
 
         foreach ($this->candidateClasses() as $class => $meta) {
             $source = $meta['source'];
 
             try {
-                /** @var Module $instance */
+                if (! class_exists($class)) {
+                    throw new \RuntimeException('class does not exist');
+                }
+
                 $instance = $this->app->make($class);
+
+                if (! $instance instanceof Module) {
+                    throw new \RuntimeException('does not implement the Module contract');
+                }
+
                 $manifest = $instance->manifest();
+
+                if (! $manifest instanceof ModuleManifest) {
+                    throw new \RuntimeException('manifest() did not return a ModuleManifest');
+                }
+
                 $slug = $manifest->slug;
+
+                if (! is_string($slug) || $slug === '') {
+                    throw new \RuntimeException('manifest has an empty slug');
+                }
+
+                if (isset($discovered[$slug])) {
+                    // A later candidate would silently shadow an earlier one;
+                    // record the loser so it cannot vanish unaccounted for.
+                    throw new \RuntimeException("duplicate slug [{$slug}] already provided by [{$discovered[$slug]->class}]");
+                }
 
                 $discovered[$slug] = new DiscoveredModule(
                     class: $class,
@@ -71,10 +106,17 @@ class ModuleRegistry
                     installPath: $meta['installPath'],
                 );
             } catch (Throwable $e) {
-                $this->errors[] = "Failed to load module [{$class}] from {$source}: {$e->getMessage()}";
-                Log::warning("Module discovery skipped [{$class}].", ['exception' => $e, 'source' => $source]);
+                // The package is installed but could not be loaded. Keep a record
+                // keyed by class: it has no usable slug, yet it must still block
+                // any operation (e.g. user:delete) that may need its cooperation.
+                $message = "Installed module [{$class}] from {$source} could not be loaded: {$e->getMessage()}";
+                $this->errors[] = $message;
+                $failures[$class] = $message;
+                Log::warning('Module discovery failed.', ['exception' => $e, 'class' => $class, 'source' => $source]);
             }
         }
+
+        $this->discoveryFailures = $failures;
 
         return $this->discovered = $discovered;
     }
@@ -269,6 +311,14 @@ class ModuleRegistry
         $handlers = [];
         $failed = [];
 
+        // Candidates that fell out of discovery entirely (missing class,
+        // manifest/constructor threw, invalid manifest, duplicate slug). They
+        // have no slug, so key them by class. Fail closed: cleanup may only
+        // report success once every installed package has been accounted for.
+        foreach ($this->discoveryFailures() as $class => $reason) {
+            $failed["class:{$class}"] = $reason;
+        }
+
         foreach ($this->discovered() as $slug => $module) {
             $registrar = $this->registrarFor($slug);
 
@@ -286,6 +336,20 @@ class ModuleRegistry
         }
 
         return ['handlers' => $handlers, 'failed' => $failed];
+    }
+
+    /**
+     * Installed candidates that could not be turned into a discovered module.
+     *
+     * @return array<class-string, string> class => reason
+     */
+    public function discoveryFailures(): array
+    {
+        if ($this->discoveryFailures === null) {
+            $this->discovered();
+        }
+
+        return $this->discoveryFailures ?? [];
     }
 
     /**
@@ -385,6 +449,7 @@ class ModuleRegistry
     public function flush(): void
     {
         $this->discovered = null;
+        $this->discoveryFailures = null;
         $this->registrars = [];
         $this->errors = [];
     }

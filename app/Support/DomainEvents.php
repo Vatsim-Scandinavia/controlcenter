@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Testing\Fakes\EventFake;
 use Throwable;
@@ -23,6 +24,12 @@ final class DomainEvents
 {
     /**
      * Dispatch a domain event, isolating each listener individually.
+     *
+     * When the event fires inside a database transaction, delivery is deferred
+     * until that transaction commits: listeners run in-process with real,
+     * irreversible side effects, so they must not observe a mutation that then
+     * rolls back. If the transaction rolls back, the deferred delivery is
+     * discarded. Outside a transaction, delivery is immediate.
      */
     public static function dispatch(object $event): void
     {
@@ -36,8 +43,23 @@ final class DomainEvents
             return;
         }
 
-        // Invoke each listener (including wildcard listeners, which
-        // getListeners() merges in) in its own try/catch.
+        if (DB::transactionLevel() > 0) {
+            // Runs after the outermost commit; dropped on rollback.
+            DB::afterCommit(static fn () => self::deliver($dispatcher, $event));
+
+            return;
+        }
+
+        self::deliver($dispatcher, $event);
+    }
+
+    /**
+     * Invoke each listener (including wildcard listeners, which getListeners()
+     * merges in) in its own try/catch so one failure neither breaks the
+     * authoritative mutation nor suppresses the other listeners.
+     */
+    private static function deliver(object $dispatcher, object $event): void
+    {
         foreach ($dispatcher->getListeners($event::class) as $listener) {
             try {
                 $listener($event::class, [$event]);

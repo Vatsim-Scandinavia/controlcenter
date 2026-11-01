@@ -18,4 +18,10 @@ use App\Facades\DivisionApi;
  * module-provided) implement this composite; consumers may type-hint a narrower
  * sub-contract where they only need part of the surface.
  */
-interface DivisionApiContract extends EndorsementApi, ExamApi, RosterApi, TrainingApi {}
+interface DivisionApiContract extends EndorsementApi, ExamApi, RosterApi, TrainingApi
+{
+    /**
+     * A short human-readable name for the driver, used in error messages.
+     */
+    public function getName(): string;
+}

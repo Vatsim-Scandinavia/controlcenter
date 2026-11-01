@@ -151,18 +151,26 @@ class ModuleFreshBootTest extends TestCase
     }
 
     /**
-     * Boot a fresh process and print a probe of the routing table: whether the
-     * core login route and the example module route exist, and the login URI
-     * (to catch a module prefix bleeding onto core routes).
+     * Boot a fresh process, handle a real HTTP request (so the module-route
+     * middleware runs), and print a probe of the routing table: the core login
+     * route, its URI (to catch a module prefix bleeding onto core routes), the
+     * example module route, and the throwing module's partial route.
+     *
+     * Module routes are registered per request by middleware, never during the
+     * console boot, so the probe must drive the HTTP kernel to observe them.
      *
      * @param  array<string, string>  $extraEnv
      */
     private function routeProbe(array $extraEnv = []): string
     {
         $php = <<<'PHP'
-        echo 'LOGIN:' . (int) Illuminate\Support\Facades\Route::has('login');
+        $kernel = app(Illuminate\Contracts\Http\Kernel::class);
+        $kernel->handle(Illuminate\Http\Request::create('/', 'GET'));
+        $has = fn (string $name) => (int) Illuminate\Support\Facades\Route::has($name);
+        echo 'LOGIN:' . $has('login');
         echo ';LOGINURI:' . (Illuminate\Support\Facades\Route::has('login') ? route('login', [], false) : '-');
-        echo ';MODROUTE:' . (int) Illuminate\Support\Facades\Route::has('modules.example.index');
+        echo ';MODROUTE:' . $has('modules.example.index');
+        echo ';MODHALF:' . $has('modules.throwroute.half');
         PHP;
 
         $process = new Process(
@@ -178,21 +186,27 @@ class ModuleFreshBootTest extends TestCase
     }
 
     /**
-     * Build the route cache in a fresh process, writing to this test's isolated
-     * APP_ROUTES_CACHE path (never the shared bootstrap/cache).
+     * Run an Artisan command in a fresh process against this test's isolated
+     * cache paths (never the shared bootstrap/cache).
      *
+     * @param  array<int, string>  $command
      * @param  array<string, string>  $extraEnv
      */
-    private function cacheRoutes(array $extraEnv = []): void
+    private function artisanProcess(array $command, array $extraEnv = []): void
     {
         $process = new Process(
-            ['php', 'artisan', 'route:cache'],
+            array_merge(['php', 'artisan'], $command),
             self::basePath(),
             array_merge($this->env, $extraEnv),
             null,
             120,
         );
         $process->mustRun();
+    }
+
+    private function cacheRoutes(array $extraEnv = []): void
+    {
+        $this->artisanProcess(['route:cache'], $extraEnv);
     }
 
     /**
@@ -281,9 +295,10 @@ class ModuleFreshBootTest extends TestCase
     #[Test]
     public function a_throwing_module_route_does_not_corrupt_core_routes_on_boot(): void
     {
-        // Finding 1: a module whose route callback throws must not leave its
-        // prefix/middleware on the group stack for the core route files that
-        // load afterwards. ThrowingRouteModule is registered first and enabled.
+        // P2-2 + finding 1: a module whose route callback throws must leave
+        // nothing behind — neither its partial routes nor its group attributes
+        // bleeding onto core routes or later modules. ThrowingRouteModule is
+        // registered first (it registers /half, then throws) and enabled.
         $register = ThrowingRouteModule::class . ',' . ExampleModule::class;
 
         $this->setEnabledSlugs(['throwroute', 'example']);
@@ -294,6 +309,8 @@ class ModuleFreshBootTest extends TestCase
         $this->assertStringContainsString('LOGINURI:/login', $output, $output);
         // The example module, registered after the throwing one, is unaffected.
         $this->assertStringContainsString('MODROUTE:1', $output, $output);
+        // The throwing module's partial /half route must not have survived.
+        $this->assertStringContainsString('MODHALF:0', $output, $output);
     }
 
     #[Test]
@@ -334,5 +351,25 @@ class ModuleFreshBootTest extends TestCase
         $output = $this->routeProbe();
 
         $this->assertStringContainsString('MODROUTE:0', $output, $output);
+    }
+
+    #[Test]
+    public function optimize_does_not_cache_module_routes(): void
+    {
+        // P2-3: `optimize` builds the route cache via a nested/programmatic call,
+        // not a literal `route:cache` argv. The route cache must still exclude
+        // module routes, because the cache build never handles an HTTP request.
+        $this->setEnabled(true);
+        $this->artisanProcess(['optimize']);
+
+        $cached = (string) file_get_contents($this->routesCachePath());
+        $this->assertStringNotContainsString('modules/example', $cached, $cached);
+
+        // Still served at runtime when enabled...
+        $this->assertStringContainsString('MODROUTE:1', $this->routeProbe(), 'enabled route missing at runtime');
+
+        // ...and gone once disabled, because the cache never captured it.
+        $this->setEnabled(false);
+        $this->assertStringContainsString('MODROUTE:0', $this->routeProbe());
     }
 }

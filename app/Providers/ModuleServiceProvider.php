@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Modules\ModuleRegistry;
-use App\Modules\ModuleRouteLoader;
 use App\Services\RoleSource;
 use App\Tasks\TaskTypeRegistry;
 use Illuminate\Support\ServiceProvider;
@@ -14,9 +13,10 @@ use Illuminate\Support\ServiceProvider;
  * Nothing here mutates `config('roles.*')`: role and permission contributions
  * are read live through {@see RoleSource} by the permission matrix, the gate
  * definitions and the role UI. All work that depends on the database (resolving
- * which modules are enabled, then applying their bindings, commands, routes and
+ * which modules are enabled, then applying their bindings, commands and
  * migrations) happens in {@see boot()}, which runs after the database is
- * initialised — register() must not touch the database.
+ * initialised — register() must not touch the database. Module routes are the
+ * exception: they are registered per request (see the boot() note), not here.
  */
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -36,37 +36,10 @@ class ModuleServiceProvider extends ServiceProvider
         $this->registerCommands($registry);
         $this->registerMigrations($registry);
 
-        // Register module routes at runtime, after the core routes have loaded.
-        //
-        // The framework's RouteServiceProvider registers its route loading in a
-        // booted callback during the *register* phase; registering ours in the
-        // *boot* phase queues it afterwards, so it runs once the core routes
-        // (cached or from files) are in place. This matters for a cached
-        // instance, where the compiled route collection replaces anything
-        // registered earlier in boot.
-        //
-        // Routes are deliberately not registered while building the route cache,
-        // so module routes never enter it: the live enabled state is the single
-        // source of truth on every request, which keeps enable/disable effective
-        // immediately and is safe across replicas.
-        $this->app->booted(function () use ($registry): void {
-            if ($this->isBuildingRouteCache()) {
-                return;
-            }
-
-            (new ModuleRouteLoader($registry))->load();
-        });
-    }
-
-    /**
-     * Whether the current process is building the route cache (`route:cache`),
-     * during which module routes must not be registered so they never land in
-     * the cached collection.
-     */
-    private function isBuildingRouteCache(): bool
-    {
-        return $this->app->runningInConsole()
-            && in_array('route:cache', (array) ($_SERVER['argv'] ?? []), true);
+        // Module routes are NOT registered here. They are registered per request
+        // by App\Http\Middleware\RegisterModuleRoutes, so they are available at
+        // runtime (cached core routes or not) yet never captured by the route
+        // cache (which is always built without handling an HTTP request).
     }
 
     /**

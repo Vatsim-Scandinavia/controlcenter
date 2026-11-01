@@ -7,6 +7,11 @@ use App\Contracts\DivisionApiContract;
 // This is a no-op adapter, which means it does nothing by design
 class NoOpAdapter implements DivisionApiContract
 {
+    public function getName(): string
+    {
+        return 'No-op';
+    }
+
     public function assignMentor($user, $requesterId) {}
 
     public function removeMentor($user, $requesterId) {}

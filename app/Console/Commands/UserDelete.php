@@ -200,8 +200,10 @@ class UserDelete extends Command
             return self::SUCCESS;
         }
 
+        // An unknown CID is not an error condition (it matches main's exit 0);
+        // only genuinely incomplete deletions below return a failing code.
         $this->error('No records of ' . $cid . ' was found.');
 
-        return self::FAILURE;
+        return self::SUCCESS;
     }
 }
