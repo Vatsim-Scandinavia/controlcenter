@@ -63,6 +63,12 @@ If a module makes an instance unusable, set `MODULES_SAFE_MODE=true`. No modules
 are booted regardless of their stored state, so core keeps working while you
 diagnose. The modules page still lists everything and shows a banner.
 
+`MODULES_SAFE_MODE` is read from the environment, so on an instance with cached
+config you must rebuild the config cache for the change to take effect — run
+`php artisan config:cache` (or `php artisan config:clear` to drop it), and the
+same again when turning safe mode back off. Module routes react on the next
+request without any cache step, but the safe-mode flag itself lives in config.
+
 ## Background work
 
 Modules may register scheduled commands and event listeners. The default

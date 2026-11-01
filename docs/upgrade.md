@@ -34,7 +34,11 @@ and **no modules ship enabled**, so there are no required manual steps.
   (`config('vatsim.division_api_drivers')`) instead of a hard-coded switch.
   VATEUD remains a built-in driver and behaves exactly as before.
 - If an installed module ever makes the instance unusable, set
-  `MODULES_SAFE_MODE=true` to boot with all modules suppressed.
+  `MODULES_SAFE_MODE=true` to boot with all modules suppressed, then rebuild the
+  config cache (`php artisan config:cache`) if your instance caches config.
+- Module routes are registered per request and never enter the route cache, so
+  `php artisan route:cache` / `optimize` is safe and need not be re-run when a
+  module is enabled or disabled.
 
 After migrating, clear caches as usual:
 

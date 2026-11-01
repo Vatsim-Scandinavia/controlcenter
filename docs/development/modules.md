@@ -62,9 +62,14 @@ class WidgetModule implements Module
 }
 ```
 
-`manifest()` is static metadata read during discovery. `register()` is called
-once per boot **only while the module is enabled and compatible**; keep it cheap
-and side-effect free — it runs on nearly every page.
+`manifest()` is static metadata read during discovery. `register()` is normally
+called once per request while the module is enabled and compatible; keep it
+cheap and side-effect free — it runs on nearly every page. One flow is the
+exception: `user:delete` (and other privacy actions) resolve the registrar of
+**every installed module, enabled or not**, so a disabled module's privacy
+handlers still run against a departing user's data. `register()` must therefore
+be safe to call even when the module is disabled, and must not assume it only
+runs while enabled.
 
 ### Compatibility
 
@@ -228,6 +233,16 @@ Grouped under `/modules/<slug>`, named `modules.<slug>.*`, with the
 `['auth','activity','suspended']` middleware stack and a `module:<slug>`
 enabled-check that returns 404 while the module is disabled.
 
+Module routes are registered at the start of every HTTP request (by a global
+middleware), reflecting the live enabled state, and are **never written into the
+route cache**. This means `php artisan route:cache` / `optimize` is safe to run
+and never needs re-running after enabling or disabling a module, and the change
+takes effect on the next request across every replica. The trade-off is that
+module routes are HTTP-only: they do not appear in `php artisan route:list` or
+to other console commands. If a module route callback throws, that module's
+routes are discarded for the request and the failure is logged; core routes and
+other modules are unaffected.
+
 ### Commands and scheduling
 
 ```php
@@ -258,9 +273,12 @@ class WidgetPrivacy implements PrivacyHandler
 
 ### Migrations
 
-Ship migrations in `modules/<slug>/database/migrations`; they are discovered by
-`php artisan migrate`. Create only `modules_<slug>_*` tables; never alter core
-tables.
+Ship migrations in your module's `database/migrations` directory; they are
+discovered by `php artisan migrate`. Both layouts are supported: an in-repo
+module at `modules/<slug>/database/migrations`, and a Composer-installed package,
+whose migrations are discovered relative to its install path in `vendor/`
+(`<install-path>/database/migrations`). Create only `modules_<slug>_*` tables;
+never alter core tables.
 
 ### Frontend assets
 
