@@ -31,13 +31,19 @@ use Throwable;
  * any means (`route:cache`, `optimize`, a programmatic call) without capturing
  * module routes, because the cache build never handles an HTTP request.
  *
- * Each module's registration is staged into its own collection and merged into
- * the live routes only if the whole module registered cleanly. A throwing route
- * callback is logged, reported to Sentry, and leaves nothing behind: the staged
- * (partial) routes are discarded and the router's group stack is restored to its
- * pre-module depth ({@see Router::group()} does not pop its own attributes when
- * the callback throws), so a broken module cannot leave a half route live nor
- * bleed its prefix/middleware/name onto routes registered afterwards.
+ * Each module registers into a staging collection seeded with the existing
+ * routes, so lookups like `route('login')` work inside a module's callback,
+ * while only the module's own new routes are merged into the live collection —
+ * and only if the whole module registered cleanly and kept its mandatory
+ * middleware. A throwing (or rejected) callback leaves nothing behind: the
+ * staged routes are discarded, the live collection is untouched, and the
+ * router's group stack is restored to its pre-module depth ({@see Router::group()}
+ * does not pop its own attributes when the callback throws).
+ *
+ * Two guarantees are enforced rather than assumed: module API routes carry
+ * `api-token` so they require a key by default, and a route may not strip a
+ * mandatory middleware via `withoutMiddleware()` (doing so rejects the whole
+ * module's routes).
  */
 class ModuleRouteLoader
 {
@@ -61,10 +67,19 @@ class ModuleRouteLoader
                 continue;
             }
 
-            // Register this module into a throwaway collection so a failure
-            // part-way through can be discarded wholesale; only a clean module
-            // is merged into the live routes.
+            // Stage into a collection seeded with the existing routes: lookups
+            // inside the callback resolve against real routes, but only the
+            // module's own additions are tracked and merged.
             $staging = new RouteCollection;
+
+            foreach ($live->getRoutes() as $existing) {
+                $staging->add($existing);
+            }
+
+            $staging->refreshNameLookups();
+            $staging->refreshActionLookups();
+
+            $seeded = $this->routeIds($staging);
             $depth = count($router->getGroupStack());
             $this->useRoutes($router, $staging);
 
@@ -77,18 +92,26 @@ class ModuleRouteLoader
                 }
 
                 foreach ($registrar->apiRoutes as $routes) {
-                    Route::middleware(['api', "module:{$slug}"])
+                    Route::middleware(['api', 'api-token', "module:{$slug}"])
                         ->prefix("api/modules/{$slug}")
                         ->name("api.modules.{$slug}.")
                         ->group($routes);
                 }
 
-                foreach ($staging->getRoutes() as $route) {
+                // The module's own new routes = staging minus the seeded set.
+                $new = array_values(array_filter(
+                    $staging->getRoutes(),
+                    fn ($route) => ! in_array(spl_object_id($route), $seeded, true),
+                ));
+
+                $this->assertMandatoryMiddlewareIntact($slug, $new);
+
+                foreach ($new as $route) {
                     $live->add($route);
                     $registered = true;
                 }
             } catch (Throwable $e) {
-                // Discard the staged (partial) routes entirely.
+                // Discard the staged (partial) routes entirely; live is untouched.
                 ModuleRegistry::captureToSentry($e, $slug);
                 Log::error("Module [{$slug}] failed while registering routes: {$e->getMessage()}", ['exception' => $e, 'module' => $slug]);
             } finally {
@@ -102,6 +125,43 @@ class ModuleRouteLoader
         // for route() and Route::has() to find them.
         if ($registered) {
             $this->refreshNameLookups($live);
+        }
+    }
+
+    /**
+     * Object ids of every route currently in the collection.
+     *
+     * @return array<int, int>
+     */
+    private function routeIds(RouteCollectionInterface $routes): array
+    {
+        return array_map('spl_object_id', array_values($routes->getRoutes()));
+    }
+
+    /**
+     * Reject a module whose route strips a middleware the group guarantees.
+     * `web()` and `api()` promise their stack and the enabled-check; a route
+     * using `withoutMiddleware()` to drop one defeats that promise, so the whole
+     * module's routes are discarded.
+     *
+     * @param  array<int, \Illuminate\Routing\Route>  $routes
+     */
+    private function assertMandatoryMiddlewareIntact(string $slug, array $routes): void
+    {
+        foreach ($routes as $route) {
+            $isApi = str_starts_with(ltrim($route->uri(), '/'), "api/modules/{$slug}");
+
+            $mandatory = $isApi
+                ? ['api', 'api-token', "module:{$slug}"]
+                : ['web', 'auth', 'activity', 'suspended', "module:{$slug}"];
+
+            $stripped = array_intersect($mandatory, (array) $route->excludedMiddleware());
+
+            if ($stripped !== []) {
+                throw new \RuntimeException(
+                    "route [{$route->uri()}] strips mandatory middleware [" . implode(', ', $stripped) . ']'
+                );
+            }
         }
     }
 

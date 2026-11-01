@@ -4,9 +4,9 @@ namespace ControlCenter\ModuleApi;
 
 use Closure;
 use ControlCenter\ModuleApi\Navigation\NavigationItem;
-use ControlCenter\ModuleApi\Privacy\PrivacyHandler;
 use ControlCenter\ModuleApi\Settings\SettingsSchema;
 use ControlCenter\ModuleApi\Ui\Slot;
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -77,13 +77,6 @@ interface Registrar
     public function taskType(string $key, string $taskTypeClass): static;
 
     /**
-     * Register the module's privacy handler.
-     *
-     * @param  class-string<PrivacyHandler>  $handlerClass
-     */
-    public function privacyHandler(string $handlerClass): static;
-
-    /**
      * Register an Artisan command shipped by the module.
      *
      * @param  class-string  $commandClass
@@ -91,12 +84,19 @@ interface Registrar
     public function command(string $commandClass): static;
 
     /**
-     * Register scheduled work. The callback receives the application schedule
-     * and only runs while the module is enabled.
+     * Schedule one of the module's own commands while the module is enabled.
      *
-     * @param  Closure(Schedule): void  $callback
+     * The command class must also be registered by this module via
+     * {@see command()}. Core creates the scheduled event for that command; the
+     * timing closure only configures frequency and constraints on it (e.g.
+     * `fn ($event) => $event->dailyAt('02:00')->withoutOverlapping()`). A module
+     * cannot schedule an arbitrary command or reach the application-wide
+     * schedule.
+     *
+     * @param  class-string  $commandClass
+     * @param  Closure(Event): void  $timing
      */
-    public function schedule(Closure $callback): static;
+    public function schedule(string $commandClass, Closure $timing): static;
 
     /**
      * Register an activity-log name so the module's audit entries render with a
@@ -111,7 +111,10 @@ interface Registrar
 
     /**
      * Register a named driver implementation for one of Control Center's
-     * pluggable contracts (e.g. the division API).
+     * pluggable contracts. Only an explicitly allow-listed contract may be
+     * driven (today just the division API, `App\Contracts\DivisionApiContract`);
+     * any other contract throws. The name must not collide with a built-in
+     * driver or another module's driver.
      *
      * @param  class-string  $contract
      * @param  Closure(Application): object  $factory
@@ -119,26 +122,29 @@ interface Registrar
     public function driver(string $contract, string $name, Closure $factory): static;
 
     /**
-     * Bind a service into the container while the module is enabled.
-     *
-     * @param  Closure(Application): mixed  $factory
-     */
-    public function bind(string $abstract, Closure $factory): static;
-
-    /**
      * Register web routes. The callback defines routes with the usual Route
      * facade; core wraps them in a group prefixed `modules/<slug>`, named
      * `modules.<slug>.*`, with the authenticated web middleware stack and an
      * enabled-check that returns 404 while the module is disabled.
+     *
+     * Core *enforces* that stack: if any route in the callback strips a
+     * mandatory middleware via `withoutMiddleware()` (the web stack or the
+     * enabled-check), the whole module's routes are rejected. Existing routes
+     * (e.g. `route('login')`) remain resolvable from inside the callback.
      *
      * @param  Closure(): void  $routes
      */
     public function web(Closure $routes): static;
 
     /**
-     * Register API routes, grouped under `api/modules/<slug>` and named
-     * `api.modules.<slug>.*`, guarded by the same enabled-check. These routes
-     * are kept out of the public OpenAPI spec.
+     * Register API routes, grouped under `api/modules/<slug>`, named
+     * `api.modules.<slug>.*`, and kept out of the public OpenAPI spec.
+     *
+     * The group requires API-token authentication by default, so a module API
+     * route needs a valid key even if its author forgets; declare per-route
+     * scopes with `->middleware('api-token:modules.<slug>.<scope>')` and they
+     * stack on top. As with web routes, stripping a mandatory middleware via
+     * `withoutMiddleware()` rejects the whole module's routes.
      *
      * @param  Closure(): void  $routes
      */

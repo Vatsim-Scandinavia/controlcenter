@@ -35,6 +35,9 @@ class SkeletonModule implements Module
                 // privacy flow know about it, e.g.:
                 // 'Stores a preference row per user keyed by CID.',
             ],
+            // If you store user data, declare a privacy handler here (not in
+            // register()), so it is available even while the module is disabled:
+            // privacyHandler: \ControlCenter\Modules\Skeleton\SkeletonPrivacy::class,
         );
     }
 

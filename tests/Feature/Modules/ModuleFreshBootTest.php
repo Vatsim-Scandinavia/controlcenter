@@ -210,6 +210,37 @@ class ModuleFreshBootTest extends TestCase
     }
 
     /**
+     * Probe the routing table from inside a console command (tinker), without
+     * handling an HTTP request. Module routes are registered on CommandStarting,
+     * so route() and signed URLs must resolve here too.
+     *
+     * @param  array<string, string>  $extraEnv
+     */
+    private function consoleRouteProbe(array $extraEnv = []): string
+    {
+        $php = <<<'PHP'
+        $has = (int) Illuminate\Support\Facades\Route::has('modules.example.index');
+        echo 'MODROUTE:' . $has;
+        echo ';URL:' . ($has ? route('modules.example.index', [], false) : '-');
+        echo ';SIGNED:' . ($has && str_contains(Illuminate\Support\Facades\URL::signedRoute('modules.example.index'), 'signature') ? 1 : 0);
+        PHP;
+
+        // Console command events (which register module routes) are only wired
+        // by the framework when NOT running under the testing environment, so a
+        // non-testing APP_ENV exercises the real production path here.
+        $process = new Process(
+            ['php', 'artisan', 'tinker', '--execute', $php],
+            self::basePath(),
+            array_merge($this->env, ['APP_ENV' => 'local'], $extraEnv),
+            null,
+            120,
+        );
+        $process->mustRun();
+
+        return $process->getOutput();
+    }
+
+    /**
      * Boot a fresh process and print a probe of the module permission's state.
      *
      * @param  array<string, string>  $extraEnv
@@ -371,5 +402,51 @@ class ModuleFreshBootTest extends TestCase
         // ...and gone once disabled, because the cache never captured it.
         $this->setEnabled(false);
         $this->assertStringContainsString('MODROUTE:0', $this->routeProbe());
+    }
+
+    #[Test]
+    public function module_routes_resolve_in_a_console_command(): void
+    {
+        // A1: route() and URL::signedRoute() must work in a console command
+        // (here, tinker), not only during an HTTP request.
+        $this->setEnabled(true);
+
+        $output = $this->consoleRouteProbe();
+
+        $this->assertStringContainsString('MODROUTE:1', $output, $output);
+        $this->assertStringContainsString('URL:/modules/example', $output, $output);
+        $this->assertStringContainsString('SIGNED:1', $output, $output);
+    }
+
+    #[Test]
+    public function a_disabled_module_registers_no_routes_in_a_console_command(): void
+    {
+        $this->setEnabled(false);
+
+        $this->assertStringContainsString('MODROUTE:0', $this->consoleRouteProbe());
+    }
+
+    #[Test]
+    public function safe_mode_registers_no_routes_in_a_console_command(): void
+    {
+        $this->setEnabled(true);
+
+        $this->assertStringContainsString('MODROUTE:0', $this->consoleRouteProbe(['MODULES_SAFE_MODE' => 'true']));
+    }
+
+    #[Test]
+    public function route_cache_built_in_a_console_command_excludes_module_routes(): void
+    {
+        // A1 corollary: even though console commands register module routes, the
+        // route:cache build (a fresh app that runs no command) must not capture
+        // them — so route() works at runtime but the cache file stays clean.
+        $this->setEnabled(true);
+        // Build the cache under the production-like env where console commands
+        // DO register module routes — proving the fresh-app build still excludes
+        // them (it runs no command) rather than the testing env masking it.
+        $this->cacheRoutes(['APP_ENV' => 'local']);
+
+        $this->assertStringNotContainsString('modules/example', (string) file_get_contents($this->routesCachePath()));
+        $this->assertStringContainsString('MODROUTE:1', $this->consoleRouteProbe());
     }
 }

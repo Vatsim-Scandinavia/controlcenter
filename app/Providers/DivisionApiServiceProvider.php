@@ -68,13 +68,31 @@ class DivisionApiServiceProvider extends ServiceProvider
             $drivers[$name] = fn (Application $app): object => $app->make($class);
         }
 
+        $builtInNames = array_keys($drivers);
+
         /** @var ModuleRegistry $registry */
         $registry = $app->make(ModuleRegistry::class);
 
         foreach ($registry->drivers() as $driver) {
-            if ($driver['contract'] === DivisionApiContract::class) {
-                $drivers[$driver['name']] = $driver['factory'];
+            if ($driver['contract'] !== DivisionApiContract::class) {
+                continue;
             }
+
+            // A module driver must never shadow a built-in or another module's
+            // driver. The built-in collision is also rejected at registration,
+            // but enforce it here too so a cache-built registrar can't slip one
+            // through; isolate the failure to the offending module.
+            if (isset($drivers[$driver['name']])) {
+                $shadows = in_array($driver['name'], $builtInNames, true) ? 'a built-in driver' : "another module's driver";
+                Log::warning("Module [{$driver['slug']}] driver [{$driver['name']}] was ignored because it collides with {$shadows}.", [
+                    'module' => $driver['slug'],
+                    'driver' => $driver['name'],
+                ]);
+
+                continue;
+            }
+
+            $drivers[$driver['name']] = $driver['factory'];
         }
 
         return $drivers;

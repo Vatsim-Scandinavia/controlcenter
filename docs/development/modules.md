@@ -5,11 +5,16 @@ packages that add integrations, settings, panels and actions inside Control
 Center's interface, while core stays focused on shared features and a small set
 of stable extension points.
 
-!!! warning "Modules are trusted, in-process code"
+!!! warning "Modules are trusted, in-process code — a contract, not a sandbox"
     A module runs with the **full privileges of the application** — the same
-    database, filesystem and network access as core. The permissions and
-    data-handling notes a module declares in its manifest are **transparency for
-    operators, not a sandbox**. Only install modules you trust, exactly as you
+    database, filesystem and network access as core, and it may call framework
+    APIs (the `Route`, `Event`, container, etc.) directly. The `Registrar` is a
+    *contract*, not a security boundary: its guarantees (namespaced permissions,
+    the route middleware stack, the driver allow-list, manifest-declared privacy)
+    describe only what **core does on the module's behalf when it goes through
+    `Registrar`** — they do not constrain what the module's own code can do.
+    The permissions and data-handling notes a module declares are transparency
+    for operators, not a sandbox. Only install modules you trust, exactly as you
     would any Composer dependency.
 
 ## What a module is
@@ -62,14 +67,11 @@ class WidgetModule implements Module
 }
 ```
 
-`manifest()` is static metadata read during discovery. `register()` is normally
-called once per request while the module is enabled and compatible; keep it
-cheap and side-effect free — it runs on nearly every page. One flow is the
-exception: `user:delete` (and other privacy actions) resolve the registrar of
-**every installed module, enabled or not**, so a disabled module's privacy
-handlers still run against a departing user's data. `register()` must therefore
-be safe to call even when the module is disabled, and must not assume it only
-runs while enabled.
+`manifest()` is static metadata read during discovery. `register()` is called
+once per request/command while the module is **enabled and compatible** — never
+while disabled — so keep it cheap and side-effect free; it runs on nearly every
+page. Anything needed while the module is disabled (notably the privacy handler,
+for a departing user's data) is declared in the manifest, not in `register()`.
 
 ### Compatibility
 
@@ -184,12 +186,34 @@ listen to: `TrainingCreated`, `TrainingStatusChanged`, `TrainingReportCreated`,
 `V1`. Register listeners from your module; keep them resilient — the default
 queue connection is `sync`, so a throwing listener runs inline.
 
+`V1` events carry live Eloquent models (e.g. `$event->training`). Treat them as
+read-only snapshots of the moment they fired; a future `V2` set may introduce
+immutable value snapshots instead of models. Domain events dispatched inside a
+database transaction are delivered only after it commits (and dropped on
+rollback), so a listener never sees a mutation that later rolls back.
+
+### Long-running and reused processes
+
+Enabled state is resolved per request and per command, so under PHP-FPM or a
+normal `artisan` invocation a module's enabled/disabled change takes effect on
+the next request/command with no cache step. A **reused** process — Laravel
+Octane, or a long-lived `queue:work` / `schedule:work` worker — resolves module
+state once at boot and keeps it until it restarts. After enabling or disabling a
+module, restart those workers (and Octane) so they pick up the change; a
+`queue:work` worker started while a module was disabled will not run that
+module's queued listeners until restarted. This mirrors how Laravel treats
+config and container state in reused processes and is intentional — core adds no
+per-job refresh.
+
 ### Drivers
 
-Register a driver for a pluggable core contract (e.g. the division API, split
-into `RosterApi`, `EndorsementApi`, `ExamApi`, `TrainingApi`). Core ships
-built-in drivers via `config('vatsim.division_api_drivers')`; a module can add
-its own under a name selected by `vatsim.division_api_driver`:
+Register a driver for a pluggable core contract. Only an allow-listed contract
+may be driven — today just `App\Contracts\DivisionApiContract` (the division
+API, split into `RosterApi`, `EndorsementApi`, `ExamApi`, `TrainingApi`); any
+other contract throws. Core ships built-in drivers via
+`config('vatsim.division_api_drivers')`; a module can add its own under a name
+selected by `vatsim.division_api_driver`, as long as the name does not collide
+with a built-in or another module's driver (a collision is rejected):
 
 ```php
 use App\Contracts\DivisionApiContract;
@@ -218,8 +242,12 @@ $r->apiScope('modules.widget.read', 'Read widget data')
 
 API routes are grouped under `/api/modules/<slug>`, named
 `api.modules.<slug>.*`, guarded by the enabled-check, and kept **out of the
-public OpenAPI spec**. Existing API keys keep working unchanged; scopes are
-additive.
+public OpenAPI spec**. The group requires API-token authentication by default,
+so a module API route needs a valid key even if you forget to add one; declare
+per-route scopes with `api-token:modules.<slug>.<scope>` and they stack on top.
+Core enforces the group's middleware: a route that strips a mandatory
+middleware via `withoutMiddleware()` causes the whole module's routes to be
+rejected.
 
 ### Web routes
 
@@ -231,32 +259,49 @@ $r->web(function () {
 
 Grouped under `/modules/<slug>`, named `modules.<slug>.*`, with the
 `['auth','activity','suspended']` middleware stack and a `module:<slug>`
-enabled-check that returns 404 while the module is disabled.
+enabled-check that returns 404 while the module is disabled. Existing route
+names (e.g. `route('login')`) resolve normally inside the callback. As with API
+routes, stripping a mandatory middleware via `withoutMiddleware()` rejects the
+whole module's routes, and a throwing callback leaves nothing behind (its
+partial routes are discarded and the failure is logged; core and other modules
+are unaffected).
 
-Module routes are registered at the start of every HTTP request (by a global
-middleware), reflecting the live enabled state, and are **never written into the
-route cache**. This means `php artisan route:cache` / `optimize` is safe to run
-and never needs re-running after enabling or disabling a module, and the change
-takes effect on the next request across every replica. The trade-off is that
-module routes are HTTP-only: they do not appear in `php artisan route:list` or
-to other console commands. If a module route callback throws, that module's
-routes are discarded for the request and the failure is logged; core routes and
-other modules are unaffected.
+Module routes are **registered at runtime, reflecting the live enabled state,
+and never written into the route cache**:
+
+- On HTTP requests a global middleware registers them before the router
+  dispatches.
+- In console runs (commands, the scheduler, sync jobs dispatched from the
+  console) they are registered when the command starts, so `route()` and
+  `URL::signedRoute()` resolve there too, and `php artisan route:list` shows
+  them.
+- `php artisan route:cache` / `optimize` build the cache from a fresh
+  application that runs no command, so module routes are never captured. The
+  cache is therefore safe to build and never needs re-running after enabling or
+  disabling a module; the change takes effect on the next request/command across
+  every replica.
 
 ### Commands and scheduling
 
 ```php
 $r->command(\Acme\Widget\Commands\SyncWidget::class)
-  ->schedule(fn ($schedule) => $schedule->command('widget:sync')->hourly());
+  ->schedule(\Acme\Widget\Commands\SyncWidget::class, fn ($event) => $event->hourly());
 ```
 
-Scheduled work only runs while the module is enabled.
+`schedule()` takes one of the module's **own** registered command classes and a
+timing closure; core creates the scheduled event and the closure only configures
+frequency/constraints on it. A module cannot reach the application-wide schedule
+or schedule an arbitrary command. Scheduled work only runs while the module is
+enabled.
 
 ### Privacy
 
-If you store user data, declare it in `dataHandling` and register a handler.
-`user:delete` invokes the handler of **every installed module (enabled or
-not)** because the data still exists.
+If you store user data, declare it in `dataHandling` and declare a handler **in
+the manifest** (not in `register()`), so it is available for a departing user's
+data even while the module is disabled. `user:delete` invokes the handler of
+every installed module (enabled or not) because the data still exists; a module
+whose declared handler is missing or invalid blocks deletion (it fails closed)
+rather than letting it report a clean deletion it cannot guarantee.
 
 ```php
 use ControlCenter\ModuleApi\Privacy\PrivacyHandler;
@@ -268,7 +313,7 @@ class WidgetPrivacy implements PrivacyHandler
     public function pseudonymise(int $cid): void { /* ... */ }
     public function delete(int $cid): void { /* ... */ }
 }
-// in register(): $r->privacyHandler(WidgetPrivacy::class);
+// in manifest(): new ModuleManifest(..., privacyHandler: WidgetPrivacy::class);
 ```
 
 ### Migrations

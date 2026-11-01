@@ -2,6 +2,7 @@
 
 namespace App\Modules;
 
+use App\Contracts\DivisionApiContract;
 use App\Modules\Exceptions\ModuleRegistrationException;
 use Closure;
 use ControlCenter\ModuleApi\Navigation\NavigationItem;
@@ -16,6 +17,14 @@ use ControlCenter\ModuleApi\Settings\SettingsSchema;
  */
 class ModuleRegistrar implements Registrar
 {
+    /**
+     * Contracts a module driver is permitted to provide. Anything else is
+     * rejected so a module cannot swap out an arbitrary core service.
+     *
+     * @var array<int, class-string>
+     */
+    private const ALLOWED_DRIVER_CONTRACTS = [DivisionApiContract::class];
+
     /** @var array<int, NavigationItem> */
     public array $navigation = [];
 
@@ -36,12 +45,9 @@ class ModuleRegistrar implements Registrar
     public array $taskTypes = [];
 
     /** @var array<int, class-string> */
-    public array $privacyHandlers = [];
-
-    /** @var array<int, class-string> */
     public array $commands = [];
 
-    /** @var array<int, Closure> */
+    /** @var array<int, array{command: class-string, timing: Closure}> */
     public array $schedules = [];
 
     /** @var array<string, string> */
@@ -52,9 +58,6 @@ class ModuleRegistrar implements Registrar
 
     /** @var array<int, array{contract: class-string, name: string, factory: Closure}> */
     public array $drivers = [];
-
-    /** @var array<string, Closure> */
-    public array $bindings = [];
 
     /** @var array<int, Closure> */
     public array $webRoutes = [];
@@ -127,13 +130,6 @@ class ModuleRegistrar implements Registrar
         return $this;
     }
 
-    public function privacyHandler(string $handlerClass): static
-    {
-        $this->privacyHandlers[] = $handlerClass;
-
-        return $this;
-    }
-
     public function command(string $commandClass): static
     {
         $this->commands[] = $commandClass;
@@ -141,9 +137,9 @@ class ModuleRegistrar implements Registrar
         return $this;
     }
 
-    public function schedule(Closure $callback): static
+    public function schedule(string $commandClass, Closure $timing): static
     {
-        $this->schedules[] = $callback;
+        $this->schedules[] = ['command' => $commandClass, 'timing' => $timing];
 
         return $this;
     }
@@ -166,14 +162,24 @@ class ModuleRegistrar implements Registrar
 
     public function driver(string $contract, string $name, Closure $factory): static
     {
+        if (! in_array($contract, self::ALLOWED_DRIVER_CONTRACTS, true)) {
+            throw new ModuleRegistrationException(
+                "Module [{$this->slug}] tried to register a driver for [{$contract}], which modules may not provide."
+            );
+        }
+
+        // A module must not shadow a built-in driver. Cross-module name
+        // collisions are rejected where drivers are aggregated, which can see
+        // every module; the built-in set lives in config and is checked here.
+        $builtIn = array_keys((array) config('vatsim.division_api_drivers', []));
+
+        if (in_array($name, $builtIn, true)) {
+            throw new ModuleRegistrationException(
+                "Module [{$this->slug}] tried to register a driver named [{$name}], which collides with a built-in driver."
+            );
+        }
+
         $this->drivers[] = compact('contract', 'name', 'factory');
-
-        return $this;
-    }
-
-    public function bind(string $abstract, Closure $factory): static
-    {
-        $this->bindings[$abstract] = $factory;
 
         return $this;
     }

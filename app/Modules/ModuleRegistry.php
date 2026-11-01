@@ -2,10 +2,12 @@
 
 namespace App\Modules;
 
+use App\Console\Commands\UserDelete;
 use App\Models\Module as ModuleRecord;
 use ControlCenter\ModuleApi\Module;
 use ControlCenter\ModuleApi\ModuleManifest;
 use ControlCenter\ModuleApi\Navigation\NavigationItem;
+use ControlCenter\ModuleApi\Privacy\PrivacyHandler;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -30,9 +32,18 @@ class ModuleRegistry
      * duplicate slug, …), keyed by class. These are packages that exist on disk
      * but fell out of {@see discovered()}; cleanup must treat them as blocking.
      *
-     * @var array<class-string, string>|null
+     * @var array<string, string>|null
      */
     private ?array $discoveryFailures = null;
+
+    /**
+     * Installed `controlcenter-module` packages whose `extra.controlcenter.module`
+     * is missing or invalid — a package that exists but names no usable module
+     * class. Keyed by `package:<name>`. Collected while reading installed.json.
+     *
+     * @var array<string, string>
+     */
+    private array $packageFailures = [];
 
     /** @var array<string, ModuleRegistrar> */
     private array $registrars = [];
@@ -63,9 +74,15 @@ class ModuleRegistry
 
         $enabledSlugs = $this->enabledSlugs();
         $discovered = [];
-        $failures = [];
+        $this->packageFailures = [];
 
-        foreach ($this->candidateClasses() as $class => $meta) {
+        // candidateClasses() populates $this->packageFailures for installed
+        // packages that name no usable module class (A3); seed the failure set
+        // with those before per-class discovery runs.
+        $candidates = $this->candidateClasses();
+        $failures = $this->packageFailures;
+
+        foreach ($candidates as $class => $meta) {
             $source = $meta['source'];
 
             try {
@@ -107,11 +124,11 @@ class ModuleRegistry
                 );
             } catch (Throwable $e) {
                 // The package is installed but could not be loaded. Keep a record
-                // keyed by class: it has no usable slug, yet it must still block
-                // any operation (e.g. user:delete) that may need its cooperation.
+                // keyed by class (it has no usable slug), so it still blocks any
+                // operation (e.g. user:delete) that may need its cooperation.
                 $message = "Installed module [{$class}] from {$source} could not be loaded: {$e->getMessage()}";
                 $this->errors[] = $message;
-                $failures[$class] = $message;
+                $failures["class:{$class}"] = $message;
                 Log::warning('Module discovery failed.', ['exception' => $e, 'class' => $class, 'source' => $source]);
             }
         }
@@ -123,9 +140,10 @@ class ModuleRegistry
 
     /**
      * The registrar for a discovered module, with the module's register() hook
-     * run. Registrars are built for every discovered module (so disabled
-     * modules still expose privacy handlers) and cached. A module that throws
-     * while registering is isolated and contributes nothing.
+     * run, cached. Callers only request this for modules that should boot
+     * (enabled and compatible), so a disabled module's register() is never run —
+     * privacy handlers come from the manifest, not register(). A module that
+     * throws while registering is isolated and contributes nothing.
      */
     public function registrarFor(string $slug): ?ModuleRegistrar
     {
@@ -285,7 +303,9 @@ class ModuleRegistry
 
     /**
      * Privacy handlers for every *installed* module (enabled or not), because a
-     * disabled module's user data still exists and must be handled.
+     * disabled module's user data still exists and must be handled. The handler
+     * is declared in the manifest, so this never runs register() — a disabled
+     * module's register() hook is never invoked.
      *
      * @return array<string, array<int, class-string>>
      */
@@ -295,14 +315,16 @@ class ModuleRegistry
     }
 
     /**
-     * The privacy cleanup plan for a user-data action: the handlers of every
-     * installed module, plus the slugs of modules that could not be initialised.
+     * The privacy cleanup plan for a user-data action: the handler of every
+     * installed module that declares one, plus the modules/packages that could
+     * not be accounted for.
      *
-     * A module whose register() hook throws contributes no handlers, but we
-     * cannot conclude it holds no user data — so its failure is surfaced
-     * separately rather than silently treated as "nothing to clean". Callers
-     * (e.g. user:delete) use this to refuse to report complete deletion when a
-     * module could not be asked to clean up.
+     * Handlers are read from each module's manifest (never from register()), so
+     * even disabled modules contribute their handler without being booted. Fail
+     * closed: a discovery failure, or a declared handler class that is missing,
+     * unresolvable or not a {@see PrivacyHandler}, is recorded as blocking so
+     * {@see UserDelete} cannot report complete deletion
+     * while any installed package is unaccounted for.
      *
      * @return array{handlers: array<string, array<int, class-string>>, failed: array<string, string>}
      */
@@ -311,27 +333,33 @@ class ModuleRegistry
         $handlers = [];
         $failed = [];
 
-        // Candidates that fell out of discovery entirely (missing class,
-        // manifest/constructor threw, invalid manifest, duplicate slug). They
-        // have no slug, so key them by class. Fail closed: cleanup may only
-        // report success once every installed package has been accounted for.
-        foreach ($this->discoveryFailures() as $class => $reason) {
-            $failed["class:{$class}"] = $reason;
+        // Candidates/packages that fell out of discovery entirely (missing
+        // class, manifest/constructor threw, invalid manifest, duplicate slug,
+        // or a controlcenter-module package with no usable module class). They
+        // have no slug, so they are keyed by class/package.
+        foreach ($this->discoveryFailures() as $key => $reason) {
+            $failed[$key] = $reason;
         }
 
         foreach ($this->discovered() as $slug => $module) {
-            $registrar = $this->registrarFor($slug);
+            $handlerClass = $module->manifest->privacyHandler;
 
-            if ($registrar === null) {
-                // register() threw: the module is installed but could not be
-                // initialised, so whether it holds this user's data is unknown.
-                $failed[$slug] = "Module [{$slug}] could not be initialised, so its data could not be removed.";
-
+            if ($handlerClass === null) {
                 continue;
             }
 
-            if ($registrar->privacyHandlers !== []) {
-                $handlers[$slug] = $registrar->privacyHandlers;
+            try {
+                if (! is_string($handlerClass) || ! class_exists($handlerClass)) {
+                    throw new \RuntimeException('class does not exist');
+                }
+
+                if (! is_subclass_of($handlerClass, PrivacyHandler::class) && ! in_array(PrivacyHandler::class, class_implements($handlerClass) ?: [], true)) {
+                    throw new \RuntimeException("[{$handlerClass}] is not a " . PrivacyHandler::class);
+                }
+
+                $handlers[$slug] = [$handlerClass];
+            } catch (Throwable $e) {
+                $failed[$slug] = "Module [{$slug}] declared a privacy handler that could not be used: {$e->getMessage()}";
             }
         }
 
@@ -339,9 +367,10 @@ class ModuleRegistry
     }
 
     /**
-     * Installed candidates that could not be turned into a discovered module.
+     * Installed candidates/packages that could not be turned into a discovered
+     * module, keyed by class (`<FQCN>`) or package (`package:<name>`).
      *
-     * @return array<class-string, string> class => reason
+     * @return array<string, string> key => reason
      */
     public function discoveryFailures(): array
     {
@@ -350,20 +379,6 @@ class ModuleRegistry
         }
 
         return $this->discoveryFailures ?? [];
-    }
-
-    /**
-     * Apply booted modules' container-level registrations (bindings, drivers,
-     * commands). Navigation, slots, settings, permissions and roles are read
-     * lazily by their consumers and are not applied here.
-     */
-    public function applyBindings(): void
-    {
-        foreach ($this->booted() as $registrar) {
-            foreach ($registrar->bindings as $abstract => $factory) {
-                $this->app->bind($abstract, $factory);
-            }
-        }
     }
 
     /**
@@ -450,6 +465,7 @@ class ModuleRegistry
     {
         $this->discovered = null;
         $this->discoveryFailures = null;
+        $this->packageFailures = [];
         $this->registrars = [];
         $this->errors = [];
     }
@@ -536,19 +552,27 @@ class ModuleRegistry
                 continue;
             }
 
+            $name = is_string($package['name'] ?? null) ? $package['name'] : 'unknown';
             $class = $package['extra']['controlcenter']['module'] ?? null;
 
-            if (is_string($class) && $class !== '') {
-                $installPath = null;
+            if (! is_string($class) || $class === '') {
+                // A controlcenter-module package that names no module class is
+                // installed yet contributes nothing to discovery. Record it as a
+                // package-level failure so cleanup still fails closed for it.
+                $this->packageFailures["package:{$name}"] = "Installed module package [{$name}] has a missing or invalid [extra.controlcenter.module] and could not be loaded.";
 
-                if (isset($package['install-path']) && is_string($package['install-path'])) {
-                    // install-path is relative to vendor/composer/.
-                    $resolved = realpath($this->app->basePath('vendor/composer/' . $package['install-path']));
-                    $installPath = $resolved !== false ? $resolved : null;
-                }
-
-                $classes[$class] = ['name' => $package['name'] ?? 'unknown', 'installPath' => $installPath];
+                continue;
             }
+
+            $installPath = null;
+
+            if (isset($package['install-path']) && is_string($package['install-path'])) {
+                // install-path is relative to vendor/composer/.
+                $resolved = realpath($this->app->basePath('vendor/composer/' . $package['install-path']));
+                $installPath = $resolved !== false ? $resolved : null;
+            }
+
+            $classes[$class] = ['name' => $name, 'installPath' => $installPath];
         }
 
         return $classes;

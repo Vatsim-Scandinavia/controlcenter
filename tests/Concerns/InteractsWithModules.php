@@ -41,8 +41,6 @@ trait InteractsWithModules
 
         $registry->flush();
 
-        $registry->applyBindings();
-
         // Define gates for module permissions (AuthServiceProvider does this at
         // boot, before the modules table exists under RefreshDatabase).
         foreach (app(RoleSource::class)->permissions() as $permission) {

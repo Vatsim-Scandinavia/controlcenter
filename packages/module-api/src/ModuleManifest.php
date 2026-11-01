@@ -2,6 +2,7 @@
 
 namespace ControlCenter\ModuleApi;
 
+use ControlCenter\ModuleApi\Privacy\PrivacyHandler;
 use InvalidArgumentException;
 
 /**
@@ -22,6 +23,7 @@ final class ModuleManifest
      * @param  string|null  $author  Optional author/vendor name.
      * @param  array<string, string>  $permissions  Declared permissions the module registers, as `modules.<slug>.*` => human description. Transparency only.
      * @param  array<int, string>  $dataHandling  Plain-language notes on what user data the module stores, for the privacy/export flow.
+     * @param  class-string<PrivacyHandler>|null  $privacyHandler  The module's privacy handler, declared here (not in register()) so it is available for a departing user's data even while the module is disabled.
      */
     public function __construct(
         public string $slug,
@@ -32,6 +34,7 @@ final class ModuleManifest
         public ?string $author = null,
         public array $permissions = [],
         public array $dataHandling = [],
+        public ?string $privacyHandler = null,
     ) {
         if (! preg_match('/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/', $slug)) {
             throw new InvalidArgumentException("Invalid module slug [{$slug}]. Use lowercase kebab-case, e.g. 'my-module'.");
@@ -66,6 +69,7 @@ final class ModuleManifest
             author: $data['author'] ?? null,
             permissions: $data['permissions'] ?? [],
             dataHandling: $data['dataHandling'] ?? [],
+            privacyHandler: $data['privacyHandler'] ?? null,
         );
     }
 
@@ -83,6 +87,7 @@ final class ModuleManifest
             'author' => $this->author,
             'permissions' => $this->permissions,
             'dataHandling' => $this->dataHandling,
+            'privacyHandler' => $this->privacyHandler,
         ];
     }
 }

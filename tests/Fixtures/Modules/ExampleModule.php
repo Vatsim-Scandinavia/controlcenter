@@ -36,6 +36,7 @@ class ExampleModule implements Module
                 'modules.example.manage' => 'Manage the example module',
             ],
             dataHandling: ['Stores an example note per user in memory only.'],
+            privacyHandler: ExamplePrivacyHandler::class,
         );
     }
 
@@ -68,15 +69,11 @@ class ExampleModule implements Module
                 'scope' => 'global',
             ], ['modules.example.view'])
             ->taskType('example.review', ExampleTaskType::class)
-            ->privacyHandler(ExamplePrivacyHandler::class)
             ->command(ExampleCommand::class)
-            ->schedule(function ($schedule): void {
-                $schedule->command('modules:example')->daily();
-            })
+            ->schedule(ExampleCommand::class, fn ($event) => $event->daily())
             ->activityLogName('modules.example', 'Example')
             ->apiScope('modules.example.read', 'Read example data')
             ->driver(DivisionApiContract::class, 'example', fn ($app) => new NoOpAdapter)
-            ->bind('modules.example.service', fn () => new \stdClass)
             ->web(function (): void {
                 Route::get('/', fn () => 'example module index')->name('index');
             })

@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use App\Modules\ModuleRegistry;
+use App\Modules\ModuleRouteLoader;
 use App\Services\RoleSource;
 use App\Tasks\TaskTypeRegistry;
+use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -32,14 +35,35 @@ class ModuleServiceProvider extends ServiceProvider
         /** @var ModuleRegistry $registry */
         $registry = $this->app->make(ModuleRegistry::class);
 
-        $registry->applyBindings();
         $this->registerCommands($registry);
         $this->registerMigrations($registry);
+        $this->registerConsoleRoutes($registry);
 
-        // Module routes are NOT registered here. They are registered per request
-        // by App\Http\Middleware\RegisterModuleRoutes, so they are available at
-        // runtime (cached core routes or not) yet never captured by the route
-        // cache (which is always built without handling an HTTP request).
+        // Module routes are NOT registered here for HTTP. They are registered
+        // per request by App\Http\Middleware\RegisterModuleRoutes, so they are
+        // available at runtime (cached core routes or not) yet never captured by
+        // the route cache (which is always built without handling an HTTP
+        // request). The console path is handled by registerConsoleRoutes().
+    }
+
+    /**
+     * Register module routes for console runs so route() and signed URLs resolve
+     * in commands, scheduled tasks and sync jobs dispatched from the console.
+     *
+     * This hangs off CommandStarting rather than boot(): the route-cache build
+     * (route:cache / optimize / a programmatic call) bootstraps a fresh
+     * application but runs no command inside it, so the listener never fires
+     * there and module routes are never serialised into the cache.
+     */
+    private function registerConsoleRoutes(ModuleRegistry $registry): void
+    {
+        if (! $this->app->runningInConsole()) {
+            return;
+        }
+
+        Event::listen(CommandStarting::class, static function () use ($registry): void {
+            (new ModuleRouteLoader($registry))->load();
+        });
     }
 
     /**

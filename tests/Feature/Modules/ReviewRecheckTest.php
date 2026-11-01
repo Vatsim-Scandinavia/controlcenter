@@ -23,11 +23,11 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\InteractsWithModules;
+use Tests\Fixtures\Modules\BadPrivacyHandlerModule;
 use Tests\Fixtures\Modules\DuplicateExampleModule;
 use Tests\Fixtures\Modules\ExampleModule;
 use Tests\Fixtures\Modules\RegisterSpyModule;
 use Tests\Fixtures\Modules\ThrowingManifestModule;
-use Tests\Fixtures\Modules\ThrowingModule;
 use Tests\Fixtures\Modules\ThrowingRouteModule;
 use Tests\TestCase;
 
@@ -75,15 +75,16 @@ class ReviewRecheckTest extends TestCase
         $this->assertFalse(Route::has('modules.throwroute.half'), 'A partial route from a failed module stayed live.');
     }
 
-    // -- Item 2: privacy registration failures must not report success -------
+    // -- Item 2 / B: an unusable declared privacy handler blocks cleanup ------
 
     #[Test]
-    public function deleting_a_user_fails_when_a_module_cannot_be_initialised(): void
+    public function deleting_a_user_fails_when_a_declared_privacy_handler_is_unusable(): void
     {
-        // ThrowingModule is installed; its register() throws, so we cannot know
-        // whether it holds the user's data. Deletion must not report success,
-        // must keep the user, and must return a failing exit code.
-        $this->bootModules([ThrowingModule::class]);
+        // The module is merely installed (disabled) and declares — in its
+        // manifest — a privacy handler class that does not exist. Its data
+        // cannot be cleaned, so deletion must keep the user and fail closed,
+        // without ever running the module's register().
+        $this->bootModules([BadPrivacyHandlerModule::class]);
 
         $user = User::factory()->create();
 
@@ -101,6 +102,19 @@ class ReviewRecheckTest extends TestCase
             ->assertExitCode(1);
 
         $this->assertDatabaseHas('users', ['id' => $user->id]);
+    }
+
+    #[Test]
+    public function a_disabled_modules_manifest_privacy_handler_is_collected_without_registering(): void
+    {
+        // ExampleModule is installed but NOT enabled; its handler is declared in
+        // the manifest, so it is available for cleanup without running register().
+        $this->bootModules([ExampleModule::class]);
+
+        $plan = app(ModuleRegistry::class)->privacyCleanupPlan();
+
+        $this->assertArrayHasKey('example', $plan['handlers']);
+        $this->assertSame([], $plan['failed']);
     }
 
     // -- Item 3: the admin settings page must not activate disabled modules --
@@ -318,7 +332,7 @@ class ReviewRecheckTest extends TestCase
         $registry = app(ModuleRegistry::class);
         $registry->flush();
 
-        $this->assertArrayHasKey(ThrowingManifestModule::class, $registry->discoveryFailures());
+        $this->assertArrayHasKey('class:' . ThrowingManifestModule::class, $registry->discoveryFailures());
         $this->assertNotEmpty($registry->privacyCleanupPlan()['failed']);
     }
 
@@ -340,15 +354,16 @@ class ReviewRecheckTest extends TestCase
 
         $failures = $registry->discoveryFailures();
 
-        $this->assertArrayHasKey(ThrowingManifestModule::class, $failures);
-        $this->assertArrayHasKey('App\\DefinitelyNotAClass', $failures);
-        $this->assertArrayHasKey(self::class, $failures);
-        $this->assertArrayHasKey(DuplicateExampleModule::class, $failures);
+        $this->assertArrayHasKey('class:' . ThrowingManifestModule::class, $failures);
+        $this->assertArrayHasKey('class:App\\DefinitelyNotAClass', $failures);
+        $this->assertArrayHasKey('class:' . self::class, $failures);
+        $this->assertArrayHasKey('class:' . DuplicateExampleModule::class, $failures);
 
         // The one valid module still discovered; every failure surfaces as blocking.
         $this->assertArrayHasKey('example', $registry->discovered());
-        foreach (array_keys($failures) as $class) {
-            $this->assertArrayHasKey("class:{$class}", $registry->privacyCleanupPlan()['failed']);
+        $plan = $registry->privacyCleanupPlan()['failed'];
+        foreach (array_keys($failures) as $key) {
+            $this->assertArrayHasKey($key, $plan);
         }
     }
 

@@ -3,6 +3,14 @@
 `controlcenter/module-api` is the stable contract between Control Center core
 and the modules operators install. It follows [Semantic Versioning](https://semver.org/).
 
+!!! note "Pre-1.0"
+    The package is still pre-1.0 and unreleased; the surface may change between
+    development builds without a major bump. Recent shifts while it settles: the
+    privacy handler is now declared on `ModuleManifest` (not via a `Registrar`
+    method); `Registrar::bind()` was removed; `Registrar::schedule()` now takes
+    a command class plus a timing closure; and `Registrar::driver()` is limited
+    to an allow-listed contract. Once tagged `1.0.0`, the promise below applies.
+
 ## The promise
 
 Everything under `ControlCenter\ModuleApi\` is public API: the `Module` and
