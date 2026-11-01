@@ -19,13 +19,15 @@ return [
     |--------------------------------------------------------------------------
     |
     | Explicitly registered modules that ship inside an image, discovered in
-    | addition to any installed `controlcenter-module` Composer packages. List
-    | the class implementing ControlCenter\ModuleApi\Module.
+    | addition to any installed `controlcenter-module` Composer packages. Set
+    | via the comma-separated MODULES_REGISTER env var (each the class
+    | implementing ControlCenter\ModuleApi\Module), or list classes here.
     |
     */
-    'register' => [
-        //
-    ],
+    'register' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('MODULES_REGISTER', '')),
+    ))),
 
     /*
     |--------------------------------------------------------------------------

@@ -9,6 +9,7 @@ use App\Modules\ModuleSettings;
 use App\Services\ActivityLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 /**
@@ -68,9 +69,19 @@ class ModuleController extends Controller
             return redirect()->route('admin.modules')->with('error', "Module [{$slug}] has no settings.");
         }
 
-        $validated = $request->validate($settings->rules($schema));
+        // Validate manually so that, on failure, secret fields are kept out of
+        // the flashed old input (Laravel would otherwise flash them in plaintext
+        // to the session).
+        $validator = Validator::make($request->all(), $settings->rules($schema));
 
-        $settings->persistSchema($slug, $schema, $validated);
+        if ($validator->fails()) {
+            return redirect()
+                ->route('admin.modules.settings', $slug)
+                ->withErrors($validator)
+                ->withInput($request->except($settings->secretKeys($schema)));
+        }
+
+        $settings->persistSchema($slug, $schema, $validator->validated());
         ActivityLogService::danger(LogName::Other, "Module settings updated: {$slug}");
 
         return redirect()->route('admin.modules.settings', $slug)->with('success', 'Module settings saved.');

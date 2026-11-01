@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Area;
 use App\Models\User;
+use App\Services\RoleSource;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -75,18 +76,26 @@ class UserPolicy
             return false;
         }
 
+        $roleSource = app(RoleSource::class);
+        $definition = $roleSource->role($requestedRole);
+
         // Global (area-less) assignments require the role's scope to allow them
         if ($requestedArea === null
-            && ! in_array(config("roles.roles.{$requestedRole}.scope"), ['both', 'global'], true)) {
+            && ! in_array($definition['scope'] ?? null, ['both', 'global'], true)) {
             return false;
         }
 
-        $permission = "roles.{$requestedRole}.manage";
+        // Module-contributed roles are governed by the module-management
+        // permission rather than a roles.<role>.manage permission that nothing
+        // registers.
+        $permission = $roleSource->isModuleRole($requestedRole)
+            ? 'system.modules.manage'
+            : "roles.{$requestedRole}.manage";
 
         // Grant authority must be held at (or above) the grant's scope. A global grant always
         // needs global authority; a role declaring grant_scope 'global' needs it even in an area.
         $requiresGlobalAuthority = $requestedArea === null
-            || config("roles.roles.{$requestedRole}.grant_scope", 'area') === 'global';
+            || ($definition['grant_scope'] ?? 'area') === 'global';
 
         return $requiresGlobalAuthority
             ? $user->hasGlobalPermission($permission)

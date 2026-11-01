@@ -20,6 +20,7 @@ final class DiscoveredModule
         public bool $enabled,
         public bool $compatible,
         public string $source,
+        public ?string $installPath = null,
     ) {}
 
     public function slug(): string

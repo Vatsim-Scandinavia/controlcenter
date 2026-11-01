@@ -4,20 +4,25 @@ namespace Tests\Concerns;
 
 use App\Modules\ModuleRegistry;
 use App\Modules\ModuleRouteLoader;
-use App\Providers\ModuleServiceProvider;
+use App\Services\RoleSource;
 use Illuminate\Support\Facades\Gate;
 
 /**
- * Helpers for tests that need modules booted inside an already-running
- * application. In production the module config is merged and gates are defined
- * during boot (before any request); under RefreshDatabase the modules table is
- * migrated after boot, so tests must re-run that wiring explicitly.
+ * Helpers for feature tests that exercise module extension points inside an
+ * already-booted application.
+ *
+ * This does NOT simulate a real boot — permission/role contributions are read
+ * live from {@see RoleSource}, so enabling a module is visible to the permission
+ * matrix immediately. It re-does only the two things the framework does once at
+ * boot and cannot repeat mid-test under RefreshDatabase (the modules table is
+ * migrated after the app boots): defining gates for module permissions, and
+ * registering the enabled modules' routes. The genuine "does it wire up on a
+ * fresh process" question is covered by the fresh-process boot tests, not here.
  */
 trait InteractsWithModules
 {
     /**
-     * Register the given module classes, enable the named slugs, and re-run the
-     * role-config merge and gate definitions so permissions resolve live.
+     * Register the given module classes and enable the named slugs.
      *
      * @param  array<int, class-string>  $moduleClasses
      * @param  array<int, string>  $enable
@@ -36,18 +41,16 @@ trait InteractsWithModules
 
         $registry->flush();
 
-        // Re-merge module permissions/roles into config, mirroring boot,
-        // without churning the container singleton.
-        ModuleServiceProvider::mergeRoleConfig($registry);
         $registry->applyBindings();
 
-        // Redefine gates so newly merged permissions resolve this request.
-        foreach (config('roles.permissions', []) as $permission) {
+        // Define gates for module permissions (AuthServiceProvider does this at
+        // boot, before the modules table exists under RefreshDatabase).
+        foreach (app(RoleSource::class)->permissions() as $permission) {
             Gate::define($permission, fn ($user, $area = null) => $user->hasPermission($permission, $area));
         }
 
-        // Register module routes, which the provider could not do at boot
-        // because the modules table is migrated after the app boots in tests.
+        // Register the enabled modules' routes (ModuleServiceProvider does this
+        // at boot).
         (new ModuleRouteLoader($registry))->load();
     }
 }

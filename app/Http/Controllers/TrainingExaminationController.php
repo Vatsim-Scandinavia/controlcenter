@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\V1\ExaminationRecorded;
 use App\Facades\DivisionApi;
 use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
@@ -16,6 +17,7 @@ use App\Notifications\MentorExaminationNotification;
 use App\Notifications\TrainingExamNotification;
 use App\Services\ActivityLogService;
 use App\Services\DivisionApi\DivisionApiError;
+use App\Support\DomainEvents;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -91,6 +93,10 @@ class TrainingExaminationController extends Controller
         if (array_key_exists('result', $data)) {
             $examination->update(['result' => $data['result']]);
         }
+
+        // Dispatch once the examination is complete (result written), not from a
+        // model observer that would fire before the result is set.
+        DomainEvents::dispatch(new ExaminationRecorded($examination));
 
         $attachmentId = TrainingObjectAttachmentController::saveAttachments($request, $examination);
         $attachmentUrl = (isset($attachmentId[0])) ? route('training.object.attachment.show', ['attachment' => $attachmentId[0]]) : null;

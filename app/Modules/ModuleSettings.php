@@ -163,4 +163,19 @@ class ModuleSettings
             ->mapWithKeys(fn (SettingField $field): array => [$field->key => $field->rules])
             ->all();
     }
+
+    /**
+     * The keys of every secret field in the schema. Used to keep secrets out of
+     * flashed old input when validation fails.
+     *
+     * @return array<int, string>
+     */
+    public function secretKeys(SettingsSchema $schema): array
+    {
+        return collect($schema->fields())
+            ->filter(fn (SettingField $field): bool => $field->secret)
+            ->map(fn (SettingField $field): string => $field->key)
+            ->values()
+            ->all();
+    }
 }

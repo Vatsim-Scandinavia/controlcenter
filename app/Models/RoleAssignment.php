@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\V1\RoleGranted;
 use App\Events\V1\RoleRevoked;
 use App\Helpers\LogName;
+use App\Services\RoleSource;
 use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,7 +45,10 @@ class RoleAssignment extends Model
         parent::boot();
 
         $validate = function (RoleAssignment $assignment) {
-            $scope = config("roles.roles.{$assignment->role}.scope");
+            // Literal-key lookup via RoleSource: module role keys are dotted
+            // (modules.<slug>.<role>) and would be mis-parsed as nested paths
+            // by config("roles.roles.{$key}.scope").
+            $scope = app(RoleSource::class)->role($assignment->role)['scope'] ?? null;
 
             if ($scope === null) {
                 throw new \InvalidArgumentException(

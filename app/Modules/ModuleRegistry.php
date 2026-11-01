@@ -53,7 +53,9 @@ class ModuleRegistry
         $enabledSlugs = $this->enabledSlugs();
         $discovered = [];
 
-        foreach ($this->candidateClasses() as $class => $source) {
+        foreach ($this->candidateClasses() as $class => $meta) {
+            $source = $meta['source'];
+
             try {
                 /** @var Module $instance */
                 $instance = $this->app->make($class);
@@ -66,6 +68,7 @@ class ModuleRegistry
                     enabled: ! $this->safeMode() && in_array($slug, $enabledSlugs, true),
                     compatible: CcVersion::satisfies($manifest->ccVersion),
                     source: $source,
+                    installPath: $meta['installPath'],
                 );
             } catch (Throwable $e) {
                 $this->errors[] = "Failed to load module [{$class}] from {$source}: {$e->getMessage()}";
@@ -293,14 +296,25 @@ class ModuleRegistry
                 continue;
             }
 
-            $path = $this->app->basePath("modules/{$slug}/database/migrations");
+            // In-repo modules follow the modules/<slug> convention; Composer
+            // packages (the primary distribution model) live under vendor/ and
+            // are discovered relative to their install path.
+            $candidates = [
+                $this->app->basePath("modules/{$slug}/database/migrations"),
+            ];
 
-            if (is_dir($path)) {
-                $paths[] = $path;
+            if ($module->installPath !== null) {
+                $candidates[] = $module->installPath . '/database/migrations';
+            }
+
+            foreach ($candidates as $path) {
+                if (is_dir($path)) {
+                    $paths[] = $path;
+                }
             }
         }
 
-        return $paths;
+        return array_values(array_unique($paths));
     }
 
     /**
@@ -395,12 +409,12 @@ class ModuleRegistry
 
         foreach ((array) config('modules.register', []) as $class) {
             if (is_string($class) && $class !== '') {
-                $classes[$class] = 'bundled';
+                $classes[$class] = ['source' => 'bundled', 'installPath' => null];
             }
         }
 
         foreach ($this->composerModuleClasses() as $class => $package) {
-            $classes[$class] = "package {$package}";
+            $classes[$class] = ['source' => "package {$package['name']}", 'installPath' => $package['installPath']];
         }
 
         return $classes;
@@ -434,7 +448,15 @@ class ModuleRegistry
             $class = $package['extra']['controlcenter']['module'] ?? null;
 
             if (is_string($class) && $class !== '') {
-                $classes[$class] = $package['name'] ?? 'unknown';
+                $installPath = null;
+
+                if (isset($package['install-path']) && is_string($package['install-path'])) {
+                    // install-path is relative to vendor/composer/.
+                    $resolved = realpath($this->app->basePath('vendor/composer/' . $package['install-path']));
+                    $installPath = $resolved !== false ? $resolved : null;
+                }
+
+                $classes[$class] = ['name' => $package['name'] ?? 'unknown', 'installPath' => $installPath];
             }
         }
 

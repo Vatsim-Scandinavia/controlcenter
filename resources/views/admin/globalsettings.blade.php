@@ -405,5 +405,8 @@
         </form>
     </div>
 
+    {{-- Module-contributed admin settings panels. --}}
+    <x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::AdminSettings" />
+
 </div>
 @endsection

@@ -12,6 +12,7 @@ use App\Models\AtcActivity;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
+use App\Services\RoleSource;
 use App\Services\StatisticsService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -127,7 +128,7 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
-        $roles = config('roles.roles');
+        $roles = app(RoleSource::class)->roles();
         $areas = Area::all();
 
         if ($user == null) {

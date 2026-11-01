@@ -39,12 +39,8 @@ class DivisionApiServiceProvider extends ServiceProvider
             $configured = config('vatsim.division_api_driver');
             $drivers = $this->drivers($app);
 
-            if (is_string($configured) && $configured !== '') {
-                foreach ($drivers as $name => $factory) {
-                    if (strcasecmp($name, $configured) === 0) {
-                        return $factory($app);
-                    }
-                }
+            if (is_string($configured) && $configured !== '' && isset($drivers[$configured])) {
+                return $drivers[$configured]($app);
             }
 
             // Enabled, but no registered driver matches the configured name, so

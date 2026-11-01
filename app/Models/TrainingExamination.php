@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Events\V1\ExaminationRecorded;
-use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TrainingExamination extends TrainingObject
@@ -21,12 +20,9 @@ class TrainingExamination extends TrainingObject
      * Fire a versioned domain event when an examination is recorded, at the
      * authoritative Eloquent creation point.
      */
-    protected static function booted(): void
-    {
-        static::created(function (self $examination): void {
-            DomainEvents::dispatch(new ExaminationRecorded($examination));
-        });
-    }
+    // The ExaminationRecorded event is dispatched by the controller after the
+    // examination's result and attachments are written, not from a created()
+    // observer (which would fire with an unfinished record).
 
     public function position()
     {

@@ -150,7 +150,7 @@ class ModuleRegistrar implements Registrar
 
     public function activityLogName(string $name, string $label): static
     {
-        $this->assertNamespaced($name, 'activity log name');
+        $this->assertNamespaced($name, 'activity log name', allowRoot: true);
         $this->activityLogNames[$name] = $label;
 
         return $this;
@@ -196,15 +196,21 @@ class ModuleRegistrar implements Registrar
      * Enforce that a registered name lives under the module's namespace. This is
      * what stops one module from granting itself core permissions.
      */
-    private function assertNamespaced(string $name, string $kind): void
+    private function assertNamespaced(string $name, string $kind, bool $allowRoot = false): void
     {
         $root = "modules.{$this->slug}";
 
-        // Accept the namespace root itself (e.g. an activity-log category
-        // `modules.example`) or anything beneath it (`modules.example.view`).
-        if ($name !== $root && ! str_starts_with($name, "{$root}.")) {
+        // Permissions, API scopes and role grants must name something *beneath*
+        // the root (`modules.<slug>.something`); the bare root alone is never a
+        // valid permission. Activity-log categories legitimately use the bare
+        // root, so they pass $allowRoot = true.
+        $valid = str_starts_with($name, "{$root}.") || ($allowRoot && $name === $root);
+
+        if (! $valid) {
+            $expected = $allowRoot ? "{$root} or {$root}.*" : "{$root}.*";
+
             throw new ModuleRegistrationException(
-                "Module [{$this->slug}] tried to register {$kind} [{$name}] outside its namespace [{$root}.*]."
+                "Module [{$this->slug}] tried to register {$kind} [{$name}] outside its namespace [{$expected}]."
             );
         }
     }

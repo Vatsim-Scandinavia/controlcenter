@@ -42,8 +42,15 @@ class UserDelete extends Command
      *
      * @param  'pseudonymise'|'delete'  $action
      */
-    private function runModulePrivacyHandlers(string $action, int $cid): void
+    /**
+     * Invoke the given privacy action on every installed module's handler,
+     * isolating each. Returns false if any handler failed, so the caller can
+     * surface incomplete cleanup rather than report unconditional success.
+     */
+    private function runModulePrivacyHandlers(string $action, int $cid): bool
     {
+        $allSucceeded = true;
+
         foreach ($this->modules->privacyHandlers() as $slug => $handlerClasses) {
             foreach ($handlerClasses as $handlerClass) {
                 try {
@@ -55,9 +62,12 @@ class UserDelete extends Command
                 } catch (Throwable $e) {
                     report($e);
                     $this->error("Module [{$slug}] failed to {$action} data for {$cid}: {$e->getMessage()}");
+                    $allSucceeded = false;
                 }
             }
         }
+
+        return $allSucceeded;
     }
 
     /**
@@ -139,16 +149,32 @@ class UserDelete extends Command
             } elseif ($choice == $choices[1]) {
                 $confirmed = $this->confirm('Are you sure you want to PERMANENTLY DELETE ' . $userInfo . '? This is IRREVERSIBLE!');
                 if ($confirmed) {
+                    // Permanently delete the user's data held by every installed
+                    // module FIRST: a module with a restrictive foreign key to
+                    // users would otherwise block $user->delete(), leaving the
+                    // handlers to never run.
+                    $privacyOk = $this->runModulePrivacyHandlers('delete', (int) $cid);
+
                     // Remove notification logs as it's not cascaded due to morph data structure
                     DB::table('notifications')->where('notifiable_type', 'App\Models\User')->where('notifiable_id', $cid)->delete();
 
                     // Remove things from Control Center
-                    $user->delete();
+                    try {
+                        $user->delete();
+                        $coreDeleted = true;
+                    } catch (Throwable $e) {
+                        report($e);
+                        $this->error('Failed to delete the core user record for ' . $userInfo . ': ' . $e->getMessage());
+                        $coreDeleted = false;
+                    }
 
-                    // Permanently delete the user's data held by every installed module.
-                    $this->runModulePrivacyHandlers('delete', (int) $cid);
-
-                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
+                    if ($coreDeleted && $privacyOk) {
+                        $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
+                    } elseif ($coreDeleted) {
+                        $this->warn('Core data for ' . $userInfo . ' was deleted, but one or more modules failed to delete their data (see errors above). Cleanup is incomplete.');
+                    } else {
+                        $this->error($userInfo . ' was NOT fully deleted. Resolve the errors above and run the command again.');
+                    }
                 }
             }
         } else {
