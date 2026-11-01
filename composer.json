@@ -7,9 +7,20 @@
         "laravel"
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/*"
+        },
+        {
+            "type": "path",
+            "url": "modules/*"
+        }
+    ],
     "require": {
         "php": ">=8.4 <8.6",
         "anlutro/l4-settings": "^1.4.1",
+        "controlcenter/module-api": "@dev",
         "dedoc/scramble": "^0.13.42",
         "graham-campbell/markdown": "^16.0",
         "guzzlehttp/guzzle": "^7.9.0",
@@ -67,7 +78,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "ControlCenter\\Modules\\Skeleton\\": "modules/skeleton/src/"
         }
     },
     "minimum-stability": "stable",
