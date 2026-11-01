@@ -111,4 +111,23 @@ class ModuleSettingsPageTest extends TestCase
             ])
             ->assertSessionHasErrors('greeting');
     }
+
+    #[Test]
+    public function a_secret_is_not_flashed_to_old_input_on_validation_failure(): void
+    {
+        // Finding 4: a validation failure must not flash secret fields to the
+        // session in cleartext.
+        $this->bootModules([ExampleModule::class], ['example']);
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.modules.settings.store', 'example'), [
+                'greeting' => str_repeat('a', 300), // fails max:255
+                'api_key' => 'super-secret-token',
+                'enabled_flag' => '1',
+            ])
+            ->assertSessionHasErrors('greeting');
+
+        $this->assertNull(session()->getOldInput('api_key'), 'The secret was flashed to old input.');
+        $this->assertSame('1', session()->getOldInput('enabled_flag'));
+    }
 }

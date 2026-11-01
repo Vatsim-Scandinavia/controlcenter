@@ -91,27 +91,8 @@ class ReviewFixesTest extends TestCase
         $user->roleAssignments()->create(['role' => 'modules.example.ghost', 'area_id' => null]);
     }
 
-    #[Test]
-    public function finding_4_a_secret_is_not_flashed_to_old_input_on_validation_failure(): void
-    {
-        $this->bootModules([ExampleModule::class], ['example']);
-
-        $admin = User::factory()->create();
-        $admin->roleAssignments()->create(['role' => 'admin', 'area_id' => null]);
-
-        // greeting has rule max:255; send an over-long value to fail validation,
-        // along with a secret api_key that must not be flashed back.
-        $response = $this->actingAs($admin)->post(route('admin.modules.settings.store', 'example'), [
-            'greeting' => str_repeat('x', 300),
-            'api_key' => 'super-secret-token',
-            'enabled_flag' => '1',
-        ]);
-
-        $response->assertSessionHasErrors('greeting');
-        $this->assertNull(session()->getOldInput('api_key'), 'The secret was flashed to old input.');
-        // Non-secret input is still flashed for redisplay.
-        $this->assertSame('1', session()->getOldInput('enabled_flag'));
-    }
+    // Finding 4 (secret kept out of flashed old input) is an admin settings-page
+    // concern and is covered by ModuleSettingsPageTest, which owns that route.
 
     #[Test]
     public function finding_9_a_failing_listener_does_not_suppress_the_others(): void
