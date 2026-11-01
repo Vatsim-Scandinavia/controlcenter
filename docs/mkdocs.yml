@@ -100,6 +100,7 @@ nav:
       - Configuration:
           - Initial configuration: configuration/index.md
           - System configuration: configuration/system.md
+          - Modules: configuration/modules.md
       - Setup:
           - Define the division: setup/division.md
           - Changing the logo: setup/logo.md
@@ -125,6 +126,7 @@ nav:
   - Reference:
       - Activity: activity.md
       - Contribute: contribute.md
+      - Developing modules: development/modules.md
       - API: api.md
       - Background jobs: background-jobs.md
       - Environment variables: reference/environment-variables.md

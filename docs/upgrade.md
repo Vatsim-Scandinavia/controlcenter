@@ -16,6 +16,37 @@ php artisan migrate
 php artisan optimize:clear
 ```
 
+## Upgrading to the Modules release
+
+This release introduces the [modules system](configuration/modules.md): an
+extension layer with stable extension points (navigation, UI slots, settings,
+permissions, events, drivers, API scopes and more). Core behaviour is unchanged
+and **no modules ship enabled**, so there are no required manual steps.
+
+### Notable changes
+
+- Task types are stored by a **stable key** rather than a class name; the
+  migration rewrites existing `tasks.type` values automatically (reversible).
+- A new `system.modules.manage` permission gates **Administration → Modules**.
+  `admin` has it; `director` does not. Module permissions (`modules.<slug>.*`)
+  are denied to `director` by default.
+- The division API now resolves its driver through a small registry
+  (`config('vatsim.division_api_drivers')`) instead of a hard-coded switch.
+  VATEUD remains a built-in driver and behaves exactly as before.
+- If an installed module ever makes the instance unusable, set
+  `MODULES_SAFE_MODE=true` to boot with all modules suppressed, then rebuild the
+  config cache (`php artisan config:cache`) if your instance caches config.
+- Module routes are registered per request and never enter the route cache, so
+  `php artisan route:cache` / `optimize` is safe and need not be re-run when a
+  module is enabled or disabled.
+
+After migrating, clear caches as usual:
+
+```sh
+php artisan migrate
+php artisan optimize:clear
+```
+
 ## Upgrading to 7.0.0
 
 This release changes how access is managed, rebuilds the theme system, and switches
