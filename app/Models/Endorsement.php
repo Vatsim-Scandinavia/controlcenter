@@ -28,15 +28,22 @@ class Endorsement extends Model
      */
     protected static function booted(): void
     {
-        static::created(function (self $endorsement): void {
-            DomainEvents::dispatch(new EndorsementGranted($endorsement));
-        });
-
         static::updated(function (self $endorsement): void {
             if ($endorsement->wasChanged('revoked') && $endorsement->revoked) {
                 DomainEvents::dispatch(new EndorsementRevoked($endorsement));
             }
         });
+    }
+
+    /**
+     * Announce that this endorsement was granted. Called by the creation flow
+     * once the endorsement's position/rating relations are attached, so
+     * listeners see the complete record — a created() observer would fire with
+     * none attached.
+     */
+    public function recordGranted(): void
+    {
+        DomainEvents::dispatch(new EndorsementGranted($this));
     }
 
     public function getActivitylogOptions(): LogOptions

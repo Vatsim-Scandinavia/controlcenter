@@ -87,6 +87,9 @@ class TrainingReportController extends Controller
         // Add attachments
         TrainingObjectAttachmentController::saveAttachments($request, $report);
 
+        // Announce creation now that attachments are saved.
+        $report->recordCreated();
+
         // Notify student of new training request if it's not a draft
         if ($report->draft != true && $training->user->setting_notify_newreport) {
             $training->user->notify(new TrainingReportNotification($training, $report));

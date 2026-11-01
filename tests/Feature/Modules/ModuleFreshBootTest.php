@@ -24,6 +24,8 @@ class ModuleFreshBootTest extends TestCase
 {
     private static string $dbFile = '';
 
+    private static string $cacheDir = '';
+
     /** @var array<string, string> */
     private array $env = [];
 
@@ -36,8 +38,11 @@ class ModuleFreshBootTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        self::$dbFile = sys_get_temp_dir() . '/cc_freshboot_' . bin2hex(random_bytes(6)) . '.sqlite';
+        $tmp = sys_get_temp_dir() . '/cc_freshboot_' . bin2hex(random_bytes(6));
+        self::$dbFile = $tmp . '.sqlite';
+        self::$cacheDir = $tmp . '_cache';
         touch(self::$dbFile);
+        @mkdir(self::$cacheDir, 0777, true);
 
         $migrate = new Process(
             ['php', 'artisan', 'migrate', '--force'],
@@ -52,21 +57,35 @@ class ModuleFreshBootTest extends TestCase
     public static function tearDownAfterClass(): void
     {
         @unlink(self::$dbFile);
-        @unlink(self::basePath('bootstrap/cache/config.php'));
+        @array_map('unlink', (array) glob(self::$cacheDir . '/*'));
+        @rmdir(self::$cacheDir);
+    }
+
+    private function configCachePath(): string
+    {
+        return self::$cacheDir . '/config.php';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        @unlink(self::basePath('bootstrap/cache/config.php'));
+        // Guard: the subprocesses here must never write the shared config cache.
+        // If a leftover exists it could silently change every other test's
+        // config, so fail loudly rather than tolerate it.
+        $this->assertFileDoesNotExist(
+            self::basePath('bootstrap/cache/config.php'),
+            'A cached config leaked into bootstrap/cache; it would affect other tests.'
+        );
+
+        @unlink($this->configCachePath());
         $this->env = self::baseEnv();
         $this->pdo()->exec('DELETE FROM modules');
     }
 
     protected function tearDown(): void
     {
-        @unlink(self::basePath('bootstrap/cache/config.php'));
+        @unlink($this->configCachePath());
 
         parent::tearDown();
     }
@@ -83,6 +102,14 @@ class ModuleFreshBootTest extends TestCase
             'MODULES_REGISTER' => ExampleModule::class,
             'CACHE_STORE' => 'array',
             'SESSION_DRIVER' => 'array',
+            // Isolate every bootstrap cache path so config:cache (and any other
+            // cache) writes into this test's temp dir, never the shared
+            // bootstrap/cache that other tests boot from.
+            'APP_CONFIG_CACHE' => self::$cacheDir . '/config.php',
+            'APP_EVENTS_CACHE' => self::$cacheDir . '/events.php',
+            'APP_PACKAGES_CACHE' => self::$cacheDir . '/packages.php',
+            'APP_ROUTES_CACHE' => self::$cacheDir . '/routes.php',
+            'APP_SERVICES_CACHE' => self::$cacheDir . '/services.php',
         ];
     }
 
@@ -160,8 +187,11 @@ class ModuleFreshBootTest extends TestCase
         $cacheProcess = new Process(['php', 'artisan', 'config:cache'], self::basePath(), $this->env, null, 120);
         $cacheProcess->mustRun();
 
-        $cached = self::basePath('bootstrap/cache/config.php');
+        // The cache is written to this test's isolated path (APP_CONFIG_CACHE),
+        // never the shared bootstrap/cache.
+        $cached = $this->configCachePath();
         $this->assertFileExists($cached);
+        $this->assertFileDoesNotExist(self::basePath('bootstrap/cache/config.php'));
         $this->assertStringNotContainsString('modules.example', (string) file_get_contents($cached));
 
         $this->setEnabled(false);

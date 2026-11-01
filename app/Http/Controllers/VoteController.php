@@ -103,6 +103,9 @@ class VoteController extends Controller
             $vote_option->save();
         }
 
+        // Announce creation now that the vote's options are attached.
+        $vote->recordCreated();
+
         ActivityLogService::danger(LogName::Other, 'Created vote ' . $vote->id . ' ― Question: ' . $vote->question);
 
         return redirect()->intended(route('vote.overview'))->withSuccess('Vote succesfully created.');

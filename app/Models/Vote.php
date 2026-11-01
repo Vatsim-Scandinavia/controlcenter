@@ -20,15 +20,21 @@ class Vote extends Model
      */
     protected static function booted(): void
     {
-        static::created(function (self $vote): void {
-            DomainEvents::dispatch(new VoteCreated($vote));
-        });
-
         static::updated(function (self $vote): void {
             if ($vote->wasChanged('closed') && $vote->closed) {
                 DomainEvents::dispatch(new VoteClosed($vote));
             }
         });
+    }
+
+    /**
+     * Announce that this vote was created. Called by the creation flow once the
+     * vote's options are attached, so listeners see the complete vote — a
+     * created() observer would fire with no options.
+     */
+    public function recordCreated(): void
+    {
+        DomainEvents::dispatch(new VoteCreated($this));
     }
 
     public function option()

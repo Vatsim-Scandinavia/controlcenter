@@ -11,6 +11,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\MentorController;
+use App\Http\Controllers\ModuleUserSettingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\ReportController;
@@ -84,6 +85,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/settings', 'settings_update')->name('user.settings.store');
         Route::post('/settings/theme', 'settings_update_theme')->name('user.settings.theme');
         Route::get('/settings/extendworkmail', 'extendWorkmail')->name('user.settings.extendworkmail');
+        Route::post('/settings/modules/{slug}', [ModuleUserSettingController::class, 'update'])->name('user.settings.modules.store');
 
         // Internal user search
         Route::get('/user/search/find', 'search')->name('user.search');

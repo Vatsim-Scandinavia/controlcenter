@@ -17,11 +17,13 @@ use App\Helpers\TaskStatus;
 use App\Helpers\TrainingStatus;
 use App\Models\Endorsement;
 use App\Models\Feedback;
+use App\Models\Rating;
 use App\Models\RoleAssignment;
 use App\Models\Task;
 use App\Models\Training;
 use App\Models\User;
 use App\Models\Vote;
+use App\Models\VoteOption;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
@@ -43,15 +45,20 @@ class DomainEventsTest extends TestCase
     /** @var array<int, string> */
     private array $fired = [];
 
+    /** @var array<string, object> */
+    private array $captured = [];
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->fired = [];
+        $this->captured = [];
 
-        Event::listen('*', function (string $event): void {
+        Event::listen('*', function (string $event, array $payload): void {
             if (str_starts_with($event, 'App\\Events\\V1\\')) {
                 $this->fired[] = $event;
+                $this->captured[$event] = $payload[0] ?? null;
             }
         });
     }
@@ -77,7 +84,17 @@ class DomainEventsTest extends TestCase
             'area_id' => 1,
         ]);
 
+        // A bare create no longer fires TrainingCreated: the creation flow
+        // dispatches it after the rating relations are attached (finding 8).
+        $this->assertNotFired(TrainingCreated::class);
+
+        $training->ratings()->saveMany(Rating::query()->take(2)->get());
+        $training->recordCreated();
+
         $this->assertFired(TrainingCreated::class);
+        // The event carries the completed record, with ratings attached.
+        $this->assertTrue($this->captured[TrainingCreated::class]->training->ratings->isNotEmpty());
+
         $this->assertNotFired(TrainingStatusChanged::class);
 
         $training->updateStatus(TrainingStatus::PRE_TRAINING);
@@ -91,6 +108,11 @@ class DomainEventsTest extends TestCase
         User::factory()->create();
 
         $endorsement = Endorsement::factory()->create();
+        // A bare create no longer fires EndorsementGranted: the creation flow
+        // dispatches it after positions/ratings are attached (finding 8).
+        $this->assertNotFired(EndorsementGranted::class);
+
+        $endorsement->recordGranted();
         $this->assertFired(EndorsementGranted::class);
         $this->assertNotFired(EndorsementRevoked::class);
 
@@ -126,7 +148,19 @@ class DomainEventsTest extends TestCase
         $vote->end_at = now()->subMinute();
         $vote->save();
 
+        // A bare save no longer fires VoteCreated: the creation flow dispatches
+        // it after the vote's options are attached (finding 8).
+        $this->assertNotFired(VoteCreated::class);
+
+        $option = new VoteOption;
+        $option->vote_id = $vote->id;
+        $option->option = 'Yes';
+        $option->voted = 0;
+        $option->save();
+        $vote->recordCreated();
+
         $this->assertFired(VoteCreated::class);
+        $this->assertTrue($this->captured[VoteCreated::class]->vote->option->isNotEmpty());
         $this->assertNotFired(VoteClosed::class);
 
         Artisan::call('clean:votes');

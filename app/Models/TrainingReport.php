@@ -31,10 +31,16 @@ class TrainingReport extends TrainingObject
                 $report->published_at = now();
             }
         });
+    }
 
-        static::created(function (self $report): void {
-            DomainEvents::dispatch(new TrainingReportCreated($report));
-        });
+    /**
+     * Announce that this report was created. Called by the creation flow once
+     * the report's attachments are saved, so listeners see the complete report
+     * — a created() observer would fire before attachments exist.
+     */
+    public function recordCreated(): void
+    {
+        DomainEvents::dispatch(new TrainingReportCreated($this));
     }
 
     /**

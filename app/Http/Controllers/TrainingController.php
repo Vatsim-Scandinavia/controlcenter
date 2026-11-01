@@ -298,6 +298,10 @@ class TrainingController extends Controller
 
         $training->ratings()->saveMany($ratings);
 
+        // Announce creation now that ratings are attached (not from a created()
+        // observer that would fire with none).
+        $training->recordCreated();
+
         ActivityLogService::info(LogName::Training, 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
 
         // Send confimration mail

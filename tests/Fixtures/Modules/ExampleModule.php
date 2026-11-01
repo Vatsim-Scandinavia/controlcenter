@@ -57,7 +57,11 @@ class ExampleModule implements Module
                     ->secret('api_key', 'API key', ['nullable', 'string'])
                     ->boolean('enabled_flag', 'An example toggle')
             )
-            ->userSettings((new SettingsSchema)->add(new SettingField('nickname', 'Nickname', 'text', ['nullable', 'string', 'max:50'])))
+            ->userSettings(
+                (new SettingsSchema)
+                    ->add(new SettingField('nickname', 'Nickname', 'text', ['nullable', 'string', 'max:50']))
+                    ->secret('personal_token', 'Personal token', ['nullable', 'string'])
+            )
             ->role('reviewer', [
                 'name' => 'Example Reviewer',
                 'description' => 'Reviews example things',

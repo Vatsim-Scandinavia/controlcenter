@@ -106,6 +106,11 @@
 
 </div>
 
-{{-- Module-contributed user settings panels. --}}
+{{-- Per-user settings declared by enabled modules via Registrar::userSettings().
+     Core renders, validates and persists these; the module only declares the
+     schema. --}}
+@include('modules.user-settings')
+
+{{-- Module-contributed user settings panels (arbitrary module UI). --}}
 <x-module-slot :name="\ControlCenter\ModuleApi\Ui\Slot::UserSettings" />
 @endsection

@@ -146,6 +146,8 @@ class EndorsementController extends Controller
             // Add ratings
             $endorsement->ratings()->save(Rating::find($data['ratingFACILITY']));
 
+            $endorsement->recordGranted();
+
             ActivityLogService::warning(LogName::Endorsement, 'Created facility endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Rating: ' . Rating::find($data['ratingFACILITY'])->name);
@@ -216,6 +218,8 @@ class EndorsementController extends Controller
             // Add positions
             $endorsement->positions()->save(Position::where('callsign', $data['position'])->get()->first());
 
+            $endorsement->recordGranted();
+
             ActivityLogService::warning(LogName::Endorsement, 'Created SOLO endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Positions: ' . $data['position']);
@@ -256,6 +260,8 @@ class EndorsementController extends Controller
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
             $endorsement->areas()->saveMany(Area::find($data['areas']));
 
+            $endorsement->recordGranted();
+
             ActivityLogService::warning(LogName::Endorsement, 'Created ' . $endorsementType . ' endorsement ' .
             ' ― User: ' . $endorsement->user_id .
             ' ― Rating: ' . $data['ratingGRP'] .
@@ -283,6 +289,8 @@ class EndorsementController extends Controller
             // Attach ratings and areas
             $endorsement->areas()->saveMany(Area::find($data['areas']));
             $endorsement->ratings()->save(Rating::find($data['ratingGRP']));
+
+            $endorsement->recordGranted();
 
             ActivityLogService::warning(LogName::Endorsement, 'Created ' . $endorsementType . ' endorsement ' .
             ' ― User: ' . $endorsement->user_id .

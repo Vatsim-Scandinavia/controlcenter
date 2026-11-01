@@ -28,10 +28,6 @@ class Training extends Model
      */
     protected static function booted(): void
     {
-        static::created(function (self $training): void {
-            DomainEvents::dispatch(new TrainingCreated($training));
-        });
-
         static::updated(function (self $training): void {
             if ($training->wasChanged('status')) {
                 DomainEvents::dispatch(new TrainingStatusChanged(
@@ -41,6 +37,16 @@ class Training extends Model
                 ));
             }
         });
+    }
+
+    /**
+     * Announce that this training was created. Called by the creation flow once
+     * the training's rating relations are attached, so listeners see the
+     * complete record — a created() observer would fire with no ratings.
+     */
+    public function recordCreated(): void
+    {
+        DomainEvents::dispatch(new TrainingCreated($this));
     }
 
     /**

@@ -31,14 +31,15 @@ class Booking extends Model
             DomainEvents::dispatch(new BookingCreated($booking));
         });
 
+        // A booking is cancelled by setting its `deleted` flag (see
+        // BookingController); that is the single authoritative "deleted" moment.
+        // The Eloquent delete() of the row is cleanup (and bulk cleanup bypasses
+        // model events anyway), so it must NOT also dispatch — doing both
+        // double-fired BookingDeleted across a booking's lifecycle.
         static::updated(function (self $booking): void {
             if ($booking->wasChanged('deleted') && $booking->deleted) {
                 DomainEvents::dispatch(new BookingDeleted($booking));
             }
-        });
-
-        static::deleted(function (self $booking): void {
-            DomainEvents::dispatch(new BookingDeleted($booking));
         });
     }
 
