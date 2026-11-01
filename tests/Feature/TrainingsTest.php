@@ -128,7 +128,7 @@ class TrainingsTest extends TestCase
     private function completedUpgradeTask(Training $training, ?Rating $rating): Task
     {
         return Task::create([
-            'type' => RatingUpgrade::class,
+            'type' => RatingUpgrade::KEY,
             'status' => TaskStatus::COMPLETED,
             'subject_user_id' => $training->user->id,
             'subject_training_id' => $training->id,

@@ -137,6 +137,7 @@ return [
         'system.settings.manage',
         'system.votes.manage',
         'system.activity-log.view',
+        'system.modules.manage',
 
         // Role management — one grant-authority permission per grantable role.
         // Governs both granting and revoking that role (both go through UserPolicy::updateRole).
@@ -168,6 +169,10 @@ return [
         'director' => [
             '**',
             '!system.**',
+            // Module permissions are denied by default; operators opt specific
+            // roles in by adding `modules.<slug>.*` patterns here. `admin`
+            // keeps the catch-all `**` and so retains module permissions.
+            '!modules.**',
             '!examinations.create',
             '!training.reports.one-time-link',
             '!training.attachments.view-hidden',

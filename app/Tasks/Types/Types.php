@@ -3,6 +3,7 @@
 namespace App\Tasks\Types;
 
 use App\Models\Task;
+use App\Tasks\TaskTypeRegistry;
 
 /**
  * Abstract class for task types
@@ -18,6 +19,16 @@ abstract class Types
     {
         $this->name = $this->getName();
         $this->icon = $this->getIcon();
+    }
+
+    /**
+     * The stable key this type is registered under, used as the persisted
+     * tasks.type value. Null when the type is not registered (e.g. a module is
+     * disabled).
+     */
+    public function key(): ?string
+    {
+        return app(TaskTypeRegistry::class)->keyFor(static::class);
     }
 
     public function onCreated(Task $model)

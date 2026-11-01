@@ -219,6 +219,8 @@ class TrainingService
 
         $endorsement->ratings()->save(Rating::find($rating->id));
 
+        $endorsement->recordGranted();
+
         // Stamped last, and only on success, so a failed call leaves the part outstanding
         // for a retry. The stamp records the grant; completeTraining() re-runs stamped
         // parts deliberately.

@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Events\V1\TaskCreated;
+use App\Events\V1\TaskStatusChanged;
 use App\Helpers\TaskStatus;
+use App\Support\DomainEvents;
+use App\Tasks\TaskTypeRegistry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +20,31 @@ class Task extends Model
         'status' => TaskStatus::class,
         'closed_at' => 'datetime',
     ];
+
+    /**
+     * Fire versioned domain events at the authoritative Eloquent mutation
+     * points: creation, and any status transition (e.g. complete or decline).
+     */
+    protected static function booted(): void
+    {
+        static::created(function (self $task): void {
+            // Reload so columns filled by database defaults (e.g. status) are
+            // present on the model the event carries, rather than null in memory.
+            $task->refresh();
+
+            DomainEvents::dispatch(new TaskCreated($task));
+        });
+
+        static::updated(function (self $task): void {
+            if ($task->wasChanged('status')) {
+                DomainEvents::dispatch(new TaskStatusChanged(
+                    $task,
+                    $task->getOriginal('status'),
+                    $task->status,
+                ));
+            }
+        });
+    }
 
     public function creator()
     {
@@ -44,10 +73,10 @@ class Task extends Model
 
     public function type()
     {
-        if ($this->type) {
-            return app($this->type);
-        } else {
+        if (! $this->type) {
             throw new \Exception('Invalid task type: ' . $this->type);
         }
+
+        return app(TaskTypeRegistry::class)->make($this->type);
     }
 }

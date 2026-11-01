@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\V1\ExaminationRecorded;
 use App\Facades\DivisionApi;
 use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
@@ -16,6 +17,7 @@ use App\Notifications\MentorExaminationNotification;
 use App\Notifications\TrainingExamNotification;
 use App\Services\ActivityLogService;
 use App\Services\DivisionApi\DivisionApiError;
+use App\Support\DomainEvents;
 use App\Tasks\Types\RatingUpgrade;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -95,6 +97,12 @@ class TrainingExaminationController extends Controller
         $attachmentId = TrainingObjectAttachmentController::saveAttachments($request, $examination);
         $attachmentUrl = (isset($attachmentId[0])) ? route('training.object.attachment.show', ['attachment' => $attachmentId[0]]) : null;
 
+        // Dispatch once the examination is complete: the result is written and
+        // its attachments are persisted (a listener may read them), not from a
+        // model observer that would fire before either is in place.
+        $examination->refresh();
+        DomainEvents::dispatch(new ExaminationRecorded($examination));
+
         // Notify the training user
         $training->user->notify(new TrainingExamNotification($training, $examination));
 
@@ -110,7 +118,7 @@ class TrainingExaminationController extends Controller
             $taskRating = isset($data['subject_training_rating_id']) ? (int) $data['subject_training_rating_id'] : null;
             if ($taskAsignee->can('receive', Task::class)) {
                 $task = Task::create([
-                    'type' => RatingUpgrade::class,
+                    'type' => RatingUpgrade::KEY,
                     'subject_user_id' => $training->user->id,
                     'subject_training_id' => $training->id,
                     'subject_training_rating_id' => $taskRating,

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\V1\TrainingReportCreated;
+use App\Support\DomainEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TrainingReport extends TrainingObject
@@ -29,6 +31,20 @@ class TrainingReport extends TrainingObject
                 $report->published_at = now();
             }
         });
+    }
+
+    /**
+     * Announce that this report was created. Called by the creation flow once
+     * the report's attachments are saved, so listeners see the complete report
+     * — a created() observer would fire before attachments exist.
+     */
+    public function recordCreated(): void
+    {
+        // Reload so columns filled by database defaults are present on the
+        // model the event carries, rather than null in memory.
+        $this->refresh();
+
+        DomainEvents::dispatch(new TrainingReportCreated($this));
     }
 
     /**

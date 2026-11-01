@@ -6,6 +6,7 @@ use App\Actions\GrantRole;
 use App\Actions\RevokeRole;
 use App\Models\Area;
 use App\Models\User;
+use App\Services\RoleSource;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
@@ -88,7 +89,7 @@ class UserRoles extends Component
     {
         $result = [];
 
-        foreach (config('roles.roles') as $role => $def) {
+        foreach (app(RoleSource::class)->roles() as $role => $def) {
             if ($role === 'admin') {
                 continue;
             }
@@ -111,7 +112,7 @@ class UserRoles extends Component
      */
     public function globalOptionFor(string $role): array
     {
-        $scope = config("roles.roles.{$role}.scope");
+        $scope = app(RoleSource::class)->role($role)['scope'] ?? null;
 
         if (! in_array($scope, ['global', 'both'], true)) {
             return ['applicable' => false, 'enabled' => false, 'reason' => 'Not available for this role'];
@@ -136,7 +137,7 @@ class UserRoles extends Component
      */
     public function areaOptionsFor(string $role): array
     {
-        $scope = config("roles.roles.{$role}.scope");
+        $scope = app(RoleSource::class)->role($role)['scope'] ?? null;
 
         $held = $this->user->roleAssignments->where('role', $role)
             ->whereNotNull('area_id')->pluck('area_id')->all();
@@ -288,7 +289,7 @@ class UserRoles extends Component
         $this->user->load('roleAssignments.area');
 
         return view('livewire.user-roles', [
-            'roles' => config('roles.roles'),
+            'roles' => app(RoleSource::class)->roles(),
             'globalAssignments' => $this->user->roleAssignments->whereNull('area_id'),
             'areaGroups' => $this->user->roleAssignments->whereNotNull('area_id')
                 ->groupBy(fn ($a) => $a->area->name),

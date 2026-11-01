@@ -3,6 +3,8 @@
 namespace App\Console;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Modules\ModuleRegistry;
+use App\Modules\ModuleScheduler;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -96,6 +98,10 @@ class Kernel extends ConsoleKernel
             Setting::set('_lastCronRun', now());
             Setting::save();
         })->everyMinute();
+
+        // Scheduled tasks registered by enabled modules. Disabled modules
+        // contribute nothing, so their commands are never scheduled.
+        ModuleScheduler::schedule($schedule, app(ModuleRegistry::class));
     }
 
     /**

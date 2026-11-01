@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="mt-3">
-                                <input type="hidden" name="type" value="{{ $requestType::class }}">
+                                <input type="hidden" name="type" value="{{ $requestType->key() }}">
                                 <input type="hidden" name="subject_user_id" value="{{ $training->user->id }}">
                                 <input type="hidden" name="subject_training_id" value="{{ $training->id }}">
                             </div>

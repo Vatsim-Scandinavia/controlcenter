@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Area;
 use App\Models\User;
+use App\Services\RoleSource;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -75,18 +76,47 @@ class UserPolicy
             return false;
         }
 
+        $roleSource = app(RoleSource::class);
+        $definition = $roleSource->role($requestedRole);
+
+        // A role whose definition is no longer active (its module was disabled
+        // or uninstalled) leaves dangling assignments. Those grant nothing while
+        // the definition is absent, but a module manager must still be able to
+        // revoke them. Authorise only when the target already holds this exact
+        // assignment (so it can only be a revocation, never a new grant of an
+        // undefined role) and the role is module-contributed.
+        if ($definition === null) {
+            $holdsAssignment = $model->roleAssignments()
+                ->where('role', $requestedRole)
+                ->when(
+                    $requestedArea === null,
+                    fn ($query) => $query->whereNull('area_id'),
+                    fn ($query) => $query->where('area_id', $requestedArea->id),
+                )
+                ->exists();
+
+            return $holdsAssignment
+                && $roleSource->isModuleRole($requestedRole)
+                && $user->hasGlobalPermission('system.modules.manage');
+        }
+
         // Global (area-less) assignments require the role's scope to allow them
         if ($requestedArea === null
-            && ! in_array(config("roles.roles.{$requestedRole}.scope"), ['both', 'global'], true)) {
+            && ! in_array($definition['scope'] ?? null, ['both', 'global'], true)) {
             return false;
         }
 
-        $permission = "roles.{$requestedRole}.manage";
+        // Module-contributed roles are governed by the module-management
+        // permission rather than a roles.<role>.manage permission that nothing
+        // registers.
+        $permission = $roleSource->isModuleRole($requestedRole)
+            ? 'system.modules.manage'
+            : "roles.{$requestedRole}.manage";
 
         // Grant authority must be held at (or above) the grant's scope. A global grant always
         // needs global authority; a role declaring grant_scope 'global' needs it even in an area.
         $requiresGlobalAuthority = $requestedArea === null
-            || config("roles.roles.{$requestedRole}.grant_scope", 'area') === 'global';
+            || ($definition['grant_scope'] ?? 'area') === 'global';
 
         return $requiresGlobalAuthority
             ? $user->hasGlobalPermission($permission)

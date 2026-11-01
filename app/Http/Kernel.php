@@ -5,8 +5,10 @@ namespace App\Http;
 use App\Http\Middleware\ApiToken;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnsureModuleEnabled;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RegisterModuleRoutes;
 use App\Http\Middleware\SuspendedUser;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
@@ -45,6 +47,9 @@ class Kernel extends HttpKernel
         ValidatePostSize::class,
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
+        // Register enabled modules' routes before the router dispatches, so they
+        // are available at runtime yet never baked into the route cache.
+        RegisterModuleRoutes::class,
     ];
 
     /**
@@ -90,6 +95,7 @@ class Kernel extends HttpKernel
         'api-token' => ApiToken::class,
         'activity' => UserActive::class,
         'suspended' => SuspendedUser::class,
+        'module' => EnsureModuleEnabled::class,
     ];
 
     /**

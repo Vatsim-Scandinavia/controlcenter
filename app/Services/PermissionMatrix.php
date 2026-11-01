@@ -4,6 +4,9 @@ namespace App\Services;
 
 class PermissionMatrix
 {
+    // Roles and permissions are read live from the RoleSource (pristine core
+    // config plus enabled-module contributions); config is never mutated.
+
     /**
      * Compiled regex cache, keyed by pattern.
      *
@@ -18,7 +21,7 @@ class PermissionMatrix
      */
     public function all(): array
     {
-        return array_values(config('roles.permissions', []));
+        return app(RoleSource::class)->permissions();
     }
 
     /**
@@ -34,7 +37,7 @@ class PermissionMatrix
 
         $roles = [];
 
-        foreach (config('roles.matrix', []) as $role => $patterns) {
+        foreach (app(RoleSource::class)->matrix() as $role => $patterns) {
             if ($this->granted($permission, $patterns)) {
                 $roles[] = $role;
             }
@@ -50,7 +53,7 @@ class PermissionMatrix
      */
     public function permissionsFor(string $role): array
     {
-        $patterns = config("roles.matrix.{$role}", []);
+        $patterns = app(RoleSource::class)->matrix()[$role] ?? [];
 
         return array_values(array_filter(
             $this->all(),

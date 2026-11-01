@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class RatingUpgrade extends Types
 {
+    /** Stable key persisted in the tasks.type column. Never change once shipped. */
+    public const string KEY = 'rating-upgrade';
+
     public function getName()
     {
         return 'Rating Upgrade';

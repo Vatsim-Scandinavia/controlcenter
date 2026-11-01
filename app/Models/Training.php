@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Events\V1\TrainingCreated;
+use App\Events\V1\TrainingStatusChanged;
 use App\Helpers\InterestStatus;
 use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
+use App\Support\DomainEvents;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +20,38 @@ use Spatie\Activitylog\Support\LogOptions;
 class Training extends Model
 {
     use HasFactory;
+
+    /**
+     * Fire versioned domain events at the authoritative Eloquent mutation
+     * points so every creation and status transition is observable by modules,
+     * regardless of which controller, command or service triggered it.
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (self $training): void {
+            if ($training->wasChanged('status')) {
+                DomainEvents::dispatch(new TrainingStatusChanged(
+                    $training,
+                    $training->getOriginal('status'),
+                    $training->status,
+                ));
+            }
+        });
+    }
+
+    /**
+     * Announce that this training was created. Called by the creation flow once
+     * the training's rating relations are attached, so listeners see the
+     * complete record — a created() observer would fire with no ratings.
+     */
+    public function recordCreated(): void
+    {
+        // Reload so columns filled by database defaults (e.g. status) are
+        // present on the model the event carries, rather than null in memory.
+        $this->refresh();
+
+        DomainEvents::dispatch(new TrainingCreated($this));
+    }
 
     /**
      * Idle activity log options not used until LogsActivity is used.
