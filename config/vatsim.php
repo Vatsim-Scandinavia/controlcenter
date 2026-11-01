@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\DivisionApi\Adapters\VATEUD;
+
 return [
 
     /*
@@ -40,6 +42,13 @@ return [
     'division_api_driver' => env('VATSIM_DIVISION_API_DRIVER'),
     'division_api_url' => env('VATSIM_DIVISION_API_URL'),
     'division_api_token' => env('VATSIM_DIVISION_API_TOKEN'),
+
+    // Built-in division API drivers, keyed by the name `division_api_driver`
+    // selects. This is the core registration path into the driver registry;
+    // modules contribute additional drivers through Registrar::driver().
+    'division_api_drivers' => [
+        'VATEUD' => VATEUD::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------
