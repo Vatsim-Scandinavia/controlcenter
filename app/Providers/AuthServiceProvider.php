@@ -33,5 +33,19 @@ class AuthServiceProvider extends ServiceProvider
                 return $user->hasPermission($permission, $area);
             });
         }
+
+        // Module abilities are additionally resolved dynamically, so enabling or
+        // disabling a module takes effect immediately — even within the request
+        // that toggles it — rather than only on the next boot. The gate
+        // definitions above are a snapshot of the state at boot; this resolves
+        // any `modules.*` ability live against RoleSource (via hasPermission),
+        // whether or not a gate was defined for it.
+        Gate::before(function ($user, string $ability, array $arguments = []) {
+            if (! str_starts_with($ability, 'modules.')) {
+                return null;
+            }
+
+            return $user->hasPermission($ability, $arguments[0] ?? null) ?: null;
+        });
     }
 }

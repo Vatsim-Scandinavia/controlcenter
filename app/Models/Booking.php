@@ -28,6 +28,10 @@ class Booking extends Model
     protected static function booted(): void
     {
         static::created(function (self $booking): void {
+            // Reload so columns filled by database defaults are present on the
+            // model the event carries, rather than null in memory.
+            $booking->refresh();
+
             DomainEvents::dispatch(new BookingCreated($booking));
         });
 

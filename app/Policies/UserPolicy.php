@@ -79,6 +79,27 @@ class UserPolicy
         $roleSource = app(RoleSource::class);
         $definition = $roleSource->role($requestedRole);
 
+        // A role whose definition is no longer active (its module was disabled
+        // or uninstalled) leaves dangling assignments. Those grant nothing while
+        // the definition is absent, but a module manager must still be able to
+        // revoke them. Authorise only when the target already holds this exact
+        // assignment (so it can only be a revocation, never a new grant of an
+        // undefined role) and the role is module-contributed.
+        if ($definition === null) {
+            $holdsAssignment = $model->roleAssignments()
+                ->where('role', $requestedRole)
+                ->when(
+                    $requestedArea === null,
+                    fn ($query) => $query->whereNull('area_id'),
+                    fn ($query) => $query->where('area_id', $requestedArea->id),
+                )
+                ->exists();
+
+            return $holdsAssignment
+                && $roleSource->isModuleRole($requestedRole)
+                && $user->hasGlobalPermission('system.modules.manage');
+        }
+
         // Global (area-less) assignments require the role's scope to allow them
         if ($requestedArea === null
             && ! in_array($definition['scope'] ?? null, ['both', 'global'], true)) {

@@ -51,7 +51,17 @@ class UserDelete extends Command
     {
         $allSucceeded = true;
 
-        foreach ($this->modules->privacyHandlers() as $slug => $handlerClasses) {
+        $plan = $this->modules->privacyCleanupPlan();
+
+        // A module that could not be initialised might still hold this user's
+        // data. Treat that as incomplete cleanup rather than silently assuming
+        // there is nothing to remove.
+        foreach ($plan['failed'] as $slug => $reason) {
+            $this->error($reason);
+            $allSucceeded = false;
+        }
+
+        foreach ($plan['handlers'] as $slug => $handlerClasses) {
             foreach ($handlerClasses as $handlerClass) {
                 try {
                     /** @var PrivacyHandler $handler */
@@ -95,10 +105,8 @@ class UserDelete extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): int
     {
         $cid = $this->ask("What is the user's CID?");
 
@@ -141,9 +149,15 @@ class UserDelete extends Command
                     $user->save();
 
                     // Pseudonymise the user's data held by every installed module.
-                    $this->runModulePrivacyHandlers('pseudonymise', (int) $cid);
+                    $privacyOk = $this->runModulePrivacyHandlers('pseudonymise', (int) $cid);
 
                     $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into CC again.');
+
+                    if (! $privacyOk) {
+                        $this->error('One or more modules could not pseudonymise their data (see errors above). Cleanup is incomplete; resolve the errors and run the command again.');
+
+                        return self::FAILURE;
+                    }
                 }
                 // PERMANENTLY DELETE
             } elseif ($choice == $choices[1]) {
@@ -155,30 +169,39 @@ class UserDelete extends Command
                     // handlers to never run.
                     $privacyOk = $this->runModulePrivacyHandlers('delete', (int) $cid);
 
+                    // If a module could not remove its data (or could not be
+                    // initialised at all), do NOT delete the core user: doing so
+                    // would strand that module's personal data with no user to
+                    // tie it back to. Keep the user so the operator can resolve
+                    // the failure and retry, and signal incompleteness.
+                    if (! $privacyOk) {
+                        $this->error($userInfo . ' was NOT deleted: one or more modules could not remove their data (see errors above). Resolve the errors and run the command again.');
+
+                        return self::FAILURE;
+                    }
+
                     // Remove notification logs as it's not cascaded due to morph data structure
                     DB::table('notifications')->where('notifiable_type', 'App\Models\User')->where('notifiable_id', $cid)->delete();
 
                     // Remove things from Control Center
                     try {
                         $user->delete();
-                        $coreDeleted = true;
                     } catch (Throwable $e) {
                         report($e);
                         $this->error('Failed to delete the core user record for ' . $userInfo . ': ' . $e->getMessage());
-                        $coreDeleted = false;
+
+                        return self::FAILURE;
                     }
 
-                    if ($coreDeleted && $privacyOk) {
-                        $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
-                    } elseif ($coreDeleted) {
-                        $this->warn('Core data for ' . $userInfo . ' was deleted, but one or more modules failed to delete their data (see errors above). Cleanup is incomplete.');
-                    } else {
-                        $this->error($userInfo . ' was NOT fully deleted. Resolve the errors above and run the command again.');
-                    }
+                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
                 }
             }
-        } else {
-            $this->error('No records of ' . $cid . ' was found.');
+
+            return self::SUCCESS;
         }
+
+        $this->error('No records of ' . $cid . ' was found.');
+
+        return self::FAILURE;
     }
 }

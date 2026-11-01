@@ -2,8 +2,14 @@
 
 namespace App\Modules;
 
+use App\Providers\ModuleServiceProvider;
+use Illuminate\Routing\CompiledRouteCollection;
+use Illuminate\Routing\RouteCollection;
+use Illuminate\Routing\RouteCollectionInterface;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use ReflectionProperty;
 use Throwable;
 
 /**
@@ -15,11 +21,20 @@ use Throwable;
  * Only {@see ModuleRegistry::booted()} modules are activated here, so a disabled
  * module's `register()` hook is never run on a normal boot and its route
  * callbacks never execute — which also means safe mode (where `booted()` is
- * empty) registers no module routes at all. Each module's route registration is
- * isolated so a throwing route callback cannot break application boot.
+ * empty) registers no module routes at all.
  *
- * Note: because routes are registered only for enabled modules, an instance
- * that uses `route:cache` must re-run it after enabling or disabling a module.
+ * This runs at runtime after the core routes have loaded (see
+ * {@see ModuleServiceProvider}), and module routes are never
+ * written into the route cache. That keeps enabling/disabling a module
+ * effective immediately without re-running `route:cache`, and makes the current
+ * enabled state the single source of truth across replicas.
+ *
+ * Each module's registration is isolated: a throwing route callback is logged,
+ * reported to Sentry, and — crucially — the router's group stack is restored to
+ * its pre-module depth, because {@see Router::group()} does not pop its own
+ * attributes when the callback throws. Without that restore, the module's
+ * prefix, middleware and name-prefix would bleed onto every route registered
+ * afterwards (core routes and later modules alike).
  */
 class ModuleRouteLoader
 {
@@ -29,7 +44,12 @@ class ModuleRouteLoader
     {
         $registered = false;
 
+        /** @var Router $router */
+        $router = Route::getFacadeRoot();
+
         foreach ($this->registry->booted() as $slug => $registrar) {
+            $depth = count($router->getGroupStack());
+
             try {
                 foreach ($registrar->webRoutes as $routes) {
                     Route::middleware(['web', 'auth', 'activity', 'suspended', "module:{$slug}"])
@@ -47,19 +67,59 @@ class ModuleRouteLoader
                     $registered = true;
                 }
             } catch (Throwable $e) {
-                // A module's route definitions must never break boot.
+                // A module's route definitions must never break boot, nor leak
+                // their group attributes onto routes registered afterwards.
+                $this->restoreGroupStack($router, $depth);
                 ModuleRegistry::captureToSentry($e, $slug);
                 Log::error("Module [{$slug}] failed while registering routes: {$e->getMessage()}", ['exception' => $e, 'module' => $slug]);
             }
         }
 
-        // When routes are added after the router has already built its name
-        // lookup (a module toggled at runtime, or the test harness), the lookup
-        // used by route() and Route::has() goes stale; rebuild it.
-        $routes = Route::getRoutes();
-
-        if ($registered && method_exists($routes, 'refreshNameLookups')) {
-            $routes->refreshNameLookups();
+        // Module routes are added after the router has already built its name
+        // lookup (core routes loaded first), so the lookup used by route() and
+        // Route::has() is stale; rebuild it.
+        if ($registered) {
+            $this->refreshNameLookups(Route::getRoutes());
         }
+    }
+
+    /**
+     * Rebuild the name/action lookups for the collection the router is using.
+     *
+     * On a cached instance the router holds a {@see CompiledRouteCollection}
+     * whose own refreshNameLookups() is a no-op; the routes we add at runtime
+     * live in its inner dynamic collection, which is what must be refreshed for
+     * route() and Route::has() to find them (group name-prefixes are applied
+     * fluently, after the route is added, so they are not indexed at add time).
+     */
+    private function refreshNameLookups(RouteCollectionInterface $routes): void
+    {
+        if ($routes instanceof CompiledRouteCollection) {
+            $property = new ReflectionProperty(CompiledRouteCollection::class, 'routes');
+            $routes = $property->getValue($routes);
+        }
+
+        if ($routes instanceof RouteCollection) {
+            $routes->refreshNameLookups();
+            $routes->refreshActionLookups();
+        }
+    }
+
+    /**
+     * Trim the router's group stack back to the given depth. Router::group()
+     * leaves its attributes on the stack when the route callback throws; there
+     * is no public API to pop them, so restore the stack directly.
+     */
+    private function restoreGroupStack(Router $router, int $depth): void
+    {
+        if (count($router->getGroupStack()) <= $depth) {
+            return;
+        }
+
+        $property = new ReflectionProperty(Router::class, 'groupStack');
+
+        /** @var array<int, array<string, mixed>> $stack */
+        $stack = $property->getValue($router);
+        $property->setValue($router, array_slice($stack, 0, $depth));
     }
 }

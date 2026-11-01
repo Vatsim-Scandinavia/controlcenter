@@ -34,6 +34,10 @@ class Vote extends Model
      */
     public function recordCreated(): void
     {
+        // Reload so columns filled by database defaults are present on the
+        // model the event carries, rather than null in memory.
+        $this->refresh();
+
         DomainEvents::dispatch(new VoteCreated($this));
     }
 

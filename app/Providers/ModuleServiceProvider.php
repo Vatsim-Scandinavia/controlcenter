@@ -35,7 +35,38 @@ class ModuleServiceProvider extends ServiceProvider
         $registry->applyBindings();
         $this->registerCommands($registry);
         $this->registerMigrations($registry);
-        (new ModuleRouteLoader($registry))->load();
+
+        // Register module routes at runtime, after the core routes have loaded.
+        //
+        // The framework's RouteServiceProvider registers its route loading in a
+        // booted callback during the *register* phase; registering ours in the
+        // *boot* phase queues it afterwards, so it runs once the core routes
+        // (cached or from files) are in place. This matters for a cached
+        // instance, where the compiled route collection replaces anything
+        // registered earlier in boot.
+        //
+        // Routes are deliberately not registered while building the route cache,
+        // so module routes never enter it: the live enabled state is the single
+        // source of truth on every request, which keeps enable/disable effective
+        // immediately and is safe across replicas.
+        $this->app->booted(function () use ($registry): void {
+            if ($this->isBuildingRouteCache()) {
+                return;
+            }
+
+            (new ModuleRouteLoader($registry))->load();
+        });
+    }
+
+    /**
+     * Whether the current process is building the route cache (`route:cache`),
+     * during which module routes must not be registered so they never land in
+     * the cached collection.
+     */
+    private function isBuildingRouteCache(): bool
+    {
+        return $this->app->runningInConsole()
+            && in_array('route:cache', (array) ($_SERVER['argv'] ?? []), true);
     }
 
     /**

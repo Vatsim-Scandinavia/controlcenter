@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Events\V1\ExaminationRecorded;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Models\Area;
@@ -16,7 +17,9 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -489,5 +492,35 @@ class TrainingExaminationsTest extends TestCase
 
         // Should not be forbidden — the policy gate should pass
         $response->assertRedirect();
+    }
+
+    #[Test]
+    public function the_examination_recorded_event_fires_after_its_attachments_are_persisted(): void
+    {
+        Storage::fake();
+
+        $seen = null;
+        $id = null;
+        Event::listen(ExaminationRecorded::class, function (ExaminationRecorded $event) use (&$seen, &$id): void {
+            $seen = $event->examination->attachments()->count();
+            $id = $event->examination->id;
+        });
+
+        $this->training->update(['status' => TrainingStatus::AWAITING_EXAM->value]);
+
+        $response = $this->actingAs($this->examiner)
+            ->post(route('training.examination.store', ['training' => $this->training]), [
+                'position' => Position::find(1)->callsign,
+                'result' => 'PASSED',
+                'examination_date' => Carbon::now()->format('d/m/Y'),
+                'files' => [UploadedFile::fake()->create('exam.pdf', 10, 'application/pdf')],
+            ]);
+
+        $response->assertRedirect();
+
+        $after = TrainingExamination::findOrFail($id)->attachments()->count();
+
+        $this->assertSame(1, $after, 'The attachment should have been persisted.');
+        $this->assertSame(1, $seen, 'ExaminationRecorded must fire after attachments are saved, not before.');
     }
 }

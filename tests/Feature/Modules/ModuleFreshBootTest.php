@@ -6,6 +6,7 @@ use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Process\Process;
 use Tests\Fixtures\Modules\ExampleModule;
+use Tests\Fixtures\Modules\ThrowingRouteModule;
 use Tests\TestCase;
 
 /**
@@ -79,6 +80,7 @@ class ModuleFreshBootTest extends TestCase
         );
 
         @unlink($this->configCachePath());
+        @unlink($this->routesCachePath());
         $this->env = self::baseEnv();
         $this->pdo()->exec('DELETE FROM modules');
     }
@@ -86,8 +88,14 @@ class ModuleFreshBootTest extends TestCase
     protected function tearDown(): void
     {
         @unlink($this->configCachePath());
+        @unlink($this->routesCachePath());
 
         parent::tearDown();
+    }
+
+    private function routesCachePath(): string
+    {
+        return self::$cacheDir . '/routes.php';
     }
 
     /** @return array<string, string> */
@@ -123,10 +131,68 @@ class ModuleFreshBootTest extends TestCase
 
     private function setEnabled(bool $enabled): void
     {
+        $this->setEnabledSlugs($enabled ? ['example'] : []);
+    }
+
+    /**
+     * Replace the enabled-module rows with the given slugs (all enabled).
+     *
+     * @param  array<int, string>  $slugs
+     */
+    private function setEnabledSlugs(array $slugs): void
+    {
         $now = date('Y-m-d H:i:s');
         $this->pdo()->exec('DELETE FROM modules');
-        $this->pdo()->prepare('INSERT INTO modules (slug, enabled, enabled_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?)')
-            ->execute(['example', $enabled ? 1 : 0, $now, $now, $now]);
+        $insert = $this->pdo()->prepare('INSERT INTO modules (slug, enabled, enabled_at, created_at, updated_at) VALUES (?, 1, ?, ?, ?)');
+
+        foreach ($slugs as $slug) {
+            $insert->execute([$slug, $now, $now, $now]);
+        }
+    }
+
+    /**
+     * Boot a fresh process and print a probe of the routing table: whether the
+     * core login route and the example module route exist, and the login URI
+     * (to catch a module prefix bleeding onto core routes).
+     *
+     * @param  array<string, string>  $extraEnv
+     */
+    private function routeProbe(array $extraEnv = []): string
+    {
+        $php = <<<'PHP'
+        echo 'LOGIN:' . (int) Illuminate\Support\Facades\Route::has('login');
+        echo ';LOGINURI:' . (Illuminate\Support\Facades\Route::has('login') ? route('login', [], false) : '-');
+        echo ';MODROUTE:' . (int) Illuminate\Support\Facades\Route::has('modules.example.index');
+        PHP;
+
+        $process = new Process(
+            ['php', 'artisan', 'tinker', '--execute', $php],
+            self::basePath(),
+            array_merge($this->env, $extraEnv),
+            null,
+            120,
+        );
+        $process->mustRun();
+
+        return $process->getOutput();
+    }
+
+    /**
+     * Build the route cache in a fresh process, writing to this test's isolated
+     * APP_ROUTES_CACHE path (never the shared bootstrap/cache).
+     *
+     * @param  array<string, string>  $extraEnv
+     */
+    private function cacheRoutes(array $extraEnv = []): void
+    {
+        $process = new Process(
+            ['php', 'artisan', 'route:cache'],
+            self::basePath(),
+            array_merge($this->env, $extraEnv),
+            null,
+            120,
+        );
+        $process->mustRun();
     }
 
     /**
@@ -210,5 +276,63 @@ class ModuleFreshBootTest extends TestCase
         $output = $this->probe(['MODULES_SAFE_MODE' => 'true']);
 
         $this->assertStringContainsString('PERM:ABSENT', $output, $output);
+    }
+
+    #[Test]
+    public function a_throwing_module_route_does_not_corrupt_core_routes_on_boot(): void
+    {
+        // Finding 1: a module whose route callback throws must not leave its
+        // prefix/middleware on the group stack for the core route files that
+        // load afterwards. ThrowingRouteModule is registered first and enabled.
+        $register = ThrowingRouteModule::class . ',' . ExampleModule::class;
+
+        $this->setEnabledSlugs(['throwroute', 'example']);
+
+        $output = $this->routeProbe(['MODULES_REGISTER' => $register]);
+
+        $this->assertStringContainsString('LOGIN:1', $output, $output);
+        $this->assertStringContainsString('LOGINURI:/login', $output, $output);
+        // The example module, registered after the throwing one, is unaffected.
+        $this->assertStringContainsString('MODROUTE:1', $output, $output);
+    }
+
+    #[Test]
+    public function an_enabled_module_route_is_registered_at_runtime_despite_a_stale_route_cache(): void
+    {
+        // Finding 4: build the route cache while the module is disabled, then
+        // enable it. The module's route is never in the cache, but it must be
+        // registered at runtime on top of the cached core routes.
+        $this->setEnabled(false);
+        $this->cacheRoutes();
+
+        $this->assertFileExists($this->routesCachePath());
+        $this->assertFileDoesNotExist(self::basePath('bootstrap/cache/routes-v7.php'));
+
+        $this->setEnabled(true);
+
+        $output = $this->routeProbe();
+
+        $this->assertStringContainsString('LOGIN:1', $output, $output);
+        $this->assertStringContainsString('MODROUTE:1', $output, $output);
+    }
+
+    #[Test]
+    public function module_routes_are_never_written_into_the_route_cache(): void
+    {
+        // Finding 4: caching while enabled must not bake module routes into the
+        // cache, so disabling later removes them (runtime registration is the
+        // single source of truth, which is also multi-replica safe).
+        $this->setEnabled(true);
+        $this->cacheRoutes();
+
+        $cached = (string) file_get_contents($this->routesCachePath());
+        $this->assertStringNotContainsString('modules/example', $cached);
+
+        // With the cache built while enabled, disabling must still drop the route.
+        $this->setEnabled(false);
+
+        $output = $this->routeProbe();
+
+        $this->assertStringContainsString('MODROUTE:0', $output, $output);
     }
 }

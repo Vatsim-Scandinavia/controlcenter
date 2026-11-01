@@ -44,6 +44,13 @@ class ModuleController extends Controller
             return redirect()->route('admin.modules')->with('error', "Module [{$slug}] is not installed.");
         }
 
+        // Only an enabled, compatible, non-suppressed module may be configured.
+        // Requesting its registrar runs the module's register() hook, so guard
+        // here to keep a disabled module's side effects from firing.
+        if (! $module->shouldBoot()) {
+            return redirect()->route('admin.modules')->with('error', "Module [{$slug}] must be enabled before it can be configured.");
+        }
+
         $schema = $registry->registrarFor($slug)?->adminSettings;
 
         if ($schema === null || $schema->isEmpty()) {
@@ -62,6 +69,12 @@ class ModuleController extends Controller
     public function updateSettings(Request $request, ModuleRegistry $registry, ModuleSettings $settings, string $slug): RedirectResponse
     {
         $this->authorize('system.modules.manage');
+
+        $module = $registry->discovered()[$slug] ?? null;
+
+        if ($module === null || ! $module->shouldBoot()) {
+            return redirect()->route('admin.modules')->with('error', "Module [{$slug}] must be enabled before it can be configured.");
+        }
 
         $schema = $registry->registrarFor($slug)?->adminSettings;
 

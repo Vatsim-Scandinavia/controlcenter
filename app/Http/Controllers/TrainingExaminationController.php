@@ -94,12 +94,14 @@ class TrainingExaminationController extends Controller
             $examination->update(['result' => $data['result']]);
         }
 
-        // Dispatch once the examination is complete (result written), not from a
-        // model observer that would fire before the result is set.
-        DomainEvents::dispatch(new ExaminationRecorded($examination));
-
         $attachmentId = TrainingObjectAttachmentController::saveAttachments($request, $examination);
         $attachmentUrl = (isset($attachmentId[0])) ? route('training.object.attachment.show', ['attachment' => $attachmentId[0]]) : null;
+
+        // Dispatch once the examination is complete: the result is written and
+        // its attachments are persisted (a listener may read them), not from a
+        // model observer that would fire before either is in place.
+        $examination->refresh();
+        DomainEvents::dispatch(new ExaminationRecorded($examination));
 
         // Notify the training user
         $training->user->notify(new TrainingExamNotification($training, $examination));

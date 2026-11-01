@@ -19,8 +19,11 @@ class ModuleUserSettingController extends Controller
 {
     public function update(Request $request, ModuleRegistry $registry, ModuleUserSettings $settings, string $slug): RedirectResponse
     {
-        // A disabled module has no settings to persist.
-        if (! $registry->isEnabled($slug)) {
+        // Only an enabled, compatible, non-suppressed module has settings to
+        // persist; anything else must not run its register() hook here.
+        $module = $registry->discovered()[$slug] ?? null;
+
+        if ($module === null || ! $module->shouldBoot()) {
             abort(404);
         }
 

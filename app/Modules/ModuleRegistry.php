@@ -249,17 +249,43 @@ class ModuleRegistry
      */
     public function privacyHandlers(): array
     {
+        return $this->privacyCleanupPlan()['handlers'];
+    }
+
+    /**
+     * The privacy cleanup plan for a user-data action: the handlers of every
+     * installed module, plus the slugs of modules that could not be initialised.
+     *
+     * A module whose register() hook throws contributes no handlers, but we
+     * cannot conclude it holds no user data — so its failure is surfaced
+     * separately rather than silently treated as "nothing to clean". Callers
+     * (e.g. user:delete) use this to refuse to report complete deletion when a
+     * module could not be asked to clean up.
+     *
+     * @return array{handlers: array<string, array<int, class-string>>, failed: array<string, string>}
+     */
+    public function privacyCleanupPlan(): array
+    {
         $handlers = [];
+        $failed = [];
 
         foreach ($this->discovered() as $slug => $module) {
             $registrar = $this->registrarFor($slug);
 
-            if ($registrar && $registrar->privacyHandlers !== []) {
+            if ($registrar === null) {
+                // register() threw: the module is installed but could not be
+                // initialised, so whether it holds this user's data is unknown.
+                $failed[$slug] = "Module [{$slug}] could not be initialised, so its data could not be removed.";
+
+                continue;
+            }
+
+            if ($registrar->privacyHandlers !== []) {
                 $handlers[$slug] = $registrar->privacyHandlers;
             }
         }
 
-        return $handlers;
+        return ['handlers' => $handlers, 'failed' => $failed];
     }
 
     /**
@@ -401,7 +427,7 @@ class ModuleRegistry
      * Discover candidate module classes from the bundled list and any installed
      * Composer packages of type `controlcenter-module`.
      *
-     * @return array<class-string, string> class => human-readable source
+     * @return array<class-string, array{source: string, installPath: string|null}>
      */
     private function candidateClasses(): array
     {
@@ -421,7 +447,7 @@ class ModuleRegistry
     }
 
     /**
-     * @return array<class-string, string> class => package name
+     * @return array<class-string, array{name: string, installPath: string|null}>
      */
     private function composerModuleClasses(): array
     {

@@ -247,11 +247,13 @@ return [
          * Application Service Providers...
          */
         AppServiceProvider::class,
-        ModuleServiceProvider::class,
         AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         EventServiceProvider::class,
         RouteServiceProvider::class,
+        // Boots after RouteServiceProvider so module routes register at runtime
+        // on top of the core routes (cached or not); see ModuleServiceProvider.
+        ModuleServiceProvider::class,
 
         /*
         * Custom providers

@@ -46,6 +46,10 @@ class Training extends Model
      */
     public function recordCreated(): void
     {
+        // Reload so columns filled by database defaults (e.g. status) are
+        // present on the model the event carries, rather than null in memory.
+        $this->refresh();
+
         DomainEvents::dispatch(new TrainingCreated($this));
     }
 
