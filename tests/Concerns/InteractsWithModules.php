@@ -6,6 +6,7 @@ use App\Modules\ModuleRegistry;
 use App\Modules\ModuleRouteLoader;
 use App\Services\RoleSource;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 
 /**
  * Helpers for feature tests that exercise module extension points inside an
@@ -13,11 +14,12 @@ use Illuminate\Support\Facades\Gate;
  *
  * This does NOT simulate a real boot — permission/role contributions are read
  * live from {@see RoleSource}, so enabling a module is visible to the permission
- * matrix immediately. It re-does only the two things the framework does once at
- * boot and cannot repeat mid-test under RefreshDatabase (the modules table is
- * migrated after the app boots): defining gates for module permissions, and
- * registering the enabled modules' routes. The genuine "does it wire up on a
- * fresh process" question is covered by the fresh-process boot tests, not here.
+ * matrix immediately. It re-does the things the framework does once at boot and
+ * cannot repeat mid-test under RefreshDatabase (the modules table is migrated
+ * after the app boots): defining gates for module permissions, registering the
+ * enabled modules' routes, and registering their view namespaces. The genuine
+ * "does it wire up on a fresh process" question is covered by the fresh-process
+ * boot tests, not here.
  */
 trait InteractsWithModules
 {
@@ -47,8 +49,14 @@ trait InteractsWithModules
             Gate::define($permission, fn ($user, $area = null) => $user->hasPermission($permission, $area));
         }
 
-        // Register the enabled modules' routes (ModuleServiceProvider does this
-        // at boot).
+        // Register the enabled modules' routes and view namespaces
+        // (ModuleServiceProvider does both at boot).
         (new ModuleRouteLoader($registry))->load();
+
+        foreach (array_keys($registry->booted()) as $slug) {
+            if (($hint = $registry->viewPath($slug)) !== null) {
+                View::prependNamespace('modules', $hint);
+            }
+        }
     }
 }

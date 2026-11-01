@@ -8,10 +8,11 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Guards module routes. Routes are registered for every compatible installed
- * module so the route cache stays stable, but requests are rejected with a 404
- * while the module is disabled (or globally suppressed by safe mode). This is
- * the runtime enabled-check behind the `/modules/<slug>` prefix.
+ * Guards module routes. Module routes are registered at runtime for enabled
+ * modules only (never cached), and this is the belt-and-braces enabled-check
+ * behind the `/modules/<slug>` prefix: a request is rejected with a 404 if the
+ * module is disabled or globally suppressed by safe mode, even if a route was
+ * registered earlier in the same request.
  */
 class EnsureModuleEnabled
 {

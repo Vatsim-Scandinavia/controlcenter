@@ -37,6 +37,7 @@ class ModuleServiceProvider extends ServiceProvider
 
         $this->registerCommands($registry);
         $this->registerMigrations($registry);
+        $this->registerViews($registry);
         $this->registerConsoleRoutes($registry);
 
         // Module routes are NOT registered here for HTTP. They are registered
@@ -44,6 +45,23 @@ class ModuleServiceProvider extends ServiceProvider
         // available at runtime (cached core routes or not) yet never captured by
         // the route cache (which is always built without handling an HTTP
         // request). The console path is handled by registerConsoleRoutes().
+    }
+
+    /**
+     * Register the `modules::` view namespace for every booted module from its
+     * install path, so a module ships Blade views (referenced as
+     * `modules::<slug>.<view>`) without needing its own service provider — which
+     * would boot even while the module is disabled or in safe mode.
+     */
+    private function registerViews(ModuleRegistry $registry): void
+    {
+        foreach ($registry->booted() as $slug => $registrar) {
+            $hint = $registry->viewPath($slug);
+
+            if ($hint !== null) {
+                $this->loadViewsFrom($hint, 'modules');
+            }
+        }
     }
 
     /**

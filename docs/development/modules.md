@@ -196,14 +196,22 @@ rollback), so a listener never sees a mutation that later rolls back.
 
 Enabled state is resolved per request and per command, so under PHP-FPM or a
 normal `artisan` invocation a module's enabled/disabled change takes effect on
-the next request/command with no cache step. A **reused** process — Laravel
-Octane, or a long-lived `queue:work` / `schedule:work` worker — resolves module
-state once at boot and keeps it until it restarts. After enabling or disabling a
-module, restart those workers (and Octane) so they pick up the change; a
-`queue:work` worker started while a module was disabled will not run that
-module's queued listeners until restarted. This mirrors how Laravel treats
-config and container state in reused processes and is intentional — core adds no
-per-job refresh.
+the next request/command with no cache step. `schedule:run` is a fresh process
+each minute (that is how the cron entry invokes it), so it always sees current
+state; `schedule:work` and a long-lived `queue:work` worker, and Laravel Octane,
+are **reused** processes that resolve module state once at boot and keep it until
+they restart. After enabling or disabling a module, restart those workers (and
+Octane) so they pick up the change; a `queue:work` worker started while a module
+was disabled will not run that module's queued listeners until restarted. This
+mirrors how Laravel treats config and container state in reused processes and is
+intentional — core adds no per-job refresh.
+
+Module commands are registered when a console command starts, so they are
+available to `php artisan <module:command>` and to `Artisan::call()` **from
+another console command**, but not to `Artisan::call()` made during an HTTP
+request (that path never starts a console command, which is also why the route
+cache never captures module routes). Trigger module work from HTTP by calling
+the module's own code or queueing a job, not by shelling out to Artisan.
 
 ### Drivers
 
@@ -258,13 +266,30 @@ $r->web(function () {
 ```
 
 Grouped under `/modules/<slug>`, named `modules.<slug>.*`, with the
-`['auth','activity','suspended']` middleware stack and a `module:<slug>`
-enabled-check that returns 404 while the module is disabled. Existing route
-names (e.g. `route('login')`) resolve normally inside the callback. As with API
-routes, stripping a mandatory middleware via `withoutMiddleware()` rejects the
-whole module's routes, and a throwing callback leaves nothing behind (its
-partial routes are discarded and the failure is logged; core and other modules
-are unaffected).
+`['auth','activity','suspended']` middleware stack (plus the `web` group's CSRF
+protection) and a `module:<slug>` enabled-check that returns 404 while the module
+is disabled. Existing route names (e.g. `route('login')`) resolve normally inside
+the callback.
+
+Core **enforces** these guarantees per route before merging it, by resolving the
+route's effective middleware (`gatherRouteMiddleware`) and requiring the
+mandatory classes to survive, and by requiring the route to stay under the
+module's URI (`modules/<slug>`) and name (`modules.<slug>.`) prefix and not
+collide with an existing route. A route that strips a mandatory middleware (by
+alias, FQCN, parent class, `setAction`, …), escapes the prefix (`setUri`,
+chained `prefix`), is added raw to the collection, or renames itself over a core
+route causes the **whole module's routes** to be discarded. Web mandatory
+middleware: `Authenticate`, `SuspendedUser`, `UserActive`, `VerifyCsrfToken`,
+`EnsureModuleEnabled`. A route-level middleware the module adds to its own route
+is allowed (that is the module's own code); a webhook that must skip CSRF cannot
+be served through `web()` — use `api()`.
+
+If a route callback throws or fails validation, the module's routes leave
+nothing behind in the route table (its partial routes are discarded and the
+group stack restored; the failure is logged and reported to Sentry, and core and
+other modules are unaffected). "Nothing behind" is about the route table only —
+a callback is trusted code and may still have performed other side effects
+before it threw.
 
 Module routes are **registered at runtime, reflecting the live enabled state,
 and never written into the route cache**:

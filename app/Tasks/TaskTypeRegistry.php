@@ -43,7 +43,9 @@ class TaskTypeRegistry
      */
     public function map(): array
     {
-        return array_merge(self::CORE, $this->modules->taskTypes());
+        // Core keys always win: a module cannot shadow a core task type by
+        // reusing its key (module types are merged first, core applied last).
+        return array_merge($this->modules->taskTypes(), self::CORE);
     }
 
     /**

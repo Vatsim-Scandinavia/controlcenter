@@ -390,8 +390,10 @@ class ModuleFreshBootTest extends TestCase
         // P2-3: `optimize` builds the route cache via a nested/programmatic call,
         // not a literal `route:cache` argv. The route cache must still exclude
         // module routes, because the cache build never handles an HTTP request.
+        // Run under `local`, where console commands DO register module routes, so
+        // the exclusion isn't merely a side effect of the testing environment.
         $this->setEnabled(true);
-        $this->artisanProcess(['optimize']);
+        $this->artisanProcess(['optimize'], ['APP_ENV' => 'local']);
 
         $cached = (string) file_get_contents($this->routesCachePath());
         $this->assertStringNotContainsString('modules/example', $cached, $cached);

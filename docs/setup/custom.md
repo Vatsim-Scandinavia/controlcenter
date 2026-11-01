@@ -48,12 +48,12 @@ Modules ship **prebuilt** frontend assets, so the runtime image needs no Node.
 FROM %%image_tag%%
 
 # For a module published to a registry:
-RUN composer require acme/cc-widget --no-interaction --no-dev
+RUN composer require acme/cc-widget --no-interaction --update-no-dev
 
 # ...or copy a local module and register it as a path repository:
 # COPY ./cc-widget /app/modules/widget
 # RUN composer config repositories.widget path modules/widget \
-#  && composer require acme/cc-widget:@dev --no-interaction --no-dev
+#  && composer require acme/cc-widget:@dev --no-interaction --update-no-dev
 ```
 
 The module is installed but **disabled** until an operator enables it from

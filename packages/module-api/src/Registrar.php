@@ -7,7 +7,6 @@ use ControlCenter\ModuleApi\Navigation\NavigationItem;
 use ControlCenter\ModuleApi\Settings\SettingsSchema;
 use ControlCenter\ModuleApi\Ui\Slot;
 use Illuminate\Console\Scheduling\Event;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -127,10 +126,16 @@ interface Registrar
      * `modules.<slug>.*`, with the authenticated web middleware stack and an
      * enabled-check that returns 404 while the module is disabled.
      *
-     * Core *enforces* that stack: if any route in the callback strips a
-     * mandatory middleware via `withoutMiddleware()` (the web stack or the
-     * enabled-check), the whole module's routes are rejected. Existing routes
-     * (e.g. `route('login')`) remain resolvable from inside the callback.
+     * Core *enforces* that stack by resolving each new route's effective
+     * middleware and requiring the mandatory classes to survive, requiring the
+     * URI and name to stay under the module's prefix, and rejecting collisions
+     * with existing routes. Any route that evades this (stripping middleware by
+     * alias, class or parent class, `setAction`, `setUri`, a raw collection add,
+     * a prefix/name escape, …) rejects the whole module's routes. This is a
+     * contract, not a sandbox: a module's own route-level middleware is honoured
+     * and the module's code can still call the framework directly. Existing
+     * route names (e.g. `route('login')`) remain resolvable inside the callback.
+     * A webhook that must skip CSRF cannot be served here — use api().
      *
      * @param  Closure(): void  $routes
      */
@@ -140,11 +145,11 @@ interface Registrar
      * Register API routes, grouped under `api/modules/<slug>`, named
      * `api.modules.<slug>.*`, and kept out of the public OpenAPI spec.
      *
-     * The group requires API-token authentication by default, so a module API
-     * route needs a valid key even if its author forgets; declare per-route
-     * scopes with `->middleware('api-token:modules.<slug>.<scope>')` and they
-     * stack on top. As with web routes, stripping a mandatory middleware via
-     * `withoutMiddleware()` rejects the whole module's routes.
+     * The group requires API-token authentication and throttling by default, so
+     * a module API route needs a valid key even if its author forgets; declare
+     * per-route scopes with `->middleware('api-token:modules.<slug>.<scope>')`
+     * and they stack on top. Read-only keys are refused on unsafe methods.
+     * The same enforcement as web() applies (see above).
      *
      * @param  Closure(): void  $routes
      */

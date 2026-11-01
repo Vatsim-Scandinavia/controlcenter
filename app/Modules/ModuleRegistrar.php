@@ -132,6 +132,14 @@ class ModuleRegistrar implements Registrar
 
     public function command(string $commandClass): static
     {
+        // A module may only ship its own commands, never (re-)register a core
+        // Artisan command and so shadow or re-wire it.
+        if (str_starts_with(ltrim($commandClass, '\\'), 'App\\')) {
+            throw new ModuleRegistrationException(
+                "Module [{$this->slug}] tried to register a core command [{$commandClass}]; modules may only register their own commands."
+            );
+        }
+
         $this->commands[] = $commandClass;
 
         return $this;

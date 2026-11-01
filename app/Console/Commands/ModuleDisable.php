@@ -22,7 +22,10 @@ class ModuleDisable extends Command
             return self::FAILURE;
         }
 
-        if (! $module->enabled) {
+        // Use the stored state, not the effective one: under safe mode a module
+        // is effectively off but still enabled in the database, and the operator
+        // must be able to turn the offending module off.
+        if (! $module->storedEnabled) {
             $this->info("Module [{$slug}] is already disabled.");
 
             return self::SUCCESS;

@@ -14,6 +14,10 @@ final class DiscoveredModule
     /**
      * @param  class-string<Module>  $class
      */
+    /**
+     * @param  bool  $enabled  Effective state: whether the module actually boots now (false under safe mode, even if stored on).
+     * @param  bool  $storedEnabled  The persisted enabled flag in the database, independent of safe mode.
+     */
     public function __construct(
         public string $class,
         public ModuleManifest $manifest,
@@ -21,6 +25,7 @@ final class DiscoveredModule
         public bool $compatible,
         public string $source,
         public ?string $installPath = null,
+        public bool $storedEnabled = false,
     ) {}
 
     public function slug(): string

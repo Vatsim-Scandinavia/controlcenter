@@ -52,6 +52,20 @@ class ApiToken
             }
         }
 
+        // A read-only key must not drive a writing request against a module API
+        // route. This is scoped to `api.modules.*` so core API behaviour (where
+        // write access is governed by the `edit` argument) is unchanged.
+        $routeName = $request->route()?->getName();
+
+        if (is_string($routeName)
+            && str_starts_with($routeName, 'api.modules.')
+            && $key->read_only == true
+            && ! in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'], true)) {
+            return response()->json([
+                'message' => 'This API key is read-only.',
+            ], 403);
+        }
+
         // Update last used
         $key->update(['last_used_at' => now()]);
 

@@ -89,8 +89,11 @@
                                             @if(! $module->compatible)
                                                 <span class="badge bg-danger">Incompatible</span>
                                                 <div class="text-muted fs-sm">requires {{ $module->manifest->ccVersion }}</div>
-                                            @elseif($module->enabled)
+                                            @elseif($module->storedEnabled)
                                                 <span class="badge bg-success">Enabled</span>
+                                                @if($safeMode)
+                                                    <div class="text-muted fs-sm">suppressed by safe mode</div>
+                                                @endif
                                             @else
                                                 <span class="badge bg-secondary">Disabled</span>
                                             @endif
@@ -106,7 +109,7 @@
                                             @if($module->enabled && in_array($module->slug(), $configurable, true))
                                                 <a href="{{ route('admin.modules.settings', $module->slug()) }}" class="btn btn-sm btn-outline-primary mb-1">Settings</a>
                                             @endif
-                                            @if($module->enabled)
+                                            @if($module->storedEnabled)
                                                 <form action="{{ route('admin.modules.disable', $module->slug()) }}" method="POST">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">Disable</button>

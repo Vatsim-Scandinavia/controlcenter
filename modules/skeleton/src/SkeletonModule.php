@@ -8,6 +8,7 @@ use ControlCenter\ModuleApi\Navigation\NavigationItem;
 use ControlCenter\ModuleApi\Registrar;
 use ControlCenter\ModuleApi\Settings\SettingsSchema;
 use ControlCenter\ModuleApi\Ui\Slot;
+use Illuminate\Support\Facades\Route;
 
 /**
  * A minimal, working Control Center module to copy from. Every call below is
@@ -55,6 +56,9 @@ class SkeletonModule implements Module
                 (new SettingsSchema)
                     ->text('welcome_message', 'Welcome message', ['nullable', 'string', 'max:255'])
                     ->secret('api_key', 'Upstream API key', ['nullable', 'string'])
-            );
+            )
+            ->web(function (): void {
+                Route::get('/', fn () => view('modules::skeleton.index'))->name('index');
+            });
     }
 }

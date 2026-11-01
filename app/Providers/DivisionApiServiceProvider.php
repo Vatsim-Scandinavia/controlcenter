@@ -40,7 +40,25 @@ class DivisionApiServiceProvider extends ServiceProvider
             $drivers = $this->drivers($app);
 
             if (is_string($configured) && $configured !== '' && isset($drivers[$configured])) {
-                return $drivers[$configured]($app);
+                try {
+                    $driver = $drivers[$configured]($app);
+
+                    if ($driver instanceof DivisionApiContract) {
+                        return $driver;
+                    }
+
+                    Log::warning('Division API driver did not return a DivisionApiContract; falling back to no-op.', [
+                        'driver' => $configured,
+                        'returned' => get_debug_type($driver),
+                    ]);
+                } catch (\Throwable $e) {
+                    Log::error('Division API driver factory threw; falling back to no-op.', [
+                        'driver' => $configured,
+                        'exception' => $e,
+                    ]);
+                }
+
+                return new NoOpAdapter;
             }
 
             // Enabled, but no registered driver matches the configured name, so

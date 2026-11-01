@@ -28,7 +28,10 @@ class ModuleEnable extends Command
             return self::FAILURE;
         }
 
-        if ($module->enabled) {
+        // Compare against the stored flag, not the effective one, so safe mode
+        // (which forces the effective state off) doesn't make this report a
+        // module as not-yet-enabled when the database row is already on.
+        if ($module->storedEnabled) {
             $this->info("Module [{$slug}] is already enabled.");
 
             return self::SUCCESS;

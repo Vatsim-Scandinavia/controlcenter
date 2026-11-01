@@ -114,13 +114,16 @@ class ModuleRegistry
                     throw new \RuntimeException("duplicate slug [{$slug}] already provided by [{$discovered[$slug]->class}]");
                 }
 
+                $storedEnabled = in_array($slug, $enabledSlugs, true);
+
                 $discovered[$slug] = new DiscoveredModule(
                     class: $class,
                     manifest: $manifest,
-                    enabled: ! $this->safeMode() && in_array($slug, $enabledSlugs, true),
+                    enabled: ! $this->safeMode() && $storedEnabled,
                     compatible: CcVersion::satisfies($manifest->ccVersion),
                     source: $source,
                     installPath: $meta['installPath'],
+                    storedEnabled: $storedEnabled,
                 );
             } catch (Throwable $e) {
                 // The package is installed but could not be loaded. Keep a record
@@ -153,7 +156,10 @@ class ModuleRegistry
 
         $module = $this->discovered()[$slug] ?? null;
 
-        if ($module === null) {
+        // Only a module that should boot (enabled and compatible, not suppressed
+        // by safe mode) gets its register() hook run — guard here too, not only
+        // in callers, so a disabled module never registers through a stray call.
+        if ($module === null || ! $module->shouldBoot()) {
             return null;
         }
 
@@ -286,16 +292,35 @@ class ModuleRegistry
     /**
      * Drivers registered by booted modules.
      *
+     * A driver name claimed by two booted modules is ambiguous: neither is
+     * returned, and the collision is recorded in {@see errors()} so the admin
+     * page surfaces it. (A collision with a built-in name is already rejected at
+     * registration time.)
+     *
      * @return array<int, array{slug: string, contract: class-string, name: string, factory: \Closure}>
      */
     public function drivers(): array
     {
-        $drivers = [];
+        $byKey = [];
 
         foreach ($this->booted() as $slug => $registrar) {
             foreach ($registrar->drivers as $driver) {
-                $drivers[] = ['slug' => $slug] + $driver;
+                $key = $driver['contract'] . '@' . $driver['name'];
+                $byKey[$key][] = ['slug' => $slug] + $driver;
             }
+        }
+
+        $drivers = [];
+
+        foreach ($byKey as $entries) {
+            if (count($entries) > 1) {
+                $slugs = implode(', ', array_map(fn ($e) => $e['slug'], $entries));
+                $this->errors[] = "Driver [{$entries[0]['name']}] for [{$entries[0]['contract']}] is claimed by multiple modules ({$slugs}); none will be used.";
+
+                continue;
+            }
+
+            $drivers[] = $entries[0];
         }
 
         return $drivers;
@@ -345,6 +370,13 @@ class ModuleRegistry
             $handlerClass = $module->manifest->privacyHandler;
 
             if ($handlerClass === null) {
+                // A module that declares it stores user data but ships no handler
+                // cannot be cleaned up, so it blocks deletion rather than letting
+                // it report a clean removal it cannot perform.
+                if ($module->manifest->dataHandling !== []) {
+                    $failed[$slug] = "Module [{$slug}] declares stored user data (dataHandling) but no privacy handler, so that data cannot be removed.";
+                }
+
                 continue;
             }
 
@@ -379,6 +411,30 @@ class ModuleRegistry
         }
 
         return $this->discoveryFailures ?? [];
+    }
+
+    /**
+     * The views directory for a module, or null if it has none. Views live
+     * under `<module>/resources/views` and are referenced as
+     * `modules::<slug>.<view>` (resolving to `<dir>/<slug>/<view>.blade.php`).
+     */
+    public function viewPath(string $slug): ?string
+    {
+        $module = $this->discovered()[$slug] ?? null;
+
+        $candidates = [$this->app->basePath("modules/{$slug}/resources/views")];
+
+        if ($module?->installPath !== null) {
+            $candidates[] = $module->installPath . '/resources/views';
+        }
+
+        foreach ($candidates as $path) {
+            if (is_dir($path)) {
+                return $path;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -427,7 +483,12 @@ class ModuleRegistry
      */
     public function errors(): array
     {
-        return $this->errors;
+        // Driver-collision errors are recorded lazily by drivers(); resolve it
+        // so every problem surfaces here. De-duplicate because callers may have
+        // already triggered some of the same checks.
+        $this->drivers();
+
+        return array_values(array_unique($this->errors));
     }
 
     public function isEnabled(string $slug): bool
@@ -534,13 +595,19 @@ class ModuleRegistry
     {
         $path = $this->app->basePath('vendor/composer/installed.json');
 
-        if (! is_file($path)) {
+        if (! is_file($path) || ! is_readable($path)) {
+            // We cannot enumerate installed module packages at all, so we cannot
+            // claim to have accounted for them. Fail closed.
+            $this->recordPackageFailure('installed.json', "Composer's installed.json is missing or unreadable at [{$path}], so installed module packages could not be enumerated.");
+
             return [];
         }
 
         try {
             $data = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            $this->recordPackageFailure('installed.json', "Composer's installed.json could not be parsed: {$e->getMessage()}");
+
             return [];
         }
 
@@ -559,7 +626,15 @@ class ModuleRegistry
                 // A controlcenter-module package that names no module class is
                 // installed yet contributes nothing to discovery. Record it as a
                 // package-level failure so cleanup still fails closed for it.
-                $this->packageFailures["package:{$name}"] = "Installed module package [{$name}] has a missing or invalid [extra.controlcenter.module] and could not be loaded.";
+                $this->recordPackageFailure($name, "Installed module package [{$name}] has a missing or invalid [extra.controlcenter.module] and could not be loaded.");
+
+                continue;
+            }
+
+            if (isset($classes[$class])) {
+                // Two installed packages claim the same module class — ambiguous,
+                // so neither is trusted and cleanup fails closed.
+                $this->recordPackageFailure($name, "Installed module package [{$name}] names module class [{$class}], which is also claimed by package [{$classes[$class]['name']}].");
 
                 continue;
             }
@@ -576,6 +651,17 @@ class ModuleRegistry
         }
 
         return $classes;
+    }
+
+    /**
+     * Record an installed-package-level discovery failure so it blocks privacy
+     * cleanup and also surfaces in errors(), the log and the admin page.
+     */
+    private function recordPackageFailure(string $key, string $message): void
+    {
+        $this->packageFailures["package:{$key}"] = $message;
+        $this->errors[] = $message;
+        Log::warning('Module package discovery failed.', ['package' => $key, 'reason' => $message]);
     }
 
     private function report(string $slug, Throwable $e, string $phase): void

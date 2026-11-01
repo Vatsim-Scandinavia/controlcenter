@@ -39,9 +39,24 @@ application version move independently:
   (e.g. `^7.0`). An incompatible module is discovered but never booted, and the
   admin page explains why.
 
+## Supported `App\` surfaces
+
+Some extension points unavoidably reference core classes outside
+`ControlCenter\ModuleApi\`. These specific surfaces are part of the contract and
+carry the same stability promise:
+
+- `App\Contracts\DivisionApiContract` — the only contract a module may drive via
+  `Registrar::driver()`.
+- `App\Events\V1\*` — the versioned domain events modules listen to.
+- `App\Tasks\Types\Types` — the base class a module's task type extends.
+- `App\Modules\ModuleSettings` / `App\Modules\ModuleUserSettings` — reading the
+  values a module declared via `adminSettings()` / `userSettings()`.
+
+A module may depend on those named classes; everything else under `App\` is an
+implementation detail.
+
 ## What is *not* covered
 
-Core internals (`App\Modules\*`), the concrete `Registrar` implementation, the
-database schema of the `modules` table, and task-type base classes are
-implementation details and may change in any release. Modules must depend only
-on `ControlCenter\ModuleApi\`.
+Core internals (`App\Modules\*` beyond the settings readers named above), the
+concrete `Registrar` implementation, and the database schema of the `modules`
+table are implementation details and may change in any release.

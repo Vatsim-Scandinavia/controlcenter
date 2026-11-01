@@ -2,51 +2,78 @@
 
 namespace App\Modules;
 
+use App\Http\Middleware\ApiToken;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\EnsureModuleEnabled;
 use App\Http\Middleware\RegisterModuleRoutes;
+use App\Http\Middleware\SuspendedUser;
+use App\Http\Middleware\UserActive;
+use App\Http\Middleware\VerifyCsrfToken;
+use App\Providers\ModuleServiceProvider;
 use Illuminate\Routing\CompiledRouteCollection;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Route as RouteObject;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\RouteCollectionInterface;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use ReflectionProperty;
+use RuntimeException;
 use Throwable;
 
 /**
- * Registers the web and API routes contributed by **enabled** modules, applying
- * the standard middleware stack, the `/modules/<slug>` (and `/api/modules/<slug>`)
- * prefix, a module-namespaced route-name prefix and the enabled-check
- * middleware.
+ * Registers the web and API routes contributed by **enabled** modules.
  *
- * Only {@see ModuleRegistry::booted()} modules are activated here, so a disabled
- * module's `register()` hook is never run on a normal boot and its route
- * callbacks never execute — which also means safe mode (where `booted()` is
- * empty) registers no module routes at all.
+ * Only {@see ModuleRegistry::booted()} modules are activated, so a disabled
+ * module (and safe mode, where booted() is empty) registers nothing. Runs at
+ * request time (HTTP middleware) and at command start (console), never baked
+ * into the route cache — see {@see RegisterModuleRoutes}
+ * and {@see ModuleServiceProvider}.
  *
- * This runs at request time from {@see RegisterModuleRoutes}
- * (after the core routes have loaded, cached or not), so module routes are
- * never written into the route cache: the live enabled state is the single
- * source of truth on every request. Enabling/disabling a module takes effect
- * immediately without re-running `route:cache`, and the cache can be built by
- * any means (`route:cache`, `optimize`, a programmatic call) without capturing
- * module routes, because the cache build never handles an HTTP request.
+ * Each module registers into a staging collection seeded once with the existing
+ * routes (so `route('login')` resolves inside a callback). Only the module's own
+ * new routes are merged into the live collection, and only after each one passes
+ * validation; a module that throws or fails validation is discarded whole (its
+ * staged routes removed and the group stack restored), leaving the live routes
+ * untouched.
  *
- * Each module registers into a staging collection seeded with the existing
- * routes, so lookups like `route('login')` work inside a module's callback,
- * while only the module's own new routes are merged into the live collection —
- * and only if the whole module registered cleanly and kept its mandatory
- * middleware. A throwing (or rejected) callback leaves nothing behind: the
- * staged routes are discarded, the live collection is untouched, and the
- * router's group stack is restored to its pre-module depth ({@see Router::group()}
- * does not pop its own attributes when the callback throws).
- *
- * Two guarantees are enforced rather than assumed: module API routes carry
- * `api-token` so they require a key by default, and a route may not strip a
- * mandatory middleware via `withoutMiddleware()` (doing so rejects the whole
- * module's routes).
+ * Route guarantees are *enforced*, not conventional, by resolving each new
+ * route's effective middleware with {@see Router::gatherRouteMiddleware()} and
+ * requiring the mandatory classes to survive, plus requiring the route to stay
+ * under the module's URI and name prefix and not to collide with an existing
+ * route. This defeats stripping middleware by alias, class or parent class,
+ * `setAction`, `setUri`, raw collection adds and prefix/name escapes. It does
+ * not sandbox a module's own code (see the developer guide): a webhook that
+ * needs CSRF exemption cannot be served through web() and must use api().
  */
 class ModuleRouteLoader
 {
+    /**
+     * Middleware classes a web module route must keep. Documented in
+     * docs/development/modules.md.
+     *
+     * @var array<int, class-string>
+     */
+    private const WEB_MANDATORY = [
+        Authenticate::class,
+        SuspendedUser::class,
+        UserActive::class,
+        VerifyCsrfToken::class,
+        EnsureModuleEnabled::class,
+    ];
+
+    /**
+     * Middleware classes an API module route must keep.
+     *
+     * @var array<int, class-string>
+     */
+    private const API_MANDATORY = [
+        ApiToken::class,
+        ThrottleRequests::class,
+        EnsureModuleEnabled::class,
+    ];
+
     public function __construct(private ModuleRegistry $registry) {}
 
     public function load(): void
@@ -60,72 +87,181 @@ class ModuleRouteLoader
         /** @var Router $router */
         $router = Route::getFacadeRoot();
         $live = $router->getRoutes();
-        $registered = false;
 
-        foreach ($booted as $slug => $registrar) {
-            if ($registrar->webRoutes === [] && $registrar->apiRoutes === []) {
-                continue;
-            }
+        // Seed staging once: it carries the existing routes for lookups, while
+        // only the modules' own additions are tracked for merging.
+        $staging = new RouteCollection;
 
-            // Stage into a collection seeded with the existing routes: lookups
-            // inside the callback resolve against real routes, but only the
-            // module's own additions are tracked and merged.
-            $staging = new RouteCollection;
-
-            foreach ($live->getRoutes() as $existing) {
-                $staging->add($existing);
-            }
-
-            $staging->refreshNameLookups();
-            $staging->refreshActionLookups();
-
-            $seeded = $this->routeIds($staging);
-            $depth = count($router->getGroupStack());
-            $this->useRoutes($router, $staging);
-
-            try {
-                foreach ($registrar->webRoutes as $routes) {
-                    Route::middleware(['web', 'auth', 'activity', 'suspended', "module:{$slug}"])
-                        ->prefix("modules/{$slug}")
-                        ->name("modules.{$slug}.")
-                        ->group($routes);
-                }
-
-                foreach ($registrar->apiRoutes as $routes) {
-                    Route::middleware(['api', 'api-token', "module:{$slug}"])
-                        ->prefix("api/modules/{$slug}")
-                        ->name("api.modules.{$slug}.")
-                        ->group($routes);
-                }
-
-                // The module's own new routes = staging minus the seeded set.
-                $new = array_values(array_filter(
-                    $staging->getRoutes(),
-                    fn ($route) => ! in_array(spl_object_id($route), $seeded, true),
-                ));
-
-                $this->assertMandatoryMiddlewareIntact($slug, $new);
-
-                foreach ($new as $route) {
-                    $live->add($route);
-                    $registered = true;
-                }
-            } catch (Throwable $e) {
-                // Discard the staged (partial) routes entirely; live is untouched.
-                ModuleRegistry::captureToSentry($e, $slug);
-                Log::error("Module [{$slug}] failed while registering routes: {$e->getMessage()}", ['exception' => $e, 'module' => $slug]);
-            } finally {
-                $this->restoreGroupStack($router, $depth);
-                $this->useRoutes($router, $live);
-            }
+        foreach ($live->getRoutes() as $existing) {
+            $staging->add($existing);
         }
 
-        // The merged routes carry their full (group-prefixed) names, but a cached
-        // instance holds a compiled collection whose name lookup needs rebuilding
-        // for route() and Route::has() to find them.
+        $staging->refreshNameLookups();
+        $staging->refreshActionLookups();
+
+        $originalIds = $this->routeIds($staging);
+        $this->useRoutes($router, $staging);
+        $registered = false;
+
+        try {
+            foreach ($booted as $slug => $registrar) {
+                if ($registrar->webRoutes === [] && $registrar->apiRoutes === []) {
+                    continue;
+                }
+
+                $before = $this->routeIds($staging);
+                $depth = count($router->getGroupStack());
+
+                try {
+                    $this->registerGroup($router, $staging, 'web', $slug, $registrar->webRoutes, $before);
+                    $this->registerGroup($router, $staging, 'api', $slug, $registrar->apiRoutes, $before);
+                    $registered = count($this->routeIds($staging)) > count($before) || $registered;
+                } catch (Throwable $e) {
+                    // Discard everything this module staged, restore the group
+                    // stack, and keep going with the other modules.
+                    $staging = $this->rebuildTo($router, $staging, $before);
+                    $this->restoreGroupStack($router, $depth);
+                    ModuleRegistry::captureToSentry($e, $slug);
+                    Log::error("Module [{$slug}] failed while registering routes: {$e->getMessage()}", ['exception' => $e, 'module' => $slug]);
+                }
+            }
+        } finally {
+            foreach ($staging->getRoutes() as $route) {
+                if (! in_array(spl_object_id($route), $originalIds, true)) {
+                    $live->add($route);
+                }
+            }
+
+            $this->useRoutes($router, $live);
+        }
+
         if ($registered) {
             $this->refreshNameLookups($live);
         }
+    }
+
+    /**
+     * Register one group's route closures, then validate every route the group
+     * produced. Throws (rejecting the whole module) on the first violation.
+     *
+     * @param  array<int, \Closure>  $closures
+     * @param  array<int, int>  $existingIds  Routes present before this module.
+     */
+    private function registerGroup(Router $router, RouteCollection $staging, string $kind, string $slug, array $closures, array $existingIds): void
+    {
+        if ($closures === []) {
+            return;
+        }
+
+        $uriPrefix = $kind === 'api' ? "api/modules/{$slug}" : "modules/{$slug}";
+        $namePrefix = $kind === 'api' ? "api.modules.{$slug}." : "modules.{$slug}.";
+        $middleware = $kind === 'api'
+            ? ['api', 'api-token', "module:{$slug}"]
+            : ['web', 'auth', 'activity', 'suspended', "module:{$slug}"];
+
+        $before = $this->routeIds($staging);
+
+        foreach ($closures as $closure) {
+            Route::middleware($middleware)->prefix($uriPrefix)->name($namePrefix)->group($closure);
+        }
+
+        $existing = $this->methodUriSet($staging, $existingIds);
+
+        foreach ($staging->getRoutes() as $route) {
+            if (in_array(spl_object_id($route), $before, true)) {
+                continue; // not new in this group
+            }
+
+            $this->validate($router, $route, $kind, $slug, $uriPrefix, $namePrefix, $existing);
+        }
+    }
+
+    /**
+     * Enforce the guarantees on a single new module route.
+     *
+     * @param  array<string, true>  $existing  method+URI keys of pre-existing routes.
+     */
+    private function validate(Router $router, RouteObject $route, string $kind, string $slug, string $uriPrefix, string $namePrefix, array $existing): void
+    {
+        $uri = ltrim($route->uri(), '/');
+
+        if (! str_starts_with($uri, $uriPrefix)) {
+            throw new RuntimeException("route [{$uri}] escaped the module URI prefix [{$uriPrefix}]");
+        }
+
+        $name = $route->getName();
+
+        if (! is_string($name) || ! str_starts_with($name, $namePrefix)) {
+            throw new RuntimeException("route [{$uri}] has name [" . (string) $name . "] outside the module name prefix [{$namePrefix}]");
+        }
+
+        foreach ($route->methods() as $method) {
+            if (isset($existing["{$method} {$uri}"])) {
+                throw new RuntimeException("route [{$method} {$uri}] collides with an existing route");
+            }
+        }
+
+        $resolved = [];
+
+        foreach ($router->gatherRouteMiddleware($route) as $middleware) {
+            if (is_string($middleware)) {
+                $resolved[strtok($middleware, ':')] = true;
+            }
+        }
+
+        $mandatory = $kind === 'api' ? self::API_MANDATORY : self::WEB_MANDATORY;
+
+        foreach ($mandatory as $class) {
+            if (! isset($resolved[$class])) {
+                throw new RuntimeException("route [{$uri}] is missing mandatory middleware [" . class_basename($class) . ']');
+            }
+        }
+    }
+
+    /**
+     * method+URI keys for the routes whose ids are in $ids.
+     *
+     * @param  array<int, int>  $ids
+     * @return array<string, true>
+     */
+    private function methodUriSet(RouteCollection $staging, array $ids): array
+    {
+        $set = [];
+
+        foreach ($staging->getRoutes() as $route) {
+            if (! in_array(spl_object_id($route), $ids, true)) {
+                continue;
+            }
+
+            foreach ($route->methods() as $method) {
+                $set["{$method} " . ltrim($route->uri(), '/')] = true;
+            }
+        }
+
+        return $set;
+    }
+
+    /**
+     * Rebuild staging down to the routes whose ids are in $keepIds (dropping a
+     * failed module's partial additions) and point the router at the result.
+     *
+     * @param  array<int, int>  $keepIds
+     */
+    private function rebuildTo(Router $router, RouteCollection $staging, array $keepIds): RouteCollection
+    {
+        $rebuilt = new RouteCollection;
+
+        foreach ($staging->getRoutes() as $route) {
+            if (in_array(spl_object_id($route), $keepIds, true)) {
+                $rebuilt->add($route);
+            }
+        }
+
+        $rebuilt->refreshNameLookups();
+        $rebuilt->refreshActionLookups();
+        $this->useRoutes($router, $rebuilt);
+
+        return $rebuilt;
     }
 
     /**
@@ -139,37 +275,9 @@ class ModuleRouteLoader
     }
 
     /**
-     * Reject a module whose route strips a middleware the group guarantees.
-     * `web()` and `api()` promise their stack and the enabled-check; a route
-     * using `withoutMiddleware()` to drop one defeats that promise, so the whole
-     * module's routes are discarded.
-     *
-     * @param  array<int, \Illuminate\Routing\Route>  $routes
-     */
-    private function assertMandatoryMiddlewareIntact(string $slug, array $routes): void
-    {
-        foreach ($routes as $route) {
-            $isApi = str_starts_with(ltrim($route->uri(), '/'), "api/modules/{$slug}");
-
-            $mandatory = $isApi
-                ? ['api', 'api-token', "module:{$slug}"]
-                : ['web', 'auth', 'activity', 'suspended', "module:{$slug}"];
-
-            $stripped = array_intersect($mandatory, (array) $route->excludedMiddleware());
-
-            if ($stripped !== []) {
-                throw new \RuntimeException(
-                    "route [{$route->uri()}] strips mandatory middleware [" . implode(', ', $stripped) . ']'
-                );
-            }
-        }
-    }
-
-    /**
      * Point the router (and the container's `routes` binding) at the given
-     * collection. Used to stage a module's routes in isolation and then restore
-     * the live collection — which may be a {@see CompiledRouteCollection} and so
-     * cannot go through Router::setRoutes() (typed to RouteCollection).
+     * collection, bypassing Router::setRoutes() because the live collection may
+     * be a {@see CompiledRouteCollection} (typed incompatibly).
      */
     private function useRoutes(Router $router, RouteCollectionInterface $routes): void
     {
@@ -178,13 +286,10 @@ class ModuleRouteLoader
     }
 
     /**
-     * Rebuild the name/action lookups for the collection the router is using.
-     *
-     * On a cached instance the router holds a {@see CompiledRouteCollection}
-     * whose own refreshNameLookups() is a no-op; the routes we add at runtime
-     * live in its inner dynamic collection, which is what must be refreshed for
-     * route() and Route::has() to find them (group name-prefixes are applied
-     * fluently, after the route is added, so they are not indexed at add time).
+     * Rebuild the name/action lookups for the collection the router uses. A
+     * cached instance holds a {@see CompiledRouteCollection} whose own
+     * refreshNameLookups() is a no-op; its inner dynamic collection is what must
+     * be refreshed for route() and Route::has() to find the merged routes.
      */
     private function refreshNameLookups(RouteCollectionInterface $routes): void
     {
@@ -201,8 +306,7 @@ class ModuleRouteLoader
 
     /**
      * Trim the router's group stack back to the given depth. Router::group()
-     * leaves its attributes on the stack when the route callback throws; there
-     * is no public API to pop them, so restore the stack directly.
+     * leaves its attributes on the stack when the route callback throws.
      */
     private function restoreGroupStack(Router $router, int $depth): void
     {
