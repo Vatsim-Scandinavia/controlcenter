@@ -15,6 +15,7 @@ The catalogue of roles, permissions, and configuration knobs that ship with Cont
 | `moderator` | `both` | Area moderator. Manages users, reports, positions, and endorsements within the assigned area, or system-wide if assigned globally. |
 | `training-staff` | `area` | Training staff. Edit access to training-related matters within the assigned area: training and reports (excluding delete and rating management), examinations, and solo endorsements. A training-only subset of `moderator`. |
 | `nav-editor` | `area` | Navigational editor. May edit operationally relevant sector data such as positions within the assigned area. |
+| `event-staff` | `global` | Event staff. Can create bulk bookings for any position, bypass rating and endorsement restrictions, and manage other users' non-Discord bookings. Booking permissions apply organisation-wide. |
 | `mentor` | `area` | Training mentor. Can manage and view training within the assigned area. |
 | `buddy` | `area` | Training buddy. Limited training visibility within the assigned area. |
 | `staff` | `both` | Generic staff member. Can view positions but not edit them. |
