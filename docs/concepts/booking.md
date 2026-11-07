@@ -56,6 +56,7 @@ Mentors and staff play a pivotal role in managing and overseeing the booking sys
 - **Bulk Booking**: Can be accessed at the `/booking/bulk/` url.
 
 Event organisers can be assigned the **Event Staff** role for bulk booking and
-booking management without training or user administration access. See
-[Assigning Event Staff](../reference/permissions.md#assigning-event-staff) for setup
-and assignment instructions. This role grants booking access across all areas.
+booking management without training or user administration access. This role
+grants booking access across all areas; bookings created through Discord must
+still be changed in Discord. See the
+[default roles reference](../reference/permissions.md#default-roles) for role details.
