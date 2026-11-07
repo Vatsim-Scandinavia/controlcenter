@@ -36,6 +36,11 @@ return [
             'description' => 'Training staff, e.g. leads, coordinators, with access to all training-related data',
             'scope' => 'area',
         ],
+        'event-staff' => [
+            'name' => 'Event Staff',
+            'description' => 'Event staff with organisation-wide booking management and bulk booking access',
+            'scope' => 'global',
+        ],
         'staff' => [
             'name' => 'Staff',
             'description' => 'Generic staff member with view-only access to positions',
@@ -143,6 +148,7 @@ return [
         'roles.director.manage',
         'roles.moderator.manage',
         'roles.training-staff.manage',
+        'roles.event-staff.manage',
         'roles.staff.manage',
         'roles.nav-editor.manage',
         'roles.mentor.manage',
@@ -209,6 +215,10 @@ return [
             'users.**',
             'roles.mentor.manage',
             'roles.buddy.manage',
+        ],
+        'event-staff' => [
+            'bookings.manage',
+            'bookings.bypass-restrictions',
         ],
         'staff' => [
             'fir.positions.view',

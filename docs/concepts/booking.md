@@ -54,3 +54,8 @@ Mentors and staff play a pivotal role in managing and overseeing the booking sys
 - **Special Tag Creation**: The :fontawesome-solid-graduation-cap: *Exam* tag is a unique feature available for mentors and staff to denote examination sessions.
 - **Management of Bookings**: Staff have comprehensive control over bookings, ensuring smooth operation and adherence to standards.
 - **Bulk Booking**: Can be accessed at the `/booking/bulk/` url.
+
+Event organisers can be assigned the **Event Staff** role for bulk booking and
+booking management without training or user administration access. See
+[Assigning Event Staff](../reference/permissions.md#assigning-event-staff) for setup
+and assignment instructions. This role grants booking access across all areas.

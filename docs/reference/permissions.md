@@ -15,6 +15,7 @@ The catalogue of roles, permissions, and configuration knobs that ship with Cont
 | `moderator` | `both` | Area moderator. Manages users, reports, positions, and endorsements within the assigned area, or system-wide if assigned globally. |
 | `training-staff` | `area` | Training staff. Edit access to training-related matters within the assigned area: training and reports (excluding delete and rating management), examinations, and solo endorsements. A training-only subset of `moderator`. |
 | `nav-editor` | `area` | Navigational editor. May edit operationally relevant sector data such as positions within the assigned area. |
+| `event-staff` | `global` | Event staff. Can create bulk bookings for any position, bypass rating and endorsement restrictions, and manage other users' bookings. Booking permissions apply organisation-wide. |
 | `mentor` | `area` | Training mentor. Can manage and view training within the assigned area. |
 | `buddy` | `area` | Training buddy. Limited training visibility within the assigned area. |
 | `staff` | `both` | Generic staff member. Can view positions but not edit them. |
@@ -77,6 +78,28 @@ After changing the file, clear the config cache so the new mapping is picked up:
 ```sh
 php artisan optimize:clear
 ```
+
+## Assigning Event Staff
+
+The `event-staff` role grants `bookings.manage` and `bookings.bypass-restrictions`.
+It does not grant user management, training administration, or sweatbox permissions.
+It is global because the booking system checks these permissions without an area.
+
+1. Deploy the updated `config/roles.php`, then run `php artisan optimize:clear`
+   on the application server. No database migration is needed.
+2. Sign in as an administrator or a **global** director. These roles can grant
+   Event Staff through `roles.event-staff.manage`.
+3. Open **Users → Member Overview** (or **Other Users**), find the person, and
+   open their profile.
+4. In **Access**, click **Add role**, select **Event Staff**, select **Global**,
+   and click **Grant**. Repeat for each person.
+5. The person can open `/booking/bulk`, enter the date and start/end times,
+   supply comma-separated position callsigns, choose a tag, and click
+   **Add Bookings**.
+
+To remove access, open the same profile's **Access** panel, remove **Event Staff**
+under **Global**, and confirm. Other roles held by the person may still grant
+booking access.
 
 ## Storage: the `role_user` Table
 
