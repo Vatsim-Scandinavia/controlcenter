@@ -103,6 +103,12 @@
                                         "description": "Stable assignment identifier, required for EXTERNAL bookings. Reuse it when republishing.",
                                         "maxLength": 128
                                     },
+                                    "external_revision": {
+                                        "type": "integer",
+                                        "description": "Monotonically increasing assignment revision (1\u20132147483647), required for EXTERNAL bookings.",
+                                        "minimum": 1,
+                                        "maximum": 2147483647
+                                    },
                                     "external_url": {
                                         "type": [
                                             "string",
@@ -157,6 +163,12 @@
                                                 "external_id": {
                                                     "type": [
                                                         "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "external_revision": {
+                                                    "type": [
+                                                        "integer",
                                                         "null"
                                                     ]
                                                 },
@@ -238,28 +250,6 @@
                             }
                         }
                     },
-                    "403": {
-                        "description": "An error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "description": "Error overview.",
-                                            "examples": [
-                                                "External bookings require an integration API key."
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "message"
-                                    ]
-                                }
-                            }
-                        }
-                    },
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
                     },
@@ -282,7 +272,7 @@
                         }
                     },
                     "409": {
-                        "description": "The assignment was cancelled or another publication is in progress.",
+                        "description": "The assignment was cancelled, the revision is stale, or a competing mutation holds a lock.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -387,6 +377,12 @@
                                         "type": "string",
                                         "maxLength": 128
                                     },
+                                    "external_revision": {
+                                        "type": "integer",
+                                        "description": "Required for EXTERNAL bookings. Increase this revision for every assignment change.",
+                                        "minimum": 1,
+                                        "maximum": 2147483647
+                                    },
                                     "source": {
                                         "type": "string",
                                         "enum": [
@@ -410,113 +406,38 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "The booking was updated, or the same revision had already been published.",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "message": {
-                                                    "type": "string",
-                                                    "const": "Booking updated"
-                                                },
-                                                "booking": {
-                                                    "$ref": "#/components/schemas/Booking"
-                                                }
-                                            },
-                                            "required": [
-                                                "message",
-                                                "booking"
-                                            ]
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "message": {
-                                                    "type": "string",
-                                                    "const": "Booking updated"
-                                                },
-                                                "booking": {
-                                                    "$ref": "#/components/schemas/Booking"
-                                                },
-                                                "tag": {
-                                                    "type": "string",
-                                                    "const": "Training"
-                                                }
-                                            },
-                                            "required": [
-                                                "message",
-                                                "booking",
-                                                "tag"
-                                            ]
+                                        "booking": {
+                                            "$ref": "#/components/schemas/Booking"
+                                        },
+                                        "tag": {
+                                            "type": "string"
                                         }
+                                    },
+                                    "required": [
+                                        "message",
+                                        "booking"
                                     ]
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "message": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "message"
-                                            ]
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "message": {
-                                                    "type": "string",
-                                                    "const": "The position is already booked for that time!"
-                                                }
-                                            },
-                                            "required": [
-                                                "message"
-                                            ]
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "message": {
-                                                    "type": "string",
-                                                    "const": "You cannot create a booking in the past."
-                                                }
-                                            },
-                                            "required": [
-                                                "message"
-                                            ]
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "message": {
-                                                    "type": "string",
-                                                    "const": "Booking needs to have a valid duration!"
-                                                }
-                                            },
-                                            "required": [
-                                                "message"
-                                            ]
-                                        }
-                                    ]
-                                }
-                            }
-                        }
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
                     },
                     "409": {
-                        "description": "The booking has been cancelled.",
+                        "description": "The booking was cancelled, the revision is stale, or a competing mutation holds a lock.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -532,12 +453,6 @@
                                 }
                             }
                         }
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationException"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/ModelNotFoundException"
                     }
                 }
             },
@@ -556,6 +471,16 @@
                         "description": "The booking ID",
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "external_revision",
+                        "in": "query",
+                        "description": "Required for EXTERNAL bookings. Must be newer than the last accepted publication or update.",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 2147483647
                         }
                     }
                 ],
@@ -582,8 +507,29 @@
                             }
                         }
                     },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "409": {
+                        "description": "The cancellation revision is stale, or a competing mutation holds a lock.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -875,6 +821,12 @@
                             "null"
                         ]
                     },
+                    "external_revision": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
                     "external_url": {
                         "type": [
                             "string",
@@ -935,6 +887,7 @@
                     "event",
                     "exam",
                     "external_id",
+                    "external_revision",
                     "external_url",
                     "id",
                     "integration_id",

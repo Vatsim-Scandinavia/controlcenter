@@ -16,6 +16,8 @@ class Booking extends Model
      */
     protected $fillable = ['callsign', 'position_id', 'name', 'time_start', 'time_end', 'cid', 'user_id', 'training', 'event', 'exam'];
 
+    protected $casts = ['external_revision' => 'integer'];
+
     public function isExternallyManaged(): bool
     {
         return in_array($this->source, ['DISCORD', 'EXTERNAL'], true);

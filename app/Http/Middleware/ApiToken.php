@@ -41,6 +41,15 @@ class ApiToken
 
         $request->attributes->set('api_key', $key);
 
+        if ($key->integration_id !== null && $args !== 'edit') {
+            $booking = $request->route('booking');
+            $routeName = $request->route()->getName();
+            if (! in_array($routeName, ['api.booking.index', 'api.booking.show', 'api.positions.index', 'api.v1.booking.index', 'api.v1.booking.show', 'api.v1.positions.index'], true)
+                || ($booking instanceof Booking && ($booking->source !== 'EXTERNAL' || $booking->integration_id !== $key->integration_id))) {
+                return response()->json(['message' => 'Integration credentials can only read their own bookings and public positions.'], 403);
+            }
+        }
+
         // Integration credentials can only write their own externally managed bookings.
         if ($args === 'edit') {
             $booking = $request->route('booking');

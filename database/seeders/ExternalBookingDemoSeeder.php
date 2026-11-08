@@ -39,8 +39,8 @@ class ExternalBookingDemoSeeder extends Seeder
         $position = Position::where('callsign', 'EKCH_TWR')->firstOrFail();
         $start = now()->addDay()->startOfDay()->addHours(18);
         foreach ([
-            ['source' => 'EXTERNAL', 'integration_id' => 'staffing-adbj', 'external_id' => 'demo-staffing-assignment', 'external_url' => 'https://staffing.adbj.no', 'event' => true],
-            ['source' => 'EXTERNAL', 'integration_id' => 'another-roster', 'external_id' => 'demo-other-assignment', 'external_url' => null, 'event' => true],
+            ['source' => 'EXTERNAL', 'integration_id' => 'staffing-adbj', 'external_id' => 'demo-staffing-assignment', 'external_revision' => 1, 'external_url' => 'https://staffing.adbj.no', 'event' => true],
+            ['source' => 'EXTERNAL', 'integration_id' => 'another-roster', 'external_id' => 'demo-other-assignment', 'external_revision' => 1, 'external_url' => null, 'event' => true],
             ['source' => 'DISCORD', 'integration_id' => null, 'external_id' => null, 'event' => true],
             ['source' => 'CC', 'integration_id' => null, 'external_id' => null, 'event' => false],
         ] as $index => $metadata) {
@@ -72,6 +72,7 @@ class ExternalBookingDemoSeeder extends Seeder
                 'position' => $position->callsign,
                 'source' => 'EXTERNAL',
                 'external_id' => 'demo-staffing-assignment',
+                'external_revision' => 2,
                 'external_url' => 'https://staffing.adbj.no',
                 'tag' => 3,
             ],

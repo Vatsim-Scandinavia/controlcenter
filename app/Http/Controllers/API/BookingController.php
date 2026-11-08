@@ -14,13 +14,14 @@ use App\Models\User;
 use App\Services\ActivityLogService;
 use App\Services\BookingService;
 use Carbon\Carbon;
+use Closure;
 use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
@@ -42,7 +43,10 @@ class BookingController extends Controller
         if ($unauthenticatedRequest) {
             $bookings = Booking::select(['id', 'callsign', 'time_start', 'time_end', 'training', 'event', 'exam', 'created_at', 'updated_at'])->where('deleted', false)->get()->sortBy('time_start');
         } else {
-            $bookings = Booking::where('deleted', false)->get()->sortBy('time_start');
+            $integrationId = $request->attributes->get('api_key')?->integration_id;
+            $bookings = Booking::where('deleted', false)
+                ->when($integrationId !== null, fn ($query) => $query->where('source', 'EXTERNAL')->where('integration_id', $integrationId))
+                ->get()->sortBy('time_start');
         }
 
         return response()->json(['data' => $bookings->values()], 200);
@@ -58,7 +62,7 @@ class BookingController extends Controller
     #[Response(
         status: 200,
         description: 'The booking was created or republished. `tag` is only present when a training tag was forced.',
-        type: 'array{success?: string, message?: string, booking: array{id: int, source: string, integration_id?: string|null, external_id?: string|null, external_url?: string|null, vatsim_booking: int|null, callsign: string, position_id: int, name: string, time_start: string, time_end: string, user_id: int, training: int, event: int, exam: int, deleted: int, created_at: string, updated_at: string}, tag?: string}',
+        type: 'array{success?: string, message?: string, booking: array{id: int, source: string, integration_id?: string|null, external_id?: string|null, external_revision?: int|null, external_url?: string|null, vatsim_booking: int|null, callsign: string, position_id: int, name: string, time_start: string, time_end: string, user_id: int, training: int, event: int, exam: int, deleted: int, created_at: string, updated_at: string}, tag?: string}',
     )]
     #[Response(
         status: 400,
@@ -67,7 +71,7 @@ class BookingController extends Controller
     )]
     #[Response(
         status: 409,
-        description: 'The assignment was cancelled or another publication is in progress.',
+        description: 'The assignment was cancelled, the revision is stale, or a competing mutation holds a lock.',
         type: 'array{message: string}',
     )]
     public function store(Request $request): JsonResponse
@@ -123,23 +127,24 @@ class BookingController extends Controller
              */
             'external_id' => 'required_if:source,EXTERNAL|prohibited_unless:source,EXTERNAL|string|max:128',
             /**
+             * Monotonically increasing assignment revision (1–2147483647), required for EXTERNAL bookings.
+             */
+            'external_revision' => 'required_if:source,EXTERNAL|prohibited_unless:source,EXTERNAL|integer|min:1|max:2147483647',
+            /**
              * Optional HTTP or HTTPS link to manage an EXTERNAL booking in the originating system.
              */
             'external_url' => 'nullable|prohibited_unless:source,EXTERNAL|url:http,https|max:2048',
         ]);
 
-        if ($data['source'] !== 'EXTERNAL') {
-            return $this->storeNewBooking($request, $data);
-        }
+        return $this->withMutationLock(function () use ($request, $data) {
+            if ($data['source'] !== 'EXTERNAL') {
+                return $this->storeNewBooking($request, $data);
+            }
 
-        $integrationId = $request->attributes->get('api_key')?->integration_id;
-        abort_unless($integrationId !== null, 403, 'External bookings require an integration API key.');
+            $integrationId = $request->attributes->get('api_key')?->integration_id;
+            abort_unless($integrationId !== null, 403, 'External bookings require an integration API key.');
 
-        // Serialize repeat publications, including the initial create and its VATSIM call.
-        $lockName = 'external-booking:' . hash('sha256', $integrationId . ':' . $data['external_id']);
-
-        try {
-            return Cache::lock($lockName, 120)->block(5, function () use ($request, $data, $integrationId) {
+            return app(BookingService::class)->withAssignmentLock($integrationId, $data['external_id'], function () use ($request, $data, $integrationId) {
                 $booking = Booking::where('integration_id', $integrationId)
                     ->where('external_id', $data['external_id'])->first();
 
@@ -148,22 +153,31 @@ class BookingController extends Controller
                         return response()->json(['message' => 'This external assignment has been cancelled. Use a new external_id to create a new assignment.'], 409);
                     }
 
-                    return $this->update($request, $booking);
+                    return $this->updateLocked($booking, $data);
                 }
 
                 return $this->storeNewBooking($request, $data);
             });
-        } catch (LockTimeoutException $e) {
-            return response()->json(['message' => 'This assignment is being published. Retry shortly.'], 409);
-        }
+        });
     }
 
+    /**
+     * @param  array{cid: int, date: string, start_at: string, end_at: string, position: string, source: string, tag?: int|null, external_id?: string, external_revision?: int, external_url?: string|null}  $data
+     */
     private function storeNewBooking(Request $request, array $data): JsonResponse
     {
+        $position = Position::firstWhere('callsign', $data['position']);
 
+        return app(BookingService::class)->withPositionLock($position->id, fn () => $this->persistNewBooking($request, $data, $position));
+    }
+
+    /**
+     * @param  array{cid: int, date: string, start_at: string, end_at: string, position: string, source: string, tag?: int|null, external_id?: string, external_revision?: int, external_url?: string|null}  $data
+     */
+    private function persistNewBooking(Request $request, array $data, Position $position): JsonResponse
+    {
         $user = User::findorFail($request['cid']);
         $booking = new Booking();
-        $position = Position::firstWhere('callsign', $data['position']);
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
@@ -177,6 +191,7 @@ class BookingController extends Controller
         if ($booking->source === 'EXTERNAL') {
             $booking->integration_id = $request->attributes->get('api_key')->integration_id;
             $booking->external_id = $data['external_id'];
+            $booking->external_revision = $data['external_revision'];
             $booking->external_url = $data['external_url'] ?? null;
         }
 
@@ -313,16 +328,17 @@ class BookingController extends Controller
      * overlapping bookings, and re-evaluates whether a training tag must be forced.
      */
     #[Response(
+        status: 200,
+        description: 'The booking was updated, or the same revision had already been published.',
+        type: 'array{message: string, booking: \App\Models\Booking, tag?: string}',
+    )]
+    #[Response(
         status: 409,
-        description: 'The booking has been cancelled.',
+        description: 'The booking was cancelled, the revision is stale, or a competing mutation holds a lock.',
         type: 'array{message: string}',
     )]
     public function update(Request $request, Booking $booking): JsonResponse
     {
-        if ($booking->deleted) {
-            return response()->json(['message' => 'This booking has been cancelled.'], 409);
-        }
-
         $data = $request->validate([
             /**
              * The VATSIM CID (user ID) the booking belongs to.
@@ -362,8 +378,21 @@ class BookingController extends Controller
             'tag' => 'nullable|integer|between:1,3',
             'external_url' => 'nullable|url:http,https|max:2048',
             'external_id' => 'sometimes|string|max:128',
+            /**
+             * Required for EXTERNAL bookings. Increase this revision for every assignment change.
+             */
+            'external_revision' => [Rule::requiredIf($booking->source === 'EXTERNAL'), Rule::prohibitedIf($booking->source !== 'EXTERNAL'), 'integer', 'min:1', 'max:2147483647'],
             'source' => 'sometimes|string|in:CC,VATBOOK,DISCORD,EXTERNAL',
         ]);
+
+        return $this->withMutationLock(fn () => app(BookingService::class)->withBookingLock($booking, fn (Booking $current) => $this->updateLocked($current, $data)));
+    }
+
+    private function updateLocked(Booking $booking, array $data): JsonResponse
+    {
+        if ($booking->deleted) {
+            return response()->json(['message' => 'This booking has been cancelled.'], 409);
+        }
 
         foreach (['source', 'external_id'] as $attribute) {
             if (array_key_exists($attribute, $data) && $data[$attribute] !== $booking->$attribute) {
@@ -371,9 +400,24 @@ class BookingController extends Controller
             }
         }
 
+        if ($booking->source === 'EXTERNAL') {
+            $revision = (int) $data['external_revision'];
+            if ($revision < $booking->external_revision) {
+                return response()->json(['message' => 'This assignment revision is older than the stored revision.'], 409);
+            }
+            if ($revision === $booking->external_revision) {
+                return response()->json(['message' => 'Booking already published', 'booking' => $booking], 200);
+            }
+        }
+
         $user = User::findorFail($data['cid']);
         $position = Position::firstWhere('callsign', $data['position']);
 
+        return app(BookingService::class)->withPositionLock($position->id, fn () => $this->persistUpdatedBooking($booking, $position, $user, $data));
+    }
+
+    private function persistUpdatedBooking(Booking $booking, Position $position, User $user, array $data): JsonResponse
+    {
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
         $booking->time_start = Carbon::createFromFormat('H:i', $data['start_at'])->setDateFrom($date);
         $booking->time_end = Carbon::createFromFormat('H:i', $data['end_at'])->setDateFrom($date);
@@ -384,6 +428,9 @@ class BookingController extends Controller
         $booking->name = $user->name;
         if ($booking->source === 'EXTERNAL' && array_key_exists('external_url', $data)) {
             $booking->external_url = $data['external_url'];
+        }
+        if ($booking->source === 'EXTERNAL') {
+            $booking->external_revision = $data['external_revision'];
         }
 
         if (Carbon::parse($booking->time_start)->eq(Carbon::parse($booking->time_end))) {
@@ -492,10 +539,35 @@ class BookingController extends Controller
         description: 'The booking was cancelled or had already been cancelled.',
         type: 'array{message: string, booking: \App\Models\Booking}',
     )]
-    public function destroy(Booking $booking): JsonResponse
+    #[Response(
+        status: 409,
+        description: 'The cancellation revision is stale, or a competing mutation holds a lock.',
+        type: 'array{message: string}',
+    )]
+    public function destroy(Request $request, Booking $booking): JsonResponse
+    {
+        $data = $request->validate([
+            /**
+             * Required for EXTERNAL bookings. Must be newer than the last accepted publication or update.
+             */
+            'external_revision' => [Rule::requiredIf($booking->source === 'EXTERNAL'), Rule::prohibitedIf($booking->source !== 'EXTERNAL'), 'integer', 'min:1', 'max:2147483647'],
+        ]);
+
+        return $this->withMutationLock(fn () => app(BookingService::class)->withBookingLock($booking,
+            fn (Booking $current) => app(BookingService::class)->withPositionLock($current->position_id, fn () => $this->cancelLocked($current, $data))));
+    }
+
+    private function cancelLocked(Booking $booking, array $data): JsonResponse
     {
         if ($booking->deleted) {
             return response()->json(['message' => 'Booking already deleted', 'booking' => $booking], 200);
+        }
+
+        if ($booking->source === 'EXTERNAL') {
+            if ((int) $data['external_revision'] <= $booking->external_revision) {
+                return response()->json(['message' => 'Cancellation requires a newer assignment revision.'], 409);
+            }
+            $booking->external_revision = $data['external_revision'];
         }
 
         $booking->deleted = true;
@@ -520,5 +592,14 @@ class BookingController extends Controller
             'message' => 'Booking deleted',
             'booking' => $booking,
         ], 200);
+    }
+
+    private function withMutationLock(Closure $callback): JsonResponse
+    {
+        try {
+            return $callback();
+        } catch (LockTimeoutException $e) {
+            return response()->json(['message' => 'This booking or position is being changed. Retry shortly.'], 409);
+        }
     }
 }
