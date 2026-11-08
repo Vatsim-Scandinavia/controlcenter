@@ -231,6 +231,14 @@ class ExternalBookingsTest extends TestCase
         $this->assertSame('EXTERNAL', Booking::findOrFail($id)->source);
     }
 
+    public function test_patch_accepts_the_source_in_any_case(): void
+    {
+        $id = $this->postJson('/api/v1/bookings/create', $this->payload(['source' => 'external']))->assertOk()->json('booking.id');
+        VatsimBookingApi::shouldReceive('updateBooking')->once()->andReturn(123);
+        $this->patchJson("/api/v1/bookings/$id", $this->payload(['source' => 'external', 'external_revision' => 2]))
+            ->assertOk()->assertJsonPath('booking.external_revision', 2);
+    }
+
     public function test_migration_can_be_rolled_back_and_reapplied_without_losing_legacy_bookings(): void
     {
         $booking = Booking::factory()->create(['source' => 'CC', 'user_id' => $this->controller->id]);

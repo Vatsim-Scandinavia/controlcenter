@@ -22,7 +22,7 @@ class BookingService
 {
     public function withAssignmentLock(string $integrationId, string $externalId, Closure $callback): mixed
     {
-        return Cache::lock('external-booking:' . hash('sha256', $integrationId . ':' . $externalId), 120)->block(5, $callback);
+        return $this->withLock('external-booking:' . hash('sha256', $integrationId . ':' . $externalId), $callback);
     }
 
     public function withBookingLock(Booking $booking, Closure $callback): mixed
@@ -37,12 +37,17 @@ class BookingService
             return $this->withAssignmentLock($booking->integration_id, $booking->external_id, $reload);
         }
 
-        return Cache::lock('booking:' . $booking->id, 120)->block(5, $reload);
+        return $this->withLock('booking:' . $booking->id, $reload);
     }
 
     public function withPositionLock(int $positionId, Closure $callback): mixed
     {
-        return Cache::lock('booking-position:' . $positionId, 120)->block(5, $callback);
+        return $this->withLock('booking-position:' . $positionId, $callback);
+    }
+
+    private function withLock(string $name, Closure $callback): mixed
+    {
+        return Cache::lock($name, 120)->block(5, $callback);
     }
 
     /**

@@ -26,10 +26,7 @@ use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
 {
-    /*public function __construct()
-    {
-        $this->middleware('client');
-    }*/
+    public function __construct(private BookingService $bookingService) {}
 
     /**
      * List bookings.
@@ -76,9 +73,7 @@ class BookingController extends Controller
     )]
     public function store(Request $request): JsonResponse
     {
-        if (is_string($request->input('source'))) {
-            $request->merge(['source' => strtoupper($request->input('source'))]);
-        }
+        $this->normalizeSource($request);
         $data = $request->validate([
             /**
              * The VATSIM CID (user ID) to create the booking for.
@@ -136,47 +131,45 @@ class BookingController extends Controller
             'external_url' => 'nullable|prohibited_unless:source,EXTERNAL|url:http,https|max:2048',
         ]);
 
-        return $this->withMutationLock(function () use ($request, $data) {
-            if ($data['source'] !== 'EXTERNAL') {
-                return $this->storeNewBooking($request, $data);
+        if ($data['source'] !== 'EXTERNAL') {
+            return $this->conflictOnLockTimeout(fn () => $this->storeNewBooking($data));
+        }
+
+        $integrationId = $request->attributes->get('api_key')?->integration_id;
+        abort_unless($integrationId !== null, 403, 'External bookings require an integration API key.');
+
+        return $this->conflictOnLockTimeout(fn () => $this->bookingService->withAssignmentLock($integrationId, $data['external_id'], function () use ($data, $integrationId) {
+            $booking = Booking::where('integration_id', $integrationId)
+                ->where('external_id', $data['external_id'])->first();
+
+            if ($booking === null) {
+                return $this->storeNewBooking($data, $integrationId);
             }
 
-            $integrationId = $request->attributes->get('api_key')?->integration_id;
-            abort_unless($integrationId !== null, 403, 'External bookings require an integration API key.');
+            if ($booking->deleted) {
+                return response()->json(['message' => 'This external assignment has been cancelled. Use a new external_id to create a new assignment.'], 409);
+            }
 
-            return app(BookingService::class)->withAssignmentLock($integrationId, $data['external_id'], function () use ($request, $data, $integrationId) {
-                $booking = Booking::where('integration_id', $integrationId)
-                    ->where('external_id', $data['external_id'])->first();
-
-                if ($booking !== null) {
-                    if ($booking->deleted) {
-                        return response()->json(['message' => 'This external assignment has been cancelled. Use a new external_id to create a new assignment.'], 409);
-                    }
-
-                    return $this->updateLocked($booking, $data);
-                }
-
-                return $this->storeNewBooking($request, $data);
-            });
-        });
+            return $this->updateLocked($booking, $data);
+        }));
     }
 
     /**
      * @param  array{cid: int, date: string, start_at: string, end_at: string, position: string, source: string, tag?: int|null, external_id?: string, external_revision?: int, external_url?: string|null}  $data
      */
-    private function storeNewBooking(Request $request, array $data): JsonResponse
+    private function storeNewBooking(array $data, ?string $integrationId = null): JsonResponse
     {
         $position = Position::firstWhere('callsign', $data['position']);
 
-        return app(BookingService::class)->withPositionLock($position->id, fn () => $this->persistNewBooking($request, $data, $position));
+        return $this->bookingService->withPositionLock($position->id, fn () => $this->persistNewBooking($data, $position, $integrationId));
     }
 
     /**
      * @param  array{cid: int, date: string, start_at: string, end_at: string, position: string, source: string, tag?: int|null, external_id?: string, external_revision?: int, external_url?: string|null}  $data
      */
-    private function persistNewBooking(Request $request, array $data, Position $position): JsonResponse
+    private function persistNewBooking(array $data, Position $position, ?string $integrationId): JsonResponse
     {
-        $user = User::findorFail($request['cid']);
+        $user = User::findorFail($data['cid']);
         $booking = new Booking();
 
         $date = Carbon::createFromFormat('d/m/Y', $data['date']);
@@ -189,7 +182,7 @@ class BookingController extends Controller
         $booking->user_id = $user->id;
         $booking->source = strtoupper($data['source']);
         if ($booking->source === 'EXTERNAL') {
-            $booking->integration_id = $request->attributes->get('api_key')->integration_id;
+            $booking->integration_id = $integrationId;
             $booking->external_id = $data['external_id'];
             $booking->external_revision = $data['external_revision'];
             $booking->external_url = $data['external_url'] ?? null;
@@ -211,7 +204,7 @@ class BookingController extends Controller
             ], 400);
         }
 
-        if (app(BookingService::class)->bookingConflictExists($booking)) {
+        if ($this->bookingService->bookingConflictExists($booking)) {
             return response()->json([
                 'message' => 'Booking overlaps with existing booking',
             ], 400);
@@ -339,6 +332,7 @@ class BookingController extends Controller
     )]
     public function update(Request $request, Booking $booking): JsonResponse
     {
+        $this->normalizeSource($request);
         $data = $request->validate([
             /**
              * The VATSIM CID (user ID) the booking belongs to.
@@ -381,11 +375,11 @@ class BookingController extends Controller
             /**
              * Required for EXTERNAL bookings. Increase this revision for every assignment change.
              */
-            'external_revision' => [Rule::requiredIf($booking->source === 'EXTERNAL'), Rule::prohibitedIf($booking->source !== 'EXTERNAL'), 'integer', 'min:1', 'max:2147483647'],
+            'external_revision' => $this->revisionRules($booking),
             'source' => 'sometimes|string|in:CC,VATBOOK,DISCORD,EXTERNAL',
         ]);
 
-        return $this->withMutationLock(fn () => app(BookingService::class)->withBookingLock($booking, fn (Booking $current) => $this->updateLocked($current, $data)));
+        return $this->conflictOnLockTimeout(fn () => $this->bookingService->withBookingLock($booking, fn (Booking $current) => $this->updateLocked($current, $data)));
     }
 
     private function updateLocked(Booking $booking, array $data): JsonResponse
@@ -413,7 +407,7 @@ class BookingController extends Controller
         $user = User::findorFail($data['cid']);
         $position = Position::firstWhere('callsign', $data['position']);
 
-        return app(BookingService::class)->withPositionLock($position->id, fn () => $this->persistUpdatedBooking($booking, $position, $user, $data));
+        return $this->bookingService->withPositionLock($position->id, fn () => $this->persistUpdatedBooking($booking, $position, $user, $data));
     }
 
     private function persistUpdatedBooking(Booking $booking, Position $position, User $user, array $data): JsonResponse
@@ -426,11 +420,9 @@ class BookingController extends Controller
         $booking->position_id = $position->id;
         $booking->user_id = $user->id;
         $booking->name = $user->name;
-        if ($booking->source === 'EXTERNAL' && array_key_exists('external_url', $data)) {
-            $booking->external_url = $data['external_url'];
-        }
         if ($booking->source === 'EXTERNAL') {
             $booking->external_revision = $data['external_revision'];
+            $booking->external_url = array_key_exists('external_url', $data) ? $data['external_url'] : $booking->external_url;
         }
 
         if (Carbon::parse($booking->time_start)->eq(Carbon::parse($booking->time_end))) {
@@ -449,7 +441,7 @@ class BookingController extends Controller
             ], 400);
         }
 
-        if (app(BookingService::class)->bookingConflictExists($booking)) {
+        if ($this->bookingService->bookingConflictExists($booking)) {
             return response()->json([
                 'message' => 'The position is already booked for that time!',
             ], 400);
@@ -550,11 +542,10 @@ class BookingController extends Controller
             /**
              * Required for EXTERNAL bookings. Must be newer than the last accepted publication or update.
              */
-            'external_revision' => [Rule::requiredIf($booking->source === 'EXTERNAL'), Rule::prohibitedIf($booking->source !== 'EXTERNAL'), 'integer', 'min:1', 'max:2147483647'],
+            'external_revision' => $this->revisionRules($booking),
         ]);
 
-        return $this->withMutationLock(fn () => app(BookingService::class)->withBookingLock($booking,
-            fn (Booking $current) => app(BookingService::class)->withPositionLock($current->position_id, fn () => $this->cancelLocked($current, $data))));
+        return $this->conflictOnLockTimeout(fn () => $this->bookingService->withBookingLock($booking, fn (Booking $current) => $this->cancelLocked($current, $data)));
     }
 
     private function cancelLocked(Booking $booking, array $data): JsonResponse
@@ -594,12 +585,29 @@ class BookingController extends Controller
         ], 200);
     }
 
-    private function withMutationLock(Closure $callback): JsonResponse
+    private function conflictOnLockTimeout(Closure $callback): JsonResponse
     {
         try {
             return $callback();
-        } catch (LockTimeoutException $e) {
+        } catch (LockTimeoutException) {
             return response()->json(['message' => 'This booking or position is being changed. Retry shortly.'], 409);
         }
+    }
+
+    private function normalizeSource(Request $request): void
+    {
+        if (is_string($request->input('source'))) {
+            $request->merge(['source' => strtoupper($request->input('source'))]);
+        }
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    private function revisionRules(Booking $booking): array
+    {
+        $isExternal = $booking->source === 'EXTERNAL';
+
+        return [Rule::requiredIf($isExternal), Rule::prohibitedIf(! $isExternal), 'integer', 'min:1', 'max:2147483647'];
     }
 }

@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ApiToken
 {
+    private const INTEGRATION_READABLE_ROUTES = ['api.booking.index', 'api.booking.show', 'api.positions.index'];
+
     /**
      * Handle an incoming request.
      *
@@ -41,31 +43,42 @@ class ApiToken
 
         $request->attributes->set('api_key', $key);
 
-        if ($key->integration_id !== null && $args !== 'edit') {
-            $booking = $request->route('booking');
-            $routeName = $request->route()->getName();
-            if (! in_array($routeName, ['api.booking.index', 'api.booking.show', 'api.positions.index', 'api.v1.booking.index', 'api.v1.booking.show', 'api.v1.positions.index'], true)
-                || ($booking instanceof Booking && ($booking->source !== 'EXTERNAL' || $booking->integration_id !== $key->integration_id))) {
-                return response()->json(['message' => 'Integration credentials can only read their own bookings and public positions.'], 403);
-            }
-        }
-
-        // Integration credentials can only write their own externally managed bookings.
-        if ($args === 'edit') {
-            $booking = $request->route('booking');
-            if ($booking instanceof Booking) {
-                if (($key->integration_id !== null || $booking->source === 'EXTERNAL')
-                    && ($booking->source !== 'EXTERNAL' || $key->integration_id === null || $booking->integration_id !== $key->integration_id)) {
-                    return response()->json(['message' => 'This booking belongs to another booking system.'], 403);
-                }
-            } elseif ($key->integration_id !== null && (! is_string($request->input('source')) || strtoupper($request->input('source')) !== 'EXTERNAL')) {
-                return response()->json(['message' => 'Integration credentials must use the EXTERNAL booking source.'], 403);
-            }
+        $denial = $this->scopeDenial($request, $key, $args === 'edit');
+        if ($denial !== null) {
+            return response()->json(['message' => $denial], 403);
         }
 
         // Update last used
         $key->update(['last_used_at' => now()]);
 
         return $next($request);
+    }
+
+    private function scopeDenial(Request $request, ApiKey $key, bool $writes): ?string
+    {
+        $booking = $request->route('booking');
+        $booking = $booking instanceof Booking ? $booking : null;
+        $isExternal = $booking?->source === 'EXTERNAL';
+
+        if ($key->integration_id === null) {
+            return $writes && $isExternal ? 'This booking belongs to another booking system.' : null;
+        }
+
+        $ownsBooking = $isExternal && $booking->integration_id === $key->integration_id;
+
+        if (! $writes) {
+            $routeName = str_replace('api.v1.', 'api.', (string) $request->route()->getName());
+            $readable = in_array($routeName, self::INTEGRATION_READABLE_ROUTES, true) && ($booking === null || $ownsBooking);
+
+            return $readable ? null : 'Integration credentials can only read their own bookings and public positions.';
+        }
+
+        if ($booking !== null) {
+            return $ownsBooking ? null : 'This booking belongs to another booking system.';
+        }
+
+        $source = $request->input('source');
+
+        return is_string($source) && strtoupper($source) === 'EXTERNAL' ? null : 'Integration credentials must use the EXTERNAL booking source.';
     }
 }
