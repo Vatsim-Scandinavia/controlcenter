@@ -13,7 +13,7 @@ class CreateApiKey extends Command
      *
      * @var string
      */
-    protected $signature = 'create:apikey';
+    protected $signature = 'create:apikey {--integration= : Stable integration identifier, e.g. staffing-adbj}';
 
     /**
      * The console command description.
@@ -29,6 +29,13 @@ class CreateApiKey extends Command
      */
     public function handle()
     {
+        $integrationId = $this->option('integration');
+        if ($integrationId !== null && ! preg_match('/\A[a-z0-9][a-z0-9_-]{0,63}\z/', $integrationId)) {
+            $this->error('Integration identifiers must use 1–64 lowercase letters, numbers, underscores or hyphens.');
+
+            return self::FAILURE;
+        }
+
         // Gather details from input
         $choices = [
             'NO, read only',
@@ -46,8 +53,11 @@ class CreateApiKey extends Command
             'name' => $name,
             'read_only' => $readonly,
             'created_at' => now(),
+            'integration_id' => $integrationId,
         ]);
 
         $this->comment('API key `' . $name . '` has been created with following token: `' . $secret . '`');
+
+        return self::SUCCESS;
     }
 }

@@ -3,10 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Models\ApiKey;
+use App\Models\Booking;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiToken
 {
@@ -35,6 +36,21 @@ class ApiToken
                 return response()->json([
                     'message' => 'Unauthorized',
                 ], 401);
+            }
+        }
+
+        $request->attributes->set('api_key', $key);
+
+        // Integration credentials can only write their own externally managed bookings.
+        if ($args === 'edit') {
+            $booking = $request->route('booking');
+            if ($booking instanceof Booking) {
+                if (($key->integration_id !== null || $booking->source === 'EXTERNAL')
+                    && ($booking->source !== 'EXTERNAL' || $key->integration_id === null || $booking->integration_id !== $key->integration_id)) {
+                    return response()->json(['message' => 'This booking belongs to another booking system.'], 403);
+                }
+            } elseif ($key->integration_id !== null && (! is_string($request->input('source')) || strtoupper($request->input('source')) !== 'EXTERNAL')) {
+                return response()->json(['message' => 'Integration credentials must use the EXTERNAL booking source.'], 403);
             }
         }
 

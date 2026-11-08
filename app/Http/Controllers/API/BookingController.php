@@ -12,11 +12,16 @@ use App\Models\Booking;
 use App\Models\Position;
 use App\Models\User;
 use App\Services\ActivityLogService;
+use App\Services\BookingService;
 use Carbon\Carbon;
+use Dedoc\Scramble\Attributes\Response;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
 {
@@ -29,10 +34,8 @@ class BookingController extends Controller
      * List bookings.
      *
      * Returns a reduced payload when the request is unauthenticated.
-     *
-     * @return Response
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $unauthenticatedRequest = $request->attributes->get('unauthenticated');
 
@@ -46,25 +49,32 @@ class BookingController extends Controller
     }
 
     /**
-     * Create a booking.
+     * Create or republish a booking.
      *
      * Validates CID, date, start/end time, position, and optional tag, then persists a
      * new booking, forcing a training tag when the controller or position rating requires it.
-     *
-     * @return Response
+     * EXTERNAL assignments with the same integration and external_id update the existing booking.
      */
-    #[\Dedoc\Scramble\Attributes\Response(
+    #[Response(
         status: 200,
-        description: 'The booking was created. `tag` is only present when a training tag was forced.',
-        type: 'array{success: string, booking: array{id: int, source: string, vatsim_booking: int|null, callsign: string, position_id: int, name: string, time_start: string, time_end: string, user_id: int, training: int, event: int, exam: int, deleted: int, created_at: string, updated_at: string}, tag?: string}',
+        description: 'The booking was created or republished. `tag` is only present when a training tag was forced.',
+        type: 'array{success?: string, message?: string, booking: array{id: int, source: string, integration_id?: string|null, external_id?: string|null, external_url?: string|null, vatsim_booking: int|null, callsign: string, position_id: int, name: string, time_start: string, time_end: string, user_id: int, training: int, event: int, exam: int, deleted: int, created_at: string, updated_at: string}, tag?: string}',
     )]
-    #[\Dedoc\Scramble\Attributes\Response(
+    #[Response(
         status: 400,
         description: 'The booking could not be created — for example the start and end time are equal, the start time is in the past, or it overlaps an existing booking.',
         type: 'array{message: string}',
     )]
-    public function store(Request $request)
+    #[Response(
+        status: 409,
+        description: 'The assignment was cancelled or another publication is in progress.',
+        type: 'array{message: string}',
+    )]
+    public function store(Request $request): JsonResponse
     {
+        if (is_string($request->input('source'))) {
+            $request->merge(['source' => strtoupper($request->input('source'))]);
+        }
         $data = $request->validate([
             /**
              * The VATSIM CID (user ID) to create the booking for.
@@ -103,12 +113,53 @@ class BookingController extends Controller
              */
             'tag' => 'nullable|integer|between:1,3',
             /**
-             * The booking source; use `CC` for Control Center bookings.
+             * The booking source: CC, VATBOOK, DISCORD, or EXTERNAL.
              *
              * @example CC
              */
-            'source' => 'required',
+            'source' => 'required|string|in:CC,VATBOOK,DISCORD,EXTERNAL',
+            /**
+             * Stable assignment identifier, required for EXTERNAL bookings. Reuse it when republishing.
+             */
+            'external_id' => 'required_if:source,EXTERNAL|prohibited_unless:source,EXTERNAL|string|max:128',
+            /**
+             * Optional HTTP or HTTPS link to manage an EXTERNAL booking in the originating system.
+             */
+            'external_url' => 'nullable|prohibited_unless:source,EXTERNAL|url:http,https|max:2048',
         ]);
+
+        if ($data['source'] !== 'EXTERNAL') {
+            return $this->storeNewBooking($request, $data);
+        }
+
+        $integrationId = $request->attributes->get('api_key')?->integration_id;
+        abort_unless($integrationId !== null, 403, 'External bookings require an integration API key.');
+
+        // Serialize repeat publications, including the initial create and its VATSIM call.
+        $lockName = 'external-booking:' . hash('sha256', $integrationId . ':' . $data['external_id']);
+
+        try {
+            return Cache::lock($lockName, 120)->block(5, function () use ($request, $data, $integrationId) {
+                $booking = Booking::where('integration_id', $integrationId)
+                    ->where('external_id', $data['external_id'])->first();
+
+                if ($booking !== null) {
+                    if ($booking->deleted) {
+                        return response()->json(['message' => 'This external assignment has been cancelled. Use a new external_id to create a new assignment.'], 409);
+                    }
+
+                    return $this->update($request, $booking);
+                }
+
+                return $this->storeNewBooking($request, $data);
+            });
+        } catch (LockTimeoutException $e) {
+            return response()->json(['message' => 'This assignment is being published. Retry shortly.'], 409);
+        }
+    }
+
+    private function storeNewBooking(Request $request, array $data): JsonResponse
+    {
 
         $user = User::findorFail($request['cid']);
         $booking = new Booking();
@@ -123,8 +174,13 @@ class BookingController extends Controller
         $booking->name = $user->name;
         $booking->user_id = $user->id;
         $booking->source = strtoupper($data['source']);
+        if ($booking->source === 'EXTERNAL') {
+            $booking->integration_id = $request->attributes->get('api_key')->integration_id;
+            $booking->external_id = $data['external_id'];
+            $booking->external_url = $data['external_url'] ?? null;
+        }
 
-        if ($booking->time_start === $booking->time_end) {
+        if (Carbon::parse($booking->time_start)->eq(Carbon::parse($booking->time_end))) {
             return response()->json([
                 'message' => 'Start and end time cannot be the same',
             ], 400);
@@ -140,17 +196,7 @@ class BookingController extends Controller
             ], 400);
         }
 
-        if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
-            ->where('position_id', $booking->position_id)
-            ->where('deleted', false)
-            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
-            ->where('position_id', $booking->position_id)
-            ->where('deleted', false)
-            ->get()->isEmpty()) {
+        if (app(BookingService::class)->bookingConflictExists($booking)) {
             return response()->json([
                 'message' => 'Booking overlaps with existing booking',
             ], 400);
@@ -232,10 +278,8 @@ class BookingController extends Controller
 
     /**
      * Display a single booking.
-     *
-     * @return Response
      */
-    public function show(Booking $booking)
+    public function show(Booking $booking): JsonResponse
     {
         $user = User::findorFail($booking->user_id);
         $positions = new Collection();
@@ -267,11 +311,18 @@ class BookingController extends Controller
      *
      * Revalidates CID, date, start/end time, position, and optional tag, re-checks for
      * overlapping bookings, and re-evaluates whether a training tag must be forced.
-     *
-     * @return Response
      */
-    public function update(Request $request, Booking $booking)
+    #[Response(
+        status: 409,
+        description: 'The booking has been cancelled.',
+        type: 'array{message: string}',
+    )]
+    public function update(Request $request, Booking $booking): JsonResponse
     {
+        if ($booking->deleted) {
+            return response()->json(['message' => 'This booking has been cancelled.'], 409);
+        }
+
         $data = $request->validate([
             /**
              * The VATSIM CID (user ID) the booking belongs to.
@@ -309,7 +360,16 @@ class BookingController extends Controller
              * @example 1
              */
             'tag' => 'nullable|integer|between:1,3',
+            'external_url' => 'nullable|url:http,https|max:2048',
+            'external_id' => 'sometimes|string|max:128',
+            'source' => 'sometimes|string|in:CC,VATBOOK,DISCORD,EXTERNAL',
         ]);
+
+        foreach (['source', 'external_id'] as $attribute) {
+            if (array_key_exists($attribute, $data) && $data[$attribute] !== $booking->$attribute) {
+                throw ValidationException::withMessages([$attribute => 'The booking source and assignment identifier cannot be changed.']);
+            }
+        }
 
         $user = User::findorFail($data['cid']);
         $position = Position::firstWhere('callsign', $data['position']);
@@ -320,8 +380,13 @@ class BookingController extends Controller
 
         $booking->callsign = strtoupper($data['position']);
         $booking->position_id = $position->id;
+        $booking->user_id = $user->id;
+        $booking->name = $user->name;
+        if ($booking->source === 'EXTERNAL' && array_key_exists('external_url', $data)) {
+            $booking->external_url = $data['external_url'];
+        }
 
-        if ($booking->time_start === $booking->time_end) {
+        if (Carbon::parse($booking->time_start)->eq(Carbon::parse($booking->time_end))) {
             return response()->json([
                 'message' => 'Booking needs to have a valid duration!',
             ], 400);
@@ -337,19 +402,7 @@ class BookingController extends Controller
             ], 400);
         }
 
-        if (! Booking::whereBetween('time_start', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
-            ->where('position_id', $booking->position_id)
-            ->where('deleted', false)
-            ->where('id', '!=', $booking->id)
-            ->orWhereBetween('time_end', [$booking->time_start, $booking->time_end])
-            ->where('time_end', '!=', $booking->time_start)
-            ->where('time_start', '!=', $booking->time_end)
-            ->where('position_id', $booking->position_id)
-            ->where('deleted', false)
-            ->where('id', '!=', $booking->id)
-            ->get()->isEmpty()) {
+        if (app(BookingService::class)->bookingConflictExists($booking)) {
             return response()->json([
                 'message' => 'The position is already booked for that time!',
             ], 400);
@@ -433,11 +486,18 @@ class BookingController extends Controller
      * Delete a booking.
      *
      * Soft-deletes the booking and cancels the corresponding VATSIM booking.
-     *
-     * @return Response
      */
-    public function destroy(Booking $booking)
+    #[Response(
+        status: 200,
+        description: 'The booking was cancelled or had already been cancelled.',
+        type: 'array{message: string, booking: \App\Models\Booking}',
+    )]
+    public function destroy(Booking $booking): JsonResponse
     {
+        if ($booking->deleted) {
+            return response()->json(['message' => 'Booking already deleted', 'booking' => $booking], 200);
+        }
+
         $booking->deleted = true;
 
         try {

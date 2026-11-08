@@ -123,19 +123,10 @@ class BookingService
     private function overlapConstraints(Booking|Sweatbook $booking): \Closure
     {
         return function ($query) use ($booking) {
-            $query->where(function ($query) use ($booking) {
-                $query->whereBetween('time_start', [$booking->time_start, $booking->time_end])
-                    ->where('time_end', '!=', $booking->time_start)
-                    ->where('time_start', '!=', $booking->time_end)
-                    ->where('position_id', $booking->position_id)
-                    ->where('id', '!=', $booking->id);
-            })->orWhere(function ($query) use ($booking) {
-                $query->whereBetween('time_end', [$booking->time_start, $booking->time_end])
-                    ->where('time_end', '!=', $booking->time_start)
-                    ->where('time_start', '!=', $booking->time_end)
-                    ->where('position_id', $booking->position_id)
-                    ->where('id', '!=', $booking->id);
-            });
+            $query->where('position_id', $booking->position_id)
+                ->where('time_start', '<', $booking->time_end)
+                ->where('time_end', '>', $booking->time_start)
+                ->when($booking->exists, fn ($query) => $query->where('id', '!=', $booking->id));
         };
     }
 

@@ -26,8 +26,8 @@
         "/bookings/create": {
             "post": {
                 "operationId": "v1.booking.store",
-                "description": "Validates CID, date, start/end time, position, and optional tag, then persists a\nnew booking, forcing a training tag when the controller or position rating requires it.",
-                "summary": "Create a booking",
+                "description": "Validates CID, date, start/end time, position, and optional tag, then persists a\nnew booking, forcing a training tag when the controller or position rating requires it.\nEXTERNAL assignments with the same integration and external_id update the existing booking.",
+                "summary": "Create or republish a booking",
                 "tags": [
                     "Booking"
                 ],
@@ -87,10 +87,30 @@
                                     },
                                     "source": {
                                         "type": "string",
-                                        "description": "The booking source; use `CC` for Control Center bookings.",
+                                        "description": "The booking source: CC, VATBOOK, DISCORD, or EXTERNAL.",
+                                        "enum": [
+                                            "CC",
+                                            "VATBOOK",
+                                            "DISCORD",
+                                            "EXTERNAL"
+                                        ],
                                         "examples": [
                                             "CC"
                                         ]
+                                    },
+                                    "external_id": {
+                                        "type": "string",
+                                        "description": "Stable assignment identifier, required for EXTERNAL bookings. Reuse it when republishing.",
+                                        "maxLength": 128
+                                    },
+                                    "external_url": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "format": "uri",
+                                        "description": "Optional HTTP or HTTPS link to manage an EXTERNAL booking in the originating system.",
+                                        "maxLength": 2048
                                     }
                                 },
                                 "required": [
@@ -107,13 +127,16 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "The booking was created. `tag` is only present when a training tag was forced.",
+                        "description": "The booking was created or republished. `tag` is only present when a training tag was forced.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
                                         "success": {
+                                            "type": "string"
+                                        },
+                                        "message": {
                                             "type": "string"
                                         },
                                         "booking": {
@@ -124,6 +147,24 @@
                                                 },
                                                 "source": {
                                                     "type": "string"
+                                                },
+                                                "integration_id": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "external_id": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "external_url": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
                                                 },
                                                 "vatsim_booking": {
                                                     "type": [
@@ -191,8 +232,29 @@
                                         }
                                     },
                                     "required": [
-                                        "success",
                                         "booking"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "An error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Error overview.",
+                                            "examples": [
+                                                "External bookings require an integration API key."
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
                                     ]
                                 }
                             }
@@ -203,6 +265,24 @@
                     },
                     "400": {
                         "description": "The booking could not be created \u2014 for example the start and end time are equal, the start time is in the past, or it overlaps an existing booking.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "The assignment was cancelled or another publication is in progress.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -294,6 +374,27 @@
                                         ],
                                         "minimum": 1,
                                         "maximum": 3
+                                    },
+                                    "external_url": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "format": "uri",
+                                        "maxLength": 2048
+                                    },
+                                    "external_id": {
+                                        "type": "string",
+                                        "maxLength": 128
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "CC",
+                                            "VATBOOK",
+                                            "DISCORD",
+                                            "EXTERNAL"
+                                        ]
                                     }
                                 },
                                 "required": [
@@ -313,7 +414,121 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "Booking updated"
+                                                },
+                                                "booking": {
+                                                    "$ref": "#/components/schemas/Booking"
+                                                }
+                                            },
+                                            "required": [
+                                                "message",
+                                                "booking"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "Booking updated"
+                                                },
+                                                "booking": {
+                                                    "$ref": "#/components/schemas/Booking"
+                                                },
+                                                "tag": {
+                                                    "type": "string",
+                                                    "const": "Training"
+                                                }
+                                            },
+                                            "required": [
+                                                "message",
+                                                "booking",
+                                                "tag"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "The position is already booked for that time!"
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "You cannot create a booking in the past."
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "Booking needs to have a valid duration!"
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "The booking has been cancelled.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
                                 }
                             }
                         }
@@ -346,15 +561,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "The booking was cancelled or had already been cancelled.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
                                         "message": {
-                                            "type": "string",
-                                            "const": "Booking deleted"
+                                            "type": "string"
                                         },
                                         "booking": {
                                             "$ref": "#/components/schemas/Booking"
@@ -655,8 +869,26 @@
                     "exam": {
                         "type": "integer"
                     },
+                    "external_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "external_url": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "id": {
                         "type": "integer"
+                    },
+                    "integration_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "name": {
                         "type": "string"
@@ -702,7 +934,10 @@
                     "deleted",
                     "event",
                     "exam",
+                    "external_id",
+                    "external_url",
                     "id",
+                    "integration_id",
                     "name",
                     "position_id",
                     "source",
