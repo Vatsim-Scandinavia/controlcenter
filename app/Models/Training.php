@@ -270,6 +270,43 @@ class Training extends Model
     }
 
     /**
+     * Get every booking of the student that is tagged as a training session.
+     *
+     * Bookings are only linked to the student, so this spans all of the student's
+     * trainings and areas. Use bookedSessions() for the ones belonging to this training.
+     */
+    public function trainingSessions(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'user_id', 'user_id')
+            ->where('training', true)
+            ->where('deleted', false)
+            ->orderBy('time_start');
+    }
+
+    /**
+     * Get the training sessions booked for this training.
+     *
+     * A student only has one open training at a time, so while this training is in
+     * progress the student's sessions on positions in its area belong to it.
+     *
+     * The area comes from each training, which a relation constraint can't reach when
+     * eager loading trainings in bulk, so the sessions are filtered here instead.
+     *
+     * @return Collection<int, Booking>
+     */
+    public function bookedSessions(): Collection
+    {
+        if (! $this->status->isInProgress()) {
+            return collect();
+        }
+
+        return $this->trainingSessions
+            ->loadMissing('position')
+            ->filter(fn (Booking $booking) => $booking->position?->area_id === $this->area_id)
+            ->values();
+    }
+
+    /**
      * Get the one time links associated with the training.
      */
     public function onetimelink(): HasMany
