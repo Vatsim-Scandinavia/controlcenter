@@ -3,6 +3,25 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## [7.4.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.3.0...v7.4.0) (2026-11-09)
+
+
+### Features
+
+* show booked training sessions to mentors ([#1607](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1607)) ([cf6ee63](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cf6ee633896105f4070fcde3cf2f9d7ebd43ee53))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency chartjs-plugin-autocolors to ^0.5.0 ([#1693](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1693)) ([0982cf3](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0982cf37f571706ec6059062887c67c6367cb819))
+* **deps:** update dependency laravel/boost to v2.10.4 ([#1704](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1704)) ([cd7be4e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/cd7be4e61184603ea1151f6bc19cb0f1826dcc4b))
+* **deps:** update dependency livewire/livewire to v4.4.8 [security] ([#1706](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1706)) ([bbab140](https://github.com/Vatsim-Scandinavia/controlcenter/commit/bbab140e3a60117b649c06b71d3abfb54cfa2006))
+* **deps:** update dependency phpunit/phpunit to v13.4.6 ([#1694](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1694)) ([5f7ad13](https://github.com/Vatsim-Scandinavia/controlcenter/commit/5f7ad1353918a4de5dcfe89c4fb68cb822d92205))
+* **deps:** update dependency sass to v1.108.1 ([#1695](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1695)) ([0ad6fbe](https://github.com/Vatsim-Scandinavia/controlcenter/commit/0ad6fbe40fdcb1cfa4e567b6a39b52332fff67f4))
+* **deps:** update dependency vue to v3.5.45 ([#1691](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1691)) ([7cd798e](https://github.com/Vatsim-Scandinavia/controlcenter/commit/7cd798efb01f208c5b840223c06356cf5e9b9e67))
+* **deps:** update mysql dev docker tag to v26 ([#1649](https://github.com/Vatsim-Scandinavia/controlcenter/issues/1649)) ([340cb34](https://github.com/Vatsim-Scandinavia/controlcenter/commit/340cb34b9bd4ea9b9a48d53ae7b5d6aae750252c))
+* **deps:** update mysql docker tag to v26 ([340cb34](https://github.com/Vatsim-Scandinavia/controlcenter/commit/340cb34b9bd4ea9b9a48d53ae7b5d6aae750252c))
+
 ## [7.3.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.2.2...v7.3.0) (2026-11-07)
 
 
