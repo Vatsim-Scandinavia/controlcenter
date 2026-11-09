@@ -3,11 +3,15 @@ name: "Test & Build"
 
 on:
   push:
+    branches-ignore:
+      - "gh-readonly-queue/**"
     paths-ignore:
       - "**.md"
   pull_request:
     paths-ignore:
       - "**.md"
+  # Merge queue runs ignore path filters, so every queued change is tested.
+  merge_group:
 
 env:
   IMAGE_NAME: vatsim-scandinavia/control-center
@@ -61,21 +65,22 @@ jobs:
           context: "{{defaultContext}}:."
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          # push-by-digest requires push=true, so only publish on non-PR events.
-          # On pull requests this still builds both arches natively as validation.
-          outputs: type=image,name=ghcr.io/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+          # push-by-digest requires push=true, so only publish on push events.
+          # On pull requests and merge queue runs this still builds both arches
+          # natively as validation.
+          outputs: type=image,name=ghcr.io/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name == 'push' }}
           cache-from: type=gha,scope=${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,mode=max,scope=${{ env.PLATFORM_PAIR }}
 
       - name: export digest
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push'
         run: |
           mkdir -p "${{ runner.temp }}/digests"
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: upload digest
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v7
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
@@ -132,7 +137,7 @@ jobs:
     needs:
       - test-app
       - build-container
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     steps:
       - name: download digests
         uses: actions/download-artifact@v8
