@@ -108,6 +108,66 @@
 .editor-preview,
 .editor-preview-side {
     background-color: var(--bg-card);
+
+    .report-image-frame {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+        vertical-align: middle;
+
+        img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+
+        &.is-selected,
+        &:focus-within {
+            outline: 1px solid var(--color-primary);
+
+            .report-image-handle {
+                display: block;
+            }
+        }
+
+        &.is-resizing {
+            user-select: none;
+        }
+    }
+
+    .report-image-handle {
+        position: absolute;
+        display: none;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        transform: translate(-50%, -50%);
+        touch-action: none;
+        z-index: 1;
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: var(--color-primary);
+            border: 2px solid var(--bg-card);
+            outline: 1px solid var(--color-primary);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 3px;
+        }
+    }
+
+    .report-image-handle-nw { top: 0; left: 0; cursor: nwse-resize; }
+    .report-image-handle-ne { top: 0; left: 100%; cursor: nesw-resize; }
+    .report-image-handle-sw { top: 100%; left: 0; cursor: nesw-resize; }
+    .report-image-handle-se { top: 100%; left: 100%; cursor: nwse-resize; }
     
     pre {
         background-color: var(--bg-card-header);

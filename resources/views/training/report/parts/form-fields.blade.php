@@ -58,3 +58,11 @@
         <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
     @enderror
 </div>
+
+<p class="form-text">Insert an image or paste it with Ctrl+V (Cmd+V on Mac). In Preview, click the image and drag any corner to resize it. Save the report to keep your changes.</p>
+<div id="report-image-status" class="form-text" role="status" aria-live="polite"></div>
+@foreach ($errors->get('inline_images*') as $messages)
+    @foreach ($messages as $message)
+        <p class="text-danger" role="alert">{{ $message }}</p>
+    @endforeach
+@endforeach

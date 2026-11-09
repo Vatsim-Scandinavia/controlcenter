@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Markdown\ReportImageSizeExtension;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use League\CommonMark\Extension\Table\TableExtension;
@@ -51,6 +52,7 @@ return [
         CommonMarkCoreExtension::class,
         TableExtension::class,
         GithubFlavoredMarkdownExtension::class,
+        ReportImageSizeExtension::class,
     ],
 
     /*
