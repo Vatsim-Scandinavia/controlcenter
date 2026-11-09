@@ -9,6 +9,8 @@ use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
+use App\Services\PilotFlightHistoryService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
@@ -16,10 +18,8 @@ class FeedbackController extends Controller
 {
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Response
      */
-    public function create()
+    public function create(PilotFlightHistoryService $flightHistory): View|RedirectResponse
     {
 
         if (! Setting::get('feedbackEnabled')) {
@@ -28,8 +28,9 @@ class FeedbackController extends Controller
 
         $positions = Position::all();
         $controllers = User::getActiveAtcMembers();
+        $flights = $flightHistory->recentFlights(auth()->id());
 
-        return view('feedback.create', compact('positions', 'controllers'));
+        return view('feedback.create', compact('positions', 'controllers', 'flights'));
     }
 
     /**
@@ -57,6 +58,10 @@ class FeedbackController extends Controller
             'submitter_user_id' => $submitter->id,
             'reference_user_id' => isset($controller) ? $controller->id : null,
             'reference_position_id' => isset($position) ? $position->id : null,
+            'pilot_callsign' => $data['pilot_callsign'] ?? null,
+            'event_date' => $data['event_date'] ?? null,
+            'departure_airport' => $data['departure_airport'] ?? null,
+            'arrival_airport' => $data['arrival_airport'] ?? null,
         ]);
 
         // Forward email if configured

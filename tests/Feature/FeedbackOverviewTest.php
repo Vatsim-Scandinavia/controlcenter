@@ -383,6 +383,93 @@ class FeedbackOverviewTest extends TestCase
     }
 
     #[Test]
+    public function free_text_search_also_matches_the_pilot_callsign_within_the_visibility_scope(): void
+    {
+        $area = Area::factory()->create();
+        $otherArea = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $visible = Feedback::factory()->create([
+            'reference_position_id' => Position::factory()->create(['area_id' => $area->id])->id,
+            'feedback' => 'First entry',
+            'pilot_callsign' => 'CSA123',
+        ]);
+        $hidden = Feedback::factory()->create([
+            'reference_position_id' => Position::factory()->create(['area_id' => $otherArea->id])->id,
+            'feedback' => 'Second entry',
+            'pilot_callsign' => 'CSA123',
+        ]);
+
+        Livewire::actingAs($moderator)
+            ->test(FeedbackTable::class)
+            ->set('search', 'CSA123')
+            ->assertSee($visible->feedback)
+            ->assertDontSee($hidden->feedback);
+    }
+
+    #[Test]
+    public function flight_details_are_in_the_edit_modal_and_not_a_table_column(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        Feedback::factory()->create([
+            'reference_position_id' => Position::factory()->create(['area_id' => $area->id])->id,
+            'pilot_callsign' => 'CSA123',
+            'event_date' => '2026-10-27',
+            'departure_airport' => 'LKPR',
+            'arrival_airport' => 'EGLL',
+        ]);
+
+        Livewire::actingAs($moderator)
+            ->test(FeedbackTable::class)
+            ->assertSeeHtmlInOrder(['id="feedback-edit-area"', 'id="feedback-edit-controller"', 'id="feedback-edit-position"', 'Pilot callsign', 'Date of event, UTC', 'Departure airport, ICAO', 'Arrival airport, ICAO', 'Feedback Text'])
+            ->assertSee('CSA123')
+            ->assertSee('27\\\\\\/10\\\\\\/2026', false)
+            ->assertSee('LKPR')
+            ->assertSee('EGLL')
+            ->assertDontSeeHtml('<th>Flight</th>');
+    }
+
+    #[Test]
+    public function edit_modal_shows_na_for_entries_without_flight_details(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        Feedback::factory()->create(['reference_position_id' => Position::factory()->create(['area_id' => $area->id])->id]);
+
+        $component = Livewire::actingAs($moderator)->test(FeedbackTable::class);
+
+        foreach (['pilotCallsign', 'eventDate', 'departureAirport', 'arrivalAirport'] as $key) {
+            $component->assertSeeHtml('\\u0022' . $key . '\\u0022:\\u0022N\\\\\\/A\\u0022');
+        }
+    }
+
+    #[Test]
+    public function free_text_search_also_matches_airports(): void
+    {
+        $area = Area::factory()->create();
+        $moderator = User::factory()->create();
+        $moderator->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
+
+        $position = Position::factory()->create(['area_id' => $area->id]);
+        $departure = Feedback::factory()->create(['reference_position_id' => $position->id, 'feedback' => 'Departed there', 'departure_airport' => 'LKPR']);
+        $arrival = Feedback::factory()->create(['reference_position_id' => $position->id, 'feedback' => 'Arrived there', 'arrival_airport' => 'LKPR']);
+        $other = Feedback::factory()->create(['reference_position_id' => $position->id, 'feedback' => 'Elsewhere', 'departure_airport' => 'EGLL']);
+
+        Livewire::actingAs($moderator)
+            ->test(FeedbackTable::class)
+            ->set('search', 'LKPR')
+            ->assertSee($departure->feedback)
+            ->assertSee($arrival->feedback)
+            ->assertDontSee($other->feedback);
+    }
+
+    #[Test]
     public function submitter_search_matches_on_name_and_does_not_error(): void
     {
         // Regression: the submitter filter must query the real first_name/

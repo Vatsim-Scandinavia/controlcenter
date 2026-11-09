@@ -86,6 +86,84 @@
                         </div>
                     </div>
 
+                    @if(! empty($flights))
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label" for="recentFlight">Your recent flights <small class="form-text"> (Optional)</small></label>
+                                <select id="recentFlight" class="form-select">
+                                    <option value="">Pick a flight to fill in the fields below</option>
+                                    @foreach($flights as $flight)
+                                        <option value="{{ $flight['callsign'] }}" data-date="{{ $flight['date'] }}" data-departure="{{ $flight['departure'] }}" data-arrival="{{ $flight['arrival'] }}">
+                                            {{ $flight['callsign'] }}@if($flight['departure'] || $flight['arrival']) &middot; {{ $flight['departure'] ?? '?' }} &rarr; {{ $flight['arrival'] ?? '?' }}@endif &middot; {{ \Carbon\Carbon::parse($flight['date'])->toEuropeanDate() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" for="pilotCallsign">Pilot callsign <small class="form-text"> (Optional)</small></label>
+                            <input
+                                id="pilotCallsign"
+                                class="form-control"
+                                type="text"
+                                name="pilot_callsign"
+                                maxlength="20"
+                                value="{{ old('pilot_callsign') }}"
+                                >
+                            @error('pilot_callsign')
+                                <span class="text-danger">{{ $errors->first('pilot_callsign') }}</span>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="eventDate">Date of event, UTC <small class="form-text"> (Optional)</small></label>
+                            <input
+                                id="eventDate"
+                                class="form-control"
+                                type="date"
+                                name="event_date"
+                                max="{{ now()->toDateString() }}"
+                                value="{{ old('event_date') }}"
+                                >
+                            @error('event_date')
+                                <span class="text-danger">{{ $errors->first('event_date') }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" for="departureAirport">Departure airport, ICAO <small class="form-text"> (Optional)</small></label>
+                            <input
+                                id="departureAirport"
+                                class="form-control"
+                                type="text"
+                                name="departure_airport"
+                                maxlength="4"
+                                value="{{ old('departure_airport') }}"
+                                >
+                            @error('departure_airport')
+                                <span class="text-danger">{{ $errors->first('departure_airport') }}</span>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="arrivalAirport">Arrival airport, ICAO <small class="form-text"> (Optional)</small></label>
+                            <input
+                                id="arrivalAirport"
+                                class="form-control"
+                                type="text"
+                                name="arrival_airport"
+                                maxlength="4"
+                                value="{{ old('arrival_airport') }}"
+                                >
+                            @error('arrival_airport')
+                                <span class="text-danger">{{ $errors->first('arrival_airport') }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label class="form-label">Your feedback (English only)</label>
@@ -116,5 +194,16 @@
         event.target.disabled = true;
         event.target.closest('form').submit();
     }
+
+    document.getElementById('recentFlight')?.addEventListener('change', (event) => {
+        const flight = event.target.selectedOptions[0];
+
+        if (flight.value) {
+            document.getElementById('pilotCallsign').value = flight.value;
+            document.getElementById('eventDate').value = flight.dataset.date;
+            document.getElementById('departureAirport').value = flight.dataset.departure;
+            document.getElementById('arrivalAirport').value = flight.dataset.arrival;
+        }
+    });
 </script>
 @endsection

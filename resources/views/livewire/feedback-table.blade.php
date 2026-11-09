@@ -1,4 +1,4 @@
-<div x-data="{ current: { submitter: '', submitted: '', feedback: '', controller: '', position: '', area: '', controllerLabel: '', positionLabel: '', areaLabel: '', updateUrl: '' } }">
+<div x-data="{ current: { submitter: '', submitted: '', feedback: '', pilotCallsign: '', eventDate: '', departureAirport: '', arrivalAirport: '', controller: '', position: '', area: '', controllerLabel: '', positionLabel: '', areaLabel: '', updateUrl: '' } }">
 
     <div class="card shadow mb-4">
         <div class="card-header bg-primary py-3">
@@ -39,7 +39,7 @@
                     </div>
                     <div class="col">
                         <input type="text" class="form-control form-control-sm"
-                            placeholder="Search feedback text…"
+                            placeholder="Search feedback, callsign or airport…"
                             wire:model.live.debounce.300ms="search">
                     </div>
                     @if($this->hasActiveFilters())
@@ -98,6 +98,10 @@
                                                 'submitter' => $f->submitter->name.' ('.$f->submitter_user_id.')',
                                                 'submitted' => $f->created_at->toEuropeanDateTime(),
                                                 'feedback' => $f->feedback,
+                                                'pilotCallsign' => $f->pilot_callsign ?? 'N/A',
+                                                'eventDate' => $f->event_date?->toEuropeanDate() ?? 'N/A',
+                                                'departureAirport' => $f->departure_airport ?? 'N/A',
+                                                'arrivalAirport' => $f->arrival_airport ?? 'N/A',
                                                 'controller' => $f->referenceUser?->id ?? '',
                                                 'position' => $f->referencePosition?->callsign ?? '',
                                                 'area' => $f->explicitArea?->id ?? '',
@@ -169,13 +173,6 @@
                             </div>
 
                             <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <label class="form-label">Feedback Text</label>
-                                    <textarea class="form-control" rows="5" disabled :value="current.feedback"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="row mb-4">
                                 <div class="col-md-12 col-lg-4">
                                     <label class="form-label" for="feedback-edit-area">Area
                                         <small class="form-text"> (Optional)</small></label>
@@ -230,6 +227,35 @@
                                         <span class="text-danger">{{ $errors->first('position') }}</span>
                                     @enderror
                                     <small class="form-text text-muted">Current: <span x-text="current.positionLabel"></span></small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Pilot callsign</label>
+                                    <input class="form-control" type="text" x-model="current.pilotCallsign" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of event, UTC</label>
+                                    <input class="form-control" type="text" x-model="current.eventDate" disabled>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Departure airport, ICAO</label>
+                                    <input class="form-control" type="text" x-model="current.departureAirport" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Arrival airport, ICAO</label>
+                                    <input class="form-control" type="text" x-model="current.arrivalAirport" disabled>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label class="form-label">Feedback Text</label>
+                                    <textarea class="form-control" rows="5" disabled :value="current.feedback"></textarea>
                                 </div>
                             </div>
 
