@@ -5860,16 +5860,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v8.1.10",
+            "version": "v8.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "79325f87c3a2acc7564ddce9f457046e980e7255"
+                "reference": "30fa3efe6e736b0d06f5331cc6abe813582c0a26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/79325f87c3a2acc7564ddce9f457046e980e7255",
-                "reference": "79325f87c3a2acc7564ddce9f457046e980e7255",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/30fa3efe6e736b0d06f5331cc6abe813582c0a26",
+                "reference": "30fa3efe6e736b0d06f5331cc6abe813582c0a26",
                 "shasum": ""
             },
             "require": {
@@ -5917,7 +5917,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v8.1.10"
+                "source": "https://github.com/symfony/http-foundation/tree/v8.1.11"
             },
             "funding": [
                 {
@@ -5937,7 +5937,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-27T12:24:10+00:00"
+            "time": "2026-11-04T08:39:20+00:00",
+            "published-time": "2026-11-04T11:31:54+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -7872,7 +7873,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-22T15:42:13+00:00"
+            "time": "2026-07-22T15:42:13+00:00",
+            "published-time": "2026-07-29T11:57:45+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -8658,16 +8660,16 @@
         },
         {
             "name": "fruitcake/laravel-debugbar",
-            "version": "v4.4.4",
+            "version": "v4.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruitcake/laravel-debugbar.git",
-                "reference": "02274537e13944ad1990c521bd06d0fb3578ba17"
+                "reference": "679c389306cd6255dbb3d2a9350d846c2e991dcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/02274537e13944ad1990c521bd06d0fb3578ba17",
-                "reference": "02274537e13944ad1990c521bd06d0fb3578ba17",
+                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/679c389306cd6255dbb3d2a9350d846c2e991dcc",
+                "reference": "679c389306cd6255dbb3d2a9350d846c2e991dcc",
                 "shasum": ""
             },
             "require": {
@@ -8745,7 +8747,7 @@
             ],
             "support": {
                 "issues": "https://github.com/fruitcake/laravel-debugbar/issues",
-                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.4.4"
+                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.4.5"
             },
             "funding": [
                 {
@@ -8757,7 +8759,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-24T10:05:29+00:00"
+            "time": "2026-10-28T13:25:29+00:00",
+            "published-time": "2026-10-28T13:26:00+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -9677,7 +9680,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-02T12:38:20+00:00"
+            "time": "2026-07-02T12:38:20+00:00",
+            "published-time": "2026-07-02T12:39:09+00:00"
         },
         {
             "name": "php-debugbar/symfony-bridge",
@@ -9743,7 +9747,8 @@
                 "issues": "https://github.com/php-debugbar/symfony-bridge/issues",
                 "source": "https://github.com/php-debugbar/symfony-bridge/tree/v1.1.0"
             },
-            "time": "2026-01-15T14:47:34+00:00"
+            "time": "2026-01-15T14:47:34+00:00",
+            "published-time": "2026-01-15T14:47:58+00:00"
         },
         {
             "name": "phpstan/phpstan",
