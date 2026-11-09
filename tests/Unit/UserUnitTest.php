@@ -21,7 +21,7 @@ class UserUnitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create(['id' => 10000000]);
+        $this->user = User::factory()->home()->create(['id' => 10000000]);
     }
 
     #[Test]

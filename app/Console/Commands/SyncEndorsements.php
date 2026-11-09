@@ -80,7 +80,7 @@ class SyncEndorsements extends Command
                 });
 
                 $relevantVisitingUsers = User::whereHas('endorsements', function ($query) {
-                    $query->where('type', 'VISITING')->where('revoked', false)->where('expired', false);
+                    $query->validVisiting();
                 })->get();
 
                 $relevantUsers = $relevantActiveUsers->merge($relevantVisitingUsers);

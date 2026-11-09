@@ -326,7 +326,7 @@ class BookingServiceTest extends TestCase
         $center = Position::factory()->create(['area_id' => $area->id, 'rating' => VatsimRating::C1->value]);
         $otherAreaTower = Position::factory()->create(['rating' => VatsimRating::S2->value]);
 
-        $user = User::factory()->create(['rating' => VatsimRating::S2->value]);
+        $user = User::factory()->home()->create(['rating' => VatsimRating::S2->value]);
         $user->atcActivity()->create(['user_id' => $user->id, 'area_id' => $area->id, 'hours' => 100, 'atc_active' => true]);
 
         $positions = $this->service->getBookablePositions($user);
@@ -342,7 +342,7 @@ class BookingServiceTest extends TestCase
         Setting::set('atcActivityBasedOnTotalHours', true);
 
         $tower = Position::factory()->create(['rating' => VatsimRating::S2->value]);
-        $user = User::factory()->create(['rating' => VatsimRating::S2->value]);
+        $user = User::factory()->home()->create(['rating' => VatsimRating::S2->value]);
 
         $positions = $this->service->getBookablePositions($user);
 

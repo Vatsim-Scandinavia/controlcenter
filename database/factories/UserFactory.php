@@ -17,6 +17,11 @@ class UserFactory extends Factory
      */
     protected $model = User::class;
 
+    public function home(): static
+    {
+        return $this->state(fn () => [config('app.mode') => config('app.owner_code')]);
+    }
+
     /**
      * Define the model's default state.
      */

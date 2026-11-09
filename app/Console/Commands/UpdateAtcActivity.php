@@ -49,7 +49,7 @@ class UpdateAtcActivity extends Command
 
             if (Setting::get('atcActivityBasedOnTotalHours', true)) {
 
-                $userActivities = $user->atcActivity;
+                $userActivities = $user->localAtcActivities();
                 $totalHours = $userActivities->sum('hours');
                 $hasAnyGrace = $userActivities
                     ->where('start_of_grace_period', '>=', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
@@ -60,7 +60,7 @@ class UpdateAtcActivity extends Command
                 }
 
             } else {
-                $user->atcActivity->where('atc_active', true)
+                $user->localAtcActivities()->where('atc_active', true)
                     ->filter(fn ($a) => $this::hasTooFewHours($a))
                     ->filter(fn ($a) => $this::notInGracePeriod($a))
                     ->map(fn ($a) => $atcActivitiesToSetAsInactive->push($a));
