@@ -49,13 +49,17 @@ class BookingPolicy
             return Response::deny('This booking must be changed in Discord where it was booked');
         }
 
+        if ($booking->isExternallyManaged()) {
+            return Response::deny('This booking is externally managed and must be changed in the system where it was booked');
+        }
+
         // The user is the owner of booking
         if ($booking->user_id == $user->id) {
             return Response::allow();
         }
 
-        // The booking is not Discord but the user is moderator or above
-        if ($booking->source != 'DISCORD' && $user->hasPermission('bookings.manage')) {
+        // The user can manage locally editable bookings.
+        if ($user->hasPermission('bookings.manage')) {
             return Response::allow();
         }
 

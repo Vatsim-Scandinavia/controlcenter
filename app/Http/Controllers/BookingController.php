@@ -9,6 +9,7 @@ use App\Models\Position;
 use App\Models\User;
 use App\Services\BookingService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -211,6 +212,15 @@ class BookingController extends Controller
      * @throws AuthorizationException
      */
     private function persistBooking(Booking $booking, Position $position, ?int $tag, bool $bulk = false): RedirectResponse|bool
+    {
+        try {
+            return $this->bookingService->withPositionLock($position->id, fn () => $this->persistBookingLocked($booking, $position, $tag, $bulk));
+        } catch (LockTimeoutException $e) {
+            return back()->withErrors('This position is being changed. Retry shortly.')->withInput();
+        }
+    }
+
+    private function persistBookingLocked(Booking $booking, Position $position, ?int $tag, bool $bulk = false): RedirectResponse|bool
     {
         $this->authorize('position', $booking);
 

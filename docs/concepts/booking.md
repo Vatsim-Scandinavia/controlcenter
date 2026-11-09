@@ -60,3 +60,13 @@ booking management without training or user administration access. This role
 grants booking access across all areas; bookings created through Discord must
 still be changed in Discord. See the
 [default roles reference](../reference/permissions.md#default-roles) for role details.
+
+### Externally Managed Bookings
+
+Roster and staffing tools can publish bookings using the shared **EXTERNAL**
+source. These bookings display an external-link icon with a tooltip explaining
+where to make changes. When provided by the tool, clicking the icon opens the
+originating system in a new tab.
+Both controllers and staff must make changes there so future roster publications
+stay aligned with CC. See the [API reference](../api.md#externally-managed-bookings)
+for integration setup and repeat publication behavior.

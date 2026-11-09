@@ -11,13 +11,45 @@ use App\Models\Position;
 use App\Models\Sweatbook;
 use App\Models\User;
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Shared domain logic for ATC and sweatbox bookings.
  */
 class BookingService
 {
+    public function withAssignmentLock(string $integrationId, string $externalId, Closure $callback): mixed
+    {
+        return $this->withLock('external-booking:' . hash('sha256', $integrationId . ':' . $externalId), $callback);
+    }
+
+    public function withBookingLock(Booking $booking, Closure $callback): mixed
+    {
+        $reload = fn () => $callback($booking->fresh() ?? abort(404));
+
+        if ($booking->source === 'EXTERNAL') {
+            if ($booking->integration_id === null || $booking->external_id === null) {
+                abort(409, 'This booking has incomplete external ownership metadata.');
+            }
+
+            return $this->withAssignmentLock($booking->integration_id, $booking->external_id, $reload);
+        }
+
+        return $this->withLock('booking:' . $booking->id, $reload);
+    }
+
+    public function withPositionLock(int $positionId, Closure $callback): mixed
+    {
+        return $this->withLock('booking-position:' . $positionId, $callback);
+    }
+
+    private function withLock(string $name, Closure $callback): mixed
+    {
+        return Cache::lock($name, 120)->block(5, $callback);
+    }
+
     /**
      * Get all active bookings of the given model, sorted by start time.
      *
@@ -120,22 +152,13 @@ class BookingService
      * Query constraints matching bookings that overlap the given booking's
      * position and period, excluding adjacent bookings and the booking itself.
      */
-    private function overlapConstraints(Booking|Sweatbook $booking): \Closure
+    private function overlapConstraints(Booking|Sweatbook $booking): Closure
     {
         return function ($query) use ($booking) {
-            $query->where(function ($query) use ($booking) {
-                $query->whereBetween('time_start', [$booking->time_start, $booking->time_end])
-                    ->where('time_end', '!=', $booking->time_start)
-                    ->where('time_start', '!=', $booking->time_end)
-                    ->where('position_id', $booking->position_id)
-                    ->where('id', '!=', $booking->id);
-            })->orWhere(function ($query) use ($booking) {
-                $query->whereBetween('time_end', [$booking->time_start, $booking->time_end])
-                    ->where('time_end', '!=', $booking->time_start)
-                    ->where('time_start', '!=', $booking->time_end)
-                    ->where('position_id', $booking->position_id)
-                    ->where('id', '!=', $booking->id);
-            });
+            $query->where('position_id', $booking->position_id)
+                ->where('time_start', '<', $booking->time_end)
+                ->where('time_end', '>', $booking->time_start)
+                ->when($booking->exists, fn ($query) => $query->where('id', '!=', $booking->id));
         };
     }
 

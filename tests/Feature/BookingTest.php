@@ -377,7 +377,7 @@ class BookingTest extends TestCase
             'start_at' => '10:00',
             'end_at' => '12:00',
             'position' => $s2Position->callsign,
-            'source' => 'TEST',
+            'source' => 'CC',
         ]);
 
         $response->assertSuccessful();
