@@ -4915,16 +4915,16 @@
         },
         {
             "name": "spatie/laravel-activitylog",
-            "version": "5.1.1",
+            "version": "5.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-activitylog.git",
-                "reference": "8ce56d3b9d72f4e4551f4449d236a5ed06e71667"
+                "reference": "aaeec9fe386fb51a98413e7757bcd9b0630d0638"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/8ce56d3b9d72f4e4551f4449d236a5ed06e71667",
-                "reference": "8ce56d3b9d72f4e4551f4449d236a5ed06e71667",
+                "url": "https://api.github.com/repos/spatie/laravel-activitylog/zipball/aaeec9fe386fb51a98413e7757bcd9b0630d0638",
+                "reference": "aaeec9fe386fb51a98413e7757bcd9b0630d0638",
                 "shasum": ""
             },
             "require": {
@@ -4992,7 +4992,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-activitylog/issues",
-                "source": "https://github.com/spatie/laravel-activitylog/tree/5.1.1"
+                "source": "https://github.com/spatie/laravel-activitylog/tree/5.1.5"
             },
             "funding": [
                 {
@@ -5004,7 +5004,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-08T12:16:25+00:00"
+            "time": "2026-11-13T09:33:51+00:00",
+            "published-time": "2026-11-13T09:35:09+00:00"
         },
         {
             "name": "spatie/laravel-ignition",
@@ -5221,7 +5222,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-19T14:06:37+00:00"
+            "time": "2026-05-19T14:06:37+00:00",
+            "published-time": "2026-05-19T14:13:24+00:00"
         },
         {
             "name": "symfony/clock",
