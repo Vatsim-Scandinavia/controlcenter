@@ -33,7 +33,17 @@
                     <dd>{{ $user->first_name.' '.$user->last_name }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->first_name.' '.$user->last_name }}')"><i class="fas fa-copy"></i></button></dd>
 
                     <dt>Email</dt>
-                    <dd class="separator pb-3">{{ $user->email }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->email }}')"><i class="fas fa-copy"></i></button></dd>
+                    <dd class="separator pb-3">
+                        @can('viewEmail', $user)
+                            <a id="reveal-email-control" href="#reveal-email-modal" class="d-inline-flex align-items-center gap-2 text-muted" data-bs-toggle="modal" data-bs-target="#reveal-email-modal" aria-label="Reveal email address" title="Reveal email address">
+                                <span id="user-email" class="font-monospace" aria-label="Email address hidden">••••••••••••</span>
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </a>
+                        @else
+                            <span id="user-email" class="font-monospace text-muted" aria-label="Email address hidden">••••••••••••</span>
+                            <span class="badge bg-secondary ms-2"><i class="fas fa-lock"></i> Hidden</span>
+                        @endcan
+                    </dd>
 
                     <dt class="pt-2">ATC Rating</dt>
                     <dd>{{ $user->rating_short }}</dd>
@@ -485,9 +495,89 @@
 
 </div>
 
+@can('viewEmail', $user)
+    <div class="modal fade" id="reveal-email-modal" tabindex="-1" aria-labelledby="reveal-email-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="reveal-email-form" action="{{ route('user.email.reveal', $user) }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reveal-email-modal-label">Reveal email address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">This access will be logged. Briefly explain why you need to view {{ $user->name }}'s email address.</p>
+                        <label for="email-access-reason" class="form-label">Reason</label>
+                        <textarea id="email-access-reason" name="reason" class="form-control" rows="3" minlength="3" maxlength="500" required></textarea>
+                        <div id="reveal-email-error" class="invalid-feedback"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-eye"></i> Reveal and log access</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endcan
+
 @endsection
 
 @section('js')
+
+    @can('viewEmail', $user)
+        <script>
+            document.getElementById('reveal-email-form').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const form = event.currentTarget;
+                const reason = form.querySelector('[name="reason"]');
+                const error = document.getElementById('reveal-email-error');
+                const submit = form.querySelector('[type="submit"]');
+
+                reason.classList.remove('is-invalid');
+                submit.disabled = true;
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': form.querySelector('[name="_token"]').value,
+                        },
+                        body: new FormData(form),
+                    });
+                    const data = await response.json();
+
+                    if (! response.ok) {
+                        throw new Error(data.errors?.reason?.[0] ?? 'The email address could not be revealed.');
+                    }
+
+                    const email = document.getElementById('user-email');
+                    email.textContent = data.email;
+                    email.classList.remove('text-muted');
+                    email.setAttribute('aria-label', 'Email address revealed');
+                    document.getElementById('reveal-email-control').replaceWith(email);
+
+                    const copy = document.createElement('button');
+                    copy.type = 'button';
+                    copy.className = 'btn btn-sm btn-link';
+                    copy.title = 'Copy email address';
+                    copy.innerHTML = '<i class="fas fa-copy"></i>';
+                    copy.addEventListener('click', () => navigator.clipboard.writeText(data.email));
+                    email.after(copy);
+
+                    form.reset();
+                    bootstrap.Modal.getInstance(document.getElementById('reveal-email-modal')).hide();
+                } catch (exception) {
+                    error.textContent = exception.message;
+                    reason.classList.add('is-invalid');
+                } finally {
+                    submit.disabled = false;
+                }
+            });
+        </script>
+    @endcan
 
     <!-- Flatpickr -->
     @include('scripts.tooltips')
