@@ -5,31 +5,45 @@ namespace App\Http\Controllers;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Http\Requests\StoreFeedbackRequest;
 use App\Http\Requests\UpdateFeedbackRequest;
+use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
 class FeedbackController extends Controller
 {
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
+     * Show the area picker that precedes the feedback form.
      */
-    public function create()
+    public function selectArea(): View|RedirectResponse
     {
-
         if (! Setting::get('feedbackEnabled')) {
             return redirect()->route('dashboard')->withErrors('Feedback is currently disabled.');
         }
 
-        $positions = Position::all();
-        $controllers = User::getActiveAtcMembers();
+        $areas = Area::orderBy('name')->get();
 
-        return view('feedback.create', compact('positions', 'controllers'));
+        return view('feedback.areas', compact('areas'));
+    }
+
+    /**
+     * Show the feedback form for the given area, or for general feedback
+     * when no area is given. Positions and controllers are limited to the area.
+     */
+    public function create(?Area $area = null): View|RedirectResponse
+    {
+        if (! Setting::get('feedbackEnabled')) {
+            return redirect()->route('dashboard')->withErrors('Feedback is currently disabled.');
+        }
+
+        $positions = $area ? Position::where('area_id', $area->id)->orderBy('callsign')->get() : Position::all();
+        $controllers = User::getActiveAtcMembers(areaId: $area?->id);
+
+        return view('feedback.create', compact('positions', 'controllers', 'area'));
     }
 
     /**
@@ -57,6 +71,8 @@ class FeedbackController extends Controller
             'submitter_user_id' => $submitter->id,
             'reference_user_id' => isset($controller) ? $controller->id : null,
             'reference_position_id' => isset($position) ? $position->id : null,
+            // A position already implies its area, and the two are kept mutually exclusive.
+            'area_id' => ! isset($position) && ! empty($data['area']) ? (int) $data['area'] : null,
         ]);
 
         // Forward email if configured

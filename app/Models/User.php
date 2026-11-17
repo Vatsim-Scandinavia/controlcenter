@@ -264,15 +264,20 @@ class User extends Authenticatable
     }
 
     /**
-     * Fetch members that are active as ATC.
+     * Fetch members that are active as ATC, optionally only those active in the given area.
      *
+     * @param  array<int, int>  $userIds
      * @return EloquentCollection<User>
      */
-    public static function getActiveAtcMembers(array $userIds = [])
+    public static function getActiveAtcMembers(array $userIds = [], ?int $areaId = null)
     {
         $query = User::where('rating', '>=', VatsimRating::S1->value)
-            ->whereHas('atcActivity', function ($query) {
+            ->whereHas('atcActivity', function ($query) use ($areaId) {
                 $query->where('atc_active', true);
+
+                if ($areaId !== null) {
+                    $query->where('area_id', $areaId);
+                }
             });
 
         if (! empty($userIds)) {
