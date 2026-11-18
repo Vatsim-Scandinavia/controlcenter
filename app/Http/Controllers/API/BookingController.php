@@ -134,7 +134,7 @@ class BookingController extends Controller
             $booking->external_url = $data['external_url'] ?? null;
         }
 
-        if (Carbon::parse($booking->time_start)->eq(Carbon::parse($booking->time_end))) {
+        if ($booking->time_start->eq($booking->time_end)) {
             return response()->json([
                 'message' => 'Start and end time cannot be the same',
             ], 400);
@@ -326,7 +326,7 @@ class BookingController extends Controller
             $booking->external_url = array_key_exists('external_url', $data) ? $data['external_url'] : $booking->external_url;
         }
 
-        if (Carbon::parse($booking->time_start)->eq(Carbon::parse($booking->time_end))) {
+        if ($booking->time_start->eq($booking->time_end)) {
             return response()->json([
                 'message' => 'Booking needs to have a valid duration!',
             ], 400);
