@@ -39,7 +39,7 @@ class ExternalBookingDemoSeeder extends Seeder
         $position = Position::where('callsign', 'EKCH_TWR')->firstOrFail();
         $start = now()->addDay()->startOfDay()->addHours(18);
         foreach ([
-            ['source' => 'EXTERNAL', 'integration_id' => 'staffing-adbj', 'external_id' => 'demo-staffing-assignment', 'external_revision' => 1, 'external_url' => 'https://staffing.adbj.no', 'event' => true],
+            ['source' => 'EXTERNAL', 'integration_id' => 'roster-tool', 'external_id' => 'demo-staffing-assignment', 'external_revision' => 1, 'external_url' => 'https://roster.example.com', 'event' => true],
             ['source' => 'EXTERNAL', 'integration_id' => 'another-roster', 'external_id' => 'demo-other-assignment', 'external_revision' => 1, 'external_url' => null, 'event' => true],
             ['source' => 'DISCORD', 'integration_id' => null, 'external_id' => null, 'event' => true],
             ['source' => 'CC', 'integration_id' => null, 'external_id' => null, 'event' => false],
@@ -57,7 +57,7 @@ class ExternalBookingDemoSeeder extends Seeder
 
         $key = ApiKey::firstOrCreate(['name' => 'External booking local demo'], [
             'id' => (string) Str::uuid(),
-            'integration_id' => 'staffing-adbj',
+            'integration_id' => 'roster-tool',
             'read_only' => false,
             'created_at' => now(),
         ]);
@@ -73,7 +73,7 @@ class ExternalBookingDemoSeeder extends Seeder
                 'source' => 'EXTERNAL',
                 'external_id' => 'demo-staffing-assignment',
                 'external_revision' => 2,
-                'external_url' => 'https://staffing.adbj.no',
+                'external_url' => 'https://roster.example.com',
                 'tag' => 3,
             ],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

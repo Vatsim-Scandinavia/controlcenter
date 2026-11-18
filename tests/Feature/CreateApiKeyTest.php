@@ -26,7 +26,7 @@ class CreateApiKeyTest extends TestCase
 
     public static function validIntegrationIdentifiers(): array
     {
-        return [['a', false], ['0', false], ['staffing-adbj_1', false], [str_repeat('a', 64), false], ['read-only', true]];
+        return [['a', false], ['0', false], ['roster-tool_1', false], [str_repeat('a', 64), false], ['read-only', true]];
     }
 
     #[DataProvider('invalidIntegrationIdentifiers')]

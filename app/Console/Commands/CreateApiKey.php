@@ -13,7 +13,7 @@ class CreateApiKey extends Command
      *
      * @var string
      */
-    protected $signature = 'create:apikey {--integration= : Stable integration identifier, e.g. staffing-adbj}';
+    protected $signature = 'create:apikey {--integration= : Stable integration identifier, e.g. roster-tool}';
 
     /**
      * The console command description.

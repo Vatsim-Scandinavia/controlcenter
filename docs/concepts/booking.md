@@ -68,5 +68,5 @@ source. These bookings display an external-link icon with a tooltip explaining
 where to make changes. When provided by the tool, clicking the icon opens the
 originating system in a new tab.
 Both controllers and staff must make changes there so future roster publications
-stay aligned with CC. See the [API reference](../api.md#externally-managed-bookings)
+stay aligned with CC. See the [external bookings integration guide](../integrations/external-bookings.md)
 for integration setup and repeat publication behavior.
