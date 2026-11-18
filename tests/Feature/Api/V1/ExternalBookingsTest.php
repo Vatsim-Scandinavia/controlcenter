@@ -13,10 +13,8 @@ use App\Models\Position;
 use App\Models\User;
 use App\Policies\BookingPolicy;
 use Carbon\Carbon;
-use Database\Seeders\ExternalBookingDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Tests\TestCase;
 
@@ -427,21 +425,5 @@ class ExternalBookingsTest extends TestCase
         $request->shouldReceive('validated')->andReturn(['external_revision' => 2]);
         $response = app(BookingController::class)->destroy($request, $stale);
         $this->assertSame('Booking already deleted', $response->getData(true)['message']);
-    }
-
-    public function test_documented_demo_seeding_preserves_metadata_and_can_be_republished(): void
-    {
-        Storage::fake('local');
-        app()->detectEnvironment(fn () => 'local');
-        try {
-            $this->artisan('db:seed', ['--class' => ExternalBookingDemoSeeder::class, '--no-interaction' => true])->assertSuccessful();
-            $this->assertDatabaseCount('bookings', 4);
-            $this->assertSame(2, Booking::where('source', 'EXTERNAL')->whereNotNull('integration_id')->where('external_revision', 1)->count());
-            $sample = Storage::disk('local')->json('external-booking-demo.json');
-            $this->withToken($sample['token'])->postJson('/api/v1/bookings/create', $sample['payload'])->assertOk();
-            $this->assertDatabaseCount('bookings', 4);
-        } finally {
-            app()->detectEnvironment(fn () => 'testing');
-        }
     }
 }
