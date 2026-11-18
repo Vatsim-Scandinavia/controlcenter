@@ -683,6 +683,42 @@
             </div>
         </div>
 
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Training Sessions
+                </h6>
+            </div>
+            <div class="card-body {{ $trainingSessions->count() == 0 ? '' : 'p-0' }}">
+                @if($trainingSessions->count() == 0)
+                    <p class="mb-0">No training sessions booked</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Position</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($trainingSessions as $trainingSession)
+                                    <tr>
+                                        <td>{{ $trainingSession->starts_at->toEuropeanDate(true) }}</td>
+                                        <td>{{ $trainingSession->starts_at->toEuropeanTime() }}</td>
+                                        <td>{{ $trainingSession->ends_at->toEuropeanTime() }}</td>
+                                        <td>{{ $trainingSession->position->callsign }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
+
     </div>
 </div>
 

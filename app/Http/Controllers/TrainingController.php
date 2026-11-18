@@ -352,6 +352,7 @@ class TrainingController extends Controller
         $activeTrainingInterest = TrainingInterest::where('training_id', $training->id)->where('expired', false)->get()->count();
 
         $relatedTasks = $training->tasks->sortByDesc('created_at');
+        $trainingSessions = $training->bookedSessions();
 
         $requestTypes = TaskController::getTypes();
         $requestPopularAssignees = TaskController::getPopularAssignees($training->area);
@@ -408,7 +409,7 @@ class TrainingController extends Controller
         // no solo endorsement was ever issued on it.
         $soloEndorsementSummary = app(SoloEndorsementService::class)->summaryFor($training);
 
-        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
+        return view('training.show', compact('training', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'trainingSessions', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
     }
 
     /**
