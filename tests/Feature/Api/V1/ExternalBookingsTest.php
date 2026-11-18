@@ -6,6 +6,7 @@ use App\Exceptions\VatsimAPIException;
 use App\Facades\VatsimBookingApi;
 use App\Helpers\VatsimRating;
 use App\Http\Controllers\API\BookingController;
+use App\Http\Requests\DestroyBookingRequest;
 use App\Models\ApiKey;
 use App\Models\Booking;
 use App\Models\Position;
@@ -14,9 +15,9 @@ use App\Policies\BookingPolicy;
 use Carbon\Carbon;
 use Database\Seeders\ExternalBookingDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 use Tests\TestCase;
 
 class ExternalBookingsTest extends TestCase
@@ -33,7 +34,7 @@ class ExternalBookingsTest extends TestCase
 
         $this->controller = User::factory()->create(['rating' => VatsimRating::C1->value]);
         $this->position = Position::factory()->create(['rating' => VatsimRating::S2->value]);
-        $this->key('roster-key', 'staffing-adbj');
+        $this->key('roster-key', 'roster-tool');
         $this->withToken('roster-key');
     }
 
@@ -59,7 +60,7 @@ class ExternalBookingsTest extends TestCase
             'source' => 'EXTERNAL',
             'external_id' => 'event-123-assignment-456',
             'external_revision' => 1,
-            'external_url' => 'https://staffing.adbj.no/rosters/123',
+            'external_url' => 'https://roster.example.com/rosters/123',
             'tag' => 3,
         ], $overrides);
     }
@@ -69,9 +70,9 @@ class ExternalBookingsTest extends TestCase
         $this->postJson('/api/v1/bookings/create', $this->payload())
             ->assertOk()
             ->assertJsonPath('booking.source', 'EXTERNAL')
-            ->assertJsonPath('booking.integration_id', 'staffing-adbj')
+            ->assertJsonPath('booking.integration_id', 'roster-tool')
             ->assertJsonPath('booking.external_id', 'event-123-assignment-456')
-            ->assertJsonPath('booking.external_url', 'https://staffing.adbj.no/rosters/123');
+            ->assertJsonPath('booking.external_url', 'https://roster.example.com/rosters/123');
     }
 
     public function test_republication_updates_the_same_booking_and_controller(): void
@@ -105,7 +106,7 @@ class ExternalBookingsTest extends TestCase
     public function test_rotated_credentials_for_the_same_integration_keep_access(): void
     {
         $id = $this->postJson('/api/v1/bookings/create', $this->payload())->assertOk()->json('booking.id');
-        $this->key('rotated-key', 'staffing-adbj');
+        $this->key('rotated-key', 'roster-tool');
         $this->withToken('rotated-key')->patchJson("/api/v1/bookings/$id", $this->payload(['end_at' => '21:00', 'external_revision' => 2]))->assertOk();
         $this->deleteJson("/api/v1/bookings/$id", ['external_revision' => 3])->assertOk();
     }
@@ -124,7 +125,7 @@ class ExternalBookingsTest extends TestCase
             ->assertUnprocessable()->assertJsonValidationErrors('external_id');
         $this->key('legacy-key', null);
         $this->withToken('legacy-key')->postJson('/api/v1/bookings/create', $this->payload())->assertForbidden();
-        $this->key('read-key', 'staffing-adbj', true);
+        $this->key('read-key', 'roster-tool', true);
         $this->withToken('read-key')->postJson('/api/v1/bookings/create', $this->payload())->assertUnauthorized();
     }
 
@@ -192,7 +193,7 @@ class ExternalBookingsTest extends TestCase
             ->assertOk()->assertSee('Externally managed booking. Open the originating system to make changes.')
             ->assertSee('fa-arrow-up-right-from-square')
             ->assertDontSeeText('Externally managed')->assertDontSeeText('Manage booking')
-            ->assertSee('https://staffing.adbj.no/rosters/123');
+            ->assertSee('https://roster.example.com/rosters/123');
         $this->get("/booking/$id")->assertForbidden();
         $this->get(route('booking.delete', $id))->assertForbidden();
         $this->actingAs($staff)->get(route('booking.delete', $id))->assertForbidden();
@@ -216,7 +217,7 @@ class ExternalBookingsTest extends TestCase
         $payload = $this->payload();
         unset($payload['external_url']);
         $this->postJson('/api/v1/bookings/create', $payload)->assertOk()
-            ->assertJsonPath('booking.external_url', 'https://staffing.adbj.no/rosters/123');
+            ->assertJsonPath('booking.external_url', 'https://roster.example.com/rosters/123');
         $this->patchJson("/api/v1/bookings/$id", $this->payload(['external_url' => null, 'external_revision' => 2]))
             ->assertOk()->assertJsonPath('booking.external_url', null);
     }
@@ -248,7 +249,7 @@ class ExternalBookingsTest extends TestCase
         $this->assertSame('CC', $booking->fresh()->source);
         $migration->up();
 
-        $this->key('replacement-key', 'staffing-adbj');
+        $this->key('replacement-key', 'roster-tool');
         $this->withToken('replacement-key')->postJson('/api/v1/bookings/create', $this->payload())->assertOk();
         $this->assertSame('CC', $booking->fresh()->source);
     }
@@ -256,9 +257,9 @@ class ExternalBookingsTest extends TestCase
     public function test_rollback_revokes_integration_keys_without_revoking_legacy_keys(): void
     {
         $booking = Booking::factory()->create(['source' => 'CC', 'user_id' => $this->controller->id]);
-        $this->key('rotated-key', 'staffing-adbj');
+        $this->key('rotated-key', 'roster-tool');
         $this->key('another-integration-key', 'another-roster');
-        $this->key('integration-read-key', 'staffing-adbj', true);
+        $this->key('integration-read-key', 'roster-tool', true);
         $this->key('legacy-write-key', null);
         $this->key('legacy-read-key', null, true);
         $migration = require database_path('migrations/2026_11_07_214336_add_external_booking_management.php');
@@ -291,7 +292,7 @@ class ExternalBookingsTest extends TestCase
         $foreignId = $this->withToken('foreign-key')->postJson('/api/v1/bookings/create', $this->payload([
             'start_at' => '20:00', 'end_at' => '22:00',
         ]))->assertOk()->json('booking.id');
-        $this->key('integration-read-key', 'staffing-adbj', true);
+        $this->key('integration-read-key', 'roster-tool', true);
 
         foreach (['roster-key', 'integration-read-key'] as $token) {
             $this->withToken($token)->getJson('/api/v1/bookings')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $ownId);
@@ -368,7 +369,7 @@ class ExternalBookingsTest extends TestCase
     public function test_patch_and_delete_share_the_publication_lock(): void
     {
         $id = $this->postJson('/api/v1/bookings/create', $this->payload())->assertOk()->json('booking.id');
-        $lock = Cache::lock('external-booking:' . hash('sha256', 'staffing-adbj:event-123-assignment-456'), 120);
+        $lock = Cache::lock('external-booking:' . hash('sha256', 'roster-tool:event-123-assignment-456'), 120);
         $this->assertTrue($lock->get());
         VatsimBookingApi::shouldReceive('updateBooking')->never();
         VatsimBookingApi::shouldReceive('deleteBooking')->once();
@@ -422,7 +423,8 @@ class ExternalBookingsTest extends TestCase
         $stale = Booking::findOrFail($id);
         $this->deleteJson("/api/v1/bookings/$id", ['external_revision' => 2])->assertOk();
         VatsimBookingApi::shouldReceive('deleteBooking')->never();
-        $request = Request::create("/api/v1/bookings/$id", 'DELETE', ['external_revision' => 2]);
+        $request = Mockery::mock(DestroyBookingRequest::class);
+        $request->shouldReceive('validated')->andReturn(['external_revision' => 2]);
         $response = app(BookingController::class)->destroy($request, $stale);
         $this->assertSame('Booking already deleted', $response->getData(true)['message']);
     }

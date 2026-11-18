@@ -8,6 +8,9 @@ use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Helpers\VatsimRating;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DestroyBookingRequest;
+use App\Http\Requests\StoreBookingRequest;
+use App\Http\Requests\UpdateBookingRequest;
 use App\Models\Booking;
 use App\Models\Position;
 use App\Models\User;
@@ -21,7 +24,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
@@ -71,65 +73,9 @@ class BookingController extends Controller
         description: 'The assignment was cancelled, the revision is stale, or a competing mutation holds a lock.',
         type: 'array{message: string}',
     )]
-    public function store(Request $request): JsonResponse
+    public function store(StoreBookingRequest $request): JsonResponse
     {
-        $this->normalizeSource($request);
-        $data = $request->validate([
-            /**
-             * The VATSIM CID (user ID) to create the booking for.
-             *
-             * @example 10000001
-             */
-            'cid' => 'required|integer',
-            /**
-             * The booking date, in `d/m/Y` format.
-             *
-             * @example 15/02/2024
-             */
-            'date' => 'required|date_format:d/m/Y|after_or_equal:today',
-            /**
-             * The booking start time, in 24-hour `H:i` format.
-             *
-             * @example 12:00
-             */
-            'start_at' => 'required|date_format:H:i',
-            /**
-             * The booking end time, in 24-hour `H:i` format.
-             *
-             * @example 13:00
-             */
-            'end_at' => 'required|date_format:H:i',
-            /**
-             * The callsign of the position to book.
-             *
-             * @example EKCH_TWR
-             */
-            'position' => 'required|exists:positions,callsign',
-            /**
-             * The booking type: `1` for training, `2` for exam, `3` for event.
-             *
-             * @example 1
-             */
-            'tag' => 'nullable|integer|between:1,3',
-            /**
-             * The booking source: CC, VATBOOK, DISCORD, or EXTERNAL.
-             *
-             * @example CC
-             */
-            'source' => 'required|string|in:CC,VATBOOK,DISCORD,EXTERNAL',
-            /**
-             * Stable assignment identifier, required for EXTERNAL bookings. Reuse it when republishing.
-             */
-            'external_id' => 'required_if:source,EXTERNAL|prohibited_unless:source,EXTERNAL|string|max:128',
-            /**
-             * Monotonically increasing assignment revision (1–2147483647), required for EXTERNAL bookings.
-             */
-            'external_revision' => 'required_if:source,EXTERNAL|prohibited_unless:source,EXTERNAL|integer|min:1|max:2147483647',
-            /**
-             * Optional HTTP or HTTPS link to manage an EXTERNAL booking in the originating system.
-             */
-            'external_url' => 'nullable|prohibited_unless:source,EXTERNAL|url:http,https|max:2048',
-        ]);
+        $data = $request->validated();
 
         if ($data['source'] !== 'EXTERNAL') {
             return $this->conflictOnLockTimeout(fn () => $this->storeNewBooking($data));
@@ -330,54 +276,9 @@ class BookingController extends Controller
         description: 'The booking was cancelled, the revision is stale, or a competing mutation holds a lock.',
         type: 'array{message: string}',
     )]
-    public function update(Request $request, Booking $booking): JsonResponse
+    public function update(UpdateBookingRequest $request, Booking $booking): JsonResponse
     {
-        $this->normalizeSource($request);
-        $data = $request->validate([
-            /**
-             * The VATSIM CID (user ID) the booking belongs to.
-             *
-             * @example 10000001
-             */
-            'cid' => 'required|integer',
-            /**
-             * The booking date, in `d/m/Y` format.
-             *
-             * @example 15/02/2024
-             */
-            'date' => 'required|date_format:d/m/Y|after_or_equal:today',
-            /**
-             * The booking start time, in 24-hour `H:i` format.
-             *
-             * @example 12:00
-             */
-            'start_at' => 'required|date_format:H:i',
-            /**
-             * The booking end time, in 24-hour `H:i` format.
-             *
-             * @example 13:00
-             */
-            'end_at' => 'required|date_format:H:i',
-            /**
-             * The callsign of the position to book.
-             *
-             * @example EKCH_TWR
-             */
-            'position' => 'required|exists:positions,callsign',
-            /**
-             * The booking type: `1` for training, `2` for exam, `3` for event.
-             *
-             * @example 1
-             */
-            'tag' => 'nullable|integer|between:1,3',
-            'external_url' => 'nullable|url:http,https|max:2048',
-            'external_id' => 'sometimes|string|max:128',
-            /**
-             * Required for EXTERNAL bookings. Increase this revision for every assignment change.
-             */
-            'external_revision' => $this->revisionRules($booking),
-            'source' => 'sometimes|string|in:CC,VATBOOK,DISCORD,EXTERNAL',
-        ]);
+        $data = $request->validated();
 
         return $this->conflictOnLockTimeout(fn () => $this->bookingService->withBookingLock($booking, fn (Booking $current) => $this->updateLocked($current, $data)));
     }
@@ -536,14 +437,9 @@ class BookingController extends Controller
         description: 'The cancellation revision is stale, or a competing mutation holds a lock.',
         type: 'array{message: string}',
     )]
-    public function destroy(Request $request, Booking $booking): JsonResponse
+    public function destroy(DestroyBookingRequest $request, Booking $booking): JsonResponse
     {
-        $data = $request->validate([
-            /**
-             * Required for EXTERNAL bookings. Must be newer than the last accepted publication or update.
-             */
-            'external_revision' => $this->revisionRules($booking),
-        ]);
+        $data = $request->validated();
 
         return $this->conflictOnLockTimeout(fn () => $this->bookingService->withBookingLock($booking, fn (Booking $current) => $this->cancelLocked($current, $data)));
     }
@@ -592,22 +488,5 @@ class BookingController extends Controller
         } catch (LockTimeoutException) {
             return response()->json(['message' => 'This booking or position is being changed. Retry shortly.'], 409);
         }
-    }
-
-    private function normalizeSource(Request $request): void
-    {
-        if (is_string($request->input('source'))) {
-            $request->merge(['source' => strtoupper($request->input('source'))]);
-        }
-    }
-
-    /**
-     * @return array<int, mixed>
-     */
-    private function revisionRules(Booking $booking): array
-    {
-        $isExternal = $booking->source === 'EXTERNAL';
-
-        return [Rule::requiredIf($isExternal), Rule::prohibitedIf(! $isExternal), 'integer', 'min:1', 'max:2147483647'];
     }
 }

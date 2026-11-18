@@ -36,97 +36,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "cid": {
-                                        "type": "integer",
-                                        "description": "The VATSIM CID (user ID) to create the booking for.",
-                                        "examples": [
-                                            10000001
-                                        ]
-                                    },
-                                    "date": {
-                                        "type": "string",
-                                        "description": "The booking date, in `d/m/Y` format.",
-                                        "examples": [
-                                            "15/02/2024"
-                                        ]
-                                    },
-                                    "start_at": {
-                                        "type": "string",
-                                        "description": "The booking start time, in 24-hour `H:i` format.",
-                                        "examples": [
-                                            "12:00"
-                                        ]
-                                    },
-                                    "end_at": {
-                                        "type": "string",
-                                        "description": "The booking end time, in 24-hour `H:i` format.",
-                                        "examples": [
-                                            "13:00"
-                                        ]
-                                    },
-                                    "position": {
-                                        "type": "string",
-                                        "description": "The callsign of the position to book.",
-                                        "examples": [
-                                            "EKCH_TWR"
-                                        ]
-                                    },
-                                    "tag": {
-                                        "type": [
-                                            "integer",
-                                            "null"
-                                        ],
-                                        "description": "The booking type: `1` for training, `2` for exam, `3` for event.",
-                                        "examples": [
-                                            1
-                                        ],
-                                        "minimum": 1,
-                                        "maximum": 3
-                                    },
-                                    "source": {
-                                        "type": "string",
-                                        "description": "The booking source: CC, VATBOOK, DISCORD, or EXTERNAL.",
-                                        "enum": [
-                                            "CC",
-                                            "VATBOOK",
-                                            "DISCORD",
-                                            "EXTERNAL"
-                                        ],
-                                        "examples": [
-                                            "CC"
-                                        ]
-                                    },
-                                    "external_id": {
-                                        "type": "string",
-                                        "description": "Stable assignment identifier, required for EXTERNAL bookings. Reuse it when republishing.",
-                                        "maxLength": 128
-                                    },
-                                    "external_revision": {
-                                        "type": "integer",
-                                        "description": "Monotonically increasing assignment revision (1\u20132147483647), required for EXTERNAL bookings.",
-                                        "minimum": 1,
-                                        "maximum": 2147483647
-                                    },
-                                    "external_url": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "format": "uri",
-                                        "description": "Optional HTTP or HTTPS link to manage an EXTERNAL booking in the originating system.",
-                                        "maxLength": 2048
-                                    }
-                                },
-                                "required": [
-                                    "cid",
-                                    "date",
-                                    "start_at",
-                                    "end_at",
-                                    "position",
-                                    "source"
-                                ]
+                                "$ref": "#/components/schemas/StoreBookingRequest"
                             }
                         }
                     }
@@ -338,90 +248,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "cid": {
-                                        "type": "integer",
-                                        "description": "The VATSIM CID (user ID) the booking belongs to.",
-                                        "examples": [
-                                            10000001
-                                        ]
-                                    },
-                                    "date": {
-                                        "type": "string",
-                                        "description": "The booking date, in `d/m/Y` format.",
-                                        "examples": [
-                                            "15/02/2024"
-                                        ]
-                                    },
-                                    "start_at": {
-                                        "type": "string",
-                                        "description": "The booking start time, in 24-hour `H:i` format.",
-                                        "examples": [
-                                            "12:00"
-                                        ]
-                                    },
-                                    "end_at": {
-                                        "type": "string",
-                                        "description": "The booking end time, in 24-hour `H:i` format.",
-                                        "examples": [
-                                            "13:00"
-                                        ]
-                                    },
-                                    "position": {
-                                        "type": "string",
-                                        "description": "The callsign of the position to book.",
-                                        "examples": [
-                                            "EKCH_TWR"
-                                        ]
-                                    },
-                                    "tag": {
-                                        "type": [
-                                            "integer",
-                                            "null"
-                                        ],
-                                        "description": "The booking type: `1` for training, `2` for exam, `3` for event.",
-                                        "examples": [
-                                            1
-                                        ],
-                                        "minimum": 1,
-                                        "maximum": 3
-                                    },
-                                    "external_url": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "format": "uri",
-                                        "maxLength": 2048
-                                    },
-                                    "external_id": {
-                                        "type": "string",
-                                        "maxLength": 128
-                                    },
-                                    "external_revision": {
-                                        "type": "integer",
-                                        "description": "Required for EXTERNAL bookings. Increase this revision for every assignment change.",
-                                        "minimum": 1,
-                                        "maximum": 2147483647
-                                    },
-                                    "source": {
-                                        "type": "string",
-                                        "enum": [
-                                            "CC",
-                                            "VATBOOK",
-                                            "DISCORD",
-                                            "EXTERNAL"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "cid",
-                                    "date",
-                                    "start_at",
-                                    "end_at",
-                                    "position"
-                                ]
+                                "$ref": "#/components/schemas/UpdateBookingRequest"
                             }
                         }
                     }
@@ -452,11 +279,11 @@
                             }
                         }
                     },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationException"
-                    },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     },
                     "409": {
                         "description": "The booking was cancelled, the revision is stale, or a competing mutation holds a lock.",
@@ -529,11 +356,11 @@
                             }
                         }
                     },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationException"
-                    },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     },
                     "409": {
                         "description": "The cancellation revision is stale, or a competing mutation holds a lock.",
@@ -924,6 +751,187 @@
                     "vatsim_booking"
                 ],
                 "title": "Booking"
+            },
+            "StoreBookingRequest": {
+                "type": "object",
+                "properties": {
+                    "cid": {
+                        "type": "integer",
+                        "description": "The VATSIM CID (user ID) the booking belongs to.",
+                        "examples": [
+                            10000001
+                        ]
+                    },
+                    "date": {
+                        "type": "string",
+                        "description": "The booking date, in `d/m/Y` format.",
+                        "examples": [
+                            "15/02/2024"
+                        ]
+                    },
+                    "end_at": {
+                        "type": "string",
+                        "description": "The booking end time, in 24-hour `H:i` format.",
+                        "examples": [
+                            "13:00"
+                        ]
+                    },
+                    "external_id": {
+                        "type": "string",
+                        "description": "Stable assignment identifier, required for EXTERNAL bookings. Reuse it when republishing.",
+                        "maxLength": 128
+                    },
+                    "external_revision": {
+                        "type": "integer",
+                        "description": "Monotonically increasing assignment revision (1\u20132147483647), required for EXTERNAL bookings.",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                    },
+                    "external_url": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uri",
+                        "description": "Optional HTTP or HTTPS link to manage an EXTERNAL booking in the originating system.",
+                        "maxLength": 2048
+                    },
+                    "position": {
+                        "type": "string",
+                        "description": "The callsign of the position to book.",
+                        "examples": [
+                            "EKCH_TWR"
+                        ]
+                    },
+                    "source": {
+                        "type": "string",
+                        "description": "The booking source: CC, VATBOOK, DISCORD, or EXTERNAL.",
+                        "enum": [
+                            "CC",
+                            "VATBOOK",
+                            "DISCORD",
+                            "EXTERNAL"
+                        ],
+                        "examples": [
+                            "CC"
+                        ]
+                    },
+                    "start_at": {
+                        "type": "string",
+                        "description": "The booking start time, in 24-hour `H:i` format.",
+                        "examples": [
+                            "12:00"
+                        ]
+                    },
+                    "tag": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "The booking type: `1` for training, `2` for exam, `3` for event.",
+                        "examples": [
+                            1
+                        ],
+                        "minimum": 1,
+                        "maximum": 3
+                    }
+                },
+                "required": [
+                    "cid",
+                    "date",
+                    "end_at",
+                    "position",
+                    "source",
+                    "start_at"
+                ],
+                "title": "StoreBookingRequest"
+            },
+            "UpdateBookingRequest": {
+                "type": "object",
+                "properties": {
+                    "cid": {
+                        "type": "integer",
+                        "description": "The VATSIM CID (user ID) the booking belongs to.",
+                        "examples": [
+                            10000001
+                        ]
+                    },
+                    "date": {
+                        "type": "string",
+                        "description": "The booking date, in `d/m/Y` format.",
+                        "examples": [
+                            "15/02/2024"
+                        ]
+                    },
+                    "end_at": {
+                        "type": "string",
+                        "description": "The booking end time, in 24-hour `H:i` format.",
+                        "examples": [
+                            "13:00"
+                        ]
+                    },
+                    "external_id": {
+                        "type": "string",
+                        "maxLength": 128
+                    },
+                    "external_revision": {
+                        "type": "integer",
+                        "description": "Required for EXTERNAL bookings. Increase this revision for every assignment change.",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                    },
+                    "external_url": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uri",
+                        "maxLength": 2048
+                    },
+                    "position": {
+                        "type": "string",
+                        "description": "The callsign of the position to book.",
+                        "examples": [
+                            "EKCH_TWR"
+                        ]
+                    },
+                    "source": {
+                        "type": "string",
+                        "enum": [
+                            "CC",
+                            "VATBOOK",
+                            "DISCORD",
+                            "EXTERNAL"
+                        ]
+                    },
+                    "start_at": {
+                        "type": "string",
+                        "description": "The booking start time, in 24-hour `H:i` format.",
+                        "examples": [
+                            "12:00"
+                        ]
+                    },
+                    "tag": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "The booking type: `1` for training, `2` for exam, `3` for event.",
+                        "examples": [
+                            1
+                        ],
+                        "minimum": 1,
+                        "maximum": 3
+                    }
+                },
+                "required": [
+                    "cid",
+                    "date",
+                    "end_at",
+                    "position",
+                    "start_at"
+                ],
+                "title": "UpdateBookingRequest"
             }
         },
         "responses": {

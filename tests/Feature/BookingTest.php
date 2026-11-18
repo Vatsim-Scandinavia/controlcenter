@@ -433,7 +433,7 @@ class BookingTest extends TestCase
             'start_at' => '23:00',
             'end_at' => '01:00',
             'position' => $position->callsign,
-            'source' => 'TEST',
+            'source' => 'CC',
         ])->assertSuccessful();
 
         $this->assertDatabaseHas('bookings', [
@@ -496,7 +496,7 @@ class BookingTest extends TestCase
             'start_at' => '23:00',
             'end_at' => '01:00',
             'position' => $position->callsign,
-            'source' => 'TEST',
+            'source' => 'CC',
         ])->assertStatus(400);
     }
 
