@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Console\Kernel;
 use App\Models\ActivityLog;
+use Illuminate\Console\Scheduling\Event;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use ReflectionMethod;
 use Tests\TestCase;
 
 class CleanLogsTest extends TestCase
@@ -73,7 +77,6 @@ class CleanLogsTest extends TestCase
 
         $this->app['env'] = 'production';
 
-        // The scheduler runs non-interactively, so the command must not require confirmation.
         $this->artisan('activitylog:clean', ['--force' => true])->assertSuccessful();
 
         $this->assertSame(1, ActivityLog::count());
@@ -82,10 +85,14 @@ class CleanLogsTest extends TestCase
 
     public function test_activitylog_clean_is_scheduled_with_force(): void
     {
-        $events = collect($this->app->make(\Illuminate\Console\Scheduling\Schedule::class)->events())
-            ->filter(fn ($event) => str_contains((string) $event->command, 'activitylog:clean'));
+        $schedule = new Schedule;
+        $kernel = $this->app->make(Kernel::class);
+        (new ReflectionMethod($kernel, 'schedule'))->invoke($kernel, $schedule);
+
+        $events = collect($schedule->events())
+            ->filter(fn (Event $event) => str_contains((string) $event->command, 'activitylog:clean'));
 
         $this->assertCount(1, $events);
-        $this->assertStringContainsString('--force', $events->first()->command);
+        $this->assertMatchesRegularExpression('/\sactivitylog:clean(\s.*)?\s--force(\s|$)/', $events->first()->command);
     }
 }
