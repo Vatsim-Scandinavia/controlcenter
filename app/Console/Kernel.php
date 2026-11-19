@@ -53,8 +53,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('clean:logs')
             ->daily();
 
-        // Delete activity log entries older than the configured retention period
-        $schedule->command('activitylog:clean')
+        // Delete activity log entries older than the configured retention period.
+        // --force is required: the command asks for confirmation in production,
+        // which can't be answered when it runs from the scheduler.
+        $schedule->command('activitylog:clean', ['--force'])
             ->daily();
 
         // Daily fetch updated member data from OAuth provider
