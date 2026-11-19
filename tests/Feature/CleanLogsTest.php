@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Console\Kernel;
 use App\Models\ActivityLog;
+use Illuminate\Console\Scheduling\Event;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use ReflectionMethod;
 use Tests\TestCase;
 
 class CleanLogsTest extends TestCase
@@ -64,5 +68,31 @@ class CleanLogsTest extends TestCase
 
         $this->assertSame(1, ActivityLog::count());
         $this->assertTrue(ActivityLog::whereKey($kept->id)->exists());
+    }
+
+    public function test_activitylog_clean_runs_unattended_in_production(): void
+    {
+        $this->logAgedDays(120);
+        $kept = $this->logAgedDays(30);
+
+        $this->app['env'] = 'production';
+
+        $this->artisan('activitylog:clean', ['--force' => true])->assertSuccessful();
+
+        $this->assertSame(1, ActivityLog::count());
+        $this->assertTrue(ActivityLog::whereKey($kept->id)->exists());
+    }
+
+    public function test_activitylog_clean_is_scheduled_with_force(): void
+    {
+        $schedule = new Schedule;
+        $kernel = $this->app->make(Kernel::class);
+        (new ReflectionMethod($kernel, 'schedule'))->invoke($kernel, $schedule);
+
+        $events = collect($schedule->events())
+            ->filter(fn (Event $event) => str_contains((string) $event->command, 'activitylog:clean'));
+
+        $this->assertCount(1, $events);
+        $this->assertMatchesRegularExpression('/\sactivitylog:clean(\s.*)?\s--force(\s|$)/', $events->first()->command);
     }
 }
