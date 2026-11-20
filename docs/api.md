@@ -13,6 +13,8 @@ To authenticate, first create an API key via `php artisan create:apikey`, then u
 
 --8<-- "exec-in-container.md"
 
+Roster and staffing systems publishing bookings should use an integration key; see [External bookings](integrations/external-bookings.md).
+
 ## API v1
 
 Interactive reference for the Control Center API v1.
