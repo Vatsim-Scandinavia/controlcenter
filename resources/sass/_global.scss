@@ -1,5 +1,11 @@
 // Global component styles
 
+.markdown-content img,
+.markdown-improve img {
+    max-width: 100%;
+    height: auto;
+}
+
 // Keep Alpine x-show/x-transition elements hidden until Alpine boots,
 // preventing a flash of the initial state (e.g. combobox dropdowns) on load.
 [x-cloak] {
