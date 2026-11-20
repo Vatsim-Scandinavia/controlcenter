@@ -21,17 +21,22 @@ Both settings are stored in the application settings store (`feedbackEnabled`, `
 
 ## Submitting feedback
 
-Any signed-in member can submit feedback when the feature is enabled. The form is available from the main navigation and collects:
+Any signed-in member can submit feedback when the feature is enabled. Opening **Feedback** from the main navigation (`/feedback`) first asks which area the feedback is about:
+
+- **An area** — opens the form for that area (`/feedback/{area}`). The controller and position lists only show active controllers and positions from that area, and a chosen position must belong to it.
+- **General feedback** — for feedback not related to a specific area (`/feedback/general`). The form lists all controllers and positions, and the entry is stored without an area.
+
+The form then collects:
 
 - **Controller** (optional) — VATSIM CID of the controller the feedback refers to
 - **Position** (optional) — callsign of the position controlled
 - **Feedback text** (required)
 
-Submissions are stored with the submitter, optional controller/position references, and a timestamp. The feedback body itself is not editable after submission; staff may only change how the entry is **correlated** (controller and position fields).
+Submissions are stored with the submitter, optional controller/position references, and a timestamp. When a position is chosen, the entry's area comes from that position; otherwise the selected area is stored on the entry. General feedback with no position is shown as uncorrelated in the report. The feedback body itself is not editable after submission; staff may only change how the entry is **correlated** (controller, position and area fields).
 
 ## Viewing feedback
 
-Staff with the right permissions can open **Reports → Feedback** (`/reports/feedback`). The table lists received entries with submitter, controller, position, area (derived from the position), and the feedback text.
+Staff with the right permissions can open **Reports → Feedback** (`/reports/feedback`). The table lists received entries with submitter, controller, position, area (taken from the position when one is set, otherwise the area stored on the entry), and the feedback text.
 
 Entries fall into two categories:
 
@@ -52,6 +57,7 @@ On the feedback report, each row the user is allowed to update shows an **Edit**
 
 - Controller (optional VATSIM CID)
 - Position (optional callsign)
+- Area (optional, only when no position is set)
 
 Saving runs server-side validation (controller must exist, position callsign must exist) and writes an activity-log entry describing what changed.
 
