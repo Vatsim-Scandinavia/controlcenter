@@ -4,16 +4,25 @@ namespace App\Services;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Facades\DivisionApi;
+use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
 use App\Http\Controllers\TrainingActivityController;
+use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Endorsement;
 use App\Models\Rating;
 use App\Models\Training;
+use App\Models\TrainingActivity;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
+use App\Notifications\TrainingCreatedNotification;
+use App\Notifications\TrainingMentorNotification;
+use App\Notifications\TrainingPreStatusNotification;
 use App\Services\DivisionApi\DivisionApiError;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -25,9 +34,11 @@ use Illuminate\Support\Facades\Auth;
  * across callers. Keeping the logic in one place is what lets the rest of the
  * app touch different parts of a training's lifecycle without duplicating it.
  *
- * Today it owns the closed/completed transition. The rest of the lifecycle
- * still lives in the oversized TrainingController (~750 lines) and should be
- * pulled in here incrementally:
+ * It owns the creation, detail updates (status, mentors, pause accounting),
+ * rating changes, pre-training toggle, comments and the closed/completed
+ * transitions. Methods that record who acted take an optional actor id and
+ * fall back to the signed-in user, so the web UI and the management API share
+ * them.
  *
  * @todo Route the hand-rolled closures through closeTraining() so the close +
  *       notification path is defined once. Duplicate sites: TrainingController::close(),
@@ -38,12 +49,310 @@ use Illuminate\Support\Facades\Auth;
  *       with $training->closed_reason, which updateStatus() never sets, so the
  *       commands' hardcoded reason strings would silently vanish from the student's
  *       email. Give it an explicit reason argument and make it persist the status.
- * @todo Move mentor attach/detach syncing out of TrainingController::updateDetails.
- * @todo Move the paused-time accounting out of TrainingController::updateDetails.
- * @todo Move the store / apply / updateRequest domain logic behind this service.
+ * @todo Move the apply / updateRequest eligibility checks behind this service.
  */
 class TrainingService
 {
+    /**
+     * Create a training request and send the confirmation to the student.
+     *
+     * Eligibility checks (open-training limit, hour requirements, refresh coverage)
+     * stay with the caller, because they differ between an application and a staff
+     * creation.
+     *
+     * @param  Collection<int, Rating>  $ratings
+     */
+    public function createTraining(
+        User $student,
+        int $areaId,
+        int $type,
+        Collection $ratings,
+        ?int $createdById,
+        string $motivation = '',
+        ?int $experience = null,
+        bool $englishOnly = false,
+        ?string $applicationComment = null,
+    ): Training {
+        $training = Training::create([
+            'user_id' => $student->id,
+            'created_by' => $createdById,
+            'area_id' => $areaId,
+            'motivation' => $motivation,
+            'experience' => $experience,
+            'english_only_training' => $englishOnly,
+            'type' => $type,
+        ]);
+
+        if ($applicationComment !== null) {
+            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: ' . $applicationComment);
+        }
+
+        $training->ratings()->saveMany($ratings);
+
+        ActivityLogService::info(LogName::Training, 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
+
+        $training->user->notify(new TrainingCreatedNotification($training));
+
+        return $training;
+    }
+
+    /**
+     * The facility ratings a refresh or familiarisation training must still cover.
+     *
+     * A refresh has to renew every active endorsement the student holds in the area.
+     * Returns the names of the endorsements missing from the requested ratings, empty
+     * when the request is complete.
+     *
+     * @param  Collection<int, string>  $requestedRatings  rating names
+     * @return Collection<int, string>
+     */
+    public function missingRefreshRatings(int $areaId, int $userId, Collection $requestedRatings): Collection
+    {
+        // Ratings applicable to area of request
+        $areaRatings = Rating::whereHas('areas', function ($query) use ($areaId) {
+            $query->where('area_id', $areaId);
+        })->whereNull('vatsim_rating')->get()->pluck('name');
+
+        // Ratings which user has today and needs to be refresh
+        $userRatings = User::find($userId)->endorsements->where('type', 'FACILITY')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
+            return $endorsement->ratings->first()->name;
+        });
+
+        // Gather expected ratings for this user in given area
+        $expectedRatings = collect();
+        foreach ($userRatings as $userRating) {
+            if ($areaRatings->contains($userRating)) {
+                $expectedRatings->push($userRating);
+            }
+        }
+
+        return $expectedRatings->diff($requestedRatings);
+    }
+
+    /**
+     * Replace the ratings of a training, keeping the completion stamps of the parts
+     * that survive the change.
+     *
+     * @param  Collection<int, Rating>  $ratings
+     */
+    public function replaceRatings(Training $training, Collection $ratings): void
+    {
+        $previousRatings = $training->ratings;
+
+        // Detach all ratings connected to training to save the new (or same) ones.
+        $training->ratings()->detach();
+        $training->ratings()->saveMany($ratings);
+
+        // The detach above dropped the per-rating completion stamps. Put them back for the
+        // ratings that survived the edit: a part that was signed off stays signed off.
+        $completedAt = $previousRatings
+            ->mapWithKeys(fn (Rating $rating) => [$rating->id => $rating->pivot->completed_at])
+            ->filter();
+
+        foreach ($ratings as $rating) {
+            if ($completedAt->has($rating->id)) {
+                $training->ratings()->updateExistingPivot($rating->id, ['completed_at' => $completedAt->get($rating->id)]);
+            }
+        }
+    }
+
+    /**
+     * Apply a set of detail changes to a training: status, closed reason, mentors,
+     * pause accounting, and any plain attributes.
+     *
+     * Every key of $changes is optional; null or absent means "leave untouched":
+     *  - status: the new TrainingStatus
+     *  - closed_reason: persisted with the training, and recorded on staff closures
+     *  - mentors: the complete mentor list as user id => expire_at (null for the default
+     *    12 months on newly attached mentors); mentors not listed are detached
+     *  - paused: whether the training should be paused
+     *  - attributes: any other training columns to persist in the same save
+     *
+     * Domain refusals (a closed training reopened over another open one) change nothing
+     * and report `refused`. A Division API failure while closing is reported as `error`
+     * after the rest has been saved, as the web flow always did.
+     *
+     * @param  array{status?: TrainingStatus|null, closed_reason?: string|null, mentors?: array<int, CarbonInterface|null>|null, paused?: bool|null, attributes?: array<string, mixed>}  $changes
+     * @return array{refused: bool, error: string|null, closed: bool, preTraining: bool, mentorNotified: bool}
+     */
+    public function updateDetails(Training $training, array $changes, ?int $actorId = null): array
+    {
+        $actorId = $this->resolveActorId($actorId);
+        $oldStatus = $training->fresh()->status;
+        $attributes = $changes['attributes'] ?? [];
+        $result = ['refused' => false, 'error' => null, 'closed' => false, 'preTraining' => false, 'mentorNotified' => false];
+
+        if (array_key_exists('closed_reason', $changes)) {
+            $attributes['closed_reason'] = $changes['closed_reason'];
+        }
+
+        $newStatus = $changes['status'] ?? null;
+        if ($newStatus !== null) {
+
+            // Don't allow re-opening a training if that causes student to have multiple trainings at the same time
+            if ($newStatus->isOpen() && $oldStatus->isClosed() && $training->user->hasActiveTrainings(true)) {
+                $result['refused'] = true;
+                $result['error'] = 'Training can not be reopened. The student already has an active training request.';
+
+                return $result;
+            }
+
+            // Stage the status change (and its derived timestamps) in memory so
+            // the rest of this request reads the new state. Everything is then
+            // persisted together in the single update below, keeping the
+            // activity log to one entry per request.
+            $training->fill($training->resolveStatusChanges($newStatus));
+
+            if ($newStatus !== $oldStatus) {
+                if ($newStatus === TrainingStatus::CLOSED_BY_STAFF || $newStatus === TrainingStatus::CLOSED_BY_SYSTEM) {
+                    TrainingActivityController::create($training->id, 'STATUS', $newStatus->value, $oldStatus->value, $actorId, $changes['closed_reason'] ?? null);
+                } else {
+                    TrainingActivityController::create($training->id, 'STATUS', $newStatus->value, $oldStatus->value, $actorId);
+                }
+            }
+        }
+
+        if (isset($changes['mentors'])) {
+            $result['mentorNotified'] = $this->syncMentors($training, $changes['mentors'], $actorId);
+        }
+
+        // Update paused time for queue estimation
+        if (isset($changes['paused'])) {
+            if ($changes['paused'] && $training->status->isOpen()) {
+                if (! isset($training->paused_at)) {
+                    $attributes['paused_at'] = Carbon::now();
+                    TrainingActivityController::create($training->id, 'PAUSE', 1, null, $actorId);
+                } else {
+                    $attributes['paused_at'] = $training->paused_at;
+                }
+            } else {
+                // If paused is unchecked but training is paused, sum up the length and unpause.
+                if (isset($training->paused_at)) {
+                    $attributes['paused_length'] = $training->paused_length + (int) Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
+                    TrainingActivityController::create($training->id, 'PAUSE', 0, null, $actorId);
+                }
+
+                $attributes['paused_at'] = null;
+            }
+        }
+
+        // If training is closed, force to unpause
+        if ($training->status !== $oldStatus) {
+            if ($training->status->isClosed()) {
+                $attributes['paused_at'] = null;
+                if (isset($training->paused_at)) {
+                    TrainingActivityController::create($training->id, 'PAUSE', 0, null, $actorId);
+                }
+            }
+        }
+
+        // Update the training
+        $training->update($attributes);
+
+        ActivityLogService::warning(LogName::Training, 'Updated training details ' . $training->id .
+        ' ― Old Status: ' . $oldStatus->label() .
+        ' ― New Status: ' . $training->status->label() .
+        ' ― Mentor: ' . $training->mentors->pluck('name'));
+
+        // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
+        if ($training->status !== $oldStatus) {
+            if ($training->status->isClosed()) {
+                $result['closed'] = true;
+                $result['error'] = $this->closeTraining($training, $actorId);
+
+                return $result;
+            }
+
+            if ($training->status === TrainingStatus::PRE_TRAINING) {
+                $result['preTraining'] = true;
+                $training->user->notify(new TrainingPreStatusNotification($training));
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Make the mentors of a training match the given list.
+     *
+     * Mentors who lack the mentor permission in the training area are skipped. New
+     * mentors are attached with the given expiry (12 months when null), and an expiry
+     * given for a mentor already attached moves it. Every attach and detach lands on
+     * the training timeline.
+     *
+     * Returns whether the student was notified of a new mentor.
+     *
+     * @param  array<int, CarbonInterface|null>  $mentors  user id => expire_at
+     */
+    public function syncMentors(Training $training, array $mentors, ?int $actorId = null): bool
+    {
+        $actorId = $this->resolveActorId($actorId);
+        $notifyOfNewMentor = false;
+
+        foreach ($mentors as $mentorId => $expireAt) {
+            $mentorUser = User::find($mentorId);
+
+            if (! $training->mentors->contains($mentorId)) {
+                if ($mentorUser != null && $mentorUser->hasPermission('training.mentor', $training->area)) {
+                    $training->mentors()->attach($mentorId, ['expire_at' => $expireAt ?? now()->addMonths(12)]);
+
+                    // Notify student of their new mentor
+                    $notifyOfNewMentor = true;
+
+                    TrainingActivityController::create($training->id, 'MENTOR', $mentorId, null, $actorId);
+                }
+            } elseif ($expireAt !== null) {
+                $training->mentors()->updateExistingPivot($mentorId, ['expire_at' => $expireAt]);
+            }
+        }
+
+        foreach ($training->mentors as $mentor) {
+            if (! array_key_exists($mentor->id, $mentors)) {
+                $training->mentors()->detach($mentor);
+                TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id, $actorId);
+            }
+        }
+
+        // Notify student of their new mentor. We put this here so detached mentors ain't included.
+        if ($notifyOfNewMentor) {
+            $training->user->notify(new TrainingMentorNotification($training));
+        }
+
+        return $notifyOfNewMentor;
+    }
+
+    /**
+     * Flip the pre-training completed flag, or set it explicitly when $completed is given.
+     *
+     * Returns the resulting state. Setting a flag to the value it already holds changes
+     * and logs nothing.
+     */
+    public function togglePreTrainingCompleted(Training $training, ?int $actorId = null, ?bool $completed = null): bool
+    {
+        $oldState = (bool) $training->pre_training_completed;
+        $newState = $completed ?? ! $oldState;
+
+        if ($newState === $oldState) {
+            return $newState;
+        }
+
+        $training->pre_training_completed = $newState;
+        $training->save();
+
+        ActivityLogService::warning(LogName::Training, 'Student marked pre-training as completed ' . $training->id);
+        TrainingActivityController::create($training->id, 'PRETRAINING', $newState, $oldState, $this->resolveActorId($actorId));
+
+        return $newState;
+    }
+
+    /**
+     * Add a free-text comment to the training timeline.
+     */
+    public function addComment(Training $training, string $comment, ?int $actorId = null): TrainingActivity
+    {
+        return TrainingActivityController::create($training->id, 'COMMENT', null, null, $this->resolveActorId($actorId), $comment);
+    }
+
     /**
      * Close a training, running the completion work when it is being completed.
      *
@@ -51,12 +360,12 @@ class TrainingService
      * Returns the Division API error string on failure (no notification sent),
      * or null on success.
      */
-    public function closeTraining(Training $training): ?string
+    public function closeTraining(Training $training, ?int $actorId = null): ?string
     {
         $training->mentors()->detach();
 
         if ($training->status === TrainingStatus::COMPLETED) {
-            $error = $this->completeTraining($training);
+            $error = $this->completeTraining($training, $actorId);
             if ($error !== null) {
                 return $error;
             }
@@ -80,8 +389,10 @@ class TrainingService
      *
      * Returns an error string for the caller to flash, or null on success.
      */
-    public function completeRatingPart(Training $training, Rating $rating): ?string
+    public function completeRatingPart(Training $training, Rating $rating, ?int $actorId = null): ?string
     {
+        $actorId = $this->resolveActorId($actorId);
+
         if (! $training->status->isInProgress()) {
             return 'Only a training in progress can have a part completed.';
         }
@@ -109,7 +420,7 @@ class TrainingService
         // the student, and the timeline renders COMMENT with an author edit button. A part
         // sign-off is neither private nor editable, and holding the rating id keeps the
         // entry readable after a rating is renamed.
-        TrainingActivityController::create($training->id, 'RATING', $rating->id, null, Auth::id());
+        TrainingActivityController::create($training->id, 'RATING', $rating->id, null, $actorId);
 
         // Load-bearing: the outstanding check below reads the pivots we just wrote.
         $training->load('ratings');
@@ -119,7 +430,7 @@ class TrainingService
         }
 
         // Every part is done and all are VATSIM ratings, so finish the training.
-        return $this->completeWholeTraining($training);
+        return $this->completeWholeTraining($training, $actorId);
     }
 
     /**
@@ -131,17 +442,19 @@ class TrainingService
      *
      * Returns an error string for the caller to flash, or null on success.
      */
-    public function completeWholeTraining(Training $training): ?string
+    public function completeWholeTraining(Training $training, ?int $actorId = null): ?string
     {
+        $actorId = $this->resolveActorId($actorId);
+
         if (! $training->status->isInProgress()) {
             return 'Only a training in progress can be completed.';
         }
 
         $oldStatus = $training->status;
         $training->updateStatus(TrainingStatus::COMPLETED);
-        TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::COMPLETED->value, $oldStatus->value, Auth::id());
+        TrainingActivityController::create($training->id, 'STATUS', TrainingStatus::COMPLETED->value, $oldStatus->value, $actorId);
 
-        return $this->closeTraining($training);
+        return $this->closeTraining($training, $actorId);
     }
 
     /**
@@ -158,14 +471,14 @@ class TrainingService
     /**
      * Run the completion work for a training: per-rating endorsements, then ATC activation.
      */
-    public function completeTraining(Training $training): ?string
+    public function completeTraining(Training $training, ?int $actorId = null): ?string
     {
         // Deliberately unfiltered: a VATSIM part stamped earlier by completeRatingPart()
         // re-runs completeRating() as a no-op (stampRatingCompleted() keeps the first
         // stamp), but a facility part must re-run so a reopened and re-completed
         // training still revokes the old endorsement and grants a fresh one.
         foreach ($training->ratings as $rating) {
-            $error = $this->completeRating($training, $rating);
+            $error = $this->completeRating($training, $rating, $actorId);
             if ($error !== null) {
                 return $error;
             }
@@ -181,7 +494,7 @@ class TrainingService
      * revoke the prior endorsement, call the Division API, and grant a fresh
      * endorsement; VATSIM ratings only get stamped.
      */
-    public function completeRating(Training $training, Rating $rating): ?string
+    public function completeRating(Training $training, Rating $rating, ?int $actorId = null): ?string
     {
         if ($rating->vatsim_rating != null) {
             $this->stampRatingCompleted($training, $rating);
@@ -203,7 +516,7 @@ class TrainingService
         }
 
         // All clear, let's start by attemping the insertion to the API
-        $response = DivisionApi::assignTierEndorsement($training->user, $rating, Auth::id());
+        $response = DivisionApi::assignTierEndorsement($training->user, $rating, $this->resolveActorId($actorId));
         if ($response && $response->failed()) {
             return DivisionApiError::message($response);
         }
@@ -287,5 +600,13 @@ class TrainingService
         }
 
         return $user->division === config('app.owner_code');
+    }
+
+    /**
+     * The id of whoever is acting: the given actor, otherwise the signed-in user.
+     */
+    private function resolveActorId(?int $actorId): ?int
+    {
+        return $actorId ?? Auth::id();
     }
 }

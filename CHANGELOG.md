@@ -3,6 +3,18 @@
 > [!IMPORTANT]
 > Before upgrading, read the [Upgrading guide](https://docs.vatsca.org/controlcenter/latest/upgrade/) for the manual steps and breaking changes that apply to your version.
 
+## Unreleased
+
+
+### Features
+
+* **api:** expand `/api/v1` management surface for trainings, endorsements, roles, roster, sweatbooks, feedback, settings, votes, and related staff workflows. Legacy `/api` bookings, users, and positions payloads stay unchanged. Edit keys authorize writes; Division API callers send `actor_cid`.
+
+
+### Bug Fixes
+
+* **api:** treat public booking and position routes as GET-only so mutating requests always require an edit key
+
 ## [7.3.0](https://github.com/Vatsim-Scandinavia/controlcenter/compare/v7.2.2...v7.3.0) (2026-11-07)
 
 

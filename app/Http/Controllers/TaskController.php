@@ -7,10 +7,10 @@ use App\Models\Area;
 use App\Models\Task;
 use App\Models\User;
 use App\Rules\ValidTaskType;
+use App\Services\TaskService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
 class TaskController extends Controller
@@ -51,35 +51,19 @@ class TaskController extends Controller
         ]);
 
         $data['creator_user_id'] = $user->id;
-        $data['created_at'] = now();
 
         // Check if recipient is mentor or above
         $recipient = User::findOrFail($data['assignee_user_id']);
 
         // Policy check if recpient can recieve a task
         if ($recipient->can('receive', Task::class)) {
-            // Create the model
-            $task = Task::create($data);
-
-            // Run the create method on the task type to trigger type specific actions on creation
-            $task->type()->create($task);
+            app(TaskService::class)->createTask($data);
 
             return redirect()->back()->with('success', 'Task created successfully.');
         }
 
         return redirect()->back()->withErrors('Recipient is not allowed to receive tasks.');
 
-    }
-
-    /**
-     * Close the specified task with a given status.
-     */
-    protected function close(Task $task, TaskStatus $status): void
-    {
-        $task->status = $status;
-        $task->assignee_notified = true;
-        $task->closed_at = now();
-        $task->save();
     }
 
     /**
@@ -90,12 +74,10 @@ class TaskController extends Controller
         $this->authorize('update', Task::class);
         $task = Task::findOrFail($task);
 
-        $error = $task->type()->complete($task);
+        $error = app(TaskService::class)->completeTask($task);
         if (isset($error)) {
             return redirect()->back()->withErrors($error);
         }
-
-        self::close($task, TaskStatus::COMPLETED);
 
         return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $task->subject->name, $task->creator->name));
     }
@@ -108,12 +90,10 @@ class TaskController extends Controller
         $this->authorize('update', Task::class);
         $task = Task::findOrFail($task);
 
-        $error = $task->type()->decline($task);
+        $error = app(TaskService::class)->declineTask($task);
         if (isset($error)) {
             return redirect()->back()->withErrors($error);
         }
-
-        self::close($task, TaskStatus::DECLINED);
 
         return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $task->subject->name, $task->creator->name));
     }
@@ -125,26 +105,7 @@ class TaskController extends Controller
      */
     public static function getTypes()
     {
-        // Specify the directory where your subclasses are located
-        $subclassesDirectory = app_path('Tasks/Types');
-
-        // Initialize an array to store the subclasses
-        $subclasses = [];
-
-        // Get all PHP files in the directory
-        $files = File::files($subclassesDirectory);
-
-        foreach ($files as $file) {
-            // Get the class name from the file path
-            $className = 'App\\Tasks\\Types\\' . pathinfo($file, PATHINFO_FILENAME);
-
-            // Check if the class exists and is a subclass of Types
-            if (class_exists($className) && is_subclass_of($className, 'App\\Tasks\\Types\\Types')) {
-                $subclasses[] = new $className();
-            }
-        }
-
-        return $subclasses;
+        return app(TaskService::class)->getTypes();
     }
 
     /**
@@ -176,14 +137,6 @@ class TaskController extends Controller
      */
     public static function isValidType($type)
     {
-        $types = self::getTypes();
-
-        foreach ($types as $taskType) {
-            if ($taskType::class == $type) {
-                return true;
-            }
-        }
-
-        return false;
+        return app(TaskService::class)->isValidType($type);
     }
 }

@@ -96,7 +96,7 @@ class FileController extends Controller
      *
      * @return string
      */
-    public static function saveFile(UploadedFile $file, ?string $filename = null)
+    public static function saveFile(UploadedFile $file, ?string $filename = null, ?int $uploadedBy = null)
     {
         $extension = $file->getClientOriginalExtension();
         $id = sha1($file->getClientOriginalName() . now()->format('Ymd_His') . rand(1000, 9999));
@@ -115,7 +115,7 @@ class FileController extends Controller
         File::create([
             'id' => $id,
             'name' => $file->getClientOriginalName(),
-            'uploaded_by' => Auth::id(),
+            'uploaded_by' => $uploadedBy ?? Auth::id(),
             'path' => $filename,
         ]);
 
