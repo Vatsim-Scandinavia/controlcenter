@@ -23,7 +23,7 @@ class PositionFactory extends Factory
     public function definition(): array
     {
         return [
-            'callsign' => strtoupper($this->faker->unique()->text(7)),
+            'callsign' => $this->faker->unique()->atcCallsign(),
             'name' => $this->faker->word(),
             'frequency' => sprintf(
                 '%03d.%03d',

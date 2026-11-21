@@ -59,6 +59,7 @@
             "App\\Helpers\\": "app/Helpers",
             "App\\Tasks\\Types\\": "app/Tasks/Types/",
             "Database\\Factories\\": "database/factories/",
+            "Database\\Faker\\": "database/faker/",
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [

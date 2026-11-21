@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Services\PermissionMatrix;
 use App\Support\OpenApi\RemovesUnreferencedSchemas;
 use App\Support\OpenApi\SortsDocumentAlphabetically;
+use Database\Faker\VatsimProvider;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\ServerVariable;
+use Faker\Generator;
 use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,6 +20,31 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(PermissionMatrix::class);
+
+        $this->registerFakerProviders();
+    }
+
+    /**
+     * Add custom providers to every Faker generator, used by both factories and `fake()`.
+     *
+     * Faker is a dev dependency, so skip this when it is not installed.
+     * Laravel caches generators per locale, so guard against adding a provider twice.
+     */
+    private function registerFakerProviders(): void
+    {
+        if (! class_exists(Generator::class)) {
+            return;
+        }
+
+        $this->app->afterResolving(Generator::class, function (Generator $faker): void {
+            foreach ($faker->getProviders() as $provider) {
+                if ($provider instanceof VatsimProvider) {
+                    return;
+                }
+            }
+
+            $faker->addProvider(new VatsimProvider($faker));
+        });
     }
 
     /**
