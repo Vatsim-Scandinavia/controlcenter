@@ -60,8 +60,9 @@ activity-log causer. It is not checked against that user's roles.
 - Domain refusals return `409` with `{ "message": "..." }`.
 - Division API failures return `422` with the adapter message.
 - New timestamps are ISO-8601. User ids remain VATSIM CIDs.
-- Paginated collections (`endorsements`) accept `page` and `per_page`
-  (default 50, max 100). The original users and bookings lists stay unpaginated.
+- Paginated collections (`trainings`, `tasks`, `endorsements`) accept `page`
+  and `per_page` (default 50, max 100). The original users and bookings lists
+  stay unpaginated.
 
 ## Endpoint overview
 
@@ -96,6 +97,30 @@ All paths below are relative to `/api/v1`.
 | `DELETE` | `/endorsements/{endorsement}` | Revoke |
 | `POST` | `/endorsements/{endorsement}/shorten` | Solos |
 | `POST` / `DELETE` | `/users/{user}/roles` | Body: `role`, optional `area_id`, required `actor_cid`. `admin` refused |
+
+### Training
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| `GET` | `/trainings`, `/trainings/{training}` | Filters: `status`, `area_id`, `user_id`, `type` |
+| `POST` | `/trainings` | Staff create; one open training per user |
+| `PATCH` | `/trainings/{training}` | Status, mentors, pause, ratings |
+| `POST` | `/trainings/{training}/close` | Closed status + reason |
+| `POST` | `/trainings/{training}/complete` | |
+| `POST` | `/trainings/{training}/ratings/{rating}/complete` | |
+| `POST` | `/trainings/{training}/pretraining` | |
+| `GET` | `/trainings/{training}/activities` | |
+| `POST` | `/trainings/{training}/comments` | |
+
+Reports, examinations, and attachments live under
+`/trainings/{training}/reports`, `/examinations`, and `/attachments`.
+
+### Tasks
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| `GET` / `POST` | `/tasks` | |
+| `POST` | `/tasks/{task}/complete`, `/tasks/{task}/decline` | Division-backed types need `actor_cid` |
 
 ## Regenerating the OpenAPI file
 

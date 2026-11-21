@@ -6,6 +6,11 @@ use App\Http\Controllers\API\EndorsementController;
 use App\Http\Controllers\API\PositionController;
 use App\Http\Controllers\API\RatingController;
 use App\Http\Controllers\API\RoleController;
+use App\Http\Controllers\API\TaskController;
+use App\Http\Controllers\API\TrainingAttachmentController;
+use App\Http\Controllers\API\TrainingController;
+use App\Http\Controllers\API\TrainingExaminationController;
+use App\Http\Controllers\API\TrainingReportController;
 use App\Http\Controllers\API\UserController;
 
 /*
@@ -30,6 +35,30 @@ Route::group(['middleware' => ['api-token:edit']], function () {
 
     Route::post('/users/{user}/roles', [RoleController::class, 'store'])->name('api.v1.users.roles.store');
     Route::delete('/users/{user}/roles', [RoleController::class, 'destroy'])->name('api.v1.users.roles.destroy');
+
+    Route::post('/trainings', [TrainingController::class, 'store'])->name('api.v1.trainings.store');
+    Route::patch('/trainings/{training}', [TrainingController::class, 'update'])->name('api.v1.trainings.update');
+    Route::post('/trainings/{training}/close', [TrainingController::class, 'close'])->name('api.v1.trainings.close');
+    Route::post('/trainings/{training}/complete', [TrainingController::class, 'complete'])->name('api.v1.trainings.complete');
+    Route::post('/trainings/{training}/ratings/{rating}/complete', [TrainingController::class, 'completeRating'])->name('api.v1.trainings.ratings.complete');
+    Route::post('/trainings/{training}/pretraining', [TrainingController::class, 'preTraining'])->name('api.v1.trainings.pretraining');
+    Route::post('/trainings/{training}/comments', [TrainingController::class, 'comment'])->name('api.v1.trainings.comments.store');
+
+    Route::post('/trainings/{training}/reports', [TrainingReportController::class, 'store'])->name('api.v1.trainings.reports.store');
+    Route::patch('/trainings/{training}/reports/{report}', [TrainingReportController::class, 'update'])->name('api.v1.trainings.reports.update');
+    Route::delete('/trainings/{training}/reports/{report}', [TrainingReportController::class, 'destroy'])->name('api.v1.trainings.reports.destroy');
+    Route::post('/trainings/{training}/reports/{report}/attachments', [TrainingAttachmentController::class, 'storeForReport'])->name('api.v1.trainings.reports.attachments.store');
+
+    Route::post('/trainings/{training}/examinations', [TrainingExaminationController::class, 'store'])->name('api.v1.trainings.examinations.store');
+    Route::patch('/trainings/{training}/examinations/{examination}', [TrainingExaminationController::class, 'update'])->name('api.v1.trainings.examinations.update');
+    Route::delete('/trainings/{training}/examinations/{examination}', [TrainingExaminationController::class, 'destroy'])->name('api.v1.trainings.examinations.destroy');
+    Route::post('/trainings/{training}/examinations/{examination}/attachments', [TrainingAttachmentController::class, 'storeForExamination'])->name('api.v1.trainings.examinations.attachments.store');
+
+    Route::delete('/attachments/{attachment}', [TrainingAttachmentController::class, 'destroy'])->name('api.v1.attachments.destroy');
+
+    Route::post('/tasks', [TaskController::class, 'store'])->name('api.v1.tasks.store');
+    Route::post('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('api.v1.tasks.complete');
+    Route::post('/tasks/{task}/decline', [TaskController::class, 'decline'])->name('api.v1.tasks.decline');
 });
 
 Route::group(['middleware' => ['api-token']], function () {
@@ -45,4 +74,18 @@ Route::group(['middleware' => ['api-token']], function () {
 
     Route::get('/ratings', [RatingController::class, 'index'])->name('api.v1.ratings.index');
     Route::get('/endorsements', [EndorsementController::class, 'index'])->name('api.v1.endorsements.index');
+
+    Route::get('/trainings', [TrainingController::class, 'index'])->name('api.v1.trainings.index');
+    Route::get('/trainings/{training}', [TrainingController::class, 'show'])->name('api.v1.trainings.show');
+    Route::get('/trainings/{training}/activities', [TrainingController::class, 'activities'])->name('api.v1.trainings.activities');
+
+    Route::get('/trainings/{training}/reports', [TrainingReportController::class, 'index'])->name('api.v1.trainings.reports.index');
+    Route::get('/trainings/{training}/reports/{report}', [TrainingReportController::class, 'show'])->name('api.v1.trainings.reports.show');
+
+    Route::get('/trainings/{training}/examinations', [TrainingExaminationController::class, 'index'])->name('api.v1.trainings.examinations.index');
+    Route::get('/trainings/{training}/examinations/{examination}', [TrainingExaminationController::class, 'show'])->name('api.v1.trainings.examinations.show');
+
+    Route::get('/attachments/{attachment}', [TrainingAttachmentController::class, 'show'])->name('api.v1.attachments.show');
+
+    Route::get('/tasks', [TaskController::class, 'index'])->name('api.v1.tasks.index');
 });
