@@ -2,21 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\DivisionApi;
-use App\Helpers\LogName;
 use App\Helpers\TrainingStatus;
-use App\Helpers\VatsimRating;
 use App\Models\OneTimeLink;
 use App\Models\Position;
-use App\Models\Task;
 use App\Models\Training;
 use App\Models\TrainingExamination;
 use App\Models\User;
-use App\Notifications\MentorExaminationNotification;
-use App\Notifications\TrainingExamNotification;
-use App\Services\ActivityLogService;
-use App\Services\DivisionApi\DivisionApiError;
-use App\Tasks\Types\RatingUpgrade;
+use App\Services\TrainingObjectService;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\Factory;
@@ -66,64 +58,14 @@ class TrainingExaminationController extends Controller
     {
         $this->authorize('create', [TrainingExamination::class, $training]);
         $data = $this->validateRequest();
-        $date = Carbon::createFromFormat('d/m/Y', $data['examination_date']);
-        $position = Position::firstWhere('callsign', $data['position']);
-        $pass = strtolower($data['result']) == 'passed' ? true : false;
+        $data['examination_date'] = Carbon::createFromFormat('d/m/Y', $data['examination_date']);
 
-        // Attempt Division API sync first if the training has VATSIM ratings and it's an S2+ examination
-        if ($request->file('files') && $training->hasVatsimRatings() && $training->getHighestVatsimRating()->vatsim_rating->isGreaterThanOrEqual(VatsimRating::S2)) {
-            foreach ($request->file('files') as $file) {
-                $response = DivisionApi::uploadExamResults($training->user->id, Auth::id(), $pass, $position->callsign, $file->getRealPath());
-                if ($response && $response->failed()) {
-                    return redirect()->back()->withErrors('Please try uploading the examination again. Failed to upload exam results to the Division API: ' . DivisionApiError::detail($response));
-                }
-            }
+        $result = app(TrainingObjectService::class)->createExamination($training, $data, Auth::id(), $request->files->all());
+        if (is_string($result)) {
+            return redirect()->back()->withErrors($result);
         }
 
-        // Save locally
-        $examination = TrainingExamination::create([
-            'position_id' => $position->id,
-            'training_id' => $training->id,
-            'examiner_id' => Auth::id(),
-            'examination_date' => $date->format('Y-m-d'),
-        ]);
-
-        if (array_key_exists('result', $data)) {
-            $examination->update(['result' => $data['result']]);
-        }
-
-        $attachmentId = TrainingObjectAttachmentController::saveAttachments($request, $examination);
-        $attachmentUrl = (isset($attachmentId[0])) ? route('training.object.attachment.show', ['attachment' => $attachmentId[0]]) : null;
-
-        // Notify the training user
-        $training->user->notify(new TrainingExamNotification($training, $examination));
-
-        // Notify mentors if there are any
-        if ($training->mentors->count() >= 1) {
-            $training->user->notify(new MentorExaminationNotification($training->mentors, $training->user, $examination, $attachmentUrl, 'View examination report'));
-        }
-
-        // Create the upgrade task for the staff
-        if (isset($data['request_task_user_id'])) {
-
-            $taskAsignee = User::find($data['request_task_user_id']);
-            $taskRating = isset($data['subject_training_rating_id']) ? (int) $data['subject_training_rating_id'] : null;
-            if ($taskAsignee->can('receive', Task::class)) {
-                $task = Task::create([
-                    'type' => RatingUpgrade::class,
-                    'subject_user_id' => $training->user->id,
-                    'subject_training_id' => $training->id,
-                    'subject_training_rating_id' => $taskRating,
-                    'assignee_user_id' => $taskAsignee->id,
-                    'creator_user_id' => Auth::id(),
-                    'created_at' => now(),
-                ]);
-
-                // Run the create method on the task type to trigger type specific actions on creation
-                $task->type()->create($task);
-            }
-
-        }
+        $examination = $result;
 
         // If OTL was used, remove the link and session variable
         if (($key = OneTimeLink::getFromSession()) != null) {
@@ -174,8 +116,7 @@ class TrainingExaminationController extends Controller
     {
         $this->authorize('delete', $examination);
 
-        $examination->delete();
-        ActivityLogService::danger(LogName::Training, 'Deleted training examination ' . $examination->id . ' ― From Training ' . $examination->training->id);
+        app(TrainingObjectService::class)->deleteExamination($examination);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Examination successfully deleted']);

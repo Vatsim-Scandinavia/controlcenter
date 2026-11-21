@@ -20,9 +20,6 @@ use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
 use App\Models\User;
 use App\Notifications\TrainingClosedNotification;
-use App\Notifications\TrainingCreatedNotification;
-use App\Notifications\TrainingMentorNotification;
-use App\Notifications\TrainingPreStatusNotification;
 use App\Services\ActivityLogService;
 use App\Services\SoloEndorsementService;
 use App\Services\TrainingService;
@@ -35,6 +32,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
@@ -282,26 +280,17 @@ class TrainingController extends Controller
             return redirect()->back()->withErrors('One or more ratings need to be selected to create training request.');
         }
 
-        $training = Training::create([
-            'user_id' => $data['user_id'] ?? Auth::id(),
-            'created_by' => Auth::id(),
-            'area_id' => $data['training_area'],
-            'motivation' => $data['motivation'] ?? '',
-            'experience' => $data['experience'] ?? null,
-            'english_only_training' => array_key_exists('englishOnly', $data),
-            'type' => $data['type'] ?? 1,
-        ]);
-
-        if (isset($data['comment'])) {
-            TrainingActivityController::create($training->id, 'COMMENT', null, null, null, 'Comment from application: ' . $data['comment']);
-        }
-
-        $training->ratings()->saveMany($ratings);
-
-        ActivityLogService::info(LogName::Training, 'Created training request ' . $training->id . ' for CID ' . $training->user_id . ' ― Ratings: ' . $ratings->pluck('name') . ' in ' . Area::find($training->area_id)->name);
-
-        // Send confimration mail
-        $training->user->notify(new TrainingCreatedNotification($training));
+        $training = app(TrainingService::class)->createTraining(
+            student: isset($data['user_id']) ? User::find($data['user_id']) : Auth::user(),
+            areaId: $data['training_area'],
+            type: $data['type'] ?? 1,
+            ratings: $ratings,
+            createdById: Auth::id(),
+            motivation: $data['motivation'] ?? '',
+            experience: $data['experience'] ?? null,
+            englishOnly: array_key_exists('englishOnly', $data),
+            applicationComment: $data['comment'] ?? null,
+        );
 
         if ($request->expectsJson()) {
             return $training;
@@ -454,9 +443,6 @@ class TrainingController extends Controller
             }
         }
 
-        // Detach all ratings connceed to training to save the new (or same) ones.
-        $training->ratings()->detach();
-
         // Check if ratings has been provided at all
         if (isset($attributes['ratings'])) {
             $ratings = Rating::find($attributes['ratings']);
@@ -464,20 +450,8 @@ class TrainingController extends Controller
             return redirect()->back()->withErrors('One or more ratings need to be selected to update training request.');
         }
 
-        // Save the ratings
-        $training->ratings()->saveMany($ratings);
-
-        // The detach above dropped the per-rating completion stamps. Put them back for the
-        // ratings that survived the edit: a part that was signed off stays signed off.
-        $completedAt = $preChangeRatings
-            ->mapWithKeys(fn (Rating $rating) => [$rating->id => $rating->pivot->completed_at])
-            ->filter();
-
-        foreach ($ratings as $rating) {
-            if ($completedAt->has($rating->id)) {
-                $training->ratings()->updateExistingPivot($rating->id, ['completed_at' => $completedAt->get($rating->id)]);
-            }
-        }
+        // Save the ratings, keeping the completed parts that survive the edit
+        app(TrainingService::class)->replaceRatings($training, $ratings);
 
         // Save the rest
         $training->type = $attributes['type'];
@@ -510,122 +484,42 @@ class TrainingController extends Controller
     public function updateDetails(Training $training)
     {
         $this->authorize('update', $training);
-        $oldStatus = $training->fresh()->status;
 
         $attributes = $this->validateUpdateDetails();
-        if (array_key_exists('status', $attributes)) {
 
-            // Don't allow re-opening a training if that causes student to have multiple trainings at the same time
-            if ($attributes['status']->isOpen() && $oldStatus->isClosed() && $training->user->hasActiveTrainings(true)) {
-                return redirect($training->path())->withErrors('Training can not be reopened. The student already has an active training request.');
-            }
+        // An absent mentors key means the list was emptied, so everybody is detached.
+        $mentors = array_fill_keys((array) ($attributes['mentors'] ?? []), null);
 
-            // Stage the status change (and its derived timestamps) in memory so
-            // the rest of this request reads the new state. Everything is then
-            // persisted together in the single update below, keeping the
-            // activity log to one entry per request.
-            $training->fill($training->resolveStatusChanges($attributes['status']));
+        $changes = [
+            'status' => $attributes['status'] ?? null,
+            'mentors' => $mentors,
+            'paused' => isset($attributes['paused_at']),
+            'attributes' => Arr::except($attributes, ['status', 'mentors', 'paused_at', 'closed_reason']),
+        ];
 
-            if ($attributes['status'] !== $oldStatus) {
-                if ($attributes['status'] === TrainingStatus::CLOSED_BY_STAFF || $attributes['status'] === TrainingStatus::CLOSED_BY_SYSTEM) {
-                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status']->value, $oldStatus->value, Auth::id(), $attributes['closed_reason']);
-                } else {
-                    TrainingActivityController::create($training->id, 'STATUS', $attributes['status']->value, $oldStatus->value, Auth::id());
-                }
-            }
+        if (array_key_exists('closed_reason', $attributes)) {
+            $changes['closed_reason'] = $attributes['closed_reason'];
         }
 
-        $notifyOfNewMentor = false;
-        if (array_key_exists('mentors', $attributes)) {
-            foreach ((array) $attributes['mentors'] as $mentor) {
-                if (! $training->mentors->contains($mentor) && User::find($mentor) != null && User::find($mentor)->hasPermission('training.mentor', $training->area)) {
-                    $training->mentors()->attach($mentor, ['expire_at' => now()->addMonths(12)]);
+        $result = app(TrainingService::class)->updateDetails($training, $changes);
 
-                    // Notify student of their new mentor
-                    $notifyOfNewMentor = true;
-
-                    TrainingActivityController::create($training->id, 'MENTOR', $mentor, null, Auth::id());
-                }
-            }
-
-            foreach ($training->mentors as $mentor) {
-                if (! in_array($mentor->id, (array) $attributes['mentors'])) {
-                    $training->mentors()->detach($mentor);
-                    TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id, Auth::id());
-                }
-            }
-
-            // Notify student of their new mentor. We put this here so detached mentors ain't included.
-            if ($notifyOfNewMentor) {
-                $training->user->notify(new TrainingMentorNotification($training));
-            }
-
-            unset($attributes['mentors']);
-        } else {
-            // Detach all if no passed key, as that means the list is empty
-
-            foreach ($training->mentors as $mentor) {
-                TrainingActivityController::create($training->id, 'MENTOR', null, $mentor->id, Auth::id());
-            }
-
-            $training->mentors()->detach();
+        if ($result['refused']) {
+            return redirect($training->path())->withErrors($result['error']);
         }
 
-        // Update paused time for queue estimation
-        if (isset($attributes['paused_at']) && $training->status->isOpen()) {
-            if (! isset($training->paused_at)) {
-                $attributes['paused_at'] = Carbon::now();
-                TrainingActivityController::create($training->id, 'PAUSE', 1, null, Auth::id());
-            } else {
-                $attributes['paused_at'] = $training->paused_at;
-            }
-        } else {
-            // If paused is unchecked but training is paused, sum up the length and unpause.
-            if (isset($training->paused_at)) {
-                $attributes['paused_length'] = $training->paused_length + (int) Carbon::create($training->paused_at)->diffInSeconds(Carbon::now(), true);
-                TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::id());
+        if ($result['closed']) {
+            if ($result['error'] !== null) {
+                return back()->withErrors($result['error']);
             }
 
-            $attributes['paused_at'] = null;
+            return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
         }
 
-        // If training is closed, force to unpause
-        if ($training->status !== $oldStatus) {
-            if ($training->status->isClosed()) {
-                $attributes['paused_at'] = null;
-                if (isset($training->paused_at)) {
-                    TrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::id());
-                }
-            }
+        if ($result['preTraining']) {
+            return redirect($training->path())->withSuccess('Training successfully updated. E-mail confirmation of pre-training sent to the student.');
         }
 
-        // Update the training
-        $training->update($attributes);
-
-        ActivityLogService::warning(LogName::Training, 'Updated training details ' . $training->id .
-        ' ― Old Status: ' . $oldStatus->label() .
-        ' ― New Status: ' . $training->status->label() .
-        ' ― Mentor: ' . $training->mentors->pluck('name'));
-
-        // Send e-mail and store endorsements rating (non-GRP ones), if it's a new status and it goes from active to closed
-        if ($training->status !== $oldStatus) {
-            if ($training->status->isClosed()) {
-                $error = app(TrainingService::class)->closeTraining($training);
-                if ($error !== null) {
-                    return back()->withErrors($error);
-                }
-
-                return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation sent to the student.');
-            }
-
-            if ($training->status === TrainingStatus::PRE_TRAINING) {
-                $training->user->notify(new TrainingPreStatusNotification($training));
-
-                return redirect($training->path())->withSuccess('Training successfully updated. E-mail confirmation of pre-training sent to the student.');
-            }
-        }
-
-        if ($notifyOfNewMentor) {
+        if ($result['mentorNotified']) {
             return redirect($training->path())->withSuccess('Training successfully updated. E-mail notification of mentor assigned sent to the student.');
         }
 
@@ -668,14 +562,7 @@ class TrainingController extends Controller
     {
         $this->authorize('togglePreTrainingCompleted', $training);
 
-        $oldState = $training->pre_training_completed;
-        $newState = ! $oldState;
-
-        $training->pre_training_completed = $newState;
-        $training->save();
-
-        ActivityLogService::warning(LogName::Training, 'Student marked pre-training as completed ' . $training->id);
-        TrainingActivityController::create($training->id, 'PRETRAINING', $newState, $oldState, Auth::id());
+        $newState = app(TrainingService::class)->togglePreTrainingCompleted($training);
 
         return redirect($training->path())->withSuccess('Pre-training marked as ' . ($newState ? 'completed' : 'not completed'));
     }
@@ -789,25 +676,7 @@ class TrainingController extends Controller
      */
     protected function validRefreshTraining($areaId, $userId, $requestedRatings)
     {
-        // Ratings applicable to area of request
-        $areaRatings = Rating::whereHas('areas', function ($query) use ($areaId) {
-            $query->where('area_id', $areaId);
-        })->whereNull('vatsim_rating')->get()->pluck('name');
-
-        // Ratings which user has today and needs to be refresh
-        $userRatings = User::find($userId)->endorsements->where('type', 'FACILITY')->where('expired', false)->where('revoked', false)->map(function ($endorsement) {
-            return $endorsement->ratings->first()->name;
-        });
-
-        // Gather expected ratings for this user in given area
-        $expectedRatings = collect();
-        foreach ($userRatings as $userRating) {
-            if ($areaRatings->contains($userRating)) {
-                $expectedRatings->push($userRating);
-            }
-        }
-
-        $discrepancyRatings = $expectedRatings->diff($requestedRatings);
+        $discrepancyRatings = app(TrainingService::class)->missingRefreshRatings($areaId, $userId, collect($requestedRatings));
         if ($discrepancyRatings->count() > 0) {
             return ['success' => false, 'data' => $discrepancyRatings];
         }

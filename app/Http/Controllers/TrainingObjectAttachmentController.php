@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TrainingObject;
 use App\Models\TrainingObjectAttachment;
+use App\Services\TrainingObjectService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -68,8 +69,7 @@ class TrainingObjectAttachmentController extends Controller
     {
         $this->authorize('delete', $attachment);
 
-        Storage::delete($attachment->file->full_path);
-        $attachment->delete();
+        app(TrainingObjectService::class)->deleteAttachment($attachment);
 
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Attachment successfully deleted']);
@@ -83,26 +83,6 @@ class TrainingObjectAttachmentController extends Controller
      */
     public static function saveAttachments(Request $request, TrainingObject $object)
     {
-        foreach ($request->files as $file) {
-            if (! is_iterable($file)) {
-                $file_id = FileController::saveFile($file);
-
-                $object->attachments()->create([
-                    'file_id' => $file_id,
-                    'hidden' => false, // We hardcode this to false for now
-                ]);
-            } else {
-                foreach ($file as $file2) {
-                    $file_id = FileController::saveFile($file2);
-
-                    $object->attachments()->create([
-                        'file_id' => $file_id,
-                        'hidden' => false, // We hardcode this to false for now
-                    ]);
-                }
-            }
-        }
-
-        return $object->fresh()->attachments()->pluck('id')->toArray();
+        return app(TrainingObjectService::class)->saveAttachments($request->files->all(), $object);
     }
 }
