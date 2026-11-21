@@ -6,6 +6,11 @@
 ## Unreleased
 
 
+### Features
+
+* **api:** add `/api/v1` catalogue and access endpoints for areas, ratings, users, positions, endorsements, and roles. Legacy `/api` bookings, users, and positions payloads stay unchanged. Edit keys authorize writes; Division API callers send `actor_cid`.
+
+
 ### Bug Fixes
 
 * **api:** treat public booking and position routes as GET-only so mutating requests always require an edit key
