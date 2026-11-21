@@ -29,6 +29,81 @@ class UserController extends Controller
     }
 
     /**
+     * Show a single user.
+     *
+     * Accepts the same `include[]` values as the list endpoint.
+     */
+    #[Response(
+        status: 200,
+        description: 'A single user. Always includes `id`, `rating`, and `atc_active`; other fields appear when requested via `include[]`.',
+    )]
+    public function show(Request $request, User $user)
+    {
+        $parameters = $request->validate([
+            'include' => 'sometimes|array',
+        ]);
+
+        $includes = $parameters['include'] ?? [];
+        $includeName = in_array('name', $includes, true);
+        $includeEmail = in_array('email', $includes, true);
+        $includeDivisions = in_array('divisions', $includes, true);
+        $includeActiveAreas = in_array('activeAreas', $includes, true);
+        $includeEndorsements = in_array('endorsements', $includes, true);
+        $includeRoles = in_array('roles', $includes, true);
+        $includeTraining = in_array('training', $includes, true);
+
+        $with = [];
+        if ($includeEndorsements) {
+            $with = array_merge($with, ['endorsements', 'endorsements.areas', 'endorsements.ratings', 'endorsements.positions']);
+        }
+        if ($includeRoles) {
+            $with[] = 'roleAssignments';
+        }
+        if ($includeTraining) {
+            $with = array_merge($with, ['trainings', 'trainings.ratings', 'trainings.area']);
+        }
+        if ($includeActiveAreas) {
+            $with[] = 'atcActivity';
+        }
+
+        if ($with !== []) {
+            $user->load($with);
+        }
+
+        if ($includeEndorsements) {
+            $user->endorsements = $this->mapEndorsements($user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->where('expired', false)->where('revoked', false));
+        }
+
+        if ($includeRoles) {
+            $user->roles = collect();
+            $globalRoles = $user->roleAssignments->whereNull('area_id')->pluck('role');
+            $user->roles['global'] = $globalRoles->count() ? $globalRoles : null;
+
+            foreach (Area::all() as $area) {
+                $areaRoles = $user->roleAssignments->where('area_id', $area->id)->pluck('role');
+                $user->roles[$area->name] = $areaRoles->count() ? $areaRoles : null;
+            }
+        }
+
+        if ($includeTraining) {
+            $user->training = $this->mapTrainings($user->trainings->filter(fn ($t) => $t->status->isOpen()));
+        }
+
+        $mapped = $this->mapUsers(
+            collect([$user]),
+            $includeName,
+            $includeEmail,
+            $includeDivisions,
+            $includeActiveAreas,
+            $includeEndorsements,
+            $includeRoles,
+            $includeTraining,
+        )->first();
+
+        return response()->json(['data' => $mapped], 200);
+    }
+
+    /**
      * List users.
      *
      * Returns users filtered by the `onlyAtcActive` query parameter, with relations and
