@@ -35,7 +35,7 @@ class StoreFeedbackRequest extends FormRequest
             'position' => 'nullable|exists:positions,callsign',
             'controller' => 'nullable|numeric|exists:users,id',
             'pilot_callsign' => ['nullable', 'string', 'max:20', 'regex:/^[A-Z0-9_-]+$/'],
-            'event_date' => 'nullable|date_format:Y-m-d|before_or_equal:today',
+            'occurred_on' => 'nullable|date_format:Y-m-d|before_or_equal:today',
             'departure_airport' => ['nullable', 'string', 'regex:/^[A-Z0-9]{4}$/'],
             'arrival_airport' => ['nullable', 'string', 'regex:/^[A-Z0-9]{4}$/'],
             'feedback' => 'required|string|max:16000',
@@ -52,7 +52,7 @@ class StoreFeedbackRequest extends FormRequest
             'controller.exists' => 'A controller with this CID was not found.',
             'position.exists' => 'The position does not exist.',
             'pilot_callsign.regex' => 'The callsign may only contain letters, digits, dashes and underscores.',
-            'event_date.before_or_equal' => 'The date of the event cannot be in the future.',
+            'occurred_on.before_or_equal' => 'The date cannot be in the future.',
             'departure_airport.regex' => 'The departure airport must be a 4 character ICAO code.',
             'arrival_airport.regex' => 'The arrival airport must be a 4 character ICAO code.',
         ];

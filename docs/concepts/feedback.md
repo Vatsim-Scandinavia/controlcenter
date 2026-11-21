@@ -26,7 +26,7 @@ Any signed-in member can submit feedback when the feature is enabled. The form i
 - **Controller** (optional) — VATSIM CID of the controller the feedback refers to
 - **Position** (optional) — callsign of the position controlled
 - **Pilot callsign** (optional) — the pilot's callsign, so staff can find the flight
-- **Date of event** (optional) — UTC date of the flight or session
+- **Date** (optional) — UTC date of the flight or session
 - **Departure airport** and **Arrival airport** (optional) — ICAO codes of the flight's airports
 - **Feedback text** (required)
 

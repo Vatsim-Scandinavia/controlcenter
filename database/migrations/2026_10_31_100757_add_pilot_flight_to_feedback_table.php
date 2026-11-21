@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('feedback', function (Blueprint $table) {
             $table->string('pilot_callsign', 20)->nullable()->after('area_id');
-            $table->date('event_date')->nullable()->after('pilot_callsign');
-            $table->string('departure_airport', 4)->nullable()->after('event_date');
+            $table->date('occurred_on')->nullable()->after('pilot_callsign');
+            $table->string('departure_airport', 4)->nullable()->after('occurred_on');
             $table->string('arrival_airport', 4)->nullable()->after('departure_airport');
         });
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('feedback', function (Blueprint $table) {
-            $table->dropColumn(['pilot_callsign', 'event_date', 'departure_airport', 'arrival_airport']);
+            $table->dropColumn(['pilot_callsign', 'occurred_on', 'departure_airport', 'arrival_airport']);
         });
     }
 };

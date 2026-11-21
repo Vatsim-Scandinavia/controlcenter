@@ -418,14 +418,14 @@ class FeedbackOverviewTest extends TestCase
         Feedback::factory()->create([
             'reference_position_id' => Position::factory()->create(['area_id' => $area->id])->id,
             'pilot_callsign' => 'CSA123',
-            'event_date' => '2026-10-27',
+            'occurred_on' => '2026-10-27',
             'departure_airport' => 'LKPR',
             'arrival_airport' => 'EGLL',
         ]);
 
         Livewire::actingAs($moderator)
             ->test(FeedbackTable::class)
-            ->assertSeeHtmlInOrder(['id="feedback-edit-area"', 'id="feedback-edit-controller"', 'id="feedback-edit-position"', 'Pilot callsign', 'Date of event, UTC', 'Departure airport, ICAO', 'Arrival airport, ICAO', 'Feedback Text'])
+            ->assertSeeHtmlInOrder(['id="feedback-edit-area"', 'id="feedback-edit-controller"', 'id="feedback-edit-position"', 'Pilot callsign', 'Date, UTC', 'Departure airport, ICAO', 'Arrival airport, ICAO', 'Feedback Text'])
             ->assertSee('CSA123')
             ->assertSee('27\\\\\\/10\\\\\\/2026', false)
             ->assertSee('LKPR')
@@ -444,7 +444,7 @@ class FeedbackOverviewTest extends TestCase
 
         $component = Livewire::actingAs($moderator)->test(FeedbackTable::class);
 
-        foreach (['pilotCallsign', 'eventDate', 'departureAirport', 'arrivalAirport'] as $key) {
+        foreach (['pilotCallsign', 'occurredOn', 'departureAirport', 'arrivalAirport'] as $key) {
             $component->assertSeeHtml('\\u0022' . $key . '\\u0022:\\u0022N\\\\\\/A\\u0022');
         }
     }

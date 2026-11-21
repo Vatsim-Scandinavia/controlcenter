@@ -236,7 +236,7 @@ class FeedbackControllerTest extends TestCase
     }
 
     #[Test]
-    public function feedback_stores_the_pilot_callsign_uppercased_with_the_event_date(): void
+    public function feedback_stores_the_pilot_callsign_uppercased_with_the_date(): void
     {
         $user = User::factory()->create();
         Setting::set('feedbackEnabled', true);
@@ -244,7 +244,7 @@ class FeedbackControllerTest extends TestCase
         $this->actingAs($user)->post(route('feedback.store'), [
             'feedback' => 'Great service',
             'pilot_callsign' => ' csa123 ',
-            'event_date' => '2026-10-27',
+            'occurred_on' => '2026-10-27',
             'departure_airport' => 'lkpr',
             'arrival_airport' => 'EGLL',
         ])->assertRedirect(route('dashboard'));
@@ -252,7 +252,7 @@ class FeedbackControllerTest extends TestCase
         $feedback = Feedback::where('submitter_user_id', $user->id)->sole();
 
         $this->assertSame('CSA123', $feedback->pilot_callsign);
-        $this->assertSame('2026-10-27', $feedback->event_date->toDateString());
+        $this->assertSame('2026-10-27', $feedback->occurred_on->toDateString());
         $this->assertSame('LKPR', $feedback->departure_airport);
         $this->assertSame('EGLL', $feedback->arrival_airport);
     }
@@ -272,7 +272,7 @@ class FeedbackControllerTest extends TestCase
     }
 
     #[Test]
-    public function pilot_callsign_and_event_date_are_optional(): void
+    public function pilot_callsign_and_date_are_optional(): void
     {
         $user = User::factory()->create();
         Setting::set('feedbackEnabled', true);
@@ -280,13 +280,13 @@ class FeedbackControllerTest extends TestCase
         $this->actingAs($user)->post(route('feedback.store'), [
             'feedback' => 'Great service',
             'pilot_callsign' => '',
-            'event_date' => '',
+            'occurred_on' => '',
         ])->assertSessionHasNoErrors();
 
         $feedback = Feedback::where('submitter_user_id', $user->id)->sole();
 
         $this->assertNull($feedback->pilot_callsign);
-        $this->assertNull($feedback->event_date);
+        $this->assertNull($feedback->occurred_on);
     }
 
     #[Test]
@@ -303,25 +303,25 @@ class FeedbackControllerTest extends TestCase
     }
 
     #[Test]
-    public function feedback_is_rejected_with_an_event_date_in_the_future_or_of_the_wrong_format(): void
+    public function feedback_is_rejected_with_a_date_in_the_future_or_of_the_wrong_format(): void
     {
         $user = User::factory()->create();
 
-        foreach ([now()->addDay()->toDateString(), '27.10.2026'] as $eventDate) {
+        foreach ([now()->addDay()->toDateString(), '27.10.2026'] as $occurredOn) {
             $this->actingAs($user)->post(route('feedback.store'), [
                 'feedback' => 'Great service',
-                'event_date' => $eventDate,
-            ])->assertSessionHasErrors('event_date');
+                'occurred_on' => $occurredOn,
+            ])->assertSessionHasErrors('occurred_on');
         }
     }
 
     #[Test]
-    public function feedback_is_rejected_with_an_impossible_event_date(): void
+    public function feedback_is_rejected_with_an_impossible_date(): void
     {
         $this->actingAs(User::factory()->create())->post(route('feedback.store'), [
             'feedback' => 'Great service',
-            'event_date' => '2026-02-30',
-        ])->assertSessionHasErrors('event_date');
+            'occurred_on' => '2026-02-30',
+        ])->assertSessionHasErrors('occurred_on');
     }
 
     #[Test]
@@ -336,14 +336,14 @@ class FeedbackControllerTest extends TestCase
     }
 
     #[Test]
-    public function feedback_accepts_today_as_the_event_date(): void
+    public function feedback_accepts_today_as_the_date(): void
     {
         $user = User::factory()->create();
         Setting::set('feedbackEnabled', true);
 
         $this->actingAs($user)->post(route('feedback.store'), [
             'feedback' => 'Great service',
-            'event_date' => now()->toDateString(),
+            'occurred_on' => now()->toDateString(),
         ])->assertSessionHasNoErrors();
     }
 
@@ -384,7 +384,7 @@ class FeedbackControllerTest extends TestCase
             'name="controller"',
             'name="position"',
             'Pilot callsign',
-            'Date of event, UTC',
+            'Date, UTC',
             'Departure airport, ICAO',
             'Arrival airport, ICAO',
             'Your feedback',
@@ -428,11 +428,11 @@ class FeedbackControllerTest extends TestCase
             ->assertOk()
             ->assertDontSee('id="recentFlight"', false)
             ->assertSee('name="pilot_callsign"', false)
-            ->assertSee('name="event_date"', false);
+            ->assertSee('name="occurred_on"', false);
     }
 
     #[Test]
-    public function updating_references_keeps_the_pilot_callsign_and_event_date(): void
+    public function updating_references_keeps_the_pilot_callsign_and_date(): void
     {
         $area = Area::factory()->create();
         $moderator = User::factory()->create();
@@ -442,7 +442,7 @@ class FeedbackControllerTest extends TestCase
         $feedback = Feedback::factory()->create([
             'reference_position_id' => $position->id,
             'pilot_callsign' => 'CSA123',
-            'event_date' => '2026-10-27',
+            'occurred_on' => '2026-10-27',
             'departure_airport' => 'LKPR',
         ]);
 
@@ -456,34 +456,36 @@ class FeedbackControllerTest extends TestCase
         $feedback->refresh();
 
         $this->assertSame('CSA123', $feedback->pilot_callsign);
-        $this->assertSame('2026-10-27', $feedback->event_date->toDateString());
+        $this->assertSame('2026-10-27', $feedback->occurred_on->toDateString());
         $this->assertSame('LKPR', $feedback->departure_airport);
     }
 
     #[Test]
-    public function forwarded_feedback_mail_shows_na_for_missing_flight_details(): void
+    public function forwarded_feedback_mail_leaves_out_missing_flight_details(): void
     {
         Setting::set('feedbackEnabled', true);
         Setting::set('feedbackForwardEmail', 'staff@example.com');
 
-        $feedback = Feedback::factory()->create();
+        $feedback = Feedback::factory()->create(['pilot_callsign' => 'CSA123']);
 
         $html = (new FeedbackNotification($feedback))->toMail($feedback)->render();
 
-        foreach (['Pilot callsign', 'Date of event', 'Departure', 'Arrival'] as $label) {
-            $this->assertStringContainsString($label . '</strong>: N/A', $html);
+        $this->assertStringContainsString('Pilot callsign</strong>: CSA123', $html);
+
+        foreach (['Date', 'Departure', 'Arrival'] as $label) {
+            $this->assertStringNotContainsString($label . '</strong>:', $html);
         }
     }
 
     #[Test]
-    public function forwarded_feedback_mail_contains_the_pilot_callsign_and_event_date(): void
+    public function forwarded_feedback_mail_contains_the_pilot_callsign_and_date(): void
     {
         Setting::set('feedbackEnabled', true);
         Setting::set('feedbackForwardEmail', 'staff@example.com');
 
         $feedback = Feedback::factory()->create([
             'pilot_callsign' => 'CSA123',
-            'event_date' => '2026-10-27',
+            'occurred_on' => '2026-10-27',
             'departure_airport' => 'LKPR',
             'arrival_airport' => 'EGLL',
         ]);
@@ -491,7 +493,7 @@ class FeedbackControllerTest extends TestCase
         $html = (new FeedbackNotification($feedback))->toMail($feedback)->render();
 
         $this->assertStringContainsString('CSA123', $html);
-        $this->assertStringContainsString($feedback->event_date->toEuropeanDate(), $html);
+        $this->assertStringContainsString($feedback->occurred_on->toEuropeanDate(), $html);
         $this->assertStringContainsString('LKPR', $html);
         $this->assertStringContainsString('EGLL', $html);
     }

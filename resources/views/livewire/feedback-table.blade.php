@@ -1,4 +1,4 @@
-<div x-data="{ current: { submitter: '', submitted: '', feedback: '', pilotCallsign: '', eventDate: '', departureAirport: '', arrivalAirport: '', controller: '', position: '', area: '', controllerLabel: '', positionLabel: '', areaLabel: '', updateUrl: '' } }">
+<div x-data="{ current: { submitter: '', submitted: '', feedback: '', pilotCallsign: '', occurredOn: '', departureAirport: '', arrivalAirport: '', controller: '', position: '', area: '', controllerLabel: '', positionLabel: '', areaLabel: '', updateUrl: '' } }">
 
     <div class="card shadow mb-4">
         <div class="card-header bg-primary py-3">
@@ -99,7 +99,7 @@
                                                 'submitted' => $f->created_at->toEuropeanDateTime(),
                                                 'feedback' => $f->feedback,
                                                 'pilotCallsign' => $f->pilot_callsign ?? 'N/A',
-                                                'eventDate' => $f->event_date?->toEuropeanDate() ?? 'N/A',
+                                                'occurredOn' => $f->occurred_on?->toEuropeanDate() ?? 'N/A',
                                                 'departureAirport' => $f->departure_airport ?? 'N/A',
                                                 'arrivalAirport' => $f->arrival_airport ?? 'N/A',
                                                 'controller' => $f->referenceUser?->id ?? '',
@@ -236,8 +236,8 @@
                                     <input class="form-control" type="text" x-model="current.pilotCallsign" disabled>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Date of event, UTC</label>
-                                    <input class="form-control" type="text" x-model="current.eventDate" disabled>
+                                    <label class="form-label">Date, UTC</label>
+                                    <input class="form-control" type="text" x-model="current.occurredOn" disabled>
                                 </div>
                             </div>
 

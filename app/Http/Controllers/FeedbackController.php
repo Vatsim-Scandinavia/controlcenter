@@ -59,7 +59,7 @@ class FeedbackController extends Controller
             'reference_user_id' => isset($controller) ? $controller->id : null,
             'reference_position_id' => isset($position) ? $position->id : null,
             'pilot_callsign' => $data['pilot_callsign'] ?? null,
-            'event_date' => $data['event_date'] ?? null,
+            'occurred_on' => $data['occurred_on'] ?? null,
             'departure_airport' => $data['departure_airport'] ?? null,
             'arrival_airport' => $data['arrival_airport'] ?? null,
         ]);

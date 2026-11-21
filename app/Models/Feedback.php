@@ -36,7 +36,7 @@ class Feedback extends Model implements DescribesActivityChanges
         'reference_position_id',
         'area_id',
         'pilot_callsign',
-        'event_date',
+        'occurred_on',
         'departure_airport',
         'arrival_airport',
         'forwarded',
@@ -46,7 +46,7 @@ class Feedback extends Model implements DescribesActivityChanges
      * @var array<string, string>
      */
     protected $casts = [
-        'event_date' => 'date',
+        'occurred_on' => 'date',
     ];
 
     /**

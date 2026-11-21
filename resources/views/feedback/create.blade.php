@@ -118,17 +118,17 @@
                             @enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="eventDate">Date of event, UTC <small class="form-text"> (Optional)</small></label>
+                            <label class="form-label" for="occurredOn">Date, UTC <small class="form-text"> (Optional)</small></label>
                             <input
-                                id="eventDate"
+                                id="occurredOn"
                                 class="form-control"
                                 type="date"
-                                name="event_date"
+                                name="occurred_on"
                                 max="{{ now()->toDateString() }}"
-                                value="{{ old('event_date') }}"
+                                value="{{ old('occurred_on') }}"
                                 >
-                            @error('event_date')
-                                <span class="text-danger">{{ $errors->first('event_date') }}</span>
+                            @error('occurred_on')
+                                <span class="text-danger">{{ $errors->first('occurred_on') }}</span>
                             @enderror
                         </div>
                     </div>
@@ -200,7 +200,7 @@
 
         if (flight.value) {
             document.getElementById('pilotCallsign').value = flight.value;
-            document.getElementById('eventDate').value = flight.dataset.date;
+            document.getElementById('occurredOn').value = flight.dataset.date;
             document.getElementById('departureAirport').value = flight.dataset.departure;
             document.getElementById('arrivalAirport').value = flight.dataset.arrival;
         }
