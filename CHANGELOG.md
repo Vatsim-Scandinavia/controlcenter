@@ -8,7 +8,7 @@
 
 ### Features
 
-* **api:** expand `/api/v1` management surface for catalogue, endorsements, roles, trainings, reports, examinations, attachments, and tasks. Legacy `/api` bookings, users, and positions payloads stay unchanged. Edit keys authorize writes; Division API callers send `actor_cid`.
+* **api:** expand `/api/v1` management surface for trainings, endorsements, roles, roster, sweatbooks, feedback, settings, votes, and related staff workflows. Legacy `/api` bookings, users, and positions payloads stay unchanged. Edit keys authorize writes; Division API callers send `actor_cid`.
 
 
 ### Bug Fixes

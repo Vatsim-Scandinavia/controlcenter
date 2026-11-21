@@ -20,7 +20,23 @@ class OpenApiDocumentTest extends TestCase
             '/bookings/create',
             '/bookings/{booking}',
             '/positions',
+            '/positions/{position}',
             '/users',
+            '/users/{user}',
+            '/areas',
+            '/areas/{area}',
+            '/areas/{area}/roster',
+            '/areas/{area}/activity',
+            '/ratings',
+            '/endorsements',
+            '/trainings',
+            '/trainings/{training}',
+            '/tasks',
+            '/sweatbooks',
+            '/feedback',
+            '/activity-log',
+            '/settings',
+            '/votes',
         ] as $expected) {
             $this->assertContains($expected, $paths, "Missing $expected in OpenAPI document");
         }

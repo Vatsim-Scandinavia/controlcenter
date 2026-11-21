@@ -47,22 +47,24 @@ such as `?full=1` on positions only apply when a key authenticates the request.
 
 ### `actor_cid`
 
-Division API writes (mentor roles, facility/solo/examiner endorsements, and
-similar) require `actor_cid`: an existing VATSIM CID in `users`. The edit key is
-the authorization; `actor_cid` is only the requester sent to VATSIM and the
-activity-log causer. It is not checked against that user's roles.
+Division API writes (mentor roles, facility/solo/examiner endorsements, rating
+upgrades, exam uploads, and similar) require `actor_cid`: an existing VATSIM CID
+in `users`. The edit key is the authorization; `actor_cid` is only the requester
+sent to VATSIM and the activity-log causer. It is not checked against that user's
+roles.
 
 ## Conventions
 
 - List and show payloads use `{ "data": ... }`. Paginated lists also include
   `meta` with `current_page`, `last_page`, `per_page`, and `total`.
 - Validation failures return Laravel's `422` body.
-- Domain refusals return `409` with `{ "message": "..." }`.
+- Domain refusals (second open training, overlap, bad status) return `409` with
+  `{ "message": "..." }`.
 - Division API failures return `422` with the adapter message.
 - New timestamps are ISO-8601. User ids remain VATSIM CIDs.
-- Paginated collections (`trainings`, `tasks`, `endorsements`) accept `page`
-  and `per_page` (default 50, max 100). The original users and bookings lists
-  stay unpaginated.
+- Paginated collections (`trainings`, `tasks`, `feedback`, `endorsements`,
+  `activity-log`) accept `page` and `per_page` (default 50, max 100). The
+  original users and bookings lists stay unpaginated.
 
 ## Endpoint overview
 
@@ -73,6 +75,8 @@ All paths below are relative to `/api/v1`.
 | Method | Path | Notes |
 | --- | --- | --- |
 | `GET` | `/areas`, `/areas/{area}` | |
+| `GET` | `/areas/{area}/roster` | Active controllers and visiting holders |
+| `GET` | `/areas/{area}/activity` | Per-user ATC hours for the area |
 | `GET` | `/ratings` | Includes area pivot fields |
 | `GET` | `/users` | Existing `include[]` / `onlyAtcActive` query |
 | `GET` | `/users/{user}` | Same `include[]` values as the list |
@@ -88,15 +92,6 @@ All paths below are relative to `/api/v1`.
 | `POST` | `/bookings/create` | Edit key. Body uses `d/m/Y` and `H:i` |
 | `PATCH` / `DELETE` | `/bookings/{booking}` | Edit key |
 | `POST` / `PATCH` / `DELETE` | `/positions`… | Edit key. Same validation as the admin UI |
-
-### Endorsements and roles
-
-| Method | Path | Notes |
-| --- | --- | --- |
-| `POST` | `/endorsements` | `FACILITY`, `SOLO`, `EXAMINER`, `VISITING` |
-| `DELETE` | `/endorsements/{endorsement}` | Revoke |
-| `POST` | `/endorsements/{endorsement}/shorten` | Solos |
-| `POST` / `DELETE` | `/users/{user}/roles` | Body: `role`, optional `area_id`, required `actor_cid`. `admin` refused |
 
 ### Training
 
@@ -115,12 +110,26 @@ All paths below are relative to `/api/v1`.
 Reports, examinations, and attachments live under
 `/trainings/{training}/reports`, `/examinations`, and `/attachments`.
 
-### Tasks
+### Tasks, endorsements, and roles
 
 | Method | Path | Notes |
 | --- | --- | --- |
 | `GET` / `POST` | `/tasks` | |
 | `POST` | `/tasks/{task}/complete`, `/tasks/{task}/decline` | Division-backed types need `actor_cid` |
+| `POST` | `/endorsements` | `FACILITY`, `SOLO`, `EXAMINER`, `VISITING` |
+| `DELETE` | `/endorsements/{endorsement}` | Revoke |
+| `POST` | `/endorsements/{endorsement}/shorten` | Solos |
+| `POST` / `DELETE` | `/users/{user}/roles` | Body: `role`, optional `area_id`, required `actor_cid`. `admin` refused |
+
+### Operations and system
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| `GET` / `POST` / `PATCH` / `DELETE` | `/sweatbooks`… | Local sweatbox bookings |
+| `GET` / `PATCH` | `/feedback`… | Correlate controller, position, area |
+| `GET` | `/activity-log` | Filter by `log_name`, `level`, `from`, `to` |
+| `GET` / `PATCH` | `/settings` | Admin settings keys only, not `.env` secrets |
+| `GET` / `POST` / `PATCH` | `/votes`… | Staff create/update. Casting a ballot stays on the web |
 
 ## Regenerating the OpenAPI file
 
