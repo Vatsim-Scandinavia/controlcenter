@@ -470,7 +470,8 @@
         "/bookings/create": {
             "post": {
                 "operationId": "v1.booking.store",
-                "summary": "Create a booking.\r\n\r\nValidates CID, date, start/end time, position, and optional tag, then persists a\r\nnew booking, forcing a training tag when the controller or position rating requires it",
+                "description": "Validates CID, date, start/end time, position, and optional tag, then persists a\nnew booking, forcing a training tag when the controller or position rating requires it.",
+                "summary": "Create a booking",
                 "tags": [
                     "Booking"
                 ],
@@ -668,7 +669,8 @@
         "/bookings/{booking}": {
             "patch": {
                 "operationId": "v1.booking.update",
-                "summary": "Update an existing booking.\r\n\r\nRevalidates CID, date, start/end time, position, and optional tag, re-checks for\r\noverlapping bookings, and re-evaluates whether a training tag must be forced",
+                "description": "Revalidates CID, date, start/end time, position, and optional tag, re-checks for\noverlapping bookings, and re-evaluates whether a training tag must be forced.",
+                "summary": "Update an existing booking",
                 "tags": [
                     "Booking"
                 ],
@@ -770,7 +772,8 @@
             },
             "delete": {
                 "operationId": "v1.booking.destroy",
-                "summary": "Delete a booking.\r\n\r\nSoft-deletes the booking and cancels the corresponding VATSIM booking",
+                "description": "Soft-deletes the booking and cancels the corresponding VATSIM booking.",
+                "summary": "Delete a booking",
                 "tags": [
                     "Booking"
                 ],
@@ -860,7 +863,8 @@
         "/bookings": {
             "get": {
                 "operationId": "v1.booking.index",
-                "summary": "List bookings.\r\n\r\nReturns a reduced payload when the request is unauthenticated",
+                "description": "Returns a reduced payload when the request is unauthenticated.",
+                "summary": "List bookings",
                 "tags": [
                     "Booking"
                 ],
@@ -1862,7 +1866,8 @@
             },
             "get": {
                 "operationId": "v1.positions.index",
-                "summary": "List positions.\r\n\r\nReturns every position, reduced to the fields a booking client needs to render\r\nand match a callsign. Pass `full=1` to include management fields as well",
+                "description": "Returns every position, reduced to the fields a booking client needs to render\nand match a callsign. Pass `full=1` to include management fields as well.",
+                "summary": "List positions",
                 "tags": [
                     "Position"
                 ],
@@ -2272,7 +2277,8 @@
         "/users/{user}/roles": {
             "post": {
                 "operationId": "v1.users.roles.store",
-                "summary": "Grant a role to a user.\r\n\r\nThe `admin` role cannot be granted through the API",
+                "description": "The `admin` role cannot be granted through the API.",
+                "summary": "Grant a role to a user",
                 "tags": [
                     "Role"
                 ],
@@ -7962,7 +7968,8 @@
         "/users": {
             "get": {
                 "operationId": "v1.users.index",
-                "summary": "List users.\r\n\r\nReturns users filtered by the `onlyAtcActive` query parameter, with relations and\r\nfields (name, email, divisions, active areas, endorsements, roles, training) added\r\nonly when requested via the `include[]` query parameter",
+                "description": "Returns users filtered by the `onlyAtcActive` query parameter, with relations and\nfields (name, email, divisions, active areas, endorsements, roles, training) added\nonly when requested via the `include[]` query parameter.",
+                "summary": "List users",
                 "tags": [
                     "User"
                 ],
@@ -8082,7 +8089,8 @@
         "/users/{user}": {
             "get": {
                 "operationId": "v1.users.show",
-                "summary": "Show a single user.\r\n\r\nAccepts the same `include[]` values as the list endpoint",
+                "description": "Accepts the same `include[]` values as the list endpoint.",
+                "summary": "Show a single user",
                 "tags": [
                     "User"
                 ],
