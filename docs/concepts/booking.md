@@ -12,7 +12,7 @@ This feature is an integral part of the training, examination and event experien
 - **No Time Restrictions**: Control Center does not enforce time limits on bookings; these are managed at the division or subdivision level.
 - **Mutually Exclusive Tags**: The booking overview help ensure clarity and purpose in bookings with mutually exclusive tags.
 - **Integration with VATSIM**: Our system seamlessly integrates with the [VATSIM ATC Bookings API](../integrations/vatsim.md), enhancing interoperability with other websites and ATC roster overviews.
-- **Programmatic Bookings**: In addition to manual bookings, our system [supports automated bookings](../api.md), such as those created for event staffing through Discord bots.
+- **Programmatic access**: The [Control Center API](../api.md) supports automated bookings (for example event staffing bots) and broader management of trainings, endorsements, roles, roster activity, and related staff workflows.
 
 ## For All ATC Members
 
