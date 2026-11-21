@@ -35,7 +35,18 @@ class Feedback extends Model implements DescribesActivityChanges
         'reference_user_id',
         'reference_position_id',
         'area_id',
+        'pilot_callsign',
+        'occurred_on',
+        'departure_airport',
+        'arrival_airport',
         'forwarded',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'occurred_on' => 'date',
     ];
 
     /**

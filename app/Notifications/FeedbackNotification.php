@@ -52,11 +52,20 @@ class FeedbackNotification extends Notification implements ShouldQueue
         $position = isset($this->feedback->referencePosition) ? $this->feedback->referencePosition->callsign : 'N/A';
         $controller = isset($this->feedback->referenceUser) ? $this->feedback->referenceUser->name : 'N/A';
 
+        // The flight details are optional, so only the ones given are listed.
+        $flightLines = collect([
+            'Pilot callsign' => $this->feedback->pilot_callsign,
+            'Date' => $this->feedback->occurred_on?->toEuropeanDate(),
+            'Departure' => $this->feedback->departure_airport,
+            'Arrival' => $this->feedback->arrival_airport,
+        ])->filter()->map(fn (string $value, string $label): string => "**{$label}**: {$value}")->values()->all();
+
         $textLines = [
             'New feedback has been submitted by ' . $this->feedback->submitter->name . ' (' . $this->feedback->submitter->id . '). You may respond by replying to this email.',
             '___',
             '**Controller**: ' . $controller,
             '**Position**: ' . $position,
+            ...$flightLines,
             '___',
             '**Feedback**',
             $this->feedback->feedback,
