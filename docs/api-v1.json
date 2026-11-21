@@ -23,6 +23,163 @@
         }
     ],
     "paths": {
+        "/areas": {
+            "get": {
+                "operationId": "v1.areas.index",
+                "summary": "List areas",
+                "tags": [
+                    "Area"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Every area, wrapped in a `data` array.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "contact": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "waiting_time": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "feedback_url": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "readme_url": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "contact",
+                                                    "waiting_time",
+                                                    "feedback_url",
+                                                    "readme_url"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/areas/{area}": {
+            "get": {
+                "operationId": "v1.areas.show",
+                "summary": "Show an area",
+                "tags": [
+                    "Area"
+                ],
+                "parameters": [
+                    {
+                        "name": "area",
+                        "in": "path",
+                        "required": true,
+                        "description": "The area ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single area.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "contact": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "waiting_time": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "feedback_url": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "readme_url": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "name",
+                                                "contact",
+                                                "waiting_time",
+                                                "feedback_url",
+                                                "readme_url"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                },
+                "security": []
+            }
+        },
         "/bookings/create": {
             "post": {
                 "operationId": "v1.booking.store",
@@ -450,17 +607,788 @@
                 "security": []
             }
         },
-        "/positions": {
-            "get": {
-                "operationId": "v1.positions.index",
-                "description": "Returns every position, reduced to the fields a booking client needs to render\nand match a callsign.",
-                "summary": "List positions",
+        "/endorsements": {
+            "post": {
+                "operationId": "v1.endorsements.store",
+                "summary": "Create an endorsement",
                 "tags": [
-                    "Position"
+                    "Endorsement"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "FACILITY",
+                                            "SOLO",
+                                            "EXAMINER",
+                                            "VISITING"
+                                        ]
+                                    },
+                                    "rating_id": {
+                                        "type": "integer"
+                                    },
+                                    "position_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "minItems": 1
+                                    },
+                                    "area_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "minItems": 1
+                                    },
+                                    "valid_from": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "valid_to": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "format": "date-time"
+                                    },
+                                    "actor_cid": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "required": [
+                                    "user_id",
+                                    "type",
+                                    "actor_cid"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "The endorsement was created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "valid_from": {
+                                                    "type": "string"
+                                                },
+                                                "valid_to": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "expired": {
+                                                    "type": "boolean"
+                                                },
+                                                "revoked": {
+                                                    "type": "boolean"
+                                                },
+                                                "issued_by": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "revoked_by": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "ratings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    }
+                                                },
+                                                "positions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "callsign": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "callsign"
+                                                        ]
+                                                    }
+                                                },
+                                                "areas": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "user_id",
+                                                "type",
+                                                "valid_from",
+                                                "valid_to",
+                                                "expired",
+                                                "revoked",
+                                                "issued_by",
+                                                "revoked_by",
+                                                "ratings",
+                                                "positions",
+                                                "areas"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed or the Division API rejected the write.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "operationId": "v1.endorsements.index",
+                "summary": "List endorsements",
+                "tags": [
+                    "Endorsement"
+                ],
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "FACILITY",
+                                "SOLO",
+                                "EXAMINER",
+                                "VISITING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "area_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "expired",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "revoked",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
                 ],
                 "responses": {
                     "200": {
-                        "description": "All positions, wrapped in a `data` array. The query selects three columns only, so the response carries no `id`, `fir`, `rating`, `area_id` or `required_facility_rating_id`.",
+                        "description": "Paginated endorsements, filterable by type, area, user, expired, and revoked.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "current_page",
+                                                "last_page",
+                                                "per_page",
+                                                "total"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/endorsements/{endorsement}": {
+            "delete": {
+                "operationId": "v1.endorsements.destroy",
+                "summary": "Revoke an endorsement",
+                "tags": [
+                    "Endorsement"
+                ],
+                "parameters": [
+                    {
+                        "name": "endorsement",
+                        "in": "path",
+                        "required": true,
+                        "description": "The endorsement ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The endorsement was revoked.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "valid_from": {
+                                                    "type": "string"
+                                                },
+                                                "valid_to": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "expired": {
+                                                    "type": "boolean"
+                                                },
+                                                "revoked": {
+                                                    "type": "boolean"
+                                                },
+                                                "issued_by": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "revoked_by": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "ratings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    }
+                                                },
+                                                "positions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "callsign": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "callsign"
+                                                        ]
+                                                    }
+                                                },
+                                                "areas": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "user_id",
+                                                "type",
+                                                "valid_from",
+                                                "valid_to",
+                                                "expired",
+                                                "revoked",
+                                                "issued_by",
+                                                "revoked_by",
+                                                "ratings",
+                                                "positions",
+                                                "areas"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "409": {
+                        "description": "The endorsement is already revoked.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Endorsement is already revoked."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            }
+        },
+        "/endorsements/{endorsement}/shorten": {
+            "post": {
+                "operationId": "v1.endorsements.shorten",
+                "summary": "Shorten a solo endorsement's valid_to date",
+                "tags": [
+                    "Endorsement"
+                ],
+                "parameters": [
+                    {
+                        "name": "endorsement",
+                        "in": "path",
+                        "required": true,
+                        "description": "The endorsement ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "valid_to": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "actor_cid": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "required": [
+                                    "valid_to"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The solo endorsement was shortened.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "valid_from": {
+                                                    "type": "string"
+                                                },
+                                                "valid_to": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "expired": {
+                                                    "type": "boolean"
+                                                },
+                                                "revoked": {
+                                                    "type": "boolean"
+                                                },
+                                                "issued_by": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "revoked_by": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "ratings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    }
+                                                },
+                                                "positions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "callsign": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "callsign"
+                                                        ]
+                                                    }
+                                                },
+                                                "areas": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "user_id",
+                                                "type",
+                                                "valid_from",
+                                                "valid_to",
+                                                "expired",
+                                                "revoked",
+                                                "issued_by",
+                                                "revoked_by",
+                                                "ratings",
+                                                "positions",
+                                                "areas"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Only active solo endorsements can be shortened.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Only active solo endorsements can be shortened."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            }
+        },
+        "/positions": {
+            "post": {
+                "operationId": "v1.positions.store",
+                "summary": "Create a position",
+                "tags": [
+                    "Position"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PositionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "The position was created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "callsign": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "frequency": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "fir": {
+                                                    "type": "string"
+                                                },
+                                                "rating": {
+                                                    "type": "integer"
+                                                },
+                                                "area_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "required_facility_rating_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "callsign",
+                                                "name",
+                                                "frequency",
+                                                "fir",
+                                                "rating",
+                                                "area_id",
+                                                "required_facility_rating_id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "get": {
+                "operationId": "v1.positions.index",
+                "summary": "List positions.\r\n\r\nReturns every position, reduced to the fields a booking client needs to render\r\nand match a callsign. Pass `full=1` to include management fields as well",
+                "tags": [
+                    "Position"
+                ],
+                "parameters": [
+                    {
+                        "name": "full",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All positions, wrapped in a `data` array. Without `full=1` the query selects three columns only (`callsign`, `frequency`, `name`). With `full=1` each row also includes `id`, `fir`, `rating`, `area_id` and `required_facility_rating_id`.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -503,11 +1431,625 @@
                 "security": []
             }
         },
+        "/positions/{position}": {
+            "patch": {
+                "operationId": "v1.positions.update",
+                "summary": "Update a position",
+                "tags": [
+                    "Position"
+                ],
+                "parameters": [
+                    {
+                        "name": "position",
+                        "in": "path",
+                        "required": true,
+                        "description": "The position ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PositionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The position was updated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "callsign": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "frequency": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "fir": {
+                                                    "type": "string"
+                                                },
+                                                "rating": {
+                                                    "type": "integer"
+                                                },
+                                                "area_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "required_facility_rating_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "callsign",
+                                                "name",
+                                                "frequency",
+                                                "fir",
+                                                "rating",
+                                                "area_id",
+                                                "required_facility_rating_id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "v1.positions.destroy",
+                "summary": "Delete a position",
+                "tags": [
+                    "Position"
+                ],
+                "parameters": [
+                    {
+                        "name": "position",
+                        "in": "path",
+                        "required": true,
+                        "description": "The position ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The position was deleted.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            },
+            "get": {
+                "operationId": "v1.positions.show",
+                "summary": "Show a position with management fields",
+                "tags": [
+                    "Position"
+                ],
+                "parameters": [
+                    {
+                        "name": "position",
+                        "in": "path",
+                        "required": true,
+                        "description": "The position ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single position including management fields.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "callsign": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "frequency": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "fir": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "rating": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "area_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "required_facility_rating_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "callsign",
+                                                "name",
+                                                "frequency",
+                                                "fir",
+                                                "rating",
+                                                "area_id",
+                                                "required_facility_rating_id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/ratings": {
+            "get": {
+                "operationId": "v1.ratings.index",
+                "summary": "List ratings, including the area pivot fields used for training eligibility",
+                "tags": [
+                    "Rating"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Every rating with its area pivots.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "vatsim_rating": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "areas": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "required_vatsim_rating": {
+                                                                    "type": [
+                                                                        "integer",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "allow_bundling": {
+                                                                    "type": [
+                                                                        "boolean",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "hour_requirement": {
+                                                                    "type": [
+                                                                        "integer",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "queue_length_low": {
+                                                                    "type": [
+                                                                        "integer",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "queue_length_high": {
+                                                                    "type": [
+                                                                        "integer",
+                                                                        "null"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id",
+                                                                "name",
+                                                                "required_vatsim_rating",
+                                                                "allow_bundling",
+                                                                "hour_requirement",
+                                                                "queue_length_low",
+                                                                "queue_length_high"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "vatsim_rating",
+                                                    "areas"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/users/{user}/roles": {
+            "post": {
+                "operationId": "v1.users.roles.store",
+                "summary": "Grant a role to a user.\r\n\r\nThe `admin` role cannot be granted through the API",
+                "tags": [
+                    "Role"
+                ],
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "description": "The user ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "director",
+                                            "moderator",
+                                            "training-staff",
+                                            "event-staff",
+                                            "staff",
+                                            "nav-editor",
+                                            "mentor",
+                                            "buddy"
+                                        ]
+                                    },
+                                    "area_id": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
+                                    },
+                                    "actor_cid": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "required": [
+                                    "role",
+                                    "actor_cid"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "The role was granted.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "role": {
+                                                    "type": "string"
+                                                },
+                                                "area_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "user_id",
+                                                "role",
+                                                "area_id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed, admin was requested, or the Division API rejected the write.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "This role requires an area."
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "const": "This role cannot be scoped to an area."
+                                                }
+                                            },
+                                            "required": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "v1.users.roles.destroy",
+                "summary": "Revoke a role from a user",
+                "tags": [
+                    "Role"
+                ],
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "description": "The user ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "role",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "director",
+                                "moderator",
+                                "training-staff",
+                                "event-staff",
+                                "staff",
+                                "nav-editor",
+                                "mentor",
+                                "buddy"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "area_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "actor_cid",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The role was revoked.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer"
+                                                },
+                                                "role": {
+                                                    "type": "string"
+                                                },
+                                                "area_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "user_id",
+                                                "role",
+                                                "area_id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed, admin was requested, or the Division API rejected the write.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "operationId": "v1.users.index",
-                "description": "Returns users filtered by the `onlyAtcActive` query parameter, with relations and\nfields (name, email, divisions, active areas, endorsements, roles, training) added\nonly when requested via the `include[]` query parameter.",
-                "summary": "List users",
+                "summary": "List users.\r\n\r\nReturns users filtered by the `onlyAtcActive` query parameter, with relations and\r\nfields (name, email, divisions, active areas, endorsements, roles, training) added\r\nonly when requested via the `include[]` query parameter",
                 "tags": [
                     "User"
                 ],
@@ -623,6 +2165,66 @@
                 },
                 "security": []
             }
+        },
+        "/users/{user}": {
+            "get": {
+                "operationId": "v1.users.show",
+                "summary": "Show a single user.\r\n\r\nAccepts the same `include[]` values as the list endpoint",
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "description": "The user ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "include[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single user. Always includes `id`, `rating`, and `atc_active`; other fields appear when requested via `include[]`.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                },
+                "security": []
+            }
         }
     },
     "components": {
@@ -714,6 +2316,49 @@
                     "vatsim_booking"
                 ],
                 "title": "Booking"
+            },
+            "PositionRequest": {
+                "type": "object",
+                "properties": {
+                    "area_id": {
+                        "type": "integer"
+                    },
+                    "callsign": {
+                        "type": "string"
+                    },
+                    "fir": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4
+                    },
+                    "frequency": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "enum": [
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "7",
+                            "8",
+                            "10"
+                        ]
+                    }
+                },
+                "required": [
+                    "area_id",
+                    "callsign",
+                    "fir",
+                    "frequency",
+                    "name",
+                    "rating"
+                ],
+                "title": "PositionRequest"
             }
         },
         "responses": {
