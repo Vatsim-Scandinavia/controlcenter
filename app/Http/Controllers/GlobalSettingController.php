@@ -51,6 +51,7 @@ class GlobalSettingController extends Controller
             'trainingInterval' => 'required|integer|min:1',
             'trainingSoloRequirement' => 'required|max:200',
             'trainingSoloMaxDays' => 'required|integer|min:1',
+            'trainingShowQueuePosition' => '',
             'atcActivityQualificationPeriod' => 'required|integer|min:1',
             'atcActivityGracePeriod' => 'required|integer|min:0',
             'atcActivityRequirement' => 'required|integer|min:0',
@@ -74,6 +75,7 @@ class GlobalSettingController extends Controller
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
+        isset($data['trainingShowQueuePosition']) ? $trainingShowQueuePosition = true : $trainingShowQueuePosition = false;
         isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityBasedOnTotalHours']) ? $atcActivityBasedOnTotalHours = true : $atcActivityBasedOnTotalHours = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
@@ -95,6 +97,7 @@ class GlobalSettingController extends Controller
         Setting::set('trainingInterval', $data['trainingInterval']);
         Setting::set('trainingSoloRequirement', $data['trainingSoloRequirement']);
         Setting::set('trainingSoloMaxDays', $data['trainingSoloMaxDays']);
+        Setting::set('trainingShowQueuePosition', $trainingShowQueuePosition);
         Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
         Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
         Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
