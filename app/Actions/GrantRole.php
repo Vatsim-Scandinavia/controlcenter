@@ -13,11 +13,15 @@ class GrantRole
     /**
      * Grant $role (optionally scoped to $area) to $user on behalf of $actor.
      *
+     * Pass `$authorize = false` for API-key callers that already hold an edit key.
+     *
      * @return string|null Error message on Division API failure, otherwise null.
      */
-    public function __invoke(User $actor, User $user, string $role, ?Area $area): ?string
+    public function __invoke(User $actor, User $user, string $role, ?Area $area, bool $authorize = true): ?string
     {
-        Gate::forUser($actor)->authorize('updateRole', [$user, $role, $area]);
+        if ($authorize) {
+            Gate::forUser($actor)->authorize('updateRole', [$user, $role, $area]);
+        }
 
         if ($role === 'mentor') {
             $response = DivisionApi::assignMentor($user, $actor->id);
