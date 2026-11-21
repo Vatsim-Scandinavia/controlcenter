@@ -6,7 +6,7 @@ use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Training;
 use App\Models\TrainingReport;
-use App\Notifications\TrainingReportNotification;
+use App\Services\TrainingObjectService;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -71,26 +71,16 @@ class TrainingReportController extends Controller
         $this->authorize('create', [TrainingReport::class, $training]);
 
         $data = $this->validateRequest();
-        $data['written_by_id'] = Auth::id();
-        $data['training_id'] = $training->id;
 
         if (isset($data['report_date'])) {
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
         }
 
-        (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
+        $data['draft'] = isset($data['draft']);
 
-        // Remove attachments , they are added in next step
+        // Attachments are added by the service, so they are not part of the report data
         unset($data['files']);
-        $report = TrainingReport::create($data);
-
-        // Add attachments
-        TrainingObjectAttachmentController::saveAttachments($request, $report);
-
-        // Notify student of new training request if it's not a draft
-        if ($report->draft != true && $training->user->setting_notify_newreport) {
-            $training->user->notify(new TrainingReportNotification($training, $report));
-        }
+        app(TrainingObjectService::class)->createReport($training, $data, Auth::id(), $request->files->all());
 
         if (($key = OneTimeLink::getFromSession($training)) != null) {
             $key->delete();
@@ -147,12 +137,7 @@ class TrainingReportController extends Controller
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
-        $report->update($data);
-
-        // Notify student when the report is first published (published_at just stamped)
-        if ($report->wasChanged('published_at') && $report->training->user->setting_notify_newreport) {
-            $report->training->user->notify(new TrainingReportNotification($report->training, $report));
-        }
+        app(TrainingObjectService::class)->updateReport($report, $data);
 
         return redirect()->intended(route('training.show', $report->training->id))->withSuccess('Training report successfully updated');
     }
