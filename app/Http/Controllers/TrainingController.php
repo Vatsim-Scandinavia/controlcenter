@@ -126,7 +126,8 @@ class TrainingController extends Controller
         $userVatsimRating = $user->rating;
 
         $trainingQueue = app(TrainingQueueService::class);
-        $queueSizes = $trainingQueue->queueSizes();
+        $showQueue = $trainingQueue->shownToStudents();
+        $queueSizes = $showQueue ? $trainingQueue->queueSizes() : collect();
 
         // Loop through all areas, it's ratings, check if user has already passed and if not, show the appropriate ratings for current level.
         $payload = [];
@@ -141,8 +142,10 @@ class TrainingController extends Controller
                     // If the required vatsim rating for the selection is lower or equals the level user has today, make it available
                     if ($reqVatRating <= $userVatsimRating->value) {
                         $rating->hour_requirement = $rating->pivot->hour_requirement;
-                        $rating->queue_name = $trainingQueue->queueName(collect([$rating]));
-                        $rating->queue_size = $queueSizes->get($trainingQueue->queueKey($area->id, collect([$rating])), 0);
+                        if ($showQueue) {
+                            $rating->queue_name = $trainingQueue->queueName(collect([$rating]));
+                            $rating->queue_size = $queueSizes->get($trainingQueue->queueKey($area->id, collect([$rating])), 0);
+                        }
                         $availableRatings->push($rating);
                     }
                 }
@@ -170,8 +173,11 @@ class TrainingController extends Controller
 
             // Re-add the removed ratings as a bundle
             if ($bundleAmount > 0) {
-                $bundle['queue_name'] = $trainingQueue->queueName($bundledRatings);
-                $bundle['queue_size'] = $queueSizes->get($trainingQueue->queueKey($area->id, $bundledRatings), 0);
+                if ($showQueue) {
+                    $bundle['queue_name'] = $trainingQueue->queueName($bundledRatings);
+                    $bundle['queue_size'] = $queueSizes->get($trainingQueue->queueKey($area->id, $bundledRatings), 0);
+                }
+
                 $availableRatings->push($bundle);
             }
 
@@ -419,7 +425,8 @@ class TrainingController extends Controller
         // no solo endorsement was ever issued on it.
         $soloEndorsementSummary = app(SoloEndorsementService::class)->summaryFor($training);
 
-        $queuePosition = app(TrainingQueueService::class)->positionOf($training);
+        $trainingQueue = app(TrainingQueueService::class);
+        $queuePosition = $trainingQueue->shownToStudents() ? $trainingQueue->positionOf($training) : null;
 
         return view('training.show', compact('training', 'queuePosition', 'reportsAndExams', 'trainingMentors', 'types', 'experiences', 'activities', 'trainingInterests', 'activeTrainingInterest', 'relatedTasks', 'trainingSessions', 'requestTypes', 'requestPopularAssignees', 'showCompletionControl', 'completablePart', 'outstandingRatings', 'otherOutstandingRatings', 'outstandingEndorsementRatings', 'canCompletePartially', 'upgradeRequestedForPart', 'soloEndorsementSummary'));
     }

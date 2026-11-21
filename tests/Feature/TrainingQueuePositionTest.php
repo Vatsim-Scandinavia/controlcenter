@@ -9,6 +9,7 @@ use App\Models\Area;
 use App\Models\Rating;
 use App\Models\Training;
 use App\Models\User;
+use App\Notifications\TrainingCreatedNotification;
 use App\Services\TrainingQueueService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,6 +22,13 @@ class TrainingQueuePositionTest extends TestCase
 {
     use CreatesRoleAssignedUsers;
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Setting::set('trainingShowQueuePosition', true);
+    }
 
     private function queuedTraining(array $ratings, string $appliedAt, int $areaId = 1, array $attributes = []): Training
     {
@@ -417,6 +425,110 @@ class TrainingQueuePositionTest extends TestCase
             $service->queueKey(1, collect([$rating(23)])),
             $service->queueKey(12, collect([$rating(3)])),
         );
+    }
+
+    #[Test]
+    public function queue_position_is_off_unless_enabled(): void
+    {
+        Setting::forget('trainingShowQueuePosition');
+
+        $this->assertFalse(app(TrainingQueueService::class)->shownToStudents());
+    }
+
+    #[Test]
+    public function dashboard_hides_the_queue_when_disabled(): void
+    {
+        Setting::set('trainingShowQueuePosition', false);
+        $training = $this->queuedTraining([$this->vatsimRating('S2')], '2026-03-12');
+
+        $this->actingAs($training->user)->get(route('dashboard'))
+            ->assertSuccessful()
+            ->assertViewHas('queuePositions', fn ($positions) => $positions->isEmpty())
+            ->assertSeeText('N/A')
+            ->assertDontSeeText('Queue position')
+            ->assertDontSee('Place among', false);
+    }
+
+    #[Test]
+    public function training_page_hides_the_queue_when_disabled(): void
+    {
+        Setting::set('trainingShowQueuePosition', false);
+        $training = $this->queuedTraining([$this->vatsimRating('S2')], '2026-01-01');
+
+        $this->actingAs($training->user)->get(route('training.show', $training))
+            ->assertSuccessful()
+            ->assertViewHas('queuePosition', null)
+            ->assertDontSeeText('Queue position');
+    }
+
+    #[Test]
+    public function apply_page_exposes_no_queue_data_when_disabled(): void
+    {
+        Setting::set('trainingShowQueuePosition', false);
+        $s2 = $this->vatsimRating('S2');
+        $this->queuedTraining([$s2], '2026-01-01');
+
+        foreach ($this->applyPayload() as $area) {
+            foreach ($area['data'] as $option) {
+                $option = (array) ($option instanceof Rating ? $option->getAttributes() : $option);
+
+                $this->assertArrayNotHasKey('queue_name', $option);
+                $this->assertArrayNotHasKey('queue_size', $option);
+            }
+        }
+    }
+
+    #[Test]
+    public function confirmation_email_states_the_position_at_the_time_of_the_request(): void
+    {
+        $s2 = $this->vatsimRating('S2');
+        $this->queuedTraining([$s2], '2026-01-01');
+        $training = $this->queuedTraining([$s2], '2026-02-01');
+
+        $mail = (new TrainingCreatedNotification($training))->toMail($training->user)->render();
+
+        $this->assertStringContainsString('Expected waiting time is unknown. You are number 2 in the queue for S2 in ' . $training->area->name . '.', $mail);
+    }
+
+    #[Test]
+    public function confirmation_email_has_no_position_when_disabled(): void
+    {
+        Setting::set('trainingShowQueuePosition', false);
+        $training = $this->queuedTraining([$this->vatsimRating('S2')], '2026-01-01');
+
+        $mail = (new TrainingCreatedNotification($training))->toMail($training->user)->render();
+
+        $this->assertStringContainsString('Expected waiting time is', $mail);
+        $this->assertStringNotContainsString('in the queue for', $mail);
+    }
+
+    #[Test]
+    public function global_settings_toggle_the_queue_position(): void
+    {
+        $settings = [
+            'trainingSOP' => 'https://example.com/sop',
+            'trainingInterval' => 7,
+            'trainingSoloRequirement' => 'Solo requirement',
+            'trainingSoloMaxDays' => 60,
+            'atcActivityQualificationPeriod' => 12,
+            'atcActivityGracePeriod' => 12,
+            'atcActivityRequirement' => 10,
+            'atcActivityInactivityReminder' => 0,
+            'linkDomain' => 'example.com',
+            'linkHome' => 'https://example.com',
+            'linkJoin' => 'https://example.com/join',
+            'linkContact' => 'https://example.com/contact',
+            'linkVisiting' => 'https://example.com/visiting',
+            'linkDiscord' => 'https://example.com/discord',
+        ];
+
+        $this->actingAs($this->admin())->post(route('admin.settings.store'), $settings)
+            ->assertSessionHasNoErrors();
+        $this->assertFalse((bool) Setting::get('trainingShowQueuePosition'));
+
+        $this->actingAs($this->admin())->post(route('admin.settings.store'), [...$settings, 'trainingShowQueuePosition' => 'on'])
+            ->assertSessionHasNoErrors();
+        $this->assertTrue((bool) Setting::get('trainingShowQueuePosition'));
     }
 
     /**

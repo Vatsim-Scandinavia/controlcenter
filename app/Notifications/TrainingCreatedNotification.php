@@ -6,6 +6,7 @@ use App\Mail\TrainingMail;
 use App\Models\Area;
 use App\Models\Training;
 use App\Models\User;
+use App\Services\TrainingQueueService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -47,10 +48,17 @@ class TrainingCreatedNotification extends Notification implements ShouldQueue
     {
 
         $waitingTime = ! empty($this->training->area->waiting_time) ? $this->training->area->waiting_time : 'unknown';
+        $queueLine = 'The request is now in queue. Expected waiting time is ' . $waitingTime . '.';
+
+        $trainingQueue = app(TrainingQueueService::class);
+        $queuePosition = $trainingQueue->shownToStudents() ? $trainingQueue->positionOf($this->training) : null;
+        if ($queuePosition) {
+            $queueLine .= ' You are number ' . $queuePosition['position'] . ' in the queue for ' . $queuePosition['name'] . ' in ' . $this->training->area->name . '.';
+        }
 
         $textLines = [
             'We hereby confirm that we have received your training request for ' . $this->training->getInlineRatings() . ' in ' . Area::find($this->training->area_id)->name . '.',
-            'The request is now in queue. Expected waiting time is ' . $waitingTime . '.',
+            $queueLine,
             'We will periodically ask you to confirm your continued interest for your application with us, it\'s your responsibility to check your email for these requests and reply within the deadline.',
         ];
 

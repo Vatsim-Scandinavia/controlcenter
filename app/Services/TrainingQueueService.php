@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\TrainingStatus;
 use App\Models\Rating;
 use App\Models\Training;
@@ -14,9 +15,20 @@ use Illuminate\Support\Collection;
  * a level, ordered by application date. Paused requests keep their place. The level is
  * the highest VATSIM rating of the request, or its full set of endorsement ratings if it
  * holds no VATSIM rating, so every request belongs to exactly one queue.
+ *
+ * Students see their queue only where the installation opts in with the
+ * trainingShowQueuePosition setting.
  */
 class TrainingQueueService
 {
+    /**
+     * Whether students are shown their queue position and the size of the queues.
+     */
+    public function shownToStudents(): bool
+    {
+        return (bool) Setting::get('trainingShowQueuePosition', false);
+    }
+
     /**
      * Get the place of a training in its queue.
      *

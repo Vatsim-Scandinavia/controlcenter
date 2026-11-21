@@ -191,7 +191,7 @@
             },
             computed:{
                 queueMessage() {
-                    if(!this.selectedOption) return ''
+                    if(!this.selectedOption || this.selectedOption.queue_size == null) return ''
 
                     const size = this.selectedOption.queue_size
                     const queue = this.selectedOption.queue_name + ' in ' + this.trainingAreaName

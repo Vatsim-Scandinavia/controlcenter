@@ -58,9 +58,11 @@ class DashboardController extends Controller
         $types = TrainingController::$types;
 
         $trainingQueue = app(TrainingQueueService::class);
-        $queuePositions = $trainings
-            ->mapWithKeys(fn ($training) => [$training->id => $trainingQueue->positionOf($training)])
-            ->filter();
+        $queuePositions = $trainingQueue->shownToStudents()
+            ? $trainings
+                ->mapWithKeys(fn ($training) => [$training->id => $trainingQueue->positionOf($training)])
+                ->filter()
+            : collect();
 
         $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', InterestStatus::NOT_EXPIRED)->first();
 

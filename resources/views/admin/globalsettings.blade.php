@@ -79,6 +79,14 @@
                                 </label>
                             </div>
 
+                            <div class="form-check mt-2">
+                                <input class="form-check-input @error('trainingShowQueuePosition') is-invalid @enderror" type="checkbox" id="checkQueuePosition" name="trainingShowQueuePosition" {{ Setting::get('trainingShowQueuePosition') ? "checked" : "" }}>
+                                <label class="form-check-label" for="checkQueuePosition">
+                                    Show students their queue position
+                                </label>
+                                <small class="form-text d-block">Students see their place in the queue on the dashboard, the training page and in the request confirmation email, and how many people are waiting when they apply.</small>
+                            </div>
+
                             <hr>
 
                             <div class="mb-4">
