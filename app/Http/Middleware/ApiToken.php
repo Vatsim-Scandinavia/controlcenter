@@ -22,12 +22,15 @@ class ApiToken
         // Authenticate by searching for the key, check if middleware requires edit rights and compare to key access
         $key = ApiKey::find($request->bearerToken());
 
-        if ($key == null || ($args == 'edit' && $key->read_only == true)) {
+        $denied = $key == null || ($args == 'edit' && $key->read_only == true);
+
+        if ($denied) {
 
             // Exception for open routes. Compare the path only (getPathInfo), so a query
             // string such as `/api/v1/bookings?date=today` still resolves as a public route.
+            // Only GET is public: mutating methods on these paths still require a key.
             $openRoutes = ['/api/bookings', '/api/positions', '/api/v1/bookings', '/api/v1/positions'];
-            if (in_array($request->getPathInfo(), $openRoutes, true)) {
+            if ($request->isMethod('GET') && in_array($request->getPathInfo(), $openRoutes, true)) {
                 $request->attributes->set('unauthenticated', true);
 
                 return $next($request);
