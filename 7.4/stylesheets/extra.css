@@ -1,0 +1,44 @@
+:root {
+    --md-primary-fg-color: #1a475f;
+}
+
+[data-md-color-scheme="default"]{
+    --md-typeset-a-color: #1a475f;
+    --md-accent-fg-color: #43c6e7;
+}
+
+[data-md-color-scheme="slate"]{
+    --md-typeset-a-color: #43c6e7;
+    --md-accent-fg-color: #43c6e7;
+}
+
+.md-content{
+    a{
+        text-decoration: underline;
+    }
+}
+
+.md-nav__link--active{
+    text-decoration: underline;
+}
+
+
+h1{
+    font-weight: 600 !important;
+}
+
+h2{
+    font-weight: 500 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--md-typeset-a-color) !important;
+}
+
+/* Tweak in-page content tabs as we don't want double underline */
+.md-typeset .tabbed-labels--linked > label > a {
+    text-decoration: none;
+}
+.js .md-typeset .tabbed-labels:before {
+    background: var(--md-accent-fg-color);
+}
