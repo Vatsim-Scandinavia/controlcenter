@@ -14,6 +14,20 @@ This guide details the functionalities available to all ATC members, mentors, an
 ### Training requests
 
 As a member of the VATSIM division using Control Center, you can apply for ATC training [from the dashboard][dashboard].
+If your division shows queue positions, the application shows how many people are in the queue for the training you selected before you accept the policy.
+
+### Your place in the queue
+
+Divisions can choose to show students their place in the queue, with **Show students their queue position** in the global settings. It is off by default.
+When it is on and your request is *In Queue*, the dashboard and the training page show your position, and the email confirming your request tells you your place in the queue at the time you applied.
+
+Each area has one queue per level, ordered by application date:
+
+- A request with VATSIM ratings joins the queue of its highest VATSIM rating, even when it is bundled with an endorsement.
+- A request with endorsements only has a queue of its own for that set of endorsements.
+- A paused request keeps its place, and a request moved back to the queue returns to its original place.
+
+The position is indicative. It changes as other requests are processed, and training staff may take requests in another order.
 
 ### Training details
 
@@ -23,6 +37,7 @@ Open one of your trainings to see everything recorded about it:
 - The training type: Standard, Refresh, or Transfer.
 - The ratings the training covers under **Level**, each with the date it was signed off once your mentor gets there.
 - The scheduled training period.
+- Your position while the request is *In Queue*, if your division shows queue positions.
 - Your training reports, once a mentor has written them.
 
 ### Minimum activity levels

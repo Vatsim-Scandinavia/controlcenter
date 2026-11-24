@@ -68,7 +68,7 @@
                                 </td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
-                                        Training never started
+                                        N/A
                                     @elseif ($training->closed_at == null)
                                         {{ $training->started_at->toEuropeanDate() }} -
                                     @elseif ($training->started_at != null)
