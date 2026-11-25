@@ -269,7 +269,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-18T12:35:13+00:00"
+            "time": "2026-07-18T12:35:13+00:00",
+            "published-time": "2026-07-18T13:00:33+00:00"
         },
         {
             "name": "dedoc/scramble",
@@ -1367,16 +1368,16 @@
         },
         {
             "name": "hisorange/browser-detect",
-            "version": "5.0.3",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hisorange/browser-detect.git",
-                "reference": "6460325a81460d912131c0b943a00e76f8847cdb"
+                "reference": "aadef00c02c9c095a4822e28149d652f59dd6870"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hisorange/browser-detect/zipball/6460325a81460d912131c0b943a00e76f8847cdb",
-                "reference": "6460325a81460d912131c0b943a00e76f8847cdb",
+                "url": "https://api.github.com/repos/hisorange/browser-detect/zipball/aadef00c02c9c095a4822e28149d652f59dd6870",
+                "reference": "aadef00c02c9c095a4822e28149d652f59dd6870",
                 "shasum": ""
             },
             "require": {
@@ -1384,13 +1385,13 @@
                 "league/pipeline": "^1.0",
                 "matomo/device-detector": "^6.0",
                 "mobiledetect/mobiledetectlib": "~4.0",
-                "php": "^8.1",
+                "php": "^8.2",
                 "ua-parser/uap-php": "~3.9"
             },
             "require-dev": {
-                "orchestra/testbench": "~7.0 || ~8.0",
+                "orchestra/testbench": "~10.0 || ~11.0",
                 "php-coveralls/php-coveralls": "~2.0",
-                "phpunit/phpunit": "~9.0 || ~10.0"
+                "phpunit/phpunit": "~11.0"
             },
             "type": "library",
             "extra": {
@@ -1414,8 +1415,8 @@
             ],
             "authors": [
                 {
-                    "name": "Varga Zsolt",
-                    "email": "hello@hisorange.me"
+                    "name": "Zsolt Varga",
+                    "email": "hisorange@proton.me"
                 }
             ],
             "description": "Browser & Mobile detection package for Laravel.",
@@ -1433,9 +1434,10 @@
             ],
             "support": {
                 "issues": "https://github.com/hisorange/browser-detect/issues",
-                "source": "https://github.com/hisorange/browser-detect/tree/5.0.3"
+                "source": "https://github.com/hisorange/browser-detect/tree/5.1.0"
             },
-            "time": "2024-02-05T08:21:06+00:00"
+            "time": "2026-10-08T22:32:51+00:00",
+            "published-time": "2026-10-08T22:34:13+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -1487,7 +1489,8 @@
                 "issues": "https://github.com/JayBizzle/Crawler-Detect/issues",
                 "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.4.1"
             },
-            "time": "2026-07-10T14:15:38+00:00"
+            "time": "2026-07-10T14:15:38+00:00",
+            "published-time": "2026-07-10T17:29:35+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -2473,7 +2476,8 @@
                 "issues": "https://github.com/thephpleague/pipeline/issues",
                 "source": "https://github.com/thephpleague/pipeline/tree/1.1.0"
             },
-            "time": "2025-02-06T08:48:15+00:00"
+            "time": "2025-02-06T08:48:15+00:00",
+            "published-time": "2025-02-06T09:01:42+00:00"
         },
         {
             "name": "league/uri",
@@ -2868,7 +2872,8 @@
                 "source": "https://github.com/matomo-org/matomo",
                 "wiki": "https://developer.matomo.org/"
             },
-            "time": "2026-05-27T09:53:26+00:00"
+            "time": "2026-05-27T09:53:26+00:00",
+            "published-time": "2026-05-27T17:03:05+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -2932,7 +2937,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-24T12:32:40+00:00"
+            "time": "2026-05-24T12:32:40+00:00",
+            "published-time": "2026-05-24T12:33:27+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -3090,7 +3096,8 @@
                 "issues": "https://github.com/mustangostang/spyc/issues",
                 "source": "https://github.com/mustangostang/spyc/tree/0.6.3"
             },
-            "time": "2019-09-10T13:16:29+00:00"
+            "time": "2019-09-10T13:16:29+00:00",
+            "published-time": "2019-09-29T02:03:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -8043,7 +8050,8 @@
                 "issues": "https://github.com/ua-parser/uap-php/issues",
                 "source": "https://github.com/ua-parser/uap-php/tree/v3.10.0"
             },
-            "time": "2025-07-17T15:43:24+00:00"
+            "time": "2025-07-17T15:43:24+00:00",
+            "published-time": "2025-07-17T15:44:46+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
