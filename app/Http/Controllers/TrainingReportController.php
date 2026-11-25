@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use App\Models\OneTimeLink;
 use App\Models\Position;
 use App\Models\Training;
@@ -16,7 +17,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Throwable;
 
 /**
  * Controller for handling training reports
@@ -81,8 +86,8 @@ class TrainingReportController extends Controller
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
         // Remove attachments , they are added in next step
-        unset($data['files']);
-        $report = TrainingReport::create($data);
+        $report = new TrainingReport;
+        $this->persistReport($request, $report, $data);
 
         // Add attachments
         TrainingObjectAttachmentController::saveAttachments($request, $report);
@@ -147,7 +152,7 @@ class TrainingReportController extends Controller
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
 
-        $report->update($data);
+        $this->persistReport($request, $report, $data);
 
         // Notify student when the report is first published (published_at just stamped)
         if ($report->wasChanged('published_at') && $report->training->user->setting_notify_newreport) {
@@ -180,14 +185,83 @@ class TrainingReportController extends Controller
      */
     protected function validateRequest()
     {
-        return request()->validate([
-            'content' => 'sometimes|required',
+        $data = request()->validate([
+            'content' => 'sometimes|required|string',
             'contentimprove' => 'nullable',
             'report_date' => 'required|date_format:d/m/Y',
             'position' => 'nullable',
             'draft' => 'sometimes',
             'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg|max:10240',
+            'inline_images' => 'sometimes|array',
+            'inline_images.*' => 'required|image|mimes:png,jpg,jpeg,webp|dimensions:min_width=1,min_height=1',
             'contentimprove' => 'sometimes|nullable|string',
         ]);
+
+        foreach (['content', 'contentimprove'] as $field) {
+            preg_match_all('/inline-image:([a-zA-Z0-9-]+)/', $data[$field] ?? '', $matches);
+
+            foreach ($matches[1] as $token) {
+                if (! request()->hasFile('inline_images.' . $token)) {
+                    throw ValidationException::withMessages([
+                        'inline_images' => 'Please remove and reinsert the unsaved images before saving the report.',
+                    ]);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    private function persistReport(Request $request, TrainingReport $report, array $data): void
+    {
+        $storedPaths = [];
+
+        try {
+            DB::transaction(function () use ($request, $report, $data, &$storedPaths): void {
+                $imageIds = $this->saveInlineImages($request, $data, $storedPaths);
+                unset($data['files'], $data['inline_images']);
+                $report->fill($data)->save();
+
+                foreach ($imageIds as $fileId) {
+                    $report->attachments()->create(['file_id' => $fileId, 'hidden' => false]);
+                }
+            });
+        } catch (Throwable $exception) {
+            if ($storedPaths !== []) {
+                try {
+                    if (! Storage::delete($storedPaths)) {
+                        report(new \RuntimeException('Failed to clean up report image uploads.'));
+                    }
+                } catch (Throwable $cleanupException) {
+                    report($cleanupException);
+                }
+            }
+
+            throw $exception;
+        }
+    }
+
+    private function saveInlineImages(Request $request, array &$data, array &$storedPaths): array
+    {
+        $imageIds = [];
+
+        foreach (['content', 'contentimprove'] as $field) {
+            if (! isset($data[$field])) {
+                continue;
+            }
+
+            $data[$field] = preg_replace_callback('/inline-image:([a-zA-Z0-9-]+)/', function ($matches) use ($request, &$imageIds, &$storedPaths) {
+                $token = $matches[1];
+
+                if (! isset($imageIds[$token])) {
+                    $imageIds[$token] = FileController::saveFile($request->file('inline_images.' . $token));
+                    $storedPaths[] = File::findOrFail($imageIds[$token])->full_path;
+                }
+
+                return route('file.get', ['file' => $imageIds[$token]]);
+            }, $data[$field]);
+        }
+
+        return array_values($imageIds);
     }
 }

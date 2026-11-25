@@ -16,7 +16,7 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('training.report.update', ['report' => $report->id]) }}" method="POST">
+                <form action="{{ route('training.report.update', ['report' => $report->id]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
 
