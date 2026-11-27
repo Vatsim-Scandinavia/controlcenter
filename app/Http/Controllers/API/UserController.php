@@ -96,17 +96,18 @@ class UserController extends Controller
         //
 
         if ($paramIncludeAllUsers) {
-            if (config('app.mode') == 'subdivision') {
-                $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
-                $returnUsers = User::whereIn('subdivision', $subdivisions);
-            } else {
-                $returnUsers = User::where('division', config('app.owner_code'));
-            }
+            $returnUsers = User::where(function (Builder $members) {
+                if (config('app.mode') == 'subdivision') {
+                    $subdivisions = array_map('trim', explode(',', Setting::get('trainingSubDivisions')));
+                    $members->whereIn('subdivision', $subdivisions);
+                } else {
+                    $members->where('division', config('app.owner_code'));
+                }
+                $members->orWhereHas('endorsements', fn (Builder $endorsements) => $endorsements->validVisiting());
+            });
 
             if ($paramOnlyActive) {
-                $returnUsers = $returnUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $returnUsers = $returnUsers->withActiveAtcActivity();
             }
             $returnUsers = $returnUsers->with($queryInclude)->get();
         }
@@ -116,9 +117,7 @@ class UserController extends Controller
                 $q->where('expired', false)->where('revoked', false);
             })->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
-                $endorsementUsers = $endorsementUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $endorsementUsers = $endorsementUsers->withActiveAtcActivity();
             }
             $endorsementUsers = $endorsementUsers->with($queryInclude)->get();
 
@@ -128,9 +127,7 @@ class UserController extends Controller
         if ($paramIncludeRoles) {
             $roleUsers = User::whereHas('roleAssignments')->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
-                $roleUsers = $roleUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $roleUsers = $roleUsers->withActiveAtcActivity();
             }
             $roleUsers = $roleUsers->with($queryInclude)->get();
 
@@ -142,9 +139,7 @@ class UserController extends Controller
                 $q->where('status', '>=', TrainingStatus::IN_QUEUE);
             })->whereNotIn('id', $returnUsers->pluck('id'));
             if ($paramOnlyActive) {
-                $trainingUsers = $trainingUsers->whereHas('atcActivity', function ($query) {
-                    $query->where('atc_active', true);
-                });
+                $trainingUsers = $trainingUsers->withActiveAtcActivity();
             }
             $trainingUsers = $trainingUsers->with($queryInclude)->get();
 
@@ -219,11 +214,10 @@ class UserController extends Controller
             ($includeDivisions) ? $returnData['division'] = $user->division : null;
             ($includeDivisions) ? $returnData['subdivision'] = $user->subdivision : null;
             $returnData['atc_active'] = $user->isAtcActive();
+            $localActivities = $includeActiveAreas ? $user->localAtcActivities() : collect();
             ($includeActiveAreas) ? $returnData['atc_active_areas'] =
-                $user->atc_active_areas = Area::all()->mapWithKeys(function ($area) use ($user) {
-                    $activity = $user->atcActivity->firstWhere('area_id', $area->id);
-
-                    return [strtolower($area->name) => $activity ? $activity->atc_active : false];
+                $user->atc_active_areas = Area::all()->mapWithKeys(function ($area) use ($localActivities) {
+                    return [strtolower($area->name) => (bool) $localActivities->firstWhere('area_id', $area->id)?->atc_active];
                 }) : null;
             ($includeEndorsements) ? $returnData['endorsements'] = $user->endorsements : null;
             ($includeRoles) ? $returnData['roles'] = $user->roles : null;

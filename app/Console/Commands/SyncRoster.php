@@ -59,7 +59,7 @@ class SyncRoster extends Command
                 $rosteredMembers = collect($json['data']['roster_members'])->pluck('user_cid');
                 $activeMembers = User::getActiveAtcMembers()->pluck('id');
                 $visitingMembers = User::whereHas('endorsements', function ($query) {
-                    $query->where('type', 'VISITING')->where('revoked', false)->where('expired', false);
+                    $query->validVisiting();
                 })->get()->pluck('id');
                 $activeMembers = $activeMembers->merge($visitingMembers)->unique();
 

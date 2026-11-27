@@ -35,6 +35,10 @@
                             <tr>
                                 <th data-field="student" class="w-25" data-sortable="true" data-filter-control="input">Member</th>
                                 <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
+                                <th data-field="activity" data-sortable="true" data-filter-control="select">Activity</th>
+                                <th data-field="hours" data-sortable="true" title="Local hours within the configured activity qualification period">Local hours</th>
+                                <th data-field="last-online" data-sortable="true">Last local session</th>
+                                <th data-field="expires" data-sortable="true">Visiting expiry</th>
                                 @foreach($areas as $a)
                                     <th data-field="{{ $a->id }}" data-sortable="true" data-filter-control="input" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $a->name }}</th>
                                 @endforeach
@@ -51,6 +55,14 @@
                                         @endcan
                                     </td>
                                     <td>{{ $visitingEndorsement->ratings->whereNotNull('vatsim_rating')->first()->name }}</td>
+                                    @php
+                                        $localActivities = $visitingEndorsement->user->atcActivity->whereIn('area_id', $visitingEndorsement->areas->modelKeys());
+                                        $lastOnline = $localActivities->max('last_online');
+                                    @endphp
+                                    <td>{{ $visitingEndorsement->user->isAtcActive() ? 'Active' : 'Inactive' }}</td>
+                                    <td>{{ number_format($localActivities->sum('hours_in_period'), 1) }}</td>
+                                    <td>{{ $lastOnline ? $lastOnline->format('Y-m-d') : 'Never' }}</td>
+                                    <td>{{ $visitingEndorsement->valid_to?->format('Y-m-d') ?? 'No expiry' }}</td>
 
                                     @foreach($areas as $a)
                                         @php $count = 0; @endphp

@@ -103,8 +103,8 @@ class UsersEndpointTest extends TestCase
     public function test_only_atc_active_accepts_boolean_spellings(string $value, bool $filters): void
     {
         $area = Area::factory()->create();
-        $active = User::factory()->create();
-        $inactive = User::factory()->create();
+        $active = User::factory()->home()->create();
+        $inactive = User::factory()->home()->create();
 
         foreach ([[$active, true], [$inactive, false]] as [$user, $isActive]) {
             AtcActivity::create(['user_id' => $user->id, 'area_id' => $area->id, 'atc_active' => $isActive, 'hours' => 20]);

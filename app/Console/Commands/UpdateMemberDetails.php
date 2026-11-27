@@ -116,17 +116,10 @@ class UpdateMemberDetails extends Command
         $this->info('Making users who left division inactive...');
         $count = 0;
 
-        $membersNotInDivision = User::whereNotIn(config('app.mode'), $divisions)->get();
-        $activeMembersNotInDivision = User::getActiveAtcMembers($membersNotInDivision->pluck('id')->toArray());
-
-        $activeMembersNotInDivision->each(function ($member) use (&$count) {
-
-            // Set as ATC Inactive
-            $atcActivitiesToSetAsInactive = $member->atcActivity->where('atc_active', true);
-            AtcActivity::whereIn('id', $atcActivitiesToSetAsInactive->pluck('id'))->update(['atc_active' => false]);
-
-            $count++;
-        });
+        $eligibleActivityIds = AtcActivity::locallyEligible()->pluck('id');
+        $ineligibleActivities = AtcActivity::where('atc_active', true)->whereNotIn('id', $eligibleActivityIds)->get();
+        $count = $ineligibleActivities->pluck('user_id')->unique()->count();
+        AtcActivity::whereIn('id', $ineligibleActivities->modelKeys())->update(['atc_active' => false]);
 
         $this->info($count . ' users affected.');
 

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\VatsimRating;
 use App\Http\Requests\StoreFeedbackRequest;
 use App\Http\Requests\UpdateFeedbackRequest;
 use App\Models\Feedback;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\FeedbackNotification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 
@@ -27,7 +29,10 @@ class FeedbackController extends Controller
         }
 
         $positions = Position::all();
-        $controllers = User::getActiveAtcMembers();
+        $controllers = User::where('rating', '>=', VatsimRating::S1->value)
+            ->where(fn (Builder $users) => $users->withActiveAtcActivity()
+                ->orWhereHas('endorsements', fn (Builder $endorsements) => $endorsements->validVisiting()))
+            ->get();
 
         return view('feedback.create', compact('positions', 'controllers'));
     }
