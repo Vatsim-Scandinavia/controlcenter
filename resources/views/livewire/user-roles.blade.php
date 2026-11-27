@@ -14,6 +14,12 @@
             <button type="button" class="btn-close" wire:click="$set('status', null)"></button>
         </div>
     @endif
+    @if ($warning)
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ $warning }}
+            <button type="button" class="btn-close" wire:click="$set('warning', null)"></button>
+        </div>
+    @endif
     @if ($error)
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ $error }}

@@ -13,11 +13,15 @@ class RevokeRole
     /**
      * Revoke $role (optionally scoped to $area) from $user on behalf of $actor.
      *
-     * @return string|null Error message on Division API failure, otherwise null.
+     * A Division API failure blocks the revocation, except when the API has no
+     * mentor record for the user: there is nothing to remove upstream, so the
+     * role is revoked locally and the result carries a warning instead.
      */
-    public function __invoke(User $actor, User $user, string $role, ?Area $area): ?string
+    public function __invoke(User $actor, User $user, string $role, ?Area $area): RevokeRoleResult
     {
         Gate::forUser($actor)->authorize('updateRole', [$user, $role, $area]);
+
+        $warning = null;
 
         if ($role === 'mentor') {
             // Call before deleting: removeMentor()'s "last area" check counts the
@@ -25,7 +29,12 @@ class RevokeRole
             $response = DivisionApi::removeMentor($user, $actor->id);
 
             if ($response && $response->failed()) {
-                return DivisionApiError::message($response);
+                if (! DivisionApiError::isMissingRecord($response)) {
+                    return RevokeRoleResult::failed(DivisionApiError::message($response));
+                }
+
+                $warning = 'Role revoked in Control Center only. ' . DivisionApi::getName()
+                    . ' has no mentor record for this user, so nothing was removed there.';
             }
         }
 
@@ -49,6 +58,6 @@ class RevokeRole
             }
         }
 
-        return null;
+        return RevokeRoleResult::revoked($warning);
     }
 }

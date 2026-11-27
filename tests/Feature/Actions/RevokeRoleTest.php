@@ -33,9 +33,10 @@ class RevokeRoleTest extends TestCase
         $area = Area::factory()->create();
         $target->roleAssignments()->create(['role' => 'moderator', 'area_id' => $area->id]);
 
-        $error = (new RevokeRole)($actor, $target, 'moderator', $area);
+        $result = (new RevokeRole)($actor, $target, 'moderator', $area);
 
-        $this->assertNull($error);
+        $this->assertTrue($result->succeeded());
+        $this->assertNull($result->warning);
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $target->id, 'role' => 'moderator', 'area_id' => $area->id,
         ]);
@@ -115,9 +116,61 @@ class RevokeRoleTest extends TestCase
         DivisionApi::shouldReceive('removeMentor')->once()->andReturn($failed);
         DivisionApi::shouldReceive('getName')->andReturn('VATEUD');
 
-        $error = (new RevokeRole)($actor, $target, 'mentor', $area);
+        $result = (new RevokeRole)($actor, $target, 'mentor', $area);
 
-        $this->assertSame('Request failed due to error in VATEUD API: boom', $error);
+        $this->assertSame('Request failed due to error in VATEUD API: boom', $result->error);
+        $this->assertDatabaseHas('role_user', ['user_id' => $target->id, 'role' => 'mentor']);
+    }
+
+    #[Test]
+    public function it_revokes_locally_with_a_warning_when_the_division_api_has_no_mentor_record(): void
+    {
+        $actor = $this->admin();
+        $target = User::factory()->create();
+        $area = Area::factory()->create();
+        $target->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+        $training = Training::factory()->create(['area_id' => $area->id]);
+        $target->teaches()->attach($training->id, ['expire_at' => now()->addMonths(12)]);
+
+        $missing = new ClientResponse(new GuzzleResponse(404, [], json_encode([
+            'success' => false,
+            'message' => 'No query results for model [App\\Models\\AtcTrainingStaff].',
+        ])));
+        DivisionApi::shouldReceive('removeMentor')->once()->andReturn($missing);
+        DivisionApi::shouldReceive('getName')->andReturn('VATEUD');
+
+        $result = (new RevokeRole)($actor, $target, 'mentor', $area);
+
+        $this->assertTrue($result->succeeded());
+        $this->assertSame(
+            'Role revoked in Control Center only. VATEUD has no mentor record for this user, so nothing was removed there.',
+            $result->warning,
+        );
+        $this->assertDatabaseMissing('role_user', ['user_id' => $target->id, 'role' => 'mentor']);
+        $this->assertDatabaseMissing('training_mentor', [
+            'user_id' => $target->id, 'training_id' => $training->id,
+        ]);
+    }
+
+    #[Test]
+    public function it_blocks_removal_on_a_404_without_a_missing_record_message(): void
+    {
+        $actor = $this->admin();
+        $target = User::factory()->create();
+        $area = Area::factory()->create();
+        $target->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        // A wrong base URL or route also answers 404, but must not skip upstream.
+        $notFound = new ClientResponse(new GuzzleResponse(404, [], json_encode([
+            'message' => 'The route facility/training/remove could not be found.',
+        ])));
+        DivisionApi::shouldReceive('removeMentor')->once()->andReturn($notFound);
+        DivisionApi::shouldReceive('getName')->andReturn('VATEUD');
+
+        $result = (new RevokeRole)($actor, $target, 'mentor', $area);
+
+        $this->assertFalse($result->succeeded());
+        $this->assertNull($result->warning);
         $this->assertDatabaseHas('role_user', ['user_id' => $target->id, 'role' => 'mentor']);
     }
 
@@ -133,9 +186,10 @@ class RevokeRoleTest extends TestCase
 
         DivisionApi::shouldReceive('removeMentor')->once()->andReturn(false);
 
-        $error = (new RevokeRole)($trainingStaff, $target, 'mentor', $area);
+        $result = (new RevokeRole)($trainingStaff, $target, 'mentor', $area);
 
-        $this->assertNull($error);
+        $this->assertTrue($result->succeeded());
+        $this->assertNull($result->warning);
         $this->assertDatabaseMissing('role_user', [
             'user_id' => $target->id, 'role' => 'mentor', 'area_id' => $area->id,
         ]);
