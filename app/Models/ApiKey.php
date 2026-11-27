@@ -13,7 +13,11 @@ class ApiKey extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     public $fillable = [
-        'id', 'name', 'last_used_at', 'read_only', 'created_at',
+        'id', 'name', 'last_used_at', 'read_only', 'created_at', 'integration_id',
     ];
 }

@@ -63,8 +63,17 @@
                                             {{ \Carbon\Carbon::create($booking->time_start)->toEuropeanDate(true) }}
                                         @endif 
                                         
-                                        @if(Auth::user()->id == $booking->user_id || Auth::user()->hasPermission('bookings.manage'))
-
+                                        @if($booking->source === 'EXTERNAL')
+                                            @if($booking->external_url)
+                                                <a href="{{ $booking->external_url }}" target="_blank" rel="noopener noreferrer" class="ms-1 text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Externally managed booking. Open the originating system to make changes." aria-label="Manage externally booked position (opens in a new tab)">
+                                                    <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                                </a>
+                                            @else
+                                                <span class="ms-1 text-primary" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" title="Externally managed booking. Make changes in the system where it was booked." aria-label="Externally managed booking. Make changes in the system where it was booked.">
+                                                    <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                                </span>
+                                            @endif
+                                        @elseif(Auth::user()->id == $booking->user_id || Auth::user()->hasPermission('bookings.manage'))
                                             @if($booking->source == "DISCORD")
                                                 <i class="fab fa-discord text-primary" data-bs-toggle="tooltip" data-bs-placement="top" aria-hidden="true" title="{{ Gate::inspect('update', $booking, \App\Models\Booking::class)->message() }}"></i>
                                             @else

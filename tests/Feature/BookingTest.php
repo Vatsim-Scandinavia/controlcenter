@@ -407,7 +407,7 @@ class BookingTest extends TestCase
             'start_at' => '10:00',
             'end_at' => '12:00',
             'position' => $s2Position->callsign,
-            'source' => 'TEST',
+            'source' => 'CC',
         ]);
 
         $response->assertSuccessful();
@@ -433,7 +433,7 @@ class BookingTest extends TestCase
             'start_at' => '23:00',
             'end_at' => '01:00',
             'position' => $position->callsign,
-            'source' => 'TEST',
+            'source' => 'CC',
         ])->assertSuccessful();
 
         $this->assertDatabaseHas('bookings', [
@@ -496,8 +496,60 @@ class BookingTest extends TestCase
             'start_at' => '23:00',
             'end_at' => '01:00',
             'position' => $position->callsign,
-            'source' => 'TEST',
+            'source' => 'CC',
         ])->assertStatus(400);
+    }
+
+    #[Test]
+    public function api_store_rejects_a_booking_with_equal_start_and_end_times(): void
+    {
+        $position = Position::factory()->create([
+            'area_id' => Area::factory()->create()->id,
+            'rating' => VatsimRating::S1->value,
+        ]);
+        $controller = User::factory()->create(['rating' => VatsimRating::S3->value]);
+
+        $this->withoutMiddleware(ApiToken::class)->postJson(route('api.booking.store'), [
+            'cid' => $controller->id,
+            'date' => Carbon::tomorrow()->format('d/m/Y'),
+            'start_at' => '12:00',
+            'end_at' => '12:00',
+            'position' => $position->callsign,
+            'source' => 'CC',
+        ])->assertStatus(400)->assertJsonPath('message', 'Start and end time cannot be the same');
+
+        $this->assertDatabaseCount('bookings', 0);
+    }
+
+    #[Test]
+    public function api_update_rejects_a_booking_with_equal_start_and_end_times(): void
+    {
+        $position = Position::factory()->create([
+            'area_id' => Area::factory()->create()->id,
+            'rating' => VatsimRating::S1->value,
+        ]);
+        $controller = User::factory()->create(['rating' => VatsimRating::S3->value]);
+        $date = Carbon::tomorrow();
+        $booking = Booking::factory()->create([
+            'user_id' => $controller->id,
+            'position_id' => $position->id,
+            'callsign' => $position->callsign,
+            'time_start' => $date->copy()->addHours(10),
+            'time_end' => $date->copy()->addHours(12),
+        ]);
+
+        $this->withoutMiddleware(ApiToken::class)->patchJson(route('api.booking.update', $booking), [
+            'cid' => $controller->id,
+            'date' => $date->format('d/m/Y'),
+            'start_at' => '12:00',
+            'end_at' => '12:00',
+            'position' => $position->callsign,
+        ])->assertStatus(400)->assertJsonPath('message', 'Booking needs to have a valid duration!');
+
+        $this->assertDatabaseHas('bookings', [
+            'id' => $booking->id,
+            'time_start' => $date->copy()->addHours(10)->format('Y-m-d H:i:s'),
+        ]);
     }
 
     #[Test]

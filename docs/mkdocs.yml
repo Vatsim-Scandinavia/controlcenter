@@ -132,6 +132,7 @@ nav:
       - Upgrading: upgrade.md
   - Integrations:
       # Insert discord.md and others here
+      - External bookings: integrations/external-bookings.md
       - Handover: integrations/handover.md
       - VATEUD Core: integrations/vateud.md
       - VATSIM: integrations/vatsim.md
