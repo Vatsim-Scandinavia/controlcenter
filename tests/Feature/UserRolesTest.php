@@ -273,6 +273,32 @@ class UserRolesTest extends TestCase
     }
 
     #[Test]
+    public function mentor_removal_shows_a_warning_when_the_division_api_has_no_record(): void
+    {
+        $area = Area::factory()->create();
+        $target = User::factory()->create();
+        $target->roleAssignments()->create(['role' => 'mentor', 'area_id' => $area->id]);
+
+        DivisionApi::shouldReceive('removeMentor')->once()->andReturn(
+            new \Illuminate\Http\Client\Response(new Response(404, [], json_encode([
+                'message' => 'No query results for model [App\\Models\\AtcTrainingStaff].',
+            ])))
+        );
+        DivisionApi::shouldReceive('getName')->andReturn('VATEUD');
+
+        Livewire::actingAs($this->admin())
+            ->test(UserRoles::class, ['user' => $target])
+            ->call('confirmRemoval', 'mentor', $area->id)
+            ->call('remove')
+            ->assertSet('error', null)
+            ->assertSet('status', null)
+            ->assertSet('warning', 'Role revoked in Control Center only. VATEUD has no mentor record for this user, so nothing was removed there.')
+            ->assertSeeHtml('alert-warning');
+
+        $this->assertDatabaseMissing('role_user', ['user_id' => $target->id, 'role' => 'mentor']);
+    }
+
+    #[Test]
     public function mentor_removal_shows_the_division_and_training_consequence(): void
     {
         $area = Area::factory()->create();

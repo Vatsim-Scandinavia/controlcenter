@@ -35,6 +35,8 @@ class UserRoles extends Component
 
     public ?string $error = null;
 
+    public ?string $warning = null;
+
     private ?Collection $areasCache = null;
 
     public function mount(User $user): void
@@ -207,6 +209,7 @@ class UserRoles extends Component
             }
         }
 
+        $this->warning = null;
         $this->error = $errors === [] ? null : implode(' ', $errors);
         $this->status = $errors === [] ? 'Role granted.' : null;
         $this->showAddModal = false;
@@ -276,11 +279,12 @@ class UserRoles extends Component
         $areaId = $this->pendingRemoval['area_id'];
         $area = $areaId === null ? null : $this->allAreas()->firstWhere('id', $areaId);
 
-        $error = $revokeRole(auth()->user(), $this->user, $role, $area);
+        $result = $revokeRole(auth()->user(), $this->user, $role, $area);
 
         $this->pendingRemoval = null;
-        $this->error = $error;
-        $this->status = $error === null ? 'Role revoked.' : null;
+        $this->error = $result->error;
+        $this->warning = $result->warning;
+        $this->status = $result->succeeded() && $result->warning === null ? 'Role revoked.' : null;
     }
 
     public function render(): View

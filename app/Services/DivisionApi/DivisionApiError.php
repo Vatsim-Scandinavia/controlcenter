@@ -32,6 +32,25 @@ final class DivisionApiError
     }
 
     /**
+     * Whether the API failed because it has no record of what we asked about.
+     *
+     * The API answers a lookup miss with a 404 carrying Laravel's model-not-found
+     * message, e.g. "No query results for model [App\Models\AtcTrainingStaff]."
+     * when removing a mentor it does not know. Requiring that message, not just
+     * the status, keeps a 404 from a wrong base URL or route on the error path.
+     */
+    public static function isMissingRecord(?Response $response): bool
+    {
+        if ($response === null || $response->status() !== 404) {
+            return false;
+        }
+
+        $message = $response->json('message');
+
+        return is_string($message) && str_starts_with($message, 'No query results for model');
+    }
+
+    /**
      * The API's own explanation of the failure, falling back to the status and
      * body when the response is missing or is not the JSON we expect.
      */
