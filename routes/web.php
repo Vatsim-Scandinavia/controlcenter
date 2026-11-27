@@ -201,7 +201,9 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     });
 
     Route::controller(FeedbackController::class)->group(function () {
-        Route::get('/feedback', 'create')->name('feedback');
+        Route::get('/feedback', 'selectArea')->name('feedback');
+        Route::get('/feedback/general', 'create')->name('feedback.create.general');
+        Route::get('/feedback/{area}', 'create')->whereNumber('area')->name('feedback.create');
         Route::post('/feedback/store', 'store')->name('feedback.store');
         Route::patch('/feedback/{feedback}', 'update')->name('feedback.update');
     });

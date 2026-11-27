@@ -8,12 +8,18 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Submit Feedback
-                </h6> 
+                    Submit Feedback{{ $area ? ' for ' . $area->name : '' }}
+                </h6>
+                <a href="{{ route('feedback') }}" class="btn btn-sm btn-light">Change area</a>
             </div>
             <div class="card-body">
                 <form action="{!! action('FeedbackController@store') !!}" method="POST">
                     @csrf
+                    <input type="hidden" name="area" value="{{ $area?->id }}">
+
+                    @error('area')
+                        <div class="alert alert-danger">{{ $errors->first('area') }}</div>
+                    @enderror
 
                     <div class="row mb-4">
                         <div class="col-md-4">
