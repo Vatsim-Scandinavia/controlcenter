@@ -112,6 +112,7 @@ return [
         // Users
         'users.manage',
         'users.access.view',
+        'users.email.view',
         'users.workmail.use',
 
         // Tasks
