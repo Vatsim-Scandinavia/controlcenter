@@ -273,16 +273,16 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.13.42",
+            "version": "v0.13.55",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "c5b8ad69dfbe259f822f5ef507d479a55ab790f7"
+                "reference": "e698d00c77a620cf05200102695a0d4107be804d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/c5b8ad69dfbe259f822f5ef507d479a55ab790f7",
-                "reference": "c5b8ad69dfbe259f822f5ef507d479a55ab790f7",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/e698d00c77a620cf05200102695a0d4107be804d",
+                "reference": "e698d00c77a620cf05200102695a0d4107be804d",
                 "shasum": ""
             },
             "require": {
@@ -342,7 +342,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.13.42"
+                "source": "https://github.com/dedoc/scramble/tree/v0.13.55"
             },
             "funding": [
                 {
@@ -350,7 +350,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-21T15:17:50+00:00"
+            "time": "2026-11-16T14:41:39+00:00",
+            "published-time": "2026-11-16T14:56:16+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -3764,7 +3765,8 @@
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
                 "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.3"
             },
-            "time": "2026-07-08T07:01:06+00:00"
+            "time": "2026-07-08T07:01:06+00:00",
+            "published-time": "2026-07-08T07:02:58+00:00"
         },
         {
             "name": "psr/clock",
